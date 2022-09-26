@@ -1,7 +1,7 @@
 package editor;
 
-import glparts.Shaders;
 import gui.GUIRenderer;
+import gui.sections.*;
 import math.Float4;
 import math.Int2;
 import physics.Physics;
@@ -27,19 +27,28 @@ public class Editor {
     public GUIRenderer guiRenderer = new GUIRenderer(window);
     public Physics physics = new Physics();
 
-    public Scene scene = null;
+    private Scene scene = null;
 
     public Editor() throws Exception {
         window.setOnResize(newSize -> {
             renderer.frameBuffer.updateSize(newSize);
             context.setViewport(newSize);
         });
+        window.setIcon("resource/textures/icons/k.png");
         window.setVSync(true);
 
         context.setDepthTest(true);
         context.setClearColor(new Float4(new Color(0x323232)));
 
         renderer.camera.setDefaultMovement(window, timer);
+
+        guiRenderer.add(new GUIMainMenu(this));
+        guiRenderer.add(new GUIScene(this));
+        guiRenderer.add(new GUIGamePanel(this));
+        guiRenderer.add(new GUIViewport(this));
+        guiRenderer.add(new GUIExplorer(this));
+        guiRenderer.add(new GUILogView(this));
+        guiRenderer.add(new GUIProperties(this));
 
         savedData.put("WireframeState", false);
         savedData.put("ViewportSize", new Int2());
@@ -79,12 +88,22 @@ public class Editor {
         window.destroy();
     }
 
-    public void updateScene(Scene scene) {
+    public Scene getScene() {
+        return scene;
+    }
+
+    public void setScene(Scene scene) {
         renderer.remove(this.scene);
         physics.remove(this.scene);
 
-        renderer.add(scene);
-        physics.add(scene);
+        if (this.scene != null) {
+            this.scene.destroy();
+        }
+
+        if (scene != null) {
+            renderer.add(scene);
+            physics.add(scene);
+        }
 
         this.scene = scene;
     }

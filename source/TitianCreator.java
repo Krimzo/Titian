@@ -1,21 +1,17 @@
 import editor.Editor;
 import entity.Entity;
 import glparts.*;
-import gui.sections.*;
 import scene.Scene;
 
 import java.util.Random;
 
 public class TitianCreator {
     public static void setup(Editor editor) throws Exception {
-        //editor.window.setIcon("resource/textures/icons/k.png"); WIP
-
-        /* DEBUG */
+        // Scene saving
         Mesh monkeMesh = new Mesh(editor.context, "resource/meshes/monke.obj");
         Texture checkersTexture = new Texture(editor.context, "resource/textures/checkers.png");
 
-        // Scene saving
-        final boolean saveTestScene = false;
+        final boolean saveTestScene = true;
         if (saveTestScene) {
             Scene scene = new Scene();
             for (int x = -3; x <= 3; x++) {
@@ -30,22 +26,10 @@ public class TitianCreator {
         }
 
         // Scene loading
-        editor.updateScene(new Scene("resource/scenes/Test.scene"));
-
-        guiSetup(editor);
+        editor.setScene(new Scene("resource/scenes/Test.scene"));
     }
 
-    public static void guiSetup(Editor editor) {
-        editor.guiRenderer.add(new GUIMainMenu(editor));
-        editor.guiRenderer.add(new GUIScene(editor));
-        editor.guiRenderer.add(new GUIViewport(editor));
-        editor.guiRenderer.add(new GUIExplorer(editor));
-        editor.guiRenderer.add(new GUIProperties(editor));
-    }
-
-    public static void update(Editor editor) {
-
-    }
+    public static void update(Editor editor) {}
 
     public static void main(String[] args) throws Exception {
         Editor.DEBUG = true;

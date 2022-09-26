@@ -5,7 +5,7 @@ import gui.GUIRenderable;
 import gui.GUISection;
 import imgui.ImGui;
 
-public class GUIMainMenu extends GUISection implements GUIRenderable {
+public final class GUIMainMenu extends GUISection implements GUIRenderable {
     public GUIMainMenu(Editor editor) {
         super(editor);
     }

@@ -1,19 +1,21 @@
 package window;
 
 import glparts.Texture;
+import glparts.Validated;
 import math.Int2;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.opengl.GL;
 import window.callbacks.*;
 import window.input.*;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window {
+public class Window implements Validated {
     protected long window;
     public final Keyboard keyboard;
     public final Mouse mouse;
@@ -43,7 +45,7 @@ public class Window {
     }
 
     public void destroy() {
-        if (window > 0) {
+        if (isValid()) {
             glfwFreeCallbacks(window);
             glfwDestroyWindow(window);
             glfwTerminate();
@@ -53,6 +55,11 @@ public class Window {
 
     public long getID() {
         return window;
+    }
+
+    @Override
+    public boolean isValid() {
+        return window != 0;
     }
 
     private GLContext context = null;
@@ -125,7 +132,15 @@ public class Window {
     }
 
     public void setIcon(String filepath) {
-        ByteBuffer iconData = Texture.createByteBuffer(Texture.getImageData(filepath));
-        glfwSetWindowIcon(window, new GLFWImage.Buffer(iconData));
+        byte[] imageData = Texture.getImageData(filepath, false);
+        if (imageData != null) {
+            Int2 imageSize = Texture.getImageSize(filepath);
+            try (GLFWImage.Buffer imageBuffer = GLFWImage.create(1)) {
+                try (GLFWImage image = GLFWImage.create().set(imageSize.x, imageSize.y, Texture.createByteBuffer(imageData))) {
+                    imageBuffer.put(0, image);
+                    glfwSetWindowIcon(window, imageBuffer);
+                }
+            }
+        }
     }
 }

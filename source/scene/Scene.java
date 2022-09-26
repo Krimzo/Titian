@@ -15,11 +15,35 @@ import java.util.Set;
 public class Scene extends ArrayList<Entity> implements Physical, Renderable, Serializable {
     public transient final Set<Mesh> meshes = new HashSet<>();
     public transient final Set<Texture> textures = new HashSet<>();
+    public transient Entity selectedEntity = null;
 
     public Scene() {}
 
     public Scene(String filepath) {
         fromFile(filepath);
+    }
+
+    public void destroy() {
+        selectedEntity = null;
+
+        for (Entity entity : this) {
+            entity.meshComponent.mesh = null;
+            if (entity.materialComponent.material != null) {
+                entity.materialComponent.material.colorMap = null;
+                entity.materialComponent.material.normalMap = null;
+                entity.materialComponent.material.roughnessMap = null;
+            }
+        }
+        for (Texture texture : textures) {
+            texture.destroy();
+        }
+        for (Mesh mesh : meshes) {
+            mesh.destroy();
+        }
+
+        this.clear();
+        textures.clear();
+        meshes.clear();
     }
 
     public void toFile(String filepath) {

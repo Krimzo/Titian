@@ -139,10 +139,14 @@ public class Texture extends GLObject implements Validated, Bindable, Serializab
         return new Int2(width[0], height[0]);
     }
 
-    public static byte[] getImageData(String filePath) {
+    public static byte[] getImageData(String filepath) {
+        return getImageData(filepath, true);
+    }
+
+    public static byte[] getImageData(String filepath, boolean flipOnY) {
         int[] dontCare = new int[1];
-        STBImage.stbi_set_flip_vertically_on_load(true);
-        return readByteBuffer(STBImage.stbi_load(filePath, dontCare, dontCare, dontCare, 4));
+        STBImage.stbi_set_flip_vertically_on_load(flipOnY);
+        return readByteBuffer(STBImage.stbi_load(filepath, dontCare, dontCare, dontCare, 4));
     }
 
     public static byte[] readByteBuffer(ByteBuffer buffer) {
