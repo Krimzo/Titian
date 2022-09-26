@@ -2,6 +2,7 @@ package entity;
 
 import glparts.Mesh;
 import glparts.Shaders;
+import glparts.Validated;
 import gui.GUIRenderable;
 import renderer.Renderable;
 

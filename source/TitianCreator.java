@@ -1,30 +1,22 @@
 import editor.Editor;
 import entity.Entity;
 import glparts.*;
-import gui.sections.GUIExplorer;
-import gui.sections.GUIProperties;
-import gui.sections.GUIScene;
-import gui.sections.GUIViewport;
-import renderer.Renderable;
+import gui.sections.*;
 import scene.Scene;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class TitianCreator {
     public static void setup(Editor editor) throws Exception {
-        editor.userData.put("WireframeState", false);
-        editor.window.keyboard.v.onPress = () -> {
-            boolean newState = !(boolean) editor.userData.get("WireframeState");
-            editor.userData.put("WireframeState", newState);
-            editor.context.setWireframe(newState);
-        };
+        //editor.window.setIcon("resource/textures/icons/k.png"); WIP
 
+        /* DEBUG */
         Mesh monkeMesh = new Mesh(editor.context, "resource/meshes/monke.obj");
         Texture checkersTexture = new Texture(editor.context, "resource/textures/checkers.png");
-        //editor.updateScene(new Scene("resource/scenes/Test.scene"));
 
-        if (true) {
+        // Scene saving
+        final boolean saveTestScene = false;
+        if (saveTestScene) {
             Scene scene = new Scene();
             for (int x = -3; x <= 3; x++) {
                 Entity monke = new Entity();
@@ -35,17 +27,20 @@ public class TitianCreator {
                 scene.add(monke);
             }
             scene.toFile("resource/scenes/Test.scene");
-            System.exit(0);
         }
+
+        // Scene loading
+        editor.updateScene(new Scene("resource/scenes/Test.scene"));
 
         guiSetup(editor);
     }
 
     public static void guiSetup(Editor editor) {
-        editor.guiRenderer.add(new GUIScene());
-        editor.guiRenderer.add(new GUIViewport());
-        editor.guiRenderer.add(new GUIExplorer());
-        editor.guiRenderer.add(new GUIProperties());
+        editor.guiRenderer.add(new GUIMainMenu(editor));
+        editor.guiRenderer.add(new GUIScene(editor));
+        editor.guiRenderer.add(new GUIViewport(editor));
+        editor.guiRenderer.add(new GUIExplorer(editor));
+        editor.guiRenderer.add(new GUIProperties(editor));
     }
 
     public static void update(Editor editor) {
@@ -53,6 +48,8 @@ public class TitianCreator {
     }
 
     public static void main(String[] args) throws Exception {
+        Editor.DEBUG = true;
+
         Editor editor = new Editor();
         editor.setup(TitianCreator::setup);
 

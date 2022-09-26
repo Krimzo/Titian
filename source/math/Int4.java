@@ -59,6 +59,12 @@ public class Int4 implements Serializable {
         z = v.y;
         w = v.z;
     }
+    public Int4(Float4 v) {
+        x = (int) v.x;
+        y = (int) v.y;
+        z = (int) v.z;
+        w = (int) v.w;
+    }
     public Int4(Int4 v) {
         x = v.x;
         y = v.y;

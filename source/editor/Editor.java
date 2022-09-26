@@ -16,31 +16,38 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Editor {
-    public final Map<String, Object> userData = new HashMap<>();
+    public static boolean DEBUG = false;
+    public final Map<String, Object> savedData = new HashMap<>();
 
     public Window window = new Window(new Int2(1600, 900), "Titian Creator", true);
     public GLContext context = window.getContext();
     public Timer timer = new Timer();
 
-    public Renderer renderer = new Renderer();
+    public Renderer renderer = new Renderer(context, window.getSize());
     public GUIRenderer guiRenderer = new GUIRenderer(window);
     public Physics physics = new Physics();
 
     public Scene scene = null;
 
     public Editor() throws Exception {
-        window.setOnResize(context::setViewport);
+        window.setOnResize(newSize -> {
+            renderer.frameBuffer.updateSize(newSize);
+            context.setViewport(newSize);
+        });
         window.setVSync(true);
 
         context.setDepthTest(true);
         context.setClearColor(new Float4(new Color(0x323232)));
 
-        renderer.shaders = new Shaders(context, "shaders/Render.glsl");
         renderer.camera.setDefaultMovement(window, timer);
+
+        savedData.put("WireframeState", false);
+        savedData.put("ViewportSize", new Int2());
     }
 
     public void setup(EditorCallback editorCallback) throws Exception {
         editorCallback.method(this);
+        window.maximize();
         timer.reset();
     }
 
@@ -54,10 +61,14 @@ public class Editor {
         physics.update(timer.getDeltaT());
         editorCallback.method(this);
 
-        context.clear(true);
-        renderer.updateVPMatrix();
+        context.clear(false);
+
+        Int2 viewportSize = (Int2) savedData.get("ViewportSize");
+        context.setViewport(viewportSize);
+        renderer.updateSize(viewportSize);
         renderer.render();
 
+        context.setViewport(window.getSize());
         guiRenderer.render();
 
         window.swapBuffers();
@@ -71,8 +82,10 @@ public class Editor {
     public void updateScene(Scene scene) {
         renderer.remove(this.scene);
         physics.remove(this.scene);
+
         renderer.add(scene);
         physics.add(scene);
+
         this.scene = scene;
     }
 }

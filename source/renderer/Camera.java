@@ -16,8 +16,8 @@ public class Camera {
 
     public Camera() {}
 
-    public void updateAspect(Float2 frameSize) {
-        aspect = frameSize.x / frameSize.y;
+    public void updateAspect(Int2 frameSize) {
+        aspect = ((float) frameSize.x) / frameSize.y;
     }
 
     public void setForward(Float3 forward) {

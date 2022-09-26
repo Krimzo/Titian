@@ -1,11 +1,15 @@
 package gui.sections;
 
+import editor.Editor;
 import gui.GUIRenderable;
+import gui.GUISection;
 import imgui.ImGui;
 import imgui.flag.ImGuiWindowFlags;
 
-public final class GUIExplorer implements GUIRenderable {
-    public GUIExplorer() {}
+public final class GUIExplorer extends GUISection implements GUIRenderable {
+    public GUIExplorer(Editor editor) {
+        super(editor);
+    }
 
     @Override
     public void onGUIRender() {

@@ -6,6 +6,7 @@ import imgui.flag.ImGuiConfigFlags;
 import imgui.flag.ImGuiDockNodeFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
+import window.GLContext;
 import window.Window;
 
 import java.util.ArrayList;
@@ -31,10 +32,12 @@ public class GUIRenderer extends ArrayList<GUIRenderable> {
     public void render() {
         implGlfw.newFrame();
         ImGui.newFrame();
+
         ImGui.dockSpaceOverViewport(ImGui.getMainViewport(), ImGuiDockNodeFlags.PassthruCentralNode);
         for (GUIRenderable guiRenderable : this) {
             guiRenderable.onGUIRender();
         }
+
         ImGui.render();
         implGl3.renderDrawData(ImGui.getDrawData());
     }

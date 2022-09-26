@@ -8,7 +8,7 @@ import java.util.*;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class Shaders extends GLObject {
+public class Shaders extends GLObject implements Validated, Bindable {
     protected int program;
 
     public Shaders(GLContext context, String vSource, String fSource) {
@@ -28,45 +28,26 @@ public class Shaders extends GLObject {
 
     @Override
     public void destroy() {
-        if (program != 0) {
+        if (isValid()) {
+            unbind();
             glDeleteProgram(program);
             program = 0;
         }
     }
 
-    private static int newShader(int type, String source) {
-        final int shader = glCreateShader(type);
-        if (shader == 0) {
-            throw new Error("Could not create a shader!");
-        }
-        glShaderSource(shader, source);
-        glCompileShader(shader);
-        int[] status = new int[1];
-        glGetShaderiv(shader, GL_COMPILE_STATUS, status);
-        if (status[0] == 0) {
-            throw new Error("\n" + glGetShaderInfoLog(shader));
-        }
-        return shader;
+    @Override
+    public boolean isValid() {
+        return program != 0;
     }
 
-    private static int newProgram(int vShader, int fShader) {
-        final int program = glCreateProgram();
-        if (program == 0) {
-            throw new Error("Could not create a shader program!");
-        }
-        glAttachShader(program, vShader);
-        glAttachShader(program, fShader);
-        glLinkProgram(program);
-        int[] res = new int[1];
-        glGetProgramiv(program, GL_LINK_STATUS, res);
-        if (res[0] == 0) {
-            throw new Error("\n" + glGetProgramInfoLog(program));
-        }
-        return program;
-    }
-
+    @Override
     public void bind() {
         glUseProgram(program);
+    }
+
+    @Override
+    public void unbind() {
+        glUseProgram(0);
     }
 
     private final Map<String, Integer> uniforms = new HashMap<>();
@@ -109,5 +90,36 @@ public class Shaders extends GLObject {
     public void setUniform(String name, Mat4 data) {
         bind();
         glUniformMatrix4fv(getUniformID(name), true, data.data);
+    }
+
+    private static int newShader(int type, String source) {
+        final int shader = glCreateShader(type);
+        if (shader == 0) {
+            throw new Error("Could not create a shader!");
+        }
+        glShaderSource(shader, source);
+        glCompileShader(shader);
+        int[] status = new int[1];
+        glGetShaderiv(shader, GL_COMPILE_STATUS, status);
+        if (status[0] == 0) {
+            throw new Error("\n" + glGetShaderInfoLog(shader));
+        }
+        return shader;
+    }
+
+    private static int newProgram(int vShader, int fShader) {
+        final int program = glCreateProgram();
+        if (program == 0) {
+            throw new Error("Could not create a shader program!");
+        }
+        glAttachShader(program, vShader);
+        glAttachShader(program, fShader);
+        glLinkProgram(program);
+        int[] res = new int[1];
+        glGetProgramiv(program, GL_LINK_STATUS, res);
+        if (res[0] == 0) {
+            throw new Error("\n" + glGetProgramInfoLog(program));
+        }
+        return program;
     }
 }

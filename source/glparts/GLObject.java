@@ -2,7 +2,9 @@ package glparts;
 
 import window.GLContext;
 
-public abstract class GLObject {
+import java.io.Serializable;
+
+public abstract class GLObject implements Serializable {
     public GLObject(GLContext context) {}
     public abstract void destroy();
 }

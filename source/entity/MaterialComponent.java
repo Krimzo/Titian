@@ -1,5 +1,6 @@
 package entity;
 
+import glparts.Validated;
 import gui.GUIRenderable;
 import material.Material;
 

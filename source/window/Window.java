@@ -1,9 +1,13 @@
 package window;
 
+import glparts.Texture;
 import math.Int2;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.opengl.GL;
 import window.callbacks.*;
 import window.input.*;
+
+import java.nio.ByteBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.Callbacks.*;
@@ -81,6 +85,10 @@ public class Window {
         });
     }
 
+    public void maximize() {
+        glfwMaximizeWindow(window);
+    }
+
     public Int2 getSize() {
         int[] sizeX = new int[1];
         int[] sizeY = new int[1];
@@ -114,5 +122,10 @@ public class Window {
 
     public void setVSync(boolean enabled) {
         glfwSwapInterval(enabled ? 1 : 0);
+    }
+
+    public void setIcon(String filepath) {
+        ByteBuffer iconData = Texture.createByteBuffer(Texture.getImageData(filepath));
+        glfwSetWindowIcon(window, new GLFWImage.Buffer(iconData));
     }
 }

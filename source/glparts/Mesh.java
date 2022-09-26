@@ -1,24 +1,36 @@
 package glparts;
 
+import editor.Editor;
 import math.*;
 import renderer.*;
-import utility.*;
+import utility.File;
 import window.*;
 
+import java.io.*;
 import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class Mesh extends GLObject implements Renderable {
-    protected Vertex[] vertices;
-    protected int vao;
-    protected int vbo;
+public class Mesh extends GLObject implements Validated, Bindable, Renderable, Serializable {
+    protected Vertex[] vertices = null;
+    protected transient int vao = 0;
+    protected transient int vbo = 0;
 
     public Mesh(GLContext context, Vertex[] vertices) {
         super(context);
+        loadData(vertices);
+    }
 
-        this.vertices = Arrays.copyOf(vertices, vertices.length);
+    public Mesh(GLContext context, String filePath) throws Exception {
+        this(context, File.parseMeshFile(filePath));
+    }
 
+    public void loadData(Vertex[] vertices) {
+        if (vertices != this.vertices) {
+            this.vertices = Arrays.copyOf(vertices, vertices.length);
+        }
+
+        destroy();
         vao = glGenVertexArrays();
         vbo = glGenBuffers();
 
@@ -38,27 +50,58 @@ public class Mesh extends GLObject implements Renderable {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    public Mesh(GLContext context, String filePath) throws Exception {
-        this(context, File.parseMeshFile(filePath));
-    }
-
     @Override
     public void destroy() {
-        if (vao != 0) {
+        if (isValid()) {
+            unbind();
             glDeleteVertexArrays(vao);
-            vao = 0;
-        }
-        if (vbo != 0) {
             glDeleteBuffers(vbo);
+            vao = 0;
             vbo = 0;
         }
     }
 
+    @Serial
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        stream.defaultWriteObject();
+        stream.writeObject(vertices);
+
+        if (Editor.DEBUG) {
+            System.out.println("Mesh saved!");
+        }
+    }
+
+    @Serial
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        vertices = (Vertex[]) stream.readObject();
+        loadData(vertices);
+
+        if (Editor.DEBUG) {
+            System.out.println("Mesh loaded!");
+        }
+    }
+
+    @Override
+    public boolean isValid() {
+        return vao != 0 && vbo != 0;
+    }
+
+    @Override
+    public void bind() {
+        glBindVertexArray(vao);
+    }
+
+    @Override
+    public void unbind() {
+        glBindVertexArray(0);
+    }
+
     @Override
     public void onRender(Shaders shaders) {
-        glBindVertexArray(vao);
+        bind();
         glDrawArrays(GL_TRIANGLES, 0, vertices.length);
-        glBindVertexArray(0);
+        unbind();
     }
 
     private static float[] toRawData(Vertex[] vertices) {

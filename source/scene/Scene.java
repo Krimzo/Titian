@@ -1,14 +1,21 @@
 package scene;
 
 import entity.Entity;
+import glparts.Mesh;
 import glparts.Shaders;
+import glparts.Texture;
 import physics.Physical;
 import renderer.Renderable;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Scene extends ArrayList<Entity> implements Physical, Renderable, Serializable {
+    public transient final Set<Mesh> meshes = new HashSet<>();
+    public transient final Set<Texture> textures = new HashSet<>();
+
     public Scene() {}
 
     public Scene(String filepath) {
@@ -23,13 +30,16 @@ public class Scene extends ArrayList<Entity> implements Physical, Renderable, Se
             objectStream.close();
             fileStream.close();
         }
-        catch (Exception ignored) {
-            ignored.printStackTrace();
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public void fromFile(String filepath) {
         this.clear();
+        meshes.clear();
+        textures.clear();
+
         try {
             FileInputStream fileStream = new FileInputStream(filepath);
             ObjectInputStream objectStream = new ObjectInputStream(fileStream);
@@ -38,11 +48,28 @@ public class Scene extends ArrayList<Entity> implements Physical, Renderable, Se
             fileStream.close();
 
             for (Entity entity : scene) {
-                entity.loadSerialization();
+                if (entity.meshComponent.mesh != null) {
+                    meshes.add(entity.meshComponent.mesh);
+                }
+
+                if (entity.materialComponent.material != null) {
+                    if (entity.materialComponent.material.colorMap != null) {
+                        textures.add(entity.materialComponent.material.colorMap);
+                    }
+                    if (entity.materialComponent.material.normalMap != null) {
+                        textures.add(entity.materialComponent.material.normalMap);
+                    }
+                    if (entity.materialComponent.material.roughnessMap != null) {
+                        textures.add(entity.materialComponent.material.roughnessMap);
+                    }
+                }
+
                 this.add(entity);
             }
         }
-        catch (Exception ignored) {}
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public class Material implements Serializable {
     public Float3 color = new Float3(1);
-    public float roughness = 0;
+    public float roughness = 0.5f;
 
     public Texture colorMap = null;
     public Texture normalMap = null;

@@ -17,6 +17,10 @@ public class Int2 implements Serializable {
         this.x = x;
         this.y = y;
     }
+    public Int2(Float2 v) {
+        x = (int) v.x;
+        y = (int) v.y;
+    }
     public Int2(Int2 v) {
         x = v.x;
         y = v.y;

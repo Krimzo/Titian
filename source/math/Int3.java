@@ -30,6 +30,11 @@ public class Int3 implements Serializable {
         y = v.x;
         z = v.y;
     }
+    public Int3(Float3 v) {
+        x = (int) v.x;
+        y = (int) v.y;
+        z = (int) v.z;
+    }
     public Int3(Int3 v) {
         x = v.x;
         y = v.y;
