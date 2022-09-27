@@ -1,11 +1,10 @@
 package gui.sections;
 
 import editor.Editor;
-import gui.GUIRenderable;
 import gui.GUISection;
 import imgui.ImGui;
 
-public final class GUIMainMenu extends GUISection implements GUIRenderable {
+public final class GUIMainMenu extends GUISection {
     public GUIMainMenu(Editor editor) {
         super(editor);
     }
@@ -40,7 +39,6 @@ public final class GUIMainMenu extends GUISection implements GUIRenderable {
     private void renderMenu() {
         if (ImGui.beginMenu("Render")) {
             if (ImGui.beginMenu("Index Texture")) {
-
 
                 ImGui.endMenu();
             }

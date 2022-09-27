@@ -8,14 +8,15 @@ import java.util.Random;
 public class TitianCreator {
     public static void setup(Editor editor) throws Exception {
         // Scene saving
-        Mesh monkeMesh = new Mesh(editor.context, "resource/meshes/monke.obj");
-        Texture checkersTexture = new Texture(editor.context, "resource/textures/checkers.png");
-
         final boolean saveTestScene = true;
         if (saveTestScene) {
+            Mesh monkeMesh = new Mesh(editor.context, "resource/meshes/default/cube.obj");
+            Texture checkersTexture = new Texture(editor.context, "resource/textures/checkers.png");
             Scene scene = new Scene();
+
             for (int x = -3; x <= 3; x++) {
-                Entity monke = new Entity();
+                Entity monke = new Entity(scene.entityNameHolder);
+                monke.setName("Cube");
                 monke.meshComponent.mesh = monkeMesh;
                 monke.materialComponent.material.colorMap = checkersTexture;
                 monke.transformComponent.position.x = x * 2.5f;
@@ -23,6 +24,10 @@ public class TitianCreator {
                 scene.add(monke);
             }
             scene.toFile("resource/scenes/Test.scene");
+
+            scene.dispose();
+            checkersTexture.dispose();
+            monkeMesh.dispose();
         }
 
         // Scene loading
@@ -41,6 +46,6 @@ public class TitianCreator {
             editor.update(TitianCreator::update);
         }
 
-        editor.destroy();
+        editor.dispose();
     }
 }

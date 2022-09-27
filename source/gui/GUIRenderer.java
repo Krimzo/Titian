@@ -1,5 +1,6 @@
 package gui;
 
+import glparts.Disposable;
 import imgui.*;
 import imgui.flag.*;
 import imgui.gl3.*;
@@ -8,7 +9,7 @@ import window.*;
 
 import java.util.ArrayList;
 
-public class GUIRenderer extends ArrayList<GUIRenderable> {
+public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable {
     private final ImGuiImplGlfw implGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 implGl3 = new ImGuiImplGl3();
 
@@ -16,20 +17,20 @@ public class GUIRenderer extends ArrayList<GUIRenderable> {
         ImGui.createContext();
         ImGui.getIO().setConfigFlags(ImGuiConfigFlags.DockingEnable);
 
-        implGlfw.init(window.getID(), true);
+        implGlfw.init(window.window, true);
         implGl3.init();
 
         loadCustomTheme();
     }
 
-    public void destroy() {
+    @Override
+    public void dispose() {
         implGl3.dispose();
         implGlfw.dispose();
         ImGui.destroyContext();
     }
 
     public void render() {
-        implGl3.updateFontsTexture();
         implGlfw.newFrame();
         ImGui.newFrame();
 

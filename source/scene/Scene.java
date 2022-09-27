@@ -1,9 +1,12 @@
 package scene;
 
 import entity.Entity;
+import glparts.Disposable;
 import glparts.Mesh;
 import glparts.Shaders;
 import glparts.Texture;
+import material.Material;
+import named.NameHolder;
 import physics.Physical;
 import renderer.Renderable;
 
@@ -12,9 +15,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Scene extends ArrayList<Entity> implements Physical, Renderable, Serializable {
+public class Scene extends ArrayList<Entity> implements Physical, Renderable, Disposable, Serializable {
+    public final NameHolder entityNameHolder = new NameHolder();
+    public final NameHolder meshNameHolder = new NameHolder();
+    public final NameHolder textureNameHolder = new NameHolder();
+    public final NameHolder materialNameHolder = new NameHolder();
+
     public transient final Set<Mesh> meshes = new HashSet<>();
     public transient final Set<Texture> textures = new HashSet<>();
+    public transient final Set<Material> materials = new HashSet<>();
+
     public transient Entity selectedEntity = null;
 
     public Scene() {}
@@ -23,7 +33,8 @@ public class Scene extends ArrayList<Entity> implements Physical, Renderable, Se
         fromFile(filepath);
     }
 
-    public void destroy() {
+    @Override
+    public void dispose() {
         selectedEntity = null;
 
         for (Entity entity : this) {
@@ -35,10 +46,10 @@ public class Scene extends ArrayList<Entity> implements Physical, Renderable, Se
             }
         }
         for (Texture texture : textures) {
-            texture.destroy();
+            texture.dispose();
         }
         for (Mesh mesh : meshes) {
-            mesh.destroy();
+            mesh.dispose();
         }
 
         this.clear();
@@ -77,6 +88,8 @@ public class Scene extends ArrayList<Entity> implements Physical, Renderable, Se
                 }
 
                 if (entity.materialComponent.material != null) {
+                    materials.add(entity.materialComponent.material);
+
                     if (entity.materialComponent.material.colorMap != null) {
                         textures.add(entity.materialComponent.material.colorMap);
                     }

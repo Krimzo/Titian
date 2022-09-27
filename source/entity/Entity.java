@@ -1,18 +1,21 @@
 package entity;
 
 import glparts.*;
+import named.*;
 import physics.*;
 import renderer.*;
 
 import java.io.Serializable;
 
-public class Entity implements Physical, Renderable, Serializable {
+public class Entity extends Named implements Physical, Renderable, Serializable {
     public final TransformComponent transformComponent = new TransformComponent();
     public final MeshComponent meshComponent = new MeshComponent();
     public final MaterialComponent materialComponent = new MaterialComponent();
     public final PhysicsComponent physicsComponent = new PhysicsComponent();
 
-    public Entity() {}
+    public Entity(NameHolder holder) {
+        super(holder);
+    }
 
     @Override
     public void onPhysicsUpdate(float deltaT) {
@@ -23,10 +26,8 @@ public class Entity implements Physical, Renderable, Serializable {
 
     @Override
     public void onRender(Shaders shaders) {
-        if (shaders != null) {
-            shaders.setUniform("W", transformComponent.matrix());
-            materialComponent.bind();
-            meshComponent.onRender(shaders);
-        }
+        shaders.setUniform("W", transformComponent.matrix());
+        materialComponent.bind();
+        meshComponent.onRender(shaders);
     }
 }

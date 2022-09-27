@@ -1,12 +1,11 @@
 package entity;
 
-import glparts.Validated;
 import gui.GUIRenderable;
 import material.Material;
 
 import java.io.Serializable;
 
-public class MaterialComponent implements Validated, GUIRenderable, Serializable {
+public class MaterialComponent implements GUIRenderable, Serializable {
     public Material material = new Material();
 
     public MaterialComponent() {}
@@ -16,14 +15,7 @@ public class MaterialComponent implements Validated, GUIRenderable, Serializable
     }
 
     public void bind() {
-        if (isValid()) {
-            material.bind();
-        }
-    }
-
-    @Override
-    public boolean isValid() {
-        return material != null;
+        material.bind();
     }
 
     @Override

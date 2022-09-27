@@ -6,7 +6,7 @@ import window.GLContext;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class FrameBuffer extends GLObject implements Validated, Bindable {
+public class FrameBuffer extends GLObject implements Bindable {
     protected int buffer;
     protected Texture colorMap;
     protected DepthTexture depthMap;
@@ -23,19 +23,16 @@ public class FrameBuffer extends GLObject implements Validated, Bindable {
     }
 
     @Override
-    public void destroy() {
-        if (isValid()) {
-            unbind();
-            depthMap.destroy();
-            colorMap.destroy();
+    public void dispose() {
+        unbind();
+
+        if (buffer != 0) {
+            depthMap.dispose();
+            colorMap.dispose();
+
             glDeleteFramebuffers(buffer);
             buffer = 0;
         }
-    }
-
-    @Override
-    public boolean isValid() {
-        return buffer != 0 && colorMap.isValid() && depthMap.isValid();
     }
 
     @Override
@@ -81,11 +78,12 @@ public class FrameBuffer extends GLObject implements Validated, Bindable {
         float[] data = new float[result.length * 4];
 
         bind();
-        glReadPixels(pos.x, pos.y, size.x, size.y, GL_RGBA, GL_FLOAT, data);
+        glReadPixels(pos.x, colorMap.getSize().y - 1 - pos.y, size.x, size.y, GL_RGBA, GL_FLOAT, data);
+        unbind();
 
         for (int i = 0; i < result.length; i++) {
             result[i] = new Float4(
-                data[i * 4 + 0],
+                data[i * 4],
                 data[i * 4 + 1],
                 data[i * 4 + 2],
                 data[i * 4 + 3]

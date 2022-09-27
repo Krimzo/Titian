@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class DepthTexture extends GLObject implements Validated, Bindable {
+public class DepthTexture extends GLObject implements Bindable {
     protected Int2 size = null;
     protected int texture = 0;
 
@@ -22,17 +22,13 @@ public class DepthTexture extends GLObject implements Validated, Bindable {
     }
 
     @Override
-    public void destroy() {
-        if (isValid()) {
-            unbind();
+    public void dispose() {
+        unbind();
+
+        if (texture != 0) {
             glDeleteTextures(texture);
             texture = 0;
         }
-    }
-
-    @Override
-    public boolean isValid() {
-        return texture != 0;
     }
 
     @Override
@@ -54,7 +50,7 @@ public class DepthTexture extends GLObject implements Validated, Bindable {
     }
 
     public void updateSize(Int2 newSize) {
-        if (isValid() && !newSize.equals(size)) {
+        if (!newSize.equals(size)) {
             bind();
             glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, size.x, size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, (ByteBuffer) null);
             size = new Int2(newSize);

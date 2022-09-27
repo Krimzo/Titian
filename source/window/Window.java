@@ -1,22 +1,22 @@
 package window;
 
+import glparts.Disposable;
 import glparts.Texture;
-import glparts.Validated;
 import math.Int2;
 import org.lwjgl.glfw.GLFWImage;
-import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.*;
 import window.callbacks.*;
 import window.input.*;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window implements Validated {
-    protected long window;
+public class Window implements Disposable {
+    public final long window;
+
     public final Keyboard keyboard;
     public final Mouse mouse;
 
@@ -29,13 +29,13 @@ public class Window implements Validated {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
-        if ((window = glfwCreateWindow(size.x, size.y, title, NULL, NULL)) == NULL) {
+        if ((window = glfwCreateWindow(size.x, size.y, title, NULL, NULL)) == 0) {
             throw new Error("Failed to create a GLFW window");
         }
 
@@ -44,28 +44,24 @@ public class Window implements Validated {
         setHidden(false);
     }
 
-    public void destroy() {
-        if (isValid()) {
-            glfwFreeCallbacks(window);
-            glfwDestroyWindow(window);
-            glfwTerminate();
-            window = 0;
-        }
-    }
-
-    public long getID() {
-        return window;
-    }
-
     @Override
-    public boolean isValid() {
-        return window != 0;
+    public void dispose() {
+        GL.destroy();
+
+        glfwFreeCallbacks(window);
+        glfwDestroyWindow(window);
+
+        glfwTerminate();
+    }
+
+    public void makeContextCurrent() {
+        glfwMakeContextCurrent(window);
     }
 
     private GLContext context = null;
     public GLContext getContext() {
         if (context == null) {
-            glfwMakeContextCurrent(window);
+            makeContextCurrent();
             GL.createCapabilities();
             context = new GLContext();
         }
@@ -136,7 +132,8 @@ public class Window implements Validated {
         if (imageData != null) {
             Int2 imageSize = Texture.getImageSize(filepath);
             try (GLFWImage.Buffer imageBuffer = GLFWImage.create(1)) {
-                try (GLFWImage image = GLFWImage.create().set(imageSize.x, imageSize.y, Texture.createByteBuffer(imageData))) {
+                try (GLFWImage image = GLFWImage.create()) {
+                    image.set(imageSize.x, imageSize.y, Texture.createByteBuffer(imageData));
                     imageBuffer.put(0, image);
                     glfwSetWindowIcon(window, imageBuffer);
                 }

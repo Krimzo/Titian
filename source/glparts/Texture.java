@@ -3,16 +3,18 @@ package glparts;
 import editor.Editor;
 import math.*;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryUtil;
 import window.*;
 
 import java.io.*;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL33.*;
 import org.lwjgl.stb.*;
 
-public class Texture extends GLObject implements Validated, Bindable, Serializable {
+public class Texture extends GLObject implements Bindable, Serializable {
     protected Int2 size = null;
     protected byte[] pixels = null;
     protected transient int texture = 0;
@@ -34,21 +36,26 @@ public class Texture extends GLObject implements Validated, Bindable, Serializab
             this.pixels = Arrays.copyOf(data, data.length);
         }
 
-        destroy();
+        dispose();
+
         texture = glGenTextures();
 
         bind();
+
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, createByteBuffer(data));
         glGenerateMipmap(GL_TEXTURE_2D);
 
         setWrap(new Int2(GL_REPEAT));
         setFilters(new Int2(GL_LINEAR));
+
+        unbind();
     }
 
     @Override
-    public void destroy() {
-        if (isValid()) {
-            unbind();
+    public void dispose() {
+        unbind();
+
+        if (texture != 0) {
             glDeleteTextures(texture);
             texture = 0;
         }
@@ -78,11 +85,6 @@ public class Texture extends GLObject implements Validated, Bindable, Serializab
     }
 
     @Override
-    public boolean isValid() {
-        return texture != 0;
-    }
-
-    @Override
     public void bind() {
         glBindTexture(GL_TEXTURE_2D, texture);
     }
@@ -106,7 +108,7 @@ public class Texture extends GLObject implements Validated, Bindable, Serializab
     }
 
     public void updateSize(Int2 newSize) {
-        if (isValid() && !newSize.equals(size)) {
+        if (!newSize.equals(size)) {
             bind();
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, newSize.x, newSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
             size = new Int2(newSize);
@@ -121,12 +123,14 @@ public class Texture extends GLObject implements Validated, Bindable, Serializab
         bind();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, modes.x);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, modes.y);
+        unbind();
     }
 
     public void setFilters(Int2 filters) {
         bind();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filters.x);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filters.y);
+        unbind();
     }
 
     public static Int2 getImageSize(String filePath) {
@@ -142,13 +146,19 @@ public class Texture extends GLObject implements Validated, Bindable, Serializab
     public static byte[] getImageData(String filepath, boolean flipOnY) {
         int[] dontCare = new int[1];
         STBImage.stbi_set_flip_vertically_on_load(flipOnY);
-        return readByteBuffer(STBImage.stbi_load(filepath, dontCare, dontCare, dontCare, 4));
+
+        ByteBuffer imageBuffer = STBImage.stbi_load(filepath, dontCare, dontCare, dontCare, 4);
+        if (imageBuffer != null) {
+            return readByteBuffer(imageBuffer);
+        }
+        return null;
     }
 
     public static byte[] readByteBuffer(ByteBuffer buffer) {
         if (buffer != null) {
             byte[] data = new byte[buffer.capacity()];
             buffer.get(data);
+            buffer.rewind();
             return data;
         }
         return null;

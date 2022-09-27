@@ -7,7 +7,7 @@ import imgui.*;
 import imgui.flag.*;
 import scene.*;
 
-public final class GUIProperties extends GUISection implements GUIRenderable {
+public final class GUIProperties extends GUISection {
     public GUIProperties(Editor editor) {
         super(editor);
     }
@@ -22,14 +22,25 @@ public final class GUIProperties extends GUISection implements GUIRenderable {
 
     @Override
     public void onGUIRender() {
-        if (ImGui.begin("Properties", ImGuiWindowFlags.NoScrollbar)) {
-            Entity selected = getSelectedEntity();
-            if (selected != null) {
-                selected.transformComponent.onGUIRender();
-                selected.meshComponent.onGUIRender();
-                selected.materialComponent.onGUIRender();
-                selected.physicsComponent.onGUIRender();
-            }
+        Entity selected = getSelectedEntity();
+
+        if (ImGui.begin("Transform", ImGuiWindowFlags.NoScrollbar)) {
+            if (selected != null) selected.transformComponent.onGUIRender();
+        }
+        ImGui.end();
+
+        if (ImGui.begin("Mesh", ImGuiWindowFlags.NoScrollbar)) {
+            if (selected != null) selected.meshComponent.onGUIRender();
+        }
+        ImGui.end();
+
+        if (ImGui.begin("Material", ImGuiWindowFlags.NoScrollbar)) {
+            if (selected != null) selected.materialComponent.onGUIRender();
+        }
+        ImGui.end();
+
+        if (ImGui.begin("Physics", ImGuiWindowFlags.NoScrollbar)) {
+            if (selected != null) selected.physicsComponent.onGUIRender();
         }
         ImGui.end();
     }

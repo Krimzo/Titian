@@ -6,16 +6,19 @@ import imgui.*;
 import imgui.flag.*;
 import math.*;
 
-public final class GUIViewport extends GUISection implements GUIRenderable {
+public final class GUIViewport extends GUISection {
     public GUIViewport(Editor editor) {
         super(editor);
     }
 
     private Int2[] saveViewportInfo() {
-        Int2 position = new Int2((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY());
-        Int2 size = new Int2((int) ImGui.getWindowWidth(), (int) ImGui.getWindowHeight());
+        int tabSize = (int) ImGui.getWindowContentRegionMinY();
+        Int2 position = new Int2((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY() + tabSize);
+        Int2 size = new Int2((int) ImGui.getWindowWidth(), (int) ImGui.getWindowHeight() - tabSize);
+
         editor.savedData.put("ViewportPosition", position);
         editor.savedData.put("ViewportSize", size);
+
         return new Int2[] { position, size };
     }
 
@@ -30,9 +33,9 @@ public final class GUIViewport extends GUISection implements GUIRenderable {
 
         if (ImGui.isMouseHoveringRect(viewportRect.x, viewportRect.y, viewportRect.z, viewportRect.w) && ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
             Float2 mousePosition = new Float2(ImGui.getMousePosX() - viewportPosition.x, ImGui.getMousePosY() - viewportPosition.y);
-            int objectIndex = (int) editor.renderer.indexBuffer.getPixel(new Int2((int) mousePosition.x, (int) (viewportSize.y - mousePosition.y))).x - 1;
+
+            int objectIndex = (int) editor.renderer.indexBuffer.getPixel(new Int2(mousePosition)).x - 1;
             editor.getScene().selectedEntity = (objectIndex < 0) ? null : editor.getScene().get(objectIndex);
-            editor.savedData.put("SelectedIndex", objectIndex);
         }
     }
 

@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class Mesh extends GLObject implements Validated, Bindable, Renderable, Serializable {
+public class Mesh extends GLObject implements Bindable, Renderable, Serializable {
     protected Vertex[] vertices = null;
     protected transient int vao = 0;
     protected transient int vbo = 0;
@@ -30,11 +30,13 @@ public class Mesh extends GLObject implements Validated, Bindable, Renderable, S
             this.vertices = Arrays.copyOf(vertices, vertices.length);
         }
 
-        destroy();
+        dispose();
+
         vao = glGenVertexArrays();
         vbo = glGenBuffers();
 
-        glBindVertexArray(vao);
+        bind();
+
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, toRawData(vertices), GL_STATIC_DRAW);
 
@@ -46,17 +48,26 @@ public class Mesh extends GLObject implements Validated, Bindable, Renderable, S
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
 
-        glBindVertexArray(0);
+        unbind();
+
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     @Override
-    public void destroy() {
-        if (isValid()) {
-            unbind();
+    public void dispose() {
+        unbind();
+
+        if(vao != 0) {
             glDeleteVertexArrays(vao);
-            glDeleteBuffers(vbo);
             vao = 0;
+        }
+
+        if (vbo != 0) {
+            glDeleteBuffers(vbo);
             vbo = 0;
         }
     }
@@ -80,11 +91,6 @@ public class Mesh extends GLObject implements Validated, Bindable, Renderable, S
         if (Editor.DEBUG) {
             System.out.println("Mesh loaded!");
         }
-    }
-
-    @Override
-    public boolean isValid() {
-        return vao != 0 && vbo != 0;
     }
 
     @Override

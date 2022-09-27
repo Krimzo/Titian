@@ -6,7 +6,7 @@ import gui.GUISection;
 import imgui.ImGui;
 import imgui.flag.ImGuiWindowFlags;
 
-public final class GUILogView extends GUISection implements GUIRenderable {
+public final class GUILogView extends GUISection {
     public GUILogView(Editor editor) {
         super(editor);
     }
