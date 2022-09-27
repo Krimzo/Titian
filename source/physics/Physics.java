@@ -1,13 +1,15 @@
 package physics;
 
-import java.util.ArrayList;
+import scene.Scene;
 
-public class Physics extends ArrayList<Physical> {
+public class Physics {
     public Physics() {}
 
-    public void update(float deltaT) {
-        for (Physical physical : this) {
-            physical.onPhysicsUpdate(deltaT);
+    public void update(Scene scene, float deltaT) {
+        if (scene != null) {
+            for (Physical physical : scene) {
+                physical.onPhysicsUpdate(deltaT);
+            }
         }
     }
 }

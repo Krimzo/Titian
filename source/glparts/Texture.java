@@ -40,7 +40,6 @@ public class Texture extends GLObject implements Validated, Bindable, Serializab
         bind();
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, createByteBuffer(data));
         glGenerateMipmap(GL_TEXTURE_2D);
-        unbind();
 
         setWrap(new Int2(GL_REPEAT));
         setFilters(new Int2(GL_LINEAR));
@@ -111,7 +110,6 @@ public class Texture extends GLObject implements Validated, Bindable, Serializab
             bind();
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, newSize.x, newSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
             size = new Int2(newSize);
-            unbind();
         }
     }
 
@@ -123,14 +121,12 @@ public class Texture extends GLObject implements Validated, Bindable, Serializab
         bind();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, modes.x);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, modes.y);
-        unbind();
     }
 
     public void setFilters(Int2 filters) {
         bind();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filters.x);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filters.y);
-        unbind();
     }
 
     public static Int2 getImageSize(String filePath) {

@@ -23,7 +23,7 @@ public class Entity implements Physical, Renderable, Serializable {
 
     @Override
     public void onRender(Shaders shaders) {
-        if (shaders != null && materialComponent.isValid() && meshComponent.isValid()) {
+        if (shaders != null) {
             shaders.setUniform("W", transformComponent.matrix());
             materialComponent.bind();
             meshComponent.onRender(shaders);

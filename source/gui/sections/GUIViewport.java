@@ -1,22 +1,43 @@
 package gui.sections;
 
-import editor.Editor;
-import gui.GUIRenderable;
-import gui.GUISection;
-import imgui.ImGui;
-import imgui.flag.ImGuiStyleVar;
-import imgui.flag.ImGuiWindowFlags;
-import math.Int2;
+import editor.*;
+import gui.*;
+import imgui.*;
+import imgui.flag.*;
+import math.*;
 
 public final class GUIViewport extends GUISection implements GUIRenderable {
     public GUIViewport(Editor editor) {
         super(editor);
     }
 
-    private Int2 saveViewportSize() {
-        Int2 viewportSize = new Int2((int) ImGui.getWindowWidth(), (int) ImGui.getWindowHeight());
-        editor.savedData.put("ViewportSize", viewportSize);
-        return viewportSize;
+    private Int2[] saveViewportInfo() {
+        Int2 position = new Int2((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY());
+        Int2 size = new Int2((int) ImGui.getWindowWidth(), (int) ImGui.getWindowHeight());
+        editor.savedData.put("ViewportPosition", position);
+        editor.savedData.put("ViewportSize", size);
+        return new Int2[] { position, size };
+    }
+
+    private void objectSelection(Int2 viewportPosition, Int2 viewportSize) {
+        if (editor.getScene() == null) {
+            return;
+        }
+
+        Float4 viewportRect = new Float4(
+            viewportPosition.x, viewportPosition.y, viewportPosition.x + viewportSize.x, viewportPosition.y + viewportSize.y
+        );
+
+        if (ImGui.isMouseHoveringRect(viewportRect.x, viewportRect.y, viewportRect.z, viewportRect.w) && ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
+            Float2 mousePosition = new Float2(ImGui.getMousePosX() - viewportPosition.x, ImGui.getMousePosY() - viewportPosition.y);
+            int objectIndex = (int) editor.renderer.indexBuffer.getPixel(new Int2((int) mousePosition.x, (int) (viewportSize.y - mousePosition.y))).x - 1;
+            editor.getScene().selectedEntity = (objectIndex < 0) ? null : editor.getScene().get(objectIndex);
+            editor.savedData.put("SelectedIndex", objectIndex);
+        }
+    }
+
+    public void displayFrame(Int2 viewportSize) {
+        ImGui.image(editor.renderer.renderBuffer.getColorMap().getID(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
     }
 
     @Override
@@ -24,8 +45,9 @@ public final class GUIViewport extends GUISection implements GUIRenderable {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0, 0);
 
         if (ImGui.begin("Viewport", ImGuiWindowFlags.NoScrollbar)) {
-            Int2 viewportSize = saveViewportSize();
-            ImGui.image(editor.renderer.frameBuffer.getColorMap().getID(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
+            Int2[] viewportInfo = saveViewportInfo();
+            objectSelection(viewportInfo[0], viewportInfo[1]);
+            displayFrame(viewportInfo[1]);
         }
         ImGui.end();
 

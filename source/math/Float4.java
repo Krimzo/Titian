@@ -12,72 +12,88 @@ public class Float4 implements Serializable {
         z = 0.0f;
         w = 0.0f;
     }
+
     public Float4(float a) {
         x = a;
         y = a;
         z = a;
         w = a;
     }
+
+    public Float4(float[] data) {
+        this(data[0], data[1], data[2], data[3]);
+    }
+
     public Float4(float x, float y, float z, float w) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.w = w;
     }
-    public Float4(Int4 v) {
-        x = (float)v.x;
-        y = (float)v.y;
-        z = (float)v.z;
-        w = (float)v.w;
-    }
+
     public Float4(Float2 v, float z, float w) {
         x = v.x;
         y = v.y;
         this.z = z;
         this.w = w;
     }
+
     public Float4(float x, Float2 v, float w) {
         this.x = x;
         y = v.x;
         z = v.y;
         this.w = w;
     }
+
     public Float4(float x, float y, Float2 v) {
         this.x = x;
         this.y = y;
         z = v.x;
         w = v.y;
     }
+
     public Float4(Float2 v1, Float2 v2) {
         x = v1.x;
         y = v1.y;
         z = v2.x;
         w = v2.y;
     }
+
     public Float4(Float3 v) {
         x = v.x;
         y = v.y;
         z = v.z;
         w = 1.0f;
     }
+
     public Float4(Float3 v, float w) {
         x = v.x;
         y = v.y;
         z = v.z;
         this.w = w;
     }
+
     public Float4(float x, Float3 v) {
         this.x = x;
         y = v.x;
         z = v.y;
         w = v.z;
     }
+
     public Float4(Float4 v) {
         x = v.x;
         y = v.y;
         z = v.z;
         w = v.w;
     }
+
+    public Float4(Int4 v) {
+        x = (float)v.x;
+        y = (float)v.y;
+        z = (float)v.z;
+        w = (float)v.w;
+    }
+
     public Float4(Color color) {
         this(new Float3(color), color.getAlpha() / 255.0f);
     }
@@ -86,8 +102,13 @@ public class Float4 implements Serializable {
     public Float2 xy() {
         return new Float2(x, y);
     }
+
     public Float3 xyz() {
         return new Float3(x, y, z);
+    }
+
+    public float[] array() {
+        return new float[] { x, y, z, w };
     }
 
     // Addition

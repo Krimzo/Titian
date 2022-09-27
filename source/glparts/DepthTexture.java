@@ -19,7 +19,6 @@ public class DepthTexture extends GLObject implements Validated, Bindable {
 
         bind();
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, size.x, size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, (ByteBuffer) null);
-        unbind();
     }
 
     @Override
@@ -59,7 +58,6 @@ public class DepthTexture extends GLObject implements Validated, Bindable {
             bind();
             glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, size.x, size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, (ByteBuffer) null);
             size = new Int2(newSize);
-            unbind();
         }
     }
 }

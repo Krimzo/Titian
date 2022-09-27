@@ -54,7 +54,7 @@ public class FrameBuffer extends GLObject implements Validated, Bindable {
 
     public void clear(boolean depth) {
         bind();
-        glClear(GL_COLOR_BUFFER_BIT | (depth ? GL_DEPTH_BUFFER_BIT : 0));
+        context.clear(true);
     }
 
     public Texture getColorMap() {
@@ -82,7 +82,6 @@ public class FrameBuffer extends GLObject implements Validated, Bindable {
 
         bind();
         glReadPixels(pos.x, pos.y, size.x, size.y, GL_RGBA, GL_FLOAT, data);
-        unbind();
 
         for (int i = 0; i < result.length; i++) {
             result[i] = new Float4(

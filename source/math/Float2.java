@@ -9,21 +9,34 @@ public class Float2 implements Serializable {
         x = 0.0f;
         y = 0.0f;
     }
+
     public Float2(float a) {
         x = a;
         y = a;
     }
+
+    public Float2(float[] data) {
+        this(data[0], data[1]);
+    }
+
     public Float2(float x, float y) {
         this.x = x;
         this.y = y;
     }
+
+    public Float2(Float2 v) {
+        x = v.x;
+        y = v.y;
+    }
+
     public Float2(Int2 v) {
         x = (float)v.x;
         y = (float)v.y;
     }
-    public Float2(Float2 v) {
-        x = v.x;
-        y = v.y;
+
+    // Getter
+    public float[] array() {
+        return new float[] { x, y };
     }
 
     // Addition

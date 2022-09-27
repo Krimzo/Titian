@@ -11,36 +11,47 @@ public class Float3 implements Serializable {
         y = 0;
         z = 0;
     }
+
     public Float3(float a) {
         x = a;
         y = a;
         z = a;
     }
+
+    public Float3(float[] data) {
+        this(data[0], data[1], data[2]);
+    }
+
     public Float3(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
-    public Float3(Int3 v) {
-        x = (float)v.x;
-        y = (float)v.y;
-        z = (float)v.z;
-    }
+
     public Float3(Float2 v, float z) {
         x = v.x;
         y = v.y;
         this.z = z;
     }
+
     public Float3(float x, Float2 v) {
         this.x = x;
         y = v.x;
         z = v.y;
     }
+
     public Float3(Float3 v) {
         x = v.x;
         y = v.y;
         z = v.z;
     }
+
+    public Float3(Int3 v) {
+        x = (float)v.x;
+        y = (float)v.y;
+        z = (float)v.z;
+    }
+
     public Float3(Color color) {
         final float recConv = 1.0f / 255.0f;
         x = color.getRed() * recConv;
@@ -51,6 +62,10 @@ public class Float3 implements Serializable {
     // Getter
     public Float2 xy() {
         return new Float2(x, y);
+    }
+
+    public float[] array() {
+        return new float[] { x, y, z };
     }
 
     // Addition

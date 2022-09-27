@@ -29,6 +29,9 @@ public final class GUIMainMenu extends GUISection implements GUIRenderable {
 
     private void viewMenu() {
         if (ImGui.beginMenu("View")) {
+            boolean wireframeState = (boolean) editor.savedData.get("WireframeState");
+            wireframeState = ImGui.selectable("Wireframe State", wireframeState);
+            editor.savedData.put("WireframeState", wireframeState);
 
             ImGui.endMenu();
         }
@@ -36,6 +39,11 @@ public final class GUIMainMenu extends GUISection implements GUIRenderable {
 
     private void renderMenu() {
         if (ImGui.beginMenu("Render")) {
+            if (ImGui.beginMenu("Index Texture")) {
+
+
+                ImGui.endMenu();
+            }
 
             ImGui.endMenu();
         }

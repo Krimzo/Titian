@@ -2,6 +2,7 @@ package editor;
 
 import gui.GUIRenderer;
 import gui.sections.*;
+import math.Float2;
 import math.Float4;
 import math.Int2;
 import physics.Physics;
@@ -30,16 +31,10 @@ public class Editor {
     private Scene scene = null;
 
     public Editor() throws Exception {
-        window.setOnResize(newSize -> {
-            renderer.frameBuffer.updateSize(newSize);
-            context.setViewport(newSize);
-        });
-        window.setIcon("resource/textures/icons/k.png");
+        window.setIcon("resource/textures/icons/titian.png");
         window.setVSync(true);
 
         context.setDepthTest(true);
-        context.setClearColor(new Float4(new Color(0x323232)));
-
         renderer.camera.setDefaultMovement(window, timer);
 
         guiRenderer.add(new GUIMainMenu(this));
@@ -51,7 +46,10 @@ public class Editor {
         guiRenderer.add(new GUIProperties(this));
 
         savedData.put("WireframeState", false);
+        savedData.put("ViewportPosition", new Int2());
         savedData.put("ViewportSize", new Int2());
+        savedData.put("SelectedIndex", -1);
+        savedData.put("OutlineColor", new Color(0xDA7315));
     }
 
     public void setup(EditorCallback editorCallback) throws Exception {
@@ -67,15 +65,29 @@ public class Editor {
     public void update(EditorCallback editorCallback) throws Exception {
         timer.updateDeltaT();
 
-        physics.update(timer.getDeltaT());
+        physics.update(scene, timer.getDeltaT());
         editorCallback.method(this);
 
         context.clear(false);
 
-        Int2 viewportSize = (Int2) savedData.get("ViewportSize");
-        context.setViewport(viewportSize);
-        renderer.updateSize(viewportSize);
-        renderer.render();
+        if (scene != null) {
+            boolean wireframeState = (boolean) savedData.get("WireframeState");
+            Int2 viewportSize = (Int2) savedData.get("ViewportSize");
+            int selectedIndex = (int) savedData.get("SelectedIndex");
+            Color outlineColor = (Color) savedData.get("OutlineColor");
+
+            context.setViewport(viewportSize);
+            renderer.updateSize(viewportSize);
+
+            context.setWireframe(wireframeState);
+            renderer.renderIndices(scene);
+            renderer.renderScene(scene);
+            context.setWireframe(false);
+
+            if (selectedIndex >= 0) {
+                renderer.renderOutline(new Float2(viewportSize), new Float4(outlineColor), selectedIndex);
+            }
+        }
 
         context.setViewport(window.getSize());
         guiRenderer.render();
@@ -93,18 +105,9 @@ public class Editor {
     }
 
     public void setScene(Scene scene) {
-        renderer.remove(this.scene);
-        physics.remove(this.scene);
-
         if (this.scene != null) {
             this.scene.destroy();
         }
-
-        if (scene != null) {
-            renderer.add(scene);
-            physics.add(scene);
-        }
-
         this.scene = scene;
     }
 }

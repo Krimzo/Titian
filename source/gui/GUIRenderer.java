@@ -1,13 +1,10 @@
 package gui;
 
 import imgui.*;
-import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiConfigFlags;
-import imgui.flag.ImGuiDockNodeFlags;
-import imgui.gl3.ImGuiImplGl3;
-import imgui.glfw.ImGuiImplGlfw;
-import window.GLContext;
-import window.Window;
+import imgui.flag.*;
+import imgui.gl3.*;
+import imgui.glfw.*;
+import window.*;
 
 import java.util.ArrayList;
 
@@ -18,8 +15,10 @@ public class GUIRenderer extends ArrayList<GUIRenderable> {
     public GUIRenderer(Window window) {
         ImGui.createContext();
         ImGui.getIO().setConfigFlags(ImGuiConfigFlags.DockingEnable);
+
         implGlfw.init(window.getID(), true);
         implGl3.init();
+
         loadCustomTheme();
     }
 
@@ -30,10 +29,12 @@ public class GUIRenderer extends ArrayList<GUIRenderable> {
     }
 
     public void render() {
+        implGl3.updateFontsTexture();
         implGlfw.newFrame();
         ImGui.newFrame();
 
         ImGui.dockSpaceOverViewport(ImGui.getMainViewport(), ImGuiDockNodeFlags.PassthruCentralNode);
+
         for (GUIRenderable guiRenderable : this) {
             guiRenderable.onGUIRender();
         }
@@ -42,7 +43,9 @@ public class GUIRenderer extends ArrayList<GUIRenderable> {
         implGl3.renderDrawData(ImGui.getDrawData());
     }
 
-    public static void loadCustomTheme() {
+    private void loadCustomTheme() {
+        ImGuiIO io = ImGui.getIO();
+
         ImGui.styleColorsDark();
         ImGuiStyle style = ImGui.getStyle();
 

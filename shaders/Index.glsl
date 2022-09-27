@@ -3,10 +3,11 @@
 
 layout (location = 0) in vec3 inWorld;
 
-uniform mat4 WVP;
+uniform mat4 W;
+uniform mat4 VP;
 
 void main() {
-    gl_Position = WVP * vec4(inWorld, 1);
+    gl_Position = VP * W * vec4(inWorld, 1);
 }
 
 // fragment shader

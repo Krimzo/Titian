@@ -22,27 +22,28 @@ vec2 toUV(vec2 pos) {
     return pos / frameSize;
 }
 
-float sqr(float value) {
-    return value * value;
+bool isValidSelection() {
+    return selectedIndex > 0;
 }
 
-float squish(float value, float minValue, float maxValue) {
-    return (value - minValue) / (maxValue - minValue);
+bool isValidPixel() {
+    return texture(indexMap, toUV(gl_FragCoord.xy)).x != selectedIndex;
+}
+
+bool isOutlinePixel(vec2 coords) {
+    for (vec2 pos = vec2(-outlineThickness); pos.y <= outlineThickness; pos.y++) {
+        for (pos.x = -outlineThickness; pos.x <= outlineThickness; pos.x++) {
+            if (texture(indexMap, toUV(coords + pos)).x == selectedIndex) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 void main() {
-    if (selectedIndex > 0 && texture(indexMap, toUV(gl_FragCoord.xy)).x == 0) {
-        //int counter = 0;
-        for (int y = -outlineThickness; y <= outlineThickness; y++) {
-            for (int x = -outlineThickness; x <= outlineThickness; x++) {
-                if (texture(indexMap, toUV(gl_FragCoord.xy + vec2(x, y))).x == selectedIndex) {
-                    //counter += 1;
-                    pixel = outlineColor;
-                    break;
-                }
-            }
-        }
-        //pixel = outlineColor * squish(counter, 0, sqr(outlineThickness * 2 + 1) - 1);
+    if (isValidSelection() && isValidPixel() && isOutlinePixel(gl_FragCoord.xy)) {
+        pixel = outlineColor;
     }
     else {
         discard;
