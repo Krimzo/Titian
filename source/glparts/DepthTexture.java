@@ -1,5 +1,6 @@
 package glparts;
 
+import callbacks.EmptyCallback;
 import math.Int2;
 import window.GLContext;
 
@@ -7,53 +8,71 @@ import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class DepthTexture extends GLObject implements Bindable {
-    protected Int2 size = null;
-    protected int texture = 0;
+public class DepthTexture extends GLObject {
+    private Int2 size;
+    private transient int buffer;
 
     public DepthTexture(GLContext context, Int2 size) {
         super(context);
 
         this.size = new Int2(size);
-        texture = glGenTextures();
 
-        bind();
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, size.x, size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, (ByteBuffer) null);
+        buffer = glGenTextures();
+
+        glBindTexture(GL_TEXTURE_2D, buffer);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, size.x, size.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     @Override
     public void dispose() {
-        unbind();
-
-        if (texture != 0) {
-            glDeleteTextures(texture);
-            texture = 0;
+        if (buffer != 0) {
+            glDeleteTextures(buffer);
+            buffer = 0;
         }
     }
 
-    @Override
-    public void bind() {
-        glBindTexture(GL_TEXTURE_2D, texture);
-    }
-
-    @Override
-    public void unbind() {
+    public void use(EmptyCallback callback) {
+        glBindTexture(GL_TEXTURE_2D, buffer);
+        callback.method();
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    public int getID() {
-        return texture;
+    public void use(int slot, EmptyCallback callback) {
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, buffer);
+
+        callback.method();
+
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+    }
+
+    public int getBuffer() {
+        return buffer;
     }
 
     public Int2 getSize() {
         return new Int2(size);
     }
 
-    public void updateSize(Int2 newSize) {
-        if (!newSize.equals(size)) {
-            bind();
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, size.x, size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, (ByteBuffer) null);
-            size = new Int2(newSize);
-        }
+    public void resize(Int2 size) {
+        this.size = new Int2(size);
+        glBindTexture(GL_TEXTURE_2D, buffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, size.x, size.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 }

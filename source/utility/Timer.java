@@ -6,7 +6,7 @@ public class Timer {
     private long deltaEnd;
 
     public Timer() {
-        final long currTime = System.nanoTime();
+        long currTime = System.nanoTime();
         elapsedStart = currTime;
         deltaStart = currTime;
         deltaEnd = currTime;

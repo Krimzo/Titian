@@ -6,39 +6,62 @@ import scene.Scene;
 import java.util.Random;
 
 public class TitianCreator {
-    public static void setup(Editor editor) throws Exception {
-        // Scene saving
-        final boolean saveTestScene = true;
-        if (saveTestScene) {
-            Mesh monkeMesh = new Mesh(editor.context, "resource/meshes/default/cube.obj");
-            Texture checkersTexture = new Texture(editor.context, "resource/textures/checkers.png");
-            Scene scene = new Scene();
+    public static String randomMesh() {
+        String path = "resource/meshes/default/";
+        String[] meshes = {
+            "capsule.obj",
+            "cube.obj",
+            "monke.obj",
+            "pyramid.obj",
+            "sphere.obj",
+        };
+        return path + meshes[new Random().nextInt(meshes.length)];
+    }
 
-            for (int x = -3; x <= 3; x++) {
-                Entity monke = new Entity(scene.entityNameHolder);
-                monke.setName("Cube");
-                monke.meshComponent.mesh = monkeMesh;
-                monke.materialComponent.material.colorMap = checkersTexture;
-                monke.transformComponent.position.x = x * 2.5f;
-                monke.physicsComponent.angular.y = (new Random().nextFloat() * 2 - 1) * 36;
-                scene.add(monke);
+    public static String randomTexture() {
+        String path = "resource/textures/";
+        String[] textures = {
+            "checkers.png",
+            "dogo.png",
+        };
+        return path + textures[new Random().nextInt(textures.length)];
+    }
+
+    public static void setup(Editor editor) {
+        try {
+            /* Scene saving */ {
+                Scene scene = new Scene();
+                Mesh mesh = new Mesh(editor.window.getContext(), randomMesh());
+                Texture texture = new Texture(editor.window.getContext(), randomTexture());
+
+                for (int x = -3; x <= 3; x++) {
+                    Entity monke = new Entity(scene.entityNameHolder);
+
+                    monke.setName("Object");
+                    monke.meshComponent.mesh = mesh;
+                    monke.materialComponent.material.colorMap = texture;
+                    monke.transformComponent.position.x = x * 2.5f;
+                    monke.physicsComponent.angular.y = (new Random().nextFloat() * 2 - 1) * 36;
+
+                    scene.add(monke);
+                }
+
+                scene.toFile("resource/scenes/test.scene");
+                scene.dispose();
             }
-            scene.toFile("resource/scenes/Test.scene");
 
-            scene.dispose();
-            checkersTexture.dispose();
-            monkeMesh.dispose();
+            /* Scene loading */ {
+                editor.changeScene(new Scene("resource/scenes/test.scene"));
+            }
         }
-
-        // Scene loading
-        editor.setScene(new Scene("resource/scenes/Test.scene"));
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void update(Editor editor) {}
 
     public static void main(String[] args) throws Exception {
-        Editor.DEBUG = true;
-
         Editor editor = new Editor();
         editor.setup(TitianCreator::setup);
 

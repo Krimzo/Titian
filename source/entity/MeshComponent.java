@@ -1,13 +1,14 @@
 package entity;
 
+import interfaces.Disposable;
 import glparts.Mesh;
 import glparts.Shaders;
-import gui.GUIRenderable;
-import renderer.Renderable;
+import interfaces.GUIRenderable;
+import interfaces.Renderable;
 
 import java.io.Serializable;
 
-public class MeshComponent implements Renderable, GUIRenderable, Serializable {
+public class MeshComponent implements Renderable, GUIRenderable, Disposable, Serializable {
     public Mesh mesh = null;
 
     public MeshComponent() {}
@@ -17,12 +18,22 @@ public class MeshComponent implements Renderable, GUIRenderable, Serializable {
     }
 
     @Override
-    public void onRender(Shaders shaders) {
-        mesh.onRender(shaders);
+    public void render(Shaders shaders) {
+        if (mesh != null) {
+            mesh.render(shaders);
+        }
     }
 
     @Override
-    public void onGUIRender() {
+    public void renderGUI() {
 
+    }
+
+    @Override
+    public void dispose() {
+        if (mesh != null) {
+            mesh.dispose();
+            mesh = null;
+        }
     }
 }

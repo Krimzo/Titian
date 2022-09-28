@@ -1,7 +1,7 @@
-package renderer;
+package interfaces;
 
 import glparts.Shaders;
 
 public interface Renderable {
-    void onRender(Shaders shaders);
+    void render(Shaders shaders);
 }

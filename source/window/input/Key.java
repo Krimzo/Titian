@@ -1,14 +1,14 @@
 package window.input;
 
-import window.callbacks.*;
+import callbacks.EmptyCallback;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Key {
     private boolean state = false;
-    public KeyCallback onPress = () -> {};
-    public KeyCallback onDown = () -> {};
-    public KeyCallback onRelease = () -> {};
+    public EmptyCallback onPress = () -> {};
+    public EmptyCallback onDown = () -> {};
+    public EmptyCallback onRelease = () -> {};
 
     protected Key() {}
 

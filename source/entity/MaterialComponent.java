@@ -1,11 +1,13 @@
 package entity;
 
-import gui.GUIRenderable;
+import callbacks.EmptyCallback;
+import interfaces.Disposable;
+import interfaces.GUIRenderable;
 import material.Material;
 
 import java.io.Serializable;
 
-public class MaterialComponent implements GUIRenderable, Serializable {
+public class MaterialComponent implements GUIRenderable, Disposable, Serializable {
     public Material material = new Material();
 
     public MaterialComponent() {}
@@ -14,12 +16,25 @@ public class MaterialComponent implements GUIRenderable, Serializable {
         this.material = material;
     }
 
-    public void bind() {
-        material.bind();
+    public void use(EmptyCallback callback) {
+        if (material != null) {
+            material.use(callback);
+        }
+        else {
+            callback.method();
+        }
     }
 
     @Override
-    public void onGUIRender() {
+    public void renderGUI() {
 
+    }
+
+    @Override
+    public void dispose() {
+        if (material != null) {
+            material.dispose();
+            material = null;
+        }
     }
 }

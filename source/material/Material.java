@@ -1,11 +1,13 @@
 package material;
 
+import callbacks.EmptyCallback;
+import interfaces.Disposable;
 import glparts.Texture;
 import math.Float3;
 
 import java.io.Serializable;
 
-public class Material implements Serializable {
+public class Material implements Disposable, Serializable {
     public Float3 color = new Float3(1);
     public float roughness = 0.5f;
 
@@ -19,9 +21,27 @@ public class Material implements Serializable {
         this.colorMap = colorMap;
     }
 
-    public void bind() {
-        if (colorMap != null) colorMap.bind(0);
-        if (normalMap != null) normalMap.bind(1);
-        if (roughnessMap != null) roughnessMap.bind(2);
+    public void use(EmptyCallback callback) {
+        int[] textures = new int[3];
+        textures[0] = (colorMap != null) ? colorMap.getBuffer() : 0;
+        textures[1] = (normalMap != null) ? normalMap.getBuffer() : 0;
+        textures[2] = (roughnessMap != null) ? roughnessMap.getBuffer() : 0;
+        Texture.use(textures, callback);
+    }
+
+    @Override
+    public void dispose() {
+        if (colorMap != null) {
+            colorMap.dispose();
+            colorMap = null;
+        }
+        if (normalMap != null) {
+            normalMap.dispose();
+            normalMap = null;
+        }
+        if (roughnessMap != null) {
+            roughnessMap.dispose();
+            roughnessMap = null;
+        }
     }
 }

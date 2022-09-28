@@ -1,72 +1,68 @@
 package glparts;
 
+import callbacks.EmptyCallback;
 import math.Float4;
 import math.Int2;
 import window.GLContext;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class FrameBuffer extends GLObject implements Bindable {
-    protected int buffer;
-    protected Texture colorMap;
-    protected DepthTexture depthMap;
+public class FrameBuffer extends GLObject {
+    private Texture colorMap;
+    private DepthTexture depthMap;
+    private int buffer;
 
     public FrameBuffer(GLContext context, Int2 size) {
         super(context);
 
-        int[] buffer = new int[1];
-        glGenFramebuffers(buffer);
-        this.buffer = buffer[0];
-
         colorMap = new Texture(context, size, null);
         depthMap = new DepthTexture(context, size);
+        buffer = glGenFramebuffers();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, buffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorMap.getBuffer(), 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap.getBuffer(), 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     @Override
     public void dispose() {
-        unbind();
-
         if (buffer != 0) {
-            depthMap.dispose();
-            colorMap.dispose();
-
             glDeleteFramebuffers(buffer);
+            colorMap.dispose();
+            depthMap.dispose();
+
             buffer = 0;
+            colorMap = null;
+            depthMap = null;
         }
     }
 
-    @Override
-    public void bind() {
+    public void clear() {
         glBindFramebuffer(GL_FRAMEBUFFER, buffer);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorMap.texture, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap.texture, 0);
-    }
-
-    @Override
-    public void unbind() {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    public void clear(boolean depth) {
-        bind();
-        context.clear(true);
+    public void use(EmptyCallback callback) {
+        glBindFramebuffer(GL_FRAMEBUFFER, buffer);
+        callback.method();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     public Texture getColorMap() {
-        unbind();
         return colorMap;
     }
 
     public DepthTexture getDepthMap() {
-        unbind();
         return depthMap;
     }
 
-    public void updateSize(Int2 newSize) {
-        getColorMap().updateSize(newSize);
-        getDepthMap().updateSize(newSize);
+    public void resize(Int2 size) {
+        if (size.x > 0 && size.y > 0) {
+            colorMap.resize(size);
+            depthMap.resize(size);
+        }
     }
 
     public Float4 getPixel(Int2 pos) {
@@ -77,9 +73,9 @@ public class FrameBuffer extends GLObject implements Bindable {
         Float4[] result = new Float4[size.x * size.y];
         float[] data = new float[result.length * 4];
 
-        bind();
+        glBindFramebuffer(GL_FRAMEBUFFER, buffer);
         glReadPixels(pos.x, colorMap.getSize().y - 1 - pos.y, size.x, size.y, GL_RGBA, GL_FLOAT, data);
-        unbind();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         for (int i = 0; i < result.length; i++) {
             result[i] = new Float4(
@@ -89,6 +85,7 @@ public class FrameBuffer extends GLObject implements Bindable {
                 data[i * 4 + 3]
             );
         }
+
         return result;
     }
 }

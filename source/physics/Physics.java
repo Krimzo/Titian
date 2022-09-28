@@ -1,5 +1,6 @@
 package physics;
 
+import interfaces.Physical;
 import scene.Scene;
 
 public class Physics {
@@ -8,7 +9,7 @@ public class Physics {
     public void update(Scene scene, float deltaT) {
         if (scene != null) {
             for (Physical physical : scene) {
-                physical.onPhysicsUpdate(deltaT);
+                physical.updatePhysics(deltaT);
             }
         }
     }

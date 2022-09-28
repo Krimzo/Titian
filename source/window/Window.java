@@ -1,21 +1,21 @@
 package window;
 
-import glparts.Disposable;
-import glparts.Texture;
+import callbacks.ResizeCallback;
+import interfaces.Disposable;
 import math.Int2;
+import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
-import org.lwjgl.opengl.*;
-import window.callbacks.*;
+import utility.File;
+import utility.Memory;
 import window.input.*;
-
-import java.nio.ByteBuffer;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window implements Disposable {
-    public final long window;
+    private long window;
+    private GLContext context;
 
     public final Keyboard keyboard;
     public final Mouse mouse;
@@ -39,6 +39,9 @@ public class Window implements Disposable {
             throw new Error("Failed to create a GLFW window");
         }
 
+        glfwMakeContextCurrent(window);
+        context = new GLContext();
+
         keyboard = new Keyboard(window);
         mouse = new Mouse(window);
         setHidden(false);
@@ -46,25 +49,24 @@ public class Window implements Disposable {
 
     @Override
     public void dispose() {
-        GL.destroy();
+        if (window != 0) {
+            glfwMakeContextCurrent(NULL);
+            context.dispose();
+            context = null;
 
-        glfwFreeCallbacks(window);
-        glfwDestroyWindow(window);
+            glfwFreeCallbacks(window);
+            glfwDestroyWindow(window);
 
-        glfwTerminate();
-    }
-
-    public void makeContextCurrent() {
-        glfwMakeContextCurrent(window);
-    }
-
-    private GLContext context = null;
-    public GLContext getContext() {
-        if (context == null) {
-            makeContextCurrent();
-            GL.createCapabilities();
-            context = new GLContext();
+            glfwTerminate();
+            window = 0;
         }
+    }
+
+    public long getWindow() {
+        return window;
+    }
+
+    public GLContext getContext() {
         return context;
     }
 
@@ -128,16 +130,16 @@ public class Window implements Disposable {
     }
 
     public void setIcon(String filepath) {
-        byte[] imageData = Texture.getImageData(filepath, false);
+        Int2 imageSize = File.getImageSize(filepath);
+        byte[] imageData = File.getImageData(filepath, false);
+
         if (imageData != null) {
-            Int2 imageSize = Texture.getImageSize(filepath);
-            try (GLFWImage.Buffer imageBuffer = GLFWImage.create(1)) {
-                try (GLFWImage image = GLFWImage.create()) {
-                    image.set(imageSize.x, imageSize.y, Texture.createByteBuffer(imageData));
-                    imageBuffer.put(0, image);
-                    glfwSetWindowIcon(window, imageBuffer);
-                }
-            }
+            GLFWImage image = GLFWImage.create();
+            image.set(imageSize.x, imageSize.y, Memory.createByteBuffer(imageData));
+
+            GLFWImage.Buffer imageBuffer = GLFWImage.create(1);
+            imageBuffer.put(0, image);
+            glfwSetWindowIcon(window, imageBuffer);
         }
     }
 }

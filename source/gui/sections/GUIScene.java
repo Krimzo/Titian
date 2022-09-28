@@ -13,7 +13,7 @@ public final class GUIScene extends GUISection {
     }
 
     @Override
-    public void onGUIRender() {
+    public void renderGUI() {
         if (ImGui.begin("Scene", ImGuiWindowFlags.NoScrollbar)) {
             Scene scene = editor.getScene();
             if (scene != null) {

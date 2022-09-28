@@ -1,10 +1,11 @@
 package gui;
 
-import glparts.Disposable;
+import interfaces.Disposable;
 import imgui.*;
 import imgui.flag.*;
 import imgui.gl3.*;
 import imgui.glfw.*;
+import interfaces.GUIRenderable;
 import window.*;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
         ImGui.createContext();
         ImGui.getIO().setConfigFlags(ImGuiConfigFlags.DockingEnable);
 
-        implGlfw.init(window.window, true);
+        implGlfw.init(window.getWindow(), true);
         implGl3.init();
 
         loadCustomTheme();
@@ -37,7 +38,7 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
         ImGui.dockSpaceOverViewport(ImGui.getMainViewport(), ImGuiDockNodeFlags.PassthruCentralNode);
 
         for (GUIRenderable guiRenderable : this) {
-            guiRenderable.onGUIRender();
+            guiRenderable.renderGUI();
         }
 
         ImGui.render();

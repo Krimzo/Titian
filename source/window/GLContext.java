@@ -1,11 +1,26 @@
 package window;
 
+import interfaces.Disposable;
 import math.*;
+import org.lwjgl.opengl.GL;
 
-import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.opengl.GL33.*;
 
-public final class GLContext {
-    GLContext() {}
+public final class GLContext implements Disposable {
+    private boolean valid;
+
+    GLContext() {
+        GL.createCapabilities();
+        valid = true;
+    }
+
+    @Override
+    public void dispose() {
+        if (valid) {
+            GL.setCapabilities(null);
+            valid = false;
+        }
+    }
 
     public void setViewport(Int2 size) {
         setViewport(new Int2(), size);

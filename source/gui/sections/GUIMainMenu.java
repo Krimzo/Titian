@@ -48,7 +48,7 @@ public final class GUIMainMenu extends GUISection {
     }
 
     @Override
-    public void onGUIRender() {
+    public void renderGUI() {
         if (ImGui.beginMainMenuBar()) {
             fileMenu();
             editMenu();

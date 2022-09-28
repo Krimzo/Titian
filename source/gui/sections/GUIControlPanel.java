@@ -11,7 +11,7 @@ public final class GUIControlPanel extends GUISection {
     }
 
     @Override
-    public void onGUIRender() {
+    public void renderGUI() {
         if (ImGui.begin("Control Panel", ImGuiWindowFlags.NoScrollbar)) {
 
         }

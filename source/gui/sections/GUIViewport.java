@@ -35,16 +35,16 @@ public final class GUIViewport extends GUISection {
             Float2 mousePosition = new Float2(ImGui.getMousePosX() - viewportPosition.x, ImGui.getMousePosY() - viewportPosition.y);
 
             int objectIndex = (int) editor.renderer.indexBuffer.getPixel(new Int2(mousePosition)).x - 1;
-            editor.getScene().selectedEntity = (objectIndex < 0) ? null : editor.getScene().get(objectIndex);
+            editor.getScene().selectedEntity = (objectIndex >= 0) ? editor.getScene().get(objectIndex) : null;
         }
     }
 
     public void displayFrame(Int2 viewportSize) {
-        ImGui.image(editor.renderer.renderBuffer.getColorMap().getID(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
+        ImGui.image(editor.renderer.renderBuffer.getColorMap().getBuffer(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
     }
 
     @Override
-    public void onGUIRender() {
+    public void renderGUI() {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0, 0);
 
         if (ImGui.begin("Viewport", ImGuiWindowFlags.NoScrollbar)) {

@@ -1,5 +1,6 @@
 package glparts;
 
+import interfaces.Disposable;
 import window.GLContext;
 
 import java.io.Serializable;

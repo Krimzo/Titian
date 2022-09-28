@@ -1,13 +1,14 @@
 package entity;
 
 import glparts.*;
+import interfaces.Disposable;
+import interfaces.Physical;
+import interfaces.Renderable;
 import named.*;
-import physics.*;
-import renderer.*;
 
 import java.io.Serializable;
 
-public class Entity extends Named implements Physical, Renderable, Serializable {
+public class Entity extends Named implements Physical, Renderable, Disposable, Serializable {
     public final TransformComponent transformComponent = new TransformComponent();
     public final MeshComponent meshComponent = new MeshComponent();
     public final MaterialComponent materialComponent = new MaterialComponent();
@@ -18,16 +19,23 @@ public class Entity extends Named implements Physical, Renderable, Serializable 
     }
 
     @Override
-    public void onPhysicsUpdate(float deltaT) {
+    public void updatePhysics(float deltaT) {
         physicsComponent.velocity = physicsComponent.velocity.add(physicsComponent.acceleration.mul(deltaT));
         transformComponent.position = transformComponent.position.add(physicsComponent.velocity.mul(deltaT));
         transformComponent.rotation = transformComponent.rotation.add(physicsComponent.angular.mul(deltaT));
     }
 
     @Override
-    public void onRender(Shaders shaders) {
+    public void render(Shaders shaders) {
         shaders.setUniform("W", transformComponent.matrix());
-        materialComponent.bind();
-        meshComponent.onRender(shaders);
+        materialComponent.use(() -> {
+            meshComponent.render(shaders);
+        });
+    }
+
+    @Override
+    public void dispose() {
+        meshComponent.dispose();
+        materialComponent.dispose();
     }
 }

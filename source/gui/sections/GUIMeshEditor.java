@@ -10,7 +10,7 @@ public final class GUIMeshEditor extends GUISection {
     }
 
     @Override
-    public void onGUIRender() {
+    public void renderGUI() {
         if (ImGui.begin("Mesh Editor")) {
 
         }

@@ -1,6 +1,7 @@
 package window.input;
 
 import math.Int2;
+import org.lwjgl.glfw.GLFWScrollCallback;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -14,6 +15,7 @@ public class Mouse {
 
     public Mouse(long window) {
         this.window = window;
+
         glfwSetScrollCallback(window, (long win, double deltaStart, double deltaEnd) -> {
             scroll = (int)(deltaEnd - deltaStart);
         });

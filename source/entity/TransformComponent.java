@@ -1,6 +1,6 @@
 package entity;
 
-import gui.GUIRenderable;
+import interfaces.GUIRenderable;
 import imgui.ImGui;
 import math.Float3;
 import math.Mat4;
@@ -15,21 +15,37 @@ public class TransformComponent implements GUIRenderable, Serializable {
     public TransformComponent() {}
 
     public Mat4 matrix() {
-        return Mat4.translate(position).mul(Mat4.rotate(rotation)).mul(Mat4.scale(scale));
+        Mat4 result = new Mat4();
+        if (position != null) {
+            result = result.mul(Mat4.translate(position));
+        }
+        if (rotation != null) {
+            result = result.mul(Mat4.rotate(rotation));
+        }
+        if (scale != null) {
+            result = result.mul(Mat4.scale(scale));
+        }
+        return result;
     }
 
     @Override
-    public void onGUIRender() {
-        float[] scaleData = scale.array();
-        ImGui.dragFloat3("Scale", scaleData, 0.1f);
-        scale = new Float3(scaleData);
+    public void renderGUI() {
+        if (scale != null) {
+            float[] scaleData = scale.array();
+            ImGui.dragFloat3("Scale", scaleData, 0.1f);
+            scale = new Float3(scaleData);
+        }
 
-        float[] rotationData = rotation.array();
-        ImGui.dragFloat3("Rotation", rotationData, 0.1f);
-        rotation = new Float3(rotationData);
+        if (rotation != null) {
+            float[] rotationData = rotation.array();
+            ImGui.dragFloat3("Rotation", rotationData, 0.1f);
+            rotation = new Float3(rotationData);
+        }
 
-        float[] positionData = position.array();
-        ImGui.dragFloat3("Position", positionData, 0.1f);
-        position = new Float3(positionData);
+        if (position != null) {
+            float[] positionData = position.array();
+            ImGui.dragFloat3("Position", positionData, 0.1f);
+            position = new Float3(positionData);
+        }
     }
 }

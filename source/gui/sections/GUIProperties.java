@@ -21,26 +21,26 @@ public final class GUIProperties extends GUISection {
     }
 
     @Override
-    public void onGUIRender() {
+    public void renderGUI() {
         Entity selected = getSelectedEntity();
 
         if (ImGui.begin("Transform", ImGuiWindowFlags.NoScrollbar)) {
-            if (selected != null) selected.transformComponent.onGUIRender();
+            if (selected != null) selected.transformComponent.renderGUI();
         }
         ImGui.end();
 
         if (ImGui.begin("Mesh", ImGuiWindowFlags.NoScrollbar)) {
-            if (selected != null) selected.meshComponent.onGUIRender();
+            if (selected != null) selected.meshComponent.renderGUI();
         }
         ImGui.end();
 
         if (ImGui.begin("Material", ImGuiWindowFlags.NoScrollbar)) {
-            if (selected != null) selected.materialComponent.onGUIRender();
+            if (selected != null) selected.materialComponent.renderGUI();
         }
         ImGui.end();
 
         if (ImGui.begin("Physics", ImGuiWindowFlags.NoScrollbar)) {
-            if (selected != null) selected.physicsComponent.onGUIRender();
+            if (selected != null) selected.physicsComponent.renderGUI();
         }
         ImGui.end();
     }

@@ -1,6 +1,7 @@
 package gui;
 
 import editor.Editor;
+import interfaces.GUIRenderable;
 
 public abstract class GUISection implements GUIRenderable {
     protected Editor editor;

@@ -1,63 +1,52 @@
 package glparts;
 
-import editor.Editor;
+import callbacks.EmptyCallback;
 import math.*;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.system.MemoryUtil;
 import window.*;
+import utility.File;
+import utility.Memory;
 
 import java.io.*;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.util.*;
 
 import static org.lwjgl.opengl.GL33.*;
-import org.lwjgl.stb.*;
 
-public class Texture extends GLObject implements Bindable, Serializable {
-    protected Int2 size = null;
-    protected byte[] pixels = null;
-    protected transient int texture = 0;
+public class Texture extends GLObject implements Serializable {
+    private Int2 size;
+    private byte[] pixels;
+    private transient int buffer;
 
     public Texture(GLContext context, Int2 size, byte[] pixels) {
         super(context);
-        loadData(size, pixels);
+
+        this.size = new Int2(size);
+        this.pixels = (pixels != null) ? Arrays.copyOf(pixels, pixels.length) : null;
+
+        buffer = glGenTextures();
+
+        glBindTexture(GL_TEXTURE_2D, buffer);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, Memory.createByteBuffer(pixels));
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     public Texture(GLContext context, String filepath) {
-        this(context, getImageSize(filepath), getImageData(filepath));
-    }
-
-    public void loadData(Int2 size, byte[] data) {
-        if (size != this.size) {
-            this.size = new Int2(size);
-        }
-        if (data != this.pixels) {
-            this.pixels = Arrays.copyOf(data, data.length);
-        }
-
-        dispose();
-
-        texture = glGenTextures();
-
-        bind();
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, createByteBuffer(data));
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        setWrap(new Int2(GL_REPEAT));
-        setFilters(new Int2(GL_LINEAR));
-
-        unbind();
+        this(context, File.getImageSize(filepath), File.getImageData(filepath));
     }
 
     @Override
     public void dispose() {
-        unbind();
-
-        if (texture != 0) {
-            glDeleteTextures(texture);
-            texture = 0;
+        if (buffer != 0) {
+            glDeleteTextures(buffer);
+            buffer = 0;
         }
     }
 
@@ -66,111 +55,77 @@ public class Texture extends GLObject implements Bindable, Serializable {
         stream.defaultWriteObject();
         stream.writeObject(size);
         stream.writeObject(pixels);
-
-        if (Editor.DEBUG) {
-            System.out.println("Texture saved!");
-        }
     }
 
     @Serial
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
-        size = (Int2) stream.readObject();
-        pixels = (byte[]) stream.readObject();
-        loadData(size, pixels);
-
-        if (Editor.DEBUG) {
-            System.out.println("Texture loaded!");
-        }
+        Texture texture = new Texture(null, (Int2) stream.readObject(), (byte[]) stream.readObject());
+        size = texture.size;
+        pixels = texture.pixels;
+        buffer = texture.buffer;
     }
 
-    @Override
-    public void bind() {
-        glBindTexture(GL_TEXTURE_2D, texture);
-    }
-
-    public void bind(int slot) {
-        glActiveTexture(GL_TEXTURE0 + slot);
-        bind();
-    }
-
-    @Override
-    public void unbind() {
+    public void setWrap(int wrapS, int wrapT) {
+        glBindTexture(GL_TEXTURE_2D, buffer);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    public int getID() {
-        return texture;
+    public void setFilters(int min, int mag) {
+        glBindTexture(GL_TEXTURE_2D, buffer);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public void use(EmptyCallback callback) {
+        glBindTexture(GL_TEXTURE_2D, buffer);
+        callback.method();
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public void use(int slot, EmptyCallback callback) {
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, buffer);
+
+        callback.method();
+
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+    }
+
+    public static void use(int[] textures, EmptyCallback callback) {
+        for (int i = 0; i < textures.length; i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, textures[i]);
+        }
+
+        callback.method();
+
+        for (int i = 0; i < textures.length; i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+
+        glActiveTexture(GL_TEXTURE0);
+    }
+
+    public int getBuffer() {
+        return buffer;
     }
 
     public Int2 getSize() {
         return new Int2(size);
     }
 
-    public void updateSize(Int2 newSize) {
-        if (!newSize.equals(size)) {
-            bind();
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, newSize.x, newSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
-            size = new Int2(newSize);
-        }
-    }
-
-    public byte[] getPixels() {
-        return pixels;
-    }
-
-    public void setWrap(Int2 modes) {
-        bind();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, modes.x);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, modes.y);
-        unbind();
-    }
-
-    public void setFilters(Int2 filters) {
-        bind();
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filters.x);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filters.y);
-        unbind();
-    }
-
-    public static Int2 getImageSize(String filePath) {
-        int[] width = new int[1]; int[] height = new int[1]; int[] dontCare = new int[1];
-        STBImage.stbi_info(filePath, width, height, dontCare);
-        return new Int2(width[0], height[0]);
-    }
-
-    public static byte[] getImageData(String filepath) {
-        return getImageData(filepath, true);
-    }
-
-    public static byte[] getImageData(String filepath, boolean flipOnY) {
-        int[] dontCare = new int[1];
-        STBImage.stbi_set_flip_vertically_on_load(flipOnY);
-
-        ByteBuffer imageBuffer = STBImage.stbi_load(filepath, dontCare, dontCare, dontCare, 4);
-        if (imageBuffer != null) {
-            return readByteBuffer(imageBuffer);
-        }
-        return null;
-    }
-
-    public static byte[] readByteBuffer(ByteBuffer buffer) {
-        if (buffer != null) {
-            byte[] data = new byte[buffer.capacity()];
-            buffer.get(data);
-            buffer.rewind();
-            return data;
-        }
-        return null;
-    }
-
-    public static ByteBuffer createByteBuffer(byte[] data) {
-        if (data != null) {
-            ByteBuffer buffer = BufferUtils.createByteBuffer(data.length);
-            buffer.put(data);
-            buffer.rewind();
-            return buffer;
-        }
-        return null;
+    public void resize(Int2 size) {
+        this.size = new Int2(size);
+        glBindTexture(GL_TEXTURE_2D, buffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 }

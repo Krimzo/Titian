@@ -1,7 +1,6 @@
 package gui.sections;
 
 import editor.Editor;
-import gui.GUIRenderable;
 import gui.GUISection;
 import imgui.ImGui;
 import imgui.flag.ImGuiWindowFlags;
@@ -12,7 +11,7 @@ public final class GUIExplorer extends GUISection {
     }
 
     @Override
-    public void onGUIRender() {
+    public void renderGUI() {
         if (ImGui.begin("Explorer", ImGuiWindowFlags.NoScrollbar)) {
 
         }
