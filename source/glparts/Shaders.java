@@ -11,11 +11,10 @@ import java.util.*;
 import static org.lwjgl.opengl.GL33.*;
 
 public class Shaders extends GLObject implements Serializable {
-    private String vSource;
-    private String fSource;
-    private transient int program;
-
     private transient final Map<String, Integer> uniforms = new HashMap<>();
+    private final String vSource;
+    private final String fSource;
+    private transient int program;
 
     public Shaders(GLContext context, String vSource, String fSource) {
         super(null, null, context);
@@ -23,12 +22,7 @@ public class Shaders extends GLObject implements Serializable {
         this.vSource = vSource;
         this.fSource = fSource;
 
-        int vShader = compileShader(GL_VERTEX_SHADER, vSource);
-        int fShader = compileShader(GL_FRAGMENT_SHADER, fSource);
-        program = createProgram(vShader, fShader);
-
-        glDeleteShader(vShader);
-        glDeleteShader(fShader);
+        program = generateShaders(vSource, fSource);
     }
 
     public Shaders(GLContext context, String filepath) {
@@ -46,10 +40,7 @@ public class Shaders extends GLObject implements Serializable {
     @Serial
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
-        Shaders shaders = new Shaders(null, (String) stream.readObject(), (String) stream.readObject());
-        vSource = shaders.vSource;
-        fSource = shaders.fSource;
-        program = shaders.program;
+        program = generateShaders(vSource, fSource);
     }
 
     private int getUniformID(String name) {
@@ -114,7 +105,7 @@ public class Shaders extends GLObject implements Serializable {
         glUseProgram(0);
     }
 
-    private static int compileShader(int type, String source) {
+    public static int compileShader(int type, String source) {
         int shader = glCreateShader(type);
         if (shader == 0) {
             throw new Error("Could not create a shader!");
@@ -132,7 +123,7 @@ public class Shaders extends GLObject implements Serializable {
         return shader;
     }
 
-    private static int createProgram(int vShader, int fShader) {
+    public static int createProgram(int vShader, int fShader) {
         int program = glCreateProgram();
         if (program == 0) {
             throw new Error("Could not create a shader program!");
@@ -152,5 +143,15 @@ public class Shaders extends GLObject implements Serializable {
         return program;
     }
 
+    public static int generateShaders(String vSource, String fSource) {
+        int vShader = compileShader(GL_VERTEX_SHADER, vSource);
+        int fShader = compileShader(GL_FRAGMENT_SHADER, fSource);
 
+        int program = createProgram(vShader, fShader);
+
+        glDeleteShader(vShader);
+        glDeleteShader(fShader);
+
+        return program;
+    }
 }

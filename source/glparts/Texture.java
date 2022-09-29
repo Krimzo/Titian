@@ -59,12 +59,6 @@ public class Texture extends GLObject implements Serializable {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    public void use(EmptyCallback callback) {
-        glBindTexture(GL_TEXTURE_2D, buffer);
-        callback.method();
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
     public void use(int slot, EmptyCallback callback) {
         glActiveTexture(GL_TEXTURE0 + slot);
         glBindTexture(GL_TEXTURE_2D, buffer);
@@ -73,22 +67,6 @@ public class Texture extends GLObject implements Serializable {
 
         glActiveTexture(GL_TEXTURE0 + slot);
         glBindTexture(GL_TEXTURE_2D, 0);
-
-        glActiveTexture(GL_TEXTURE0);
-    }
-
-    public static void use(int[] textures, EmptyCallback callback) {
-        for (int i = 0; i < textures.length; i++) {
-            glActiveTexture(GL_TEXTURE0 + i);
-            glBindTexture(GL_TEXTURE_2D, textures[i]);
-        }
-
-        callback.method();
-
-        for (int i = 0; i < textures.length; i++) {
-            glActiveTexture(GL_TEXTURE0 + i);
-            glBindTexture(GL_TEXTURE_2D, 0);
-        }
 
         glActiveTexture(GL_TEXTURE0);
     }
@@ -126,5 +104,21 @@ public class Texture extends GLObject implements Serializable {
         glBindTexture(GL_TEXTURE_2D, 0);
 
         return buffer;
+    }
+
+    public static void use(int[] textures, EmptyCallback callback) {
+        for (int i = 0; i < textures.length; i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, textures[i]);
+        }
+
+        callback.method();
+
+        for (int i = 0; i < textures.length; i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+
+        glActiveTexture(GL_TEXTURE0);
     }
 }
