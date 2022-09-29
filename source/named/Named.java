@@ -4,15 +4,18 @@ import java.io.Serializable;
 
 public abstract class Named implements Serializable {
     private final NameHolder holder;
-    private String name;
-
-    public Named(NameHolder holder) {
-        this(holder, "Unknown");
-    }
+    private String name = "Orphan Named";
 
     public Named(NameHolder holder, String name) {
         this.holder = holder;
-        setName(name);
+        if (holder != null) {
+            if (name != null) {
+                setName(name);
+            }
+            else {
+                throw new Error("Name must be provided to a Named object if NameHolder was provided!");
+            }
+        }
     }
 
     public void eraseName() {
@@ -26,11 +29,10 @@ public abstract class Named implements Serializable {
 
     public void setName(String name) {
         String possibleName = name;
-        int nameCounter = 0;
-
         holder.names.remove(this.name);
-        while (holder.names.contains(possibleName)) {
-            possibleName = name + ++nameCounter;
+
+        for (int i = 1; holder.names.contains(possibleName); i++) {
+            possibleName = name + i;
         }
 
         holder.names.add(possibleName);

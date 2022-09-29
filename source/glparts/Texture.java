@@ -1,7 +1,8 @@
 package glparts;
 
-import callbacks.EmptyCallback;
+import callback.EmptyCallback;
 import math.*;
+import named.NameHolder;
 import window.*;
 import utility.File;
 import utility.Memory;
@@ -14,32 +15,20 @@ import static org.lwjgl.opengl.GL33.*;
 
 public class Texture extends GLObject implements Serializable {
     private Int2 size;
-    private byte[] pixels;
+    private final byte[] pixels;
     private transient int buffer;
 
-    public Texture(GLContext context, Int2 size, byte[] pixels) {
-        super(context);
+    public Texture(NameHolder holder, String name, GLContext context, Int2 size, byte[] pixels) {
+        super(holder, name, context);
 
         this.size = new Int2(size);
         this.pixels = (pixels != null) ? Arrays.copyOf(pixels, pixels.length) : null;
 
-        buffer = glGenTextures();
-
-        glBindTexture(GL_TEXTURE_2D, buffer);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, Memory.createByteBuffer(pixels));
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
+        buffer = generateTexture(size, pixels);
     }
 
-    public Texture(GLContext context, String filepath) {
-        this(context, File.getImageSize(filepath), File.getImageData(filepath));
+    public Texture(NameHolder holder, String name, GLContext context, String filepath) {
+        this(holder, name, context, File.getImageSize(filepath), File.getImageData(filepath));
     }
 
     @Override
@@ -51,19 +40,9 @@ public class Texture extends GLObject implements Serializable {
     }
 
     @Serial
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-        stream.writeObject(size);
-        stream.writeObject(pixels);
-    }
-
-    @Serial
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
-        Texture texture = new Texture(null, (Int2) stream.readObject(), (byte[]) stream.readObject());
-        size = texture.size;
-        pixels = texture.pixels;
-        buffer = texture.buffer;
+        buffer = generateTexture(size, pixels);
     }
 
     public void setWrap(int wrapS, int wrapT) {
@@ -123,9 +102,29 @@ public class Texture extends GLObject implements Serializable {
     }
 
     public void resize(Int2 size) {
-        this.size = new Int2(size);
+        if (!this.size.equals(size)) {
+            glBindTexture(GL_TEXTURE_2D, buffer);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            this.size = new Int2(size);
+        }
+    }
+
+    public static int generateTexture(Int2 size, byte[] pixels) {
+        int buffer = glGenTextures();
+
         glBindTexture(GL_TEXTURE_2D, buffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, Memory.createByteBuffer(pixels));
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        return buffer;
     }
 }

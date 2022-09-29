@@ -1,14 +1,17 @@
 package glparts;
 
-import interfaces.Disposable;
+import utility.Disposable;
+import named.NameHolder;
+import named.Named;
 import window.GLContext;
 
 import java.io.Serializable;
 
-public abstract class GLObject implements Disposable, Serializable {
+public abstract class GLObject extends Named implements Disposable, Serializable {
     public transient final GLContext context;
 
-    public GLObject(GLContext context) {
+    public GLObject(NameHolder holder, String name, GLContext context) {
+        super(holder, name);
         this.context = context;
     }
 }

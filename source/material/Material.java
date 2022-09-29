@@ -1,24 +1,24 @@
 package material;
 
-import callbacks.EmptyCallback;
-import interfaces.Disposable;
+import callback.EmptyCallback;
+import utility.Disposable;
 import glparts.Texture;
 import math.Float3;
+import named.NameHolder;
+import named.Named;
 
 import java.io.Serializable;
 
-public class Material implements Disposable, Serializable {
-    public Float3 color = new Float3(1);
+public class Material extends Named implements Disposable, Serializable {
+    public final Float3 color = new Float3(1);
     public float roughness = 0.5f;
 
     public Texture colorMap = null;
     public Texture normalMap = null;
     public Texture roughnessMap = null;
 
-    public Material() {}
-
-    public Material(Texture colorMap) {
-        this.colorMap = colorMap;
+    public Material(NameHolder holder, String name) {
+        super(holder, name);
     }
 
     public void use(EmptyCallback callback) {

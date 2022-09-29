@@ -1,6 +1,6 @@
-package entity;
+package entity.components;
 
-import interfaces.GUIRenderable;
+import gui.GUIRenderable;
 import imgui.ImGui;
 import math.Float3;
 

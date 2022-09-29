@@ -1,6 +1,6 @@
 package window.input;
 
-import callbacks.EmptyCallback;
+import callback.EmptyCallback;
 
 import static org.lwjgl.glfw.GLFW.*;
 

@@ -1,6 +1,6 @@
 package glparts;
 
-import callbacks.EmptyCallback;
+import callback.EmptyCallback;
 import math.Int2;
 import window.GLContext;
 
@@ -13,7 +13,7 @@ public class DepthTexture extends GLObject {
     private transient int buffer;
 
     public DepthTexture(GLContext context, Int2 size) {
-        super(context);
+        super(null, null, context);
 
         this.size = new Int2(size);
 
@@ -70,9 +70,11 @@ public class DepthTexture extends GLObject {
     }
 
     public void resize(Int2 size) {
-        this.size = new Int2(size);
-        glBindTexture(GL_TEXTURE_2D, buffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, size.x, size.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        if (!this.size.equals(size)) {
+            glBindTexture(GL_TEXTURE_2D, buffer);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, size.x, size.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            this.size = new Int2(size);
+        }
     }
 }

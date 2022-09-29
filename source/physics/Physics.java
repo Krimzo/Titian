@@ -1,6 +1,5 @@
 package physics;
 
-import interfaces.Physical;
 import scene.Scene;
 
 public class Physics {

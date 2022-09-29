@@ -1,7 +1,6 @@
 package renderer;
 
 import glparts.*;
-import interfaces.Renderable;
 import math.*;
 import scene.Scene;
 import window.*;
@@ -10,6 +9,7 @@ public class Renderer {
     public final Camera camera = new Camera();
     public final FrameBuffer renderBuffer;
     public final FrameBuffer indexBuffer;
+
     private final Shaders renderShaders;
     private final Shaders indexShaders;
     private final Shaders outlineShaders;
@@ -23,16 +23,13 @@ public class Renderer {
         indexShaders = new Shaders(context, "shaders/Index.glsl");
         outlineShaders = new Shaders(context, "shaders/Outline.glsl");
 
-        screenMesh = new Mesh(context, new Vertex[]{
-            new Vertex(new Float3(-1.0f, -1.0f, 0.5f)), new Vertex(new Float3(-1.0f, 1.0f, 0.5f)), new Vertex(new Float3(1.0f, 1.0f, 0.5f)),
-            new Vertex(new Float3(1.0f, 1.0f, 0.5f)), new Vertex(new Float3(1.0f, -1.0f, 0.5f)), new Vertex(new Float3(-1.0f, -1.0f, 0.5f))
-        });
+        screenMesh = Mesh.generateScreenMesh();
     }
 
-    public void updateSize(Int2 newSize) {
-        renderBuffer.resize(newSize);
-        indexBuffer.resize(newSize);
-        camera.updateAspect(newSize);
+    public void resize(Int2 size) {
+        renderBuffer.resize(size);
+        indexBuffer.resize(size);
+        camera.updateAspect(size);
     }
 
     public void renderIndices(Scene scene) {

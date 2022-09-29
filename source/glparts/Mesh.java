@@ -1,9 +1,11 @@
 package glparts;
 
-import interfaces.Renderable;
+import renderer.Renderable;
 import math.*;
+import named.NameHolder;
 import utility.File;
 import utility.Memory;
+import utility.Pair;
 import window.*;
 
 import java.io.*;
@@ -12,17 +14,56 @@ import java.util.Arrays;
 import static org.lwjgl.opengl.GL33.*;
 
 public class Mesh extends GLObject implements Renderable, Serializable {
-    private Vertex[] vertices;
+    private final Vertex[] vertices;
     private transient int vao;
     private transient int vbo;
 
-    public Mesh(GLContext context, Vertex[] vertices) {
-        super(context);
+    public Mesh(NameHolder holder, String name, GLContext context, Vertex[] vertices) {
+        super(holder, name, context);
 
         this.vertices = Arrays.copyOf(vertices, vertices.length);
 
-        vao = glGenVertexArrays();
-        vbo = glGenBuffers();
+        Pair<Integer> result = generateMesh(vertices);
+        vao = result.first;
+        vbo = result.second;
+    }
+
+    public Mesh(NameHolder holder, String name, GLContext context, String filePath) throws Exception {
+        this(holder, name, context, File.parseMeshFile(filePath));
+    }
+
+    @Override
+    public void dispose() {
+        if (vao != 0) {
+            glDeleteVertexArrays(vao);
+            vao = 0;
+        }
+        if (vbo != 0) {
+            glDeleteBuffers(vbo);
+            vbo = 0;
+        }
+    }
+
+    @Serial
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        Pair<Integer> result = generateMesh(vertices);
+        vao = result.first;
+        vbo = result.second;
+    }
+
+    @Override
+    public void render(Shaders shaders) {
+        shaders.use(() -> {
+            glBindVertexArray(vao);
+            glDrawArrays(GL_TRIANGLES, 0, vertices.length);
+            glBindVertexArray(0);
+        });
+    }
+
+    public static Pair<Integer> generateMesh(Vertex[] vertices) {
+        int vao = glGenVertexArrays();
+        int vbo = glGenBuffers();
 
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -43,45 +84,14 @@ public class Mesh extends GLObject implements Renderable, Serializable {
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
+
+        return new Pair<>(vao, vbo);
     }
 
-    public Mesh(GLContext context, String filePath) throws Exception {
-        this(context, File.parseMeshFile(filePath));
-    }
-
-    @Override
-    public void dispose() {
-        if (vao != 0) {
-            glDeleteVertexArrays(vao);
-            vao = 0;
-        }
-        if (vbo != 0) {
-            glDeleteBuffers(vbo);
-            vbo = 0;
-        }
-    }
-
-    @Serial
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-        stream.writeObject(vertices);
-    }
-
-    @Serial
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        Mesh mesh = new Mesh(null, (Vertex[]) stream.readObject());
-        vertices = mesh.vertices;
-        vao = mesh.vao;
-        vbo = mesh.vbo;
-    }
-
-    @Override
-    public void render(Shaders shaders) {
-        shaders.use(() -> {
-            glBindVertexArray(vao);
-            glDrawArrays(GL_TRIANGLES, 0, vertices.length);
-            glBindVertexArray(0);
+    public static Mesh generateScreenMesh() {
+        return new Mesh(null, null, null, new Vertex[] {
+            new Vertex(new Float3(-1.0f, -1.0f, 0.5f)), new Vertex(new Float3(-1.0f, 1.0f, 0.5f)), new Vertex(new Float3(1.0f, 1.0f, 0.5f)),
+            new Vertex(new Float3(1.0f, 1.0f, 0.5f)), new Vertex(new Float3(1.0f, -1.0f, 0.5f)), new Vertex(new Float3(-1.0f, -1.0f, 0.5f))
         });
     }
 }

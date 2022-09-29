@@ -1,42 +1,91 @@
 package scene;
 
 import entity.Entity;
-import interfaces.Disposable;
+import glparts.Mesh;
+import glparts.Texture;
+import utility.Disposable;
 import glparts.Shaders;
+import material.Material;
 import named.NameHolder;
-import interfaces.Physical;
-import interfaces.Renderable;
+import physics.Physical;
+import renderer.Renderable;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Scene extends ArrayList<Entity> implements Physical, Renderable, Disposable, Serializable {
-    public final NameHolder entityNameHolder = new NameHolder();
-    public final NameHolder meshNameHolder = new NameHolder();
-    public final NameHolder textureNameHolder = new NameHolder();
-    public final NameHolder materialNameHolder = new NameHolder();
+    public final NameHolder entityNames = new NameHolder();
+    public final NameHolder materialNames = new NameHolder();
+    public final NameHolder textureNames = new NameHolder();
+    public final NameHolder meshNames = new NameHolder();
+
+    public final Set<Material> materials = new HashSet<>();
+    public final Set<Texture> textures = new HashSet<>();
+    public final Set<Mesh> meshes = new HashSet<>();
 
     public transient Entity selectedEntity = null;
 
     public Scene() {}
 
-    public Scene(String filepath) {
-        fromFile(filepath);
+    @Override
+    public void dispose() {
+        for (Texture texture : textures) {
+            texture.dispose();
+        }
+        for (Mesh mesh : meshes) {
+            mesh.dispose();
+        }
+
+        this.clear();
+        entityNames.clear();
+        materialNames.clear();
+        textureNames.clear();
+        meshNames.clear();
+
+        materials.clear();
+        textures.clear();
+        meshes.clear();
+
+        selectedEntity = null;
+    }
+
+    public boolean add(Entity entity) {
+        if (entity != null) {
+            if (entity.materialComponent.material != null) {
+                materials.add(entity.materialComponent.material);
+
+                if (entity.materialComponent.material.colorMap != null) {
+                    textures.add(entity.materialComponent.material.colorMap);
+                }
+                if (entity.materialComponent.material.normalMap != null) {
+                    textures.add(entity.materialComponent.material.normalMap);
+                }
+                if (entity.materialComponent.material.roughnessMap != null) {
+                    textures.add(entity.materialComponent.material.roughnessMap);
+                }
+            }
+
+            if (entity.meshComponent.mesh != null) {
+                meshes.add(entity.meshComponent.mesh);
+            }
+
+            return super.add(entity);
+        }
+        return false;
     }
 
     @Override
-    public void dispose() {
+    public void updatePhysics(float deltaT) {
         for (Entity entity : this) {
-            entity.dispose();
+            entity.updatePhysics(deltaT);
         }
-        this.clear();
+    }
 
-        entityNameHolder.dispose();
-        meshNameHolder.dispose();
-        textureNameHolder.dispose();
-        materialNameHolder.dispose();
-
-        selectedEntity = null;
+    @Override
+    public void render(Shaders shaders) {
+        for (Entity entity : this) {
+            entity.render(shaders);
+        }
     }
 
     public void toFile(String filepath) {
@@ -52,34 +101,18 @@ public class Scene extends ArrayList<Entity> implements Physical, Renderable, Di
         }
     }
 
-    public void fromFile(String filepath) {
-        this.clear();
-
+    public static Scene fromFile(String filepath) {
+        Scene scene = null;
         try {
             FileInputStream fileStream = new FileInputStream(filepath);
             ObjectInputStream objectStream = new ObjectInputStream(fileStream);
-
-            this.addAll((Scene) objectStream.readObject());
-
+            scene = (Scene) objectStream.readObject();
             objectStream.close();
             fileStream.close();
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void updatePhysics(float deltaT) {
-        for (Entity entity : this) {
-            entity.updatePhysics(deltaT);
-        }
-    }
-
-    @Override
-    public void render(Shaders shaders) {
-        for (Entity entity : this) {
-            entity.render(shaders);
-        }
+        return scene;
     }
 }

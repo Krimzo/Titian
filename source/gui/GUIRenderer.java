@@ -1,11 +1,10 @@
 package gui;
 
-import interfaces.Disposable;
+import utility.Disposable;
 import imgui.*;
 import imgui.flag.*;
 import imgui.gl3.*;
 import imgui.glfw.*;
-import interfaces.GUIRenderable;
 import window.*;
 
 import java.util.ArrayList;

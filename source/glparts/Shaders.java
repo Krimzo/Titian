@@ -1,6 +1,6 @@
 package glparts;
 
-import callbacks.EmptyCallback;
+import callback.EmptyCallback;
 import math.*;
 import utility.File;
 import window.*;
@@ -18,7 +18,7 @@ public class Shaders extends GLObject implements Serializable {
     private transient final Map<String, Integer> uniforms = new HashMap<>();
 
     public Shaders(GLContext context, String vSource, String fSource) {
-        super(context);
+        super(null, null, context);
 
         this.vSource = vSource;
         this.fSource = fSource;
@@ -41,13 +41,6 @@ public class Shaders extends GLObject implements Serializable {
             glDeleteProgram(program);
             program = 0;
         }
-    }
-
-    @Serial
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-        stream.writeObject(vSource);
-        stream.writeObject(fSource);
     }
 
     @Serial
@@ -158,4 +151,6 @@ public class Shaders extends GLObject implements Serializable {
 
         return program;
     }
+
+
 }

@@ -1,7 +1,6 @@
 package window.input;
 
 import math.Int2;
-import org.lwjgl.glfw.GLFWScrollCallback;
 
 import static org.lwjgl.glfw.GLFW.*;
 

@@ -1,6 +1,6 @@
 package glparts;
 
-import callbacks.EmptyCallback;
+import callback.EmptyCallback;
 import math.Float4;
 import math.Int2;
 import window.GLContext;
@@ -13,9 +13,9 @@ public class FrameBuffer extends GLObject {
     private int buffer;
 
     public FrameBuffer(GLContext context, Int2 size) {
-        super(context);
+        super(null, null, context);
 
-        colorMap = new Texture(context, size, null);
+        colorMap = new Texture(null, null, context, size, null);
         depthMap = new DepthTexture(context, size);
         buffer = glGenFramebuffers();
 

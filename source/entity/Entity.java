@@ -1,21 +1,21 @@
 package entity;
 
+import entity.components.*;
 import glparts.*;
-import interfaces.Disposable;
-import interfaces.Physical;
-import interfaces.Renderable;
+import physics.Physical;
+import renderer.Renderable;
 import named.*;
 
 import java.io.Serializable;
 
-public class Entity extends Named implements Physical, Renderable, Disposable, Serializable {
+public class Entity extends Named implements Physical, Renderable, Serializable {
     public final TransformComponent transformComponent = new TransformComponent();
     public final MeshComponent meshComponent = new MeshComponent();
     public final MaterialComponent materialComponent = new MaterialComponent();
     public final PhysicsComponent physicsComponent = new PhysicsComponent();
 
-    public Entity(NameHolder holder) {
-        super(holder);
+    public Entity(NameHolder holder, String name) {
+        super(holder, name);
     }
 
     @Override
@@ -31,11 +31,5 @@ public class Entity extends Named implements Physical, Renderable, Disposable, S
         materialComponent.use(() -> {
             meshComponent.render(shaders);
         });
-    }
-
-    @Override
-    public void dispose() {
-        meshComponent.dispose();
-        materialComponent.dispose();
     }
 }

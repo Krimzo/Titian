@@ -5,7 +5,6 @@ import utility.Timer;
 import window.Window;
 
 public class Camera {
-    private Float3 forward = Float3.getPosZ();
     public Float3 position = new Float3();
     public float aspect = 16.0f / 9.0f;
     public float fov = 75.0f;
@@ -13,6 +12,10 @@ public class Camera {
     public float far = 500.0f;
     public float speed = 2.0f;
     public float sens = 0.1f;
+
+    private Float3 forward = Float3.getPosZ();
+    private boolean firstClick = true;
+    private boolean camMoving = false;
 
     public Camera() {}
 
@@ -23,9 +26,11 @@ public class Camera {
     public void setForward(Float3 forward) {
         this.forward = forward.norm();
     }
+
     public Float3 getForward() {
         return new Float3(forward);
     }
+
     public Float3 getRight() {
         return Float3.getPosY().cross(forward);
     }
@@ -33,18 +38,23 @@ public class Camera {
     public void moveForward(float deltaTime) {
         position = position.add(forward.mul(speed * deltaTime));
     }
+
     public void moveBack(float deltaTime) {
         position = position.sub(forward.mul(speed * deltaTime));
     }
+
     public void moveRight(float deltaTime) {
         position = position.add(getRight().mul(speed * deltaTime));
     }
+
     public void moveLeft(float deltaTime) {
         position = position.sub(getRight().mul(speed * deltaTime));
     }
+
     public void moveUp(float deltaTime) {
         position = position.add(Float3.getPosY().mul(speed * deltaTime));
     }
+
     public void moveDown(float deltaTime) {
         position = position.sub(Float3.getPosY().mul(speed * deltaTime));
     }
@@ -65,8 +75,6 @@ public class Camera {
         return proj.mul(view);
     }
 
-    private boolean firstClick = true;
-    private boolean camMoving = false;
     public void setDefaultMovement(Window window, Timer timer) {
         window.keyboard.w.onDown = () -> moveForward(timer.getDeltaT());
         window.keyboard.a.onDown = () -> moveLeft(timer.getDeltaT());

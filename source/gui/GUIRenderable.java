@@ -1,4 +1,4 @@
-package interfaces;
+package gui;
 
 public interface GUIRenderable {
     void renderGUI();

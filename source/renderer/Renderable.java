@@ -1,4 +1,4 @@
-package interfaces;
+package renderer;
 
 import glparts.Shaders;
 

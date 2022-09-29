@@ -1,7 +1,7 @@
 package editor;
 
-import callbacks.EditorCallback;
-import interfaces.Disposable;
+import callback.EditorCallback;
+import utility.Disposable;
 import gui.GUIRenderer;
 import gui.sections.*;
 import math.Float2;
@@ -77,7 +77,7 @@ public class Editor implements Disposable {
             int selectedIndex = scene.indexOf(scene.selectedEntity);
 
             window.getContext().setViewport(viewportSize);
-            renderer.updateSize(viewportSize);
+            renderer.resize(viewportSize);
 
             window.getContext().setWireframe(wireframeState);
             renderer.renderIndices(scene);

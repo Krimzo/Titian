@@ -1,14 +1,14 @@
-package entity;
+package entity.components;
 
-import interfaces.Disposable;
 import glparts.Mesh;
 import glparts.Shaders;
-import interfaces.GUIRenderable;
-import interfaces.Renderable;
+import gui.GUIRenderable;
+import imgui.ImGui;
+import renderer.Renderable;
 
 import java.io.Serializable;
 
-public class MeshComponent implements Renderable, GUIRenderable, Disposable, Serializable {
+public class MeshComponent implements Renderable, GUIRenderable, Serializable {
     public Mesh mesh = null;
 
     public MeshComponent() {}
@@ -26,14 +26,6 @@ public class MeshComponent implements Renderable, GUIRenderable, Disposable, Ser
 
     @Override
     public void renderGUI() {
-
-    }
-
-    @Override
-    public void dispose() {
-        if (mesh != null) {
-            mesh.dispose();
-            mesh = null;
-        }
+        ImGui.text((mesh != null) ? mesh.getName() : "NULL");
     }
 }

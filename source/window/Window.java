@@ -1,9 +1,8 @@
 package window;
 
-import callbacks.ResizeCallback;
-import interfaces.Disposable;
+import callback.ResizeCallback;
+import utility.Disposable;
 import math.Int2;
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
 import utility.File;
 import utility.Memory;
