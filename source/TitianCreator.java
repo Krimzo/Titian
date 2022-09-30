@@ -10,7 +10,7 @@ public class TitianCreator {
     public static void saveTestScene(Editor editor) throws Exception {
         Scene scene = new Scene();
 
-        Mesh monkeMesh = new Mesh(scene.meshNames, "Monke Mesh", editor.window.getContext(), "resource/meshes/default/monke.obj");
+        Mesh monkeMesh = new Mesh(scene.meshNames, "Monke Mesh", editor.window.getContext(), "resource/meshes/monke.obj");
         Material monkeMaterial = new Material(scene.materialNames, "Monke Material");
         monkeMaterial.colorMap = new Texture(scene.textureNames, "Checkers Texture", editor.window.getContext(), "resource/textures/checkers.png");
 
