@@ -10,8 +10,14 @@ public class Mat3 implements Serializable {
         data[3] = 0.0f; data[4] = 1.0f; data[5] = 0.0f;
         data[6] = 0.0f; data[7] = 0.0f; data[8] = 1.0f;
     }
+
     public Mat3(Mat3 m) {
         System.arraycopy(m.data, 0, data, 0, data.length);
+    }
+
+    // Getter
+    public float get(int x, int y) {
+        return data[y * 3 + x];
     }
 
     // Addition
@@ -99,7 +105,7 @@ public class Mat3 implements Serializable {
     }
 
     // Translation matrix
-    public static Mat3 translate(Float2 translation) {
+    public static Mat3 translation(Float2 translation) {
         Mat3 temp = new Mat3();
         temp.data[2] = translation.x;
         temp.data[5] = translation.y;
@@ -107,7 +113,7 @@ public class Mat3 implements Serializable {
     }
 
     // Rotation matrix
-    public static Mat3 rotate(float rotation) {
+    public static Mat3 rotation(float rotation) {
         // Computing trig
 	    final float zSin = (float)Math.sin(Math.toRadians(rotation));
 	    final float zCos = (float)Math.cos(Math.toRadians(rotation));
@@ -122,7 +128,7 @@ public class Mat3 implements Serializable {
     }
 
     // Scaling matrix
-    public static Mat3 scale(Float2 size) {
+    public static Mat3 scaling(Float2 size) {
         Mat3 temp = new Mat3();
         temp.data[0] = size.x;
         temp.data[4] = size.y;

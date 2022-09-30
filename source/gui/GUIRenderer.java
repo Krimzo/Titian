@@ -1,5 +1,7 @@
 package gui;
 
+import glparts.Texture;
+import imgui.extension.imguizmo.ImGuizmo;
 import utility.Disposable;
 import imgui.*;
 import imgui.flag.*;
@@ -8,10 +10,14 @@ import imgui.glfw.*;
 import window.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable {
     private final ImGuiImplGlfw implGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 implGl3 = new ImGuiImplGl3();
+
+    public final Map<String, Texture> loadedTextures = new HashMap<>();
 
     public GUIRenderer(Window window) {
         ImGui.createContext();
@@ -21,10 +27,20 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
         implGl3.init();
 
         loadCustomTheme();
+
+        loadedTextures.put("PlayIcon", new Texture(null, null, window.getContext(), "resource/textures/control/play.png", false));
+        loadedTextures.put("StopIcon", new Texture(null, null, window.getContext(), "resource/textures/control/stop.png", false));
+        loadedTextures.put("WireIcon", new Texture(null, null, window.getContext(), "resource/textures/control/wire.png", false));
+        loadedTextures.put("SolidIcon", new Texture(null, null, window.getContext(), "resource/textures/control/solid.png", false));
     }
 
     @Override
     public void dispose() {
+        for (var obj : loadedTextures.entrySet()) {
+            obj.getValue().dispose();
+        }
+        loadedTextures.clear();
+
         implGl3.dispose();
         implGlfw.dispose();
         ImGui.destroyContext();
@@ -33,6 +49,7 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
     public void render() {
         implGlfw.newFrame();
         ImGui.newFrame();
+        ImGuizmo.beginFrame();
 
         ImGui.dockSpaceOverViewport(ImGui.getMainViewport(), ImGuiDockNodeFlags.PassthruCentralNode);
 

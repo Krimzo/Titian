@@ -14,18 +14,29 @@ public class TransformComponent implements GUIRenderable, Serializable {
 
     public TransformComponent() {}
 
-    public Mat4 matrix() {
-        Mat4 result = new Mat4();
-        if (position != null) {
-            result = result.mul(Mat4.translate(position));
-        }
-        if (rotation != null) {
-            result = result.mul(Mat4.rotate(rotation));
-        }
+    public Mat4 scalingMatrix() {
         if (scale != null) {
-            result = result.mul(Mat4.scale(scale));
+            return Mat4.scaling(scale);
         }
-        return result;
+        return new Mat4();
+    }
+
+    public Mat4 rotationMatrix() {
+        if (rotation != null) {
+            return Mat4.rotation(rotation);
+        }
+        return new Mat4();
+    }
+
+    public Mat4 translationMatrix() {
+        if (position != null) {
+            return Mat4.translation(position);
+        }
+        return new Mat4();
+    }
+
+    public Mat4 matrix() {
+        return translationMatrix().mul(rotationMatrix()).mul(scalingMatrix());
     }
 
     @Override

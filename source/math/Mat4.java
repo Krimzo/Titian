@@ -11,8 +11,14 @@ public class Mat4 implements Serializable {
         data[ 8] = 0.0f; data[ 9] = 0.0f; data[10] = 1.0f; data[11] = 0.0f;
         data[12] = 0.0f; data[13] = 0.0f; data[14] = 0.0f; data[15] = 1.0f;
     }
+
     public Mat4(Mat4 m) {
         System.arraycopy(m.data, 0, data, 0, data.length);
+    }
+
+    // Getter
+    public float get(int x, int y) {
+        return data[y * 4 + x];
     }
 
     // Addition
@@ -75,8 +81,19 @@ public class Mat4 implements Serializable {
         return mul(1.0f / a);
     }
 
+    // Transpose
+    public Mat4 transpose() {
+        Mat4 result = new Mat4();
+        for (int y = 0; y < 4; y++) {
+            for (int x = 0; x < 4; x++) {
+                result.data[y * 4 + x] = data[x * 4 + y];
+            }
+        }
+        return result;
+    }
+
     // Inverse
-    public Mat4 inv() {
+    public Mat4 inverse() {
         Mat4 temp = new Mat4();
         temp.data[0] = data[5] * data[10] * data[15] -
                 data[5] * data[11] * data[14] -
@@ -189,7 +206,7 @@ public class Mat4 implements Serializable {
     }
 
     // Translation matrix
-    public static Mat4 translate(Float3 translation) {
+    public static Mat4 translation(Float3 translation) {
         Mat4 temp = new Mat4();
         temp.data[ 3] = translation.x;
         temp.data[ 7] = translation.y;
@@ -198,7 +215,7 @@ public class Mat4 implements Serializable {
     }
 
     // Rotation matrix
-    public static Mat4 rotate(Float3 rotation) {
+    public static Mat4 rotation(Float3 rotation) {
         // Computing x rotation matrix
         final float xSin = (float)Math.sin(Math.toRadians(rotation.x));
         final float xCos = (float)Math.cos(Math.toRadians(rotation.x));
@@ -231,7 +248,7 @@ public class Mat4 implements Serializable {
     }
 
     // Scaling matrix
-    public static Mat4 scale(Float3 size) {
+    public static Mat4 scaling(Float3 size) {
         Mat4 temp = new Mat4();
         temp.data[ 0] = size.x;
         temp.data[ 5] = size.y;
@@ -241,7 +258,7 @@ public class Mat4 implements Serializable {
 
     // Perspective projection matrix
     private static final float halfAngleRad = (float)(Math.PI / 360);
-    public static Mat4 persp(float fov, float ar, float zNear, float zFar) {
+    public static Mat4 perspective(float fov, float ar, float zNear, float zFar) {
 		final float tanHalf = 1 / (float)Math.tan(fov * halfAngleRad);
         Mat4 temp = new Mat4();
         temp.data[ 0] = tanHalf / ar;
@@ -254,7 +271,7 @@ public class Mat4 implements Serializable {
     }
 
     // Orthographic projection matrix
-    public static Mat4 ortho(float left, float right, float bottom, float top, float nearZ, float farZ) {
+    public static Mat4 orthographic(float left, float right, float bottom, float top, float nearZ, float farZ) {
         Mat4 temp = new Mat4();
         temp.data[ 0] = 2 / (right - left);
         temp.data[ 5] = 2 / (top - bottom);

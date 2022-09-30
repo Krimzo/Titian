@@ -3,6 +3,7 @@ package gui.sections;
 import editor.Editor;
 import gui.GUISection;
 import imgui.ImGui;
+import math.Int2;
 
 public final class GUIMainMenu extends GUISection {
     public GUIMainMenu(Editor editor) {
@@ -21,25 +22,29 @@ public final class GUIMainMenu extends GUISection {
 
     private void editMenu() {
         if (ImGui.beginMenu("Edit")) {
-
+            ImGui.menuItem("WIP");
             ImGui.endMenu();
         }
     }
 
     private void viewMenu() {
         if (ImGui.beginMenu("View")) {
-            boolean wireframeState = (boolean) editor.savedData.get("WireframeState");
-            wireframeState = ImGui.selectable("Wireframe State", wireframeState);
-            editor.savedData.put("WireframeState", wireframeState);
-
+            ImGui.menuItem("WIP");
             ImGui.endMenu();
         }
     }
 
     private void renderMenu() {
         if (ImGui.beginMenu("Render")) {
-            if (ImGui.beginMenu("Index Texture")) {
+            Int2 viewportSize = (Int2) editor.savedData.get("ViewportSize");
 
+            if (ImGui.beginMenu("Depth Texture")) {
+                ImGui.image(editor.renderer.renderBuffer.getDepthMap().getBuffer(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
+                ImGui.endMenu();
+            }
+
+            if (ImGui.beginMenu("Index Texture")) {
+                ImGui.image(editor.renderer.indexBuffer.getColorMap().getBuffer(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
                 ImGui.endMenu();
             }
 

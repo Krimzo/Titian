@@ -5,6 +5,8 @@ import math.*;
 import scene.Scene;
 import window.*;
 
+import static org.lwjgl.opengl.GL33.*;
+
 public class Renderer {
     public final Camera camera = new Camera();
     public final FrameBuffer renderBuffer;
@@ -18,6 +20,7 @@ public class Renderer {
     public Renderer(GLContext context, Int2 size) {
         renderBuffer = new FrameBuffer(context, size);
         indexBuffer = new FrameBuffer(context, size);
+        indexBuffer.getColorMap().setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 
         renderShaders = new Shaders(context, "shaders/Render.glsl");
         indexShaders = new Shaders(context, "shaders/Index.glsl");

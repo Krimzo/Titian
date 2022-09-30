@@ -27,8 +27,12 @@ public class Texture extends GLObject implements Serializable {
         buffer = generateTexture(size, pixels);
     }
 
+    public Texture(NameHolder holder, String name, GLContext context, String filepath, boolean flipY) {
+        this(holder, name, context, File.getImageSize(filepath), File.getImageData(filepath, flipY));
+    }
+
     public Texture(NameHolder holder, String name, GLContext context, String filepath) {
-        this(holder, name, context, File.getImageSize(filepath), File.getImageData(filepath));
+        this(holder, name, context, filepath, true);
     }
 
     @Override

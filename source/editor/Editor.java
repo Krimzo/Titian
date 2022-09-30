@@ -1,6 +1,7 @@
 package editor;
 
 import callback.EditorCallback;
+import imgui.extension.imguizmo.flag.Mode;
 import utility.Disposable;
 import gui.GUIRenderer;
 import gui.sections.*;
@@ -46,14 +47,17 @@ public class Editor implements Disposable {
         guiRenderer.add(new GUILogView(this));
         guiRenderer.add(new GUIProperties(this));
 
+        savedData.put("GameRunning", false);
         savedData.put("WireframeState", false);
         savedData.put("ViewportPosition", new Int2());
         savedData.put("ViewportSize", new Int2());
         savedData.put("OutlineColor", new Color(0xDA7315));
+        savedData.put("GizmoMode", Mode.WORLD);
+        savedData.put("GizmoOperation", 0);
     }
 
-    public void setup(EditorCallback editorCallback) throws Exception {
-        editorCallback.method(this);
+    public void setup(EditorCallback setupCallback) throws Exception {
+        setupCallback.method(this);
         window.maximize();
         timer.reset();
     }
@@ -62,11 +66,13 @@ public class Editor implements Disposable {
         return window.process();
     }
 
-    public void update(EditorCallback editorCallback) throws Exception {
+    public void update(EditorCallback gameUpdateCallback) throws Exception {
         timer.updateDeltaT();
 
-        physics.update(scene, timer.getDeltaT());
-        editorCallback.method(this);
+        if ((boolean) savedData.get("GameRunning")) {
+            physics.update(scene, timer.getDeltaT());
+            gameUpdateCallback.method(this);
+        }
 
         window.getContext().clear(false);
 

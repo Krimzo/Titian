@@ -69,10 +69,16 @@ public class Camera {
         forward = forward.rotate(rotation.x, Float3.getPosY());
     }
 
+    public Mat4 viewMatrix() {
+        return Mat4.lookAt(position, position.add(forward), Float3.getPosY());
+    }
+
+    public Mat4 projectionMatrix() {
+        return Mat4.perspective(fov, aspect, near, far);
+    }
+
     public Mat4 matrix() {
-	    final Mat4 view = Mat4.lookAt(position, position.add(forward), Float3.getPosY());
-	    final Mat4 proj = Mat4.persp(fov, aspect, near, far);
-        return proj.mul(view);
+        return projectionMatrix().mul(viewMatrix());
     }
 
     public void setDefaultMovement(Window window, Timer timer) {

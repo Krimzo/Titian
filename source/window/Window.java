@@ -70,13 +70,13 @@ public class Window implements Disposable {
     }
 
     public boolean process() {
-        boolean running = !glfwWindowShouldClose(window);
-        if (running) {
+        if (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
             keyboard.update();
             mouse.update();
+            return true;
         }
-        return running;
+        return false;
     }
 
     public void close() {

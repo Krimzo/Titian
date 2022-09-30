@@ -23,7 +23,7 @@ public class Scene extends ArrayList<Entity> implements Physical, Renderable, Di
     public final Set<Texture> textures = new HashSet<>();
     public final Set<Mesh> meshes = new HashSet<>();
 
-    public transient Entity selectedEntity = null;
+    public Entity selectedEntity = null;
 
     public Scene() {}
 
