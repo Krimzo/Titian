@@ -26,10 +26,11 @@ public final class GUIControlPanel extends GUISection {
             Texture playStateTexture = gameRunning ? editor.guiRenderer.loadedTextures.get("StopIcon") : editor.guiRenderer.loadedTextures.get("PlayIcon");
             if (ImGui.imageButton(playStateTexture.getBuffer(), buttonSize, buttonSize)) {
                 if (!gameRunning) {
-                    editor.getScene().toFile(SAVED_RUN_SCENE);
+                    editor.scene.toFile(SAVED_RUN_SCENE);
                 }
                 else {
-                    editor.changeScene(Scene.fromFile(SAVED_RUN_SCENE));
+                    editor.destroyCurrentScene();
+                    editor.scene = Scene.fromFile(SAVED_RUN_SCENE);
                 }
                 editor.savedData.put("GameRunning", !gameRunning);
             }

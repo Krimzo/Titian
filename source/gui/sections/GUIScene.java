@@ -15,11 +15,10 @@ public final class GUIScene extends GUISection {
     @Override
     public void renderGUI() {
         if (ImGui.begin("Scene", ImGuiWindowFlags.NoScrollbar)) {
-            Scene scene = editor.getScene();
-            if (scene != null) {
-                for (Entity entity : scene) {
-                    if (ImGui.selectable(entity.getName(), entity == scene.selectedEntity)) {
-                        scene.selectedEntity = entity;
+            if (editor.scene != null) {
+                for (Entity entity : editor.scene) {
+                    if (ImGui.selectable(entity.getName(), entity == editor.scene.selectedEntity)) {
+                        editor.scene.selectedEntity = entity;
                     }
                 }
             }

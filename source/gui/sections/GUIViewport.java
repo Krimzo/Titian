@@ -29,7 +29,7 @@ public final class GUIViewport extends GUISection {
     }
 
     private void objectSelection(Int2 viewportPosition, Int2 viewportSize) {
-        if (editor.getScene() == null || ImGuizmo.isOver()) {
+        if (editor.scene == null || ImGuizmo.isOver()) {
             return;
         }
 
@@ -41,7 +41,7 @@ public final class GUIViewport extends GUISection {
             Float2 mousePosition = new Float2(ImGui.getMousePosX() - viewportPosition.x, ImGui.getMousePosY() - viewportPosition.y);
 
             int objectIndex = (int) editor.renderer.indexBuffer.getPixel(new Int2(mousePosition)).x - 1;
-            editor.getScene().selectedEntity = (objectIndex >= 0) ? editor.getScene().get(objectIndex) : null;
+            editor.scene.selectedEntity = (objectIndex >= 0) ? editor.scene.get(objectIndex) : null;
         }
     }
 
@@ -49,7 +49,7 @@ public final class GUIViewport extends GUISection {
         ImGui.image(editor.renderer.renderBuffer.getColorMap().getBuffer(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
     }
 
-    private int updateGizmoState() {
+    private Pair<Integer> updateGizmoState() {
         int gizmoOperation = (int) editor.savedData.get("GizmoOperation");
         if (ImGui.isKeyPressed('1')) {
             gizmoOperation = (gizmoOperation != Operation.SCALE) ? Operation.SCALE : 0;
@@ -61,48 +61,35 @@ public final class GUIViewport extends GUISection {
             gizmoOperation = (gizmoOperation != Operation.TRANSLATE) ? Operation.TRANSLATE : 0;
         }
         editor.savedData.put("GizmoOperation", gizmoOperation);
-        return gizmoOperation;
+        return new Pair<>(gizmoOperation, Mode.WORLD); // Maybe future change
     }
 
-    private void renderGizmos(Int2 viewportPosition, Int2 viewportSize, int gizmoOperation) {
+    private void renderGizmos(Int2 viewportPosition, Int2 viewportSize, int gizmoOperation, int gizmoMode) {
         ImGuizmo.setEnabled(true);
         ImGuizmo.setDrawList();
         ImGuizmo.setRect(viewportPosition.x, viewportPosition.y, viewportSize.x, viewportSize.y);
 
-        Entity selected = editor.getScene().selectedEntity;
+        Entity selected = editor.scene.selectedEntity;
         if (selected == null || gizmoOperation == 0) {
             float[] ignored = new float[16];
-            ImGuizmo.manipulate(ignored, ignored, ignored, Operation.TRANSLATE, Mode.WORLD);
+            ImGuizmo.manipulate(ignored, ignored, ignored, gizmoOperation, gizmoMode);
             return;
         }
 
+        TransformComponent transform = selected.transformComponent;
         Mat4 viewMatrix = editor.renderer.camera.viewMatrix().transpose();
         Mat4 projectionMatrix = editor.renderer.camera.projectionMatrix().transpose();
-        Mat4 transformMatrix = selected.transformComponent.matrix().transpose();
+        Mat4 transformMatrix = transform.translationMatrix().mul(transform.scalingMatrix()).transpose();
 
-        ImGuizmo.manipulate(viewMatrix.data, projectionMatrix.data, transformMatrix.data, gizmoOperation, Mode.WORLD);
+        ImGuizmo.manipulate(viewMatrix.data, projectionMatrix.data, transformMatrix.data, gizmoOperation, gizmoMode);
 
         if (ImGuizmo.isUsing()) {
-            float[] data = transformMatrix.data;
+            float[][] data = new float[3][3];
+            ImGuizmo.decomposeMatrixToComponents(transformMatrix.data, data[2], data[1], data[0]);
 
-            Float3 scale = new Float3(1);
-            scale.x = new Float3(data[0], data[1], data[2]).len();
-            scale.y = new Float3(data[4], data[5], data[6]).len();
-            scale.z = new Float3(data[8], data[9], data[10]).len();
-
-            Float3 rotation = new Float3();
-            rotation.x = (float) Math.toDegrees(Math.atan2(data[6], data[10]));
-            rotation.y = (float) Math.toDegrees(Math.atan2(-data[2], Math.sqrt(data[6] * data[6] + data[10] * data[10])));
-            rotation.z = (float) Math.toDegrees(Math.atan2(data[1], data[0]));
-
-            Float3 position = new Float3();
-            position.x = data[12];
-            position.y = data[13];
-            position.z = data[14];
-
-            selected.transformComponent.scale = scale;
-            //selected.transformComponent.rotation = rotation; WIP
-            selected.transformComponent.position = position;
+            transform.scale = new Float3(data[0]);
+            transform.rotation = transform.rotation.add(new Float3(data[1]));
+            transform.position = new Float3(data[2]);
         }
     }
 
@@ -112,11 +99,11 @@ public final class GUIViewport extends GUISection {
 
         if (ImGui.begin("Viewport", ImGuiWindowFlags.NoScrollbar)) {
             Pair<Int2> viewportInfo = saveViewportInfo();
-            int gizmoOperation = updateGizmoState();
+            Pair<Integer> gizmoInfo = updateGizmoState();
 
             objectSelection(viewportInfo.first, viewportInfo.second);
             displayFrame(viewportInfo.second);
-            renderGizmos(viewportInfo.first, viewportInfo.second, gizmoOperation);
+            renderGizmos(viewportInfo.first, viewportInfo.second, gizmoInfo.first, gizmoInfo.second);
         }
         ImGui.end();
 

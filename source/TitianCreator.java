@@ -2,6 +2,7 @@ import editor.Editor;
 import entity.Entity;
 import glparts.*;
 import material.Material;
+import math.Float3;
 import scene.Scene;
 
 import java.util.Random;
@@ -14,24 +15,28 @@ public class TitianCreator {
         Material monkeMaterial = new Material(scene.materialNames, "Monke Material");
         monkeMaterial.colorMap = new Texture(scene.textureNames, "Checkers Texture", editor.window.getContext(), "resource/textures/checkers.png");
 
-        for (int x = -3; x <= 3; x++) {
-            Entity monke = new Entity(scene.entityNames, "Monke");
+        final int size = 3;
+        for (int y = -size; y <= size; y++) {
+            for (int x = -size; x <= size; x++) {
+                Entity monke = new Entity(scene.entityNames, "Monke");
 
-            monke.transformComponent.position.x = x * 2.5f;
-            monke.physicsComponent.angular.y = (new Random().nextFloat() * 2 - 1) * 36;
+                monke.transformComponent.position = new Float3(x, y, 0).mul(2.5f);
+                monke.physicsComponent.angular.y = (new Random().nextFloat() * 2 - 1) * 36;
 
-            monke.meshComponent.mesh = monkeMesh;
-            monke.materialComponent.material = monkeMaterial;
+                monke.meshComponent.mesh = monkeMesh;
+                monke.materialComponent.material = monkeMaterial;
 
-            scene.add(monke);
+                scene.add(monke);
+            }
         }
 
         scene.toFile("resource/scenes/test.scene");
         scene.dispose();
     }
 
-    public static void loadTestScene(Editor editor) throws Exception {
-        editor.changeScene(Scene.fromFile("resource/scenes/test.scene"));
+    public static void loadTestScene(Editor editor) {
+        editor.destroyCurrentScene();
+        editor.scene = Scene.fromFile("resource/scenes/test.scene");
     }
 
     public static void setup(Editor editor) {

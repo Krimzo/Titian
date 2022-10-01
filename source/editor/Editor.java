@@ -28,7 +28,7 @@ public class Editor implements Disposable {
     public GUIRenderer guiRenderer = new GUIRenderer(window);
     public Physics physics = new Physics();
 
-    private Scene scene = null;
+    public Scene scene = null;
 
     public Editor() throws Exception {
         window.setIcon("resource/textures/icons/titian.png");
@@ -52,7 +52,6 @@ public class Editor implements Disposable {
         savedData.put("ViewportPosition", new Int2());
         savedData.put("ViewportSize", new Int2());
         savedData.put("OutlineColor", new Color(0xDA7315));
-        savedData.put("GizmoMode", Mode.WORLD);
         savedData.put("GizmoOperation", 0);
     }
 
@@ -107,14 +106,10 @@ public class Editor implements Disposable {
         window.dispose();
     }
 
-    public Scene getScene() {
-        return scene;
-    }
-
-    public void changeScene(Scene scene) {
-        if (this.scene != null) {
-            this.scene.dispose();
+    public void destroyCurrentScene() {
+        if (scene != null) {
+            scene.dispose();
+            scene = null;
         }
-        this.scene = scene;
     }
 }

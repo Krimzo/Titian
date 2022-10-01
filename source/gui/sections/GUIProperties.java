@@ -7,7 +7,6 @@ import gui.*;
 import imgui.*;
 import imgui.flag.*;
 import material.Material;
-import scene.*;
 
 public final class GUIProperties extends GUISection {
     public GUIProperties(Editor editor) {
@@ -15,9 +14,8 @@ public final class GUIProperties extends GUISection {
     }
 
     private Entity getSelectedEntity() {
-        Scene scene = editor.getScene();
-        if (scene != null) {
-            return scene.selectedEntity;
+        if (editor.scene != null) {
+            return editor.scene.selectedEntity;
         }
         return null;
     }
@@ -38,7 +36,7 @@ public final class GUIProperties extends GUISection {
                 selected.meshComponent.renderGUI();
                 ImGui.separator();
 
-                for (Mesh mesh : editor.getScene().meshes) {
+                for (Mesh mesh : editor.scene.meshes) {
                     if (ImGui.selectable(mesh.getName())) {
                         selected.meshComponent.mesh = mesh;
                     }
@@ -52,7 +50,7 @@ public final class GUIProperties extends GUISection {
                 selected.materialComponent.renderGUI();
                 ImGui.separator();
 
-                for (Material material : editor.getScene().materials) {
+                for (Material material : editor.scene.materials) {
                     if (ImGui.selectable(material.getName())) {
                         selected.materialComponent.material = material;
                     }
