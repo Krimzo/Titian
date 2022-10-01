@@ -22,49 +22,49 @@ public class Mat3 implements Serializable {
 
     // Addition
     public Mat3 add(Mat3 m) {
-        Mat3 temp = new Mat3();
+        Mat3 result = new Mat3();
         for(int i = 0; i < 9; i++) {
-            temp.data[i] = data[i] + m.data[i];
+            result.data[i] = data[i] + m.data[i];
         }
-        return temp;
+        return result;
     }
 
     // Subtraction
     public Mat3 sub(Mat3 m) {
-        Mat3 temp = new Mat3();
+        Mat3 result = new Mat3();
         for(int i = 0; i < 9; i++) {
-            temp.data[i] = data[i] - m.data[i];
+            result.data[i] = data[i] - m.data[i];
         }
-        return temp;
+        return result;
     }
 
     // Multiplication
     public Mat3 mul(float a) {
-        Mat3 temp = new Mat3();
+        Mat3 result = new Mat3();
         for(int i = 0; i < 9; i++) {
-            temp.data[i] = data[i] * a;
+            result.data[i] = data[i] * a;
         }
-        return temp;
+        return result;
     }
     public Float3 mul(Float3 v) {
-        Float3 temp = new Float3();
-        temp.x = data[0] * v.x + data[1] * v.y + data[2] * v.z;
-        temp.y = data[3] * v.x + data[4] * v.y + data[5] * v.z;
-        temp.z = data[6] * v.x + data[7] * v.y + data[8] * v.z;
-        return temp;
+        Float3 result = new Float3();
+        result.x = data[0] * v.x + data[1] * v.y + data[2] * v.z;
+        result.y = data[3] * v.x + data[4] * v.y + data[5] * v.z;
+        result.z = data[6] * v.x + data[7] * v.y + data[8] * v.z;
+        return result;
     }
     public Mat3 mul(Mat3 m) {
-        Mat3 temp = new Mat3();
-        temp.data[0] = data[0] * m.data[0] + data[1] * m.data[3] + data[2] * m.data[6];
-        temp.data[1] = data[0] * m.data[1] + data[1] * m.data[4] + data[2] * m.data[7];
-        temp.data[2] = data[0] * m.data[2] + data[1] * m.data[5] + data[2] * m.data[8];
-        temp.data[3] = data[3] * m.data[0] + data[4] * m.data[3] + data[5] * m.data[6];
-        temp.data[4] = data[3] * m.data[1] + data[4] * m.data[4] + data[5] * m.data[7];
-        temp.data[5] = data[3] * m.data[2] + data[4] * m.data[5] + data[5] * m.data[8];
-        temp.data[6] = data[6] * m.data[0] + data[7] * m.data[3] + data[8] * m.data[6];
-        temp.data[7] = data[6] * m.data[1] + data[7] * m.data[4] + data[8] * m.data[7];
-        temp.data[8] = data[6] * m.data[2] + data[7] * m.data[5] + data[8] * m.data[8];
-        return temp;
+        Mat3 result = new Mat3();
+        result.data[0] = data[0] * m.data[0] + data[1] * m.data[3] + data[2] * m.data[6];
+        result.data[1] = data[0] * m.data[1] + data[1] * m.data[4] + data[2] * m.data[7];
+        result.data[2] = data[0] * m.data[2] + data[1] * m.data[5] + data[2] * m.data[8];
+        result.data[3] = data[3] * m.data[0] + data[4] * m.data[3] + data[5] * m.data[6];
+        result.data[4] = data[3] * m.data[1] + data[4] * m.data[4] + data[5] * m.data[7];
+        result.data[5] = data[3] * m.data[2] + data[4] * m.data[5] + data[5] * m.data[8];
+        result.data[6] = data[6] * m.data[0] + data[7] * m.data[3] + data[8] * m.data[6];
+        result.data[7] = data[6] * m.data[1] + data[7] * m.data[4] + data[8] * m.data[7];
+        result.data[8] = data[6] * m.data[2] + data[7] * m.data[5] + data[8] * m.data[8];
+        return result;
     }
 
     // Division
@@ -84,16 +84,16 @@ public class Mat3 implements Serializable {
 
     // Inverse
     public Mat3 inv() {
-        Mat3 temp = new Mat3();
-        temp.data[0] = data[4] * data[8] - data[7] * data[5];
-        temp.data[1] = data[2] * data[7] - data[1] * data[8];
-        temp.data[2] = data[1] * data[5] - data[2] * data[4];
-        temp.data[3] = data[5] * data[6] - data[3] * data[8];
-        temp.data[4] = data[0] * data[8] - data[2] * data[6];
-        temp.data[5] = data[3] * data[2] - data[0] * data[5];
-        temp.data[6] = data[3] * data[7] - data[6] * data[4];
-        temp.data[7] = data[6] * data[1] - data[0] * data[7];
-        temp.data[8] = data[0] * data[4] - data[3] * data[1];
+        Mat3 result = new Mat3();
+        result.data[0] = data[4] * data[8] - data[7] * data[5];
+        result.data[1] = data[2] * data[7] - data[1] * data[8];
+        result.data[2] = data[1] * data[5] - data[2] * data[4];
+        result.data[3] = data[5] * data[6] - data[3] * data[8];
+        result.data[4] = data[0] * data[8] - data[2] * data[6];
+        result.data[5] = data[3] * data[2] - data[0] * data[5];
+        result.data[6] = data[3] * data[7] - data[6] * data[4];
+        result.data[7] = data[6] * data[1] - data[0] * data[7];
+        result.data[8] = data[0] * data[4] - data[3] * data[1];
 
         // Det calc
 	    final float det = data[0] * (data[4] * data[8] - data[7] * data[5]) -
@@ -101,38 +101,38 @@ public class Mat3 implements Serializable {
                 data[2] * (data[3] * data[7] - data[4] * data[6]);
 
         // Return
-        return temp.div(det);
+        return result.div(det);
     }
 
     // Translation matrix
     public static Mat3 translation(Float2 translation) {
-        Mat3 temp = new Mat3();
-        temp.data[2] = translation.x;
-        temp.data[5] = translation.y;
-        return temp;
+        Mat3 result = new Mat3();
+        result.data[2] = translation.x;
+        result.data[5] = translation.y;
+        return result;
     }
 
     // Rotation matrix
     public static Mat3 rotation(float rotation) {
         // Computing trig
-	    final float zSin = (float)Math.sin(Math.toRadians(rotation));
-	    final float zCos = (float)Math.cos(Math.toRadians(rotation));
+	    final float zSin = (float) Math.sin(Math.toRadians(rotation));
+	    final float zCos = (float) Math.cos(Math.toRadians(rotation));
 
         // Generating the mat
-        Mat3 temp = new Mat3();
-        temp.data[0] =  zCos;
-        temp.data[1] = -zSin;
-        temp.data[3] =  zSin;
-        temp.data[4] =  zCos;
-        return temp;
+        Mat3 result = new Mat3();
+        result.data[0] =  zCos;
+        result.data[1] = -zSin;
+        result.data[3] =  zSin;
+        result.data[4] =  zCos;
+        return result;
     }
 
     // Scaling matrix
     public static Mat3 scaling(Float2 size) {
-        Mat3 temp = new Mat3();
-        temp.data[0] = size.x;
-        temp.data[4] = size.y;
-        return temp;
+        Mat3 result = new Mat3();
+        result.data[0] = size.x;
+        result.data[4] = size.y;
+        return result;
     }
 
     // String

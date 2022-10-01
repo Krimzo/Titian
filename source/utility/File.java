@@ -84,11 +84,11 @@ public final class File {
                 String[] lineParts = fileLine.split(" ");
 
                 if (Objects.equals(lineParts[0], "v")) {
-                    xyzBuffer.add(new Float3(Float.parseFloat(lineParts[1]), Float.parseFloat(lineParts[2]), Float.parseFloat(lineParts[3]) * -1));
+                    xyzBuffer.add(new Float3(Float.parseFloat(lineParts[1]), Float.parseFloat(lineParts[2]), Float.parseFloat(lineParts[3])));
                 } else if (Objects.equals(lineParts[0], "vt")) {
                     uvBuffer.add(new Float2(Float.parseFloat(lineParts[1]), Float.parseFloat(lineParts[2])));
                 } else if (Objects.equals(lineParts[0], "vn")) {
-                    normBuffer.add(new Float3(Float.parseFloat(lineParts[1]), Float.parseFloat(lineParts[2]), Float.parseFloat(lineParts[3]) * -1));
+                    normBuffer.add(new Float3(Float.parseFloat(lineParts[1]), Float.parseFloat(lineParts[2]), Float.parseFloat(lineParts[3])));
                 } else if (Objects.equals(lineParts[0], "f")) {
                     for (int i = 1; i < 4; i++) {
                         String[] linePartParts = lineParts[i].split("/");

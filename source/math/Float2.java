@@ -82,7 +82,7 @@ public class Float2 implements Serializable {
 
     // Length
     public float len() {
-        return (float)Math.sqrt(x * x + y * y);
+        return (float) Math.sqrt(x * x + y * y);
     }
 
     // Normalization
@@ -97,13 +97,13 @@ public class Float2 implements Serializable {
 
     // Angle between vectors
     public float angle(Float2 v) {
-        return (float)Math.toDegrees(Math.acos(norm().dot(v.norm())));
+        return (float) Math.toDegrees(Math.acos(norm().dot(v.norm())));
     }
 
     // Returns a rotated vector around the given point
     public Float2 rotate(float angle) {
-        final float sinA = (float)Math.sin(Math.toRadians(angle));
-        final float cosA = (float)Math.cos(Math.toRadians(angle));
+        final float sinA = (float) Math.sin(Math.toRadians(angle));
+        final float cosA = (float) Math.cos(Math.toRadians(angle));
         return new Float2(cosA * x - sinA * y, sinA * x + cosA * y);
     }
 

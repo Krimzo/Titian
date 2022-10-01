@@ -3,11 +3,15 @@ package renderer;
 import glparts.*;
 import math.*;
 import scene.Scene;
+import utility.Disposable;
 import window.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class Renderer {
+public class Renderer implements Disposable {
     public final Camera camera = new Camera();
     public final FrameBuffer renderBuffer;
     public final FrameBuffer indexBuffer;
@@ -15,7 +19,8 @@ public class Renderer {
     private final Shaders renderShaders;
     private final Shaders indexShaders;
     private final Shaders outlineShaders;
-    private final Mesh screenMesh;
+
+    public final Map<String, Mesh> predefinedMeshes = new HashMap<>();
 
     public Renderer(GLContext context, Int2 size) {
         renderBuffer = new FrameBuffer(context, size);
@@ -26,7 +31,15 @@ public class Renderer {
         indexShaders = new Shaders(context, "shaders/Index.glsl");
         outlineShaders = new Shaders(context, "shaders/Outline.glsl");
 
-        screenMesh = Mesh.generateScreenMesh();
+        predefinedMeshes.put("ScreenMesh", Mesh.generateScreenMesh());
+    }
+
+    @Override
+    public void dispose() {
+        for (var obj : predefinedMeshes.entrySet()) {
+            obj.getValue().dispose();
+        }
+        predefinedMeshes.clear();
     }
 
     public void resize(Int2 size) {
@@ -69,7 +82,7 @@ public class Renderer {
                 outlineShaders.setUniform("frameSize", frameSize);
                 outlineShaders.setUniform("outlineThickness", 1);
                 outlineShaders.setUniform("selectedIndex", objectIndex + 1);
-                screenMesh.render(outlineShaders);
+                predefinedMeshes.get("ScreenMesh").render(outlineShaders);
             });
             renderBuffer.context.setDepthTest(true);
         });

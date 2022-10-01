@@ -11,9 +11,9 @@ public class Camera {
     public float near = 0.01f;
     public float far = 500.0f;
     public float speed = 2.0f;
-    public float sens = 0.1f;
+    public float sensitivity = 0.1f;
 
-    private Float3 forward = Float3.getPosZ();
+    private Float3 forward = Float3.getNegZ();
     private boolean firstClick = true;
     private boolean camMoving = false;
 
@@ -32,7 +32,7 @@ public class Camera {
     }
 
     public Float3 getRight() {
-        return Float3.getPosY().cross(forward);
+        return forward.cross(Float3.getPosY());
     }
 
     public void moveForward(float deltaTime) {
@@ -61,12 +61,14 @@ public class Camera {
 
     public void rotate(Int2 mousePos, Int2 frameCenter, float verticalAngleLimit) {
 	    final Int2 delta = mousePos.sub(frameCenter);
-        final Float2 rotation = new Float2(delta).mul(sens);
-        Float3 forwardVert = forward.rotate(rotation.y, getRight());
+        final Float2 rotation = new Float2(delta).mul(sensitivity);
+
+        Float3 forwardVert = forward.rotate(-rotation.y, getRight());
         if (Math.abs(forwardVert.angle(Float3.getPosY()) - 90.0f) <= verticalAngleLimit) {
             forward = forwardVert;
         }
-        forward = forward.rotate(rotation.x, Float3.getPosY());
+
+        forward = forward.rotate(-rotation.x, Float3.getPosY());
     }
 
     public Mat4 viewMatrix() {
@@ -100,10 +102,12 @@ public class Camera {
         window.mouse.rmb.onDown = () -> {
             if (camMoving) {
 			    final Int2 frameCenter = window.getSize().div(2);
+
                 if (!firstClick) {
                     rotate(window.mouse.getPosition(), frameCenter, 85.0f);
                 }
                 firstClick = false;
+
                 window.mouse.setPosition(frameCenter);
             }
         };

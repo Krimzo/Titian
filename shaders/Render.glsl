@@ -34,7 +34,7 @@ void main() {
     vec4 textureColor = texture(colorMap, outTexture);
     vec3 pixelNormal = normalize(outNormal);
 
-    vec3 lightDirection = normalize(vec3(1, -1, 1));
+    vec3 lightDirection = normalize(vec3(1, -1, -1));
     float diffuseFactor = dot(pixelNormal, -lightDirection);
 
     outPixel = textureColor * diffuseFactor;

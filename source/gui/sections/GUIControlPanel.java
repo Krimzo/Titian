@@ -23,7 +23,7 @@ public final class GUIControlPanel extends GUISection {
             float buttonSize = windowRegion.y * 0.5f;
 
             boolean gameRunning = (boolean) editor.savedData.get("GameRunning");
-            Texture playStateTexture = gameRunning ? editor.guiRenderer.loadedTextures.get("StopIcon") : editor.guiRenderer.loadedTextures.get("PlayIcon");
+            Texture playStateTexture = gameRunning ? editor.guiRenderer.predefineTextures.get("StopIcon") : editor.guiRenderer.predefineTextures.get("PlayIcon");
             if (ImGui.imageButton(playStateTexture.getBuffer(), buttonSize, buttonSize)) {
                 if (!gameRunning) {
                     editor.scene.toFile(SAVED_RUN_SCENE);
@@ -37,7 +37,7 @@ public final class GUIControlPanel extends GUISection {
             ImGui.sameLine();
 
             boolean wireframeEnabled = (boolean) editor.savedData.get("WireframeState");
-            Texture wireframeTexture = wireframeEnabled ? editor.guiRenderer.loadedTextures.get("SolidIcon") : editor.guiRenderer.loadedTextures.get("WireIcon");
+            Texture wireframeTexture = wireframeEnabled ? editor.guiRenderer.predefineTextures.get("SolidIcon") : editor.guiRenderer.predefineTextures.get("WireIcon");
             if (ImGui.imageButton(wireframeTexture.getBuffer(), buttonSize, buttonSize)) {
                 editor.savedData.put("WireframeState", !wireframeEnabled);
             }

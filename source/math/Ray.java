@@ -94,7 +94,7 @@ public class Ray implements Serializable {
         }
 
         // Intersect distance calculation
-        final float thc = (float)Math.sqrt(rr - ccDot);
+        final float thc = (float) Math.sqrt(rr - ccDot);
         final float dis0 = cdDot - thc;
         final float dis1 = cdDot + thc;
 

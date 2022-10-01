@@ -149,7 +149,7 @@ public class Float4 implements Serializable {
 
     // Length
     public float len() {
-        return (float)Math.sqrt(x * x + y * y + z * z + w * w);
+        return (float) Math.sqrt(x * x + y * y + z * z + w * w);
     }
 
     // Normalization
@@ -164,7 +164,7 @@ public class Float4 implements Serializable {
 
     // Angle between vectors
     float angle(Float4 a) {
-        return (float)Math.toDegrees(Math.acos(norm().dot(a.norm())));
+        return (float) Math.toDegrees(Math.acos(norm().dot(a.norm())));
     }
 
     // Constants

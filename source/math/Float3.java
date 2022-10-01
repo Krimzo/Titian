@@ -111,7 +111,7 @@ public class Float3 implements Serializable {
 
     // Length
     public float len() {
-        return (float)Math.sqrt(x * x + y * y + z * z);
+        return (float) Math.sqrt(x * x + y * y + z * z);
     }
 
     // Normalization
@@ -131,15 +131,15 @@ public class Float3 implements Serializable {
 
     // Angle between vectors
     public float angle(Float3 a) {
-        return (float)Math.toDegrees(Math.acos(norm().dot(a.norm())));
+        return (float) Math.toDegrees(Math.acos(norm().dot(a.norm())));
     }
 
     // Returns a rotated vector around the given axis
     private static final float halfAngleRad = (float)(Math.PI / 360.0f);
     public Float3 rotate(float angle, Float3 axis) {
         // Calculating trig values
-        final float angleSin = (float)Math.sin(angle * halfAngleRad);
-        final float angleCos = (float)Math.cos(angle * halfAngleRad);
+        final float angleSin = (float) Math.sin(angle * halfAngleRad);
+        final float angleCos = (float) Math.cos(angle * halfAngleRad);
 
         // Calculating quaternion constants
         final float qx = axis.x * angleSin;
@@ -162,6 +162,11 @@ public class Float3 implements Serializable {
         temp.y = (xy + zw + zw + xy) * x + ( y2 - z2 + w2 - x2) * y + (yz + yz - xw - xw) * z;
         temp.z = (xz - yw + xz - yw) * x + ( yz + yz + xw + xw) * y + (z2 - y2 - x2 + w2) * z;
         return temp;
+    }
+
+    public Float3 reflect(Float3 vec) {
+        final Float3 normal = vec.norm();
+        return this.sub(normal.mul(2 * this.dot(normal)));
     }
 
     // Constants

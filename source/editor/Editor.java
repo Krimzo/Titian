@@ -102,6 +102,7 @@ public class Editor implements Disposable {
 
     @Override
     public void dispose() {
+        renderer.dispose();
         guiRenderer.dispose();
         window.dispose();
     }

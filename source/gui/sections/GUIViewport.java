@@ -1,13 +1,12 @@
 package gui.sections;
 
 import editor.*;
-import entity.Entity;
-import entity.components.TransformComponent;
+import entity.*;
+import entity.components.*;
 import gui.*;
 import imgui.*;
-import imgui.extension.imguizmo.ImGuizmo;
-import imgui.extension.imguizmo.flag.Mode;
-import imgui.extension.imguizmo.flag.Operation;
+import imgui.extension.imguizmo.*;
+import imgui.extension.imguizmo.flag.*;
 import imgui.flag.*;
 import math.*;
 import utility.Pair;

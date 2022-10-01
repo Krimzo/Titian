@@ -17,7 +17,7 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
     private final ImGuiImplGlfw implGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 implGl3 = new ImGuiImplGl3();
 
-    public final Map<String, Texture> loadedTextures = new HashMap<>();
+    public final Map<String, Texture> predefineTextures = new HashMap<>();
 
     public GUIRenderer(Window window) {
         ImGui.createContext();
@@ -28,18 +28,18 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
 
         loadCustomTheme();
 
-        loadedTextures.put("PlayIcon", new Texture(null, null, window.getContext(), "resource/textures/control/play.png", false));
-        loadedTextures.put("StopIcon", new Texture(null, null, window.getContext(), "resource/textures/control/stop.png", false));
-        loadedTextures.put("WireIcon", new Texture(null, null, window.getContext(), "resource/textures/control/wire.png", false));
-        loadedTextures.put("SolidIcon", new Texture(null, null, window.getContext(), "resource/textures/control/solid.png", false));
+        predefineTextures.put("PlayIcon", new Texture(null, null, window.getContext(), "resource/textures/control/play.png", false));
+        predefineTextures.put("StopIcon", new Texture(null, null, window.getContext(), "resource/textures/control/stop.png", false));
+        predefineTextures.put("WireIcon", new Texture(null, null, window.getContext(), "resource/textures/control/wire.png", false));
+        predefineTextures.put("SolidIcon", new Texture(null, null, window.getContext(), "resource/textures/control/solid.png", false));
     }
 
     @Override
     public void dispose() {
-        for (var obj : loadedTextures.entrySet()) {
+        for (var obj : predefineTextures.entrySet()) {
             obj.getValue().dispose();
         }
-        loadedTextures.clear();
+        predefineTextures.clear();
 
         implGl3.dispose();
         implGlfw.dispose();
@@ -61,9 +61,7 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
         implGl3.renderDrawData(ImGui.getDrawData());
     }
 
-    private void loadCustomTheme() {
-        ImGuiIO io = ImGui.getIO();
-
+    public static void loadCustomTheme() {
         ImGui.styleColorsDark();
         ImGuiStyle style = ImGui.getStyle();
 
