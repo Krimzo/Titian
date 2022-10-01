@@ -1,5 +1,6 @@
 package renderer;
 
+import imgui.ImGui;
 import math.*;
 import utility.Timer;
 import window.Window;
@@ -84,27 +85,43 @@ public class Camera {
     }
 
     public void setDefaultMovement(Window window, Timer timer) {
-        window.keyboard.w.onDown = () -> moveForward(timer.getDeltaT());
-        window.keyboard.a.onDown = () -> moveLeft(timer.getDeltaT());
-        window.keyboard.s.onDown = () -> moveBack(timer.getDeltaT());
-        window.keyboard.d.onDown = () -> moveRight(timer.getDeltaT());
-        window.keyboard.e.onDown = () -> moveUp(timer.getDeltaT());
-        window.keyboard.q.onDown = () -> moveDown(timer.getDeltaT());
+        window.keyboard.w.onDown = () -> {
+            moveForward(timer.getDeltaT());
+        };
+        window.keyboard.a.onDown = () -> {
+            moveLeft(timer.getDeltaT());
+        };
+        window.keyboard.s.onDown = () -> {
+            moveBack(timer.getDeltaT());
+        };
+        window.keyboard.d.onDown = () -> {
+            moveRight(timer.getDeltaT());
+        };
+        window.keyboard.e.onDown = () -> {
+            moveUp(timer.getDeltaT());
+        };
+        window.keyboard.q.onDown = () -> {
+            moveDown(timer.getDeltaT());
+        };
 
-        window.keyboard.shift.onPress = () -> speed = 5.0f;
-        window.keyboard.shift.onRelease = () -> speed = 2.0f;
+        window.keyboard.shift.onPress = () -> {
+            speed = 5;
+        };
+        window.keyboard.shift.onRelease = () -> {
+            speed = 2;
+        };
 
-        window.mouse.rmb.onPress = () -> {
+        window.mouse.mmb.onPress = () -> {
             window.mouse.setHidden(true);
             camMoving = true;
         };
 
-        window.mouse.rmb.onDown = () -> {
+        window.mouse.mmb.onDown = () -> {
             if (camMoving) {
 			    final Int2 frameCenter = window.getSize().div(2);
 
                 if (!firstClick) {
-                    rotate(window.mouse.getPosition(), frameCenter, 85.0f);
+                    rotate(window.mouse.getPosition(), frameCenter, 85);
                 }
                 firstClick = false;
 
@@ -112,7 +129,7 @@ public class Camera {
             }
         };
 
-        window.mouse.rmb.onRelease = () -> {
+        window.mouse.mmb.onRelease = () -> {
             window.mouse.setHidden(false);
             firstClick = true;
             camMoving = false;

@@ -60,7 +60,7 @@ public final class GUIViewport extends GUISection {
             gizmoOperation = (gizmoOperation != Operation.TRANSLATE) ? Operation.TRANSLATE : 0;
         }
         editor.savedData.put("GizmoOperation", gizmoOperation);
-        return new Pair<>(gizmoOperation, Mode.WORLD); // Maybe future change
+        return new Pair<>(gizmoOperation, Mode.WORLD);
     }
 
     private void renderGizmos(Int2 viewportPosition, Int2 viewportSize, int gizmoOperation, int gizmoMode) {

@@ -39,19 +39,21 @@ public class TitianCreator {
         editor.scene = Scene.fromFile("resource/scenes/test.scene");
     }
 
-    public static void setup(Editor editor) {
-        try {
-            saveTestScene(editor);
-            loadTestScene(editor);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void main(String[] args) throws Exception {
         Editor editor = new Editor();
-        editor.setup(TitianCreator::setup);
+
+        System.setOut(editor.logger);
+        System.setErr(editor.logger);
+
+        editor.setup((ed) -> {
+            try {
+                saveTestScene(ed);
+                loadTestScene(ed);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
         while (editor.process()) {
             editor.update(ignored -> {});

@@ -1,7 +1,6 @@
 package editor;
 
 import callback.EditorCallback;
-import imgui.extension.imguizmo.flag.Mode;
 import utility.Disposable;
 import gui.GUIRenderer;
 import gui.sections.*;
@@ -17,6 +16,7 @@ import window.Window;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import logging.Logger;
 
 public class Editor implements Disposable {
     public final Map<String, Object> savedData = new HashMap<>();
@@ -27,6 +27,8 @@ public class Editor implements Disposable {
     public Renderer renderer = new Renderer(window.getContext(), window.getSize());
     public GUIRenderer guiRenderer = new GUIRenderer(window);
     public Physics physics = new Physics();
+
+    public Logger logger = new Logger();
 
     public Scene scene = null;
 
