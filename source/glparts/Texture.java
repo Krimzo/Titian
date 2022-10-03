@@ -1,10 +1,11 @@
 package glparts;
 
 import callback.EmptyCallback;
+import glparts.abs.GLObject;
 import math.*;
 import named.NameHolder;
 import window.*;
-import utility.File;
+import utility.Files;
 import utility.Memory;
 
 import java.io.*;
@@ -28,7 +29,7 @@ public class Texture extends GLObject implements Serializable {
     }
 
     public Texture(NameHolder holder, String name, GLContext context, String filepath, boolean flipY) {
-        this(holder, name, context, File.getImageSize(filepath), File.getImageData(filepath, flipY));
+        this(holder, name, context, Files.getImageSize(filepath), Files.getImageData(filepath, flipY));
     }
 
     public Texture(NameHolder holder, String name, GLContext context, String filepath) {

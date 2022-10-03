@@ -1,6 +1,5 @@
-package glparts;
+package glparts.abs;
 
-import utility.Disposable;
 import named.NameHolder;
 import named.Named;
 import window.GLContext;

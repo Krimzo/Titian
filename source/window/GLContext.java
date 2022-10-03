@@ -1,6 +1,6 @@
 package window;
 
-import utility.Disposable;
+import glparts.abs.Disposable;
 import math.*;
 import org.lwjgl.opengl.GL;
 

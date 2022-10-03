@@ -1,9 +1,9 @@
-package gui.sections;
+package gui.section;
 
 import editor.*;
 import entity.Entity;
 import glparts.Mesh;
-import gui.*;
+import gui.abs.GUISection;
 import imgui.*;
 import imgui.flag.*;
 import material.Material;
@@ -14,10 +14,7 @@ public final class GUIProperties extends GUISection {
     }
 
     private Entity getSelectedEntity() {
-        if (editor.scene != null) {
-            return editor.scene.selectedEntity;
-        }
-        return null;
+        return (editor.scene != null) ? editor.scene.selectedEntity : null;
     }
 
     @Override
@@ -37,7 +34,7 @@ public final class GUIProperties extends GUISection {
                 ImGui.separator();
 
                 for (Mesh mesh : editor.scene.meshes) {
-                    if (ImGui.selectable(mesh.getName())) {
+                    if (ImGui.selectable(mesh.getName(), selected.meshComponent.mesh == mesh)) {
                         selected.meshComponent.mesh = mesh;
                     }
                 }
@@ -51,7 +48,7 @@ public final class GUIProperties extends GUISection {
                 ImGui.separator();
 
                 for (Material material : editor.scene.materials) {
-                    if (ImGui.selectable(material.getName())) {
+                    if (ImGui.selectable(material.getName(), selected.materialComponent.material == material)) {
                         selected.materialComponent.material = material;
                     }
                 }

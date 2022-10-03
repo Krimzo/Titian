@@ -1,8 +1,8 @@
-package gui.sections;
+package gui.section;
 
 import editor.Editor;
 import glparts.Texture;
-import gui.GUISection;
+import gui.abs.GUISection;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiWindowFlags;

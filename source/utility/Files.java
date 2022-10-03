@@ -10,17 +10,37 @@ import java.util.*;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public final class File {
-    private File() {}
+public final class Files {
+    private Files() {}
 
     public static String read(String filePath) {
         try {
-            return Files.readString(Path.of(filePath));
+            return java.nio.file.Files.readString(Path.of(filePath));
         }
         catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static boolean isEmpty(String filepath) {
+        File[] files = new File(filepath).listFiles();
+        return files == null || files.length == 0;
+    }
+
+    public static String getExtension(String filepath) {
+        final int index = filepath.lastIndexOf('.');
+        return (index >= 0) ? filepath.substring(index + 1) : "";
+    }
+
+    public static File[] listFolders(String filepath) {
+        File[] folders = new File(filepath).listFiles(File::isDirectory);
+        return (folders != null) ? folders : new File[0];
+    }
+
+    public static File[] listFiles(String filepath) {
+        File[] files = new File(filepath).listFiles(File::isFile);
+        return (files != null) ? files : new File[0];
     }
 
     private static String getShaderDeclaration(int type) {

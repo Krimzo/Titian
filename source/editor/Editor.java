@@ -1,9 +1,9 @@
 package editor;
 
 import callback.EditorCallback;
-import utility.Disposable;
+import glparts.abs.Disposable;
 import gui.GUIRenderer;
-import gui.sections.*;
+import gui.section.*;
 import math.Float2;
 import math.Float4;
 import math.Int2;
@@ -49,11 +49,11 @@ public class Editor implements Disposable {
         guiRenderer.add(new GUILogView(this));
         guiRenderer.add(new GUIProperties(this));
 
+        savedData.put("SpecialColor", new Color(190, 115, 10));
         savedData.put("GameRunning", false);
         savedData.put("WireframeState", false);
         savedData.put("ViewportPosition", new Int2());
         savedData.put("ViewportSize", new Int2());
-        savedData.put("OutlineColor", new Color(0xDA7315));
         savedData.put("GizmoOperation", 0);
     }
 
@@ -80,7 +80,7 @@ public class Editor implements Disposable {
         if (scene != null) {
             boolean wireframeState = (boolean) savedData.get("WireframeState");
             Int2 viewportSize = (Int2) savedData.get("ViewportSize");
-            Color outlineColor = (Color) savedData.get("OutlineColor");
+            Color outlineColor = (Color) savedData.get("SpecialColor");
             int selectedIndex = scene.indexOf(scene.selectedEntity);
 
             window.getContext().setViewport(viewportSize);

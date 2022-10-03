@@ -1,7 +1,7 @@
-package gui.sections;
+package gui.section;
 
 import editor.Editor;
-import gui.GUISection;
+import gui.abs.GUISection;
 import imgui.ImGui;
 
 public final class GUIMeshEditor extends GUISection {

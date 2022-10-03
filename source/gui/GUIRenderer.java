@@ -1,12 +1,15 @@
 package gui;
 
+import callback.EmptyCallback;
 import glparts.Texture;
+import gui.abs.GUIRenderable;
 import imgui.extension.imguizmo.ImGuizmo;
-import utility.Disposable;
+import glparts.abs.Disposable;
 import imgui.*;
 import imgui.flag.*;
 import imgui.gl3.*;
 import imgui.glfw.*;
+import math.Float4;
 import window.*;
 
 import java.util.ArrayList;
@@ -28,10 +31,20 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
 
         loadCustomTheme();
 
+        // Viewport
         predefineTextures.put("PlayIcon", new Texture(null, null, window.getContext(), "resource/textures/control/play.png", false));
         predefineTextures.put("StopIcon", new Texture(null, null, window.getContext(), "resource/textures/control/stop.png", false));
         predefineTextures.put("WireIcon", new Texture(null, null, window.getContext(), "resource/textures/control/wire.png", false));
         predefineTextures.put("SolidIcon", new Texture(null, null, window.getContext(), "resource/textures/control/solid.png", false));
+
+        // Explorer
+        predefineTextures.put("FolderIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/folder.png", false));
+        predefineTextures.put("EmptyFolderIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/folder_empty.png", false));
+        predefineTextures.put("FileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/file.png", false));
+        predefineTextures.put("ImageFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/image.png", false));
+        predefineTextures.put("MeshFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/mesh.png", false));
+        predefineTextures.put("ScriptFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/script.png", false));
+        predefineTextures.put("CodeFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/code.png", false));
     }
 
     @Override
@@ -61,6 +74,12 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
         implGl3.renderDrawData(ImGui.getDrawData());
     }
 
+    public static void useColor(int styleType, Float4 color, EmptyCallback callback) {
+        ImGui.pushStyleColor(styleType, color.x, color.y, color.z, color.w);
+        callback.method();
+        ImGui.popStyleColor();
+    }
+
     public static void loadCustomTheme() {
         ImGui.styleColorsDark();
         ImGuiStyle style = ImGui.getStyle();
@@ -82,10 +101,10 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
         style.setChildBorderSize(1.0f);
         style.setChildRounding(5.0f);
 
-	    ImVec4 colorDark = new ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
-	    ImVec4 colorMid = new ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-	    ImVec4 colorLight = new ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
-	    ImVec4 colorSpec = new ImVec4(0.7f, 0.4f, 0.0f, 1.0f);
+	    Float4 colorDark = new Float4(0.1f, 0.1f, 0.1f, 1.0f);
+	    Float4 colorNormal = new Float4(0.2f, 0.2f, 0.2f, 1.0f);
+	    Float4 colorLight = new Float4(0.3f, 0.3f, 0.3f, 1.0f);
+	    Float4 colorSpecial = new Float4(0.7f, 0.4f, 0.0f, 1.0f);
 
         style.setColor(ImGuiCol.Text, 0.95f, 0.95f, 0.95f, 1.0f);
         style.setColor(ImGuiCol.TextDisabled, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
@@ -93,9 +112,9 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
         style.setColor(ImGuiCol.ChildBg, colorDark.x, colorDark.y, colorDark.z, colorDark.w);
         style.setColor(ImGuiCol.PopupBg, colorDark.x, colorDark.y, colorDark.z, colorDark.w);
         style.setColor(ImGuiCol.Border, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
-        style.setColor(ImGuiCol.BorderShadow, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
+        style.setColor(ImGuiCol.BorderShadow, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
         style.setColor(ImGuiCol.FrameBg, colorDark.x, colorDark.y, colorDark.z, colorDark.w);
-        style.setColor(ImGuiCol.FrameBgHovered, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
+        style.setColor(ImGuiCol.FrameBgHovered, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
         style.setColor(ImGuiCol.FrameBgActive, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
         style.setColor(ImGuiCol.TitleBg, colorDark.x, colorDark.y, colorDark.z, colorDark.w);
         style.setColor(ImGuiCol.TitleBgActive, colorDark.x, colorDark.y, colorDark.z, colorDark.w);
@@ -103,44 +122,44 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
         style.setColor(ImGuiCol.MenuBarBg, colorDark.x, colorDark.y, colorDark.z, colorDark.w);
         style.setColor(ImGuiCol.ScrollbarBg, colorDark.x, colorDark.y, colorDark.z, colorDark.w);
         style.setColor(ImGuiCol.ScrollbarGrab, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
-        style.setColor(ImGuiCol.ScrollbarGrabHovered, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
+        style.setColor(ImGuiCol.ScrollbarGrabHovered, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
         style.setColor(ImGuiCol.ScrollbarGrabActive, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
-        style.setColor(ImGuiCol.CheckMark, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.SliderGrab, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.SliderGrabActive, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.Button, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
+        style.setColor(ImGuiCol.CheckMark, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.SliderGrab, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.SliderGrabActive, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.Button, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
         style.setColor(ImGuiCol.ButtonHovered, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
         style.setColor(ImGuiCol.ButtonActive, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
-        style.setColor(ImGuiCol.Header, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
+        style.setColor(ImGuiCol.Header, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
         style.setColor(ImGuiCol.HeaderHovered, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
-        style.setColor(ImGuiCol.HeaderActive, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.Separator, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
+        style.setColor(ImGuiCol.HeaderActive, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.Separator, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
         style.setColor(ImGuiCol.SeparatorHovered, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
-        style.setColor(ImGuiCol.SeparatorActive, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.ResizeGrip, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
+        style.setColor(ImGuiCol.SeparatorActive, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.ResizeGrip, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
         style.setColor(ImGuiCol.ResizeGripHovered, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
-        style.setColor(ImGuiCol.ResizeGripActive, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.Tab, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
-        style.setColor(ImGuiCol.TabHovered, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.TabActive, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.TabUnfocused, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
+        style.setColor(ImGuiCol.ResizeGripActive, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.Tab, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
+        style.setColor(ImGuiCol.TabHovered, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.TabActive, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.TabUnfocused, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
         style.setColor(ImGuiCol.TabUnfocusedActive, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
-        style.setColor(ImGuiCol.DockingPreview, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.DockingEmptyBg, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
-        style.setColor(ImGuiCol.PlotLines, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
+        style.setColor(ImGuiCol.DockingPreview, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.DockingEmptyBg, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
+        style.setColor(ImGuiCol.PlotLines, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
         style.setColor(ImGuiCol.PlotLinesHovered, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
-        style.setColor(ImGuiCol.PlotHistogram, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
+        style.setColor(ImGuiCol.PlotHistogram, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
         style.setColor(ImGuiCol.PlotHistogramHovered, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
-        style.setColor(ImGuiCol.TableHeaderBg, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
+        style.setColor(ImGuiCol.TableHeaderBg, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
         style.setColor(ImGuiCol.TableBorderStrong, colorDark.x, colorDark.y, colorDark.z, colorDark.w);
         style.setColor(ImGuiCol.TableBorderLight, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
         style.setColor(ImGuiCol.TableRowBg, colorDark.x, colorDark.y, colorDark.z, colorDark.w);
-        style.setColor(ImGuiCol.TableRowBgAlt, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
+        style.setColor(ImGuiCol.TableRowBgAlt, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
         style.setColor(ImGuiCol.TextSelectedBg, colorLight.x, colorLight.y, colorLight.z, colorLight.w);
-        style.setColor(ImGuiCol.DragDropTarget, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.NavHighlight, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.NavWindowingHighlight, colorSpec.x, colorSpec.y, colorSpec.z, colorSpec.w);
-        style.setColor(ImGuiCol.NavWindowingDimBg, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
-        style.setColor(ImGuiCol.ModalWindowDimBg, colorMid.x, colorMid.y, colorMid.z, colorMid.w);
+        style.setColor(ImGuiCol.DragDropTarget, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.NavHighlight, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.NavWindowingHighlight, colorSpecial.x, colorSpecial.y, colorSpecial.z, colorSpecial.w);
+        style.setColor(ImGuiCol.NavWindowingDimBg, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
+        style.setColor(ImGuiCol.ModalWindowDimBg, colorNormal.x, colorNormal.y, colorNormal.z, colorNormal.w);
     }
 }

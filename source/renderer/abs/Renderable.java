@@ -1,4 +1,4 @@
-package renderer;
+package renderer.abs;
 
 import glparts.Shaders;
 

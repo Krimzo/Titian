@@ -1,9 +1,10 @@
 package glparts;
 
-import renderer.Renderable;
+import glparts.abs.GLObject;
+import renderer.abs.Renderable;
 import math.*;
 import named.NameHolder;
-import utility.File;
+import utility.Files;
 import utility.Memory;
 import utility.Pair;
 import window.*;
@@ -29,7 +30,7 @@ public class Mesh extends GLObject implements Renderable, Serializable {
     }
 
     public Mesh(NameHolder holder, String name, GLContext context, String filePath) throws Exception {
-        this(holder, name, context, File.parseMeshFile(filePath));
+        this(holder, name, context, Files.parseMeshFile(filePath));
     }
 
     @Override

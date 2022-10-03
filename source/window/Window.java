@@ -1,10 +1,10 @@
 package window;
 
 import callback.ResizeCallback;
-import utility.Disposable;
+import glparts.abs.Disposable;
 import math.Int2;
 import org.lwjgl.glfw.GLFWImage;
-import utility.File;
+import utility.Files;
 import utility.Memory;
 import window.input.*;
 
@@ -129,8 +129,8 @@ public class Window implements Disposable {
     }
 
     public void setIcon(String filepath) {
-        Int2 imageSize = File.getImageSize(filepath);
-        byte[] imageData = File.getImageData(filepath, false);
+        Int2 imageSize = Files.getImageSize(filepath);
+        byte[] imageData = Files.getImageData(filepath, false);
 
         if (imageData != null) {
             GLFWImage image = GLFWImage.create();

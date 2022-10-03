@@ -1,8 +1,9 @@
 package glparts;
 
 import callback.EmptyCallback;
+import glparts.abs.GLObject;
 import math.*;
-import utility.File;
+import utility.Files;
 import window.*;
 
 import java.io.*;
@@ -26,7 +27,7 @@ public class Shaders extends GLObject implements Serializable {
     }
 
     public Shaders(GLContext context, String filepath) {
-        this(context, File.parseShader(filepath, GL_VERTEX_SHADER), File.parseShader(filepath, GL_FRAGMENT_SHADER));
+        this(context, Files.parseShader(filepath, GL_VERTEX_SHADER), Files.parseShader(filepath, GL_FRAGMENT_SHADER));
     }
 
     @Override

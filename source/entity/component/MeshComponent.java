@@ -1,10 +1,10 @@
-package entity.components;
+package entity.component;
 
 import glparts.Mesh;
 import glparts.Shaders;
-import gui.GUIRenderable;
+import gui.abs.GUIRenderable;
 import imgui.ImGui;
-import renderer.Renderable;
+import renderer.abs.Renderable;
 
 import java.io.Serializable;
 

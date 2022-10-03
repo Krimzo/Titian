@@ -1,6 +1,7 @@
 package glparts;
 
 import callback.EmptyCallback;
+import glparts.abs.GLObject;
 import math.Float4;
 import math.Int2;
 import window.GLContext;

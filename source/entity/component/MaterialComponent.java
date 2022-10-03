@@ -1,7 +1,7 @@
-package entity.components;
+package entity.component;
 
 import callback.EmptyCallback;
-import gui.GUIRenderable;
+import gui.abs.GUIRenderable;
 import imgui.ImGui;
 import material.Material;
 

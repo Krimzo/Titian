@@ -1,11 +1,10 @@
-package gui.sections;
+package gui.section;
 
 import editor.Editor;
 import entity.Entity;
-import gui.GUISection;
+import gui.abs.GUISection;
 import imgui.ImGui;
 import imgui.flag.ImGuiWindowFlags;
-import scene.Scene;
 
 public final class GUIScene extends GUISection {
     public GUIScene(Editor editor) {

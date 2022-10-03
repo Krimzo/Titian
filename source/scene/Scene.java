@@ -3,12 +3,12 @@ package scene;
 import entity.Entity;
 import glparts.Mesh;
 import glparts.Texture;
-import utility.Disposable;
+import glparts.abs.Disposable;
 import glparts.Shaders;
 import material.Material;
 import named.NameHolder;
 import physics.Physical;
-import renderer.Renderable;
+import renderer.abs.Renderable;
 
 import java.io.*;
 import java.util.*;

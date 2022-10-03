@@ -2,8 +2,9 @@ package renderer;
 
 import glparts.*;
 import math.*;
+import renderer.abs.Renderable;
 import scene.Scene;
-import utility.Disposable;
+import glparts.abs.Disposable;
 import window.*;
 
 import java.util.HashMap;

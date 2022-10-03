@@ -1,9 +1,9 @@
-package gui.sections;
+package gui.section;
 
 import editor.*;
 import entity.*;
-import entity.components.*;
-import gui.*;
+import entity.component.*;
+import gui.abs.GUISection;
 import imgui.*;
 import imgui.extension.imguizmo.*;
 import imgui.extension.imguizmo.flag.*;

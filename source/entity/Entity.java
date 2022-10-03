@@ -1,9 +1,9 @@
 package entity;
 
-import entity.components.*;
+import entity.component.*;
 import glparts.*;
 import physics.Physical;
-import renderer.Renderable;
+import renderer.abs.Renderable;
 import named.*;
 
 import java.io.Serializable;
