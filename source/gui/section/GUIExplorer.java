@@ -7,6 +7,7 @@ import imgui.ImGui;
 import imgui.ImGuiStyle;
 import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiWindowFlags;
 import utility.Files;
 
@@ -29,6 +30,16 @@ public final class GUIExplorer extends GUISection {
             return editor.guiRenderer.predefineTextures.get("EmptyFolderIcon");
         }
         return editor.guiRenderer.predefineTextures.get("FolderIcon");
+    }
+
+    private String getFileType(File file) {
+        return switch (Files.getExtension(file.toString())) {
+            case "obj" -> "MeshFile";
+            case "jpg", "png", "bmp" -> "ImageFile";
+            case "c", "cpp", "h", "glsl" -> "CodeFile";
+            case "java" -> "ScriptFile";
+            default -> "File";
+        };
     }
 
     private Texture getFileIcon(File file) {
@@ -67,8 +78,10 @@ public final class GUIExplorer extends GUISection {
     }
 
     private void renderFile(File file) {
+        Texture fileIcon = getFileIcon(file);
+
         ImGui.pushID(file.toString());
-        if (ImGui.imageButton(getFileIcon(file).getBuffer(), buttonSize, buttonSize)) {
+        if (ImGui.imageButton(fileIcon.getBuffer(), buttonSize, buttonSize)) {
             try {
                 Desktop.getDesktop().open(file);
             }
@@ -77,6 +90,12 @@ public final class GUIExplorer extends GUISection {
             }
         }
         ImGui.popID();
+
+        if (ImGui.beginDragDropSource()) {
+            ImGui.setDragDropPayload(getFileType(file), file.getAbsolutePath());
+            ImGui.image(fileIcon.getBuffer(), 50, 50);
+            ImGui.endDragDropSource();
+        }
 
         ImGui.textWrapped(file.getName());
         ImGui.nextColumn();

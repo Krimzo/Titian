@@ -10,6 +10,7 @@ import math.Int2;
 import physics.Physics;
 import renderer.Renderer;
 import scene.Scene;
+import script.Scripter;
 import utility.Timer;
 import window.Window;
 
@@ -29,6 +30,7 @@ public class Editor implements Disposable {
     public Physics physics = new Physics();
 
     public Logger logger = new Logger();
+    public Scripter scripter = new Scripter();
 
     public Scene scene = null;
 
@@ -41,9 +43,10 @@ public class Editor implements Disposable {
 
         guiRenderer.add(new GUIMainMenu(this));
         guiRenderer.add(new GUIScene(this));
+        guiRenderer.add(new GUIControlPanel(this));
         guiRenderer.add(new GUIMeshEditor(this));
         guiRenderer.add(new GUIMaterialEditor(this));
-        guiRenderer.add(new GUIControlPanel(this));
+        guiRenderer.add(new GUIScriptEditor(this));
         guiRenderer.add(new GUIViewport(this));
         guiRenderer.add(new GUIExplorer(this));
         guiRenderer.add(new GUILogView(this));
@@ -57,7 +60,7 @@ public class Editor implements Disposable {
         savedData.put("GizmoOperation", 0);
     }
 
-    public void setup(EditorCallback setupCallback) throws Exception {
+    public void setup(EditorCallback setupCallback) {
         setupCallback.method(this);
         window.maximize();
         timer.reset();
@@ -67,12 +70,12 @@ public class Editor implements Disposable {
         return window.process();
     }
 
-    public void update(EditorCallback gameUpdateCallback) throws Exception {
+    public void update() {
         timer.updateDeltaT();
 
         if ((boolean) savedData.get("GameRunning")) {
             physics.update(scene, timer.getDeltaT());
-            gameUpdateCallback.method(this);
+            scripter.callUpdates(scene);
         }
 
         window.getContext().clear(false);

@@ -9,7 +9,7 @@ import imgui.flag.ImGuiWindowFlags;
 import scene.Scene;
 
 public final class GUIControlPanel extends GUISection {
-    private static final String SAVED_RUN_SCENE = "resource/scenes/saved_run.scene";
+    private static final String SAVED_RUN_SCENE = "saved_run.scene";
 
     public GUIControlPanel(Editor editor) {
         super(editor);
@@ -27,6 +27,7 @@ public final class GUIControlPanel extends GUISection {
             if (ImGui.imageButton(playStateTexture.getBuffer(), buttonSize, buttonSize)) {
                 if (!gameRunning) {
                     editor.scene.toFile(SAVED_RUN_SCENE);
+                    editor.scripter.callStarts(editor.scene);
                 }
                 else {
                     editor.destroyCurrentScene();

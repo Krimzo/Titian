@@ -3,8 +3,8 @@ package named;
 import java.io.Serializable;
 
 public abstract class Named implements Serializable {
-    private final NameHolder holder;
     private String name = "Orphan Named";
+    private final NameHolder holder;
 
     public Named(NameHolder holder, String name) {
         this.holder = holder;
@@ -19,7 +19,9 @@ public abstract class Named implements Serializable {
     }
 
     public void eraseName() {
-        holder.names.remove(name);
+        if (holder != null) {
+            holder.names.remove(name);
+        }
         name = null;
     }
 
@@ -29,13 +31,17 @@ public abstract class Named implements Serializable {
 
     public void setName(String name) {
         String possibleName = name;
-        holder.names.remove(this.name);
 
-        for (int i = 1; holder.names.contains(possibleName); i++) {
-            possibleName = name + i;
+        if (holder != null) {
+            holder.names.remove(this.name);
+
+            for (int i = 1; holder.names.contains(possibleName); i++) {
+                possibleName = name + i;
+            }
+
+            holder.names.add(possibleName);
         }
 
-        holder.names.add(possibleName);
         this.name = possibleName;
     }
 }

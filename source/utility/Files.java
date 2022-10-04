@@ -13,13 +13,13 @@ import static org.lwjgl.opengl.GL33.*;
 public final class Files {
     private Files() {}
 
-    public static String read(String filePath) {
+    public static boolean delete(String filepath) {
         try {
-            return java.nio.file.Files.readString(Path.of(filePath));
+            return new File(filepath).delete();
         }
         catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 
@@ -28,9 +28,42 @@ public final class Files {
         return files == null || files.length == 0;
     }
 
+    public static String readString(String filepath) {
+        try {
+            return java.nio.file.Files.readString(Path.of(filepath));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static byte[] readBytes(String filepath) {
+        try (FileInputStream stream = new FileInputStream(filepath)) {
+            return stream.readAllBytes();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getName(String filepath) {
+        return new File(filepath).getName();
+    }
+
     public static String getExtension(String filepath) {
         final int index = filepath.lastIndexOf('.');
         return (index >= 0) ? filepath.substring(index + 1) : "";
+    }
+
+    public static String getWithoutExtension(String filepath) {
+        final int index = filepath.indexOf('.');
+        return (index > 0) ? filepath.substring(0, index) : "";
+    }
+
+    public static String getNameWithoutExtension(String filepath) {
+        return getWithoutExtension(getName(filepath));
     }
 
     public static File[] listFolders(String filepath) {
@@ -43,38 +76,34 @@ public final class Files {
         return (files != null) ? files : new File[0];
     }
 
-    private static String getShaderDeclaration(int type) {
-        return switch (type) {
-            case GL_VERTEX_SHADER -> "//vertexshader";
-            case GL_FRAGMENT_SHADER -> "//fragmentshader";
-            case GL_GEOMETRY_SHADER -> "//geometryshader";
-            default -> null;
-        };
-    }
-
-    private static boolean isShaderDeclaration(String line) {
-        return switch (line.toLowerCase().replaceAll("\\s", "")) {
-            case "//vertexshader", "//fragmentshader", "//geometryshader" -> true;
-            default -> false;
-        };
-    }
-
-    public static String parseShader(String filePath, int type) {
+    public static String parseShader(String filepath, int type) {
         try {
-            FileReader file = new FileReader(filePath);
+            FileReader file = new FileReader(filepath);
             BufferedReader reader = new BufferedReader(file);
             StringBuilder builder = new StringBuilder();
 
             boolean shouldSave = false;
-            final String neededDeclaration = getShaderDeclaration(type);
-            for (String fileLine; (fileLine = reader.readLine()) != null; ) {
+            String shaderName = switch (type) {
+                case GL_VERTEX_SHADER -> "//vertexshader";
+                case GL_FRAGMENT_SHADER -> "//fragmentshader";
+                case GL_GEOMETRY_SHADER -> "//geometryshader";
+                default -> null;
+            };
+
+            for (String line; (line = reader.readLine()) != null;) {
+                String formattedLine = line.toLowerCase().replaceAll("\\s", "");
                 if (shouldSave) {
-                    if (!isShaderDeclaration(fileLine)) {
-                        builder.append(fileLine).append('\n');
-                    } else {
+                    if (switch (formattedLine) {
+                        case "//vertexshader", "//fragmentshader", "//geometryshader" -> false;
+                        default -> true;
+                    }) {
+                        builder.append(line).append('\n');
+                    }
+                    else {
                         break;
                     }
-                } else if (fileLine.toLowerCase().replaceAll("\\s", "").equals(neededDeclaration)) {
+                }
+                else if (formattedLine.equals(shaderName)) {
                     shouldSave = true;
                 }
             }
@@ -103,22 +132,36 @@ public final class Files {
             for (String fileLine; (fileLine = reader.readLine()) != null; ) {
                 String[] lineParts = fileLine.split(" ");
 
-                if (Objects.equals(lineParts[0], "v")) {
-                    xyzBuffer.add(new Float3(Float.parseFloat(lineParts[1]), Float.parseFloat(lineParts[2]), Float.parseFloat(lineParts[3])));
-                } else if (Objects.equals(lineParts[0], "vt")) {
-                    uvBuffer.add(new Float2(Float.parseFloat(lineParts[1]), Float.parseFloat(lineParts[2])));
-                } else if (Objects.equals(lineParts[0], "vn")) {
-                    normBuffer.add(new Float3(Float.parseFloat(lineParts[1]), Float.parseFloat(lineParts[2]), Float.parseFloat(lineParts[3])));
-                } else if (Objects.equals(lineParts[0], "f")) {
-                    for (int i = 1; i < 4; i++) {
-                        String[] linePartParts = lineParts[i].split("/");
-                        vertices.add(
-                                new Vertex(
-                                        xyzBuffer.get(Integer.parseInt(linePartParts[0]) - 1),
-                                        uvBuffer.get(Integer.parseInt(linePartParts[1]) - 1),
-                                        normBuffer.get(Integer.parseInt(linePartParts[2]) - 1)
-                                )
-                        );
+                switch (lineParts[0]) {
+                    case "v" -> {
+                        xyzBuffer.add(new Float3(
+                            Float.parseFloat(lineParts[1]),
+                            Float.parseFloat(lineParts[2]),
+                            Float.parseFloat(lineParts[3])
+                        ));
+                    }
+                    case "vt" -> {
+                        uvBuffer.add(new Float2(
+                            Float.parseFloat(lineParts[1]),
+                            Float.parseFloat(lineParts[2])
+                        ));
+                    }
+                    case "vn" -> {
+                        normBuffer.add(new Float3(
+                            Float.parseFloat(lineParts[1]),
+                            Float.parseFloat(lineParts[2]),
+                            Float.parseFloat(lineParts[3])
+                        ));
+                    }
+                    case "f" -> {
+                        for (int i = 1; i < 4; i++) {
+                            String[] linePartParts = lineParts[i].split("/");
+                            vertices.add(new Vertex(
+                                xyzBuffer.get(Integer.parseInt(linePartParts[0]) - 1),
+                                uvBuffer.get(Integer.parseInt(linePartParts[1]) - 1),
+                                normBuffer.get(Integer.parseInt(linePartParts[2]) - 1)
+                            ));
+                        }
                     }
                 }
             }
@@ -138,29 +181,21 @@ public final class Files {
     }
 
     public static Int2 getImageSize(String filePath) {
-        int[] width = new int[1];
-        int[] height = new int[1];
-        int[] dontCare = new int[1];
-
-        STBImage.stbi_info(filePath, width, height, dontCare);
-
-        return new Int2(width[0], height[0]);
+        int[][] data = new int[3][1];
+        STBImage.stbi_info(filePath, data[0], data[1], data[2]);
+        return new Int2(data[0][0], data[1][0]);
     }
 
-    public static byte[] getImageData(String filepath) {
-        return getImageData(filepath, true);
-    }
+    public static byte[] getImageData(String filepath, boolean flipY) {
+        STBImage.stbi_set_flip_vertically_on_load(flipY);
 
-    public static byte[] getImageData(String filepath, boolean flipOnY) {
-        STBImage.stbi_set_flip_vertically_on_load(flipOnY);
+        int[] ignored = new int[1];
+        ByteBuffer buffer = STBImage.stbi_load(filepath, ignored, ignored, ignored, 4);
 
-        int[] dontCare = new int[1];
-        ByteBuffer imageBuffer = STBImage.stbi_load(filepath, dontCare, dontCare, dontCare, 4);
-
-        if (imageBuffer != null) {
-            byte[] imageData = Memory.readByteBuffer(imageBuffer);
-            STBImage.stbi_image_free(imageBuffer);
-            return imageData;
+        if (buffer != null) {
+            byte[] data = Memory.readByteBuffer(buffer);
+            STBImage.stbi_image_free(buffer);
+            return data;
         }
 
         return null;

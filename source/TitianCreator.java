@@ -13,7 +13,7 @@ public class TitianCreator {
 
         Mesh monkeMesh = new Mesh(scene.meshNames, "Monke Mesh", editor.window.getContext(), "resource/meshes/monke.obj");
         Material monkeMaterial = new Material(scene.materialNames, "Monke Material");
-        monkeMaterial.colorMap = new Texture(scene.textureNames, "Checkers Texture", editor.window.getContext(), "resource/textures/checkers.png");
+        monkeMaterial.colorMap = new Texture(scene.textureNames, "Checkers Texture", editor.window.getContext(), "test/textures/checkers.png");
 
         final int size = 3;
         for (int y = -size; y <= size; y++) {
@@ -30,13 +30,13 @@ public class TitianCreator {
             }
         }
 
-        scene.toFile("resource/scenes/test.scene");
+        scene.toFile("test/scenes/test.scene");
         scene.dispose();
     }
 
     public static void loadTestScene(Editor editor) {
         editor.destroyCurrentScene();
-        editor.scene = Scene.fromFile("resource/scenes/test.scene");
+        editor.scene = Scene.fromFile("test/scenes/test.scene");
     }
 
     public static void main(String[] args) throws Exception {
@@ -56,7 +56,7 @@ public class TitianCreator {
         });
 
         while (editor.process()) {
-            editor.update(ignored -> {});
+            editor.update();
         }
 
         editor.dispose();

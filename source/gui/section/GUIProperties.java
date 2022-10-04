@@ -7,6 +7,7 @@ import gui.abs.GUISection;
 import imgui.*;
 import imgui.flag.*;
 import material.Material;
+import script.Script;
 
 public final class GUIProperties extends GUISection {
     public GUIProperties(Editor editor) {
@@ -59,6 +60,30 @@ public final class GUIProperties extends GUISection {
         if (ImGui.begin("Physics", ImGuiWindowFlags.NoScrollbar)) {
             if (selected != null) {
                 selected.physicsComponent.renderGUI();
+            }
+        }
+        ImGui.end();
+
+        if (ImGui.begin("Scripts", ImGuiWindowFlags.NoScrollbar)) {
+            if (selected != null) {
+                ImVec2 position = ImGui.getWindowPos();
+                ImVec2 size = ImGui.getWindowSize();
+
+                if (ImGui.beginDragDropTarget()) {
+                    String scriptPath = ImGui.getDragDropPayload("ScriptFile");
+
+                    if (scriptPath != null) {
+                        ImGui.getForegroundDrawList().addRect(position.x, position.y, position.x + size.x, position.y + size.y, 0xFFFFFFFF);
+
+                        if ((scriptPath = ImGui.acceptDragDropPayload("ScriptFile")) != null) {
+                            selected.scriptComponent.scripts.add(new Script(scriptPath));
+                        }
+                    }
+
+                    ImGui.endDragDropTarget();
+                }
+
+                selected.scriptComponent.renderGUI();
             }
         }
         ImGui.end();
