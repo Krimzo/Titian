@@ -7,8 +7,11 @@ import imgui.ImGui;
 import imgui.ImGuiStyle;
 import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiDragDropFlags;
+import imgui.flag.ImGuiInputTextFlags;
+import imgui.flag.ImGuiPopupFlags;
 import imgui.flag.ImGuiWindowFlags;
+import imgui.type.ImString;
+import script.Script;
 import utility.Files;
 
 import java.awt.*;
@@ -18,6 +21,7 @@ import java.nio.file.Paths;
 public final class GUIExplorer extends GUISection {
     private File currentPath = new File(Paths.get("").toUri());
     private float buttonSize = 0;
+    private ImString scriptNameInput = null;
 
     public int columnCount = 12;
 
@@ -130,6 +134,25 @@ public final class GUIExplorer extends GUISection {
             }
 
             ImGui.popStyleColor(3);
+
+            if (ImGui.beginPopupContextWindow(ImGuiPopupFlags.MouseButtonRight | ImGuiPopupFlags.NoOpenOverItems)) {
+                if (scriptNameInput == null) {
+                    if (ImGui.button("New Script")) {
+                        scriptNameInput = new ImString();
+                    }
+                }
+                else {
+                    if (ImGui.inputText("Script Name", scriptNameInput, ImGuiInputTextFlags.EnterReturnsTrue)) {
+                        String scriptName = scriptNameInput.toString();
+                        Files.writeString(currentPath + "/" + scriptName + ".java", Script.getTemplate(scriptName));
+
+                        ImGui.closeCurrentPopup();
+                        scriptNameInput = null;
+                    }
+                }
+
+                ImGui.endPopup();
+            }
         }
         ImGui.end();
     }

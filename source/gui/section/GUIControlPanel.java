@@ -28,6 +28,7 @@ public final class GUIControlPanel extends GUISection {
                 if (!gameRunning) {
                     editor.scene.toFile(SAVED_RUN_SCENE);
                     editor.scripter.callStarts(editor.scene);
+                    editor.timer.reset();
                 }
                 else {
                     editor.destroyCurrentScene();

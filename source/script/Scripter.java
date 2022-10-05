@@ -1,5 +1,6 @@
 package script;
 
+import entity.Entity;
 import scene.Scene;
 import script.abs.Scriptable;
 
@@ -8,16 +9,16 @@ public class Scripter {
 
     public void callStarts(Scene scene) {
         if (scene != null) {
-            for (Scriptable scriptable : scene) {
-                scriptable.scriptStart();
+            for (Entity entity : scene) {
+                entity.callScriptStarts();
             }
         }
     }
 
     public void callUpdates(Scene scene) {
         if (scene != null) {
-            for (Scriptable scriptable : scene) {
-                scriptable.scriptUpdate();
+            for (Entity entity : scene) {
+                entity.callScriptUpdates();
             }
         }
     }

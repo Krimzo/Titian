@@ -2,13 +2,15 @@ package window.input;
 
 import callback.EmptyCallback;
 
+import java.util.ArrayList;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Key {
     private boolean state = false;
-    public EmptyCallback onPress = () -> {};
-    public EmptyCallback onDown = () -> {};
-    public EmptyCallback onRelease = () -> {};
+    public final ArrayList<EmptyCallback> onPress = new ArrayList<>();
+    public final ArrayList<EmptyCallback> onHold = new ArrayList<>();
+    public final ArrayList<EmptyCallback> onRelease = new ArrayList<>();
 
     protected Key() {}
 
@@ -27,14 +29,20 @@ public class Key {
     protected void update(boolean newState) {
         if (state) {
             if (!newState) {
-                onRelease.method();
+                for (EmptyCallback callback : onRelease) {
+                    callback.method();
+                }
             }
             else {
-                onDown.method();
+                for (EmptyCallback callback : onHold) {
+                    callback.method();
+                }
             }
         }
         else if (newState) {
-            onPress.method();
+            for (EmptyCallback callback : onPress) {
+                callback.method();
+            }
         }
         state = newState;
     }

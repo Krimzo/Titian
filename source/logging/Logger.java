@@ -31,8 +31,8 @@ public class Logger extends PrintStream {
         return lastClearMessage;
     }
 
-    public String convertInfo(LogInfo log) {
-        return log.firstMessagePart + Strings.spaces(longestSender - log.senderLength + 2) + log.secondMessagePart;
+    public String formatSpaces(LogInfo log) {
+        return Strings.spaces(longestSender - log.senderLength + 2);
     }
 
     public void iterate(LogInfoCallback callback) {
@@ -48,7 +48,7 @@ public class Logger extends PrintStream {
     }
 
     private void logSystemOut(Object object) {
-        log(new LogInfo(LogType.INFO, "System.out", object));
+        log(new LogInfo(LogType.INFO, "System.print", object));
     }
 
     @Override

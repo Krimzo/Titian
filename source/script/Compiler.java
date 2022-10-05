@@ -12,11 +12,16 @@ public class Compiler {
     }
 
     public byte[] compile(String filepath) {
-        if (compiler.run(null, null, null, filepath) == 0) {
-            String compiledPath = Files.getWithoutExtension(filepath) + ".class";
-            byte[] data = Files.readBytes(compiledPath);
-            Files.delete(compiledPath);
-            return data;
+        try {
+            if (compiler.run(null, null, null, filepath) == 0) {
+                String compiledPath = Files.getWithoutExtension(filepath) + ".class";
+                byte[] data = Files.readBytes(compiledPath);
+                Files.delete(compiledPath);
+                return data;
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }

@@ -1,9 +1,19 @@
-public class Grow {
-    public void scriptStart() {
-        System.out.println("Started!");
+import script.abs.Scriptable;
+import entity.Entity;
+import math.*;
+
+public class Grow extends Scriptable {
+    public Grow(Entity entity) {
+        super(entity);
     }
 
-    public void scriptUpdate() {
+    @Override
+    public void start() {
 
+    }
+
+    @Override
+    public void update() {
+        entity.transformComponent.scale = new Float3(editor.timer.getElapsedT() * 0.1f);
     }
 }

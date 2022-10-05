@@ -13,6 +13,17 @@ import static org.lwjgl.opengl.GL33.*;
 public final class Files {
     private Files() {}
 
+    public static boolean isEmpty(String filepath) {
+        try {
+            File[] files = new File(filepath).listFiles();
+            return files == null || files.length == 0;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static boolean delete(String filepath) {
         try {
             return new File(filepath).delete();
@@ -23,18 +34,24 @@ public final class Files {
         }
     }
 
-    public static boolean isEmpty(String filepath) {
-        File[] files = new File(filepath).listFiles();
-        return files == null || files.length == 0;
-    }
-
     public static String readString(String filepath) {
         try {
             return java.nio.file.Files.readString(Path.of(filepath));
         }
         catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return "";
+        }
+    }
+
+    public static boolean writeString(String filepath, String data) {
+        try (FileOutputStream stream = new FileOutputStream(filepath)) {
+            stream.write(data.getBytes());
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -49,7 +66,13 @@ public final class Files {
     }
 
     public static String getName(String filepath) {
-        return new File(filepath).getName();
+        try {
+            return new File(filepath).getName();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     public static String getExtension(String filepath) {
@@ -59,7 +82,13 @@ public final class Files {
 
     public static String getWithoutExtension(String filepath) {
         final int index = filepath.indexOf('.');
-        return (index > 0) ? filepath.substring(0, index) : "";
+        if (index > 0) {
+            return filepath.substring(0, index);
+        }
+        if (index < 0) {
+            return filepath;
+        }
+        return "";
     }
 
     public static String getNameWithoutExtension(String filepath) {
@@ -67,13 +96,25 @@ public final class Files {
     }
 
     public static File[] listFolders(String filepath) {
-        File[] folders = new File(filepath).listFiles(File::isDirectory);
-        return (folders != null) ? folders : new File[0];
+        try {
+            File[] folders = new File(filepath).listFiles(File::isDirectory);
+            return (folders != null) ? folders : new File[0];
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static File[] listFiles(String filepath) {
-        File[] files = new File(filepath).listFiles(File::isFile);
-        return (files != null) ? files : new File[0];
+        try {
+            File[] files = new File(filepath).listFiles(File::isFile);
+            return (files != null) ? files : new File[0];
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static String parseShader(String filepath, int type) {

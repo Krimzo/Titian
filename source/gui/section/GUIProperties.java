@@ -29,7 +29,7 @@ public final class GUIProperties extends GUISection {
         }
         ImGui.end();
 
-        if (ImGui.begin("Mesh", ImGuiWindowFlags.NoScrollbar)) {
+        if (ImGui.begin("Mesh")) {
             if (selected != null) {
                 selected.meshComponent.renderGUI();
                 ImGui.separator();
@@ -43,7 +43,7 @@ public final class GUIProperties extends GUISection {
         }
         ImGui.end();
 
-        if (ImGui.begin("Material", ImGuiWindowFlags.NoScrollbar)) {
+        if (ImGui.begin("Material")) {
             if (selected != null) {
                 selected.materialComponent.renderGUI();
                 ImGui.separator();
@@ -64,26 +64,31 @@ public final class GUIProperties extends GUISection {
         }
         ImGui.end();
 
-        if (ImGui.begin("Scripts", ImGuiWindowFlags.NoScrollbar)) {
+        if (ImGui.begin("Scripts")) {
             if (selected != null) {
-                ImVec2 position = ImGui.getWindowPos();
-                ImVec2 size = ImGui.getWindowSize();
+                selected.scriptComponent.renderGUI();
+
+                ImVec2 contentMin = ImGui.getWindowContentRegionMin();
+                ImVec2 contentMax = ImGui.getWindowContentRegionMax();
+                ImGui.dummy(contentMax.x - contentMin.x, contentMax.y - contentMin.y);
 
                 if (ImGui.beginDragDropTarget()) {
-                    String scriptPath = ImGui.getDragDropPayload("ScriptFile");
-
+                    String scriptPath = ImGui.acceptDragDropPayload("ScriptFile");
                     if (scriptPath != null) {
-                        ImGui.getForegroundDrawList().addRect(position.x, position.y, position.x + size.x, position.y + size.y, 0xFFFFFFFF);
-
-                        if ((scriptPath = ImGui.acceptDragDropPayload("ScriptFile")) != null) {
-                            selected.scriptComponent.scripts.add(new Script(scriptPath));
-                        }
+                        selected.scriptComponent.scripts.add(new Script(scriptPath, selected));
                     }
 
                     ImGui.endDragDropTarget();
                 }
 
-                selected.scriptComponent.renderGUI();
+                if (ImGui.beginPopupContextWindow(ImGuiPopupFlags.MouseButtonRight | ImGuiPopupFlags.NoOpenOverItems)) {
+                    if (ImGui.button("Reload")) {
+                        selected.scriptComponent.reload();
+                        ImGui.closeCurrentPopup();
+                    }
+
+                    ImGui.endPopup();
+                }
             }
         }
         ImGui.end();

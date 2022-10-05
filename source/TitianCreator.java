@@ -4,6 +4,7 @@ import glparts.*;
 import material.Material;
 import math.Float3;
 import scene.Scene;
+import script.abs.Scriptable;
 
 import java.util.Random;
 
@@ -44,6 +45,8 @@ public class TitianCreator {
 
         System.setOut(editor.logger);
         System.setErr(editor.logger);
+
+        Scriptable.editor = editor;
 
         editor.setup((ed) -> {
             try {

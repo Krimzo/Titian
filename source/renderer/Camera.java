@@ -85,38 +85,22 @@ public class Camera {
     }
 
     public void setDefaultMovement(Window window, Timer timer) {
-        window.keyboard.w.onDown = () -> {
-            moveForward(timer.getDeltaT());
-        };
-        window.keyboard.a.onDown = () -> {
-            moveLeft(timer.getDeltaT());
-        };
-        window.keyboard.s.onDown = () -> {
-            moveBack(timer.getDeltaT());
-        };
-        window.keyboard.d.onDown = () -> {
-            moveRight(timer.getDeltaT());
-        };
-        window.keyboard.e.onDown = () -> {
-            moveUp(timer.getDeltaT());
-        };
-        window.keyboard.q.onDown = () -> {
-            moveDown(timer.getDeltaT());
-        };
+        window.keyboard.w.onHold.add(() -> moveForward(timer.getDeltaT()));
+        window.keyboard.a.onHold.add(() -> moveLeft(timer.getDeltaT()));
+        window.keyboard.s.onHold.add(() -> moveBack(timer.getDeltaT()));
+        window.keyboard.d.onHold.add(() -> moveRight(timer.getDeltaT()));
+        window.keyboard.e.onHold.add(() -> moveUp(timer.getDeltaT()));
+        window.keyboard.q.onHold.add(() -> moveDown(timer.getDeltaT()));
 
-        window.keyboard.shift.onPress = () -> {
-            speed = 5;
-        };
-        window.keyboard.shift.onRelease = () -> {
-            speed = 2;
-        };
+        window.keyboard.shift.onPress.add(() -> speed = 5);
+        window.keyboard.shift.onRelease.add(() -> speed = 2);
 
-        window.mouse.mmb.onPress = () -> {
+        window.mouse.mmb.onPress.add(() -> {
             window.mouse.setHidden(true);
             camMoving = true;
-        };
+        });
 
-        window.mouse.mmb.onDown = () -> {
+        window.mouse.mmb.onHold.add(() -> {
             if (camMoving) {
 			    final Int2 frameCenter = window.getSize().div(2);
 
@@ -127,12 +111,12 @@ public class Camera {
 
                 window.mouse.setPosition(frameCenter);
             }
-        };
+        });
 
-        window.mouse.mmb.onRelease = () -> {
+        window.mouse.mmb.onRelease.add(() -> {
             window.mouse.setHidden(false);
             firstClick = true;
             camMoving = false;
-        };
+        });
     }
 }

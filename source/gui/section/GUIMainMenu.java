@@ -1,6 +1,7 @@
 package gui.section;
 
 import editor.Editor;
+import entity.Entity;
 import gui.abs.GUISection;
 import imgui.ImGui;
 import math.Int2;
@@ -22,7 +23,14 @@ public final class GUIMainMenu extends GUISection {
 
     private void editMenu() {
         if (ImGui.beginMenu("Edit")) {
-            ImGui.menuItem("WIP");
+            if (ImGui.menuItem("Reload All")) {
+                if (editor.scene != null) {
+                    for (Entity entity : editor.scene) {
+                        entity.scriptComponent.reload();
+                    }
+                }
+            }
+
             ImGui.endMenu();
         }
     }
