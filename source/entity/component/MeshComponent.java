@@ -27,5 +27,15 @@ public class MeshComponent implements Renderable, GUIRenderable, Serializable {
     @Override
     public void renderGUI() {
         ImGui.text((mesh != null) ? mesh.getName() : "NULL");
+
+        if (ImGui.beginPopupContextItem("EditEntityMesh")) {
+            if (ImGui.button("Remove mesh")) {
+                mesh = null;
+
+                ImGui.closeCurrentPopup();
+            }
+
+            ImGui.endPopup();
+        }
     }
 }

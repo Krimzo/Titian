@@ -1,6 +1,7 @@
 package entity.component;
 
 import callback.EmptyCallback;
+import entity.Entity;
 import gui.abs.GUIRenderable;
 import imgui.ImGui;
 import material.Material;
@@ -25,5 +26,15 @@ public class MaterialComponent implements GUIRenderable, Serializable {
     @Override
     public void renderGUI() {
         ImGui.text((material != null) ? material.getName() : "NULL");
+
+        if (ImGui.beginPopupContextItem("EditEntityMaterial")) {
+            if (ImGui.button("Remove material")) {
+                material = null;
+
+                ImGui.closeCurrentPopup();
+            }
+
+            ImGui.endPopup();
+        }
     }
 }

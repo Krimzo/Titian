@@ -1,0 +1,41 @@
+package renderer;
+
+import camera.PerspectiveCamera;
+import camera.abs.Camera;
+import glparts.FrameBuffer;
+import glparts.Shaders;
+import glparts.abs.Disposable;
+import math.Float4;
+import math.Int2;
+import renderer.abs.Renderable;
+import scene.Scene;
+import window.GLContext;
+
+public class GameRenderer implements Disposable {
+    public final FrameBuffer renderBuffer;
+    private final Shaders renderShaders;
+
+    public GameRenderer(GLContext context, Int2 size) {
+        renderBuffer = new FrameBuffer(context, size);
+        renderShaders = new Shaders(context, "shaders/Render.glsl");
+    }
+
+    @Override
+    public void dispose() {
+        renderShaders.dispose();
+        renderBuffer.dispose();
+    }
+
+    public void resize(Int2 size) {
+        renderBuffer.resize(size);
+    }
+
+    public void renderScene(Scene scene, Camera camera) {
+        renderBuffer.use(() -> {
+            renderShaders.setUniform("VP", camera.matrix());
+            for (Renderable renderable : scene) {
+                renderable.render(renderShaders);
+            }
+        });
+    }
+}

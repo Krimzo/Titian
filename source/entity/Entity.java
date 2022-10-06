@@ -1,5 +1,6 @@
 package entity;
 
+import editor.Editor;
 import entity.component.*;
 import glparts.*;
 import physics.Physical;
@@ -46,4 +47,6 @@ public class Entity extends Named implements Physical, Renderable, Serializable 
             meshComponent.render(shaders);
         });
     }
+
+    public void renderCustomGUI(Editor editor) {}
 }

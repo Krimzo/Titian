@@ -9,25 +9,36 @@ import imgui.extension.imguizmo.*;
 import imgui.extension.imguizmo.flag.*;
 import imgui.flag.*;
 import math.*;
-import utility.Pair;
 
 public final class GUIViewport extends GUISection {
+    private Int2 viewportPosition = new Int2();
+    private Int2 viewportSize = new Int2();
+    private int gizmoOperation = 0;
+    private int gizmoMode = Mode.WORLD;
+
     public GUIViewport(Editor editor) {
         super(editor);
     }
 
-    private Pair<Int2> saveViewportInfo() {
-        int tabSize = (int) ImGui.getWindowContentRegionMinY();
-        Int2 position = new Int2((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY() + tabSize);
-        Int2 size = new Int2((int) ImGui.getWindowWidth(), (int) ImGui.getWindowHeight() - tabSize);
-
-        editor.savedData.put("ViewportPosition", position);
-        editor.savedData.put("ViewportSize", size);
-
-        return new Pair<>(position, size);
+    private void updateViewportInfo() {
+        final int tabSize = (int) ImGui.getWindowContentRegionMinY();
+        viewportPosition = new Int2((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY() + tabSize);
+        viewportSize = new Int2((int) ImGui.getWindowWidth(), (int) ImGui.getWindowHeight() - tabSize);
     }
 
-    private void objectSelection(Int2 viewportPosition, Int2 viewportSize) {
+    private void updateGizmoState() {
+        if (ImGui.isKeyPressed('1')) {
+            gizmoOperation = (gizmoOperation != Operation.SCALE) ? Operation.SCALE : 0;
+        }
+        if (ImGui.isKeyPressed('2')) {
+            gizmoOperation = (gizmoOperation != Operation.ROTATE) ? Operation.ROTATE : 0;
+        }
+        if (ImGui.isKeyPressed('3')) {
+            gizmoOperation = (gizmoOperation != Operation.TRANSLATE) ? Operation.TRANSLATE : 0;
+        }
+    }
+
+    private void objectSelection() {
         if (editor.scene == null || ImGuizmo.isOver()) {
             return;
         }
@@ -39,31 +50,40 @@ public final class GUIViewport extends GUISection {
         if (ImGui.isMouseHoveringRect(viewportRect.x, viewportRect.y, viewportRect.z, viewportRect.w) && ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
             Float2 mousePosition = new Float2(ImGui.getMousePosX() - viewportPosition.x, ImGui.getMousePosY() - viewportPosition.y);
 
-            int objectIndex = (int) editor.renderer.indexBuffer.getPixel(new Int2(mousePosition)).x - 1;
+            int objectIndex = (int) editor.viewportRenderer.indexBuffer.getPixel(new Int2(mousePosition)).x - 1;
             editor.scene.selectedEntity = (objectIndex >= 0) ? editor.scene.get(objectIndex) : null;
         }
     }
 
-    private void displayFrame(Int2 viewportSize) {
-        ImGui.image(editor.renderer.renderBuffer.getColorMap().getBuffer(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
+    private void renderScene() {
+        editor.viewportRenderer.renderBuffer.context.setClearColor(new Float4(0.2f));
+        editor.viewportRenderer.renderBuffer.clear();
+
+        if (editor.scene == null) {
+            return;
+        }
+
+        int selectedIndex = editor.scene.indexOf(editor.scene.selectedEntity);
+
+        editor.window.getContext().setViewport(viewportSize);
+        editor.viewportRenderer.resize(viewportSize);
+        editor.camera.updateAspect(viewportSize);
+
+        editor.window.getContext().setWireframe(editor.wireframeState);
+        editor.viewportRenderer.renderScene(editor.scene, editor.camera);
+        editor.viewportRenderer.renderIndices(editor.scene, editor.camera);
+        editor.window.getContext().setWireframe(false);
+
+        if (selectedIndex >= 0) {
+            editor.viewportRenderer.renderOutline(new Float2(viewportSize), editor.outlineColor, selectedIndex);
+        }
     }
 
-    private Pair<Integer> updateGizmoState() {
-        int gizmoOperation = (int) editor.savedData.get("GizmoOperation");
-        if (ImGui.isKeyPressed('1')) {
-            gizmoOperation = (gizmoOperation != Operation.SCALE) ? Operation.SCALE : 0;
-        }
-        if (ImGui.isKeyPressed('2')) {
-            gizmoOperation = (gizmoOperation != Operation.ROTATE) ? Operation.ROTATE : 0;
-        }
-        if (ImGui.isKeyPressed('3')) {
-            gizmoOperation = (gizmoOperation != Operation.TRANSLATE) ? Operation.TRANSLATE : 0;
-        }
-        editor.savedData.put("GizmoOperation", gizmoOperation);
-        return new Pair<>(gizmoOperation, Mode.WORLD);
+    private void displayFrame() {
+        ImGui.image(editor.viewportRenderer.renderBuffer.getColorMap().getBuffer(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
     }
 
-    private void renderGizmos(Int2 viewportPosition, Int2 viewportSize, int gizmoOperation, int gizmoMode) {
+    private void renderGizmos() {
         ImGuizmo.setEnabled(true);
         ImGuizmo.setDrawList();
         ImGuizmo.setRect(viewportPosition.x, viewportPosition.y, viewportSize.x, viewportSize.y);
@@ -76,8 +96,8 @@ public final class GUIViewport extends GUISection {
         }
 
         TransformComponent transform = selected.transformComponent;
-        Mat4 viewMatrix = editor.renderer.camera.viewMatrix().transpose();
-        Mat4 projectionMatrix = editor.renderer.camera.projectionMatrix().transpose();
+        Mat4 viewMatrix = editor.camera.viewMatrix().transpose();
+        Mat4 projectionMatrix = editor.camera.projectionMatrix().transpose();
         Mat4 transformMatrix = transform.translationMatrix().mul(transform.scalingMatrix()).transpose();
 
         ImGuizmo.manipulate(viewMatrix.data, projectionMatrix.data, transformMatrix.data, gizmoOperation, gizmoMode);
@@ -97,12 +117,13 @@ public final class GUIViewport extends GUISection {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0, 0);
 
         if (ImGui.begin("Viewport", ImGuiWindowFlags.NoScrollbar)) {
-            Pair<Int2> viewportInfo = saveViewportInfo();
-            Pair<Integer> gizmoInfo = updateGizmoState();
+            updateViewportInfo();
+            updateGizmoState();
+            objectSelection();
 
-            objectSelection(viewportInfo.first, viewportInfo.second);
-            displayFrame(viewportInfo.second);
-            renderGizmos(viewportInfo.first, viewportInfo.second, gizmoInfo.first, gizmoInfo.second);
+            renderScene();
+            displayFrame();
+            renderGizmos();
         }
         ImGui.end();
 

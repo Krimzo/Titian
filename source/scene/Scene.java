@@ -1,5 +1,6 @@
 package scene;
 
+import camera.abs.Camera;
 import entity.Entity;
 import glparts.Mesh;
 import glparts.Texture;
@@ -24,6 +25,7 @@ public class Scene extends ArrayList<Entity> implements Physical, Renderable, Di
     public final Set<Mesh> meshes = new HashSet<>();
 
     public Entity selectedEntity = null;
+    public Camera mainCamera = null;
 
     public Scene() {}
 

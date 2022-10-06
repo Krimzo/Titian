@@ -16,7 +16,7 @@ public class TitianCreator {
         Material monkeMaterial = new Material(scene.materialNames, "Monke Material");
         monkeMaterial.colorMap = new Texture(scene.textureNames, "Checkers Texture", editor.window.getContext(), "test/textures/checkers.png");
 
-        final int size = 3;
+        final int size = 1;
         for (int y = -size; y <= size; y++) {
             for (int x = -size; x <= size; x++) {
                 Entity monke = new Entity(scene.entityNames, "Monke");
@@ -36,7 +36,7 @@ public class TitianCreator {
     }
 
     public static void loadTestScene(Editor editor) {
-        editor.destroyCurrentScene();
+        editor.disposeCurrentScene();
         editor.scene = Scene.fromFile("test/scenes/test.scene");
     }
 
@@ -58,7 +58,7 @@ public class TitianCreator {
             }
         });
 
-        while (editor.process()) {
+        while (editor.window.process()) {
             editor.update();
         }
 

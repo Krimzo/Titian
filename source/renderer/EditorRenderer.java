@@ -1,5 +1,6 @@
 package renderer;
 
+import camera.abs.Camera;
 import glparts.*;
 import math.*;
 import renderer.abs.Renderable;
@@ -12,8 +13,7 @@ import java.util.Map;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class Renderer implements Disposable {
-    public final Camera camera = new Camera();
+public class EditorRenderer implements Disposable {
     public final FrameBuffer renderBuffer;
     public final FrameBuffer indexBuffer;
 
@@ -23,7 +23,7 @@ public class Renderer implements Disposable {
 
     public final Map<String, Mesh> predefinedMeshes = new HashMap<>();
 
-    public Renderer(GLContext context, Int2 size) {
+    public EditorRenderer(GLContext context, Int2 size) {
         renderBuffer = new FrameBuffer(context, size);
         indexBuffer = new FrameBuffer(context, size);
         indexBuffer.getColorMap().setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
@@ -41,15 +41,21 @@ public class Renderer implements Disposable {
             obj.getValue().dispose();
         }
         predefinedMeshes.clear();
+
+        outlineShaders.dispose();
+        indexShaders.dispose();
+        renderShaders.dispose();
+
+        indexBuffer.dispose();
+        renderBuffer.dispose();
     }
 
     public void resize(Int2 size) {
         renderBuffer.resize(size);
         indexBuffer.resize(size);
-        camera.updateAspect(size);
     }
 
-    public void renderIndices(Scene scene) {
+    public void renderIndices(Scene scene, Camera camera) {
         indexBuffer.context.setClearColor(new Float4(0));
         indexBuffer.clear();
 
@@ -62,10 +68,7 @@ public class Renderer implements Disposable {
         });
     }
 
-    public void renderScene(Scene scene) {
-        renderBuffer.context.setClearColor(new Float4(0.2f));
-        renderBuffer.clear();
-
+    public void renderScene(Scene scene, Camera camera) {
         renderBuffer.use(() -> {
             renderShaders.setUniform("VP", camera.matrix());
             for (Renderable renderable : scene) {

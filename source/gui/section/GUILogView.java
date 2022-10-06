@@ -23,10 +23,11 @@ public final class GUILogView extends GUISection {
                 });
             });
 
-            if (ImGui.beginPopupContextWindow("Edit")) {
-                if (ImGui.selectable("Clear")) {
+            if (ImGui.beginPopupContextWindow("EditLogView")) {
+                if (ImGui.button("Clear")) {
                     editor.logger.clear();
                 }
+
                 ImGui.endPopup();
             }
         }

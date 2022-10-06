@@ -1,45 +1,56 @@
 package editor;
 
 import callback.EditorCallback;
+import camera.PerspectiveCamera;
+import glparts.Mesh;
+import glparts.Texture;
 import glparts.abs.Disposable;
 import gui.GUIRenderer;
 import gui.section.*;
-import math.Float2;
+import material.Material;
 import math.Float4;
 import math.Int2;
 import physics.Physics;
-import renderer.Renderer;
+import renderer.EditorRenderer;
+import renderer.GameRenderer;
 import scene.Scene;
 import script.Scripter;
 import utility.Timer;
 import window.Window;
 
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 import logging.Logger;
 
-public class Editor implements Disposable {
-    public final Map<String, Object> savedData = new HashMap<>();
+import java.awt.*;
 
+public class Editor implements Disposable {
     public Window window = new Window(new Int2(1600, 900), "Titian Creator", true);
     public Timer timer = new Timer();
 
-    public Renderer renderer = new Renderer(window.getContext(), window.getSize());
+    public EditorRenderer viewportRenderer = new EditorRenderer(window.getContext(), window.getSize());
+    public GameRenderer gameRenderer = new GameRenderer(window.getContext(), window.getSize());
     public GUIRenderer guiRenderer = new GUIRenderer(window);
+
     public Physics physics = new Physics();
 
     public Logger logger = new Logger();
     public Scripter scripter = new Scripter();
 
+    public final PerspectiveCamera camera = new PerspectiveCamera(null, "Editor Camera");
     public Scene scene = null;
+
+    public final Mesh defaultMesh;
+    public final Material defaultMaterial;
+
+    public boolean gameRunning = false;
+    public boolean wireframeState = false;
+    public Float4 outlineColor = new Float4(new Color(190, 115, 10));
 
     public Editor() throws Exception {
         window.setIcon("resource/textures/icons/titian.png");
         window.setVSync(true);
 
         window.getContext().setDepthTest(true);
-        renderer.camera.setDefaultMovement(window, timer);
+        camera.setupDefaultMovement(window, timer);
 
         guiRenderer.add(new GUIMainMenu(this));
         guiRenderer.add(new GUIScene(this));
@@ -48,16 +59,14 @@ public class Editor implements Disposable {
         guiRenderer.add(new GUIMaterialEditor(this));
         guiRenderer.add(new GUIScriptEditor(this));
         guiRenderer.add(new GUIViewport(this));
+        guiRenderer.add(new GUIGameView((this)));
         guiRenderer.add(new GUIExplorer(this));
         guiRenderer.add(new GUILogView(this));
         guiRenderer.add(new GUIProperties(this));
 
-        savedData.put("SpecialColor", new Color(190, 115, 10));
-        savedData.put("GameRunning", false);
-        savedData.put("WireframeState", false);
-        savedData.put("ViewportPosition", new Int2());
-        savedData.put("ViewportSize", new Int2());
-        savedData.put("GizmoOperation", 0);
+        defaultMesh = new Mesh(null, "Default Mesh", window.getContext(), "resource/meshes/cube.obj");
+        defaultMaterial = new Material(null, "Default Material");
+        defaultMaterial.colorMap = new Texture(null, "Default Texture", window.getContext(), "resource/textures/default.png");
     }
 
     public void setup(EditorCallback setupCallback) {
@@ -66,40 +75,17 @@ public class Editor implements Disposable {
         timer.reset();
     }
 
-    public boolean process() {
-        return window.process();
-    }
-
     public void update() {
         timer.updateDeltaT();
 
-        if ((boolean) savedData.get("GameRunning")) {
+        if (gameRunning) {
             physics.update(scene, timer.getDeltaT());
             scripter.callUpdates(scene);
         }
 
         window.getContext().clear(false);
-
-        if (scene != null) {
-            boolean wireframeState = (boolean) savedData.get("WireframeState");
-            Int2 viewportSize = (Int2) savedData.get("ViewportSize");
-            Color outlineColor = (Color) savedData.get("SpecialColor");
-            int selectedIndex = scene.indexOf(scene.selectedEntity);
-
-            window.getContext().setViewport(viewportSize);
-            renderer.resize(viewportSize);
-
-            window.getContext().setWireframe(wireframeState);
-            renderer.renderIndices(scene);
-            renderer.renderScene(scene);
-            window.getContext().setWireframe(false);
-
-            if (selectedIndex >= 0) {
-                renderer.renderOutline(new Float2(viewportSize), new Float4(outlineColor), selectedIndex);
-            }
-        }
-
         window.getContext().setViewport(window.getSize());
+
         guiRenderer.render();
 
         window.swapBuffers();
@@ -107,12 +93,13 @@ public class Editor implements Disposable {
 
     @Override
     public void dispose() {
-        renderer.dispose();
+        gameRenderer.dispose();
+        viewportRenderer.dispose();
         guiRenderer.dispose();
         window.dispose();
     }
 
-    public void destroyCurrentScene() {
+    public void disposeCurrentScene() {
         if (scene != null) {
             scene.dispose();
             scene = null;

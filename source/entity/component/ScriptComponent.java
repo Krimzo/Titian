@@ -27,7 +27,7 @@ public class ScriptComponent implements GUIRenderable, Serializable {
         for (int i = 0; i < scripts.size(); i++) {
             ImGui.selectable(scripts.get(i).getName());
 
-            if (ImGui.beginPopupContextItem()) {
+            if (ImGui.beginPopupContextItem("EditScripts" + i)) {
                 if (ImGui.button("Remove")) {
                     scripts.remove(i--);
                     ImGui.closeCurrentPopup();

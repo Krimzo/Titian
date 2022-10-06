@@ -15,6 +15,17 @@ public final class GUIControlPanel extends GUISection {
         super(editor);
     }
 
+    private void onGameStart() {
+        editor.scene.toFile(SAVED_RUN_SCENE);
+        editor.scripter.callStarts(editor.scene);
+        editor.timer.reset();
+    }
+
+    private void onGameEnd() {
+        editor.disposeCurrentScene();
+        editor.scene = Scene.fromFile(SAVED_RUN_SCENE);
+    }
+
     @Override
     public void renderGUI() {
         if (ImGui.begin("Control Panel", ImGuiWindowFlags.NoScrollbar)) {
@@ -22,26 +33,22 @@ public final class GUIControlPanel extends GUISection {
 
             float buttonSize = windowRegion.y * 0.5f;
 
-            boolean gameRunning = (boolean) editor.savedData.get("GameRunning");
-            Texture playStateTexture = gameRunning ? editor.guiRenderer.predefineTextures.get("StopIcon") : editor.guiRenderer.predefineTextures.get("PlayIcon");
+            Texture playStateTexture = editor.gameRunning ? editor.guiRenderer.predefineTextures.get("StopIcon") : editor.guiRenderer.predefineTextures.get("PlayIcon");
             if (ImGui.imageButton(playStateTexture.getBuffer(), buttonSize, buttonSize)) {
-                if (!gameRunning) {
-                    editor.scene.toFile(SAVED_RUN_SCENE);
-                    editor.scripter.callStarts(editor.scene);
-                    editor.timer.reset();
+                if (!editor.gameRunning) {
+                    onGameStart();
+                    editor.gameRunning = true;
                 }
                 else {
-                    editor.destroyCurrentScene();
-                    editor.scene = Scene.fromFile(SAVED_RUN_SCENE);
+                    onGameEnd();
+                    editor.gameRunning = false;
                 }
-                editor.savedData.put("GameRunning", !gameRunning);
             }
             ImGui.sameLine();
 
-            boolean wireframeEnabled = (boolean) editor.savedData.get("WireframeState");
-            Texture wireframeTexture = wireframeEnabled ? editor.guiRenderer.predefineTextures.get("SolidIcon") : editor.guiRenderer.predefineTextures.get("WireIcon");
+            Texture wireframeTexture = editor.wireframeState ? editor.guiRenderer.predefineTextures.get("SolidIcon") : editor.guiRenderer.predefineTextures.get("WireIcon");
             if (ImGui.imageButton(wireframeTexture.getBuffer(), buttonSize, buttonSize)) {
-                editor.savedData.put("WireframeState", !wireframeEnabled);
+                editor.wireframeState = !editor.wireframeState;
             }
             ImGui.sameLine();
         }

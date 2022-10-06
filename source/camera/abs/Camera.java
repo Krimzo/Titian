@@ -1,28 +1,38 @@
-package renderer;
+package camera.abs;
 
+import editor.Editor;
+import entity.Entity;
 import imgui.ImGui;
-import math.*;
+import imgui.flag.ImGuiWindowFlags;
+import math.Float2;
+import math.Float3;
+import math.Int2;
+import math.Mat4;
+import named.NameHolder;
 import utility.Timer;
 import window.Window;
 
-public class Camera {
-    public Float3 position = new Float3();
-    public float aspect = 16.0f / 9.0f;
-    public float fov = 75.0f;
+import java.io.Serializable;
+
+public abstract class Camera extends Entity implements Serializable {
+    protected Float3 forward = Float3.getNegZ();
+
     public float near = 0.01f;
-    public float far = 500.0f;
-    public float speed = 2.0f;
+    public float far = 500;
+
+    public float speed = 2;
     public float sensitivity = 0.1f;
 
-    private Float3 forward = Float3.getNegZ();
     private boolean firstClick = true;
     private boolean camMoving = false;
 
-    public Camera() {}
-
-    public void updateAspect(Int2 frameSize) {
-        aspect = ((float) frameSize.x) / frameSize.y;
+    public Camera(NameHolder holder, String name) {
+        super(holder, name);
     }
+
+    public abstract Mat4 viewMatrix();
+    public abstract Mat4 projectionMatrix();
+    public abstract Mat4 matrix();
 
     public void setForward(Float3 forward) {
         this.forward = forward.norm();
@@ -37,31 +47,31 @@ public class Camera {
     }
 
     public void moveForward(float deltaTime) {
-        position = position.add(forward.mul(speed * deltaTime));
+        transformComponent.position = transformComponent.position.add(forward.mul(speed * deltaTime));
     }
 
     public void moveBack(float deltaTime) {
-        position = position.sub(forward.mul(speed * deltaTime));
+        transformComponent.position = transformComponent.position.sub(forward.mul(speed * deltaTime));
     }
 
     public void moveRight(float deltaTime) {
-        position = position.add(getRight().mul(speed * deltaTime));
+        transformComponent.position = transformComponent.position.add(getRight().mul(speed * deltaTime));
     }
 
     public void moveLeft(float deltaTime) {
-        position = position.sub(getRight().mul(speed * deltaTime));
+        transformComponent.position = transformComponent.position.sub(getRight().mul(speed * deltaTime));
     }
 
     public void moveUp(float deltaTime) {
-        position = position.add(Float3.getPosY().mul(speed * deltaTime));
+        transformComponent.position = transformComponent.position.add(Float3.getPosY().mul(speed * deltaTime));
     }
 
     public void moveDown(float deltaTime) {
-        position = position.sub(Float3.getPosY().mul(speed * deltaTime));
+        transformComponent.position = transformComponent.position.sub(Float3.getPosY().mul(speed * deltaTime));
     }
 
     public void rotate(Int2 mousePos, Int2 frameCenter, float verticalAngleLimit) {
-	    final Int2 delta = mousePos.sub(frameCenter);
+        final Int2 delta = mousePos.sub(frameCenter);
         final Float2 rotation = new Float2(delta).mul(sensitivity);
 
         Float3 forwardVert = forward.rotate(-rotation.y, getRight());
@@ -72,19 +82,7 @@ public class Camera {
         forward = forward.rotate(-rotation.x, Float3.getPosY());
     }
 
-    public Mat4 viewMatrix() {
-        return Mat4.lookAt(position, position.add(forward), Float3.getPosY());
-    }
-
-    public Mat4 projectionMatrix() {
-        return Mat4.perspective(fov, aspect, near, far);
-    }
-
-    public Mat4 matrix() {
-        return projectionMatrix().mul(viewMatrix());
-    }
-
-    public void setDefaultMovement(Window window, Timer timer) {
+    public void setupDefaultMovement(Window window, Timer timer) {
         window.keyboard.w.onHold.add(() -> moveForward(timer.getDeltaT()));
         window.keyboard.a.onHold.add(() -> moveLeft(timer.getDeltaT()));
         window.keyboard.s.onHold.add(() -> moveBack(timer.getDeltaT()));
@@ -102,7 +100,7 @@ public class Camera {
 
         window.mouse.mmb.onHold.add(() -> {
             if (camMoving) {
-			    final Int2 frameCenter = window.getSize().div(2);
+                final Int2 frameCenter = window.getSize().div(2);
 
                 if (!firstClick) {
                     rotate(window.mouse.getPosition(), frameCenter, 85);
@@ -118,5 +116,16 @@ public class Camera {
             firstClick = true;
             camMoving = false;
         });
+    }
+
+    @Override
+    public void renderCustomGUI(Editor editor) {
+        if (ImGui.begin("Properties", ImGuiWindowFlags.NoScrollbar)) {
+            boolean isMainCamera = editor.scene.mainCamera == this;
+            if (ImGui.checkbox("Main camera", isMainCamera)) {
+                editor.scene.mainCamera = isMainCamera ? null : this;
+            }
+        }
+        ImGui.end();
     }
 }

@@ -4,7 +4,10 @@ import editor.Editor;
 import entity.Entity;
 import gui.abs.GUISection;
 import imgui.ImGui;
+import imgui.extension.imguifiledialog.ImGuiFileDialog;
+import math.Float2;
 import math.Int2;
+import scene.Scene;
 
 public final class GUIMainMenu extends GUISection {
     public GUIMainMenu(Editor editor) {
@@ -13,6 +16,14 @@ public final class GUIMainMenu extends GUISection {
 
     private void fileMenu() {
         if (ImGui.beginMenu("File")) {
+            if (ImGui.menuItem("Load scene")) {
+                ImGuiFileDialog.openDialog("LoadSceneDlg", "Load scene", ".scene", ".", "", 1, 0, 0);
+            }
+
+            if (ImGui.menuItem("Save scene") && editor.scene != null) {
+                ImGuiFileDialog.openDialog("SaveSceneDlg", "Save scene", ".scene", ".", "", 1, 0, 0);
+            }
+
             if (ImGui.menuItem("Exit")) {
                 editor.window.close();
             }
@@ -44,19 +55,38 @@ public final class GUIMainMenu extends GUISection {
 
     private void renderMenu() {
         if (ImGui.beginMenu("Render")) {
-            Int2 viewportSize = (Int2) editor.savedData.get("ViewportSize");
+            Float2 size = new Float2(1280, 720);
 
             if (ImGui.beginMenu("Depth Texture")) {
-                ImGui.image(editor.renderer.renderBuffer.getDepthMap().getBuffer(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
+                ImGui.image(editor.viewportRenderer.renderBuffer.getDepthMap().getBuffer(), size.x, size.y, 0, 1, 1, 0);
                 ImGui.endMenu();
             }
 
             if (ImGui.beginMenu("Index Texture")) {
-                ImGui.image(editor.renderer.indexBuffer.getColorMap().getBuffer(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
+                ImGui.image(editor.viewportRenderer.indexBuffer.getColorMap().getBuffer(), size.x, size.y, 0, 1, 1, 0);
                 ImGui.endMenu();
             }
 
             ImGui.endMenu();
+        }
+    }
+
+    private void displayDialogs() {
+        if (ImGuiFileDialog.display("LoadSceneDlg", 0, 192, 108, 1920, 1080)) {
+            if (ImGuiFileDialog.isOk()) {
+                editor.disposeCurrentScene();
+                editor.scene = Scene.fromFile(ImGuiFileDialog.getFilePathName());
+            }
+
+            ImGuiFileDialog.close();
+        }
+
+        if (ImGuiFileDialog.display("SaveSceneDlg", 0, 192, 108, 1920, 1080)) {
+            if (ImGuiFileDialog.isOk() && editor.scene != null) {
+                editor.scene.toFile(ImGuiFileDialog.getFilePathName());
+            }
+
+            ImGuiFileDialog.close();
         }
     }
 
@@ -67,6 +97,8 @@ public final class GUIMainMenu extends GUISection {
             editMenu();
             viewMenu();
             renderMenu();
+
+            displayDialogs();
         }
         ImGui.endMainMenuBar();
     }

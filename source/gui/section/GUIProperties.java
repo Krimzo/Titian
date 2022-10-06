@@ -22,6 +22,10 @@ public final class GUIProperties extends GUISection {
     public void renderGUI() {
         Entity selected = getSelectedEntity();
 
+        if (selected != null) {
+            selected.renderCustomGUI(editor);
+        }
+
         if (ImGui.begin("Transform", ImGuiWindowFlags.NoScrollbar)) {
             if (selected != null) {
                 selected.transformComponent.renderGUI();
