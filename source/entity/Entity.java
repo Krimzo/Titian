@@ -35,9 +35,18 @@ public class Entity extends Named implements Physical, Renderable, Serializable 
 
     @Override
     public void updatePhysics(float deltaT) {
-        physicsComponent.velocity = physicsComponent.velocity.add(physicsComponent.acceleration.mul(deltaT));
-        transformComponent.position = transformComponent.position.add(physicsComponent.velocity.mul(deltaT));
-        transformComponent.rotation = transformComponent.rotation.add(physicsComponent.angular.mul(deltaT));
+        if (physicsComponent.velocity != null) {
+            if (physicsComponent.acceleration != null) {
+                physicsComponent.velocity = physicsComponent.velocity.add(physicsComponent.acceleration.mul(deltaT));
+            }
+            if (transformComponent.position != null) {
+                transformComponent.position = transformComponent.position.add(physicsComponent.velocity.mul(deltaT));
+            }
+        }
+
+        if (transformComponent.rotation != null && physicsComponent.angular != null) {
+            transformComponent.rotation = transformComponent.rotation.add(physicsComponent.angular.mul(deltaT));
+        }
     }
 
     @Override

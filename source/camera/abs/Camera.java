@@ -27,6 +27,7 @@ public abstract class Camera extends Entity implements Serializable {
 
     public Camera(NameHolder holder, String name) {
         super(holder, name);
+        super.transformComponent.rotation = null;
     }
 
     public abstract Mat4 viewMatrix();
@@ -125,9 +126,36 @@ public abstract class Camera extends Entity implements Serializable {
                 editor.scene.mainCamera = isMainCamera ? null : this;
             }
 
-            float[] color = background.array();
-            if (ImGui.colorEdit3("Background color", color)) {
-                background = new Float3(color);
+            float[] forwardData = forward.array();
+            if (ImGui.dragFloat3("Forward", forwardData, 0.01f, -1, 1)) {
+                setForward(new Float3(forwardData));
+            }
+
+            float[] nearData = { near };
+            if (ImGui.dragFloat("Near plane", nearData, 0.05f, 0, 1000000)) {
+                near = nearData[0];
+            }
+
+            float[] farData = { far };
+            if (ImGui.dragFloat("Far plane", farData, 0.05f, 0, 1000000)) {
+                far = farData[0];
+            }
+
+            float[] speedData = { speed };
+            if (ImGui.dragFloat("Speed", speedData, 0.05f, 0, 1000000)) {
+                speed = speedData[0];
+            }
+
+            float[] sensitivityData = { sensitivity };
+            if (ImGui.dragFloat("Sensitivity", sensitivityData, 0.05f, 0, 100)) {
+                sensitivity = sensitivityData[0];
+            }
+
+            ImGui.separator();
+
+            float[] colorData = background.array();
+            if (ImGui.colorEdit3("Background", colorData)) {
+                background = new Float3(colorData);
             }
         }
         ImGui.end();

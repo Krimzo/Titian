@@ -1,6 +1,5 @@
 package renderer;
 
-import camera.PerspectiveCamera;
 import camera.abs.Camera;
 import glparts.FrameBuffer;
 import glparts.Shaders;

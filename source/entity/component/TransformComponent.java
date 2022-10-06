@@ -43,20 +43,23 @@ public class TransformComponent implements GUIRenderable, Serializable {
     public void renderGUI() {
         if (scale != null) {
             float[] scaleData = scale.array();
-            ImGui.dragFloat3("Scale", scaleData, 0.1f);
-            scale = new Float3(scaleData);
+            if (ImGui.dragFloat3("Scale", scaleData, 0.1f)) {
+                scale = new Float3(scaleData);
+            }
         }
 
         if (rotation != null) {
             float[] rotationData = rotation.array();
-            ImGui.dragFloat3("Rotation", rotationData, 0.1f);
-            rotation = new Float3(rotationData);
+            if (ImGui.dragFloat3("Rotation", rotationData, 0.1f)) {
+                rotation = new Float3(rotationData);
+            }
         }
 
         if (position != null) {
             float[] positionData = position.array();
-            ImGui.dragFloat3("Position", positionData, 0.1f);
-            position = new Float3(positionData);
+            if (ImGui.dragFloat3("Position", positionData, 0.1f)) {
+                position = new Float3(positionData);
+            }
         }
     }
 }
