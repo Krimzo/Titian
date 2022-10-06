@@ -8,10 +8,9 @@ import glparts.abs.Disposable;
 import gui.GUIRenderer;
 import gui.section.*;
 import material.Material;
-import math.Float4;
 import math.Int2;
 import physics.Physics;
-import renderer.EditorRenderer;
+import renderer.ViewportRenderer;
 import renderer.GameRenderer;
 import scene.Scene;
 import script.Scripter;
@@ -20,13 +19,11 @@ import window.Window;
 
 import logging.Logger;
 
-import java.awt.*;
-
 public class Editor implements Disposable {
     public Window window = new Window(new Int2(1600, 900), "Titian Creator", true);
     public Timer timer = new Timer();
 
-    public EditorRenderer viewportRenderer = new EditorRenderer(window.getContext(), window.getSize());
+    public ViewportRenderer viewportRenderer = new ViewportRenderer(window.getContext(), window.getSize());
     public GameRenderer gameRenderer = new GameRenderer(window.getContext(), window.getSize());
     public GUIRenderer guiRenderer = new GUIRenderer(window);
 
@@ -43,7 +40,6 @@ public class Editor implements Disposable {
 
     public boolean gameRunning = false;
     public boolean wireframeState = false;
-    public Float4 outlineColor = new Float4(new Color(190, 115, 10));
 
     public Editor() throws Exception {
         window.setIcon("resource/textures/icons/titian.png");

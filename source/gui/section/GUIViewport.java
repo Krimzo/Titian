@@ -10,6 +10,8 @@ import imgui.extension.imguizmo.flag.*;
 import imgui.flag.*;
 import math.*;
 
+import java.awt.*;
+
 public final class GUIViewport extends GUISection {
     private Int2 viewportPosition = new Int2();
     private Int2 viewportSize = new Int2();
@@ -56,8 +58,7 @@ public final class GUIViewport extends GUISection {
     }
 
     private void renderScene() {
-        editor.viewportRenderer.renderBuffer.context.setClearColor(new Float4(0.2f));
-        editor.viewportRenderer.renderBuffer.clear();
+        editor.viewportRenderer.clear(editor.camera);
 
         if (editor.scene == null) {
             return;
@@ -75,7 +76,7 @@ public final class GUIViewport extends GUISection {
         editor.window.getContext().setWireframe(false);
 
         if (selectedIndex >= 0) {
-            editor.viewportRenderer.renderOutline(new Float2(viewportSize), editor.outlineColor, selectedIndex);
+            editor.viewportRenderer.renderOutline(new Float2(viewportSize), new Float4(new Color(190, 115, 10)), selectedIndex);
         }
     }
 

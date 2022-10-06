@@ -4,10 +4,7 @@ import editor.Editor;
 import entity.Entity;
 import imgui.ImGui;
 import imgui.flag.ImGuiWindowFlags;
-import math.Float2;
-import math.Float3;
-import math.Int2;
-import math.Mat4;
+import math.*;
 import named.NameHolder;
 import utility.Timer;
 import window.Window;
@@ -22,6 +19,8 @@ public abstract class Camera extends Entity implements Serializable {
 
     public float speed = 2;
     public float sensitivity = 0.1f;
+
+    public Float3 background = new Float3(0.1f);
 
     private boolean firstClick = true;
     private boolean camMoving = false;
@@ -124,6 +123,11 @@ public abstract class Camera extends Entity implements Serializable {
             boolean isMainCamera = editor.scene.mainCamera == this;
             if (ImGui.checkbox("Main camera", isMainCamera)) {
                 editor.scene.mainCamera = isMainCamera ? null : this;
+            }
+
+            float[] color = background.array();
+            if (ImGui.colorEdit3("Background color", color)) {
+                background = new Float3(color);
             }
         }
         ImGui.end();

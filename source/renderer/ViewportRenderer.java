@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class EditorRenderer implements Disposable {
+public class ViewportRenderer implements Disposable {
     public final FrameBuffer renderBuffer;
     public final FrameBuffer indexBuffer;
 
@@ -23,7 +23,7 @@ public class EditorRenderer implements Disposable {
 
     public final Map<String, Mesh> predefinedMeshes = new HashMap<>();
 
-    public EditorRenderer(GLContext context, Int2 size) {
+    public ViewportRenderer(GLContext context, Int2 size) {
         renderBuffer = new FrameBuffer(context, size);
         indexBuffer = new FrameBuffer(context, size);
         indexBuffer.getColorMap().setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
@@ -53,6 +53,11 @@ public class EditorRenderer implements Disposable {
     public void resize(Int2 size) {
         renderBuffer.resize(size);
         indexBuffer.resize(size);
+    }
+
+    public void clear(Camera camera) {
+        renderBuffer.context.setClearColor(new Float4(camera.background, 1));
+        renderBuffer.clear();
     }
 
     public void renderIndices(Scene scene, Camera camera) {

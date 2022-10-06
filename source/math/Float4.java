@@ -59,13 +59,6 @@ public class Float4 implements Serializable {
         w = v2.y;
     }
 
-    public Float4(Float3 v) {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-        w = 1.0f;
-    }
-
     public Float4(Float3 v, float w) {
         x = v.x;
         y = v.y;

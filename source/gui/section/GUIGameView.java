@@ -22,8 +22,7 @@ public final class GUIGameView extends GUISection {
     }
 
     private void renderScene() {
-        editor.gameRenderer.renderBuffer.context.setClearColor(new Float4(0.2f));
-        editor.gameRenderer.renderBuffer.clear();
+        editor.gameRenderer.clear(editor.scene.mainCamera);
 
         if (editor.scene == null || editor.scene.mainCamera == null) {
             return;
