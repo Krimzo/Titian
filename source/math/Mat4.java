@@ -258,7 +258,7 @@ public class Mat4 implements Serializable {
 
     // Perspective projection matrix
     public static Mat4 perspective(float fov, float aspect, float zNear, float zFar) {
-        final float xScale = (float) Math.atan(Math.toRadians(fov * 0.5f));
+        final float xScale = 1.0f / (float) Math.tan(Math.toRadians(fov * 0.5f));
         final float yScale = xScale * aspect;
 
         Mat4 result = new Mat4();

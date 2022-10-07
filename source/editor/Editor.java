@@ -7,7 +7,7 @@ import gui.GUIRenderer;
 import gui.section.*;
 import math.Int2;
 import physics.Physics;
-import renderer.ViewportRenderer;
+import renderer.EditorRenderer;
 import renderer.GameRenderer;
 import scene.Scene;
 import script.Scripter;
@@ -22,7 +22,7 @@ public class Editor implements Disposable {
     public Window window = new Window(new Int2(1600, 900), "Titian Creator", true);
     public Timer timer = new Timer();
 
-    public ViewportRenderer viewportRenderer = new ViewportRenderer(window.getContext(), window.getSize());
+    public EditorRenderer editorRenderer = new EditorRenderer(window.getContext(), window.getSize());
     public GameRenderer gameRenderer = new GameRenderer(window.getContext(), window.getSize());
     public GUIRenderer guiRenderer = new GUIRenderer(window);
 
@@ -31,7 +31,7 @@ public class Editor implements Disposable {
     public Logger logger = new Logger();
     public Scripter scripter = new Scripter();
 
-    public final PerspectiveCamera camera = new PerspectiveCamera(null, "Editor Camera");
+    public final PerspectiveCamera camera = new PerspectiveCamera(null, "Editor Camera", this);
     public Scene scene = null;
 
     public Editor() throws Exception {
@@ -80,8 +80,9 @@ public class Editor implements Disposable {
 
     @Override
     public void dispose() {
+        data.dispose();
         gameRenderer.dispose();
-        viewportRenderer.dispose();
+        editorRenderer.dispose();
         guiRenderer.dispose();
         window.dispose();
     }

@@ -19,7 +19,7 @@ public class TitianCreator {
         final int size = 1;
         for (int y = -size; y <= size; y++) {
             for (int x = -size; x <= size; x++) {
-                Entity monke = new Entity(scene.entityNames, "Monke");
+                Entity monke = new Entity(scene.entityNames, "Monke", editor);
 
                 monke.transformComponent.position = new Float3(x, y, 0).mul(2.5f);
                 monke.physicsComponent.angular.y = (new Random().nextFloat() * 2 - 1) * 36;

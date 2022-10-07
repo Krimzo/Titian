@@ -13,9 +13,9 @@ void main() {
 // fragment shader
 #version 330
 
-out vec4 outIndex;
-
 uniform int index;
+
+out vec4 outIndex;
 
 void main() {
     outIndex = vec4(index);

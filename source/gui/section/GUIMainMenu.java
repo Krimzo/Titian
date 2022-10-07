@@ -74,12 +74,12 @@ public final class GUIMainMenu extends GUISection {
             Float2 size = new Float2(1280, 720);
 
             if (ImGui.beginMenu("Depth Texture")) {
-                ImGui.image(editor.viewportRenderer.renderBuffer.getDepthMap().getBuffer(), size.x, size.y, 0, 1, 1, 0);
+                ImGui.image(editor.editorRenderer.renderBuffer.getDepthMap().getBuffer(), size.x, size.y, 0, 1, 1, 0);
                 ImGui.endMenu();
             }
 
             if (ImGui.beginMenu("Index Texture")) {
-                ImGui.image(editor.viewportRenderer.indexBuffer.getColorMap().getBuffer(), size.x, size.y, 0, 1, 1, 0);
+                ImGui.image(editor.editorRenderer.indexBuffer.getColorMap().getBuffer(), size.x, size.y, 0, 1, 1, 0);
                 ImGui.endMenu();
             }
 

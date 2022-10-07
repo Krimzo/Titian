@@ -51,13 +51,13 @@ public final class GUIViewport extends GUISection {
         if (ImGui.isMouseHoveringRect(viewportRect.x, viewportRect.y, viewportRect.z, viewportRect.w) && ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
             Float2 mousePosition = new Float2(ImGui.getMousePosX() - viewportPosition.x, ImGui.getMousePosY() - viewportPosition.y);
 
-            int objectIndex = (int) editor.viewportRenderer.indexBuffer.getPixel(new Int2(mousePosition)).x - 1;
+            int objectIndex = (int) editor.editorRenderer.indexBuffer.getPixel(new Int2(mousePosition)).x - 1;
             editor.scene.selectedEntity = (objectIndex >= 0) ? editor.scene.get(objectIndex) : null;
         }
     }
 
     private void renderScene() {
-        editor.viewportRenderer.clear(editor.camera);
+        editor.editorRenderer.clear(editor.camera);
 
         if (editor.scene == null) {
             return;
@@ -66,21 +66,21 @@ public final class GUIViewport extends GUISection {
         int selectedIndex = editor.scene.indexOf(editor.scene.selectedEntity);
 
         editor.window.getContext().setViewport(viewportSize);
-        editor.viewportRenderer.resize(viewportSize);
+        editor.editorRenderer.resize(viewportSize);
         editor.camera.updateAspect(viewportSize);
 
         editor.window.getContext().setWireframe(editor.data.wireframeState);
-        editor.viewportRenderer.renderScene(editor.scene, editor.camera);
-        editor.viewportRenderer.renderIndices(editor.scene, editor.camera);
+        editor.editorRenderer.renderScene(editor.scene, editor.camera);
+        editor.editorRenderer.renderIndices(editor.scene, editor.camera);
         editor.window.getContext().setWireframe(false);
 
         if (selectedIndex >= 0) {
-            editor.viewportRenderer.renderOutline(new Float2(viewportSize), GUIStyle.special, selectedIndex);
+            editor.editorRenderer.renderOutline(new Float2(viewportSize), GUIStyle.special, selectedIndex);
         }
     }
 
     private void displayFrame() {
-        ImGui.image(editor.viewportRenderer.renderBuffer.getColorMap().getBuffer(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
+        ImGui.image(editor.editorRenderer.renderBuffer.getColorMap().getBuffer(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
     }
 
     private void renderGizmos() {

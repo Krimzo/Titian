@@ -20,7 +20,7 @@ public final class GUIScene extends GUISection {
                 if (ImGui.beginPopupContextWindow()) {
                     if (ImGui.beginMenu("New")) {
                         if (ImGui.button("Entity")) {
-                            Entity entity = new Entity(editor.scene.entityNames, "NewEntity");
+                            Entity entity = new Entity(editor.scene.entityNames, "NewEntity", editor);
                             entity.meshComponent.mesh = editor.data.defaultMesh;
                             entity.materialComponent.material = editor.data.defaultMaterial;
                             editor.scene.add(entity);
@@ -30,14 +30,14 @@ public final class GUIScene extends GUISection {
 
                         if (ImGui.beginMenu("Camera")) {
                             if (ImGui.button("Perspective")) {
-                                PerspectiveCamera camera = new PerspectiveCamera(editor.scene.entityNames, "NewPerspCam");
+                                PerspectiveCamera camera = new PerspectiveCamera(editor.scene.entityNames, "NewPerspCam", editor);
                                 editor.scene.add(camera);
 
                                 ImGui.closeCurrentPopup();
                             }
 
                             if (ImGui.button("Orthographic")) {
-                                OrthographicCamera camera = new OrthographicCamera(editor.scene.entityNames, "NewOrthoCam");
+                                OrthographicCamera camera = new OrthographicCamera(editor.scene.entityNames, "NewOrthoCam", editor);
                                 editor.scene.add(camera);
 
                                 ImGui.closeCurrentPopup();

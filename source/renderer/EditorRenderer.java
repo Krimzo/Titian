@@ -3,7 +3,7 @@ package renderer;
 import camera.abs.Camera;
 import glparts.*;
 import math.*;
-import renderer.abs.Renderable;
+import renderer.abs.EditorRenderable;
 import scene.Scene;
 import glparts.abs.Disposable;
 import window.*;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public class ViewportRenderer implements Disposable {
+public class EditorRenderer implements Disposable {
     public final FrameBuffer renderBuffer;
     public final FrameBuffer indexBuffer;
 
@@ -23,7 +23,7 @@ public class ViewportRenderer implements Disposable {
 
     public final Map<String, Mesh> predefinedMeshes = new HashMap<>();
 
-    public ViewportRenderer(GLContext context, Int2 size) {
+    public EditorRenderer(GLContext context, Int2 size) {
         renderBuffer = new FrameBuffer(context, size);
         indexBuffer = new FrameBuffer(context, size);
         indexBuffer.getColorMap().setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
@@ -68,7 +68,7 @@ public class ViewportRenderer implements Disposable {
             indexShaders.setUniform("VP", camera.matrix());
             for (int i = 0; i < scene.size(); i++) {
                 indexShaders.setUniform("index", i + 1);
-                scene.get(i).render(indexShaders);
+                scene.get(i).indexRender(indexShaders);
             }
         });
     }
@@ -76,8 +76,8 @@ public class ViewportRenderer implements Disposable {
     public void renderScene(Scene scene, Camera camera) {
         renderBuffer.use(() -> {
             renderShaders.setUniform("VP", camera.matrix());
-            for (Renderable renderable : scene) {
-                renderable.render(renderShaders);
+            for (EditorRenderable renderable : scene) {
+                renderable.editorRender(renderShaders);
             }
         });
     }
@@ -91,7 +91,7 @@ public class ViewportRenderer implements Disposable {
                 outlineShaders.setUniform("frameSize", frameSize);
                 outlineShaders.setUniform("outlineThickness", 1);
                 outlineShaders.setUniform("selectedIndex", objectIndex + 1);
-                predefinedMeshes.get("ScreenMesh").render(outlineShaders);
+                predefinedMeshes.get("ScreenMesh").renderTriangles(outlineShaders);
             });
             renderBuffer.context.setDepthTest(true);
         });

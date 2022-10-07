@@ -26,7 +26,7 @@ in vec3 outWorld;
 in vec2 outTexture;
 in vec3 outNormal;
 
-out vec4 outPixel;
+out vec4 pixel;
 
 uniform sampler2D colorMap;
 
@@ -37,5 +37,5 @@ void main() {
     vec3 lightDirection = normalize(vec3(1, -1, -1));
     float diffuseFactor = dot(pixelNormal, -lightDirection);
 
-    outPixel = textureColor * diffuseFactor;
+    pixel = textureColor * diffuseFactor;
 }

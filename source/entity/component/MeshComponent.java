@@ -4,11 +4,13 @@ import glparts.Mesh;
 import glparts.Shaders;
 import gui.abs.GUIRenderable;
 import imgui.ImGui;
-import renderer.abs.Renderable;
+import renderer.abs.EditorRenderable;
+import renderer.abs.GameRenderable;
+import renderer.abs.IndexRenderable;
 
 import java.io.Serializable;
 
-public class MeshComponent implements Renderable, GUIRenderable, Serializable {
+public class MeshComponent implements GameRenderable, EditorRenderable, IndexRenderable, GUIRenderable, Serializable {
     public Mesh mesh = null;
 
     public MeshComponent() {}
@@ -18,9 +20,25 @@ public class MeshComponent implements Renderable, GUIRenderable, Serializable {
     }
 
     @Override
-    public void render(Shaders shaders) {
+    public void gameRender(Shaders shaders) {
         if (mesh != null) {
-            mesh.render(shaders);
+            mesh.renderTriangles(shaders);
+        }
+    }
+
+    @Override
+    public void editorRender(Shaders shaders) {
+        // In case of future changes
+        if (mesh != null) {
+            mesh.renderTriangles(shaders);
+        }
+    }
+
+    @Override
+    public void indexRender(Shaders shaders) {
+        // In case of future changes
+        if (mesh != null) {
+            mesh.renderTriangles(shaders);
         }
     }
 

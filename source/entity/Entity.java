@@ -3,23 +3,27 @@ package entity;
 import editor.Editor;
 import entity.component.*;
 import glparts.*;
-import imgui.ImGui;
 import physics.Physical;
-import renderer.abs.Renderable;
 import named.*;
+import renderer.abs.EditorRenderable;
+import renderer.abs.GameRenderable;
+import renderer.abs.IndexRenderable;
 import script.Script;
 
 import java.io.Serializable;
 
-public class Entity extends Named implements Physical, Renderable, Serializable {
+public class Entity extends Named implements Physical, GameRenderable, EditorRenderable, IndexRenderable, Serializable {
+    public transient final Editor editor;
+
     public final TransformComponent transformComponent = new TransformComponent();
     public final MeshComponent meshComponent = new MeshComponent();
     public final MaterialComponent materialComponent = new MaterialComponent();
     public final PhysicsComponent physicsComponent = new PhysicsComponent();
     public final ScriptComponent scriptComponent = new ScriptComponent(this);
 
-    public Entity(NameHolder holder, String name) {
+    public Entity(NameHolder holder, String name, Editor editor) {
         super(holder, name);
+        this.editor = editor;
     }
 
     public void callScriptStarts() {
@@ -51,14 +55,28 @@ public class Entity extends Named implements Physical, Renderable, Serializable 
     }
 
     @Override
-    public void render(Shaders shaders) {
+    public void gameRender(Shaders shaders) {
         shaders.setUniform("W", transformComponent.matrix());
         materialComponent.use(() -> {
-            meshComponent.render(shaders);
+            meshComponent.gameRender(shaders);
         });
     }
 
-    public boolean renderInfoGUI(Editor editor) {
-        return false;
+    @Override
+    public void editorRender(Shaders shaders) {
+        shaders.setUniform("W", transformComponent.matrix());
+        materialComponent.use(() -> {
+            meshComponent.editorRender(shaders);
+        });
     }
+
+    @Override
+    public void indexRender(Shaders shaders) {
+        shaders.setUniform("W", transformComponent.matrix());
+        materialComponent.use(() -> {
+            meshComponent.indexRender(shaders);
+        });
+    }
+
+    public void renderInfoGUI(Editor editor) {}
 }

@@ -9,12 +9,11 @@ import glparts.Shaders;
 import material.Material;
 import named.NameHolder;
 import physics.Physical;
-import renderer.abs.Renderable;
 
 import java.io.*;
 import java.util.*;
 
-public class Scene extends ArrayList<Entity> implements Physical, Renderable, Disposable, Serializable {
+public class Scene extends ArrayList<Entity> implements Physical, Disposable, Serializable {
     public final NameHolder entityNames = new NameHolder();
     public final NameHolder materialNames = new NameHolder();
     public final NameHolder textureNames = new NameHolder();
@@ -80,13 +79,6 @@ public class Scene extends ArrayList<Entity> implements Physical, Renderable, Di
     public void updatePhysics(float deltaT) {
         for (Entity entity : this) {
             entity.updatePhysics(deltaT);
-        }
-    }
-
-    @Override
-    public void render(Shaders shaders) {
-        for (Entity entity : this) {
-            entity.render(shaders);
         }
     }
 

@@ -4,7 +4,6 @@ import editor.Editor;
 import entity.Entity;
 import gui.GUIUtil;
 import imgui.ImGui;
-import imgui.flag.ImGuiTreeNodeFlags;
 import math.*;
 import named.NameHolder;
 import utility.Timer;
@@ -26,8 +25,8 @@ public abstract class Camera extends Entity implements Serializable {
     private boolean firstClick = true;
     private boolean camMoving = false;
 
-    public Camera(NameHolder holder, String name) {
-        super(holder, name);
+    public Camera(NameHolder holder, String name, Editor editor) {
+        super(holder, name, editor);
 
         super.transformComponent.scale = null;
         super.transformComponent.rotation = null;
@@ -122,26 +121,21 @@ public abstract class Camera extends Entity implements Serializable {
     }
 
     @Override
-    public boolean renderInfoGUI(Editor editor) {
-        if (!ImGui.collapsingHeader("Info", ImGuiTreeNodeFlags.DefaultOpen)) {
-            return false;
-        }
-
+    public void renderInfoGUI(Editor editor) {
         boolean isMainCamera = editor.scene.mainCamera == this;
         if (ImGui.checkbox("Main camera", isMainCamera)) {
             editor.scene.mainCamera = isMainCamera ? null : this;
         }
 
-        GUIUtil.editFloat3("Forward", forward, 0.01f, -1, 1);
+        GUIUtil.editFloat3("Forward", forward, 0.01f);
+        setForward(forward);
 
-        near = GUIUtil.editFloat("Near plane", near, 0.05f, 0, 1000000);
-        far = GUIUtil.editFloat("Far plane", far, 0.05f, 0, 1000000);
+        near = GUIUtil.editFloat("Near plane", near, 0.05f);
+        far = GUIUtil.editFloat("Far plane", far, 0.05f);
 
-        speed = GUIUtil.editFloat("Speed", speed, 0.05f, 0, 1000000);
-        sensitivity = GUIUtil.editFloat("Sensitivity", sensitivity, 0.05f, 0, 100);
+        speed = GUIUtil.editFloat("Speed", speed, 0.05f);
+        sensitivity = GUIUtil.editFloat("Sensitivity", sensitivity, 0.05f);
 
         GUIUtil.editColor3("Background", background);
-
-        return true;
     }
 }

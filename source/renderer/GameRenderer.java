@@ -7,7 +7,7 @@ import glparts.abs.Disposable;
 import math.Float3;
 import math.Float4;
 import math.Int2;
-import renderer.abs.Renderable;
+import renderer.abs.GameRenderable;
 import scene.Scene;
 import window.GLContext;
 
@@ -39,8 +39,8 @@ public class GameRenderer implements Disposable {
     public void renderScene(Scene scene, Camera camera) {
         renderBuffer.use(() -> {
             renderShaders.setUniform("VP", camera.matrix());
-            for (Renderable renderable : scene) {
-                renderable.render(renderShaders);
+            for (GameRenderable renderable : scene) {
+                renderable.gameRender(renderShaders);
             }
         });
     }

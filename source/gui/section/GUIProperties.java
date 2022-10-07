@@ -14,21 +14,11 @@ public final class GUIProperties extends GUISection {
         super(editor);
     }
 
-    private boolean renderTransform(Entity selected) {
-        if (!ImGui.collapsingHeader("Transform", ImGuiTreeNodeFlags.DefaultOpen)) {
-            return false;
-        }
-
+    private void renderTransform(Entity selected) {
         selected.transformComponent.renderGUI();
-
-        return true;
     }
 
-    private boolean renderMesh(Entity selected) {
-        if (!ImGui.collapsingHeader("Mesh", ImGuiTreeNodeFlags.DefaultOpen)) {
-            return false;
-        }
-
+    private void renderMesh(Entity selected) {
         selected.meshComponent.renderGUI();
 
         if (ImGui.beginListBox("##Loaded meshes", -1, 0)) {
@@ -40,15 +30,9 @@ public final class GUIProperties extends GUISection {
 
             ImGui.endListBox();
         }
-
-        return true;
     }
 
-    private boolean renderMaterial(Entity selected) {
-        if (!ImGui.collapsingHeader("Material", ImGuiTreeNodeFlags.DefaultOpen)) {
-            return false;
-        }
-
+    private void renderMaterial(Entity selected) {
         selected.materialComponent.renderGUI();
 
         if (ImGui.beginListBox("##Loaded materials", -1, 0)) {
@@ -60,25 +44,13 @@ public final class GUIProperties extends GUISection {
 
             ImGui.endListBox();
         }
-
-        return true;
     }
 
-    private boolean renderPhysics(Entity selected) {
-        if (!ImGui.collapsingHeader("Physics", ImGuiTreeNodeFlags.DefaultOpen)) {
-            return false;
-        }
-
+    private void renderPhysics(Entity selected) {
         selected.physicsComponent.renderGUI();
-
-        return true;
     }
 
-    private boolean renderScripts(Entity selected) {
-        if (!ImGui.collapsingHeader("Scripts", ImGuiTreeNodeFlags.DefaultOpen)) {
-            return false;
-        }
-
+    private void renderScripts(Entity selected) {
         selected.scriptComponent.renderGUI();
 
         ImVec2 contentMin = ImGui.getWindowContentRegionMin();
@@ -103,8 +75,6 @@ public final class GUIProperties extends GUISection {
 
             ImGui.endPopup();
         }
-
-        return true;
     }
 
     @Override
@@ -112,27 +82,34 @@ public final class GUIProperties extends GUISection {
         Entity selected = (editor.scene != null) ? editor.scene.selectedEntity : null;
 
         if (ImGui.begin("Properties") && selected != null) {
-            if (selected.renderInfoGUI(editor)) {
+            if (ImGui.collapsingHeader("Info", ImGuiTreeNodeFlags.DefaultOpen)) {
+                selected.renderInfoGUI(editor);
                 ImGui.separator();
             }
 
-            if (renderTransform(selected)) {
+            if (ImGui.collapsingHeader("Transform", ImGuiTreeNodeFlags.DefaultOpen)) {
+                renderTransform(selected);
                 ImGui.separator();
             }
 
-            if (renderMesh(selected)) {
+            if (ImGui.collapsingHeader("Mesh", ImGuiTreeNodeFlags.DefaultOpen)) {
+                renderMesh(selected);
                 ImGui.separator();
             }
 
-            if (renderMaterial(selected)) {
+            if (ImGui.collapsingHeader("Material", ImGuiTreeNodeFlags.DefaultOpen)) {
+                renderMaterial(selected);
                 ImGui.separator();
             }
 
-            if (renderPhysics(selected)) {
+            if (ImGui.collapsingHeader("Physics", ImGuiTreeNodeFlags.DefaultOpen)) {
+                renderPhysics(selected);
                 ImGui.separator();
             }
 
-            renderScripts(selected);
+            if (ImGui.collapsingHeader("Scripts", ImGuiTreeNodeFlags.DefaultOpen)) {
+                renderScripts(selected);
+            }
         }
         ImGui.end();
     }
