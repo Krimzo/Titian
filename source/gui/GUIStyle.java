@@ -126,4 +126,14 @@ public final class GUIStyle {
 
         style.setColor(ImGuiCol.ModalWindowDimBg, normal.x, normal.y, normal.z, 1);
     }
+
+    public static void setFont(String filepath, int size) {
+        ImFontAtlas fontAtlas = ImGui.getIO().getFonts();
+
+        fontAtlas.clear();
+        fontAtlas.addFontFromFileTTF(filepath, size, fontAtlas.getGlyphRangesDefault());
+
+        fontAtlas.setFlags(ImGuiFreeTypeBuilderFlags.LightHinting);
+        fontAtlas.build();
+    }
 }

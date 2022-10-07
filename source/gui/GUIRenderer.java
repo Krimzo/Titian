@@ -24,10 +24,11 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
         ImGui.createContext();
         ImGui.getIO().setConfigFlags(ImGuiConfigFlags.DockingEnable);
 
-        implGlfw.init(window.getWindow(), true);
-        implGl3.init();
-
         GUIStyle.reloadStyle();
+        GUIStyle.setFont("resource/fonts/Roboto.ttf", 16);
+
+        implGlfw.init(window.getWindow(), true);
+        implGl3.init("#version 330");
 
         // Viewport
         predefineTextures.put("PlayIcon", new Texture(null, null, window.getContext(), "resource/textures/control/play.png", false));
