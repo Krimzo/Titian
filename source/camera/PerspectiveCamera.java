@@ -34,7 +34,7 @@ public class PerspectiveCamera extends Camera implements Serializable {
 
     @Override
     public Mat4 matrix() {
-        return projectionMatrix().mul(viewMatrix());
+        return projectionMatrix().multiply(viewMatrix());
     }
 
     @Override

@@ -4,7 +4,9 @@ import java.awt.*;
 import java.io.Serializable;
 
 public class Float3 implements Serializable {
-    public float x, y, z;
+    public float x;
+    public float y;
+    public float z;
 
     public Float3() {
         x = 0;
@@ -59,7 +61,6 @@ public class Float3 implements Serializable {
         z = color.getBlue() * recConv;
     }
 
-    // Getter
     public Float2 xy() {
         return new Float2(x, y);
     }
@@ -68,80 +69,66 @@ public class Float3 implements Serializable {
         return new float[] { x, y, z };
     }
 
-    // Addition
     public Float3 add(Float3 v) {
         return new Float3(x + v.x, y + v.y, z + v.z);
     }
 
-    // Subtraction
-    public Float3 sub(Float3 v) {
+    public Float3 subtract(Float3 v) {
         return new Float3(x - v.x, y - v.y, z - v.z);
     }
 
-    // Multiplication
-    public Float3 mul(float a) {
+    public Float3 multiply(float a) {
         return new Float3(x * a, y * a, z * a);
     }
-    public Float3 mul(Float3 v) {
+
+    public Float3 multiply(Float3 v) {
         return new Float3(x * v.x, y * v.y, z * v.z);
     }
 
-    // Division
-    public Float3 div(float a) {
-        return mul(1.0f / a);
+    public Float3 divide(float a) {
+        return multiply(1.0f / a);
     }
-    public Float3 div(Float3 v) {
+
+    public Float3 divide(Float3 v) {
         return new Float3(x / v.x, y / v.y, z / v.z);
     }
 
-    // Comparison
     public boolean equals(Float3 v) {
         return x == v.x && y == v.y && z == v.z;
     }
 
-    // Negation
-    public Float3 neg() {
-        return mul(-1.0f);
+    public Float3 negate() {
+        return multiply(-1.0f);
     }
 
-    // Absolute
-    public Float3 abs() {
+    public Float3 absolute() {
         return new Float3(Math.abs(x), Math.abs(y), Math.abs(z));
     }
 
-    // Length
-    public float len() {
-        return (float) Math.sqrt(x * x + y * y + z * z);
+    public float length() {
+        return (float) Math.sqrt(dot(this));
     }
 
-    // Normalization
-    public Float3 norm() {
-        return div(len());
+    public Float3 normalize() {
+        return divide(length());
     }
 
-    // Dot product
-    public float dot(Float3 a) {
-        return x * a.x + y * a.y + z * a.z;
+    public float dot(Float3 v) {
+        return x * v.x + y * v.y + z * v.z;
     }
 
-    // Cross product
-    public Float3 cross(Float3 a) {
-        return new Float3(y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x);
+    public Float3 cross(Float3 v) {
+        return new Float3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
     }
 
-    // Angle between vectors
-    public float angle(Float3 a) {
-        return (float) Math.toDegrees(Math.acos(norm().dot(a.norm())));
+    public float angle(Float3 v) {
+        return (float) Math.toDegrees(Math.acos(normalize().dot(v.normalize())));
     }
 
-    // Returns a rotated vector around the given axis
-    private static final float halfAngleRad = (float)(Math.PI / 360.0f);
     public Float3 rotate(float angle, Float3 axis) {
-        // Calculating trig values
-        final float angleSin = (float) Math.sin(angle * halfAngleRad);
-        final float angleCos = (float) Math.cos(angle * halfAngleRad);
+        final float angleSin = (float) Math.sin(Math.toRadians(angle * 0.5f));
+        final float angleCos = (float) Math.cos(Math.toRadians(angle * 0.5f));
 
-        // Calculating quaternion constants
         final float qx = axis.x * angleSin;
         final float qy = axis.y * angleSin;
         final float qz = axis.z * angleSin;
@@ -156,7 +143,6 @@ public class Float3 implements Serializable {
         final float yw = qy * angleCos;
         final float zw = qz * angleCos;
 
-        // Calculating the rotated vector
         Float3 temp = new Float3(0);
         temp.x = (w2 + x2 - z2 - y2) * x + (-zw + xy - zw + xy) * y + (yw + xz + xz + yw) * z;
         temp.y = (xy + zw + zw + xy) * x + ( y2 - z2 + w2 - x2) * y + (yz + yz - xw - xw) * z;
@@ -164,12 +150,11 @@ public class Float3 implements Serializable {
         return temp;
     }
 
-    public Float3 reflect(Float3 vec) {
-        final Float3 normal = vec.norm();
-        return this.sub(normal.mul(2 * this.dot(normal)));
+    public Float3 reflect(Float3 v) {
+        final Float3 normal = v.normalize();
+        return this.subtract(normal.multiply(2 * this.dot(normal)));
     }
 
-    // Constants
     public static Float3 getPosX() {
         return new Float3(1.0f, 0.0f, 0.0f);
     }
@@ -189,7 +174,6 @@ public class Float3 implements Serializable {
         return new Float3(0.0f, 0.0f, -1.0f);
     }
 
-    // String
     public String toString() {
         return "(" + x + ", " + y + ", " + z + ")";
     }

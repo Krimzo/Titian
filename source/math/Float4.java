@@ -4,7 +4,10 @@ import java.awt.*;
 import java.io.Serializable;
 
 public class Float4 implements Serializable {
-    public float x, y, z, w;
+    public float x;
+    public float y;
+    public float z;
+    public float w;
 
     public Float4() {
         x = 0.0f;
@@ -91,7 +94,6 @@ public class Float4 implements Serializable {
         this(new Float3(color), color.getAlpha() / 255.0f);
     }
 
-    // Getters
     public Float2 xy() {
         return new Float2(x, y);
     }
@@ -104,63 +106,54 @@ public class Float4 implements Serializable {
         return new float[] { x, y, z, w };
     }
 
-    // Addition
     public Float4 add(Float4 v) {
         return new Float4(x + v.x, y + v.y, z + v.z, w + v.w);
     }
 
-    // Subtraction
-    public Float4 sub(Float4 v) {
+    public Float4 subtract(Float4 v) {
         return new Float4(x - v.x, y - v.y, z - v.z, w - v.w);
     }
 
-    // Multiplication
-    public Float4 mul(float a) {
+    public Float4 multiply(float a) {
         return new Float4(x * a, y * a, z * a, w * a);
     }
-    public Float4 mul(Float4 v) {
+
+    public Float4 multiply(Float4 v) {
         return new Float4(x * v.x, y * v.y, z * v.z, w * v.w);
     }
 
-    // Division
-    public Float4 div(float a) {
-        return mul(1.0f / a);
+    public Float4 divide(float a) {
+        return multiply(1.0f / a);
     }
-    public Float4 div(Float4 v) {
+
+    public Float4 divide(Float4 v) {
         return new Float4(x / v.x, y / v.y, z / v.z, w / v.w);
     }
 
-    // Comparison
     public boolean equals(Float4 v) {
         return x == v.x && y == v.y && z == v.z && w == v.w;
     }
 
-    // Negation
-    public Float4 neg() {
-        return mul(-1.0f);
+    public Float4 negate() {
+        return multiply(-1.0f);
     }
 
-    // Length
-    public float len() {
-        return (float) Math.sqrt(x * x + y * y + z * z + w * w);
+    public float length() {
+        return (float) Math.sqrt(dot(this));
     }
 
-    // Normalization
-    public Float4 norm() {
-        return div(len());
+    public Float4 normalize() {
+        return divide(length());
     }
 
-    // Dot product
-    float dot(Float4 a) {
-        return x * a.x + y * a.y + z * a.z + w * a.w;
+    float dot(Float4 v) {
+        return x * v.x + y * v.y + z * v.z + w * v.w;
     }
 
-    // Angle between vectors
-    float angle(Float4 a) {
-        return (float) Math.toDegrees(Math.acos(norm().dot(a.norm())));
+    float angle(Float4 v) {
+        return (float) Math.toDegrees(Math.acos(normalize().dot(v.normalize())));
     }
 
-    // Constants
     public static Float4 getPosX() {
         return new Float4(1.0f, 0.0f, 0.0f, 0.0f);
     }
@@ -186,7 +179,6 @@ public class Float4 implements Serializable {
         return new Float4(0.0f, 0.0f, 0.0f, -1.0f);
     }
 
-    // String
     public String toString() {
         return "(" + x + ", " + y + ", " + z + ", " + w + ")";
     }

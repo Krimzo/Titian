@@ -2,109 +2,55 @@ package math;
 
 import java.io.Serializable;
 
-public class Mat3 implements Serializable {
-    public final float[] data = new float[9];
-
+public class Mat3 extends Matrix implements Serializable {
     public Mat3() {
-        data[0] = 1.0f; data[1] = 0.0f; data[2] = 0.0f;
-        data[3] = 0.0f; data[4] = 1.0f; data[5] = 0.0f;
-        data[6] = 0.0f; data[7] = 0.0f; data[8] = 1.0f;
+        super(3, 3);
     }
 
-    public Mat3(Mat3 m) {
-        System.arraycopy(m.data, 0, data, 0, data.length);
+    public Mat3(float[] data) {
+        this(); System.arraycopy(data, 0, this.data, 0, this.data.length);
     }
 
-    // Getter
-    public float get(int x, int y) {
-        return data[y * 3 + x];
+    public Mat3(Matrix matrix) {
+        this(matrix.data);
     }
 
-    // Addition
-    public Mat3 add(Mat3 m) {
-        Mat3 result = new Mat3();
-        for(int i = 0; i < 9; i++) {
-            result.data[i] = data[i] + m.data[i];
-        }
-        return result;
+    public Mat3(Mat3 mat) {
+        this(mat.data);
     }
 
-    // Subtraction
-    public Mat3 sub(Mat3 m) {
-        Mat3 result = new Mat3();
-        for(int i = 0; i < 9; i++) {
-            result.data[i] = data[i] - m.data[i];
-        }
-        return result;
+    public Mat3 add(Mat3 mat) {
+        return new Mat3(super.add(mat));
     }
 
-    // Multiplication
-    public Mat3 mul(float a) {
-        Mat3 result = new Mat3();
-        for(int i = 0; i < 9; i++) {
-            result.data[i] = data[i] * a;
-        }
-        return result;
-    }
-    public Float3 mul(Float3 v) {
-        Float3 result = new Float3();
-        result.x = data[0] * v.x + data[1] * v.y + data[2] * v.z;
-        result.y = data[3] * v.x + data[4] * v.y + data[5] * v.z;
-        result.z = data[6] * v.x + data[7] * v.y + data[8] * v.z;
-        return result;
-    }
-    public Mat3 mul(Mat3 m) {
-        Mat3 result = new Mat3();
-        result.data[0] = data[0] * m.data[0] + data[1] * m.data[3] + data[2] * m.data[6];
-        result.data[1] = data[0] * m.data[1] + data[1] * m.data[4] + data[2] * m.data[7];
-        result.data[2] = data[0] * m.data[2] + data[1] * m.data[5] + data[2] * m.data[8];
-        result.data[3] = data[3] * m.data[0] + data[4] * m.data[3] + data[5] * m.data[6];
-        result.data[4] = data[3] * m.data[1] + data[4] * m.data[4] + data[5] * m.data[7];
-        result.data[5] = data[3] * m.data[2] + data[4] * m.data[5] + data[5] * m.data[8];
-        result.data[6] = data[6] * m.data[0] + data[7] * m.data[3] + data[8] * m.data[6];
-        result.data[7] = data[6] * m.data[1] + data[7] * m.data[4] + data[8] * m.data[7];
-        result.data[8] = data[6] * m.data[2] + data[7] * m.data[5] + data[8] * m.data[8];
-        return result;
+    public Mat3 subtract(Mat3 mat) {
+        return new Mat3(super.subtract(mat));
     }
 
-    // Division
-    public Mat3 div(float a) {
-        return mul(1.0f / a);
+    public Float3 multiply(Float3 vec) {
+        return new Float3(super.multiply(vec.array(), 1, 3).data);
     }
 
-    // Comparison
-    public boolean equals(Mat3 m) {
-        for (int i = 0; i < 9; i++) {
-            if (data[i] != m.data[i]) {
-                return false;
-            }
-        }
-        return true;
+    public Mat3 multiply(Mat3 mat) {
+        return new Mat3(super.multiply(mat));
     }
 
-    // Inverse
-    public Mat3 inv() {
-        Mat3 result = new Mat3();
-        result.data[0] = data[4] * data[8] - data[7] * data[5];
-        result.data[1] = data[2] * data[7] - data[1] * data[8];
-        result.data[2] = data[1] * data[5] - data[2] * data[4];
-        result.data[3] = data[5] * data[6] - data[3] * data[8];
-        result.data[4] = data[0] * data[8] - data[2] * data[6];
-        result.data[5] = data[3] * data[2] - data[0] * data[5];
-        result.data[6] = data[3] * data[7] - data[6] * data[4];
-        result.data[7] = data[6] * data[1] - data[0] * data[7];
-        result.data[8] = data[0] * data[4] - data[3] * data[1];
-
-        // Det calc
-	    final float det = data[0] * (data[4] * data[8] - data[7] * data[5]) -
-                data[1] * (data[3] * data[8] - data[5] * data[6]) +
-                data[2] * (data[3] * data[7] - data[4] * data[6]);
-
-        // Return
-        return result.div(det);
+    public Mat3 absolute() {
+        return new Mat3(super.absolute());
     }
 
-    // Translation matrix
+    public Mat3 negate() {
+        return new Mat3(super.negate());
+    }
+
+    public Mat3 transpose() {
+        return new Mat3(super.transpose());
+    }
+
+    public Mat3 inverse() {
+        return new Mat3(super.inverse());
+    }
+
     public static Mat3 translation(Float2 translation) {
         Mat3 result = new Mat3();
         result.data[2] = translation.x;
@@ -112,13 +58,10 @@ public class Mat3 implements Serializable {
         return result;
     }
 
-    // Rotation matrix
     public static Mat3 rotation(float rotation) {
-        // Computing trig
 	    final float zSin = (float) Math.sin(Math.toRadians(rotation));
 	    final float zCos = (float) Math.cos(Math.toRadians(rotation));
 
-        // Generating the mat
         Mat3 result = new Mat3();
         result.data[0] =  zCos;
         result.data[1] = -zSin;
@@ -127,18 +70,10 @@ public class Mat3 implements Serializable {
         return result;
     }
 
-    // Scaling matrix
     public static Mat3 scaling(Float2 size) {
         Mat3 result = new Mat3();
         result.data[0] = size.x;
         result.data[4] = size.y;
         return result;
-    }
-
-    // String
-    public String toString() {
-        return  "[" + data[0] + " " + data[1] + " " + data[2] + "]\n" +
-                "[" + data[3] + " " + data[4] + " " + data[5] + "]\n" +
-                "[" + data[6] + " " + data[7] + " " + data[8] + "]";
     }
 }

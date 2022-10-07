@@ -10,8 +10,9 @@ public class Plane implements Serializable {
         this.normal = normal;
         this.point = point;
     }
-    public Plane(Plane p) {
-        normal = new Float3(p.normal);
-        point = new Float3(p.point);
+
+    public Plane(Plane plane) {
+        normal = new Float3(plane.normal);
+        point = new Float3(plane.point);
     }
 }

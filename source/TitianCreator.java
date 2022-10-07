@@ -1,8 +1,8 @@
 import editor.Editor;
 import entity.Entity;
 import glparts.*;
+import math.*;
 import material.Material;
-import math.Float3;
 import scene.Scene;
 import script.abs.Scriptable;
 
@@ -21,7 +21,7 @@ public class TitianCreator {
             for (int x = -size; x <= size; x++) {
                 Entity monke = new Entity(scene.entityNames, "Monke", editor);
 
-                monke.transformComponent.position = new Float3(x, y, 0).mul(2.5f);
+                monke.transformComponent.position = new Float3(x, y, 0).multiply(2.5f);
                 monke.physicsComponent.angular.y = (new Random().nextFloat() * 2 - 1) * 36;
 
                 monke.meshComponent.mesh = monkeMesh;

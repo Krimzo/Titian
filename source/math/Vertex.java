@@ -12,25 +12,29 @@ public class Vertex implements Serializable {
         texture = new Float2();
         normal = new Float3();
     }
+
     public Vertex(Float3 world) {
         this.world = world;
         texture = new Float2();
         normal = new Float3();
     }
+
     public Vertex(Float3 world, Float2 texture) {
         this.world = world;
         this.texture = texture;
         normal = new Float3();
     }
+
     public Vertex(Float3 world, Float2 texture, Float3 normal) {
         this.world = world;
         this.texture = texture;
         this.normal = normal;
     }
-    public Vertex(Vertex v) {
-        world = new Float3(v.world);
-        texture = new Float2(v.texture);
-        normal = new Float3(v.normal);
+
+    public Vertex(Vertex vertex) {
+        world = new Float3(vertex.world);
+        texture = new Float2(vertex.texture);
+        normal = new Float3(vertex.normal);
     }
 
     public String toString() {

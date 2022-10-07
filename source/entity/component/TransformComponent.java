@@ -37,7 +37,7 @@ public class TransformComponent implements GUIRenderable, Serializable {
     }
 
     public Mat4 matrix() {
-        return translationMatrix().mul(rotationMatrix()).mul(scalingMatrix());
+        return translationMatrix().multiply(rotationMatrix()).multiply(scalingMatrix());
     }
 
     @Override

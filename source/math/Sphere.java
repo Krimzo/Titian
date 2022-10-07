@@ -10,8 +10,9 @@ public class Sphere implements Serializable {
         this.center = center;
         this.radius = radius;
     }
-    public Sphere(Sphere s) {
-        center = new Float3(s.center);
-        radius = s.radius;
+
+    public Sphere(Sphere sphere) {
+        center = new Float3(sphere.center);
+        radius = sphere.radius;
     }
 }

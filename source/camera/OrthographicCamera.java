@@ -5,7 +5,6 @@ import editor.Editor;
 import glparts.Shaders;
 import gui.GUIStyle;
 import gui.GUIUtil;
-import math.Float2;
 import math.Float3;
 import math.Mat4;
 import named.NameHolder;
@@ -32,7 +31,7 @@ public class OrthographicCamera extends Camera implements Serializable {
 
     @Override
     public Mat4 matrix() {
-        return projectionMatrix().mul(viewMatrix());
+        return projectionMatrix().multiply(viewMatrix());
     }
 
     @Override

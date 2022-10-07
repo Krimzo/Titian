@@ -42,15 +42,15 @@ public class Entity extends Named implements Physical, GameRenderable, EditorRen
     public void updatePhysics(float deltaT) {
         if (physicsComponent.velocity != null) {
             if (physicsComponent.acceleration != null) {
-                physicsComponent.velocity = physicsComponent.velocity.add(physicsComponent.acceleration.mul(deltaT));
+                physicsComponent.velocity = physicsComponent.velocity.add(physicsComponent.acceleration.multiply(deltaT));
             }
             if (transformComponent.position != null) {
-                transformComponent.position = transformComponent.position.add(physicsComponent.velocity.mul(deltaT));
+                transformComponent.position = transformComponent.position.add(physicsComponent.velocity.multiply(deltaT));
             }
         }
 
         if (transformComponent.rotation != null && physicsComponent.angular != null) {
-            transformComponent.rotation = transformComponent.rotation.add(physicsComponent.angular.mul(deltaT));
+            transformComponent.rotation = transformComponent.rotation.add(physicsComponent.angular.multiply(deltaT));
         }
     }
 

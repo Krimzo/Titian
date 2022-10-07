@@ -98,7 +98,7 @@ public final class GUIViewport extends GUISection {
         TransformComponent transform = selected.transformComponent;
         Mat4 viewMatrix = editor.camera.viewMatrix().transpose();
         Mat4 projectionMatrix = editor.camera.projectionMatrix().transpose();
-        Mat4 transformMatrix = transform.translationMatrix().mul(transform.scalingMatrix()).transpose();
+        Mat4 transformMatrix = transform.translationMatrix().multiply(transform.scalingMatrix()).transpose();
 
         ImGuizmo.manipulate(viewMatrix.data, projectionMatrix.data, transformMatrix.data, gizmoOperation, gizmoMode);
 

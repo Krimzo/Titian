@@ -25,7 +25,7 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
         ImGui.getIO().setConfigFlags(ImGuiConfigFlags.DockingEnable);
 
         GUIStyle.reloadStyle();
-        GUIStyle.setFont("resource/fonts/Roboto.ttf", 16);
+        GUIStyle.setFont("resource/fonts/Roboto.ttf", 15);
 
         implGlfw.init(window.getWindow(), true);
         implGl3.init("#version 330");
