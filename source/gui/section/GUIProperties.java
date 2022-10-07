@@ -14,86 +14,125 @@ public final class GUIProperties extends GUISection {
         super(editor);
     }
 
-    private Entity getSelectedEntity() {
-        return (editor.scene != null) ? editor.scene.selectedEntity : null;
+    private boolean renderTransform(Entity selected) {
+        if (!ImGui.collapsingHeader("Transform", ImGuiTreeNodeFlags.DefaultOpen)) {
+            return false;
+        }
+
+        selected.transformComponent.renderGUI();
+
+        return true;
+    }
+
+    private boolean renderMesh(Entity selected) {
+        if (!ImGui.collapsingHeader("Mesh", ImGuiTreeNodeFlags.DefaultOpen)) {
+            return false;
+        }
+
+        selected.meshComponent.renderGUI();
+
+        if (ImGui.beginListBox("##Loaded meshes", -1, 0)) {
+            for (Mesh mesh : editor.scene.meshes) {
+                if (ImGui.selectable(mesh.getName(), selected.meshComponent.mesh == mesh)) {
+                    selected.meshComponent.mesh = mesh;
+                }
+            }
+
+            ImGui.endListBox();
+        }
+
+        return true;
+    }
+
+    private boolean renderMaterial(Entity selected) {
+        if (!ImGui.collapsingHeader("Material", ImGuiTreeNodeFlags.DefaultOpen)) {
+            return false;
+        }
+
+        selected.materialComponent.renderGUI();
+
+        if (ImGui.beginListBox("##Loaded materials", -1, 0)) {
+            for (Material material : editor.scene.materials) {
+                if (ImGui.selectable(material.getName(), selected.materialComponent.material == material)) {
+                    selected.materialComponent.material = material;
+                }
+            }
+
+            ImGui.endListBox();
+        }
+
+        return true;
+    }
+
+    private boolean renderPhysics(Entity selected) {
+        if (!ImGui.collapsingHeader("Physics", ImGuiTreeNodeFlags.DefaultOpen)) {
+            return false;
+        }
+
+        selected.physicsComponent.renderGUI();
+
+        return true;
+    }
+
+    private boolean renderScripts(Entity selected) {
+        if (!ImGui.collapsingHeader("Scripts", ImGuiTreeNodeFlags.DefaultOpen)) {
+            return false;
+        }
+
+        selected.scriptComponent.renderGUI();
+
+        ImVec2 contentMin = ImGui.getWindowContentRegionMin();
+        ImVec2 contentMax = ImGui.getWindowContentRegionMax();
+        ImGui.dummy(contentMax.x - contentMin.x, contentMax.y - contentMin.y);
+
+        if (ImGui.beginDragDropTarget()) {
+            String scriptPath = ImGui.acceptDragDropPayload("ScriptFile");
+            if (scriptPath != null) {
+                selected.scriptComponent.scripts.add(new Script(scriptPath, selected));
+            }
+
+            ImGui.endDragDropTarget();
+        }
+
+        if (ImGui.beginPopupContextItem("Scripts", ImGuiPopupFlags.MouseButtonRight | ImGuiPopupFlags.NoOpenOverItems)) {
+            if (ImGui.button("Reload")) {
+                selected.scriptComponent.reload();
+
+                ImGui.closeCurrentPopup();
+            }
+
+            ImGui.endPopup();
+        }
+
+        return true;
     }
 
     @Override
     public void renderGUI() {
-        Entity selected = getSelectedEntity();
+        Entity selected = (editor.scene != null) ? editor.scene.selectedEntity : null;
 
-        if (selected != null) {
-            selected.renderCustomGUI(editor);
-        }
-
-        if (ImGui.begin("Transform", ImGuiWindowFlags.NoScrollbar)) {
-            if (selected != null) {
-                selected.transformComponent.renderGUI();
-            }
-        }
-        ImGui.end();
-
-        if (ImGui.begin("Mesh")) {
-            if (selected != null) {
-                selected.meshComponent.renderGUI();
+        if (ImGui.begin("Properties") && selected != null) {
+            if (selected.renderInfoGUI(editor)) {
                 ImGui.separator();
-
-                for (Mesh mesh : editor.scene.meshes) {
-                    if (ImGui.selectable(mesh.getName(), selected.meshComponent.mesh == mesh)) {
-                        selected.meshComponent.mesh = mesh;
-                    }
-                }
             }
-        }
-        ImGui.end();
 
-        if (ImGui.begin("Material")) {
-            if (selected != null) {
-                selected.materialComponent.renderGUI();
+            if (renderTransform(selected)) {
                 ImGui.separator();
-
-                for (Material material : editor.scene.materials) {
-                    if (ImGui.selectable(material.getName(), selected.materialComponent.material == material)) {
-                        selected.materialComponent.material = material;
-                    }
-                }
             }
-        }
-        ImGui.end();
 
-        if (ImGui.begin("Physics", ImGuiWindowFlags.NoScrollbar)) {
-            if (selected != null) {
-                selected.physicsComponent.renderGUI();
+            if (renderMesh(selected)) {
+                ImGui.separator();
             }
-        }
-        ImGui.end();
 
-        if (ImGui.begin("Scripts")) {
-            if (selected != null) {
-                selected.scriptComponent.renderGUI();
-
-                ImVec2 contentMin = ImGui.getWindowContentRegionMin();
-                ImVec2 contentMax = ImGui.getWindowContentRegionMax();
-                ImGui.dummy(contentMax.x - contentMin.x, contentMax.y - contentMin.y);
-
-                if (ImGui.beginDragDropTarget()) {
-                    String scriptPath = ImGui.acceptDragDropPayload("ScriptFile");
-                    if (scriptPath != null) {
-                        selected.scriptComponent.scripts.add(new Script(scriptPath, selected));
-                    }
-
-                    ImGui.endDragDropTarget();
-                }
-
-                if (ImGui.beginPopupContextWindow(ImGuiPopupFlags.MouseButtonRight | ImGuiPopupFlags.NoOpenOverItems)) {
-                    if (ImGui.button("Reload")) {
-                        selected.scriptComponent.reload();
-                        ImGui.closeCurrentPopup();
-                    }
-
-                    ImGui.endPopup();
-                }
+            if (renderMaterial(selected)) {
+                ImGui.separator();
             }
+
+            if (renderPhysics(selected)) {
+                ImGui.separator();
+            }
+
+            renderScripts(selected);
         }
         ImGui.end();
     }

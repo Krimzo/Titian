@@ -27,7 +27,7 @@ public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable 
         implGlfw.init(window.getWindow(), true);
         implGl3.init();
 
-        GUI.loadCustomTheme();
+        GUIStyle.reloadStyle();
 
         // Viewport
         predefineTextures.put("PlayIcon", new Texture(null, null, window.getContext(), "resource/textures/control/play.png", false));

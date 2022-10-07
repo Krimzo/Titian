@@ -2,8 +2,9 @@ package camera.abs;
 
 import editor.Editor;
 import entity.Entity;
+import gui.GUIUtil;
 import imgui.ImGui;
-import imgui.flag.ImGuiWindowFlags;
+import imgui.flag.ImGuiTreeNodeFlags;
 import math.*;
 import named.NameHolder;
 import utility.Timer;
@@ -27,6 +28,8 @@ public abstract class Camera extends Entity implements Serializable {
 
     public Camera(NameHolder holder, String name) {
         super(holder, name);
+
+        super.transformComponent.scale = null;
         super.transformComponent.rotation = null;
     }
 
@@ -119,45 +122,26 @@ public abstract class Camera extends Entity implements Serializable {
     }
 
     @Override
-    public void renderCustomGUI(Editor editor) {
-        if (ImGui.begin("Properties", ImGuiWindowFlags.NoScrollbar)) {
-            boolean isMainCamera = editor.scene.mainCamera == this;
-            if (ImGui.checkbox("Main camera", isMainCamera)) {
-                editor.scene.mainCamera = isMainCamera ? null : this;
-            }
-
-            float[] forwardData = forward.array();
-            if (ImGui.dragFloat3("Forward", forwardData, 0.01f, -1, 1)) {
-                setForward(new Float3(forwardData));
-            }
-
-            float[] nearData = { near };
-            if (ImGui.dragFloat("Near plane", nearData, 0.05f, 0, 1000000)) {
-                near = nearData[0];
-            }
-
-            float[] farData = { far };
-            if (ImGui.dragFloat("Far plane", farData, 0.05f, 0, 1000000)) {
-                far = farData[0];
-            }
-
-            float[] speedData = { speed };
-            if (ImGui.dragFloat("Speed", speedData, 0.05f, 0, 1000000)) {
-                speed = speedData[0];
-            }
-
-            float[] sensitivityData = { sensitivity };
-            if (ImGui.dragFloat("Sensitivity", sensitivityData, 0.05f, 0, 100)) {
-                sensitivity = sensitivityData[0];
-            }
-
-            ImGui.separator();
-
-            float[] colorData = background.array();
-            if (ImGui.colorEdit3("Background", colorData)) {
-                background = new Float3(colorData);
-            }
+    public boolean renderInfoGUI(Editor editor) {
+        if (!ImGui.collapsingHeader("Info", ImGuiTreeNodeFlags.DefaultOpen)) {
+            return false;
         }
-        ImGui.end();
+
+        boolean isMainCamera = editor.scene.mainCamera == this;
+        if (ImGui.checkbox("Main camera", isMainCamera)) {
+            editor.scene.mainCamera = isMainCamera ? null : this;
+        }
+
+        GUIUtil.editFloat3("Forward", forward, 0.01f, -1, 1);
+
+        near = GUIUtil.editFloat("Near plane", near, 0.05f, 0, 1000000);
+        far = GUIUtil.editFloat("Far plane", far, 0.05f, 0, 1000000);
+
+        speed = GUIUtil.editFloat("Speed", speed, 0.05f, 0, 1000000);
+        sensitivity = GUIUtil.editFloat("Sensitivity", sensitivity, 0.05f, 0, 100);
+
+        GUIUtil.editColor3("Background", background);
+
+        return true;
     }
 }

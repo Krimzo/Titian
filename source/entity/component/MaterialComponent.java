@@ -25,7 +25,7 @@ public class MaterialComponent implements GUIRenderable, Serializable {
 
     @Override
     public void renderGUI() {
-        ImGui.text((material != null) ? material.getName() : "NULL");
+        ImGui.bulletText((material != null) ? material.getName() : "None");
 
         if (ImGui.beginPopupContextItem("EditEntityMaterial")) {
             if (ImGui.button("Remove material")) {

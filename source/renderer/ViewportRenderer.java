@@ -82,12 +82,12 @@ public class ViewportRenderer implements Disposable {
         });
     }
 
-    public void renderOutline(Float2 frameSize, Float4 outlineColor, int objectIndex) {
+    public void renderOutline(Float2 frameSize, Float3 outlineColor, int objectIndex) {
         indexBuffer.getColorMap().use(0, () -> {
             renderBuffer.context.setDepthTest(false);
             renderBuffer.use(() -> {
                 outlineShaders.setUniform("indexMap", 0);
-                outlineShaders.setUniform("outlineColor", outlineColor);
+                outlineShaders.setUniform("outlineColor", new Float4(outlineColor, 1));
                 outlineShaders.setUniform("frameSize", frameSize);
                 outlineShaders.setUniform("outlineThickness", 1);
                 outlineShaders.setUniform("selectedIndex", objectIndex + 1);

@@ -43,7 +43,7 @@ public class Logger extends PrintStream {
 
     public void clear() {
         logs.clear();
-        lastClearMessage = "------ CLEARED ON " + Time.now() + " ------";
+        lastClearMessage = "CLEARED ON " + Time.now();
         longestSender = 0;
     }
 

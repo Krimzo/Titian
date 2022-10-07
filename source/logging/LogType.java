@@ -1,6 +1,6 @@
 package logging;
 
-import math.Float4;
+import math.Float3;
 
 import java.awt.*;
 
@@ -13,13 +13,13 @@ public enum LogType {
 
     LogType() {}
 
-    private static final Float4 infoColor = new Float4(new Color(215, 215, 215));
-    private static final Float4 debugColor = new Float4(new Color(64, 194, 159));
-    private static final Float4 scriptColor = new Float4(new Color(203, 189, 89));
-    private static final Float4 warningColor = new Float4(new Color(210, 126, 66));
-    private static final Float4 errorColor = new Float4(new Color(204, 63, 75));
+    private static final Float3 infoColor = new Float3(new Color(215, 215, 215));
+    private static final Float3 debugColor = new Float3(new Color(64, 194, 159));
+    private static final Float3 scriptColor = new Float3(new Color(203, 189, 89));
+    private static final Float3 warningColor = new Float3(new Color(210, 126, 66));
+    private static final Float3 errorColor = new Float3(new Color(204, 63, 75));
 
-    public Float4 toColor() {
+    public Float3 toColor() {
         return switch (this) {
             case INFO    -> infoColor;
             case DEBUG   -> debugColor;

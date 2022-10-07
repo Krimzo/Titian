@@ -3,6 +3,7 @@ package entity;
 import editor.Editor;
 import entity.component.*;
 import glparts.*;
+import imgui.ImGui;
 import physics.Physical;
 import renderer.abs.Renderable;
 import named.*;
@@ -57,5 +58,7 @@ public class Entity extends Named implements Physical, Renderable, Serializable 
         });
     }
 
-    public void renderCustomGUI(Editor editor) {}
+    public boolean renderInfoGUI(Editor editor) {
+        return false;
+    }
 }

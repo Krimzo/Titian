@@ -21,8 +21,8 @@ public final class GUIScene extends GUISection {
                     if (ImGui.beginMenu("New")) {
                         if (ImGui.button("Entity")) {
                             Entity entity = new Entity(editor.scene.entityNames, "NewEntity");
-                            entity.meshComponent.mesh = editor.defaultMesh;
-                            entity.materialComponent.material = editor.defaultMaterial;
+                            entity.meshComponent.mesh = editor.data.defaultMesh;
+                            entity.materialComponent.material = editor.data.defaultMaterial;
                             editor.scene.add(entity);
 
                             ImGui.closeCurrentPopup();

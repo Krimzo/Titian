@@ -1,5 +1,6 @@
 package entity.component;
 
+import gui.GUIUtil;
 import gui.abs.GUIRenderable;
 import imgui.ImGui;
 import math.Float3;
@@ -42,24 +43,15 @@ public class TransformComponent implements GUIRenderable, Serializable {
     @Override
     public void renderGUI() {
         if (scale != null) {
-            float[] scaleData = scale.array();
-            if (ImGui.dragFloat3("Scale", scaleData, 0.1f)) {
-                scale = new Float3(scaleData);
-            }
+            GUIUtil.editFloat3("Scale", scale, 0.1f);
         }
 
         if (rotation != null) {
-            float[] rotationData = rotation.array();
-            if (ImGui.dragFloat3("Rotation", rotationData, 0.1f)) {
-                rotation = new Float3(rotationData);
-            }
+            GUIUtil.editFloat3("Rotation", rotation, 0.1f);
         }
 
         if (position != null) {
-            float[] positionData = position.array();
-            if (ImGui.dragFloat3("Position", positionData, 0.1f)) {
-                position = new Float3(positionData);
-            }
+            GUIUtil.editFloat3("Position", position, 0.1f);
         }
     }
 }

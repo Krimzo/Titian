@@ -1,5 +1,6 @@
 package entity.component;
 
+import gui.GUIUtil;
 import gui.abs.GUIRenderable;
 import imgui.ImGui;
 import math.Float3;
@@ -16,21 +17,15 @@ public class PhysicsComponent implements GUIRenderable, Serializable {
     @Override
     public void renderGUI() {
         if (acceleration != null) {
-            float[] accelerationData = acceleration.array();
-            ImGui.dragFloat3("Acceleration", accelerationData, 0.1f);
-            acceleration = new Float3(accelerationData);
+            GUIUtil.editFloat3("Acceleration", acceleration, 0.1f);
         }
 
         if (velocity != null) {
-            float[] velocityData = velocity.array();
-            ImGui.dragFloat3("Velocity", velocityData, 0.1f);
-            velocity = new Float3(velocityData);
+            GUIUtil.editFloat3("Velocity", velocity, 0.1f);
         }
 
         if (angular != null) {
-            float[] angularData = angular.array();
-            ImGui.dragFloat3("Angular", angularData, 0.1f);
-            angular = new Float3(angularData);
+            GUIUtil.editFloat3("Angular", angular, 0.1f);
         }
     }
 }

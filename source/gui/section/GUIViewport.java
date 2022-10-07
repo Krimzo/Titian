@@ -3,14 +3,13 @@ package gui.section;
 import editor.*;
 import entity.*;
 import entity.component.*;
+import gui.GUIStyle;
 import gui.abs.GUISection;
 import imgui.*;
 import imgui.extension.imguizmo.*;
 import imgui.extension.imguizmo.flag.*;
 import imgui.flag.*;
 import math.*;
-
-import java.awt.*;
 
 public final class GUIViewport extends GUISection {
     private Int2 viewportPosition = new Int2();
@@ -70,13 +69,13 @@ public final class GUIViewport extends GUISection {
         editor.viewportRenderer.resize(viewportSize);
         editor.camera.updateAspect(viewportSize);
 
-        editor.window.getContext().setWireframe(editor.wireframeState);
+        editor.window.getContext().setWireframe(editor.data.wireframeState);
         editor.viewportRenderer.renderScene(editor.scene, editor.camera);
         editor.viewportRenderer.renderIndices(editor.scene, editor.camera);
         editor.window.getContext().setWireframe(false);
 
         if (selectedIndex >= 0) {
-            editor.viewportRenderer.renderOutline(new Float2(viewportSize), new Float4(new Color(190, 115, 10)), selectedIndex);
+            editor.viewportRenderer.renderOutline(new Float2(viewportSize), GUIStyle.special, selectedIndex);
         }
     }
 

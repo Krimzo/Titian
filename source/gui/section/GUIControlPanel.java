@@ -33,22 +33,22 @@ public final class GUIControlPanel extends GUISection {
 
             float buttonSize = windowRegion.y * 0.5f;
 
-            Texture playStateTexture = editor.gameRunning ? editor.guiRenderer.predefineTextures.get("StopIcon") : editor.guiRenderer.predefineTextures.get("PlayIcon");
+            Texture playStateTexture = editor.data.gameRunning ? editor.guiRenderer.predefineTextures.get("StopIcon") : editor.guiRenderer.predefineTextures.get("PlayIcon");
             if (ImGui.imageButton(playStateTexture.getBuffer(), buttonSize, buttonSize)) {
-                if (!editor.gameRunning) {
+                if (!editor.data.gameRunning) {
                     onGameStart();
-                    editor.gameRunning = true;
+                    editor.data.gameRunning = true;
                 }
                 else {
                     onGameEnd();
-                    editor.gameRunning = false;
+                    editor.data.gameRunning = false;
                 }
             }
             ImGui.sameLine();
 
-            Texture wireframeTexture = editor.wireframeState ? editor.guiRenderer.predefineTextures.get("SolidIcon") : editor.guiRenderer.predefineTextures.get("WireIcon");
+            Texture wireframeTexture = editor.data.wireframeState ? editor.guiRenderer.predefineTextures.get("SolidIcon") : editor.guiRenderer.predefineTextures.get("WireIcon");
             if (ImGui.imageButton(wireframeTexture.getBuffer(), buttonSize, buttonSize)) {
-                editor.wireframeState = !editor.wireframeState;
+                editor.data.wireframeState = !editor.data.wireframeState;
             }
             ImGui.sameLine();
         }

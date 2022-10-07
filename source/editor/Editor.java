@@ -2,12 +2,9 @@ package editor;
 
 import callback.EditorCallback;
 import camera.PerspectiveCamera;
-import glparts.Mesh;
-import glparts.Texture;
 import glparts.abs.Disposable;
 import gui.GUIRenderer;
 import gui.section.*;
-import material.Material;
 import math.Int2;
 import physics.Physics;
 import renderer.ViewportRenderer;
@@ -20,6 +17,8 @@ import window.Window;
 import logging.Logger;
 
 public class Editor implements Disposable {
+    public EditorData data;
+
     public Window window = new Window(new Int2(1600, 900), "Titian Creator", true);
     public Timer timer = new Timer();
 
@@ -34,12 +33,6 @@ public class Editor implements Disposable {
 
     public final PerspectiveCamera camera = new PerspectiveCamera(null, "Editor Camera");
     public Scene scene = null;
-
-    public final Mesh defaultMesh;
-    public final Material defaultMaterial;
-
-    public boolean gameRunning = false;
-    public boolean wireframeState = false;
 
     public Editor() throws Exception {
         window.setIcon("resource/textures/icons/titian.png");
@@ -60,9 +53,7 @@ public class Editor implements Disposable {
         guiRenderer.add(new GUILogView(this));
         guiRenderer.add(new GUIProperties(this));
 
-        defaultMesh = new Mesh(null, "Default Mesh", window.getContext(), "resource/meshes/cube.obj");
-        defaultMaterial = new Material(null, "Default Material");
-        defaultMaterial.colorMap = new Texture(null, "Default Texture", window.getContext(), "resource/textures/default.png");
+        data = new EditorData(this);
     }
 
     public void setup(EditorCallback setupCallback) {
@@ -74,7 +65,7 @@ public class Editor implements Disposable {
     public void update() {
         timer.updateDeltaT();
 
-        if (gameRunning) {
+        if (data.gameRunning) {
             physics.update(scene, timer.getDeltaT());
             scripter.callUpdates(scene);
         }

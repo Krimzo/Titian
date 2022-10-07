@@ -1,7 +1,7 @@
 package gui.section;
 
 import editor.Editor;
-import gui.GUI;
+import gui.GUIUtil;
 import gui.abs.GUISection;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
@@ -14,11 +14,11 @@ public final class GUILogView extends GUISection {
     @Override
     public void renderGUI() {
         if (ImGui.begin("Log View")) {
-            ImGui.text(editor.logger.getLastClearMessage());
+            ImGui.bulletText(editor.logger.getLastClearMessage());
             ImGui.separator();
 
             editor.logger.iterate(log -> {
-                GUI.useColor(ImGuiCol.Text, log.type.toColor(), () -> {
+                GUIUtil.useColor3(ImGuiCol.Text, log.type.toColor(), () -> {
                     ImGui.text(log.firstMessagePart + editor.logger.formatSpaces(log) + log.secondMessagePart);
                 });
             });
@@ -26,6 +26,8 @@ public final class GUILogView extends GUISection {
             if (ImGui.beginPopupContextWindow("EditLogView")) {
                 if (ImGui.button("Clear")) {
                     editor.logger.clear();
+
+                    ImGui.closeCurrentPopup();
                 }
 
                 ImGui.endPopup();

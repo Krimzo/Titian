@@ -2,11 +2,12 @@ package gui.section;
 
 import editor.Editor;
 import entity.Entity;
+import gui.GUIStyle;
+import gui.GUIUtil;
 import gui.abs.GUISection;
 import imgui.ImGui;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
 import math.Float2;
-import math.Int2;
 import scene.Scene;
 
 public final class GUIMainMenu extends GUISection {
@@ -34,11 +35,9 @@ public final class GUIMainMenu extends GUISection {
 
     private void editMenu() {
         if (ImGui.beginMenu("Edit")) {
-            if (ImGui.menuItem("Reload All")) {
-                if (editor.scene != null) {
-                    for (Entity entity : editor.scene) {
-                        entity.scriptComponent.reload();
-                    }
+            if (ImGui.menuItem("Reload scripts") && editor.scene != null) {
+                for (Entity entity : editor.scene) {
+                    entity.scriptComponent.reload();
                 }
             }
 
@@ -48,7 +47,24 @@ public final class GUIMainMenu extends GUISection {
 
     private void viewMenu() {
         if (ImGui.beginMenu("View")) {
-            ImGui.menuItem("WIP");
+            if (ImGui.beginMenu("Colors")) {
+                GUIUtil.editColor3("Black", GUIStyle.black);
+                GUIUtil.editColor3("Dark", GUIStyle.dark);
+                GUIUtil.editColor3("Normal", GUIStyle.normal);
+                GUIUtil.editColor3("Light", GUIStyle.light);
+                GUIUtil.editColor3("Special", GUIStyle.special);
+
+                if (ImGui.button("Reload style")) {
+                    GUIStyle.reloadStyle();
+                }
+
+                if (ImGui.button("Load defaults")) {
+                    GUIStyle.loadDefaults();
+                }
+
+                ImGui.endMenu();
+            }
+
             ImGui.endMenu();
         }
     }

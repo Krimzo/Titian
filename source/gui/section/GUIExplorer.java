@@ -110,27 +110,34 @@ public final class GUIExplorer extends GUISection {
         if (ImGui.begin("Explorer", ImGuiWindowFlags.NoScrollbar)) {
             buttonSize = 0.75f * ImGui.getWindowContentRegionMaxX() / columnCount;
 
-            ImGui.text(currentPath.getAbsolutePath());
+            ImGui.bulletText(currentPath.getAbsolutePath());
             ImGui.separator();
 
-            ImGuiStyle style = ImGui.getStyle();
-            ImVec4 buttonColor = style.getColor(ImGuiCol.Button);
-            ImVec4 buttonHoverColor = style.getColor(ImGuiCol.ButtonHovered);
-            ImVec4 buttonActiveColor = style.getColor(ImGuiCol.ButtonActive);
-            ImGui.pushStyleColor(ImGuiCol.Button, buttonColor.x, buttonColor.y, buttonColor.z, 0.0f);
-            ImGui.pushStyleColor(ImGuiCol.ButtonHovered, buttonHoverColor.x, buttonHoverColor.y, buttonHoverColor.z, 0.25f);
-            ImGui.pushStyleColor(ImGuiCol.ButtonActive, buttonActiveColor.x, buttonActiveColor.y, buttonActiveColor.z, 0.5f);
+            ImVec4 color = ImGui.getStyle().getColor(ImGuiCol.Button);
+            ImGui.pushStyleColor(ImGuiCol.Button, color.x, color.y, color.z, 0.0f);
+
+            color = ImGui.getStyle().getColor(ImGuiCol.ButtonHovered);
+            ImGui.pushStyleColor(ImGuiCol.ButtonHovered, color.x, color.y, color.z, 0.25f);
+
+            color = ImGui.getStyle().getColor(ImGuiCol.ButtonActive);
+            ImGui.pushStyleColor(ImGuiCol.ButtonActive, color.x, color.y, color.z, 0.5f);
 
             ImGui.columns(columnCount, "ExplorerColumns", false);
 
             renderParent();
 
-            for (File folder : Files.listFolders(currentPath.toString())) {
-                renderFolder(folder);
+            File[] folders = Files.listFolders(currentPath.toString());
+            if (folders != null) {
+                for (File folder : folders) {
+                    renderFolder(folder);
+                }
             }
 
-            for (File file : Files.listFiles(currentPath.toString())) {
-                renderFile(file);
+            File[] files = Files.listFiles(currentPath.toString());
+            if (files != null) {
+                for (File file : files) {
+                    renderFile(file);
+                }
             }
 
             ImGui.popStyleColor(3);
@@ -141,14 +148,12 @@ public final class GUIExplorer extends GUISection {
                         scriptNameInput = new ImString();
                     }
                 }
-                else {
-                    if (ImGui.inputText("Script Name", scriptNameInput, ImGuiInputTextFlags.EnterReturnsTrue)) {
-                        String scriptName = scriptNameInput.toString();
-                        Files.writeString(currentPath + "/" + scriptName + ".java", Script.getTemplate(scriptName));
+                else if (ImGui.inputText("Script Name", scriptNameInput, ImGuiInputTextFlags.EnterReturnsTrue)) {
+                    String scriptName = scriptNameInput.toString();
+                    Files.writeString(currentPath + "/" + scriptName + ".java", Script.getTemplate(scriptName));
+                    scriptNameInput = null;
 
-                        ImGui.closeCurrentPopup();
-                        scriptNameInput = null;
-                    }
+                    ImGui.closeCurrentPopup();
                 }
 
                 ImGui.endPopup();
