@@ -106,15 +106,9 @@ public final class GUIViewport extends GUISection {
             float[][] data = new float[3][3];
             ImGuizmo.decomposeMatrixToComponents(transformMatrix.data, data[2], data[1], data[0]);
 
-            if (transform.scale != null) {
-                transform.scale = new Float3(data[0]);
-            }
-            if (transform.rotation != null) {
-                transform.rotation = transform.rotation.add(new Float3(data[1]));
-            }
-            if (transform.position != null) {
-                transform.position = new Float3(data[2]);
-            }
+            transform.scale.set(new Float3(data[0]));
+            transform.rotation.set(transform.rotation.add(new Float3(data[1])));
+            transform.position.set(new Float3(data[2]));
         }
     }
 

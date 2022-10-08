@@ -9,58 +9,76 @@ public class Float3 implements Serializable {
     public float z;
 
     public Float3() {
-        x = 0;
-        y = 0;
-        z = 0;
+        set(0);
     }
 
     public Float3(float a) {
-        x = a;
-        y = a;
-        z = a;
+        set(a);
     }
 
     public Float3(float[] data) {
-        this(data[0], data[1], data[2]);
+        set(data);
     }
 
     public Float3(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        set(x, y, z);
     }
 
     public Float3(Float2 v, float z) {
-        x = v.x;
-        y = v.y;
-        this.z = z;
+        set(v, z);
     }
 
     public Float3(float x, Float2 v) {
-        this.x = x;
-        y = v.x;
-        z = v.y;
+        set(x, v);
     }
 
     public Float3(Float3 v) {
-        x = v.x;
-        y = v.y;
-        z = v.z;
+        set(v);
     }
 
     public Float3(Int3 v) {
-        x = (float)v.x;
-        y = (float)v.y;
-        z = (float)v.z;
+        set(v);
     }
 
     public Float3(Color color) {
-        final float recConv = 1.0f / 255.0f;
-        x = color.getRed() * recConv;
-        y = color.getGreen() * recConv;
-        z = color.getBlue() * recConv;
+        set(color);
     }
 
+    // Setters
+    public void set(float x, float y, float z) {
+        this.x = x; this.y = y; this.z = z;
+    }
+
+    public void set(float a) {
+        set(a, a, a);
+    }
+
+    public void set(float[] data) {
+        set(data[0], data[1], data[2]);
+    }
+
+    public void set(Float2 v, float z) {
+        set(v.x, v.y, z);
+    }
+
+    public void set(float x, Float2 v) {
+        set(x, v.x, v.y);
+    }
+
+    public void set(Float3 v) {
+        set(v.x, v.y, v.z);
+    }
+
+    public void set(Int3 v) {
+        set(v.x, v.y, v.z);
+    }
+
+    public void set(Color color) {
+        final float conv = 1.0f / 255.0f;
+        set(color.getRed() * conv, color.getGreen() * conv, color.getBlue() * conv);
+    }
+
+    // Getters
     public Float2 xy() {
         return new Float2(x, y);
     }
@@ -69,6 +87,15 @@ public class Float3 implements Serializable {
         return new float[] { x, y, z };
     }
 
+    public Color color() {
+        return new Color(
+            (int) Math.min(Math.max(x * 255, 0), 255),
+            (int) Math.min(Math.max(y * 255, 0), 255),
+            (int) Math.min(Math.max(z * 255, 0), 255)
+        );
+    }
+
+    // Math
     public Float3 add(Float3 v) {
         return new Float3(x + v.x, y + v.y, z + v.z);
     }

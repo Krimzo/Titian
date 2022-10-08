@@ -2,18 +2,21 @@ package entity.component;
 
 import callback.EmptyCallback;
 import entity.Entity;
-import gui.abs.GUIRenderable;
+import entity.abs.EntityComponent;
 import imgui.ImGui;
 import material.Material;
 
 import java.io.Serializable;
 
-public class MaterialComponent implements GUIRenderable, Serializable {
+public class MaterialComponent extends EntityComponent implements Serializable {
     public Material material = null;
 
-    public MaterialComponent() {}
+    public MaterialComponent(Entity entity) {
+        super(entity);
+    }
 
-    public MaterialComponent(Material material) {
+    public MaterialComponent(Entity entity, Material material) {
+        super(entity);
         this.material = material;
     }
 

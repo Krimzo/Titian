@@ -1,19 +1,18 @@
 package entity.component;
 
 import entity.Entity;
-import gui.abs.GUIRenderable;
+import entity.abs.EntityComponent;
 import imgui.ImGui;
 import script.Script;
+import utility.nncollection.NNArrayList;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
-public class ScriptComponent implements GUIRenderable, Serializable {
-    private Entity entity = null;
-    public final ArrayList<Script> scripts = new ArrayList<>();
+public class ScriptComponent extends EntityComponent implements Serializable {
+    public final NNArrayList<Script> scripts = new NNArrayList<>();
 
     public ScriptComponent(Entity entity) {
-        this.entity = entity;
+        super(entity);
     }
 
     public void reload() {

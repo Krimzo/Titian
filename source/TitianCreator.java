@@ -21,7 +21,7 @@ public class TitianCreator {
             for (int x = -size; x <= size; x++) {
                 Entity monke = new Entity(scene.entityNames, "Monke", editor);
 
-                monke.transformComponent.position = new Float3(x, y, 0).multiply(2.5f);
+                monke.transformComponent.position.set(new Float2(x, y).multiply(2.5f), 0);
                 monke.physicsComponent.angular.y = (new Random().nextFloat() * 2 - 1) * 36;
 
                 monke.meshComponent.mesh = monkeMesh;

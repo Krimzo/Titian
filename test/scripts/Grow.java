@@ -14,6 +14,6 @@ public class Grow extends Scriptable {
 
     @Override
     public void update() {
-        entity.transformComponent.scale = new Float3(editor.timer.getElapsedT() * 0.1f);
+        entity.transformComponent.scale.set(new Float3(editor.timer.getElapsedT() * 0.1f));
     }
 }

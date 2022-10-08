@@ -7,30 +7,56 @@ public class Int2 implements Serializable {
     public int y;
 
     public Int2() {
-        x = 0;
-        y = 0;
+        set(0);
     }
 
     public Int2(int a) {
-        x = a;
-        y = a;
+        set(a);
+    }
+
+    public Int2(int[] data) {
+        set(data);
     }
 
     public Int2(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public Int2(Float2 v) {
-        x = (int) v.x;
-        y = (int) v.y;
+        set(x, y);
     }
 
     public Int2(Int2 v) {
-        x = v.x;
-        y = v.y;
+        set(v);
     }
 
+    public Int2(Float2 v) {
+        set(v);
+    }
+
+    // Setters
+    public void set(int x, int y) {
+        this.x = x; this.y = y;
+    }
+
+    public void set(int a) {
+        set(a, a);
+    }
+
+    public void set(int[] data) {
+        set(data[0], data[1]);
+    }
+
+    public void set(Int2 v) {
+        set(v.x, v.y);
+    }
+
+    public void set(Float2 v) {
+        set((int) v.x, (int) v.y);
+    }
+
+    // Getters
+    public int[] array() {
+        return new int[] { x, y };
+    }
+
+    // Math
     public Int2 add(Int2 v) {
         return new Int2(x + v.x, y + v.y);
     }

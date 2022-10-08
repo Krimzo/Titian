@@ -6,9 +6,9 @@ import math.*;
 import renderer.abs.EditorRenderable;
 import scene.Scene;
 import glparts.abs.Disposable;
+import utility.nncollection.NNHashMap;
 import window.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL33.*;
@@ -21,7 +21,7 @@ public class EditorRenderer implements Disposable {
     private final Shaders indexShaders;
     private final Shaders outlineShaders;
 
-    public final Map<String, Mesh> predefinedMeshes = new HashMap<>();
+    public final Map<String, Mesh> predefinedMeshes = new NNHashMap<>();
 
     public EditorRenderer(GLContext context, Int2 size) {
         renderBuffer = new FrameBuffer(context, size);

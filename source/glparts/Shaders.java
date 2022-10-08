@@ -4,6 +4,7 @@ import callback.EmptyCallback;
 import glparts.abs.GLObject;
 import math.*;
 import utility.Files;
+import utility.nncollection.NNHashMap;
 import window.*;
 
 import java.io.*;
@@ -12,7 +13,7 @@ import java.util.*;
 import static org.lwjgl.opengl.GL33.*;
 
 public class Shaders extends GLObject implements Serializable {
-    private transient final Map<String, Integer> uniforms = new HashMap<>();
+    private transient final Map<String, Integer> uniforms = new NNHashMap<>();
     private final String vSource;
     private final String fSource;
     private transient int program;

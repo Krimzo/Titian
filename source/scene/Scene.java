@@ -5,23 +5,23 @@ import entity.Entity;
 import glparts.Mesh;
 import glparts.Texture;
 import glparts.abs.Disposable;
-import glparts.Shaders;
 import material.Material;
 import named.NameHolder;
 import physics.Physical;
+import utility.nncollection.*;
 
 import java.io.*;
 import java.util.*;
 
-public class Scene extends ArrayList<Entity> implements Physical, Disposable, Serializable {
+public class Scene extends NNArrayList<Entity> implements Physical, Disposable, Serializable {
     public final NameHolder entityNames = new NameHolder();
     public final NameHolder materialNames = new NameHolder();
     public final NameHolder textureNames = new NameHolder();
     public final NameHolder meshNames = new NameHolder();
 
-    public final Set<Material> materials = new HashSet<>();
-    public final Set<Texture> textures = new HashSet<>();
-    public final Set<Mesh> meshes = new HashSet<>();
+    public final Set<Material> materials = new NNHashSet<>();
+    public final Set<Texture> textures = new NNHashSet<>();
+    public final Set<Mesh> meshes = new NNHashSet<>();
 
     public Entity selectedEntity = null;
     public Camera mainCamera = null;
@@ -51,32 +51,21 @@ public class Scene extends ArrayList<Entity> implements Physical, Disposable, Se
     }
 
     public boolean addUnsaved(Entity entity) {
-        if (entity != null) {
-            return super.add(entity);
-        }
-        return false;
+        return super.add(entity);
     }
 
+    @Override
     public boolean add(Entity entity) {
         boolean added = addUnsaved(entity);
 
         if (added) {
+            meshes.add(entity.meshComponent.mesh);
+
             if (entity.materialComponent.material != null) {
                 materials.add(entity.materialComponent.material);
-
-                if (entity.materialComponent.material.colorMap != null) {
-                    textures.add(entity.materialComponent.material.colorMap);
-                }
-                if (entity.materialComponent.material.normalMap != null) {
-                    textures.add(entity.materialComponent.material.normalMap);
-                }
-                if (entity.materialComponent.material.roughnessMap != null) {
-                    textures.add(entity.materialComponent.material.roughnessMap);
-                }
-            }
-
-            if (entity.meshComponent.mesh != null) {
-                meshes.add(entity.meshComponent.mesh);
+                textures.add(entity.materialComponent.material.colorMap);
+                textures.add(entity.materialComponent.material.normalMap);
+                textures.add(entity.materialComponent.material.roughnessMap);
             }
         }
 

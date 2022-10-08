@@ -6,9 +6,7 @@ import glparts.*;
 import imgui.ImGui;
 import physics.Physical;
 import named.*;
-import renderer.abs.EditorRenderable;
-import renderer.abs.GameRenderable;
-import renderer.abs.IndexRenderable;
+import renderer.abs.*;
 import script.Script;
 
 import java.io.Serializable;
@@ -16,10 +14,10 @@ import java.io.Serializable;
 public class Entity extends Named implements Physical, GameRenderable, EditorRenderable, IndexRenderable, Serializable {
     public transient final Editor editor;
 
-    public final TransformComponent transformComponent = new TransformComponent();
-    public final MeshComponent meshComponent = new MeshComponent();
-    public final MaterialComponent materialComponent = new MaterialComponent();
-    public final PhysicsComponent physicsComponent = new PhysicsComponent();
+    public final TransformComponent transformComponent = new TransformComponent(this);
+    public final MeshComponent meshComponent = new MeshComponent(this);
+    public final MaterialComponent materialComponent = new MaterialComponent(this);
+    public final PhysicsComponent physicsComponent = new PhysicsComponent(this);
     public final ScriptComponent scriptComponent = new ScriptComponent(this);
 
     public Entity(NameHolder holder, String name, Editor editor) {
@@ -41,18 +39,9 @@ public class Entity extends Named implements Physical, GameRenderable, EditorRen
 
     @Override
     public void updatePhysics(float deltaT) {
-        if (physicsComponent.velocity != null) {
-            if (physicsComponent.acceleration != null) {
-                physicsComponent.velocity = physicsComponent.velocity.add(physicsComponent.acceleration.multiply(deltaT));
-            }
-            if (transformComponent.position != null) {
-                transformComponent.position = transformComponent.position.add(physicsComponent.velocity.multiply(deltaT));
-            }
-        }
-
-        if (transformComponent.rotation != null && physicsComponent.angular != null) {
-            transformComponent.rotation = transformComponent.rotation.add(physicsComponent.angular.multiply(deltaT));
-        }
+        physicsComponent.velocity.set(physicsComponent.velocity.add(physicsComponent.acceleration.multiply(deltaT)));
+        transformComponent.position.set(transformComponent.position.add(physicsComponent.velocity.multiply(deltaT)));
+        transformComponent.rotation.set(transformComponent.rotation.add(physicsComponent.angular.multiply(deltaT)));
     }
 
     @Override

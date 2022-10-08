@@ -8,17 +8,17 @@ import imgui.*;
 import imgui.flag.*;
 import imgui.gl3.*;
 import imgui.glfw.*;
+import utility.nncollection.NNArrayList;
+import utility.nncollection.NNHashMap;
 import window.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
-public class GUIRenderer extends ArrayList<GUIRenderable> implements Disposable {
+public class GUIRenderer extends NNArrayList<GUIRenderable> implements Disposable {
     private final ImGuiImplGlfw implGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 implGl3 = new ImGuiImplGl3();
 
-    public final Map<String, Texture> predefineTextures = new HashMap<>();
+    public final Map<String, Texture> predefineTextures = new NNHashMap<>();
 
     public GUIRenderer(Window window) {
         ImGui.createContext();

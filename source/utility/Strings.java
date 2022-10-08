@@ -1,12 +1,13 @@
 package utility;
 
-import java.util.HashMap;
+import utility.nncollection.NNHashMap;
+
 import java.util.Map;
 
 public final class Strings {
     private Strings() {}
 
-    private static final Map<Integer, String> spaces = new HashMap<>();
+    private static final Map<Integer, String> spaces = new NNHashMap<>();
 
     public static String spaces(int count) {
         if (count < 1) {

@@ -46,27 +46,27 @@ public abstract class Camera extends Entity implements Serializable {
     }
 
     public void moveForward(float deltaTime) {
-        transformComponent.position = transformComponent.position.add(forward.multiply(speed * deltaTime));
+        transformComponent.position.set(transformComponent.position.add(forward.multiply(speed * deltaTime)));
     }
 
     public void moveBack(float deltaTime) {
-        transformComponent.position = transformComponent.position.subtract(forward.multiply(speed * deltaTime));
+        transformComponent.position.set(transformComponent.position.subtract(forward.multiply(speed * deltaTime)));
     }
 
     public void moveRight(float deltaTime) {
-        transformComponent.position = transformComponent.position.add(getRight().multiply(speed * deltaTime));
+        transformComponent.position.set(transformComponent.position.add(getRight().multiply(speed * deltaTime)));
     }
 
     public void moveLeft(float deltaTime) {
-        transformComponent.position = transformComponent.position.subtract(getRight().multiply(speed * deltaTime));
+        transformComponent.position.set(transformComponent.position.subtract(getRight().multiply(speed * deltaTime)));
     }
 
     public void moveUp(float deltaTime) {
-        transformComponent.position = transformComponent.position.add(Float3.getPosY().multiply(speed * deltaTime));
+        transformComponent.position.set(transformComponent.position.add(Float3.getPosY().multiply(speed * deltaTime)));
     }
 
     public void moveDown(float deltaTime) {
-        transformComponent.position = transformComponent.position.subtract(Float3.getPosY().multiply(speed * deltaTime));
+        transformComponent.position.set(transformComponent.position.subtract(Float3.getPosY().multiply(speed * deltaTime)));
     }
 
     public void rotate(Int2 mousePos, Int2 frameCenter, float verticalAngleLimit) {

@@ -3,13 +3,13 @@ package logging;
 import callback.LogInfoCallback;
 import utility.Strings;
 import utility.Time;
+import utility.nncollection.NNArrayList;
 
 import java.io.*;
-import java.util.ArrayList;
 
 public class Logger extends PrintStream {
     public int maxSize = 100;
-    private final ArrayList<LogInfo> logs = new ArrayList<>();
+    private final NNArrayList<LogInfo> logs = new NNArrayList<>();
     private String lastClearMessage;
     private int longestSender;
 

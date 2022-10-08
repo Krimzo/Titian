@@ -2,11 +2,11 @@ package utility;
 
 import math.*;
 import org.lwjgl.stb.STBImage;
+import utility.nncollection.NNArrayList;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.*;
-import java.util.*;
 
 import static org.lwjgl.opengl.GL33.*;
 
@@ -165,10 +165,10 @@ public final class Files {
             FileReader file = new FileReader(filepath);
             BufferedReader reader = new BufferedReader(file);
 
-            ArrayList<Vertex> vertices = new ArrayList<>();
-            ArrayList<Float3> xyzBuffer = new ArrayList<>();
-            ArrayList<Float2> uvBuffer = new ArrayList<>();
-            ArrayList<Float3> normBuffer = new ArrayList<>();
+            NNArrayList<Vertex> vertices = new NNArrayList<>();
+            NNArrayList<Float3> xyzBuffer = new NNArrayList<>();
+            NNArrayList<Float2> uvBuffer = new NNArrayList<>();
+            NNArrayList<Float3> normBuffer = new NNArrayList<>();
 
             for (String fileLine; (fileLine = reader.readLine()) != null; ) {
                 String[] lineParts = fileLine.split(" ");

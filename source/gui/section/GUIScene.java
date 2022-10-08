@@ -7,7 +7,6 @@ import entity.Entity;
 import gui.abs.GUISection;
 import imgui.ImGui;
 import imgui.flag.ImGuiInputTextFlags;
-import imgui.flag.ImGuiPopupFlags;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImString;
 
@@ -18,7 +17,7 @@ public final class GUIScene extends GUISection {
 
         public RenameData(Entity entity) {
             this.entity = entity;
-            name = new ImString(entity.getName());
+            name = new ImString(entity.getName(), 30);
         }
 
         public boolean updateName() {

@@ -1,21 +1,23 @@
 package entity.component;
 
+import entity.Entity;
+import entity.abs.EntityComponent;
 import glparts.Mesh;
 import glparts.Shaders;
-import gui.abs.GUIRenderable;
 import imgui.ImGui;
-import renderer.abs.EditorRenderable;
-import renderer.abs.GameRenderable;
-import renderer.abs.IndexRenderable;
+import renderer.abs.*;
 
 import java.io.Serializable;
 
-public class MeshComponent implements GameRenderable, EditorRenderable, IndexRenderable, GUIRenderable, Serializable {
+public class MeshComponent extends EntityComponent implements GameRenderable, EditorRenderable, IndexRenderable, Serializable {
     public Mesh mesh = null;
 
-    public MeshComponent() {}
+    public MeshComponent(Entity entity) {
+        super(entity);
+    }
 
-    public MeshComponent(Mesh mesh) {
+    public MeshComponent(Entity entity, Mesh mesh) {
+        super(entity);
         this.mesh = mesh;
     }
 

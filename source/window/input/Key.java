@@ -1,16 +1,15 @@
 package window.input;
 
 import callback.EmptyCallback;
-
-import java.util.ArrayList;
+import utility.nncollection.NNArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Key {
     private boolean state = false;
-    public final ArrayList<EmptyCallback> onPress = new ArrayList<>();
-    public final ArrayList<EmptyCallback> onHold = new ArrayList<>();
-    public final ArrayList<EmptyCallback> onRelease = new ArrayList<>();
+    public final NNArrayList<EmptyCallback> onPress = new NNArrayList<>();
+    public final NNArrayList<EmptyCallback> onHold = new NNArrayList<>();
+    public final NNArrayList<EmptyCallback> onRelease = new NNArrayList<>();
 
     protected Key() {}
 

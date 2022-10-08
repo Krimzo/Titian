@@ -187,8 +187,8 @@ public class Matrix implements Serializable {
             }
 
             if (width > 2) {
-                float result = 0;
                 int multi = -1;
+                float result = 0;
                 for (int i = 0; i < width; i++) {
                     result += (multi *= -1) * get(i) * cofactor(i).determinant();
                 }
