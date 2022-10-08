@@ -1,53 +1,30 @@
 package script;
 
 import entity.Entity;
-import named.Named;
-import script.abs.Scriptable;
+import gui.abs.GUIRenderable;
+import imgui.ImGui;
 import utility.Files;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serial;
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.util.Arrays;
 
-public class Script extends Named implements Serializable {
-    private byte[] data;
+public class Script implements GUIRenderable, Serializable {
+    private Instance instance = null;
     private String filepath = null;
-    private Entity entity = null;
-    private transient Scriptable instance = null;
 
     public Script(String name, byte[] data, Entity entity) {
-        super(null, null);
         load(name, data, entity);
     }
 
     public Script(String filepath, Entity entity) {
-        super(null, null);
         load(filepath, entity);
-    }
-
-    @Serial
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        load(getName(), data, entity);
     }
 
     public void load(String name, byte[] data, Entity entity) {
         try {
-            setName(name);
-            if (data != this.data) {
-                this.data = Arrays.copyOf(data, data.length);
-            }
-            this.entity = entity;
-
-            Loader loader = new Loader();
-            Class<?> loaded = loader.load(name, data);
-            Constructor<?> constructor = loaded.getDeclaredConstructor(Entity.class);
-            instance = (Scriptable) constructor.newInstance(entity);
+            this.instance = new Instance(name, data, entity);
         }
         catch (Exception e) {
+            this.instance = null;
             e.printStackTrace();
         }
     }
@@ -61,30 +38,32 @@ public class Script extends Named implements Serializable {
         load(filepath, entity);
     }
 
-    public boolean callStart() {
-        try {
-            instance.start();
-            return true;
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return false;
+    public void callStarts() {
+        if (instance != null) {
+            instance.callStarts();
         }
     }
 
-    public boolean callUpdate() {
-        try {
-            instance.update();
-            return true;
+    public void callUpdates() {
+        if (instance != null) {
+            instance.callUpdates();
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            return false;
+    }
+
+    @Override
+    public void renderGUI() {
+        if (instance == null) {
+            return;
+        }
+
+        if (ImGui.collapsingHeader(instance.getName())) {
+            instance.renderGUI();
         }
     }
 
     public static String getTemplate(String className) {
         return "import script.abs.Scriptable;\n" +
+            "import java.awt.Color;\n" +
             "import entity.Entity;\n" +
             "import math.*;\n" +
             "\n" +

@@ -84,6 +84,10 @@ public final class GUIViewport extends GUISection {
     }
 
     private void renderGizmos() {
+        if (editor.scene == null) {
+            return;
+        }
+
         ImGuizmo.setEnabled(true);
         ImGuizmo.setDrawList();
         ImGuizmo.setRect(viewportPosition.x, viewportPosition.y, viewportSize.x, viewportSize.y);

@@ -1,5 +1,6 @@
 import script.abs.Scriptable;
 import entity.Entity;
+import java.awt.Color;
 import math.*;
 
 public class Grow extends Scriptable {

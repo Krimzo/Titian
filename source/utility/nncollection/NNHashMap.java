@@ -1,9 +1,10 @@
 package utility.nncollection;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NNHashMap<K, V> extends HashMap<K, V> {
+public class NNHashMap<K, V> extends HashMap<K, V> implements Serializable {
     public NNHashMap() {}
 
     @Override

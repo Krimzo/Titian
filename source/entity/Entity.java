@@ -27,13 +27,13 @@ public class Entity extends Named implements Physical, GameRenderable, EditorRen
 
     public void callScriptStarts() {
         for (Script script : scriptComponent.scripts) {
-            script.callStart();
+            script.callStarts();
         }
     }
 
     public void callScriptUpdates() {
         for (Script script : scriptComponent.scripts) {
-            script.callUpdate();
+            script.callUpdates();
         }
     }
 

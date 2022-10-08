@@ -22,11 +22,12 @@ public final class GUIGameView extends GUISection {
     }
 
     private void renderScene() {
-        editor.gameRenderer.clear(editor.scene.mainCamera);
-
         if (editor.scene == null || editor.scene.mainCamera == null) {
+            editor.gameRenderer.clear(null);
             return;
         }
+
+        editor.gameRenderer.clear(editor.scene.mainCamera);
 
         editor.window.getContext().setViewport(windowSize);
         editor.gameRenderer.resize(windowSize);

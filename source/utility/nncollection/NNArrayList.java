@@ -1,9 +1,10 @@
 package utility.nncollection;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class NNArrayList<T> extends ArrayList<T> {
+public class NNArrayList<T> extends ArrayList<T> implements Serializable {
     public NNArrayList() {}
 
     @Override

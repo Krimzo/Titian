@@ -6,7 +6,7 @@ import gui.abs.GUIRenderable;
 import java.io.Serializable;
 
 public abstract class EntityComponent implements GUIRenderable, Serializable {
-    protected transient final Entity entity;
+    protected final Entity entity;
 
     protected EntityComponent(Entity entity) {
         this.entity = entity;

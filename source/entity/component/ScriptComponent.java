@@ -24,7 +24,9 @@ public class ScriptComponent extends EntityComponent implements Serializable {
     @Override
     public void renderGUI() {
         for (int i = 0; i < scripts.size(); i++) {
-            ImGui.selectable(scripts.get(i).getName());
+            ImGui.pushID(i);
+            scripts.get(i).renderGUI();
+            ImGui.popID();
 
             if (ImGui.beginPopupContextItem("EditScripts" + i)) {
                 if (ImGui.button("Remove")) {

@@ -1,9 +1,10 @@
 package utility.nncollection;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
-public class NNHashSet<T> extends HashSet<T> {
+public class NNHashSet<T> extends HashSet<T> implements Serializable {
     public NNHashSet() {}
 
     @Override
