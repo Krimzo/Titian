@@ -50,8 +50,17 @@ public class Scene extends ArrayList<Entity> implements Physical, Disposable, Se
         selectedEntity = null;
     }
 
-    public boolean add(Entity entity) {
+    public boolean addUnsaved(Entity entity) {
         if (entity != null) {
+            return super.add(entity);
+        }
+        return false;
+    }
+
+    public boolean add(Entity entity) {
+        boolean added = addUnsaved(entity);
+
+        if (added) {
             if (entity.materialComponent.material != null) {
                 materials.add(entity.materialComponent.material);
 
@@ -69,10 +78,9 @@ public class Scene extends ArrayList<Entity> implements Physical, Disposable, Se
             if (entity.meshComponent.mesh != null) {
                 meshes.add(entity.meshComponent.mesh);
             }
-
-            return super.add(entity);
         }
-        return false;
+
+        return added;
     }
 
     @Override

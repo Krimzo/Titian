@@ -36,20 +36,27 @@ public final class GUIStyle {
 
         style.setWindowPadding(15, 15);
         style.setWindowRounding(2);
+
         style.setFramePadding(5, 5);
         style.setFrameRounding(2);
-        style.setItemSpacing(12, 8);
-        style.setItemInnerSpacing(8, 6);
-        style.setSelectableTextAlign(0.5f, 0.5f);
-        style.setIndentSpacing(25);
-        style.setScrollbarSize(15);
-        style.setScrollbarRounding(9);
-        style.setGrabMinSize(5);
-        style.setGrabRounding(3);
-        style.setPopupBorderSize(1);
-        style.setPopupRounding(5);
+
         style.setChildBorderSize(1);
         style.setChildRounding(5);
+
+        style.setItemSpacing(12, 8);
+        style.setItemInnerSpacing(8, 6);
+
+        style.setSelectableTextAlign(0.5f, 0.5f);
+        style.setIndentSpacing(25);
+
+        style.setScrollbarSize(15);
+        style.setScrollbarRounding(9);
+
+        style.setGrabMinSize(5);
+        style.setGrabRounding(3);
+
+        style.setPopupBorderSize(1);
+        style.setPopupRounding(5);
 
         style.setColor(ImGuiCol.Text, white.x, white.y, white.z, 1);
         style.setColor(ImGuiCol.TextDisabled, light.x, light.y, light.z, 1);
@@ -90,7 +97,7 @@ public final class GUIStyle {
         style.setColor(ImGuiCol.HeaderHovered, light.x, light.y, light.z, 0.25f);
         style.setColor(ImGuiCol.HeaderActive, special.x, special.y, special.z, 1);
 
-        style.setColor(ImGuiCol.Separator, normal.x, normal.y, normal.z, 1);
+        style.setColor(ImGuiCol.Separator, light.x, light.y, light.z, 1);
         style.setColor(ImGuiCol.SeparatorHovered, light.x, light.y, light.z, 1);
         style.setColor(ImGuiCol.SeparatorActive, special.x, special.y, special.z, 1);
 

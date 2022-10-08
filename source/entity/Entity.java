@@ -3,6 +3,7 @@ package entity;
 import editor.Editor;
 import entity.component.*;
 import glparts.*;
+import imgui.ImGui;
 import physics.Physical;
 import named.*;
 import renderer.abs.EditorRenderable;
@@ -78,5 +79,7 @@ public class Entity extends Named implements Physical, GameRenderable, EditorRen
         });
     }
 
-    public void renderInfoGUI(Editor editor) {}
+    public void renderInfoGUI(Editor editor) {
+        ImGui.bulletText(getName());
+    }
 }

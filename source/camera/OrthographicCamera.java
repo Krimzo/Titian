@@ -36,9 +36,10 @@ public class OrthographicCamera extends Camera implements Serializable {
 
     @Override
     public void renderInfoGUI(Editor editor) {
+        super.renderInfoGUI(editor);
+
         width = GUIUtil.editFloat("Width", width, 0.1f);
         height = GUIUtil.editFloat("Height", height, 0.1f);
-        super.renderInfoGUI(editor);
     }
 
     @Override

@@ -27,9 +27,6 @@ public abstract class Camera extends Entity implements Serializable {
 
     public Camera(NameHolder holder, String name, Editor editor) {
         super(holder, name, editor);
-
-        super.transformComponent.scale = null;
-        super.transformComponent.rotation = null;
     }
 
     public abstract Mat4 viewMatrix();
@@ -122,6 +119,8 @@ public abstract class Camera extends Entity implements Serializable {
 
     @Override
     public void renderInfoGUI(Editor editor) {
+        super.renderInfoGUI(editor);
+
         boolean isMainCamera = editor.scene.mainCamera == this;
         if (ImGui.checkbox("Main camera", isMainCamera)) {
             editor.scene.mainCamera = isMainCamera ? null : this;

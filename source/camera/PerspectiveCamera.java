@@ -39,9 +39,10 @@ public class PerspectiveCamera extends Camera implements Serializable {
 
     @Override
     public void renderInfoGUI(Editor editor) {
+        super.renderInfoGUI(editor);
+
         aspect = GUIUtil.editFloat("Aspect", aspect, 0.01f);
         fov = GUIUtil.editFloat("FOV", fov, 0.1f);
-        super.renderInfoGUI(editor);
     }
 
     @Override
