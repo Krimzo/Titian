@@ -45,6 +45,7 @@ public class GUIRenderer extends NNArrayList<GUIRenderable> implements Disposabl
         predefineTextures.put("MeshFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/mesh.png", false));
         predefineTextures.put("ScriptFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/script.png", false));
         predefineTextures.put("CodeFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/code.png", false));
+        predefineTextures.put("SceneFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/scene.png", false));
     }
 
     @Override

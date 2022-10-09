@@ -41,6 +41,7 @@ public final class GUIExplorer extends GUISection {
             case "jpg", "png", "bmp" -> "ImageFile";
             case "c", "cpp", "h", "glsl" -> "CodeFile";
             case "java" -> "ScriptFile";
+            case "scene" -> "SceneFile";
             default -> "File";
         };
     }
@@ -51,6 +52,7 @@ public final class GUIExplorer extends GUISection {
             case "jpg", "png", "bmp" -> "ImageFileIcon";
             case "c", "cpp", "h", "glsl" -> "CodeFileIcon";
             case "java" -> "ScriptFileIcon";
+            case "scene" -> "SceneFileIcon";
             default -> "FileIcon";
         });
     }
