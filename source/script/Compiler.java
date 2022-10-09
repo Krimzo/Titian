@@ -2,7 +2,8 @@ package script;
 
 import utility.Files;
 
-import javax.tools.*;
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 
 public class Compiler {
     private final JavaCompiler compiler;

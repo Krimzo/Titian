@@ -1,14 +1,18 @@
 package glparts;
 
+import glparts.abs.GLContext;
 import glparts.abs.GLObject;
-import math.*;
+import math.Float3;
+import math.Vertex;
 import named.NameHolder;
 import utility.Files;
 import utility.Memory;
 import utility.Pair;
-import glparts.abs.GLContext;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL33.*;

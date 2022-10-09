@@ -4,7 +4,6 @@ import editor.Editor;
 import glparts.Texture;
 import gui.abs.GUISection;
 import imgui.ImGui;
-import imgui.ImGuiStyle;
 import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiInputTextFlags;

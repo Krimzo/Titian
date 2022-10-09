@@ -1,8 +1,11 @@
 package gui;
 
-import imgui.*;
-import imgui.flag.*;
-import math.*;
+import imgui.ImFontAtlas;
+import imgui.ImGui;
+import imgui.ImGuiStyle;
+import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiFreeTypeBuilderFlags;
+import math.Float3;
 
 import java.awt.*;
 

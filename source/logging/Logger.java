@@ -5,7 +5,8 @@ import utility.Strings;
 import utility.Time;
 import utility.nncollection.NNArrayList;
 
-import java.io.*;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Locale;
 
 public class Logger extends PrintStream {

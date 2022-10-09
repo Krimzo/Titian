@@ -1,17 +1,22 @@
 package renderer;
 
 import camera.abs.Camera;
-import glparts.*;
-import math.*;
+import glparts.FrameBuffer;
+import glparts.Mesh;
+import glparts.Shaders;
+import glparts.abs.Disposable;
+import glparts.abs.GLContext;
+import math.Float2;
+import math.Float3;
+import math.Float4;
+import math.Int2;
 import renderer.abs.EditorRenderable;
 import scene.Scene;
-import glparts.abs.Disposable;
 import utility.nncollection.NNHashMap;
-import glparts.abs.GLContext;
 
 import java.util.Map;
 
-import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.opengl.GL33.GL_CLAMP_TO_EDGE;
 
 public class EditorRenderer implements Disposable {
     public final FrameBuffer renderBuffer;

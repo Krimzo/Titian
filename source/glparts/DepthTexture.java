@@ -1,9 +1,9 @@
 package glparts;
 
 import callback.EmptyCallback;
+import glparts.abs.GLContext;
 import glparts.abs.GLObject;
 import math.Int2;
-import glparts.abs.GLContext;
 
 import java.nio.ByteBuffer;
 

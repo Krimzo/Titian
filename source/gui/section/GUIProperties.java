@@ -1,11 +1,13 @@
 package gui.section;
 
-import editor.*;
+import editor.Editor;
 import entity.Entity;
 import glparts.Mesh;
 import gui.abs.GUISection;
-import imgui.*;
-import imgui.flag.*;
+import imgui.ImGui;
+import imgui.ImVec2;
+import imgui.flag.ImGuiPopupFlags;
+import imgui.flag.ImGuiTreeNodeFlags;
 import material.Material;
 import script.Script;
 

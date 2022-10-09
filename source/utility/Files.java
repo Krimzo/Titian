@@ -1,12 +1,15 @@
 package utility;
 
-import math.*;
+import math.Float2;
+import math.Float3;
+import math.Int2;
+import math.Vertex;
 import org.lwjgl.stb.STBImage;
 import utility.nncollection.NNArrayList;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.nio.file.*;
+import java.nio.file.Path;
 
 import static org.lwjgl.opengl.GL33.*;
 

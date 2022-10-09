@@ -4,12 +4,12 @@ import camera.abs.Camera;
 import glparts.FrameBuffer;
 import glparts.Shaders;
 import glparts.abs.Disposable;
+import glparts.abs.GLContext;
 import math.Float3;
 import math.Float4;
 import math.Int2;
 import renderer.abs.GameRenderable;
 import scene.Scene;
-import glparts.abs.GLContext;
 
 public class GameRenderer implements Disposable {
     public final FrameBuffer renderBuffer;

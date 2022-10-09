@@ -5,6 +5,7 @@ import camera.PerspectiveCamera;
 import glparts.abs.Disposable;
 import gui.GUIRenderer;
 import gui.section.*;
+import logging.Logger;
 import math.Int2;
 import physics.Physics;
 import renderer.EditorRenderer;
@@ -13,8 +14,6 @@ import scene.Scene;
 import script.Scripter;
 import utility.Timer;
 import window.Window;
-
-import logging.Logger;
 
 public class Editor implements Disposable {
     public EditorData data;

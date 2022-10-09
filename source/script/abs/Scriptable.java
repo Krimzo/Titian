@@ -3,8 +3,9 @@ package script.abs;
 import camera.abs.Camera;
 import editor.Editor;
 import entity.Entity;
-import logging.*;
-import math.*;
+import logging.LogInfo;
+import logging.LogType;
+import math.Int2;
 
 public abstract class Scriptable {
     private static Editor editor = null;

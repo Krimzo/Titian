@@ -1,15 +1,18 @@
 package gui.section;
 
-import editor.*;
-import entity.*;
-import entity.component.*;
+import editor.Editor;
+import entity.Entity;
+import entity.component.TransformComponent;
 import gui.GUIStyle;
 import gui.GUIUtil;
 import gui.abs.GUISection;
-import imgui.*;
-import imgui.extension.imguizmo.*;
-import imgui.extension.imguizmo.flag.*;
-import imgui.flag.*;
+import imgui.ImGui;
+import imgui.extension.imguizmo.ImGuizmo;
+import imgui.extension.imguizmo.flag.Mode;
+import imgui.extension.imguizmo.flag.Operation;
+import imgui.flag.ImGuiMouseButton;
+import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiWindowFlags;
 import math.*;
 
 public final class GUIViewport extends GUISection {

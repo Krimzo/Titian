@@ -5,7 +5,9 @@ import entity.abs.EntityComponent;
 import glparts.Mesh;
 import glparts.Shaders;
 import imgui.ImGui;
-import renderer.abs.*;
+import renderer.abs.EditorRenderable;
+import renderer.abs.GameRenderable;
+import renderer.abs.IndexRenderable;
 
 import java.io.Serializable;
 

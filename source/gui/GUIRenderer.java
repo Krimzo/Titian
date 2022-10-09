@@ -1,16 +1,17 @@
 package gui;
 
 import glparts.Texture;
-import gui.abs.GUIRenderable;
-import imgui.extension.imguizmo.ImGuizmo;
 import glparts.abs.Disposable;
-import imgui.*;
-import imgui.flag.*;
-import imgui.gl3.*;
-import imgui.glfw.*;
+import gui.abs.GUIRenderable;
+import imgui.ImGui;
+import imgui.extension.imguizmo.ImGuizmo;
+import imgui.flag.ImGuiConfigFlags;
+import imgui.flag.ImGuiDockNodeFlags;
+import imgui.gl3.ImGuiImplGl3;
+import imgui.glfw.ImGuiImplGlfw;
 import utility.nncollection.NNArrayList;
 import utility.nncollection.NNHashMap;
-import window.*;
+import window.Window;
 
 import java.util.Map;
 

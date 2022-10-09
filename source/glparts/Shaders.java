@@ -1,14 +1,17 @@
 package glparts;
 
 import callback.EmptyCallback;
+import glparts.abs.GLContext;
 import glparts.abs.GLObject;
 import math.*;
 import utility.Files;
 import utility.nncollection.NNHashMap;
-import glparts.abs.GLContext;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL33.*;
 

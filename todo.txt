@@ -1,4 +1,3 @@
-optimize all class imports
 scene file explorer icon
 better gizmo colors
 euler angles/forward vector math

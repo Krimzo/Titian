@@ -1,13 +1,13 @@
 package window;
 
 import glparts.abs.Disposable;
+import glparts.abs.GLContext;
 import math.Int2;
 import org.lwjgl.glfw.GLFWImage;
 import utility.Files;
 import utility.Memory;
-import glparts.abs.GLContext;
 
-import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 

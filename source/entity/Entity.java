@@ -1,11 +1,14 @@
 package entity;
 
 import editor.Editor;
-import glparts.*;
+import glparts.Shaders;
 import imgui.ImGui;
+import named.NameHolder;
+import named.Named;
 import physics.Physical;
-import named.*;
-import renderer.abs.*;
+import renderer.abs.EditorRenderable;
+import renderer.abs.GameRenderable;
+import renderer.abs.IndexRenderable;
 import script.Script;
 
 import java.io.Serializable;

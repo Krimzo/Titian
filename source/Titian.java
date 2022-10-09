@@ -1,8 +1,9 @@
 import editor.Editor;
 import entity.Entity;
-import glparts.*;
-import math.*;
+import glparts.Mesh;
+import glparts.Texture;
 import material.Material;
+import math.Float2;
 import scene.Scene;
 import script.abs.Scriptable;
 

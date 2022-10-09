@@ -2,7 +2,6 @@ package script;
 
 import entity.Entity;
 import scene.Scene;
-import script.abs.Scriptable;
 
 public class Scripter {
     public Scripter() {}

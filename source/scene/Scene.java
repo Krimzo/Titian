@@ -9,10 +9,11 @@ import glparts.abs.Disposable;
 import material.Material;
 import named.NameHolder;
 import physics.Physical;
-import utility.nncollection.*;
+import utility.nncollection.NNArrayList;
+import utility.nncollection.NNHashSet;
 
 import java.io.*;
-import java.util.*;
+import java.util.Set;
 
 public class Scene extends NNArrayList<Entity> implements Physical, Disposable, Serializable {
     public final NameHolder entityNames = new NameHolder();

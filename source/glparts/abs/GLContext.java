@@ -1,7 +1,7 @@
 package glparts.abs;
 
-import glparts.abs.Disposable;
-import math.*;
+import math.Float4;
+import math.Int2;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.opengl.GL33.*;

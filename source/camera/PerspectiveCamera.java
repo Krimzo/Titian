@@ -5,7 +5,9 @@ import editor.Editor;
 import glparts.Shaders;
 import gui.GUIStyle;
 import gui.GUIUtil;
-import math.*;
+import math.Float3;
+import math.Int2;
+import math.Mat4;
 import named.NameHolder;
 
 import java.io.Serializable;
