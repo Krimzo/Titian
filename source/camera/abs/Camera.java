@@ -15,7 +15,9 @@ import window.input.Mouse;
 import java.io.Serializable;
 
 public abstract class Camera extends Entity implements Serializable {
-    protected Float3 forward = Float3.getNegZ();
+    private Float3 forward = Float3.getNegZ();
+    private Float3 right = Float3.getPosX();
+    private Float3 up = Float3.getPosY();
 
     public float near = 0.01f;
     public float far = 500;
@@ -32,15 +34,14 @@ public abstract class Camera extends Entity implements Serializable {
         super(holder, name, editor);
     }
 
-    public Mat4 viewMatrix() {
-        return Mat4.lookAt(components.transform.position, components.transform.position.add(forward), Float3.getPosY());
-    }
-
-    public abstract Mat4 projectionMatrix();
-    public abstract Mat4 matrix();
-
     public void setForward(Float3 forward) {
         this.forward = forward.normalize();
+        right = this.forward.cross(up);
+    }
+
+    public void setUp(Float3 up) {
+        this.up = up.normalize();
+        right = forward.cross(this.up);
     }
 
     public Float3 getForward() {
@@ -48,8 +49,20 @@ public abstract class Camera extends Entity implements Serializable {
     }
 
     public Float3 getRight() {
-        return forward.cross(Float3.getPosY());
+        return new Float3(right);
     }
+
+    public Float3 getUp() {
+        return new Float3(up);
+    }
+
+    public Mat4 viewMatrix() {
+        return Mat4.lookAt(components.transform.position, components.transform.position.add(forward), up);
+    }
+
+    public abstract Mat4 projectionMatrix();
+
+    public abstract Mat4 matrix();
 
     public void moveForward(float deltaTime) {
         components.transform.position.set(components.transform.position.add(forward.multiply(speed * deltaTime)));
@@ -60,35 +73,38 @@ public abstract class Camera extends Entity implements Serializable {
     }
 
     public void moveRight(float deltaTime) {
-        components.transform.position.set(components.transform.position.add(getRight().multiply(speed * deltaTime)));
+        components.transform.position.set(components.transform.position.add(right.multiply(speed * deltaTime)));
     }
 
     public void moveLeft(float deltaTime) {
-        components.transform.position.set(components.transform.position.subtract(getRight().multiply(speed * deltaTime)));
+        components.transform.position.set(components.transform.position.subtract(right.multiply(speed * deltaTime)));
     }
 
     public void moveUp(float deltaTime) {
-        components.transform.position.set(components.transform.position.add(Float3.getPosY().multiply(speed * deltaTime)));
+        components.transform.position.set(components.transform.position.add(up.multiply(speed * deltaTime)));
     }
 
     public void moveDown(float deltaTime) {
-        components.transform.position.set(components.transform.position.subtract(Float3.getPosY().multiply(speed * deltaTime)));
+        components.transform.position.set(components.transform.position.subtract(up.multiply(speed * deltaTime)));
     }
 
-    public void rotate(Int2 mousePos, Int2 frameCenter, float verticalAngleLimit) {
+    public void rotate(Int2 mousePos, Int2 frameCenter, float angleLimit) {
         final Int2 delta = mousePos.subtract(frameCenter);
         final Float2 rotation = new Float2(delta).multiply(sensitivity);
 
-        Float3 forwardVert = forward.rotate(-rotation.y, getRight());
-        if (Math.abs(forwardVert.angle(Float3.getPosY()) - 90.0f) <= verticalAngleLimit) {
+        Float3 forwardVert = forward.rotate(-rotation.y, right);
+        if (Math.abs(forwardVert.angle(up) - 90) <= angleLimit) {
             forward = forwardVert;
         }
 
-        forward = forward.rotate(-rotation.x, Float3.getPosY());
+        setForward(forward.rotate(-rotation.x, up));
     }
 
-    public void useDefaultMovement(int forward, int back, int right, int left, int up, int down, Int2 frameSize, float deltaT) {
-        speed = Input.isShiftDown() ? 5 : 2;
+    public void useDefaultMovement(int forward, int back, int right, int left, int up, int down, float multi, Int2 frameSize, float deltaT) {
+        final float speed = this.speed;
+        if (Input.isShiftDown()) {
+            this.speed *= multi;
+        }
 
         if (Input.isKeyDown(forward)) {
             moveForward(deltaT);
@@ -108,6 +124,8 @@ public abstract class Camera extends Entity implements Serializable {
         if (Input.isKeyDown(down)) {
             moveDown(deltaT);
         }
+
+        this.speed = speed;
 
         if (Input.isMousePressed(Mouse.Middle)) {
             editor.window.setMouseState(false);

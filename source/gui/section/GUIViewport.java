@@ -28,8 +28,8 @@ public final class GUIViewport extends GUISection {
 
     private void updateViewport() {
         if (ImGui.isWindowFocused()) {
-            editor.camera.useDefaultMovement('W', 'S', 'D', 'A', 'E', 'Q',
-                    editor.window.getSize(), editor.timer.getDeltaT()
+            editor.camera.useDefaultMovement(Key.W, Key.S, Key.D, Key.A, Key.E, Key.Q, 2,
+                editor.window.getSize(), editor.timer.getDeltaT()
             );
         }
 
