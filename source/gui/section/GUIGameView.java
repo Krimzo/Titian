@@ -6,7 +6,6 @@ import gui.abs.GUISection;
 import imgui.ImGui;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
-import math.Float4;
 import math.Int2;
 
 public final class GUIGameView extends GUISection {
@@ -22,21 +21,21 @@ public final class GUIGameView extends GUISection {
     }
 
     private void renderScene() {
-        if (editor.scene == null || editor.scene.mainCamera == null) {
+        if (editor.scene == null || editor.scene.camera == null) {
             editor.gameRenderer.clear(null);
             return;
         }
 
-        editor.gameRenderer.clear(editor.scene.mainCamera);
+        editor.gameRenderer.clear(editor.scene.camera);
 
         editor.window.getContext().setViewport(windowSize);
         editor.gameRenderer.resize(windowSize);
 
-        if (editor.scene.mainCamera.getClass() == PerspectiveCamera.class) {
-            ((PerspectiveCamera) editor.scene.mainCamera).updateAspect(windowSize);
+        if (editor.scene.camera.getClass() == PerspectiveCamera.class) {
+            ((PerspectiveCamera) editor.scene.camera).updateAspect(windowSize);
         }
 
-        editor.gameRenderer.renderScene(editor.scene, editor.scene.mainCamera);
+        editor.gameRenderer.renderScene(editor.scene, editor.scene.camera);
     }
 
     private void displayFrame() {

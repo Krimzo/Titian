@@ -16,7 +16,7 @@ public class Ray implements Serializable {
         direction = new Float3(ray.direction);
     }
 
-    boolean intersect(Plane plane, Float3 outIntersection) {
+    public boolean intersect(Plane plane, Float3 outIntersection) {
         final float denom = plane.normal.normalize().dot(direction.normalize());
 
         if (Math.abs(denom) > 0.0001f) {
@@ -35,7 +35,7 @@ public class Ray implements Serializable {
         return false;
     }
 
-    boolean intersect(Triangle triangle, Float3 outIntersection) {
+    public boolean intersect(Triangle triangle, Float3 outIntersection) {
         final Float3 edge1 = triangle.b.world.subtract(triangle.a.world);
         final Float3 edge2 = triangle.c.world.subtract(triangle.a.world);
     

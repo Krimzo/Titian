@@ -4,6 +4,7 @@ import editor.*;
 import entity.*;
 import entity.component.*;
 import gui.GUIStyle;
+import gui.GUIUtil;
 import gui.abs.GUISection;
 import imgui.*;
 import imgui.extension.imguizmo.*;
@@ -21,13 +22,41 @@ public final class GUIViewport extends GUISection {
         super(editor);
     }
 
-    private void updateViewportInfo() {
+    private void updateViewport() {
+        if (ImGui.isWindowFocused()) {
+            editor.camera.useDefaultMovement('W', 'S', 'D', 'A', 'E', 'Q',
+                    editor.window.getSize(), editor.timer.getDeltaT()
+            );
+        }
+
         final int tabSize = (int) ImGui.getWindowContentRegionMinY();
         viewportPosition = new Int2((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY() + tabSize);
         viewportSize = new Int2((int) ImGui.getWindowWidth(), (int) ImGui.getWindowHeight() - tabSize);
     }
 
+    private void renderViewportInfo() {
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 14, 14);
+
+        if (ImGui.begin("Viewport Info")) {
+            ImGui.bulletText("Camera");
+
+            GUIUtil.editFloat3("##Position", editor.camera.components.transform.position, 0.1f);
+
+            float[] data = editor.camera.getForward().array();
+            if (ImGui.dragFloat3("##Forward", data, 0.05f)) {
+                editor.camera.setForward(new Float3(data));
+            }
+        }
+        ImGui.end();
+
+        ImGui.popStyleVar();
+    }
+
     private void updateGizmoState() {
+        if (!ImGui.isWindowFocused()) {
+            return;
+        }
+
         if (ImGui.isKeyPressed('1')) {
             gizmoOperation = (gizmoOperation != Operation.SCALE) ? Operation.SCALE : 0;
         }
@@ -52,7 +81,7 @@ public final class GUIViewport extends GUISection {
             Float2 mousePosition = new Float2(ImGui.getMousePosX() - viewportPosition.x, ImGui.getMousePosY() - viewportPosition.y);
 
             int objectIndex = (int) editor.editorRenderer.indexBuffer.getPixel(new Int2(mousePosition)).x - 1;
-            editor.scene.selectedEntity = (objectIndex >= 0) ? editor.scene.get(objectIndex) : null;
+            editor.scene.selected = (objectIndex >= 0) ? editor.scene.get(objectIndex) : null;
         }
     }
 
@@ -63,7 +92,7 @@ public final class GUIViewport extends GUISection {
             return;
         }
 
-        int selectedIndex = editor.scene.indexOf(editor.scene.selectedEntity);
+        int selectedIndex = editor.scene.indexOf(editor.scene.selected);
 
         editor.window.getContext().setViewport(viewportSize);
         editor.editorRenderer.resize(viewportSize);
@@ -80,7 +109,11 @@ public final class GUIViewport extends GUISection {
     }
 
     private void displayFrame() {
-        ImGui.image(editor.editorRenderer.renderBuffer.getColorMap().getBuffer(), viewportSize.x, viewportSize.y, 0, 1, 1, 0);
+        ImGui.image(editor.editorRenderer.renderBuffer.getColorMap().getBuffer(),
+            viewportSize.x, viewportSize.y,
+            0, 1,
+            1, 0
+        );
     }
 
     private void renderGizmos() {
@@ -92,14 +125,14 @@ public final class GUIViewport extends GUISection {
         ImGuizmo.setDrawList();
         ImGuizmo.setRect(viewportPosition.x, viewportPosition.y, viewportSize.x, viewportSize.y);
 
-        Entity selected = editor.scene.selectedEntity;
+        Entity selected = editor.scene.selected;
         if (selected == null || gizmoOperation == 0) {
             float[] ignored = new float[16];
             ImGuizmo.manipulate(ignored, ignored, ignored, gizmoOperation, gizmoMode);
             return;
         }
 
-        TransformComponent transform = selected.transformComponent;
+        TransformComponent transform = selected.components.transform;
         Mat4 viewMatrix = editor.camera.viewMatrix().transpose();
         Mat4 projectionMatrix = editor.camera.projectionMatrix().transpose();
         Mat4 transformMatrix = transform.translationMatrix().multiply(transform.scalingMatrix()).transpose();
@@ -120,8 +153,11 @@ public final class GUIViewport extends GUISection {
     public void renderGUI() {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 0, 0);
 
+        ImGui.setNextWindowBgAlpha(1);
         if (ImGui.begin("Viewport", ImGuiWindowFlags.NoScrollbar)) {
-            updateViewportInfo();
+            updateViewport();
+            renderViewportInfo();
+
             updateGizmoState();
             objectSelection();
 

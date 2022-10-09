@@ -9,7 +9,7 @@ import math.Float4;
 import math.Int2;
 import renderer.abs.GameRenderable;
 import scene.Scene;
-import window.GLContext;
+import glparts.abs.GLContext;
 
 public class GameRenderer implements Disposable {
     public final FrameBuffer renderBuffer;

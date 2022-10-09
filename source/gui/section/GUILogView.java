@@ -5,6 +5,7 @@ import gui.GUIUtil;
 import gui.abs.GUISection;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
+import logging.Logger;
 
 public final class GUILogView extends GUISection {
     public GUILogView(Editor editor) {
@@ -13,19 +14,23 @@ public final class GUILogView extends GUISection {
 
     @Override
     public void renderGUI() {
-        if (ImGui.begin("Log View")) {
-            ImGui.bulletText(editor.logger.getLastClearMessage());
+        Logger logger = editor.logger;
+        int unseenCount = logger.getUnseenCount();
+
+        if (ImGui.begin("Log View" + (unseenCount > 0 ? (" [" + unseenCount + "]###") : "###"))) {
+            ImGui.bulletText(logger.getLastClearMessage());
             ImGui.separator();
 
-            editor.logger.iterate(log -> {
+            logger.iterate(log -> {
                 GUIUtil.useColor3(ImGuiCol.Text, log.type.toColor(), () -> {
-                    ImGui.text(log.firstMessagePart + editor.logger.formatSpaces(log) + log.secondMessagePart);
+                    ImGui.text(log.firstMessagePart + logger.formatSpaces(log) + log.secondMessagePart);
                 });
             });
+            logger.clearUnseen();
 
             if (ImGui.beginPopupContextWindow("EditLogView")) {
                 if (ImGui.button("Clear")) {
-                    editor.logger.clear();
+                    logger.clear();
 
                     ImGui.closeCurrentPopup();
                 }

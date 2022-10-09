@@ -20,8 +20,8 @@ public class Compiler {
                 return data;
             }
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("Script \"" + filepath + "\" compilation error");
         }
         return null;
     }

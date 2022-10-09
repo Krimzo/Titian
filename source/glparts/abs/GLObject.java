@@ -2,7 +2,6 @@ package glparts.abs;
 
 import named.NameHolder;
 import named.Named;
-import window.GLContext;
 
 import java.io.Serializable;
 

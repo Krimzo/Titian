@@ -4,9 +4,9 @@ import callback.EmptyCallback;
 import glparts.abs.GLObject;
 import math.*;
 import named.NameHolder;
-import window.*;
 import utility.Files;
 import utility.Memory;
+import glparts.abs.GLContext;
 
 import java.io.*;
 import java.nio.ByteBuffer;

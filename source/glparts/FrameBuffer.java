@@ -4,7 +4,7 @@ import callback.EmptyCallback;
 import glparts.abs.GLObject;
 import math.Float4;
 import math.Int2;
-import window.GLContext;
+import glparts.abs.GLContext;
 
 import static org.lwjgl.opengl.GL33.*;
 

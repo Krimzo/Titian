@@ -15,16 +15,16 @@ public final class GUIProperties extends GUISection {
     }
 
     private void renderTransform(Entity selected) {
-        selected.transformComponent.renderGUI();
+        selected.components.transform.renderGUI();
     }
 
     private void renderMesh(Entity selected) {
-        selected.meshComponent.renderGUI();
+        selected.components.mesh.renderGUI();
 
         if (ImGui.beginListBox("##Loaded meshes", -1, 0)) {
             for (Mesh mesh : editor.scene.meshes) {
-                if (ImGui.selectable(mesh.getName(), selected.meshComponent.mesh == mesh)) {
-                    selected.meshComponent.mesh = mesh;
+                if (ImGui.selectable(mesh.getName(), selected.components.mesh.mesh == mesh)) {
+                    selected.components.mesh.mesh = mesh;
                 }
             }
 
@@ -33,12 +33,12 @@ public final class GUIProperties extends GUISection {
     }
 
     private void renderMaterial(Entity selected) {
-        selected.materialComponent.renderGUI();
+        selected.components.material.renderGUI();
 
         if (ImGui.beginListBox("##Loaded materials", -1, 0)) {
             for (Material material : editor.scene.materials) {
-                if (ImGui.selectable(material.getName(), selected.materialComponent.material == material)) {
-                    selected.materialComponent.material = material;
+                if (ImGui.selectable(material.getName(), selected.components.material.material == material)) {
+                    selected.components.material.material = material;
                 }
             }
 
@@ -47,11 +47,11 @@ public final class GUIProperties extends GUISection {
     }
 
     private void renderPhysics(Entity selected) {
-        selected.physicsComponent.renderGUI();
+        selected.components.physics.renderGUI();
     }
 
     private void renderScripts(Entity selected) {
-        selected.scriptComponent.renderGUI();
+        selected.components.script.renderGUI();
 
         ImVec2 contentMin = ImGui.getWindowContentRegionMin();
         ImVec2 contentMax = ImGui.getWindowContentRegionMax();
@@ -60,7 +60,7 @@ public final class GUIProperties extends GUISection {
         if (ImGui.beginDragDropTarget()) {
             String scriptPath = ImGui.acceptDragDropPayload("ScriptFile");
             if (scriptPath != null) {
-                selected.scriptComponent.scripts.add(new Script(scriptPath, selected));
+                selected.components.script.scripts.add(new Script(scriptPath, selected));
             }
 
             ImGui.endDragDropTarget();
@@ -68,7 +68,7 @@ public final class GUIProperties extends GUISection {
 
         if (ImGui.beginPopupContextItem("Scripts", ImGuiPopupFlags.MouseButtonRight | ImGuiPopupFlags.NoOpenOverItems)) {
             if (ImGui.button("Reload")) {
-                selected.scriptComponent.reload();
+                selected.components.script.reload();
 
                 ImGui.closeCurrentPopup();
             }
@@ -79,7 +79,7 @@ public final class GUIProperties extends GUISection {
 
     @Override
     public void renderGUI() {
-        Entity selected = (editor.scene != null) ? editor.scene.selectedEntity : null;
+        Entity selected = (editor.scene != null) ? editor.scene.selected : null;
 
         if (ImGui.begin("Properties") && selected != null) {
             if (ImGui.collapsingHeader("Info", ImGuiTreeNodeFlags.DefaultOpen)) {

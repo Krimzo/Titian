@@ -22,6 +22,7 @@ public class Editor implements Disposable {
     public Window window = new Window(new Int2(1600, 900), "Titian Creator", true);
     public Timer timer = new Timer();
 
+    public final PerspectiveCamera camera = new PerspectiveCamera(null, "Editor Camera", this);
     public EditorRenderer editorRenderer = new EditorRenderer(window.getContext(), window.getSize());
     public GameRenderer gameRenderer = new GameRenderer(window.getContext(), window.getSize());
     public GUIRenderer guiRenderer = new GUIRenderer(window);
@@ -31,7 +32,6 @@ public class Editor implements Disposable {
     public Logger logger = new Logger();
     public Scripter scripter = new Scripter();
 
-    public final PerspectiveCamera camera = new PerspectiveCamera(null, "Editor Camera", this);
     public Scene scene = null;
 
     public Editor() throws Exception {
@@ -39,7 +39,6 @@ public class Editor implements Disposable {
         window.setVSync(true);
 
         window.getContext().setDepthTest(true);
-        camera.setupDefaultMovement(window, timer);
 
         guiRenderer.add(new GUIMainMenu(this));
         guiRenderer.add(new GUIScene(this));
@@ -47,10 +46,11 @@ public class Editor implements Disposable {
         guiRenderer.add(new GUIMeshEditor(this));
         guiRenderer.add(new GUIMaterialEditor(this));
         guiRenderer.add(new GUIScriptEditor(this));
-        guiRenderer.add(new GUIViewport(this));
         guiRenderer.add(new GUIGameView((this)));
-        guiRenderer.add(new GUIExplorer(this));
+        guiRenderer.add(new GUIViewport(this));
         guiRenderer.add(new GUILogView(this));
+        guiRenderer.add(new GUIExplorer(this));
+        guiRenderer.add(new GUIProfiling(this));
         guiRenderer.add(new GUIProperties(this));
 
         data = new EditorData(this);

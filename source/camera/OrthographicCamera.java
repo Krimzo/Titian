@@ -20,11 +20,6 @@ public class OrthographicCamera extends Camera implements Serializable {
     }
 
     @Override
-    public Mat4 viewMatrix() {
-        return Mat4.lookAt(transformComponent.position, transformComponent.position.add(forward), Float3.getPosY());
-    }
-
-    @Override
     public Mat4 projectionMatrix() {
         return Mat4.orthographic(width, height, near, far);
     }
@@ -46,7 +41,7 @@ public class OrthographicCamera extends Camera implements Serializable {
     public void editorRender(Shaders shaders) {
         editor.data.frustumShaders.setUniform("iVP", matrix().inverse());
         editor.data.frustumShaders.setUniform("VP", editor.camera.matrix());
-        editor.data.frustumShaders.setUniform("color", (this == editor.scene.selectedEntity) ? GUIStyle.special : new Float3(1));
+        editor.data.frustumShaders.setUniform("color", (this == editor.scene.selected) ? GUIStyle.special : new Float3(1));
         editor.data.frustumMesh.renderLines(editor.data.frustumShaders);
 
         super.editorRender(shaders);

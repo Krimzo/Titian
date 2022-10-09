@@ -6,8 +6,8 @@ import gui.GUIUtil;
 import imgui.ImGui;
 import math.*;
 import named.NameHolder;
-import utility.Timer;
-import window.Window;
+import window.input.Input;
+import window.input.Mouse;
 
 import java.io.Serializable;
 
@@ -29,7 +29,10 @@ public abstract class Camera extends Entity implements Serializable {
         super(holder, name, editor);
     }
 
-    public abstract Mat4 viewMatrix();
+    public Mat4 viewMatrix() {
+        return Mat4.lookAt(components.transform.position, components.transform.position.add(forward), Float3.getPosY());
+    }
+
     public abstract Mat4 projectionMatrix();
     public abstract Mat4 matrix();
 
@@ -46,27 +49,27 @@ public abstract class Camera extends Entity implements Serializable {
     }
 
     public void moveForward(float deltaTime) {
-        transformComponent.position.set(transformComponent.position.add(forward.multiply(speed * deltaTime)));
+        components.transform.position.set(components.transform.position.add(forward.multiply(speed * deltaTime)));
     }
 
     public void moveBack(float deltaTime) {
-        transformComponent.position.set(transformComponent.position.subtract(forward.multiply(speed * deltaTime)));
+        components.transform.position.set(components.transform.position.subtract(forward.multiply(speed * deltaTime)));
     }
 
     public void moveRight(float deltaTime) {
-        transformComponent.position.set(transformComponent.position.add(getRight().multiply(speed * deltaTime)));
+        components.transform.position.set(components.transform.position.add(getRight().multiply(speed * deltaTime)));
     }
 
     public void moveLeft(float deltaTime) {
-        transformComponent.position.set(transformComponent.position.subtract(getRight().multiply(speed * deltaTime)));
+        components.transform.position.set(components.transform.position.subtract(getRight().multiply(speed * deltaTime)));
     }
 
     public void moveUp(float deltaTime) {
-        transformComponent.position.set(transformComponent.position.add(Float3.getPosY().multiply(speed * deltaTime)));
+        components.transform.position.set(components.transform.position.add(Float3.getPosY().multiply(speed * deltaTime)));
     }
 
     public void moveDown(float deltaTime) {
-        transformComponent.position.set(transformComponent.position.subtract(Float3.getPosY().multiply(speed * deltaTime)));
+        components.transform.position.set(components.transform.position.subtract(Float3.getPosY().multiply(speed * deltaTime)));
     }
 
     public void rotate(Int2 mousePos, Int2 frameCenter, float verticalAngleLimit) {
@@ -81,49 +84,60 @@ public abstract class Camera extends Entity implements Serializable {
         forward = forward.rotate(-rotation.x, Float3.getPosY());
     }
 
-    public void setupDefaultMovement(Window window, Timer timer) {
-        window.keyboard.w.onHold.add(() -> moveForward(timer.getDeltaT()));
-        window.keyboard.a.onHold.add(() -> moveLeft(timer.getDeltaT()));
-        window.keyboard.s.onHold.add(() -> moveBack(timer.getDeltaT()));
-        window.keyboard.d.onHold.add(() -> moveRight(timer.getDeltaT()));
-        window.keyboard.e.onHold.add(() -> moveUp(timer.getDeltaT()));
-        window.keyboard.q.onHold.add(() -> moveDown(timer.getDeltaT()));
+    public void useDefaultMovement(int forward, int back, int right, int left, int up, int down, Int2 frameSize, float deltaT) {
+        speed = Input.isShiftDown() ? 5 : 2;
 
-        window.keyboard.shift.onPress.add(() -> speed = 5);
-        window.keyboard.shift.onRelease.add(() -> speed = 2);
+        if (Input.isKeyDown(forward)) {
+            moveForward(deltaT);
+        }
+        if (Input.isKeyDown(back)) {
+            moveBack(deltaT);
+        }
+        if (Input.isKeyDown(right)) {
+            moveRight(deltaT);
+        }
+        if (Input.isKeyDown(left)) {
+            moveLeft(deltaT);
+        }
+        if (Input.isKeyDown(up)) {
+            moveUp(deltaT);
+        }
+        if (Input.isKeyDown(down)) {
+            moveDown(deltaT);
+        }
 
-        window.mouse.mmb.onPress.add(() -> {
-            window.mouse.setHidden(true);
+        if (Input.isMousePressed(Mouse.Middle)) {
+            editor.window.setMouseState(false);
             camMoving = true;
-        });
+        }
 
-        window.mouse.mmb.onHold.add(() -> {
+        if (Input.isMouseDown(Mouse.Middle)) {
             if (camMoving) {
-                final Int2 frameCenter = window.getSize().divide(2);
+                final Int2 frameCenter = frameSize.divide(2);
 
                 if (!firstClick) {
-                    rotate(window.mouse.getPosition(), frameCenter, 85);
+                    rotate(editor.window.getMousePosition(), frameCenter, 85);
                 }
                 firstClick = false;
 
-                window.mouse.setPosition(frameCenter);
+                editor.window.setMousePosition(frameCenter);
             }
-        });
+        }
 
-        window.mouse.mmb.onRelease.add(() -> {
-            window.mouse.setHidden(false);
+        if (Input.isMouseReleased(Mouse.Middle)) {
+            editor.window.setMouseState(true);
             firstClick = true;
             camMoving = false;
-        });
+        }
     }
 
     @Override
     public void renderInfoGUI(Editor editor) {
         super.renderInfoGUI(editor);
 
-        boolean isMainCamera = editor.scene.mainCamera == this;
+        boolean isMainCamera = editor.scene.camera == this;
         if (ImGui.checkbox("Main camera", isMainCamera)) {
-            editor.scene.mainCamera = isMainCamera ? null : this;
+            editor.scene.camera = isMainCamera ? null : this;
         }
 
         GUIUtil.editFloat3("Forward", forward, 0.01f);

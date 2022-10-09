@@ -89,8 +89,8 @@ public final class GUIExplorer extends GUISection {
             try {
                 Desktop.getDesktop().open(file);
             }
-            catch (Exception e) {
-                e.printStackTrace();
+            catch (Exception ignored) {
+                System.out.println("File \"" + file + "\" open with default error");
             }
         }
         ImGui.popID();

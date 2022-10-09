@@ -6,7 +6,7 @@ import named.NameHolder;
 import utility.Files;
 import utility.Memory;
 import utility.Pair;
-import window.*;
+import glparts.abs.GLContext;
 
 import java.io.*;
 import java.util.Arrays;

@@ -9,6 +9,7 @@ import imgui.ImGui;
 import imgui.flag.ImGuiInputTextFlags;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImString;
+import window.input.Input;
 
 public final class GUIScene extends GUISection {
     private static class RenameData {
@@ -42,8 +43,8 @@ public final class GUIScene extends GUISection {
         if (ImGui.beginMenu("New")) {
             if (ImGui.button("Entity", -1, 0)) {
                 Entity entity = new Entity(editor.scene.entityNames, "Entity", editor);
-                entity.meshComponent.mesh = editor.data.defaultMesh;
-                entity.materialComponent.material = editor.data.defaultMaterial;
+                entity.components.mesh.mesh = editor.data.defaultMesh;
+                entity.components.material.material = editor.data.defaultMaterial;
                 editor.scene.addUnsaved(entity);
 
                 ImGui.closeCurrentPopup();
@@ -82,11 +83,11 @@ public final class GUIScene extends GUISection {
             for (int i = 0; i < editor.scene.size(); i++) {
                 Entity entity = editor.scene.get(i);
 
-                if (ImGui.selectable(entity.getName(), entity == editor.scene.selectedEntity)) {
-                    editor.scene.selectedEntity = entity;
+                if (ImGui.selectable(entity.getName(), entity == editor.scene.selected)) {
+                    editor.scene.selected = entity;
                 }
 
-                if (!editor.window.keyboard.shift.getState() && ImGui.beginPopupContextItem("EditEntity" + i)) {
+                if (!Input.isShiftDown() && ImGui.beginPopupContextItem("EditEntity" + i)) {
                     if (ImGui.button("Rename")) {
                         renameData = new RenameData(entity);
                     }
@@ -94,12 +95,12 @@ public final class GUIScene extends GUISection {
                     if (ImGui.button("Delete", -1, 0)) {
                         Entity removed = editor.scene.remove(i--);
 
-                        if (removed == editor.scene.selectedEntity) {
-                            editor.scene.selectedEntity = null;
+                        if (removed == editor.scene.selected) {
+                            editor.scene.selected = null;
                         }
 
-                        if (removed == editor.scene.mainCamera) {
-                            editor.scene.mainCamera = null;
+                        if (removed == editor.scene.camera) {
+                            editor.scene.camera = null;
                         }
 
                         ImGui.closeCurrentPopup();

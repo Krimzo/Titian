@@ -1,9 +1,10 @@
 import script.abs.Scriptable;
 import entity.Entity;
+import window.input.*;
 import java.awt.Color;
 import math.*;
 
-public class FieldsTest extends Scriptable {
+public class Fields extends Scriptable {
     public boolean someBool = false;
     public byte someByte = 1;
     public short someShort = 2;
@@ -24,7 +25,7 @@ public class FieldsTest extends Scriptable {
 
     public String someNullField = null;
 
-    public FieldsTest(Entity entity) {
+    public Fields(Entity entity) {
         super(entity);
     }
 

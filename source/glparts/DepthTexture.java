@@ -3,7 +3,7 @@ package glparts;
 import callback.EmptyCallback;
 import glparts.abs.GLObject;
 import math.Int2;
-import window.GLContext;
+import glparts.abs.GLContext;
 
 import java.nio.ByteBuffer;
 

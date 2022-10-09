@@ -1,7 +1,6 @@
 package entity;
 
 import editor.Editor;
-import entity.component.*;
 import glparts.*;
 import imgui.ImGui;
 import physics.Physical;
@@ -12,13 +11,8 @@ import script.Script;
 import java.io.Serializable;
 
 public class Entity extends Named implements Physical, GameRenderable, EditorRenderable, IndexRenderable, Serializable {
-    public transient final Editor editor;
-
-    public final TransformComponent transformComponent = new TransformComponent(this);
-    public final MeshComponent meshComponent = new MeshComponent(this);
-    public final MaterialComponent materialComponent = new MaterialComponent(this);
-    public final PhysicsComponent physicsComponent = new PhysicsComponent(this);
-    public final ScriptComponent scriptComponent = new ScriptComponent(this);
+    public final ComponentPackage components = new ComponentPackage(this);
+    public transient Editor editor;
 
     public Entity(NameHolder holder, String name, Editor editor) {
         super(holder, name);
@@ -26,45 +20,45 @@ public class Entity extends Named implements Physical, GameRenderable, EditorRen
     }
 
     public void callScriptStarts() {
-        for (Script script : scriptComponent.scripts) {
+        for (Script script : components.script.scripts) {
             script.callStarts();
         }
     }
 
     public void callScriptUpdates() {
-        for (Script script : scriptComponent.scripts) {
+        for (Script script : components.script.scripts) {
             script.callUpdates();
         }
     }
 
     @Override
     public void updatePhysics(float deltaT) {
-        physicsComponent.velocity.set(physicsComponent.velocity.add(physicsComponent.acceleration.multiply(deltaT)));
-        transformComponent.position.set(transformComponent.position.add(physicsComponent.velocity.multiply(deltaT)));
-        transformComponent.rotation.set(transformComponent.rotation.add(physicsComponent.angular.multiply(deltaT)));
+        components.physics.velocity.set(components.physics.velocity.add(components.physics.acceleration.multiply(deltaT)));
+        components.transform.position.set(components.transform.position.add(components.physics.velocity.multiply(deltaT)));
+        components.transform.rotation.set(components.transform.rotation.add(components.physics.angular.multiply(deltaT)));
     }
 
     @Override
     public void gameRender(Shaders shaders) {
-        shaders.setUniform("W", transformComponent.matrix());
-        materialComponent.use(() -> {
-            meshComponent.gameRender(shaders);
+        shaders.setUniform("W", components.transform.matrix());
+        components.material.use(() -> {
+            components.mesh.gameRender(shaders);
         });
     }
 
     @Override
     public void editorRender(Shaders shaders) {
-        shaders.setUniform("W", transformComponent.matrix());
-        materialComponent.use(() -> {
-            meshComponent.editorRender(shaders);
+        shaders.setUniform("W", components.transform.matrix());
+        components.material.use(() -> {
+            components.mesh.editorRender(shaders);
         });
     }
 
     @Override
     public void indexRender(Shaders shaders) {
-        shaders.setUniform("W", transformComponent.matrix());
-        materialComponent.use(() -> {
-            meshComponent.indexRender(shaders);
+        shaders.setUniform("W", components.transform.matrix());
+        components.material.use(() -> {
+            components.mesh.indexRender(shaders);
         });
     }
 

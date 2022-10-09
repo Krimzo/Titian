@@ -1,6 +1,7 @@
 package scene;
 
 import camera.abs.Camera;
+import editor.Editor;
 import entity.Entity;
 import glparts.Mesh;
 import glparts.Texture;
@@ -23,8 +24,8 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
     public final Set<Texture> textures = new NNHashSet<>();
     public final Set<Mesh> meshes = new NNHashSet<>();
 
-    public Entity selectedEntity = null;
-    public Camera mainCamera = null;
+    public Camera camera = null;
+    public Entity selected = null;
 
     public Scene() {}
 
@@ -47,7 +48,8 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
         textures.clear();
         meshes.clear();
 
-        selectedEntity = null;
+        camera = null;
+        selected = null;
     }
 
     public boolean addUnsaved(Entity entity) {
@@ -59,13 +61,13 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
         boolean added = addUnsaved(entity);
 
         if (added) {
-            meshes.add(entity.meshComponent.mesh);
+            meshes.add(entity.components.mesh.mesh);
 
-            if (entity.materialComponent.material != null) {
-                materials.add(entity.materialComponent.material);
-                textures.add(entity.materialComponent.material.colorMap);
-                textures.add(entity.materialComponent.material.normalMap);
-                textures.add(entity.materialComponent.material.roughnessMap);
+            if (entity.components.material.material != null) {
+                materials.add(entity.components.material.material);
+                textures.add(entity.components.material.material.colorMap);
+                textures.add(entity.components.material.material.normalMap);
+                textures.add(entity.components.material.material.roughnessMap);
             }
         }
 
@@ -87,22 +89,27 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
             objectStream.close();
             fileStream.close();
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("Scene saving error, \"" + filepath + '"');
         }
     }
 
-    public static Scene fromFile(String filepath) {
+    public static Scene fromFile(String filepath, Editor editor) {
         Scene scene = null;
         try {
             FileInputStream fileStream = new FileInputStream(filepath);
             ObjectInputStream objectStream = new ObjectInputStream(fileStream);
+
             scene = (Scene) objectStream.readObject();
+            for (Entity entity : scene) {
+                entity.editor = editor;
+            }
+
             objectStream.close();
             fileStream.close();
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("Scene loading error, \"" + filepath + '"');
         }
         return scene;
     }

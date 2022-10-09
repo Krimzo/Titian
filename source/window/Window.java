@@ -1,12 +1,11 @@
 package window;
 
-import callback.ResizeCallback;
 import glparts.abs.Disposable;
 import math.Int2;
 import org.lwjgl.glfw.GLFWImage;
 import utility.Files;
 import utility.Memory;
-import window.input.*;
+import glparts.abs.GLContext;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,9 +14,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window implements Disposable {
     private long window;
     private GLContext context;
-
-    public final Keyboard keyboard;
-    public final Mouse mouse;
 
     public Window(Int2 size, String title, boolean resizable) {
         if (!glfwInit()) {
@@ -41,8 +37,6 @@ public class Window implements Disposable {
         glfwMakeContextCurrent(window);
         context = new GLContext();
 
-        keyboard = new Keyboard(window);
-        mouse = new Mouse(window);
         setHidden(false);
     }
 
@@ -72,8 +66,6 @@ public class Window implements Disposable {
     public boolean process() {
         if (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
-            keyboard.update();
-            mouse.update();
             return true;
         }
         return false;
@@ -81,12 +73,6 @@ public class Window implements Disposable {
 
     public void close() {
         glfwSetWindowShouldClose(window, true);
-    }
-
-    public void setOnResize(ResizeCallback callback) {
-        glfwSetFramebufferSizeCallback(window, (long window, int width, int height) -> {
-            callback.method(new Int2(width, height));
-        });
     }
 
     public void maximize() {
@@ -114,6 +100,20 @@ public class Window implements Disposable {
         else {
             glfwShowWindow(window);
         }
+    }
+
+    public void setMouseState(boolean enabled) {
+        glfwSetInputMode(window, GLFW_CURSOR, enabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+    }
+
+    public Int2 getMousePosition() {
+        double[][] position = { new double[1], new double[1] };
+        glfwGetCursorPos(window, position[0], position[1]);
+        return new Int2((int) position[0][0], (int) position[1][0]);
+    }
+
+    public void setMousePosition(Int2 position) {
+        glfwSetCursorPos(window, position.x, position.y);
     }
 
     public void swapBuffers() {

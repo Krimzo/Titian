@@ -6,12 +6,15 @@ import utility.Time;
 import utility.nncollection.NNArrayList;
 
 import java.io.*;
+import java.util.Locale;
 
 public class Logger extends PrintStream {
     public int maxSize = 100;
+
     private final NNArrayList<LogInfo> logs = new NNArrayList<>();
     private String lastClearMessage;
     private int longestSender;
+    private int unseenCount = 0;
 
     public Logger() {
         super(new OutputStream() { public void write(int b) {} });
@@ -25,6 +28,16 @@ public class Logger extends PrintStream {
         if (logs.size() >= maxSize) {
             logs.remove(0);
         }
+
+        unseenCount += 1;
+    }
+
+    public int getUnseenCount() {
+        return unseenCount;
+    }
+
+    public void clearUnseen() {
+        unseenCount = 0;
     }
 
     public String getLastClearMessage() {
@@ -45,6 +58,7 @@ public class Logger extends PrintStream {
         logs.clear();
         lastClearMessage = "CLEARED ON " + Time.now();
         longestSender = 0;
+        unseenCount = 0;
     }
 
     private void logSystemOut(Object object) {
@@ -144,5 +158,71 @@ public class Logger extends PrintStream {
     @Override
     public void println(Object data) {
         print(data);
+    }
+
+    @Override
+    public void write(int b) {
+        print(b);
+    }
+
+    @Override
+    public void write(byte[] buf, int off, int len) {
+        print(new String(buf, off, len));
+    }
+
+    @Override
+    public void write(byte[] buf) {
+        print(new String(buf));
+    }
+
+    @Override
+    public void writeBytes(byte[] buf) {
+        print(new String(buf));
+    }
+
+    @Override
+    public PrintStream printf(String format, Object... args) {
+        print(String.format(format, args));
+        return this;
+    }
+
+    @Override
+    public PrintStream printf(Locale l, String format, Object... args) {
+        print(String.format(l, format, args));
+        return this;
+    }
+
+    @Override
+    public PrintStream format(String format, Object... args) {
+        printf(format, args);
+        return this;
+    }
+
+    @Override
+    public PrintStream format(Locale l, String format, Object... args) {
+        printf(l, format, args);
+        return this;
+    }
+
+    @Override
+    public PrintStream append(CharSequence csq) {
+        print(csq.toString());
+        return this;
+    }
+
+    @Override
+    public PrintStream append(CharSequence csq, int start, int end) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = start; i < end; i++) {
+            builder.append(csq.charAt(i));
+        }
+        print(builder.toString());
+        return this;
+    }
+
+    @Override
+    public PrintStream append(char c) {
+        print(c);
+        return this;
     }
 }

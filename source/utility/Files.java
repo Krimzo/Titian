@@ -18,8 +18,8 @@ public final class Files {
             File[] files = new File(filepath).listFiles();
             return files == null || files.length == 0;
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("File \"" + filepath + "\" isEmpty() error");
             return false;
         }
     }
@@ -28,8 +28,8 @@ public final class Files {
         try {
             return new File(filepath).delete();
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("File \"" + filepath + "\" delete() error");
             return false;
         }
     }
@@ -38,8 +38,8 @@ public final class Files {
         try {
             return java.nio.file.Files.readString(Path.of(filepath));
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("File \"" + filepath + "\" readString() error");
             return "";
         }
     }
@@ -49,8 +49,8 @@ public final class Files {
             stream.write(data.getBytes());
             return true;
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("File \"" + filepath + "\" writeString() error");
             return false;
         }
     }
@@ -59,8 +59,8 @@ public final class Files {
         try (FileInputStream stream = new FileInputStream(filepath)) {
             return stream.readAllBytes();
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("File \"" + filepath + "\" readBytes() error");
             return null;
         }
     }
@@ -69,8 +69,8 @@ public final class Files {
         try {
             return new File(filepath).getName();
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("File \"" + filepath + "\" getName() error");
             return "";
         }
     }
@@ -100,8 +100,8 @@ public final class Files {
             File[] folders = new File(filepath).listFiles(File::isDirectory);
             return (folders != null) ? folders : new File[0];
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("Path \"" + filepath + "\" listFolders() error");
             return null;
         }
     }
@@ -111,8 +111,8 @@ public final class Files {
             File[] files = new File(filepath).listFiles(File::isFile);
             return (files != null) ? files : new File[0];
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("Path \"" + filepath + "\" listFiles() error");
             return null;
         }
     }
@@ -154,8 +154,8 @@ public final class Files {
 
             return builder.toString();
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("File \"" + filepath + "\" parseShaders() error");
             return null;
         }
     }
@@ -215,8 +215,8 @@ public final class Files {
 
             return result;
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            System.out.println("File \"" + filepath + "\" parseMesh() error");
             return null;
         }
     }

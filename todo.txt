@@ -1,0 +1,35 @@
+optimize all class imports
+scene file explorer icon
+better gizmo colors
+euler angles/forward vector math
+reworked gizmo rotation
+better control panel ui
+local gizmo mode
+control panel gizmo modes
+viewport image tinting
+explorer file/folder editing
+depth texture display
+
+mesh editor
+3d mesh editor view 
+loading mesh files
+
+material editor
+3d material editor view
+loading texture files
+normal/roughess maps
+
+script editor
+script node view
+better script compilation method
+better script compilation error printing
+script intellisense
+script state serialization
+script allowed entity field
+more script information about editor state
+
+multi entity selection
+light entities
+camera skyboxes
+collision detection with physx
+game class

@@ -21,11 +21,11 @@ public class TitianCreator {
             for (int x = -size; x <= size; x++) {
                 Entity monke = new Entity(scene.entityNames, "Monke", editor);
 
-                monke.transformComponent.position.set(new Float2(x, y).multiply(2.5f), 0);
-                monke.physicsComponent.angular.y = (new Random().nextFloat() * 2 - 1) * 36;
+                monke.components.transform.position.set(new Float2(x, y).multiply(2.5f), 0);
+                monke.components.physics.angular.y = (new Random().nextFloat() * 2 - 1) * 36;
 
-                monke.meshComponent.mesh = monkeMesh;
-                monke.materialComponent.material = monkeMaterial;
+                monke.components.mesh.mesh = monkeMesh;
+                monke.components.material.material = monkeMaterial;
 
                 scene.add(monke);
             }
@@ -37,7 +37,7 @@ public class TitianCreator {
 
     public static void loadTestScene(Editor editor) {
         editor.disposeCurrentScene();
-        editor.scene = Scene.fromFile("test/scenes/test.scene");
+        editor.scene = Scene.fromFile("test/scenes/test.scene", editor);
     }
 
     public static void main(String[] args) throws Exception {
@@ -46,15 +46,15 @@ public class TitianCreator {
         System.setOut(editor.logger);
         System.setErr(editor.logger);
 
-        Scriptable.editor = editor;
+        Scriptable.setEditor(editor);
 
         editor.setup((ed) -> {
             try {
                 saveTestScene(ed);
                 loadTestScene(ed);
             }
-            catch (Exception e) {
-                e.printStackTrace();
+            catch (Exception ignored) {
+                System.out.println("Editor setup error");
             }
         });
 

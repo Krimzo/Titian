@@ -1,5 +1,6 @@
 import script.abs.Scriptable;
 import entity.Entity;
+import window.input.*;
 import java.awt.Color;
 import math.*;
 
@@ -15,6 +16,6 @@ public class Grow extends Scriptable {
 
     @Override
     public void update() {
-        entity.transformComponent.scale.set(new Float3(editor.timer.getElapsedT() * 0.1f));
+        entity.components.transform.scale.set(new Float3(getElapsedT() * 0.1f));
     }
 }

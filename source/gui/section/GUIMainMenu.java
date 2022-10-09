@@ -37,7 +37,7 @@ public final class GUIMainMenu extends GUISection {
         if (ImGui.beginMenu("Edit")) {
             if (ImGui.menuItem("Reload scripts") && editor.scene != null) {
                 for (Entity entity : editor.scene) {
-                    entity.scriptComponent.reload();
+                    entity.components.script.reload();
                 }
             }
 
@@ -54,11 +54,11 @@ public final class GUIMainMenu extends GUISection {
                 GUIUtil.editColor3("Light", GUIStyle.light);
                 GUIUtil.editColor3("Special", GUIStyle.special);
 
-                if (ImGui.button("Reload style")) {
+                if (ImGui.button("Reload style", -1, 0)) {
                     GUIStyle.reloadStyle();
                 }
 
-                if (ImGui.button("Load defaults")) {
+                if (ImGui.button("Load defaults", -1, 0)) {
                     GUIStyle.loadDefaults();
                 }
 
@@ -91,7 +91,7 @@ public final class GUIMainMenu extends GUISection {
         if (ImGuiFileDialog.display("LoadSceneDlg", 0, 192, 108, 1920, 1080)) {
             if (ImGuiFileDialog.isOk()) {
                 editor.disposeCurrentScene();
-                editor.scene = Scene.fromFile(ImGuiFileDialog.getFilePathName());
+                editor.scene = Scene.fromFile(ImGuiFileDialog.getFilePathName(), editor);
             }
 
             ImGuiFileDialog.close();

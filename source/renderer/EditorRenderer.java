@@ -7,7 +7,7 @@ import renderer.abs.EditorRenderable;
 import scene.Scene;
 import glparts.abs.Disposable;
 import utility.nncollection.NNHashMap;
-import window.*;
+import glparts.abs.GLContext;
 
 import java.util.Map;
 

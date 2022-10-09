@@ -1,4 +1,4 @@
-package window;
+package glparts.abs;
 
 import glparts.abs.Disposable;
 import math.*;
@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL33.*;
 public final class GLContext implements Disposable {
     private boolean valid;
 
-    GLContext() {
+    public GLContext() {
         GL.createCapabilities();
         valid = true;
     }

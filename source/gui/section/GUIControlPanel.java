@@ -23,7 +23,7 @@ public final class GUIControlPanel extends GUISection {
 
     private void onGameEnd() {
         editor.disposeCurrentScene();
-        editor.scene = Scene.fromFile(SAVED_RUN_SCENE);
+        editor.scene = Scene.fromFile(SAVED_RUN_SCENE, editor);
     }
 
     @Override

@@ -5,7 +5,7 @@ import glparts.abs.GLObject;
 import math.*;
 import utility.Files;
 import utility.nncollection.NNHashMap;
-import window.*;
+import glparts.abs.GLContext;
 
 import java.io.*;
 import java.util.*;
