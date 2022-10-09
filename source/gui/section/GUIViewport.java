@@ -14,6 +14,7 @@ import imgui.flag.ImGuiMouseButton;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import math.*;
+import window.input.Key;
 
 public final class GUIViewport extends GUISection {
     private Int2 viewportPosition = new Int2();
@@ -60,14 +61,17 @@ public final class GUIViewport extends GUISection {
             return;
         }
 
-        if (ImGui.isKeyPressed('1')) {
+        if (ImGui.isKeyPressed(Key.Num1)) {
             gizmoOperation = (gizmoOperation != Operation.SCALE) ? Operation.SCALE : 0;
         }
-        if (ImGui.isKeyPressed('2')) {
+        if (ImGui.isKeyPressed(Key.Num2)) {
             gizmoOperation = (gizmoOperation != Operation.ROTATE) ? Operation.ROTATE : 0;
         }
-        if (ImGui.isKeyPressed('3')) {
+        if (ImGui.isKeyPressed(Key.Num3)) {
             gizmoOperation = (gizmoOperation != Operation.TRANSLATE) ? Operation.TRANSLATE : 0;
+        }
+        if (ImGui.isKeyPressed(Key.Num4)) {
+            gizmoMode = (gizmoMode == Mode.WORLD) ? Mode.LOCAL : Mode.WORLD;
         }
     }
 
@@ -138,17 +142,22 @@ public final class GUIViewport extends GUISection {
         TransformComponent transform = selected.components.transform;
         Mat4 viewMatrix = editor.camera.viewMatrix().transpose();
         Mat4 projectionMatrix = editor.camera.projectionMatrix().transpose();
-        Mat4 transformMatrix = transform.translationMatrix().multiply(transform.scalingMatrix()).transpose();
+        Mat4 transformMatrix = transform.matrix().transpose();
 
-        ImGuizmo.manipulate(viewMatrix.data, projectionMatrix.data, transformMatrix.data, gizmoOperation, gizmoMode);
+        float[][] result = new float[2][16];
+        ImGuizmo.manipulate(viewMatrix.data, projectionMatrix.data, transformMatrix.data, result[0],
+            gizmoOperation, gizmoMode, result[1], result[1], result[1]
+        );
 
         if (ImGuizmo.isUsing()) {
-            float[][] data = new float[3][3];
-            ImGuizmo.decomposeMatrixToComponents(transformMatrix.data, data[2], data[1], data[0]);
+            float[][] decomposed = new float[3][3];
 
-            transform.scale.set(new Float3(data[0]));
-            transform.rotation.set(transform.rotation.add(new Float3(data[1])));
-            transform.position.set(new Float3(data[2]));
+            ImGuizmo.decomposeMatrixToComponents(transformMatrix.data, decomposed[2], decomposed[1], decomposed[0]);
+            transform.scale.set(new Float3(decomposed[0]));
+            transform.position.set(new Float3(decomposed[2]));
+
+            ImGuizmo.decomposeMatrixToComponents(result[0], decomposed[2], decomposed[1], decomposed[0]);
+            transform.rotation.set(transform.rotation.add(new Float3(decomposed[1])));
         }
     }
 

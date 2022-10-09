@@ -32,13 +32,13 @@ public class Titian {
             }
         }
 
-        scene.toFile("test/scenes/test.scene");
+        scene.toFile("test/scenes/test.titian");
         scene.dispose();
     }
 
     public static void loadTestScene(Editor editor) {
         editor.disposeCurrentScene();
-        editor.scene = Scene.fromFile("test/scenes/test.scene", editor);
+        editor.scene = Scene.fromFile("test/scenes/test.titian", editor);
     }
 
     public static void main(String[] args) throws Exception {

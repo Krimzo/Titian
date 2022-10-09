@@ -1,8 +1,4 @@
-better gizmo colors
-euler angles/forward vector math
-reworked gizmo rotation
 better control panel ui
-local gizmo mode
 control panel gizmo modes
 viewport image tinting
 explorer file/folder editing

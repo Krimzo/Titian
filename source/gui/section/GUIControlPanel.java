@@ -9,21 +9,21 @@ import imgui.flag.ImGuiWindowFlags;
 import scene.Scene;
 
 public final class GUIControlPanel extends GUISection {
-    private static final String SAVED_RUN_SCENE = "saved_run.scene";
+    private static final String SAVED_PLAY_PATH = "./temp/play.titian";
 
     public GUIControlPanel(Editor editor) {
         super(editor);
     }
 
     private void onGameStart() {
-        editor.scene.toFile(SAVED_RUN_SCENE);
+        editor.scene.toFile(SAVED_PLAY_PATH);
         editor.scripter.callStarts(editor.scene);
         editor.timer.reset();
     }
 
     private void onGameEnd() {
         editor.disposeCurrentScene();
-        editor.scene = Scene.fromFile(SAVED_RUN_SCENE, editor);
+        editor.scene = Scene.fromFile(SAVED_PLAY_PATH, editor);
     }
 
     @Override

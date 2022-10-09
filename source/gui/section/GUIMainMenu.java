@@ -18,11 +18,11 @@ public final class GUIMainMenu extends GUISection {
     private void fileMenu() {
         if (ImGui.beginMenu("File")) {
             if (ImGui.menuItem("Load scene")) {
-                ImGuiFileDialog.openDialog("LoadSceneDlg", "Load scene", ".scene", ".", "", 1, 0, 0);
+                ImGuiFileDialog.openDialog("LoadSceneDlg", "Load scene", ".titian", ".", "", 1, 0, 0);
             }
 
             if (ImGui.menuItem("Save scene") && editor.scene != null) {
-                ImGuiFileDialog.openDialog("SaveSceneDlg", "Save scene", ".scene", ".", "", 1, 0, 0);
+                ImGuiFileDialog.openDialog("SaveSceneDlg", "Save scene", ".titian", ".", "", 1, 0, 0);
             }
 
             if (ImGui.menuItem("Exit")) {

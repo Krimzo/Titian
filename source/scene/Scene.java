@@ -84,9 +84,13 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
 
     public void toFile(String filepath) {
         try {
+            boolean ignored = new File(filepath).getParentFile().mkdirs();
+
             FileOutputStream fileStream = new FileOutputStream(filepath);
             ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
+
             objectStream.writeObject(this);
+
             objectStream.close();
             fileStream.close();
         }
