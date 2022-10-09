@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TitianCreator.iml" filepath="$PROJECT_DIR$/TitianCreator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Titian.iml" filepath="$PROJECT_DIR$/Titian.iml" />
     </modules>
   </component>
 </project>

@@ -8,7 +8,7 @@ import script.abs.Scriptable;
 
 import java.util.Random;
 
-public class TitianCreator {
+public class Titian {
     public static void saveTestScene(Editor editor) throws Exception {
         Scene scene = new Scene();
 

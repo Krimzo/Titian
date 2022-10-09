@@ -19,7 +19,7 @@ import logging.Logger;
 public class Editor implements Disposable {
     public EditorData data;
 
-    public Window window = new Window(new Int2(1600, 900), "Titian Creator", true);
+    public Window window = new Window(new Int2(1600, 900), "Titian", true);
     public Timer timer = new Timer();
 
     public final PerspectiveCamera camera = new PerspectiveCamera(null, "Editor Camera", this);
