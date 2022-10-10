@@ -3,8 +3,8 @@ package camera;
 import camera.abs.Camera;
 import editor.Editor;
 import glparts.Shaders;
+import gui.GUIEdit;
 import gui.GUIStyle;
-import gui.GUIUtil;
 import math.Float3;
 import math.Int2;
 import math.Mat4;
@@ -38,8 +38,8 @@ public class PerspectiveCamera extends Camera implements Serializable {
     public void renderInfoGUI(Editor editor) {
         super.renderInfoGUI(editor);
 
-        aspect = GUIUtil.editFloat("Aspect", aspect, 0.01f);
-        fov = GUIUtil.editFloat("FOV", fov, 0.1f);
+        aspect = GUIEdit.editFloat("Aspect", aspect, 0.01f);
+        fov = GUIEdit.editFloat("FOV", fov, 0.1f);
     }
 
     @Override

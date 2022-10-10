@@ -1,26 +1,27 @@
 package gui.section;
 
+import callback.ObjectCallback;
 import editor.Editor;
 import glparts.Texture;
+import gui.GUIDragDrop;
+import gui.GUIPopup;
+import gui.GUITextInput;
 import gui.abs.GUISection;
 import imgui.ImGui;
 import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiInputTextFlags;
-import imgui.flag.ImGuiPopupFlags;
 import imgui.flag.ImGuiWindowFlags;
-import imgui.type.ImString;
 import script.Script;
 import utility.Files;
 
-import java.awt.*;
 import java.io.File;
 import java.nio.file.Paths;
 
 public final class GUIExplorer extends GUISection {
+    private GUITextInput textInput = null;
+
     private File currentPath = new File(Paths.get("").toUri());
     private float buttonSize = 0;
-    private ImString scriptNameInput = null;
 
     public int columnCount = 12;
 
@@ -47,60 +48,80 @@ public final class GUIExplorer extends GUISection {
     }
 
     private Texture getFileIcon(File file) {
-        return editor.guiRenderer.predefineTextures.get(switch (Files.getExtension(file.toString())) {
-            case "obj" -> "MeshFileIcon";
-            case "jpg", "png", "bmp" -> "ImageFileIcon";
-            case "c", "cpp", "h", "glsl" -> "CodeFileIcon";
-            case "java" -> "ScriptFileIcon";
-            case "titian" -> "SceneFileIcon";
-            default -> "FileIcon";
-        });
+        return editor.guiRenderer.predefineTextures.get(getFileType(file) + "Icon");
     }
 
     private void renderParent() {
         File parent = currentPath.getParentFile();
         if (parent != null) {
-            ImGui.pushID(parent.toString());
-            if (ImGui.imageButton(getFolderIcon(parent).getBuffer(), buttonSize, buttonSize)) {
-                currentPath = parent;
-            }
-            ImGui.popID();
-
-            ImGui.textWrapped("..");
-            ImGui.nextColumn();
+            renderFolder(parent, true);
         }
     }
 
-    private void renderFolder(File folder) {
+    private void renderFolder(File folder, boolean parent) {
         ImGui.pushID(folder.toString());
         if (ImGui.imageButton(getFolderIcon(folder).getBuffer(), buttonSize, buttonSize)) {
             currentPath = folder;
         }
         ImGui.popID();
 
-        ImGui.textWrapped(folder.getName());
+        GUIPopup.itemPopup("EditExplorerFolder" + folder, () -> {
+            if (ImGui.button("Rename")) {
+                textInput = new GUITextInput(folder.getAbsolutePath(), name -> {
+                    Files.rename(folder.getAbsolutePath(), name);
+                    textInput = null;
+                });
+                GUIPopup.close();
+            }
+
+            if (Files.isEmpty(folder.getAbsolutePath()) && ImGui.button("Delete", -1, 0)) {
+                Files.delete(folder.getAbsolutePath());
+                GUIPopup.close();
+            }
+        });
+
+        GUIDragDrop.setData("Folder", folder.getAbsolutePath());
+
+        ObjectCallback callback = path -> {
+            Files.move((String) path, folder.getAbsolutePath());
+        };
+        GUIDragDrop.getData("Folder", callback);
+        GUIDragDrop.getData("File", callback);
+        GUIDragDrop.getData("MeshFile", callback);
+        GUIDragDrop.getData("ImageFile", callback);
+        GUIDragDrop.getData("CodeFile", callback);
+        GUIDragDrop.getData("ScriptFile", callback);
+        GUIDragDrop.getData("SceneFile", callback);
+
+        ImGui.textWrapped(!parent ? folder.getName() : "..");
         ImGui.nextColumn();
     }
 
     private void renderFile(File file) {
-        Texture fileIcon = getFileIcon(file);
+        final Texture fileIcon = getFileIcon(file);
 
         ImGui.pushID(file.toString());
         if (ImGui.imageButton(fileIcon.getBuffer(), buttonSize, buttonSize)) {
-            try {
-                Desktop.getDesktop().open(file);
-            }
-            catch (Exception ignored) {
-                System.out.println("File \"" + file + "\" open with default error");
-            }
+            Files.openDefault(file.getAbsolutePath());
         }
         ImGui.popID();
 
-        if (ImGui.beginDragDropSource()) {
-            ImGui.setDragDropPayload(getFileType(file), file.getAbsolutePath());
-            ImGui.image(fileIcon.getBuffer(), 50, 50);
-            ImGui.endDragDropSource();
-        }
+        GUIPopup.itemPopup("EditExplorerFile" + file, () -> {
+            if (ImGui.button("Rename")) {
+                textInput = new GUITextInput(file.getName(), name -> {
+                    Files.rename(file.getAbsolutePath(), name);
+                    textInput = null;
+                });
+                GUIPopup.close();
+            }
+
+            if (ImGui.button("Delete", -1, 0)) {
+                Files.delete(file.getAbsolutePath());
+                GUIPopup.close();
+            }
+        });
+
+        GUIDragDrop.setData(getFileType(file), file.getAbsolutePath(), fileIcon);
 
         ImGui.textWrapped(file.getName());
         ImGui.nextColumn();
@@ -130,7 +151,7 @@ public final class GUIExplorer extends GUISection {
             File[] folders = Files.listFolders(currentPath.toString());
             if (folders != null) {
                 for (File folder : folders) {
-                    renderFolder(folder);
+                    renderFolder(folder, false);
                 }
             }
 
@@ -143,21 +164,35 @@ public final class GUIExplorer extends GUISection {
 
             ImGui.popStyleColor(3);
 
-            if (ImGui.beginPopupContextWindow(ImGuiPopupFlags.MouseButtonRight | ImGuiPopupFlags.NoOpenOverItems)) {
-                if (scriptNameInput == null) {
-                    if (ImGui.button("New Script")) {
-                        scriptNameInput = new ImString();
-                    }
-                }
-                else if (ImGui.inputText("Script Name", scriptNameInput, ImGuiInputTextFlags.EnterReturnsTrue)) {
-                    String scriptName = scriptNameInput.toString();
-                    Files.writeString(currentPath + "/" + scriptName + ".java", Script.getTemplate(scriptName));
-                    scriptNameInput = null;
-
-                    ImGui.closeCurrentPopup();
+            GUIPopup.windowPopup("ExplorerWindow", () -> {
+                if (ImGui.button("New File", -1, 0)) {
+                    textInput = new GUITextInput("", name -> {
+                        Files.createFile(currentPath + "/" + name);
+                        textInput = null;
+                    });
+                    GUIPopup.close();
                 }
 
-                ImGui.endPopup();
+                if (ImGui.button("New Script", -1, 0)) {
+                    textInput = new GUITextInput("", name -> {
+                        String path = currentPath + "/" + name + ".java";
+                        Files.writeString(path, Script.getTemplate(name));
+                        textInput = null;
+                    });
+                    GUIPopup.close();
+                }
+
+                if (ImGui.button("New Folder")) {
+                    textInput = new GUITextInput("", name -> {
+                        Files.createFolder(currentPath + "/" + name);
+                        textInput = null;
+                    });
+                    GUIPopup.close();
+                }
+            });
+
+            if (textInput != null) {
+                textInput.update();
             }
         }
         ImGui.end();

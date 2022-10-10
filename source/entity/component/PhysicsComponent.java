@@ -2,7 +2,7 @@ package entity.component;
 
 import entity.Entity;
 import entity.abs.EntityComponent;
-import gui.GUIUtil;
+import gui.GUIEdit;
 import math.Float3;
 
 import java.io.Serializable;
@@ -18,8 +18,8 @@ public class PhysicsComponent extends EntityComponent implements Serializable {
 
     @Override
     public void renderGUI() {
-        GUIUtil.editFloat3("Acceleration", acceleration, 0.1f);
-        GUIUtil.editFloat3("Velocity", velocity, 0.1f);
-        GUIUtil.editFloat3("Angular", angular, 0.1f);
+        GUIEdit.editFloat3("Acceleration", acceleration, 0.1f);
+        GUIEdit.editFloat3("Velocity", velocity, 0.1f);
+        GUIEdit.editFloat3("Angular", angular, 0.1f);
     }
 }

@@ -3,8 +3,8 @@ package gui.section;
 import editor.Editor;
 import entity.Entity;
 import entity.component.TransformComponent;
+import gui.GUIEdit;
 import gui.GUIStyle;
-import gui.GUIUtil;
 import gui.abs.GUISection;
 import imgui.ImGui;
 import imgui.extension.imguizmo.ImGuizmo;
@@ -44,7 +44,7 @@ public final class GUIViewport extends GUISection {
         if (ImGui.begin("Viewport Info")) {
             ImGui.bulletText("Camera");
 
-            GUIUtil.editFloat3("##Position", editor.camera.components.transform.position, 0.1f);
+            GUIEdit.editFloat3("##Position", editor.camera.components.transform.position, 0.1f);
 
             float[] data = editor.camera.getForward().array();
             if (ImGui.dragFloat3("##Forward", data, 0.05f)) {

@@ -3,10 +3,11 @@ package gui.section;
 import editor.Editor;
 import entity.Entity;
 import glparts.Mesh;
+import gui.GUIDragDrop;
+import gui.GUIPopup;
 import gui.abs.GUISection;
 import imgui.ImGui;
 import imgui.ImVec2;
-import imgui.flag.ImGuiPopupFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
 import material.Material;
 import script.Script;
@@ -59,24 +60,16 @@ public final class GUIProperties extends GUISection {
         ImVec2 contentMax = ImGui.getWindowContentRegionMax();
         ImGui.dummy(contentMax.x - contentMin.x, contentMax.y - contentMin.y);
 
-        if (ImGui.beginDragDropTarget()) {
-            String scriptPath = ImGui.acceptDragDropPayload("ScriptFile");
-            if (scriptPath != null) {
-                selected.components.script.scripts.add(new Script(scriptPath, selected));
-            }
+        GUIDragDrop.getData("ScriptFile", path -> {
+            selected.components.script.scripts.add(new Script((String) path, selected));
+        });
 
-            ImGui.endDragDropTarget();
-        }
-
-        if (ImGui.beginPopupContextItem("Scripts", ImGuiPopupFlags.MouseButtonRight | ImGuiPopupFlags.NoOpenOverItems)) {
+        GUIPopup.windowPopup("Scripts", () -> {
             if (ImGui.button("Reload")) {
                 selected.components.script.reload();
-
-                ImGui.closeCurrentPopup();
+                GUIPopup.close();
             }
-
-            ImGui.endPopup();
-        }
+        });
     }
 
     @Override

@@ -2,7 +2,7 @@ package entity.component;
 
 import entity.Entity;
 import entity.abs.EntityComponent;
-import gui.GUIUtil;
+import gui.GUIEdit;
 import math.Float3;
 import math.Mat4;
 
@@ -35,8 +35,8 @@ public class TransformComponent extends EntityComponent implements Serializable 
 
     @Override
     public void renderGUI() {
-        GUIUtil.editFloat3("Scale", scale, 0.1f);
-        GUIUtil.editFloat3("Rotation", rotation, 0.1f);
-        GUIUtil.editFloat3("Position", position, 0.1f);
+        GUIEdit.editFloat3("Scale", scale, 0.1f);
+        GUIEdit.editFloat3("Rotation", rotation, 0.1f);
+        GUIEdit.editFloat3("Position", position, 0.1f);
     }
 }

@@ -10,8 +10,8 @@ import script.abs.Scriptable;
 import java.awt.*;
 import java.lang.reflect.Field;
 
-public final class GUIUtil {
-    private GUIUtil() {}
+public final class GUIEdit {
+    private GUIEdit() {}
 
     public static int editInt(String name, int data, int precision) {
         int[] dataArray = { data };

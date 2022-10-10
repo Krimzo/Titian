@@ -3,6 +3,7 @@ package entity.component;
 import callback.EmptyCallback;
 import entity.Entity;
 import entity.abs.EntityComponent;
+import gui.GUIPopup;
 import imgui.ImGui;
 import material.Material;
 
@@ -30,14 +31,11 @@ public class MaterialComponent extends EntityComponent implements Serializable {
     public void renderGUI() {
         ImGui.bulletText((material != null) ? material.getName() : "None");
 
-        if (ImGui.beginPopupContextItem("EditEntityMaterial")) {
+        GUIPopup.itemPopup("EditEntityMaterial", () -> {
             if (ImGui.button("Remove material")) {
                 material = null;
-
-                ImGui.closeCurrentPopup();
+                GUIPopup.close();
             }
-
-            ImGui.endPopup();
-        }
+        });
     }
 }

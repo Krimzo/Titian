@@ -2,11 +2,13 @@ package entity.component;
 
 import entity.Entity;
 import entity.abs.EntityComponent;
+import gui.GUIPopup;
 import imgui.ImGui;
 import script.Script;
 import utility.nncollection.NNArrayList;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ScriptComponent extends EntityComponent implements Serializable {
     public final NNArrayList<Script> scripts = new NNArrayList<>();
@@ -23,19 +25,17 @@ public class ScriptComponent extends EntityComponent implements Serializable {
 
     @Override
     public void renderGUI() {
-        for (int i = 0; i < scripts.size(); i++) {
-            ImGui.pushID(i);
-            scripts.get(i).renderGUI();
+        for (AtomicInteger i = new AtomicInteger(); i.get() < scripts.size(); i.getAndIncrement()) {
+            ImGui.pushID(i.get());
+            scripts.get(i.get()).renderGUI();
             ImGui.popID();
 
-            if (ImGui.beginPopupContextItem("EditScripts" + i)) {
+            GUIPopup.itemPopup("EditScripts" + i, () -> {
                 if (ImGui.button("Remove")) {
-                    scripts.remove(i--);
-                    ImGui.closeCurrentPopup();
+                    scripts.remove(i.getAndDecrement());
+                    GUIPopup.close();
                 }
-
-                ImGui.endPopup();
-            }
+            });
         }
     }
 }

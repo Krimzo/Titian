@@ -1,8 +1,7 @@
 better control panel ui
 control panel gizmo modes
-viewport image tinting
-explorer file/folder editing
 depth texture display
+viewport image tinting
 
 mesh editor
 3d mesh editor view 
@@ -11,7 +10,7 @@ loading mesh files
 material editor
 3d material editor view
 loading texture files
-normal/roughess maps
+normal/roughness maps
 
 script editor
 script node view

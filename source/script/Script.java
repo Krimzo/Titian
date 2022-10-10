@@ -1,7 +1,7 @@
 package script;
 
 import entity.Entity;
-import gui.GUIUtil;
+import gui.GUIEdit;
 import gui.abs.GUIRenderable;
 import imgui.ImGui;
 import script.abs.Scriptable;
@@ -128,7 +128,7 @@ public class Script implements GUIRenderable, Serializable {
         if (ImGui.collapsingHeader(valid ? name : (name + "?")) && valid) {
             for (Field field : fields) {
                 try {
-                    GUIUtil.editField(field, instance);
+                    GUIEdit.editField(field, instance);
                 }
                 catch (Exception ignored) {
                     System.out.println("Script \"" + name + "\" field gui error");

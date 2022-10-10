@@ -7,6 +7,7 @@ import math.Vertex;
 import org.lwjgl.stb.STBImage;
 import utility.nncollection.NNArrayList;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
@@ -22,7 +23,7 @@ public final class Files {
             return files == null || files.length == 0;
         }
         catch (Exception ignored) {
-            System.out.println("File \"" + filepath + "\" isEmpty() error");
+            System.out.println("Folder \"" + filepath + "\" isEmpty() error");
             return false;
         }
     }
@@ -32,7 +33,64 @@ public final class Files {
             return new File(filepath).delete();
         }
         catch (Exception ignored) {
-            System.out.println("File \"" + filepath + "\" delete() error");
+            System.out.println("File/folder \"" + filepath + "\" delete() error");
+            return false;
+        }
+    }
+
+    public static boolean createFile(String filepath) {
+        try {
+            File file = new File(filepath);
+            boolean ignored = file.getParentFile().mkdirs();
+            return file.createNewFile();
+        }
+        catch (Exception ignored) {
+            System.out.println("File/folder \"" + filepath + "\" create() error");
+            return false;
+        }
+    }
+
+    public static boolean createFolder(String filepath) {
+        try {
+            return new File(filepath).mkdirs();
+        }
+        catch (Exception ignored) {
+            System.out.println("File/folder \"" + filepath + "\" create() error");
+            return false;
+        }
+    }
+
+    public static boolean rename(String filepath, String name) {
+        try {
+            File file = new File(filepath);
+            String newPath = file.getParent() + "/" + name;
+            return file.renameTo(new File(newPath));
+        }
+        catch (Exception ignored) {
+            System.out.println("File/folder \"" + filepath + "\" rename() error");
+            return false;
+        }
+    }
+
+    public static boolean move(String filepath, String toFolder) {
+        try {
+            File from = new File(filepath);
+            String to = toFolder + "/" + from.getName();
+            return from.renameTo(new File(to));
+        }
+        catch (Exception ignored) {
+            System.out.println("File/folder \"" + filepath + "\" move() error");
+            return false;
+        }
+    }
+
+    public static boolean openDefault(String filepath) {
+        try {
+            Desktop.getDesktop().open(new File(filepath));
+            return true;
+        }
+        catch (Exception ignored) {
+            System.out.println("File \"" + filepath + "\" openDefault() error");
             return false;
         }
     }
@@ -48,8 +106,14 @@ public final class Files {
     }
 
     public static boolean writeString(String filepath, String data) {
-        try (FileOutputStream stream = new FileOutputStream(filepath)) {
-            stream.write(data.getBytes());
+        try {
+            File file = new File(filepath);
+            boolean ignored = file.getParentFile().mkdirs();
+
+            try (FileOutputStream stream = new FileOutputStream(file)) {
+                stream.write(data.getBytes());
+            }
+
             return true;
         }
         catch (Exception ignored) {
@@ -73,7 +137,7 @@ public final class Files {
             return new File(filepath).getName();
         }
         catch (Exception ignored) {
-            System.out.println("File \"" + filepath + "\" getName() error");
+            System.out.println("File/folder \"" + filepath + "\" getName() error");
             return "";
         }
     }
@@ -104,7 +168,7 @@ public final class Files {
             return (folders != null) ? folders : new File[0];
         }
         catch (Exception ignored) {
-            System.out.println("Path \"" + filepath + "\" listFolders() error");
+            System.out.println("Folder \"" + filepath + "\" listFolders() error");
             return null;
         }
     }
@@ -115,7 +179,7 @@ public final class Files {
             return (files != null) ? files : new File[0];
         }
         catch (Exception ignored) {
-            System.out.println("Path \"" + filepath + "\" listFiles() error");
+            System.out.println("Folder \"" + filepath + "\" listFiles() error");
             return null;
         }
     }

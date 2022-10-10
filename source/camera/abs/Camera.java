@@ -2,7 +2,7 @@ package camera.abs;
 
 import editor.Editor;
 import entity.Entity;
-import gui.GUIUtil;
+import gui.GUIEdit;
 import imgui.ImGui;
 import math.Float2;
 import math.Float3;
@@ -161,15 +161,15 @@ public abstract class Camera extends Entity implements Serializable {
             editor.scene.camera = isMainCamera ? null : this;
         }
 
-        GUIUtil.editFloat3("Forward", forward, 0.01f);
+        GUIEdit.editFloat3("Forward", forward, 0.01f);
         setForward(forward);
 
-        near = GUIUtil.editFloat("Near plane", near, 0.05f);
-        far = GUIUtil.editFloat("Far plane", far, 0.05f);
+        near = GUIEdit.editFloat("Near plane", near, 0.05f);
+        far = GUIEdit.editFloat("Far plane", far, 0.05f);
 
-        speed = GUIUtil.editFloat("Speed", speed, 0.05f);
-        sensitivity = GUIUtil.editFloat("Sensitivity", sensitivity, 0.05f);
+        speed = GUIEdit.editFloat("Speed", speed, 0.05f);
+        sensitivity = GUIEdit.editFloat("Sensitivity", sensitivity, 0.05f);
 
-        GUIUtil.editColor3("Background", background);
+        GUIEdit.editColor3("Background", background);
     }
 }

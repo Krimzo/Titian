@@ -3,8 +3,8 @@ package camera;
 import camera.abs.Camera;
 import editor.Editor;
 import glparts.Shaders;
+import gui.GUIEdit;
 import gui.GUIStyle;
-import gui.GUIUtil;
 import math.Float3;
 import math.Mat4;
 import named.NameHolder;
@@ -33,8 +33,8 @@ public class OrthographicCamera extends Camera implements Serializable {
     public void renderInfoGUI(Editor editor) {
         super.renderInfoGUI(editor);
 
-        width = GUIUtil.editFloat("Width", width, 0.1f);
-        height = GUIUtil.editFloat("Height", height, 0.1f);
+        width = GUIEdit.editFloat("Width", width, 0.1f);
+        height = GUIEdit.editFloat("Height", height, 0.1f);
     }
 
     @Override

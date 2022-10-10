@@ -4,6 +4,7 @@ import entity.Entity;
 import entity.abs.EntityComponent;
 import glparts.Mesh;
 import glparts.Shaders;
+import gui.GUIPopup;
 import imgui.ImGui;
 import renderer.abs.EditorRenderable;
 import renderer.abs.GameRenderable;
@@ -50,14 +51,11 @@ public class MeshComponent extends EntityComponent implements GameRenderable, Ed
     public void renderGUI() {
         ImGui.bulletText((mesh != null) ? mesh.getName() : "None");
 
-        if (ImGui.beginPopupContextItem("EditEntityMesh")) {
+        GUIPopup.itemPopup("EditEntityMesh", () -> {
             if (ImGui.button("Remove mesh")) {
                 mesh = null;
-
-                ImGui.closeCurrentPopup();
+                GUIPopup.close();
             }
-
-            ImGui.endPopup();
-        }
+        });
     }
 }

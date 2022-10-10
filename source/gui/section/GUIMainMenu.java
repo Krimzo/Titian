@@ -2,8 +2,8 @@ package gui.section;
 
 import editor.Editor;
 import entity.Entity;
+import gui.GUIEdit;
 import gui.GUIStyle;
-import gui.GUIUtil;
 import gui.abs.GUISection;
 import imgui.ImGui;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
@@ -48,11 +48,11 @@ public final class GUIMainMenu extends GUISection {
     private void viewMenu() {
         if (ImGui.beginMenu("View")) {
             if (ImGui.beginMenu("Colors")) {
-                GUIUtil.editColor3("Black", GUIStyle.black);
-                GUIUtil.editColor3("Dark", GUIStyle.dark);
-                GUIUtil.editColor3("Normal", GUIStyle.normal);
-                GUIUtil.editColor3("Light", GUIStyle.light);
-                GUIUtil.editColor3("Special", GUIStyle.special);
+                GUIEdit.editColor3("Black", GUIStyle.black);
+                GUIEdit.editColor3("Dark", GUIStyle.dark);
+                GUIEdit.editColor3("Normal", GUIStyle.normal);
+                GUIEdit.editColor3("Light", GUIStyle.light);
+                GUIEdit.editColor3("Special", GUIStyle.special);
 
                 if (ImGui.button("Reload style", -1, 0)) {
                     GUIStyle.reloadStyle();
