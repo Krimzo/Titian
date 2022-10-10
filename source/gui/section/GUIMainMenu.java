@@ -2,9 +2,9 @@ package gui.section;
 
 import editor.Editor;
 import entity.Entity;
-import gui.GUIEdit;
-import gui.GUIStyle;
 import gui.abs.GUISection;
+import gui.helper.GUIEdit;
+import gui.helper.GUIStyle;
 import imgui.ImGui;
 import imgui.extension.imguifiledialog.ImGuiFileDialog;
 import math.Float2;
@@ -13,6 +13,11 @@ import scene.Scene;
 public final class GUIMainMenu extends GUISection {
     public GUIMainMenu(Editor editor) {
         super(editor);
+    }
+
+    @Override
+    public void dispose() {
+
     }
 
     private void fileMenu() {

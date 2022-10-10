@@ -1,4 +1,4 @@
-package gui;
+package gui.helper;
 
 import imgui.ImFontAtlas;
 import imgui.ImGui;

@@ -3,7 +3,7 @@ package entity.component;
 import callback.EmptyCallback;
 import entity.Entity;
 import entity.abs.EntityComponent;
-import gui.GUIPopup;
+import gui.helper.GUIPopup;
 import imgui.ImGui;
 import material.Material;
 
@@ -16,9 +16,9 @@ public class MaterialComponent extends EntityComponent implements Serializable {
         super(entity);
     }
 
-    public MaterialComponent(Entity entity, Material material) {
-        super(entity);
-        this.material = material;
+    @Override
+    public void dispose() {
+
     }
 
     public void use(EmptyCallback callback) {

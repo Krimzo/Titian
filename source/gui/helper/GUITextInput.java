@@ -1,4 +1,4 @@
-package gui;
+package gui.helper;
 
 import callback.StringCallback;
 import imgui.ImGui;

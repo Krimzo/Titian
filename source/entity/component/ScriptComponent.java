@@ -2,7 +2,7 @@ package entity.component;
 
 import entity.Entity;
 import entity.abs.EntityComponent;
-import gui.GUIPopup;
+import gui.helper.GUIPopup;
 import imgui.ImGui;
 import script.Script;
 import utility.nncollection.NNArrayList;
@@ -15,6 +15,11 @@ public class ScriptComponent extends EntityComponent implements Serializable {
 
     public ScriptComponent(Entity entity) {
         super(entity);
+    }
+
+    @Override
+    public void dispose() {
+
     }
 
     public void reload() {
@@ -31,7 +36,7 @@ public class ScriptComponent extends EntityComponent implements Serializable {
             ImGui.popID();
 
             GUIPopup.itemPopup("EditScripts" + i, () -> {
-                if (ImGui.button("Remove")) {
+                if (ImGui.button("Delete")) {
                     scripts.remove(i.getAndDecrement());
                     GUIPopup.close();
                 }

@@ -8,12 +8,13 @@ import glparts.abs.GLContext;
 import math.Float3;
 import math.Float4;
 import math.Int2;
-import renderer.abs.GameRenderable;
+import renderer.abs.Renderable;
+import renderer.abs.Renderer;
 import scene.Scene;
 
-public class GameRenderer implements Disposable {
+public class GameRenderer extends Renderer implements Disposable {
     public final FrameBuffer renderBuffer;
-    private final Shaders renderShaders;
+    protected final Shaders renderShaders;
 
     public GameRenderer(GLContext context, Int2 size) {
         renderBuffer = new FrameBuffer(context, size);
@@ -26,21 +27,39 @@ public class GameRenderer implements Disposable {
         renderBuffer.dispose();
     }
 
+    @Override
     public void resize(Int2 size) {
         renderBuffer.resize(size);
     }
 
+    @Override
     public void clear(Camera camera) {
-        Float3 color = (camera != null) ? camera.background : new Float3(0.1f);
+        Float3 color = (camera != null) ? camera.background : new Float3(0);
         renderBuffer.context.setClearColor(new Float4(color, 1));
         renderBuffer.clear();
     }
 
-    public void renderScene(Scene scene, Camera camera) {
+    @Override
+    protected void renderRenderable(Renderable renderable) {
+        renderable.gameRender(renderShaders);
+    }
+
+    @Override
+    public final void renderScene(Scene scene, Camera camera) {
         renderBuffer.use(() -> {
             renderShaders.setUniform("VP", camera.matrix());
-            for (GameRenderable renderable : scene) {
-                renderable.gameRender(renderShaders);
+
+            if (scene.ambientLight != null) {
+                renderShaders.setUniform("ambientColor", scene.ambientLight.getColor());
+            }
+
+            if (scene.directionalLight != null) {
+                renderShaders.setUniform("sunDirection", scene.directionalLight.getDirection());
+                renderShaders.setUniform("sunColor", scene.directionalLight.getColor());
+            }
+
+            for (Renderable renderable : scene) {
+                renderRenderable(renderable);
             }
         });
     }

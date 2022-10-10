@@ -2,7 +2,7 @@ package camera.abs;
 
 import editor.Editor;
 import entity.Entity;
-import gui.GUIEdit;
+import gui.helper.GUIEdit;
 import imgui.ImGui;
 import math.Float2;
 import math.Float3;
@@ -10,7 +10,6 @@ import math.Int2;
 import math.Mat4;
 import named.NameHolder;
 import window.input.Input;
-import window.input.Mouse;
 
 import java.io.Serializable;
 
@@ -100,7 +99,7 @@ public abstract class Camera extends Entity implements Serializable {
         setForward(forward.rotate(-rotation.x, up));
     }
 
-    public void useDefaultMovement(int forward, int back, int right, int left, int up, int down, float multi, Int2 frameSize, float deltaT) {
+    public void useDefaultMovement(int mouse, int forward, int back, int right, int left, int up, int down, float multi, Int2 frameSize, float deltaT) {
         final float speed = this.speed;
         if (Input.isShiftDown()) {
             this.speed *= multi;
@@ -127,12 +126,12 @@ public abstract class Camera extends Entity implements Serializable {
 
         this.speed = speed;
 
-        if (Input.isMousePressed(Mouse.Middle)) {
+        if (Input.isMousePressed(mouse)) {
             editor.window.setMouseState(false);
             camMoving = true;
         }
 
-        if (Input.isMouseDown(Mouse.Middle)) {
+        if (Input.isMouseDown(mouse)) {
             if (camMoving) {
                 final Int2 frameCenter = frameSize.divide(2);
 
@@ -145,7 +144,7 @@ public abstract class Camera extends Entity implements Serializable {
             }
         }
 
-        if (Input.isMouseReleased(Mouse.Middle)) {
+        if (Input.isMouseReleased(mouse)) {
             editor.window.setMouseState(true);
             firstClick = true;
             camMoving = false;

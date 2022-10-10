@@ -2,7 +2,7 @@ package entity.component;
 
 import entity.Entity;
 import entity.abs.EntityComponent;
-import gui.GUIEdit;
+import gui.helper.GUIEdit;
 import math.Float3;
 
 import java.io.Serializable;
@@ -14,6 +14,11 @@ public class PhysicsComponent extends EntityComponent implements Serializable {
 
     public PhysicsComponent(Entity entity) {
         super(entity);
+    }
+
+    @Override
+    public void dispose() {
+
     }
 
     @Override

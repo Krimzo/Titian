@@ -15,6 +15,11 @@ public final class GUIGameView extends GUISection {
         super(editor);
     }
 
+    @Override
+    public void dispose() {
+
+    }
+
     private void updateWindowInfo() {
         int tabSize = (int) ImGui.getWindowContentRegionMinY();
         windowSize = new Int2((int) ImGui.getWindowWidth(), (int) ImGui.getWindowHeight() - tabSize);

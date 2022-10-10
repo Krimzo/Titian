@@ -3,8 +3,8 @@
 
 layout (location = 0) in vec3 inWorld;
 
-uniform mat4 iVP;
 uniform mat4 VP;
+uniform mat4 iVP;
 
 void main() {
     vec4 corner = iVP * vec4(inWorld, 1);
@@ -18,8 +18,8 @@ void main() {
 
 uniform vec3 color;
 
-out vec4 pixel;
+out vec4 outPixel;
 
 void main() {
-    pixel = vec4(color, 1);
+    outPixel = vec4(color, 1);
 }

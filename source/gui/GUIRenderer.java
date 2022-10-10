@@ -1,8 +1,7 @@
 package gui;
 
-import glparts.Texture;
-import glparts.abs.Disposable;
 import gui.abs.GUIRenderable;
+import gui.helper.GUIStyle;
 import imgui.ImGui;
 import imgui.extension.imguizmo.ImGuizmo;
 import imgui.flag.ImGuiConfigFlags;
@@ -10,16 +9,13 @@ import imgui.flag.ImGuiDockNodeFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import utility.nncollection.NNArrayList;
-import utility.nncollection.NNHashMap;
 import window.Window;
 
-import java.util.Map;
-
-public class GUIRenderer extends NNArrayList<GUIRenderable> implements Disposable {
+public class GUIRenderer extends NNArrayList<GUIRenderable> implements GUIRenderable {
     private final ImGuiImplGlfw implGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 implGl3 = new ImGuiImplGl3();
 
-    public final Map<String, Texture> predefineTextures = new NNHashMap<>();
+    public final GUITexturePackage textures;
 
     public GUIRenderer(Window window) {
         ImGui.createContext();
@@ -31,36 +27,23 @@ public class GUIRenderer extends NNArrayList<GUIRenderable> implements Disposabl
         implGlfw.init(window.getWindow(), true);
         implGl3.init("#version 330");
 
-        // Viewport
-        predefineTextures.put("PlayIcon", new Texture(null, null, window.getContext(), "resource/textures/control/play.png", false));
-        predefineTextures.put("StopIcon", new Texture(null, null, window.getContext(), "resource/textures/control/stop.png", false));
-        predefineTextures.put("WireIcon", new Texture(null, null, window.getContext(), "resource/textures/control/wire.png", false));
-        predefineTextures.put("SolidIcon", new Texture(null, null, window.getContext(), "resource/textures/control/solid.png", false));
-
-        // Explorer
-        predefineTextures.put("FolderIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/folder.png", false));
-        predefineTextures.put("EmptyFolderIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/folder_empty.png", false));
-        predefineTextures.put("FileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/file.png", false));
-        predefineTextures.put("ImageFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/image.png", false));
-        predefineTextures.put("MeshFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/mesh.png", false));
-        predefineTextures.put("ScriptFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/script.png", false));
-        predefineTextures.put("CodeFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/code.png", false));
-        predefineTextures.put("SceneFileIcon", new Texture(null, null, window.getContext(), "resource/textures/explorer/scene.png", false));
+        textures = new GUITexturePackage(window.getContext());
     }
 
     @Override
     public void dispose() {
-        for (var obj : predefineTextures.entrySet()) {
-            obj.getValue().dispose();
+        for (GUIRenderable renderable : this) {
+            renderable.dispose();
         }
-        predefineTextures.clear();
 
+        textures.dispose();
         implGl3.dispose();
         implGlfw.dispose();
         ImGui.destroyContext();
     }
 
-    public void render() {
+    @Override
+    public void renderGUI() {
         implGlfw.newFrame();
         ImGui.newFrame();
         ImGuizmo.beginFrame();

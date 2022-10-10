@@ -6,6 +6,8 @@ import entity.Entity;
 import glparts.Mesh;
 import glparts.Texture;
 import glparts.abs.Disposable;
+import light.AmbientLight;
+import light.DirectionalLight;
 import material.Material;
 import named.NameHolder;
 import physics.Physical;
@@ -27,8 +29,13 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
 
     public Camera camera = null;
     public Entity selected = null;
+    public AmbientLight ambientLight = null;
+    public DirectionalLight directionalLight = null;
 
-    public Scene() {}
+    public Scene(Editor editor) {
+        ambientLight = new AmbientLight(null, null, editor);
+        directionalLight = new DirectionalLight(null, null, editor);
+    }
 
     @Override
     public void dispose() {

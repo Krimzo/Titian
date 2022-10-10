@@ -3,10 +3,10 @@ package gui.section;
 import callback.ObjectCallback;
 import editor.Editor;
 import glparts.Texture;
-import gui.GUIDragDrop;
-import gui.GUIPopup;
-import gui.GUITextInput;
 import gui.abs.GUISection;
+import gui.helper.GUIDragDrop;
+import gui.helper.GUIPopup;
+import gui.helper.GUITextInput;
 import imgui.ImGui;
 import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
@@ -29,11 +29,16 @@ public final class GUIExplorer extends GUISection {
         super(editor);
     }
 
+    @Override
+    public void dispose() {
+
+    }
+
     private Texture getFolderIcon(File folder) {
         if (Files.isEmpty(folder.toString())) {
-            return editor.guiRenderer.predefineTextures.get("EmptyFolderIcon");
+            return editor.guiRenderer.textures.emptyFolderIcon;
         }
-        return editor.guiRenderer.predefineTextures.get("FolderIcon");
+        return editor.guiRenderer.textures.folderIcon;
     }
 
     private String getFileType(File file) {
@@ -48,7 +53,14 @@ public final class GUIExplorer extends GUISection {
     }
 
     private Texture getFileIcon(File file) {
-        return editor.guiRenderer.predefineTextures.get(getFileType(file) + "Icon");
+        return switch (getFileType(file)) {
+            case "MeshFile" -> editor.guiRenderer.textures.meshFileIcon;
+            case "ImageFile" -> editor.guiRenderer.textures.imageFileIcon;
+            case "CodeFile" -> editor.guiRenderer.textures.codeFileIcon;
+            case "ScriptFile" -> editor.guiRenderer.textures.scriptFileIcon;
+            case "SceneFile" -> editor.guiRenderer.textures.sceneFileIcon;
+            default -> editor.guiRenderer.textures.fileIcon;
+        };
     }
 
     private void renderParent() {

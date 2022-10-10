@@ -1,8 +1,8 @@
 package script;
 
 import entity.Entity;
-import gui.GUIEdit;
 import gui.abs.GUIRenderable;
+import gui.helper.GUIEdit;
 import imgui.ImGui;
 import script.abs.Scriptable;
 import utility.Files;
@@ -33,6 +33,9 @@ public class Script implements GUIRenderable, Serializable {
     public Script(String filepath, Entity entity) {
         load(filepath, entity);
     }
+
+    @Override
+    public void dispose() {}
 
     @Serial
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {

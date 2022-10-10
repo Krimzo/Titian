@@ -19,6 +19,8 @@ import static org.lwjgl.opengl.GL33.*;
 
 public class Mesh extends GLObject implements Serializable {
     private final Vertex[] vertices;
+    public final float maxRadius;
+
     private transient int vao;
     private transient int vbo;
 
@@ -26,6 +28,12 @@ public class Mesh extends GLObject implements Serializable {
         super(holder, name, context);
 
         this.vertices = Arrays.copyOf(vertices, vertices.length);
+
+        float maxDistance = 0;
+        for (Vertex vertex : vertices) {
+            maxDistance = Math.max(maxDistance, vertex.world.length());
+        }
+        maxRadius = maxDistance;
 
         Pair<Integer> result = generateMesh(vertices);
         vao = result.first;

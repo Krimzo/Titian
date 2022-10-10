@@ -2,7 +2,7 @@ package entity.component;
 
 import entity.Entity;
 import entity.abs.EntityComponent;
-import gui.GUIEdit;
+import gui.helper.GUIEdit;
 import math.Float3;
 import math.Mat4;
 
@@ -15,6 +15,11 @@ public class TransformComponent extends EntityComponent implements Serializable 
 
     public TransformComponent(Entity entity) {
         super(entity);
+    }
+
+    @Override
+    public void dispose() {
+
     }
 
     public Mat4 scalingMatrix() {

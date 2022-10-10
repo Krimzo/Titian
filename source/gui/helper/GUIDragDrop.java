@@ -1,4 +1,4 @@
-package gui;
+package gui.helper;
 
 import callback.ObjectCallback;
 import glparts.Texture;

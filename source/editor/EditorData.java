@@ -5,9 +5,11 @@ import glparts.Shaders;
 import glparts.Texture;
 import glparts.abs.Disposable;
 import material.Material;
+import math.Int2;
 
 public class EditorData implements Disposable {
     public final Shaders frustumShaders;
+    public final Shaders unlitShaders;
 
     public final Mesh defaultMesh;
     public final Mesh frustumMesh;
@@ -21,11 +23,14 @@ public class EditorData implements Disposable {
 
     public EditorData(Editor editor) throws Exception {
         frustumShaders = new Shaders(editor.window.getContext(), "shaders/Frustum.glsl");
+        unlitShaders = new Shaders(editor.window.getContext(), "shaders/Unlit.glsl");
 
         defaultMesh = new Mesh(null, "Default Mesh", editor.window.getContext(), "resource/meshes/cube.obj");
         frustumMesh = Mesh.generateFrustumMesh();
 
-        defaultTexture = new Texture(null, "Default Texture", editor.window.getContext(), "resource/textures/default.png");
+        defaultTexture = new Texture(null, "Default Texture", editor.window.getContext(),
+            new Int2(1, 1), new byte[] { (byte) 50, (byte) 50, (byte) 50, (byte) 0xFF }
+        );
 
         defaultMaterial = new Material(null, "Default Material");
         defaultMaterial.colorMap = defaultTexture;
@@ -35,6 +40,9 @@ public class EditorData implements Disposable {
 
     @Override
     public void dispose() {
+        frustumShaders.dispose();
+        unlitShaders.dispose();
+
         defaultMesh.dispose();
         frustumMesh.dispose();
 

@@ -3,9 +3,9 @@ package gui.section;
 import editor.Editor;
 import entity.Entity;
 import glparts.Mesh;
-import gui.GUIDragDrop;
-import gui.GUIPopup;
 import gui.abs.GUISection;
+import gui.helper.GUIDragDrop;
+import gui.helper.GUIPopup;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiTreeNodeFlags;
@@ -15,6 +15,11 @@ import script.Script;
 public final class GUIProperties extends GUISection {
     public GUIProperties(Editor editor) {
         super(editor);
+    }
+
+    @Override
+    public void dispose() {
+
     }
 
     private void renderTransform(Entity selected) {
@@ -64,7 +69,7 @@ public final class GUIProperties extends GUISection {
             selected.components.script.scripts.add(new Script((String) path, selected));
         });
 
-        GUIPopup.windowPopup("Scripts", () -> {
+        GUIPopup.itemPopup("Scripts", () -> {
             if (ImGui.button("Reload")) {
                 selected.components.script.reload();
                 GUIPopup.close();

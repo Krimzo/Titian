@@ -4,9 +4,9 @@ import camera.OrthographicCamera;
 import camera.PerspectiveCamera;
 import editor.Editor;
 import entity.Entity;
-import gui.GUIPopup;
-import gui.GUITextInput;
 import gui.abs.GUISection;
+import gui.helper.GUIPopup;
+import gui.helper.GUITextInput;
 import imgui.ImGui;
 import imgui.flag.ImGuiWindowFlags;
 import window.input.Input;
@@ -18,6 +18,11 @@ public final class GUIScene extends GUISection {
 
     public GUIScene(Editor editor) {
         super(editor);
+    }
+
+    @Override
+    public void dispose() {
+
     }
 
     private void windowPopup() {

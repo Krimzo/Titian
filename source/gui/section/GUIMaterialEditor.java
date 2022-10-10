@@ -10,9 +10,24 @@ public final class GUIMaterialEditor extends GUISection {
     }
 
     @Override
+    public void dispose() {
+
+    }
+
+    @Override
     public void renderGUI() {
         if (ImGui.begin("Material Editor")) {
+            ImGui.columns(2);
+            if (ImGui.beginChild("Materials")) {
 
+            }
+            ImGui.endChild();
+
+            ImGui.nextColumn();
+            if (ImGui.beginChild("Material View")) {
+
+            }
+            ImGui.endChild();
         }
         ImGui.end();
     }

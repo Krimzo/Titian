@@ -6,14 +6,12 @@ import imgui.ImGui;
 import named.NameHolder;
 import named.Named;
 import physics.Physical;
-import renderer.abs.EditorRenderable;
-import renderer.abs.GameRenderable;
-import renderer.abs.IndexRenderable;
+import renderer.abs.Renderable;
 import script.Script;
 
 import java.io.Serializable;
 
-public class Entity extends Named implements Physical, GameRenderable, EditorRenderable, IndexRenderable, Serializable {
+public class Entity extends Named implements Physical, Renderable, Serializable {
     public final ComponentPackage components = new ComponentPackage(this);
     public transient Editor editor;
 

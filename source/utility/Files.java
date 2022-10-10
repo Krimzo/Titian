@@ -109,11 +109,9 @@ public final class Files {
         try {
             File file = new File(filepath);
             boolean ignored = file.getParentFile().mkdirs();
-
             try (FileOutputStream stream = new FileOutputStream(file)) {
                 stream.write(data.getBytes());
             }
-
             return true;
         }
         catch (Exception ignored) {

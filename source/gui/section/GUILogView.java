@@ -1,9 +1,9 @@
 package gui.section;
 
 import editor.Editor;
-import gui.GUIEdit;
-import gui.GUIPopup;
 import gui.abs.GUISection;
+import gui.helper.GUIEdit;
+import gui.helper.GUIPopup;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import logging.Logger;
@@ -11,6 +11,11 @@ import logging.Logger;
 public final class GUILogView extends GUISection {
     public GUILogView(Editor editor) {
         super(editor);
+    }
+
+    @Override
+    public void dispose() {
+
     }
 
     @Override

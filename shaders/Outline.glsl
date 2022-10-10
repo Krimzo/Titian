@@ -16,7 +16,7 @@ uniform vec2 frameSize;
 uniform int outlineThickness;
 uniform int selectedIndex;
 
-out vec4 pixel;
+out vec4 outPixel;
 
 vec2 toUV(vec2 pos) {
     return pos / frameSize;
@@ -43,7 +43,7 @@ bool isOutlinePixel(vec2 coords) {
 
 void main() {
     if (isValidSelection() && isValidPixel() && isOutlinePixel(gl_FragCoord.xy)) {
-        pixel = outlineColor;
+        outPixel = outlineColor;
     }
     else {
         discard;

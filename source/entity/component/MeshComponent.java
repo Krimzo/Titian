@@ -4,24 +4,22 @@ import entity.Entity;
 import entity.abs.EntityComponent;
 import glparts.Mesh;
 import glparts.Shaders;
-import gui.GUIPopup;
+import gui.helper.GUIPopup;
 import imgui.ImGui;
-import renderer.abs.EditorRenderable;
-import renderer.abs.GameRenderable;
-import renderer.abs.IndexRenderable;
+import renderer.abs.Renderable;
 
 import java.io.Serializable;
 
-public class MeshComponent extends EntityComponent implements GameRenderable, EditorRenderable, IndexRenderable, Serializable {
+public class MeshComponent extends EntityComponent implements Renderable, Serializable {
     public Mesh mesh = null;
 
     public MeshComponent(Entity entity) {
         super(entity);
     }
 
-    public MeshComponent(Entity entity, Mesh mesh) {
-        super(entity);
-        this.mesh = mesh;
+    @Override
+    public void dispose() {
+
     }
 
     @Override

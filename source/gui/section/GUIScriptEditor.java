@@ -10,6 +10,11 @@ public final class GUIScriptEditor extends GUISection {
     }
 
     @Override
+    public void dispose() {
+
+    }
+
+    @Override
     public void renderGUI() {
         if (ImGui.begin("Script Editor")) {
 

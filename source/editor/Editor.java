@@ -35,9 +35,10 @@ public class Editor implements Disposable {
 
     public Editor() throws Exception {
         window.setIcon("resource/textures/icons/titian.png");
+        window.getContext().setDepthTest(true);
         window.setVSync(true);
 
-        window.getContext().setDepthTest(true);
+        data = new EditorData(this);
 
         guiRenderer.add(new GUIMainMenu(this));
         guiRenderer.add(new GUIScene(this));
@@ -51,8 +52,6 @@ public class Editor implements Disposable {
         guiRenderer.add(new GUIExplorer(this));
         guiRenderer.add(new GUIProfiling(this));
         guiRenderer.add(new GUIProperties(this));
-
-        data = new EditorData(this);
     }
 
     public void setup(EditorCallback setupCallback) {
@@ -72,7 +71,7 @@ public class Editor implements Disposable {
         window.getContext().clear(false);
         window.getContext().setViewport(window.getSize());
 
-        guiRenderer.render();
+        guiRenderer.renderGUI();
 
         window.swapBuffers();
     }

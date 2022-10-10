@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class Titian {
     public static void saveTestScene(Editor editor) throws Exception {
-        Scene scene = new Scene();
+        Scene scene = new Scene(editor);
 
         Mesh monkeMesh = new Mesh(scene.meshNames, "Monke Mesh", editor.window.getContext(), "resource/meshes/monke.obj");
         Material monkeMaterial = new Material(scene.materialNames, "Monke Material");

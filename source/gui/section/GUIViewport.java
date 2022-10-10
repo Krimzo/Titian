@@ -3,9 +3,9 @@ package gui.section;
 import editor.Editor;
 import entity.Entity;
 import entity.component.TransformComponent;
-import gui.GUIEdit;
-import gui.GUIStyle;
 import gui.abs.GUISection;
+import gui.helper.GUIEdit;
+import gui.helper.GUIStyle;
 import imgui.ImGui;
 import imgui.extension.imguizmo.ImGuizmo;
 import imgui.extension.imguizmo.flag.Mode;
@@ -15,6 +15,7 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import math.*;
 import window.input.Key;
+import window.input.Mouse;
 
 public final class GUIViewport extends GUISection {
     private Int2 viewportPosition = new Int2();
@@ -26,9 +27,14 @@ public final class GUIViewport extends GUISection {
         super(editor);
     }
 
+    @Override
+    public void dispose() {
+
+    }
+
     private void updateViewport() {
         if (ImGui.isWindowFocused()) {
-            editor.camera.useDefaultMovement(Key.W, Key.S, Key.D, Key.A, Key.E, Key.Q, 2,
+            editor.camera.useDefaultMovement(Mouse.Right, Key.W, Key.S, Key.D, Key.A, Key.E, Key.Q, 2,
                 editor.window.getSize(), editor.timer.getDeltaT()
             );
         }
@@ -106,8 +112,10 @@ public final class GUIViewport extends GUISection {
         editor.camera.updateAspect(viewportSize);
 
         editor.window.getContext().setWireframe(editor.data.wireframeState);
+
         editor.editorRenderer.renderScene(editor.scene, editor.camera);
         editor.editorRenderer.renderIndices(editor.scene, editor.camera);
+
         editor.window.getContext().setWireframe(false);
 
         if (selectedIndex >= 0) {
