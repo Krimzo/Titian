@@ -34,25 +34,27 @@ public final class GUIControlPanel extends GUISection {
     @Override
     public void renderGUI() {
         if (ImGui.begin("Control Panel", ImGuiWindowFlags.NoScrollbar)) {
-            ImVec2 regionMax = ImGui.getWindowContentRegionMax();
-            final float buttonSize = regionMax.y * 0.5f;
+            final int padding = 5;
+            ImVec2 available = ImGui.getContentRegionAvail();
+            float buttonSize = Math.min(available.x, available.y) - padding * 2;
 
             Texture playStateTexture = editor.data.gameRunning ? editor.guiRenderer.textures.stopIcon : editor.guiRenderer.textures.playIcon;
-            if (ImGui.imageButton(playStateTexture.getBuffer(), buttonSize, buttonSize)) {
+            if (ImGui.imageButton(playStateTexture.getBuffer(), buttonSize, buttonSize, 0, 0, 1, 1, padding)) {
                 if (!editor.data.gameRunning) {
-                    onGameStart();
                     editor.data.gameRunning = true;
+                    onGameStart();
                 }
                 else {
-                    onGameEnd();
                     editor.data.gameRunning = false;
+                    onGameEnd();
                 }
             }
 
             ImGui.sameLine();
+            ImGui.setCursorPosX(ImGui.getWindowContentRegionMaxX() - buttonSize - padding * 2);
 
             Texture wireframeTexture = editor.data.wireframeState ? editor.guiRenderer.textures.solidIcon : editor.guiRenderer.textures.wireIcon;
-            if (ImGui.imageButton(wireframeTexture.getBuffer(), buttonSize, buttonSize)) {
+            if (ImGui.imageButton(wireframeTexture.getBuffer(), buttonSize, buttonSize, 0, 0, 1, 1, padding)) {
                 editor.data.wireframeState = !editor.data.wireframeState;
             }
         }

@@ -55,7 +55,7 @@ public final class GUIMeshEditor extends GUISection {
         entity = new Entity(null, null, editor);
         entity.components.material.material = material;
 
-        scene = new Scene(editor);
+        scene = new Scene();
         scene.ambientLight = new AmbientLight(null, null, editor);
         scene.directionalLight = new DirectionalLight(null, null, editor);
         scene.add(entity);

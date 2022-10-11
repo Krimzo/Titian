@@ -32,10 +32,7 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
     public AmbientLight ambientLight = null;
     public DirectionalLight directionalLight = null;
 
-    public Scene(Editor editor) {
-        ambientLight = new AmbientLight(null, null, editor);
-        directionalLight = new DirectionalLight(null, null, editor);
-    }
+    public Scene() {}
 
     @Override
     public void dispose() {

@@ -2,6 +2,7 @@ package light.abs;
 
 import editor.Editor;
 import entity.Entity;
+import gui.helper.GUIEdit;
 import math.Float3;
 import named.NameHolder;
 
@@ -20,5 +21,12 @@ public abstract class Light extends Entity implements Serializable {
 
     public Float3 getColor() {
         return new Float3(color);
+    }
+
+    @Override
+    public void renderInfoGUI(Editor editor) {
+        super.renderInfoGUI(editor);
+
+        GUIEdit.editColor3("Color", color);
     }
 }

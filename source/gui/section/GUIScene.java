@@ -9,6 +9,9 @@ import gui.helper.GUIPopup;
 import gui.helper.GUITextInput;
 import imgui.ImGui;
 import imgui.flag.ImGuiWindowFlags;
+import light.AmbientLight;
+import light.DirectionalLight;
+import light.PositionalLight;
 import window.input.Input;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,34 +28,69 @@ public final class GUIScene extends GUISection {
 
     }
 
-    private void windowPopup() {
-        if (ImGui.beginMenu("New")) {
-            if (ImGui.button("Entity", -1, 0)) {
-                Entity entity = new Entity(editor.scene.entityNames, "Entity", editor);
-                entity.components.mesh.mesh = editor.data.defaultMesh;
-                entity.components.material.material = editor.data.defaultMaterial;
-                editor.scene.addUnsaved(entity);
+    private void addEntity() {
+        if (ImGui.button("Entity", -1, 0)) {
+            Entity entity = new Entity(editor.scene.entityNames, "Entity", editor);
+            entity.components.mesh.mesh = editor.data.defaultMesh;
+            entity.components.material.material = editor.data.defaultMaterial;
+            editor.scene.addUnsaved(entity);
+
+            GUIPopup.close();
+        }
+    }
+
+    private void addCamera() {
+        if (ImGui.beginMenu("Camera")) {
+            if (ImGui.button("Perspective", -1, 0)) {
+                Entity camera = new PerspectiveCamera(editor.scene.entityNames, "Perspective camera", editor);
+                editor.scene.add(camera);
 
                 GUIPopup.close();
             }
 
-            if (ImGui.beginMenu("Camera")) {
-                if (ImGui.button("Perspective", -1, 0)) {
-                    PerspectiveCamera camera = new PerspectiveCamera(editor.scene.entityNames, "Perspective camera", editor);
-                    editor.scene.add(camera);
+            if (ImGui.button("Orthographic")) {
+                Entity camera = new OrthographicCamera(editor.scene.entityNames, "Orthographic camera", editor);
+                editor.scene.add(camera);
 
-                    GUIPopup.close();
-                }
-
-                if (ImGui.button("Orthographic")) {
-                    OrthographicCamera camera = new OrthographicCamera(editor.scene.entityNames, "Orthographic camera", editor);
-                    editor.scene.add(camera);
-
-                    GUIPopup.close();
-                }
-
-                ImGui.endMenu();
+                GUIPopup.close();
             }
+
+            ImGui.endMenu();
+        }
+    }
+
+    private void addLight() {
+        if (ImGui.beginMenu("Light")) {
+            if (ImGui.button("Ambient", -1, 0)) {
+                Entity light = new AmbientLight(editor.scene.entityNames, "Ambient Light", editor);
+                editor.scene.add(light);
+
+                GUIPopup.close();
+            }
+
+            if (ImGui.button("Directional")) {
+                Entity camera = new DirectionalLight(editor.scene.entityNames, "Directional Light", editor);
+                editor.scene.add(camera);
+
+                GUIPopup.close();
+            }
+
+            if (ImGui.button("Positional", -1, 0)) {
+                Entity camera = new PositionalLight(editor.scene.entityNames, "Positional Light", editor);
+                editor.scene.add(camera);
+
+                GUIPopup.close();
+            }
+
+            ImGui.endMenu();
+        }
+    }
+
+    private void windowPopup() {
+        if (ImGui.beginMenu("New")) {
+            addEntity();
+            addCamera();
+            addLight();
 
             ImGui.endMenu();
         }

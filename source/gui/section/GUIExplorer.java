@@ -63,19 +63,16 @@ public final class GUIExplorer extends GUISection {
         };
     }
 
-    private void renderParent() {
-        File parent = currentPath.getParentFile();
-        if (parent != null) {
-            renderFolder(parent, true);
-        }
-    }
-
     private void renderFolder(File folder, boolean parent) {
+        final Texture folderIcon = getFolderIcon(folder);
+
         ImGui.pushID(folder.toString());
-        if (ImGui.imageButton(getFolderIcon(folder).getBuffer(), buttonSize, buttonSize)) {
+        if (ImGui.imageButton(folderIcon.getBuffer(), buttonSize, buttonSize)) {
             currentPath = folder;
         }
         ImGui.popID();
+
+        GUIDragDrop.setData("Folder", folder.getAbsolutePath(), folderIcon);
 
         GUIPopup.itemPopup("EditExplorerFolder" + folder, () -> {
             if (ImGui.button("Rename")) {
@@ -92,8 +89,6 @@ public final class GUIExplorer extends GUISection {
             }
         });
 
-        GUIDragDrop.setData("Folder", folder.getAbsolutePath());
-
         ObjectCallback callback = path -> {
             Files.move((String) path, folder.getAbsolutePath());
         };
@@ -105,7 +100,8 @@ public final class GUIExplorer extends GUISection {
         GUIDragDrop.getData("ScriptFile", callback);
         GUIDragDrop.getData("SceneFile", callback);
 
-        ImGui.textWrapped(!parent ? folder.getName() : "..");
+        ImGui.text(!parent ? folder.getName() : "..");
+
         ImGui.nextColumn();
     }
 
@@ -117,6 +113,8 @@ public final class GUIExplorer extends GUISection {
             Files.openDefault(file.getAbsolutePath());
         }
         ImGui.popID();
+
+        GUIDragDrop.setData(getFileType(file), file.getAbsolutePath(), fileIcon);
 
         GUIPopup.itemPopup("EditExplorerFile" + file, () -> {
             if (ImGui.button("Rename")) {
@@ -133,32 +131,31 @@ public final class GUIExplorer extends GUISection {
             }
         });
 
-        GUIDragDrop.setData(getFileType(file), file.getAbsolutePath(), fileIcon);
+        ImGui.text(file.getName());
 
-        ImGui.textWrapped(file.getName());
         ImGui.nextColumn();
     }
 
     @Override
     public void renderGUI() {
         if (ImGui.begin("Explorer", ImGuiWindowFlags.NoScrollbar)) {
-            buttonSize = 0.75f * ImGui.getWindowContentRegionMaxX() / columnCount;
-
             ImGui.bulletText(currentPath.getAbsolutePath());
             ImGui.separator();
 
             ImVec4 color = ImGui.getStyle().getColor(ImGuiCol.Button);
             ImGui.pushStyleColor(ImGuiCol.Button, color.x, color.y, color.z, 0.0f);
-
             color = ImGui.getStyle().getColor(ImGuiCol.ButtonHovered);
             ImGui.pushStyleColor(ImGuiCol.ButtonHovered, color.x, color.y, color.z, 0.25f);
-
             color = ImGui.getStyle().getColor(ImGuiCol.ButtonActive);
             ImGui.pushStyleColor(ImGuiCol.ButtonActive, color.x, color.y, color.z, 0.5f);
 
             ImGui.columns(columnCount, "ExplorerColumns", false);
+            buttonSize = ImGui.calcItemWidth();
 
-            renderParent();
+            File parent = currentPath.getParentFile();
+            if (parent != null) {
+                renderFolder(parent, true);
+            }
 
             File[] folders = Files.listFolders(currentPath.toString());
             if (folders != null) {

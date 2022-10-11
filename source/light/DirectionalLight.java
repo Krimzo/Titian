@@ -1,6 +1,8 @@
 package light;
 
 import editor.Editor;
+import gui.helper.GUIEdit;
+import imgui.ImGui;
 import light.abs.Light;
 import math.Float3;
 import named.NameHolder;
@@ -20,5 +22,18 @@ public class DirectionalLight extends Light implements Serializable {
 
     public Float3 getDirection() {
         return new Float3(direction);
+    }
+
+    @Override
+    public void renderInfoGUI(Editor editor) {
+        super.renderInfoGUI(editor);
+
+        GUIEdit.editFloat3("Direction", direction, 0.1f);
+        direction.set(direction.normalize());
+
+        boolean isMain = editor.scene.directionalLight == this;
+        if (ImGui.checkbox("Main directional light", isMain)) {
+            editor.scene.directionalLight = isMain ? null : this;
+        }
     }
 }

@@ -34,7 +34,7 @@ public final class GUILogView extends GUISection {
             });
             logger.clearUnseen();
 
-            GUIPopup.itemPopup("EditLogView", () -> {
+            GUIPopup.windowPopup("EditLogView", () -> {
                 if (ImGui.button("Clear")) {
                     logger.clear();
                     GUIPopup.close();

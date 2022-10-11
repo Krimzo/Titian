@@ -1,8 +1,11 @@
-light entities ui
-
 better control panel ui
 control panel gizmo modes
 depth texture display
+camera skyboxes
+collision detection with physx
+multi entity selection
+script public entity field
+game class
 
 material editor
 3d material editor view
@@ -17,8 +20,3 @@ script intellisense
 script state serialization
 script allowed entity field
 more script information about editor state
-
-multi entity selection
-camera skyboxes
-collision detection with physx
-game class

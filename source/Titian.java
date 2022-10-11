@@ -2,8 +2,11 @@ import editor.Editor;
 import entity.Entity;
 import glparts.Mesh;
 import glparts.Texture;
+import light.AmbientLight;
+import light.DirectionalLight;
 import material.Material;
 import math.Float2;
+import math.Float3;
 import scene.Scene;
 import script.abs.Scriptable;
 
@@ -11,7 +14,13 @@ import java.util.Random;
 
 public class Titian {
     public static void saveTestScene(Editor editor) throws Exception {
-        Scene scene = new Scene(editor);
+        Scene scene = new Scene();
+
+        scene.ambientLight = new AmbientLight(scene.entityNames, "Ambient Light", editor);
+        scene.directionalLight = new DirectionalLight(scene.entityNames, "Directional Light", editor);
+        scene.directionalLight.setDirection(new Float3(1, -1, -1));
+        scene.add(scene.ambientLight);
+        scene.add(scene.directionalLight);
 
         Mesh monkeMesh = new Mesh(scene.meshNames, "Monke Mesh", editor.window.getContext(), "resource/meshes/monke.obj");
         Material monkeMaterial = new Material(scene.materialNames, "Monke Material");
