@@ -148,4 +148,21 @@ public class Mesh extends GLObject implements Serializable {
             frustumPoints[3], frustumPoints[7],
         });
     }
+
+    public static Mesh generateGrid(int size) {
+        final int sideLen = size * 2 + 1;
+        Vertex[] vertices = new Vertex[sideLen * 4];
+
+        for (int i = 0; i < sideLen; i++) {
+            final int pos = -size + i;
+
+            vertices[i * 4 + 0] = new Vertex(new Float3(pos, 0, -size));
+            vertices[i * 4 + 1] = new Vertex(new Float3(pos, 0, +size));
+
+            vertices[i * 4 + 2] = new Vertex(new Float3(-size, 0, pos));
+            vertices[i * 4 + 3] = new Vertex(new Float3(+size, 0, pos));
+        }
+
+        return new Mesh(null, "Grid Mesh", null, vertices);
+    }
 }

@@ -3,6 +3,8 @@ package gui.section;
 import editor.Editor;
 import entity.Entity;
 import entity.component.TransformComponent;
+import glparts.Mesh;
+import glparts.Shaders;
 import gui.abs.GUISection;
 import gui.helper.GUIEdit;
 import gui.helper.GUIStyle;
@@ -20,16 +22,24 @@ import window.input.Mouse;
 public final class GUIViewport extends GUISection {
     private Int2 viewportPosition = new Int2();
     private Int2 viewportSize = new Int2();
+
+    private Mesh gridMesh = null;
+    private Shaders gridShaders = null;
+
     private int gizmoOperation = 0;
     private int gizmoMode = Mode.WORLD;
 
     public GUIViewport(Editor editor) {
         super(editor);
+
+        gridMesh = Mesh.generateGrid(50);
+        gridShaders = new Shaders(editor.window.getContext(), "shaders/Grid.glsl");
     }
 
     @Override
     public void dispose() {
-
+        gridMesh.dispose();
+        gridShaders.dispose();
     }
 
     private void updateViewport() {
@@ -101,25 +111,26 @@ public final class GUIViewport extends GUISection {
     private void renderScene() {
         editor.editorRenderer.clear(editor.camera);
 
-        if (editor.scene == null) {
-            return;
-        }
-
-        int selectedIndex = editor.scene.indexOf(editor.scene.selected);
-
         editor.window.getContext().setViewport(viewportSize);
         editor.editorRenderer.resize(viewportSize);
         editor.camera.updateAspect(viewportSize);
 
-        editor.window.getContext().setWireframe(editor.data.wireframeState);
+        editor.editorRenderer.renderBuffer.use(() -> {
+            gridShaders.setUniform("VP", editor.camera.matrix());
+            gridMesh.renderLines(gridShaders);
+        });
 
-        editor.editorRenderer.renderScene(editor.scene, editor.camera);
-        editor.editorRenderer.renderIndices(editor.scene, editor.camera);
+        if (editor.scene != null) {
+            int selectedIndex = editor.scene.indexOf(editor.scene.selected);
 
-        editor.window.getContext().setWireframe(false);
+            editor.window.getContext().setWireframe(editor.data.wireframeState);
+            editor.editorRenderer.renderScene(editor.scene, editor.camera);
+            editor.editorRenderer.renderIndices(editor.scene, editor.camera);
+            editor.window.getContext().setWireframe(false);
 
-        if (selectedIndex >= 0) {
-            editor.editorRenderer.renderOutline(new Float2(viewportSize), GUIStyle.special, selectedIndex);
+            if (selectedIndex >= 0) {
+                editor.editorRenderer.renderOutline(new Float2(viewportSize), GUIStyle.special, selectedIndex);
+            }
         }
     }
 

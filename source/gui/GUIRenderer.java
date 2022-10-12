@@ -15,7 +15,7 @@ public class GUIRenderer extends NNArrayList<GUIRenderable> implements GUIRender
     private final ImGuiImplGlfw implGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 implGl3 = new ImGuiImplGl3();
 
-    public final GUITexturePackage textures;
+    public final GUITextureData textures;
 
     public GUIRenderer(Window window) {
         ImGui.createContext();
@@ -27,7 +27,7 @@ public class GUIRenderer extends NNArrayList<GUIRenderable> implements GUIRender
         implGlfw.init(window.getWindow(), true);
         implGl3.init("#version 330");
 
-        textures = new GUITexturePackage(window.getContext());
+        textures = new GUITextureData(window.getContext());
     }
 
     @Override

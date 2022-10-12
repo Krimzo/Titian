@@ -12,7 +12,7 @@ import script.Script;
 import java.io.Serializable;
 
 public class Entity extends Named implements Physical, Renderable, Serializable {
-    public final ComponentPackage components = new ComponentPackage(this);
+    public final ComponentData components = new ComponentData(this);
     public transient Editor editor;
 
     public Entity(NameHolder holder, String name, Editor editor) {

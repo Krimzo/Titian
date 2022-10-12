@@ -4,7 +4,7 @@ import glparts.Texture;
 import glparts.abs.Disposable;
 import glparts.abs.GLContext;
 
-public class GUITexturePackage implements Disposable {
+public class GUITextureData implements Disposable {
     public final Texture playIcon;
     public final Texture stopIcon;
     public final Texture wireIcon;
@@ -19,7 +19,7 @@ public class GUITexturePackage implements Disposable {
     public final Texture codeFileIcon;
     public final Texture sceneFileIcon;
 
-    public GUITexturePackage(GLContext context) {
+    public GUITextureData(GLContext context) {
         playIcon = new Texture(null, null, context, "resource/textures/control/play.png", false);
         stopIcon = new Texture(null, null, context, "resource/textures/control/stop.png", false);
         wireIcon = new Texture(null, null, context, "resource/textures/control/wire.png", false);
