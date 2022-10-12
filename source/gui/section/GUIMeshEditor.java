@@ -87,7 +87,7 @@ public final class GUIMeshEditor extends GUISection {
                     });
                 }
 
-                if (ImGui.button("Delete")) {
+                if (ImGui.button("Delete", -1, 0)) {
                     it.remove();
 
                     if (mesh == mc.mesh) {

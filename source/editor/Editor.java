@@ -34,7 +34,7 @@ public class Editor implements Disposable {
     public Scene scene = null;
 
     public Editor() throws Exception {
-        window.setIcon("resource/textures/icons/titian.png");
+        window.setIcon("resource/textures/titian.png");
         window.getContext().setDepthTest(true);
         window.setVSync(true);
 

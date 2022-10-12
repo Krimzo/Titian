@@ -1,7 +1,3 @@
-grid control
-
-better control panel ui
-control panel gizmo modes
 depth texture display
 camera skyboxes
 collision detection with physx

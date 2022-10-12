@@ -23,6 +23,7 @@ public class Window implements Disposable {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
+        glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -79,6 +80,18 @@ public class Window implements Disposable {
         glfwMaximizeWindow(window);
     }
 
+    public void minimize() {
+        glfwIconifyWindow(window);
+    }
+
+    public void restore() {
+        glfwRestoreWindow(window);
+    }
+
+    public boolean isMaximized() {
+        return glfwGetWindowAttrib(window, GLFW_MAXIMIZED) != 0;
+    }
+
     public Int2 getSize() {
         int[] sizeX = new int[1];
         int[] sizeY = new int[1];
@@ -91,6 +104,10 @@ public class Window implements Disposable {
         int[] posY = new int[1];
         glfwGetWindowPos(window, posX, posY);
         return new Int2(posX[0], posY[0]);
+    }
+
+    public void setPosition(Int2 pos) {
+        glfwSetWindowPos(window, pos.x, pos.y);
     }
 
     public void setHidden(boolean state) {

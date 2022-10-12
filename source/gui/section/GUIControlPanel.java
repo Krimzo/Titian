@@ -1,10 +1,12 @@
 package gui.section;
 
 import editor.Editor;
-import glparts.Texture;
 import gui.abs.GUISection;
 import imgui.ImGui;
-import imgui.ImVec2;
+import imgui.extension.imguizmo.flag.Mode;
+import imgui.extension.imguizmo.flag.Operation;
+import imgui.flag.ImGuiStyleVar;
+import imgui.flag.ImGuiTableFlags;
 import imgui.flag.ImGuiWindowFlags;
 import scene.Scene;
 
@@ -33,31 +35,57 @@ public final class GUIControlPanel extends GUISection {
 
     @Override
     public void renderGUI() {
+        ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 1, 1);
+
         if (ImGui.begin("Control Panel", ImGuiWindowFlags.NoScrollbar)) {
-            final int padding = 5;
-            ImVec2 available = ImGui.getContentRegionAvail();
-            float buttonSize = Math.min(available.x, available.y) - padding * 2;
+            if (ImGui.beginTable("##ControlTable", 2, ImGuiTableFlags.SizingStretchSame | ImGuiTableFlags.Borders, -1, -1)) {
+                ImGui.tableNextRow();
 
-            Texture playStateTexture = editor.data.gameRunning ? editor.guiRenderer.textures.stopIcon : editor.guiRenderer.textures.playIcon;
-            if (ImGui.imageButton(playStateTexture.getBuffer(), buttonSize, buttonSize, 0, 0, 1, 1, padding)) {
-                if (!editor.data.gameRunning) {
-                    editor.data.gameRunning = true;
-                    onGameStart();
+                ImGui.tableNextColumn();
+                if (ImGui.checkbox("Playing", editor.data.gameRunning)) {
+                    if (!editor.data.gameRunning) {
+                        onGameStart();
+                    } else {
+                        onGameEnd();
+                    }
+                    editor.data.gameRunning = !editor.data.gameRunning;
                 }
-                else {
-                    editor.data.gameRunning = false;
-                    onGameEnd();
+
+                ImGui.sameLine();
+                if (ImGui.checkbox("Wireframe", editor.data.wireframeState)) {
+                    editor.data.wireframeState = !editor.data.wireframeState;
                 }
-            }
 
-            ImGui.sameLine();
-            ImGui.setCursorPosX(ImGui.getWindowContentRegionMaxX() - buttonSize - padding * 2);
+                ImGui.sameLine();
+                if (ImGui.checkbox("Grid", editor.data.renderGrid)) {
+                    editor.data.renderGrid = !editor.data.renderGrid;
+                }
 
-            Texture wireframeTexture = editor.data.wireframeState ? editor.guiRenderer.textures.solidIcon : editor.guiRenderer.textures.wireIcon;
-            if (ImGui.imageButton(wireframeTexture.getBuffer(), buttonSize, buttonSize, 0, 0, 1, 1, padding)) {
-                editor.data.wireframeState = !editor.data.wireframeState;
+                ImGui.tableNextColumn();
+                if (ImGui.checkbox("Local", editor.data.gizmoMode == Mode.LOCAL)) {
+                    editor.data.gizmoMode = (editor.data.gizmoMode != Mode.LOCAL) ? Mode.LOCAL : Mode.WORLD;
+                }
+
+                ImGui.sameLine();
+                if (ImGui.checkbox("Scale", editor.data.gizmoOperation == Operation.SCALE)) {
+                    editor.data.gizmoOperation = (editor.data.gizmoOperation != Operation.SCALE) ? Operation.SCALE : 0;
+                }
+
+                ImGui.sameLine();
+                if (ImGui.checkbox("Rotation", editor.data.gizmoOperation == Operation.ROTATE)) {
+                    editor.data.gizmoOperation = (editor.data.gizmoOperation != Operation.ROTATE) ? Operation.ROTATE : 0;
+                }
+
+                ImGui.sameLine();
+                if (ImGui.checkbox("Translation", editor.data.gizmoOperation == Operation.TRANSLATE)) {
+                    editor.data.gizmoOperation = (editor.data.gizmoOperation != Operation.TRANSLATE) ? Operation.TRANSLATE : 0;
+                }
+
+                ImGui.endTable();
             }
         }
         ImGui.end();
+
+        ImGui.popStyleVar();
     }
 }

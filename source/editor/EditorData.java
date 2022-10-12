@@ -4,6 +4,7 @@ import glparts.Mesh;
 import glparts.Shaders;
 import glparts.Texture;
 import glparts.abs.Disposable;
+import imgui.extension.imguizmo.flag.Mode;
 import material.Material;
 import math.Int2;
 
@@ -20,6 +21,10 @@ public class EditorData implements Disposable {
 
     public boolean gameRunning = false;
     public boolean wireframeState = false;
+    public boolean renderGrid = true;
+
+    public int gizmoOperation = 0;
+    public int gizmoMode = Mode.WORLD;
 
     public EditorData(Editor editor) throws Exception {
         frustumShaders = new Shaders(editor.window.getContext(), "shaders/Frustum.glsl");

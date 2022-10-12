@@ -26,9 +26,6 @@ public final class GUIViewport extends GUISection {
     private Mesh gridMesh = null;
     private Shaders gridShaders = null;
 
-    private int gizmoOperation = 0;
-    private int gizmoMode = Mode.WORLD;
-
     public GUIViewport(Editor editor) {
         super(editor);
 
@@ -43,12 +40,6 @@ public final class GUIViewport extends GUISection {
     }
 
     private void updateViewport() {
-        if (ImGui.isWindowFocused()) {
-            editor.camera.useDefaultMovement(Mouse.Right, Key.W, Key.S, Key.D, Key.A, Key.E, Key.Q, 2,
-                editor.window.getSize(), editor.timer.getDeltaT()
-            );
-        }
-
         final int tabSize = (int) ImGui.getWindowContentRegionMinY();
         viewportPosition = new Int2((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY() + tabSize);
         viewportSize = new Int2((int) ImGui.getWindowWidth(), (int) ImGui.getWindowHeight() - tabSize);
@@ -72,22 +63,24 @@ public final class GUIViewport extends GUISection {
         ImGui.popStyleVar();
     }
 
-    private void updateGizmoState() {
-        if (!ImGui.isWindowFocused()) {
-            return;
-        }
+    private void updateCamera() {
+        editor.camera.useDefaultMovement(Mouse.Right, Key.W, Key.S, Key.D, Key.A, Key.E, Key.Q, 2,
+            editor.window.getSize(), editor.timer.getDeltaT()
+        );
+    }
 
+    private void updateGizmoState() {
         if (ImGui.isKeyPressed(Key.Num1)) {
-            gizmoOperation = (gizmoOperation != Operation.SCALE) ? Operation.SCALE : 0;
+            editor.data.gizmoOperation = (editor.data.gizmoOperation != Operation.SCALE) ? Operation.SCALE : 0;
         }
         if (ImGui.isKeyPressed(Key.Num2)) {
-            gizmoOperation = (gizmoOperation != Operation.ROTATE) ? Operation.ROTATE : 0;
+            editor.data.gizmoOperation = (editor.data.gizmoOperation != Operation.ROTATE) ? Operation.ROTATE : 0;
         }
         if (ImGui.isKeyPressed(Key.Num3)) {
-            gizmoOperation = (gizmoOperation != Operation.TRANSLATE) ? Operation.TRANSLATE : 0;
+            editor.data.gizmoOperation = (editor.data.gizmoOperation != Operation.TRANSLATE) ? Operation.TRANSLATE : 0;
         }
         if (ImGui.isKeyPressed(Key.Num4)) {
-            gizmoMode = (gizmoMode == Mode.WORLD) ? Mode.LOCAL : Mode.WORLD;
+            editor.data.gizmoMode = (editor.data.gizmoMode == Mode.WORLD) ? Mode.LOCAL : Mode.WORLD;
         }
     }
 
@@ -115,10 +108,15 @@ public final class GUIViewport extends GUISection {
         editor.editorRenderer.resize(viewportSize);
         editor.camera.updateAspect(viewportSize);
 
-        editor.editorRenderer.renderBuffer.use(() -> {
-            gridShaders.setUniform("VP", editor.camera.matrix());
-            gridMesh.renderLines(gridShaders);
-        });
+        if (editor.data.renderGrid) {
+            editor.editorRenderer.renderBuffer.use(() -> {
+                Float3 position = editor.camera.components.transform.position;
+                position = new Float3((int) position.x, 0, (int) position.z);
+                gridShaders.setUniform("W", Mat4.translation(position));
+                gridShaders.setUniform("VP", editor.camera.matrix());
+                gridMesh.renderLines(gridShaders);
+            });
+        }
 
         if (editor.scene != null) {
             int selectedIndex = editor.scene.indexOf(editor.scene.selected);
@@ -152,9 +150,9 @@ public final class GUIViewport extends GUISection {
         ImGuizmo.setRect(viewportPosition.x, viewportPosition.y, viewportSize.x, viewportSize.y);
 
         Entity selected = editor.scene.selected;
-        if (selected == null || gizmoOperation == 0) {
+        if (selected == null || editor.data.gizmoOperation == 0) {
             float[] ignored = new float[16];
-            ImGuizmo.manipulate(ignored, ignored, ignored, gizmoOperation, gizmoMode);
+            ImGuizmo.manipulate(ignored, ignored, ignored, editor.data.gizmoOperation, editor.data.gizmoMode);
             return;
         }
 
@@ -165,7 +163,7 @@ public final class GUIViewport extends GUISection {
 
         float[][] result = new float[2][16];
         ImGuizmo.manipulate(viewMatrix.data, projectionMatrix.data, transformMatrix.data, result[0],
-            gizmoOperation, gizmoMode, result[1], result[1], result[1]
+            editor.data.gizmoOperation, editor.data.gizmoMode, result[1], result[1], result[1]
         );
 
         if (ImGuizmo.isUsing()) {
@@ -189,8 +187,11 @@ public final class GUIViewport extends GUISection {
             updateViewport();
             renderViewportInfo();
 
-            updateGizmoState();
-            objectSelection();
+            if (ImGui.isWindowFocused()) {
+                updateCamera();
+                updateGizmoState();
+                objectSelection();
+            }
 
             renderScene();
             displayFrame();
