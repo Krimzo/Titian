@@ -27,9 +27,9 @@ public class AmbientLight extends Light implements Serializable {
 
         intensity = GUIEdit.editFloat("Intensity", intensity, 0.1f);
 
-        boolean isMain = editor.scene.ambientLight == this;
+        boolean isMain = editor.scene.selected.ambientLight == this;
         if (ImGui.checkbox("Main ambient light", isMain)) {
-            editor.scene.ambientLight = isMain ? null : this;
+            editor.scene.selected.ambientLight = isMain ? null : this;
         }
     }
 }

@@ -48,9 +48,9 @@ public class GameRenderer extends Renderer implements Disposable {
     public final void renderScene(Scene scene, Camera camera) {
         renderBuffer.use(() -> {
             renderShaders.setUniform("VP", camera.matrix());
-            renderShaders.setUniform("ambientColor", (scene.ambientLight != null) ? scene.ambientLight.getColor() : new Float3());
-            renderShaders.setUniform("sunDirection", (scene.directionalLight != null) ? scene.directionalLight.getDirection() : new Float3());
-            renderShaders.setUniform("sunColor", (scene.directionalLight != null) ? scene.directionalLight.getColor() : new Float3());
+            renderShaders.setUniform("ambientColor", (scene.selected.ambientLight != null) ? scene.selected.ambientLight.getColor() : new Float3());
+            renderShaders.setUniform("sunDirection", (scene.selected.directionalLight != null) ? scene.selected.directionalLight.getDirection() : new Float3());
+            renderShaders.setUniform("sunColor", (scene.selected.directionalLight != null) ? scene.selected.directionalLight.getColor() : new Float3());
 
             for (Renderable renderable : scene) {
                 renderRenderable(renderable);

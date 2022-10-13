@@ -16,20 +16,20 @@ public class Titian {
     public static void saveTestScene(Editor editor) throws Exception {
         Scene scene = new Scene();
 
-        scene.ambientLight = new AmbientLight(scene.entityNames, "Ambient Light", editor);
-        scene.directionalLight = new DirectionalLight(scene.entityNames, "Directional Light", editor);
-        scene.directionalLight.setDirection(new Float3(1, -1, -1));
-        scene.add(scene.ambientLight);
-        scene.add(scene.directionalLight);
+        scene.selected.ambientLight = new AmbientLight(scene.names.entity, "Ambient Light", editor);
+        scene.selected.directionalLight = new DirectionalLight(scene.names.entity, "Directional Light", editor);
+        scene.selected.directionalLight.setDirection(new Float3(1, -1, -1));
+        scene.add(scene.selected.ambientLight);
+        scene.add(scene.selected.directionalLight);
 
-        Mesh monkeMesh = new Mesh(scene.meshNames, "Monke Mesh", editor.window.getContext(), "resource/meshes/monke.obj");
-        Material monkeMaterial = new Material(scene.materialNames, "Monke Material");
-        monkeMaterial.colorMap = new Texture(scene.textureNames, "Checkers Texture", editor.window.getContext(), "test/textures/checkers.png");
+        Mesh monkeMesh = new Mesh(scene.names.mesh, "Monke Mesh", editor.window.getContext(), "resource/meshes/monke.obj");
+        Material monkeMaterial = new Material(scene.names.material, "Monke Material");
+        monkeMaterial.colorMap = new Texture(scene.names.texture, "Checkers Texture", editor.window.getContext(), "test/textures/checkers.png");
 
         final int size = 1;
         for (int y = -size; y <= size; y++) {
             for (int x = -size; x <= size; x++) {
-                Entity monke = new Entity(scene.entityNames, "Monke", editor);
+                Entity monke = new Entity(scene.names.entity, "Monke", editor);
 
                 monke.components.transform.position.set(new Float2(x, y).multiply(2.5f), 0);
                 monke.components.physics.angular.y = (new Random().nextFloat() * 2 - 1) * 36;

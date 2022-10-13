@@ -30,7 +30,7 @@ public final class GUIScene extends GUISection {
 
     private void addEntity() {
         if (ImGui.button("Entity", -1, 0)) {
-            Entity entity = new Entity(editor.scene.entityNames, "Entity", editor);
+            Entity entity = new Entity(editor.scene.names.entity, "Entity", editor);
             entity.components.mesh.mesh = editor.data.defaultMesh;
             entity.components.material.material = editor.data.defaultMaterial;
             editor.scene.addUnsaved(entity);
@@ -42,14 +42,14 @@ public final class GUIScene extends GUISection {
     private void addCamera() {
         if (ImGui.beginMenu("Camera")) {
             if (ImGui.button("Perspective", -1, 0)) {
-                Entity camera = new PerspectiveCamera(editor.scene.entityNames, "Perspective camera", editor);
+                Entity camera = new PerspectiveCamera(editor.scene.names.entity, "Perspective camera", editor);
                 editor.scene.add(camera);
 
                 GUIPopup.close();
             }
 
             if (ImGui.button("Orthographic")) {
-                Entity camera = new OrthographicCamera(editor.scene.entityNames, "Orthographic camera", editor);
+                Entity camera = new OrthographicCamera(editor.scene.names.entity, "Orthographic camera", editor);
                 editor.scene.add(camera);
 
                 GUIPopup.close();
@@ -62,21 +62,21 @@ public final class GUIScene extends GUISection {
     private void addLight() {
         if (ImGui.beginMenu("Light")) {
             if (ImGui.button("Ambient", -1, 0)) {
-                Entity light = new AmbientLight(editor.scene.entityNames, "Ambient Light", editor);
+                Entity light = new AmbientLight(editor.scene.names.entity, "Ambient Light", editor);
                 editor.scene.add(light);
 
                 GUIPopup.close();
             }
 
             if (ImGui.button("Directional")) {
-                Entity camera = new DirectionalLight(editor.scene.entityNames, "Directional Light", editor);
+                Entity camera = new DirectionalLight(editor.scene.names.entity, "Directional Light", editor);
                 editor.scene.add(camera);
 
                 GUIPopup.close();
             }
 
             if (ImGui.button("Positional", -1, 0)) {
-                Entity camera = new PositionalLight(editor.scene.entityNames, "Positional Light", editor);
+                Entity camera = new PositionalLight(editor.scene.names.entity, "Positional Light", editor);
                 editor.scene.add(camera);
 
                 GUIPopup.close();
@@ -104,8 +104,8 @@ public final class GUIScene extends GUISection {
             for (AtomicInteger i = new AtomicInteger(); i.get() < editor.scene.size(); i.getAndIncrement()) {
                 Entity entity = editor.scene.get(i.get());
 
-                if (ImGui.selectable(entity.getName(), entity == editor.scene.selected)) {
-                    editor.scene.selected = entity;
+                if (ImGui.selectable(entity.getName(), entity == editor.scene.selected.entity)) {
+                    editor.scene.selected.entity = entity;
                 }
 
                 GUIPopup.itemPopup("EditEntity" + i, () -> {
@@ -123,12 +123,12 @@ public final class GUIScene extends GUISection {
                     if (ImGui.button("Delete", -1, 0)) {
                         Entity removed = editor.scene.remove(i.getAndDecrement());
 
-                        if (removed == editor.scene.selected) {
-                            editor.scene.selected = null;
+                        if (removed == editor.scene.selected.entity) {
+                            editor.scene.selected.entity = null;
                         }
 
-                        if (removed == editor.scene.camera) {
-                            editor.scene.camera = null;
+                        if (removed == editor.scene.selected.camera) {
+                            editor.scene.selected.camera = null;
                         }
 
                         GUIPopup.close();

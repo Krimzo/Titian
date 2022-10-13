@@ -1,15 +1,11 @@
 package scene;
 
-import camera.abs.Camera;
 import editor.Editor;
 import entity.Entity;
 import glparts.Mesh;
 import glparts.Texture;
 import glparts.abs.Disposable;
-import light.AmbientLight;
-import light.DirectionalLight;
 import material.Material;
-import named.NameHolder;
 import physics.Physical;
 import utility.nncollection.NNArrayList;
 import utility.nncollection.NNHashSet;
@@ -18,19 +14,12 @@ import java.io.*;
 import java.util.Set;
 
 public class Scene extends NNArrayList<Entity> implements Physical, Disposable, Serializable {
-    public final NameHolder entityNames = new NameHolder();
-    public final NameHolder materialNames = new NameHolder();
-    public final NameHolder textureNames = new NameHolder();
-    public final NameHolder meshNames = new NameHolder();
-
     public final Set<Material> materials = new NNHashSet<>();
     public final Set<Texture> textures = new NNHashSet<>();
     public final Set<Mesh> meshes = new NNHashSet<>();
 
-    public Camera camera = null;
-    public Entity selected = null;
-    public AmbientLight ambientLight = null;
-    public DirectionalLight directionalLight = null;
+    public final SceneNameHolders names = new SceneNameHolders();
+    public final SceneSelectedData selected = new SceneSelectedData();
 
     public Scene() {}
 
@@ -42,19 +31,13 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
         for (Mesh mesh : meshes) {
             mesh.dispose();
         }
-
-        this.clear();
-        entityNames.clear();
-        materialNames.clear();
-        textureNames.clear();
-        meshNames.clear();
-
         materials.clear();
         textures.clear();
         meshes.clear();
+        this.clear();
 
-        camera = null;
-        selected = null;
+        names.dispose();
+        selected.dispose();
     }
 
     public boolean addUnsaved(Entity entity) {

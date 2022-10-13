@@ -16,7 +16,7 @@ import utility.Timer;
 import window.Window;
 
 public class Editor implements Disposable {
-    public EditorData data;
+    public EditorSharedData data;
 
     public Window window = new Window(new Int2(1600, 900), "Titian", true);
     public Timer timer = new Timer();
@@ -38,7 +38,7 @@ public class Editor implements Disposable {
         window.getContext().setDepthTest(true);
         window.setVSync(true);
 
-        data = new EditorData(this);
+        data = new EditorSharedData(this);
 
         guiRenderer.add(new GUIMainMenu(this));
         guiRenderer.add(new GUIScene(this));

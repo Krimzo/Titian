@@ -155,9 +155,9 @@ public abstract class Camera extends Entity implements Serializable {
     public void renderInfoGUI(Editor editor) {
         super.renderInfoGUI(editor);
 
-        boolean isMain = editor.scene.camera == this;
+        boolean isMain = editor.scene.selected.camera == this;
         if (ImGui.checkbox("Main camera", isMain)) {
-            editor.scene.camera = isMain ? null : this;
+            editor.scene.selected.camera = isMain ? null : this;
         }
 
         GUIEdit.editFloat3("Forward", forward, 0.01f);

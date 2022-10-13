@@ -26,21 +26,21 @@ public final class GUIGameView extends GUISection {
     }
 
     private void renderScene() {
-        if (editor.scene == null || editor.scene.camera == null) {
+        if (editor.scene == null || editor.scene.selected.camera == null) {
             editor.gameRenderer.clear(null);
             return;
         }
 
-        editor.gameRenderer.clear(editor.scene.camera);
+        editor.gameRenderer.clear(editor.scene.selected.camera);
 
         editor.window.getContext().setViewport(windowSize);
         editor.gameRenderer.resize(windowSize);
 
-        if (editor.scene.camera.getClass() == PerspectiveCamera.class) {
-            ((PerspectiveCamera) editor.scene.camera).updateAspect(windowSize);
+        if (editor.scene.selected.camera.getClass() == PerspectiveCamera.class) {
+            ((PerspectiveCamera) editor.scene.selected.camera).updateAspect(windowSize);
         }
 
-        editor.gameRenderer.renderScene(editor.scene, editor.scene.camera);
+        editor.gameRenderer.renderScene(editor.scene, editor.scene.selected.camera);
     }
 
     private void displayFrame() {

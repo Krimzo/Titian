@@ -97,7 +97,7 @@ public final class GUIViewport extends GUISection {
             Float2 mousePosition = new Float2(ImGui.getMousePosX() - viewportPosition.x, ImGui.getMousePosY() - viewportPosition.y);
 
             int objectIndex = (int) editor.editorRenderer.indexBuffer.getPixel(new Int2(mousePosition)).x - 1;
-            editor.scene.selected = (objectIndex >= 0) ? editor.scene.get(objectIndex) : null;
+            editor.scene.selected.entity = (objectIndex >= 0) ? editor.scene.get(objectIndex) : null;
         }
     }
 
@@ -119,7 +119,7 @@ public final class GUIViewport extends GUISection {
         }
 
         if (editor.scene != null) {
-            int selectedIndex = editor.scene.indexOf(editor.scene.selected);
+            int selectedIndex = editor.scene.indexOf(editor.scene.selected.entity);
 
             editor.window.getContext().setWireframe(editor.data.wireframeState);
             editor.editorRenderer.renderScene(editor.scene, editor.camera);
@@ -149,7 +149,7 @@ public final class GUIViewport extends GUISection {
         ImGuizmo.setDrawList();
         ImGuizmo.setRect(viewportPosition.x, viewportPosition.y, viewportSize.x, viewportSize.y);
 
-        Entity selected = editor.scene.selected;
+        Entity selected = editor.scene.selected.entity;
         if (selected == null || editor.data.gizmoOperation == 0) {
             float[] ignored = new float[16];
             ImGuizmo.manipulate(ignored, ignored, ignored, editor.data.gizmoOperation, editor.data.gizmoMode);

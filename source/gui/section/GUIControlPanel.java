@@ -38,7 +38,7 @@ public final class GUIControlPanel extends GUISection {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 1, 1);
 
         if (ImGui.begin("Control Panel", ImGuiWindowFlags.NoScrollbar)) {
-            if (ImGui.beginTable("##ControlTable", 2, ImGuiTableFlags.SizingStretchSame | ImGuiTableFlags.Borders, -1, -1)) {
+            if (ImGui.beginTable("##ControlTable", 3, ImGuiTableFlags.SizingStretchSame | ImGuiTableFlags.Borders, -1, -1)) {
                 ImGui.tableNextRow();
 
                 ImGui.tableNextColumn();
@@ -51,7 +51,7 @@ public final class GUIControlPanel extends GUISection {
                     editor.data.gameRunning = !editor.data.gameRunning;
                 }
 
-                ImGui.sameLine();
+                ImGui.tableNextColumn();
                 if (ImGui.checkbox("Wireframe", editor.data.wireframeState)) {
                     editor.data.wireframeState = !editor.data.wireframeState;
                 }

@@ -56,8 +56,8 @@ public final class GUIMeshEditor extends GUISection {
         entity.components.material.material = material;
 
         scene = new Scene();
-        scene.ambientLight = new AmbientLight(null, null, editor);
-        scene.directionalLight = new DirectionalLight(null, null, editor);
+        scene.selected.ambientLight = new AmbientLight(null, null, editor);
+        scene.selected.directionalLight = new DirectionalLight(null, null, editor);
         scene.add(entity);
     }
 
@@ -130,7 +130,7 @@ public final class GUIMeshEditor extends GUISection {
         position.set(position.normalize().multiply(cameraDistance));
         camera.setForward(position.negate());
 
-        scene.directionalLight.setDirection(camera.getForward());
+        scene.selected.directionalLight.setDirection(camera.getForward());
     }
 
     private void renderSelected(Int2 viewportSize) {
@@ -167,7 +167,7 @@ public final class GUIMeshEditor extends GUISection {
                 if (scene != null) {
                     try {
                         String fileName = Files.getNameWithoutExtension((String) path);
-                        scene.meshes.add(new Mesh(editor.scene.meshNames, fileName, editor.window.getContext(), (String) path));
+                        scene.meshes.add(new Mesh(editor.scene.names.mesh, fileName, editor.window.getContext(), (String) path));
                     }
                     catch (Exception ignored) {
                         System.out.println("Mesh \"" + path + "\" loading error!");

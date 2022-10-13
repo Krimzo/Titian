@@ -79,7 +79,7 @@ public final class GUIProperties extends GUISection {
 
     @Override
     public void renderGUI() {
-        Entity selected = (editor.scene != null) ? editor.scene.selected : null;
+        Entity selected = (editor.scene != null) ? editor.scene.selected.entity : null;
 
         if (ImGui.begin("Properties") && selected != null) {
             if (ImGui.collapsingHeader("Info", ImGuiTreeNodeFlags.DefaultOpen)) {

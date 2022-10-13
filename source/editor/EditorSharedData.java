@@ -8,7 +8,7 @@ import imgui.extension.imguizmo.flag.Mode;
 import material.Material;
 import math.Int2;
 
-public class EditorData implements Disposable {
+public class EditorSharedData implements Disposable {
     public final Shaders frustumShaders;
     public final Shaders unlitShaders;
 
@@ -26,7 +26,7 @@ public class EditorData implements Disposable {
     public int gizmoOperation = 0;
     public int gizmoMode = Mode.WORLD;
 
-    public EditorData(Editor editor) throws Exception {
+    public EditorSharedData(Editor editor) throws Exception {
         frustumShaders = new Shaders(editor.window.getContext(), "shaders/Frustum.glsl");
         unlitShaders = new Shaders(editor.window.getContext(), "shaders/Unlit.glsl");
 
