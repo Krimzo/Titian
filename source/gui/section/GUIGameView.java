@@ -16,7 +16,7 @@ public final class GUIGameView extends GUISection {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 

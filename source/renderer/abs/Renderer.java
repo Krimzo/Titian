@@ -1,11 +1,11 @@
 package renderer.abs;
 
 import camera.abs.Camera;
-import glparts.abs.Disposable;
 import math.Int2;
 import scene.Scene;
+import utility.abs.Allocated;
 
-public abstract class Renderer implements Disposable {
+public abstract class Renderer implements Allocated {
     public Renderer() {}
 
     public abstract void resize(Int2 size);

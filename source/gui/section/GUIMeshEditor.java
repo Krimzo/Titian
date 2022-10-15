@@ -21,6 +21,7 @@ import math.Float3;
 import math.Int2;
 import scene.Scene;
 import utility.Files;
+import utility.Instance;
 import window.input.Input;
 import window.input.Mouse;
 
@@ -62,8 +63,8 @@ public final class GUIMeshEditor extends GUISection {
     }
 
     @Override
-    public void dispose() {
-        material.colorMap.dispose();
+    public void free() {
+        material.colorMap.free();
     }
 
     private void displayMeshes(Scene scene) {
@@ -100,7 +101,7 @@ public final class GUIMeshEditor extends GUISection {
                         }
                     }
 
-                    mesh.dispose();
+                    mesh.free();
 
                     GUIPopup.close();
                 }
@@ -157,14 +158,14 @@ public final class GUIMeshEditor extends GUISection {
     public void renderGUI() {
         if (ImGui.begin("Mesh Editor", ImGuiWindowFlags.NoScrollbar)) {
             ImGui.columns(2);
-            if (ImGui.beginChild("Meshes") && editor.scene != null) {
+            if (ImGui.beginChild("Meshes") && Instance.isValid(editor.scene)) {
                 displayMeshes(editor.scene);
             }
             ImGui.endChild();
 
             GUIDragDrop.getData("MeshFile", path -> {
                 Scene scene = editor.scene;
-                if (scene != null) {
+                if (Instance.isValid(scene)) {
                     try {
                         String fileName = Files.getNameWithoutExtension((String) path);
                         scene.meshes.add(new Mesh(editor.scene.names.mesh, fileName, editor.window.getContext(), (String) path));
@@ -176,7 +177,7 @@ public final class GUIMeshEditor extends GUISection {
             });
 
             ImGui.nextColumn();
-            if (ImGui.beginChild("Mesh View") && entity.components.mesh.mesh != null) {
+            if (ImGui.beginChild("Mesh View") && Instance.isValid(entity.components.mesh.mesh)) {
                 Int2 viewportSize = new Int2((int) ImGui.getContentRegionAvailX(), (int) ImGui.getContentRegionAvailY());
 
                 updateCamera();
@@ -185,7 +186,7 @@ public final class GUIMeshEditor extends GUISection {
             }
             ImGui.endChild();
 
-            if (textInput != null) {
+            if (Instance.isValid(textInput)) {
                 textInput.update();
             }
         }

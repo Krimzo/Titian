@@ -1,5 +1,7 @@
 package utility.nncollection;
 
+import utility.Instance;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -9,7 +11,7 @@ public class NNHashSet<T> extends HashSet<T> implements Serializable {
 
     @Override
     public boolean add(T object) {
-        if (object != null) {
+        if (Instance.isValid(object)) {
             return super.add(object);
         }
         return false;

@@ -13,6 +13,7 @@ import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiWindowFlags;
 import script.Script;
 import utility.Files;
+import utility.Instance;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -30,7 +31,7 @@ public final class GUIExplorer extends GUISection {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 
@@ -153,19 +154,19 @@ public final class GUIExplorer extends GUISection {
             buttonSize = ImGui.calcItemWidth();
 
             File parent = currentPath.getParentFile();
-            if (parent != null) {
+            if (Instance.isValid(parent)) {
                 renderFolder(parent, true);
             }
 
             File[] folders = Files.listFolders(currentPath.toString());
-            if (folders != null) {
+            if (Instance.isValid(folders)) {
                 for (File folder : folders) {
                     renderFolder(folder, false);
                 }
             }
 
             File[] files = Files.listFiles(currentPath.toString());
-            if (files != null) {
+            if (Instance.isValid(files)) {
                 for (File file : files) {
                     renderFile(file);
                 }
@@ -200,7 +201,7 @@ public final class GUIExplorer extends GUISection {
                 }
             });
 
-            if (textInput != null) {
+            if (Instance.isValid(textInput)) {
                 textInput.update();
             }
         }

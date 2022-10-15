@@ -6,6 +6,7 @@ import entity.abs.EntityComponent;
 import gui.helper.GUIPopup;
 import imgui.ImGui;
 import material.Material;
+import utility.Instance;
 
 import java.io.Serializable;
 
@@ -17,19 +18,19 @@ public class MaterialComponent extends EntityComponent implements Serializable {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 
     public void use(EmptyCallback callback) {
-        if (material != null) {
+        if (Instance.isValid(material)) {
             material.use(callback);
         }
     }
 
     @Override
     public void renderGUI() {
-        ImGui.bulletText((material != null) ? material.getName() : "None");
+        ImGui.bulletText(Instance.isValid(material) ? material.getName() : "None");
 
         GUIPopup.itemPopup("EditEntityMaterial", () -> {
             if (ImGui.button("Remove material")) {

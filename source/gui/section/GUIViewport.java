@@ -16,6 +16,7 @@ import imgui.flag.ImGuiMouseButton;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import math.*;
+import utility.Instance;
 import window.input.Key;
 import window.input.Mouse;
 
@@ -29,14 +30,14 @@ public final class GUIViewport extends GUISection {
     public GUIViewport(Editor editor) {
         super(editor);
 
-        gridMesh = Mesh.generateGrid(50);
+        gridMesh = Mesh.generateGridMesh(50);
         gridShaders = new Shaders(editor.window.getContext(), "shaders/Grid.glsl");
     }
 
     @Override
-    public void dispose() {
-        gridMesh.dispose();
-        gridShaders.dispose();
+    public void free() {
+        gridMesh.free();
+        gridShaders.free();
     }
 
     private void updateViewport() {
@@ -118,7 +119,7 @@ public final class GUIViewport extends GUISection {
             });
         }
 
-        if (editor.scene != null) {
+        if (Instance.isValid(editor.scene)) {
             int selectedIndex = editor.scene.indexOf(editor.scene.selected.entity);
 
             editor.window.getContext().setWireframe(editor.data.wireframeState);

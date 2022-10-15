@@ -3,6 +3,7 @@ package gui.helper;
 import callback.ObjectCallback;
 import glparts.Texture;
 import imgui.ImGui;
+import utility.Instance;
 
 public final class GUIDragDrop {
     private GUIDragDrop() {}
@@ -25,7 +26,7 @@ public final class GUIDragDrop {
     public static void getData(String id, ObjectCallback callback) {
         if (ImGui.beginDragDropTarget()) {
             Object object = ImGui.acceptDragDropPayload(id);
-            if (object != null) {
+            if (Instance.isValid(object)) {
                 callback.method(object);
             }
             ImGui.endDragDropTarget();

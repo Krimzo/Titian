@@ -11,6 +11,7 @@ import imgui.ImVec2;
 import imgui.flag.ImGuiTreeNodeFlags;
 import material.Material;
 import script.Script;
+import utility.Instance;
 
 public final class GUIProperties extends GUISection {
     public GUIProperties(Editor editor) {
@@ -18,7 +19,7 @@ public final class GUIProperties extends GUISection {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 
@@ -79,9 +80,9 @@ public final class GUIProperties extends GUISection {
 
     @Override
     public void renderGUI() {
-        Entity selected = (editor.scene != null) ? editor.scene.selected.entity : null;
+        Entity selected = Instance.isValid(editor.scene) ? editor.scene.selected.entity : null;
 
-        if (ImGui.begin("Properties") && selected != null) {
+        if (ImGui.begin("Properties") && Instance.isValid(selected)) {
             if (ImGui.collapsingHeader("Info", ImGuiTreeNodeFlags.DefaultOpen)) {
                 selected.renderInfoGUI(editor);
                 ImGui.separator();

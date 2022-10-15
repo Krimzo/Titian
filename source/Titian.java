@@ -42,11 +42,11 @@ public class Titian {
         }
 
         scene.toFile("test/scenes/test.titian");
-        scene.dispose();
+        scene.free();
     }
 
     public static void loadTestScene(Editor editor) {
-        editor.disposeCurrentScene();
+        editor.freeCurrentScene();
         editor.scene = Scene.fromFile("test/scenes/test.titian", editor);
     }
 
@@ -72,6 +72,6 @@ public class Titian {
             editor.update();
         }
 
-        editor.dispose();
+        editor.free();
     }
 }

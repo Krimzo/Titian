@@ -14,7 +14,7 @@ public final class GUILogView extends GUISection {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 

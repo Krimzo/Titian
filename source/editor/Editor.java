@@ -2,7 +2,6 @@ package editor;
 
 import callback.EditorCallback;
 import camera.PerspectiveCamera;
-import glparts.abs.Disposable;
 import gui.GUIRenderer;
 import gui.section.*;
 import logging.Logger;
@@ -12,10 +11,12 @@ import renderer.EditorRenderer;
 import renderer.GameRenderer;
 import scene.Scene;
 import script.Scripter;
+import utility.Instance;
 import utility.Timer;
+import utility.abs.Allocated;
 import window.Window;
 
-public class Editor implements Disposable {
+public class Editor implements Allocated {
     public EditorSharedData data;
 
     public Window window = new Window(new Int2(1600, 900), "Titian", true);
@@ -77,17 +78,17 @@ public class Editor implements Disposable {
     }
 
     @Override
-    public void dispose() {
-        data.dispose();
-        gameRenderer.dispose();
-        editorRenderer.dispose();
-        guiRenderer.dispose();
-        window.dispose();
+    public void free() {
+        data.free();
+        gameRenderer.free();
+        editorRenderer.free();
+        guiRenderer.free();
+        window.free();
     }
 
-    public void disposeCurrentScene() {
-        if (scene != null) {
-            scene.dispose();
+    public void freeCurrentScene() {
+        if (Instance.isValid(scene)) {
+            scene.free();
             scene = null;
         }
     }

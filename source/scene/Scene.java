@@ -4,16 +4,17 @@ import editor.Editor;
 import entity.Entity;
 import glparts.Mesh;
 import glparts.Texture;
-import glparts.abs.Disposable;
 import material.Material;
 import physics.Physical;
+import utility.Instance;
+import utility.abs.Allocated;
 import utility.nncollection.NNArrayList;
 import utility.nncollection.NNHashSet;
 
 import java.io.*;
 import java.util.Set;
 
-public class Scene extends NNArrayList<Entity> implements Physical, Disposable, Serializable {
+public class Scene extends NNArrayList<Entity> implements Physical, Allocated, Serializable {
     public final Set<Material> materials = new NNHashSet<>();
     public final Set<Texture> textures = new NNHashSet<>();
     public final Set<Mesh> meshes = new NNHashSet<>();
@@ -24,20 +25,20 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
     public Scene() {}
 
     @Override
-    public void dispose() {
+    public void free() {
         for (Texture texture : textures) {
-            texture.dispose();
+            texture.free();
         }
         for (Mesh mesh : meshes) {
-            mesh.dispose();
+            mesh.free();
         }
         materials.clear();
         textures.clear();
         meshes.clear();
         this.clear();
 
-        names.dispose();
-        selected.dispose();
+        names.free();
+        selected.free();
     }
 
     public boolean addUnsaved(Entity entity) {
@@ -50,9 +51,9 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
 
         if (added) {
             meshes.add(entity.components.mesh.mesh);
+            materials.add(entity.components.material.material);
 
-            if (entity.components.material.material != null) {
-                materials.add(entity.components.material.material);
+            if (Instance.isValid(entity.components.material.material)) {
                 textures.add(entity.components.material.material.colorMap);
                 textures.add(entity.components.material.material.normalMap);
                 textures.add(entity.components.material.material.roughnessMap);
@@ -72,14 +73,9 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
     public void toFile(String filepath) {
         try {
             boolean ignored = new File(filepath).getParentFile().mkdirs();
-
-            FileOutputStream fileStream = new FileOutputStream(filepath);
-            ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
-
-            objectStream.writeObject(this);
-
-            objectStream.close();
-            fileStream.close();
+            try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(filepath))) {
+                stream.writeObject(this);
+            }
         }
         catch (Exception ignored) {
             System.out.println("Scene saving error, \"" + filepath + '"');
@@ -88,17 +84,11 @@ public class Scene extends NNArrayList<Entity> implements Physical, Disposable, 
 
     public static Scene fromFile(String filepath, Editor editor) {
         Scene scene = null;
-        try {
-            FileInputStream fileStream = new FileInputStream(filepath);
-            ObjectInputStream objectStream = new ObjectInputStream(fileStream);
-
-            scene = (Scene) objectStream.readObject();
+        try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(filepath))) {
+            scene = (Scene) stream.readObject();
             for (Entity entity : scene) {
                 entity.editor = editor;
             }
-
-            objectStream.close();
-            fileStream.close();
         }
         catch (Exception ignored) {
             System.out.println("Scene loading error, \"" + filepath + '"');

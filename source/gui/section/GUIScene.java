@@ -12,6 +12,7 @@ import imgui.flag.ImGuiWindowFlags;
 import light.AmbientLight;
 import light.DirectionalLight;
 import light.PositionalLight;
+import utility.Instance;
 import window.input.Input;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,7 +25,7 @@ public final class GUIScene extends GUISection {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 
@@ -98,7 +99,7 @@ public final class GUIScene extends GUISection {
 
     @Override
     public void renderGUI() {
-        if (ImGui.begin("Scene", ImGuiWindowFlags.NoScrollbar) && editor.scene != null) {
+        if (ImGui.begin("Scene", ImGuiWindowFlags.NoScrollbar) && Instance.isValid(editor.scene)) {
             GUIPopup.windowPopup("SceneWindow", this::windowPopup);
 
             for (AtomicInteger i = new AtomicInteger(); i.get() < editor.scene.size(); i.getAndIncrement()) {
@@ -136,7 +137,7 @@ public final class GUIScene extends GUISection {
                 });
             }
 
-            if (textInput != null) {
+            if (Instance.isValid(textInput)) {
                 textInput.update();
             }
         }

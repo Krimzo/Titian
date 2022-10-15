@@ -7,6 +7,7 @@ import glparts.Shaders;
 import gui.helper.GUIPopup;
 import imgui.ImGui;
 import renderer.abs.Renderable;
+import utility.Instance;
 
 import java.io.Serializable;
 
@@ -18,13 +19,13 @@ public class MeshComponent extends EntityComponent implements Renderable, Serial
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 
     @Override
     public void gameRender(Shaders shaders) {
-        if (mesh != null) {
+        if (Instance.isValid(mesh)) {
             mesh.renderTriangles(shaders);
         }
     }
@@ -32,7 +33,7 @@ public class MeshComponent extends EntityComponent implements Renderable, Serial
     @Override
     public void editorRender(Shaders shaders) {
         // In case of future changes
-        if (mesh != null) {
+        if (Instance.isValid(mesh)) {
             mesh.renderTriangles(shaders);
         }
     }
@@ -40,14 +41,14 @@ public class MeshComponent extends EntityComponent implements Renderable, Serial
     @Override
     public void indexRender(Shaders shaders) {
         // In case of future changes
-        if (mesh != null) {
+        if (Instance.isValid(mesh)) {
             mesh.renderTriangles(shaders);
         }
     }
 
     @Override
     public void renderGUI() {
-        ImGui.bulletText((mesh != null) ? mesh.getName() : "None");
+        ImGui.bulletText(Instance.isValid(mesh) ? mesh.getName() : "None");
 
         GUIPopup.itemPopup("EditEntityMesh", () -> {
             if (ImGui.button("Remove mesh")) {

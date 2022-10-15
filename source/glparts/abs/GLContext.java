@@ -3,10 +3,11 @@ package glparts.abs;
 import math.Float4;
 import math.Int2;
 import org.lwjgl.opengl.GL;
+import utility.abs.Allocated;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public final class GLContext implements Disposable {
+public final class GLContext implements Allocated {
     private boolean valid;
 
     public GLContext() {
@@ -15,7 +16,7 @@ public final class GLContext implements Disposable {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
         if (valid) {
             GL.setCapabilities(null);
             valid = false;

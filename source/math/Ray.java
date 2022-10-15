@@ -1,5 +1,7 @@
 package math;
 
+import utility.Instance;
+
 import java.io.Serializable;
 
 public class Ray implements Serializable {
@@ -23,10 +25,8 @@ public class Ray implements Serializable {
 		    final float t = plane.point.subtract(origin).dot(plane.normal) / denom;
 
             if (t >= 0.0f) {
-                if (outIntersection != null) {
-                    outIntersection.x = origin.x + direction.x * t;
-                    outIntersection.y = origin.y + direction.y * t;
-                    outIntersection.z = origin.z + direction.z * t;
+                if (Instance.isValid(outIntersection)) {
+                    outIntersection.set(origin.add(direction.multiply(t)));
                 }
                 return true;
             }
@@ -55,10 +55,8 @@ public class Ray implements Serializable {
 
         final float t = edge2.dot(q) * f;
         if (t > 0) {
-            if (outIntersection != null) {
-			    outIntersection.x = origin.x + direction.x * t;
-                outIntersection.y = origin.y + direction.y * t;
-                outIntersection.z = origin.z + direction.z * t;
+            if (Instance.isValid(outIntersection)) {
+                outIntersection.set(origin.add(direction.multiply(t)));
             }
             return true;
         }
@@ -82,10 +80,12 @@ public class Ray implements Serializable {
         final float dis0 = cdDot - thc;
         final float dis1 = cdDot + thc;
 
-        outData.w = ((dis0 < 0) ? dis1 : dis0);
-        outData.x = origin.x + direction.x * outData.w;
-        outData.y = origin.y + direction.y * outData.w;
-        outData.z = origin.z + direction.z * outData.w;
+        if (Instance.isValid(outData)) {
+            outData.w = (dis0 < 0) ? dis1 : dis0;
+            outData.x = origin.x + direction.x * outData.w;
+            outData.y = origin.y + direction.y * outData.w;
+            outData.z = origin.z + direction.z * outData.w;
+        }
 
         return true;
     }

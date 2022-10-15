@@ -18,7 +18,7 @@ public class TransformComponent extends EntityComponent implements Serializable 
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 

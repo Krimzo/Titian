@@ -27,11 +27,11 @@ public class FrameBuffer extends GLObject {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
         if (buffer != 0) {
             glDeleteFramebuffers(buffer);
-            colorMap.dispose();
-            depthMap.dispose();
+            colorMap.free();
+            depthMap.free();
 
             buffer = 0;
             colorMap = null;

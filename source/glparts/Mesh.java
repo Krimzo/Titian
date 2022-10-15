@@ -45,7 +45,7 @@ public class Mesh extends GLObject implements Serializable {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
         if (vao != 0) {
             glDeleteVertexArrays(vao);
             vao = 0;
@@ -149,7 +149,7 @@ public class Mesh extends GLObject implements Serializable {
         });
     }
 
-    public static Mesh generateGrid(int size) {
+    public static Mesh generateGridMesh(int size) {
         final int sideLen = size * 2 + 1;
         Vertex[] vertices = new Vertex[sideLen * 4];
 

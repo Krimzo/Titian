@@ -1,17 +1,18 @@
 package window;
 
-import glparts.abs.Disposable;
 import glparts.abs.GLContext;
 import math.Int2;
 import org.lwjgl.glfw.GLFWImage;
 import utility.Files;
+import utility.Instance;
 import utility.Memory;
+import utility.abs.Allocated;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window implements Disposable {
+public class Window implements Allocated {
     private long window;
     private GLContext context;
 
@@ -42,10 +43,10 @@ public class Window implements Disposable {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
         if (window != 0) {
             glfwMakeContextCurrent(NULL);
-            context.dispose();
+            context.free();
             context = null;
 
             glfwFreeCallbacks(window);
@@ -149,7 +150,7 @@ public class Window implements Disposable {
         Int2 imageSize = Files.getImageSize(filepath);
         byte[] imageData = Files.getImageData(filepath, false);
 
-        if (imageData != null) {
+        if (Instance.isValid(imageData)) {
             GLFWImage image = GLFWImage.create();
             image.set(imageSize.x, imageSize.y, Memory.createByteBuffer(imageData));
 

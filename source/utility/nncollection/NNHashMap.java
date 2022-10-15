@@ -1,5 +1,7 @@
 package utility.nncollection;
 
+import utility.Instance;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +11,7 @@ public class NNHashMap<K, V> extends HashMap<K, V> implements Serializable {
 
     @Override
     public V put(K key, V value) {
-        if (key != null && value != null) {
+        if (Instance.isValid(key) && Instance.isValid(value)) {
             return super.put(key, value);
         }
         return null;
@@ -24,7 +26,7 @@ public class NNHashMap<K, V> extends HashMap<K, V> implements Serializable {
 
     @Override
     public V replace(K key, V value) {
-        if (key != null && value != null) {
+        if (Instance.isValid(key) && Instance.isValid(value)) {
             return super.replace(key, value);
         }
         return null;

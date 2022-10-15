@@ -31,12 +31,12 @@ public class GUIRenderer extends NNArrayList<GUIRenderable> implements GUIRender
     }
 
     @Override
-    public void dispose() {
+    public void free() {
         for (GUIRenderable renderable : this) {
-            renderable.dispose();
+            renderable.free();
         }
 
-        textures.dispose();
+        textures.free();
         implGl3.dispose();
         implGlfw.dispose();
         ImGui.destroyContext();

@@ -13,7 +13,7 @@ public final class GUIProfiling extends GUISection {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 

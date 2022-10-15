@@ -5,6 +5,7 @@ import glparts.Texture;
 import math.Float3;
 import named.NameHolder;
 import named.Named;
+import utility.Instance;
 
 import java.io.Serializable;
 
@@ -22,9 +23,9 @@ public class Material extends Named implements Serializable {
 
     public void use(EmptyCallback callback) {
         int[] textures = new int[3];
-        textures[0] = (colorMap != null) ? colorMap.getBuffer() : 0;
-        textures[1] = (normalMap != null) ? normalMap.getBuffer() : 0;
-        textures[2] = (roughnessMap != null) ? roughnessMap.getBuffer() : 0;
+        textures[0] = Instance.isValid(colorMap) ? colorMap.getBuffer() : 0;
+        textures[1] = Instance.isValid(normalMap) ? normalMap.getBuffer() : 0;
+        textures[2] = Instance.isValid(roughnessMap) ? roughnessMap.getBuffer() : 0;
         Texture.use(textures, callback);
     }
 }

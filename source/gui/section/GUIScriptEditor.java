@@ -10,7 +10,7 @@ public final class GUIScriptEditor extends GUISection {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 

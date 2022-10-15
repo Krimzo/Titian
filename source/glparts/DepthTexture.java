@@ -37,7 +37,7 @@ public class DepthTexture extends GLObject {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
         if (buffer != 0) {
             glDeleteTextures(buffer);
             buffer = 0;

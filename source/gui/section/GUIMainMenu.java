@@ -13,6 +13,7 @@ import imgui.flag.ImGuiStyleVar;
 import math.Float2;
 import math.Int2;
 import scene.Scene;
+import utility.Instance;
 import window.input.Input;
 import window.input.Mouse;
 
@@ -22,7 +23,7 @@ public final class GUIMainMenu extends GUISection {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 
@@ -58,7 +59,7 @@ public final class GUIMainMenu extends GUISection {
                 ImGuiFileDialog.openDialog("LoadSceneDlg", "Load scene", ".titian", ".", "", 1, 0, 0);
             }
 
-            if (ImGui.menuItem("Save scene") && editor.scene != null) {
+            if (ImGui.menuItem("Save scene") && Instance.isValid(editor.scene)) {
                 ImGuiFileDialog.openDialog("SaveSceneDlg", "Save scene", ".titian", ".", "", 1, 0, 0);
             }
 
@@ -72,7 +73,7 @@ public final class GUIMainMenu extends GUISection {
 
     private void editMenu() {
         if (ImGui.beginMenu("Edit")) {
-            if (ImGui.menuItem("Reload scripts") && editor.scene != null) {
+            if (ImGui.menuItem("Reload scripts") && Instance.isValid(editor.scene)) {
                 for (Entity entity : editor.scene) {
                     entity.components.script.reload();
                 }
@@ -153,7 +154,7 @@ public final class GUIMainMenu extends GUISection {
     private void displayDialogs() {
         if (ImGuiFileDialog.display("LoadSceneDlg", 0, 192, 108, 1920, 1080)) {
             if (ImGuiFileDialog.isOk()) {
-                editor.disposeCurrentScene();
+                editor.freeCurrentScene();
                 editor.scene = Scene.fromFile(ImGuiFileDialog.getFilePathName(), editor);
             }
 
@@ -161,7 +162,7 @@ public final class GUIMainMenu extends GUISection {
         }
 
         if (ImGuiFileDialog.display("SaveSceneDlg", 0, 192, 108, 1920, 1080)) {
-            if (ImGuiFileDialog.isOk() && editor.scene != null) {
+            if (ImGuiFileDialog.isOk() && Instance.isValid(editor.scene)) {
                 editor.scene.toFile(ImGuiFileDialog.getFilePathName());
             }
 

@@ -3,12 +3,12 @@ package editor;
 import glparts.Mesh;
 import glparts.Shaders;
 import glparts.Texture;
-import glparts.abs.Disposable;
 import imgui.extension.imguizmo.flag.Mode;
 import material.Material;
 import math.Int2;
+import utility.abs.Allocated;
 
-public class EditorSharedData implements Disposable {
+public class EditorSharedData implements Allocated {
     public final Shaders frustumShaders;
     public final Shaders unlitShaders;
 
@@ -44,13 +44,13 @@ public class EditorSharedData implements Disposable {
     }
 
     @Override
-    public void dispose() {
-        frustumShaders.dispose();
-        unlitShaders.dispose();
+    public void free() {
+        frustumShaders.free();
+        unlitShaders.free();
 
-        defaultMesh.dispose();
-        frustumMesh.dispose();
+        defaultMesh.free();
+        frustumMesh.free();
 
-        defaultTexture.dispose();
+        defaultTexture.free();
     }
 }

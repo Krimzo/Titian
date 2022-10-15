@@ -10,7 +10,7 @@ public final class GUIMaterialEditor extends GUISection {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 

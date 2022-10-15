@@ -6,6 +6,7 @@ import gui.helper.GUIEdit;
 import imgui.ImGui;
 import script.abs.Scriptable;
 import utility.Files;
+import utility.Instance;
 import utility.nncollection.NNArrayList;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class Script implements GUIRenderable, Serializable {
     }
 
     @Override
-    public void dispose() {}
+    public void free() {}
 
     @Serial
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
@@ -49,7 +50,7 @@ public class Script implements GUIRenderable, Serializable {
     public void load(String name, byte[] data, Entity entity) {
         try {
             this.name = name;
-            this.data = (data != null) ? Arrays.copyOf(data, data.length) : null;
+            this.data = Instance.isValid(data) ? Arrays.copyOf(data, data.length) : null;
             this.entity = entity;
 
             loadType(name, data);
@@ -126,7 +127,7 @@ public class Script implements GUIRenderable, Serializable {
 
     @Override
     public void renderGUI() {
-        boolean valid = fields != null && instance != null;
+        boolean valid = Instance.isValid(fields) && Instance.isValid(instance);
 
         if (ImGui.collapsingHeader(valid ? name : (name + "?")) && valid) {
             for (Field field : fields) {

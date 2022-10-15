@@ -18,7 +18,7 @@ public final class GUIControlPanel extends GUISection {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 
@@ -29,7 +29,7 @@ public final class GUIControlPanel extends GUISection {
     }
 
     private void onGameEnd() {
-        editor.disposeCurrentScene();
+        editor.freeCurrentScene();
         editor.scene = Scene.fromFile(SAVED_PLAY_PATH, editor);
     }
 

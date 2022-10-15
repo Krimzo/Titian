@@ -6,6 +6,7 @@ import glparts.abs.GLObject;
 import math.Int2;
 import named.NameHolder;
 import utility.Files;
+import utility.Instance;
 import utility.Memory;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class Texture extends GLObject implements Serializable {
         super(holder, name, context);
 
         this.size = new Int2(size);
-        this.pixels = (pixels != null) ? Arrays.copyOf(pixels, pixels.length) : null;
+        this.pixels = Instance.isValid(pixels) ? Arrays.copyOf(pixels, pixels.length) : null;
 
         buffer = generateTexture(size, pixels);
     }
@@ -40,7 +41,7 @@ public class Texture extends GLObject implements Serializable {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
         if (buffer != 0) {
             glDeleteTextures(buffer);
             buffer = 0;

@@ -9,7 +9,7 @@ public final class Memory {
     private Memory() {}
 
     public static byte[] readByteBuffer(ByteBuffer buffer) {
-        if (buffer != null) {
+        if (Instance.isValid(buffer)) {
             byte[] data = new byte[buffer.capacity()];
 
             buffer.get(data);
@@ -21,7 +21,7 @@ public final class Memory {
     }
 
     public static ByteBuffer createByteBuffer(byte[] data) {
-        if (data != null) {
+        if (Instance.isValid(data)) {
             ByteBuffer buffer = BufferUtils.createByteBuffer(data.length);
 
             buffer.put(data);

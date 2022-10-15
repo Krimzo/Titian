@@ -35,7 +35,7 @@ public class Shaders extends GLObject implements Serializable {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
         if (program != 0) {
             glDeleteProgram(program);
             program = 0;

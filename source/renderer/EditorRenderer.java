@@ -4,7 +4,6 @@ import camera.abs.Camera;
 import glparts.FrameBuffer;
 import glparts.Mesh;
 import glparts.Shaders;
-import glparts.abs.Disposable;
 import glparts.abs.GLContext;
 import math.Float2;
 import math.Float3;
@@ -12,10 +11,11 @@ import math.Float4;
 import math.Int2;
 import renderer.abs.Renderable;
 import scene.Scene;
+import utility.abs.Allocated;
 
 import static org.lwjgl.opengl.GL33.GL_CLAMP_TO_EDGE;
 
-public class EditorRenderer extends GameRenderer implements Disposable {
+public class EditorRenderer extends GameRenderer implements Allocated {
     public final FrameBuffer indexBuffer;
     private final Shaders indexShaders;
     private final Shaders outlineShaders;
@@ -32,13 +32,13 @@ public class EditorRenderer extends GameRenderer implements Disposable {
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void free() {
+        super.free();
 
-        indexBuffer.dispose();
-        indexShaders.dispose();
-        outlineShaders.dispose();
-        screenMesh.dispose();
+        indexBuffer.free();
+        indexShaders.free();
+        outlineShaders.free();
+        screenMesh.free();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package utility.nncollection;
 
+import utility.Instance;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +11,7 @@ public class NNArrayList<T> extends ArrayList<T> implements Serializable {
 
     @Override
     public T set(int index, T object) {
-        if (object != null) {
+        if (Instance.isValid(object)) {
             return super.set(index, object);
         }
         return null;
@@ -17,7 +19,7 @@ public class NNArrayList<T> extends ArrayList<T> implements Serializable {
 
     @Override
     public boolean add(T object) {
-        if (object != null) {
+        if (Instance.isValid(object)) {
             return super.add(object);
         }
         return false;
@@ -25,7 +27,7 @@ public class NNArrayList<T> extends ArrayList<T> implements Serializable {
 
     @Override
     public void add(int index, T object) {
-        if (object != null) {
+        if (Instance.isValid(object)) {
             super.add(index, object);
         }
     }

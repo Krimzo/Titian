@@ -17,7 +17,7 @@ public class PhysicsComponent extends EntityComponent implements Serializable {
     }
 
     @Override
-    public void dispose() {
+    public void free() {
 
     }
 

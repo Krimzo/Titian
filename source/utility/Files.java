@@ -20,7 +20,7 @@ public final class Files {
     public static boolean isEmpty(String filepath) {
         try {
             File[] files = new File(filepath).listFiles();
-            return files == null || files.length == 0;
+            return Instance.isNull(files) || files.length == 0;
         }
         catch (Exception ignored) {
             System.out.println("Folder \"" + filepath + "\" isEmpty() error");
@@ -163,7 +163,7 @@ public final class Files {
     public static File[] listFolders(String filepath) {
         try {
             File[] folders = new File(filepath).listFiles(File::isDirectory);
-            return (folders != null) ? folders : new File[0];
+            return Instance.isValid(folders) ? folders : new File[0];
         }
         catch (Exception ignored) {
             System.out.println("Folder \"" + filepath + "\" listFolders() error");
@@ -174,7 +174,7 @@ public final class Files {
     public static File[] listFiles(String filepath) {
         try {
             File[] files = new File(filepath).listFiles(File::isFile);
-            return (files != null) ? files : new File[0];
+            return Instance.isValid(files) ? files : new File[0];
         }
         catch (Exception ignored) {
             System.out.println("Folder \"" + filepath + "\" listFiles() error");
@@ -193,10 +193,10 @@ public final class Files {
                 case GL_VERTEX_SHADER -> "//vertexshader";
                 case GL_FRAGMENT_SHADER -> "//fragmentshader";
                 case GL_GEOMETRY_SHADER -> "//geometryshader";
-                default -> null;
+                default -> "";
             };
 
-            for (String line; (line = reader.readLine()) != null;) {
+            for (String line; Instance.isValid(line = reader.readLine());) {
                 String formattedLine = line.toLowerCase().replaceAll("\\s", "");
                 if (shouldSave) {
                     if (switch (formattedLine) {
@@ -235,7 +235,7 @@ public final class Files {
             NNArrayList<Float2> uvBuffer = new NNArrayList<>();
             NNArrayList<Float3> normBuffer = new NNArrayList<>();
 
-            for (String fileLine; (fileLine = reader.readLine()) != null; ) {
+            for (String fileLine; Instance.isValid(fileLine = reader.readLine()); ) {
                 String[] lineParts = fileLine.split(" ");
 
                 switch (lineParts[0]) {
@@ -298,7 +298,7 @@ public final class Files {
         int[] ignored = new int[1];
         ByteBuffer buffer = STBImage.stbi_load(filepath, ignored, ignored, ignored, 4);
 
-        if (buffer != null) {
+        if (Instance.isValid(buffer)) {
             byte[] data = Memory.readByteBuffer(buffer);
             STBImage.stbi_image_free(buffer);
             return data;

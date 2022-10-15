@@ -1,7 +1,7 @@
 package gui.abs;
 
-import glparts.abs.Disposable;
+import utility.abs.Allocated;
 
-public interface GUIRenderable extends Disposable {
+public interface GUIRenderable extends Allocated {
     void renderGUI();
 }
