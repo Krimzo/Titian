@@ -6,6 +6,7 @@ import imgui.flag.ImGuiInputTextFlags;
 import imgui.type.ImString;
 import math.*;
 import script.abs.Scriptable;
+import utility.Instance;
 
 import java.awt.*;
 import java.lang.reflect.Field;
@@ -163,7 +164,7 @@ public final class GUIEdit {
 
             case "math.Int2" -> {
                 Int2 object = (Int2) field.get(instance);
-                if (object == null) {
+                if (Instance.isNull(object)) {
                     ImGui.text("Field \"" + field.getName() + "\" is null");
                     return;
                 }
@@ -175,7 +176,7 @@ public final class GUIEdit {
             }
             case "math.Int3" -> {
                 Int3 object = (Int3) field.get(instance);
-                if (object == null) {
+                if (Instance.isNull(object)) {
                     ImGui.text("Field \"" + field.getName() + "\" is null");
                     return;
                 }
@@ -187,7 +188,7 @@ public final class GUIEdit {
             }
             case "math.Int4" -> {
                 Int4 object = (Int4) field.get(instance);
-                if (object == null) {
+                if (Instance.isNull(object)) {
                     ImGui.text("Field \"" + field.getName() + "\" is null");
                     return;
                 }
@@ -199,7 +200,7 @@ public final class GUIEdit {
             }
             case "math.Float2" -> {
                 Float2 object = (Float2) field.get(instance);
-                if (object == null) {
+                if (Instance.isNull(object)) {
                     ImGui.text("Field \"" + field.getName() + "\" is null");
                     return;
                 }
@@ -211,7 +212,7 @@ public final class GUIEdit {
             }
             case "math.Float3" -> {
                 Float3 object = (Float3) field.get(instance);
-                if (object == null) {
+                if (Instance.isNull(object)) {
                     ImGui.text("Field \"" + field.getName() + "\" is null");
                     return;
                 }
@@ -223,7 +224,7 @@ public final class GUIEdit {
             }
             case "math.Float4" -> {
                 Float4 object = (Float4) field.get(instance);
-                if (object == null) {
+                if (Instance.isNull(object)) {
                     ImGui.text("Field \"" + field.getName() + "\" is null");
                     return;
                 }
@@ -235,7 +236,7 @@ public final class GUIEdit {
             }
             case "java.awt.Color" -> {
                 Color object = (Color) field.get(instance);
-                if (object == null) {
+                if (Instance.isNull(object)) {
                     ImGui.text("Field \"" + field.getName() + "\" is null");
                     return;
                 }
@@ -247,7 +248,7 @@ public final class GUIEdit {
             }
             case "java.lang.String" -> {
                 String object = (String) field.get(instance);
-                if (object == null) {
+                if (Instance.isNull(object)) {
                     ImGui.text("Field \"" + field.getName() + "\" is null");
                     return;
                 }

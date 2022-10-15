@@ -125,7 +125,7 @@ public final class GUIMeshEditor extends GUISection {
         scene.selected.directionalLight.setDirection(camera.getForward());
     }
 
-    private void renderSelected(Int2 viewportSize) {
+    private void renderSelectedMesh(Int2 viewportSize) {
         editor.editorRenderer.clear(camera);
 
         editor.window.getContext().setViewport(viewportSize);
@@ -155,11 +155,10 @@ public final class GUIMeshEditor extends GUISection {
             ImGui.endChild();
 
             GUIDragDrop.getData("MeshFile", path -> {
-                Scene scene = editor.scene;
-                if (Instance.isValid(scene)) {
+                if (Instance.isValid(editor.scene)) {
                     try {
                         String fileName = Files.getNameWithoutExtension((String) path);
-                        scene.meshes.add(new Mesh(editor.scene.names.mesh, fileName, editor.window.getContext(), (String) path));
+                        editor.scene.meshes.add(new Mesh(editor.scene.names.mesh, fileName, editor.window.getContext(), (String) path));
                     }
                     catch (Exception ignored) {
                         System.out.println("Mesh \"" + path + "\" loading error!");
@@ -172,7 +171,7 @@ public final class GUIMeshEditor extends GUISection {
                 Int2 viewportSize = new Int2((int) ImGui.getContentRegionAvailX(), (int) ImGui.getContentRegionAvailY());
 
                 updateCamera();
-                renderSelected(viewportSize);
+                renderSelectedMesh(viewportSize);
                 displayFrame(viewportSize);
             }
             ImGui.endChild();

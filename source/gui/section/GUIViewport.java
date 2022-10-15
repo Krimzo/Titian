@@ -17,6 +17,7 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import math.*;
 import utility.Instance;
+import window.input.Input;
 import window.input.Key;
 import window.input.Mouse;
 
@@ -26,6 +27,13 @@ public final class GUIViewport extends GUISection {
 
     private Mesh gridMesh = null;
     private Shaders gridShaders = null;
+
+    private final float[][] snap = {
+        { 0.1f, 0.1f, 0.1f },
+        { 30, 30, 30 },
+        { 1, 1, 1 },
+        { 0, 0, 0 },
+    };
 
     public GUIViewport(Editor editor) {
         super(editor);
@@ -80,7 +88,7 @@ public final class GUIViewport extends GUISection {
     }
 
     private void objectSelection() {
-        if (editor.scene == null || ImGuizmo.isOver()) {
+        if (Instance.isNull(editor.scene) || ImGuizmo.isOver()) {
             return;
         }
 
@@ -136,7 +144,7 @@ public final class GUIViewport extends GUISection {
     }
 
     private void renderGizmos() {
-        if (editor.scene == null) {
+        if (Instance.isNull(editor.scene)) {
             return;
         }
 
@@ -145,7 +153,7 @@ public final class GUIViewport extends GUISection {
         ImGuizmo.setRect(viewportPosition.x, viewportPosition.y, viewportSize.x, viewportSize.y);
 
         Entity selected = editor.scene.selected.entity;
-        if (selected == null || editor.data.gizmoOperation == 0) {
+        if (Instance.isNull(selected) || editor.data.gizmoOperation == 0) {
             float[] ignored = new float[16];
             ImGuizmo.manipulate(ignored, ignored, ignored, editor.data.gizmoOperation, editor.data.gizmoMode);
             return;
@@ -156,9 +164,18 @@ public final class GUIViewport extends GUISection {
         Mat4 projectionMatrix = editor.camera.projectionMatrix().transpose();
         Mat4 transformMatrix = transform.matrix().transpose();
 
-        float[][] result = new float[2][16];
-        ImGuizmo.manipulate(viewMatrix.data, projectionMatrix.data, transformMatrix.data, result[0],
-            editor.data.gizmoOperation, editor.data.gizmoMode, result[1], result[1], result[1]
+        float[] snap = this.snap[3];
+        if (Input.isShiftDown()) {
+            switch (editor.data.gizmoOperation) {
+                case Operation.SCALE -> snap = this.snap[0];
+                case Operation.ROTATE -> snap = this.snap[1];
+                case Operation.TRANSLATE -> snap = this.snap[2];
+            }
+        }
+
+        float[] result = new float[16];
+        ImGuizmo.manipulate(viewMatrix.data, projectionMatrix.data, transformMatrix.data, result,
+            editor.data.gizmoOperation, editor.data.gizmoMode, snap, this.snap[3], this.snap[3]
         );
 
         if (ImGuizmo.isUsing()) {
@@ -168,7 +185,7 @@ public final class GUIViewport extends GUISection {
             transform.scale.set(new Float3(decomposed[0]));
             transform.position.set(new Float3(decomposed[2]));
 
-            ImGuizmo.decomposeMatrixToComponents(result[0], decomposed[2], decomposed[1], decomposed[0]);
+            ImGuizmo.decomposeMatrixToComponents(result, decomposed[2], decomposed[1], decomposed[0]);
             transform.rotation.set(transform.rotation.add(new Float3(decomposed[1])));
         }
     }

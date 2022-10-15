@@ -1,6 +1,7 @@
 package material;
 
 import callback.EmptyCallback;
+import glparts.Shaders;
 import glparts.Texture;
 import math.Float3;
 import named.NameHolder;
@@ -27,5 +28,12 @@ public class Material extends Named implements Serializable {
         textures[1] = Instance.isValid(normalMap) ? normalMap.getBuffer() : 0;
         textures[2] = Instance.isValid(roughnessMap) ? roughnessMap.getBuffer() : 0;
         Texture.use(textures, callback);
+    }
+
+    public void updateUniforms(Shaders shaders) {
+        final boolean useColorMap = Instance.isValid(colorMap);
+        shaders.setUniform("color", color);
+        shaders.setUniform("useColorMap", useColorMap ? 1 : 0);
+        shaders.setUniform("colorMap", 0);
     }
 }

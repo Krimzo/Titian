@@ -43,6 +43,7 @@ public class Entity extends Named implements Physical, Renderable, Serializable 
     public void gameRender(Shaders shaders) {
         shaders.setUniform("W", components.transform.matrix());
         components.material.use(() -> {
+            components.material.material.updateUniforms(shaders);
             components.mesh.gameRender(shaders);
         });
     }
@@ -51,6 +52,7 @@ public class Entity extends Named implements Physical, Renderable, Serializable 
     public void editorRender(Shaders shaders) {
         shaders.setUniform("W", components.transform.matrix());
         components.material.use(() -> {
+            components.material.material.updateUniforms(shaders);
             components.mesh.editorRender(shaders);
         });
     }

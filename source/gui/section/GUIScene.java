@@ -28,6 +28,8 @@ public final class GUIScene extends GUISection {
         if (ImGui.button("Entity", -1, 0)) {
             Entity entity = new Entity(editor.scene.names.entity, "Entity", editor);
             editor.scene.add(entity);
+
+            // Mesh/material bind after add() call so defaults don't get added to the scene list
             entity.components.mesh.mesh = editor.data.defaultMesh;
             entity.components.material.material = editor.data.defaultMaterial;
 

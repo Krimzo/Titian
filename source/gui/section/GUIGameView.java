@@ -7,6 +7,7 @@ import imgui.ImGui;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import math.Int2;
+import utility.Instance;
 
 public final class GUIGameView extends GUISection {
     private Int2 windowSize = new Int2();
@@ -21,7 +22,7 @@ public final class GUIGameView extends GUISection {
     }
 
     private void renderScene() {
-        if (editor.scene == null || editor.scene.selected.camera == null) {
+        if (Instance.isNull(editor.scene) || Instance.isNull(editor.scene.selected.camera)) {
             editor.gameRenderer.clear(null);
             return;
         }
