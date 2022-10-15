@@ -14,11 +14,6 @@ public final class GUIMaterialEditor extends GUISection {
     }
 
     @Override
-    public void free() {
-
-    }
-
-    @Override
     public void renderGUI() {
         if (ImGui.begin("Material Editor")) {
             ImGui.columns(2);

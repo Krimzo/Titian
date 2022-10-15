@@ -4,18 +4,17 @@ import camera.abs.Camera;
 import glparts.FrameBuffer;
 import glparts.Mesh;
 import glparts.Shaders;
-import glparts.abs.GLContext;
 import math.Float2;
 import math.Float3;
 import math.Float4;
 import math.Int2;
 import renderer.abs.Renderable;
 import scene.Scene;
-import utility.abs.Allocated;
+import window.GLContext;
 
 import static org.lwjgl.opengl.GL33.GL_CLAMP_TO_EDGE;
 
-public class EditorRenderer extends GameRenderer implements Allocated {
+public class EditorRenderer extends GameRenderer {
     public final FrameBuffer indexBuffer;
     private final Shaders indexShaders;
     private final Shaders outlineShaders;
@@ -29,16 +28,6 @@ public class EditorRenderer extends GameRenderer implements Allocated {
         indexShaders = new Shaders(context, "shaders/Index.glsl");
         outlineShaders = new Shaders(context, "shaders/Outline.glsl");
         screenMesh = Mesh.generateScreenMesh();
-    }
-
-    @Override
-    public void free() {
-        super.free();
-
-        indexBuffer.free();
-        indexShaders.free();
-        outlineShaders.free();
-        screenMesh.free();
     }
 
     @Override

@@ -1,10 +1,9 @@
 package gui;
 
 import glparts.Texture;
-import glparts.abs.GLContext;
-import utility.abs.Allocated;
+import window.GLContext;
 
-public class GUITextureData implements Allocated {
+public class GUITextureData {
     public final Texture folderIcon;
     public final Texture emptyFolderIcon;
     public final Texture fileIcon;
@@ -23,17 +22,5 @@ public class GUITextureData implements Allocated {
         scriptFileIcon = new Texture(null, null, context, "resource/textures/explorer/script.png", false);
         codeFileIcon = new Texture(null, null, context, "resource/textures/explorer/code.png", false);
         sceneFileIcon = new Texture(null, null, context, "resource/textures/explorer/scene.png", false);
-    }
-
-    @Override
-    public void free() {
-        folderIcon.free();
-        emptyFolderIcon.free();
-        fileIcon.free();
-        imageFileIcon.free();
-        meshFileIcon.free();
-        scriptFileIcon.free();
-        codeFileIcon.free();
-        sceneFileIcon.free();
     }
 }

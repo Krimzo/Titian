@@ -24,11 +24,6 @@ public final class GUIScene extends GUISection {
         super(editor);
     }
 
-    @Override
-    public void free() {
-
-    }
-
     private void addEntity() {
         if (ImGui.button("Entity", -1, 0)) {
             Entity entity = new Entity(editor.scene.names.entity, "Entity", editor);

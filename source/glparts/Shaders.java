@@ -1,11 +1,11 @@
 package glparts;
 
 import callback.EmptyCallback;
-import glparts.abs.GLContext;
 import glparts.abs.GLObject;
 import math.*;
 import utility.Files;
 import utility.nncollection.NNHashMap;
+import window.GLContext;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,10 +16,11 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL33.*;
 
 public class Shaders extends GLObject implements Serializable {
-    private transient final Map<String, Integer> uniforms = new NNHashMap<>();
     private final String vSource;
     private final String fSource;
+
     private transient int program;
+    private transient final Map<String, Integer> uniforms = new NNHashMap<>();
 
     public Shaders(GLContext context, String vSource, String fSource) {
         super(null, null, context);
@@ -35,11 +36,14 @@ public class Shaders extends GLObject implements Serializable {
     }
 
     @Override
-    public void free() {
-        if (program != 0) {
-            glDeleteProgram(program);
-            program = 0;
-        }
+    public void deallocate() {
+        glDeleteProgram(program);
+        program = 0;
+    }
+
+    @Override
+    public boolean isAllocated() {
+        return program != 0;
     }
 
     @Serial

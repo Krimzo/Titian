@@ -22,11 +22,6 @@ public final class GUIMainMenu extends GUISection {
         super(editor);
     }
 
-    @Override
-    public void free() {
-
-    }
-
     private void windowControl() {
         ImVec4 rect = new ImVec4(ImGui.getWindowPosX(), ImGui.getWindowPosY(), 0, 0);
         rect.z = rect.x + ImGui.getWindowWidth();
@@ -154,7 +149,6 @@ public final class GUIMainMenu extends GUISection {
     private void displayDialogs() {
         if (ImGuiFileDialog.display("LoadSceneDlg", 0, 192, 108, 1920, 1080)) {
             if (ImGuiFileDialog.isOk()) {
-                editor.freeCurrentScene();
                 editor.scene = Scene.fromFile(ImGuiFileDialog.getFilePathName(), editor);
             }
 

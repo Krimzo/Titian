@@ -5,14 +5,10 @@ import utility.Instance;
 import java.io.Serializable;
 
 public abstract class Named implements Serializable {
-    private String name = null;
     private final NameHolder holder;
+    private String name = null;
 
     public Named(NameHolder holder, String name) {
-        if (Instance.isValid(holder) && Instance.isNull(name)) {
-            throw new Error("Name must be provided to a Named object if NameHolder was provided!");
-        }
-
         this.holder = holder;
         setName(name);
     }
@@ -32,12 +28,14 @@ public abstract class Named implements Serializable {
         String possibleName = name;
 
         if (Instance.isValid(holder)) {
-            holder.names.remove(this.name);
+            if (Instance.isNull(name)) {
+                throw new Error("Name can't be null if Named object references a NameHolder");
+            }
 
+            holder.names.remove(this.name);
             for (int i = 1; holder.names.contains(possibleName); i++) {
                 possibleName = name + i;
             }
-
             holder.names.add(possibleName);
         }
 

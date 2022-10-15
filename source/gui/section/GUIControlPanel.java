@@ -17,11 +17,6 @@ public final class GUIControlPanel extends GUISection {
         super(editor);
     }
 
-    @Override
-    public void free() {
-
-    }
-
     private void onGameStart() {
         editor.scene.toFile(SAVED_PLAY_PATH);
         editor.scripter.callStarts(editor.scene);
@@ -29,7 +24,6 @@ public final class GUIControlPanel extends GUISection {
     }
 
     private void onGameEnd() {
-        editor.freeCurrentScene();
         editor.scene = Scene.fromFile(SAVED_PLAY_PATH, editor);
     }
 

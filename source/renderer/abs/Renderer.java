@@ -3,9 +3,8 @@ package renderer.abs;
 import camera.abs.Camera;
 import math.Int2;
 import scene.Scene;
-import utility.abs.Allocated;
 
-public abstract class Renderer implements Allocated {
+public abstract class Renderer {
     public Renderer() {}
 
     public abstract void resize(Int2 size);

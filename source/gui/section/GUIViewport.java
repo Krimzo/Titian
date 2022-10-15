@@ -34,12 +34,6 @@ public final class GUIViewport extends GUISection {
         gridShaders = new Shaders(editor.window.getContext(), "shaders/Grid.glsl");
     }
 
-    @Override
-    public void free() {
-        gridMesh.free();
-        gridShaders.free();
-    }
-
     private void updateViewport() {
         final int tabSize = (int) ImGui.getWindowContentRegionMinY();
         viewportPosition = new Int2((int) ImGui.getWindowPosX(), (int) ImGui.getWindowPosY() + tabSize);

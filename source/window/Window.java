@@ -1,20 +1,18 @@
 package window;
 
-import glparts.abs.GLContext;
 import math.Int2;
 import org.lwjgl.glfw.GLFWImage;
 import utility.Files;
 import utility.Instance;
 import utility.Memory;
-import utility.abs.Allocated;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window implements Allocated {
+public class Window {
+    private final GLContext context;
     private long window;
-    private GLContext context;
 
     public Window(Int2 size, String title, boolean resizable) {
         if (!glfwInit()) {
@@ -42,19 +40,13 @@ public class Window implements Allocated {
         setHidden(false);
     }
 
-    @Override
-    public void free() {
-        if (window != 0) {
-            glfwMakeContextCurrent(NULL);
-            context.free();
-            context = null;
-
-            glfwFreeCallbacks(window);
-            glfwDestroyWindow(window);
-
-            glfwTerminate();
-            window = 0;
-        }
+    public void destroy() {
+        context.destroy();
+        glfwMakeContextCurrent(NULL);
+        glfwFreeCallbacks(window);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        window = 0;
     }
 
     public long getWindow() {

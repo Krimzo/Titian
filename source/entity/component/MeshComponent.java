@@ -19,11 +19,6 @@ public class MeshComponent extends EntityComponent implements Renderable, Serial
     }
 
     @Override
-    public void free() {
-
-    }
-
-    @Override
     public void gameRender(Shaders shaders) {
         if (Instance.isValid(mesh)) {
             mesh.renderTriangles(shaders);

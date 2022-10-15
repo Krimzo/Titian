@@ -1,16 +1,16 @@
 package glparts;
 
 import callback.EmptyCallback;
-import glparts.abs.GLContext;
 import glparts.abs.GLObject;
 import math.Float4;
 import math.Int2;
+import window.GLContext;
 
 import static org.lwjgl.opengl.GL33.*;
 
 public class FrameBuffer extends GLObject {
-    private Texture colorMap;
-    private DepthTexture depthMap;
+    private final Texture colorMap;
+    private final DepthTexture depthMap;
     private int buffer;
 
     public FrameBuffer(GLContext context, Int2 size) {
@@ -27,16 +27,14 @@ public class FrameBuffer extends GLObject {
     }
 
     @Override
-    public void free() {
-        if (buffer != 0) {
-            glDeleteFramebuffers(buffer);
-            colorMap.free();
-            depthMap.free();
+    public void deallocate() {
+        glDeleteFramebuffers(buffer);
+        buffer = 0;
+    }
 
-            buffer = 0;
-            colorMap = null;
-            depthMap = null;
-        }
+    @Override
+    public boolean isAllocated() {
+        return buffer != 0;
     }
 
     public void clear() {

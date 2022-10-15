@@ -2,6 +2,7 @@ package editor;
 
 import callback.EditorCallback;
 import camera.PerspectiveCamera;
+import glparts.abs.GLObject;
 import gui.GUIRenderer;
 import gui.section.*;
 import logging.Logger;
@@ -11,12 +12,10 @@ import renderer.EditorRenderer;
 import renderer.GameRenderer;
 import scene.Scene;
 import script.Scripter;
-import utility.Instance;
 import utility.Timer;
-import utility.abs.Allocated;
 import window.Window;
 
-public class Editor implements Allocated {
+public class Editor {
     public EditorSharedData data;
 
     public Window window = new Window(new Int2(1600, 900), "Titian", true);
@@ -55,6 +54,11 @@ public class Editor implements Allocated {
         guiRenderer.add(new GUIProperties(this));
     }
 
+    public void destroy() {
+        guiRenderer.destroy();
+        window.destroy();
+    }
+
     public void setup(EditorCallback setupCallback) {
         setupCallback.method(this);
         window.maximize();
@@ -72,24 +76,10 @@ public class Editor implements Allocated {
         window.getContext().clear(false);
         window.getContext().setViewport(window.getSize());
 
-        guiRenderer.renderGUI();
+        guiRenderer.render();
 
         window.swapBuffers();
-    }
 
-    @Override
-    public void free() {
-        data.free();
-        gameRenderer.free();
-        editorRenderer.free();
-        guiRenderer.free();
-        window.free();
-    }
-
-    public void freeCurrentScene() {
-        if (Instance.isValid(scene)) {
-            scene.free();
-            scene = null;
-        }
+        GLObject.cleanup();
     }
 }

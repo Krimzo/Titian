@@ -1,16 +1,16 @@
 package glparts;
 
 import callback.EmptyCallback;
-import glparts.abs.GLContext;
 import glparts.abs.GLObject;
 import math.Int2;
+import window.GLContext;
 
 import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL33.*;
 
 public class DepthTexture extends GLObject {
-    private Int2 size;
+    private final Int2 size;
     private transient int buffer;
 
     public DepthTexture(GLContext context, Int2 size) {
@@ -37,11 +37,14 @@ public class DepthTexture extends GLObject {
     }
 
     @Override
-    public void free() {
-        if (buffer != 0) {
-            glDeleteTextures(buffer);
-            buffer = 0;
-        }
+    public void deallocate() {
+        glDeleteTextures(buffer);
+        buffer = 0;
+    }
+
+    @Override
+    public boolean isAllocated() {
+        return buffer != 0;
     }
 
     public void use(EmptyCallback callback) {
@@ -75,7 +78,7 @@ public class DepthTexture extends GLObject {
             glBindTexture(GL_TEXTURE_2D, buffer);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, size.x, size.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
             glBindTexture(GL_TEXTURE_2D, 0);
-            this.size = new Int2(size);
+            this.size.set(size);
         }
     }
 }

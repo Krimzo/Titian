@@ -3,7 +3,6 @@ package renderer;
 import camera.abs.Camera;
 import glparts.FrameBuffer;
 import glparts.Shaders;
-import glparts.abs.GLContext;
 import math.Float3;
 import math.Float4;
 import math.Int2;
@@ -11,21 +10,15 @@ import renderer.abs.Renderable;
 import renderer.abs.Renderer;
 import scene.Scene;
 import utility.Instance;
-import utility.abs.Allocated;
+import window.GLContext;
 
-public class GameRenderer extends Renderer implements Allocated {
+public class GameRenderer extends Renderer {
     public final FrameBuffer renderBuffer;
     protected final Shaders renderShaders;
 
     public GameRenderer(GLContext context, Int2 size) {
         renderBuffer = new FrameBuffer(context, size);
         renderShaders = new Shaders(context, "shaders/Render.glsl");
-    }
-
-    @Override
-    public void free() {
-        renderShaders.free();
-        renderBuffer.free();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package glparts;
 
-import glparts.abs.GLContext;
 import glparts.abs.GLObject;
 import math.Float3;
 import math.Vertex;
@@ -8,6 +7,7 @@ import named.NameHolder;
 import utility.Files;
 import utility.Memory;
 import utility.Pair;
+import window.GLContext;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -45,15 +45,16 @@ public class Mesh extends GLObject implements Serializable {
     }
 
     @Override
-    public void free() {
-        if (vao != 0) {
-            glDeleteVertexArrays(vao);
-            vao = 0;
-        }
-        if (vbo != 0) {
-            glDeleteBuffers(vbo);
-            vbo = 0;
-        }
+    public void deallocate() {
+        glDeleteVertexArrays(vao);
+        glDeleteBuffers(vbo);
+        vao = 0;
+        vbo = 0;
+    }
+
+    @Override
+    public boolean isAllocated() {
+        return vao != 0 || vbo != 0;
     }
 
     @Serial

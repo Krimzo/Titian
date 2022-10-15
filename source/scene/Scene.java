@@ -7,14 +7,13 @@ import glparts.Texture;
 import material.Material;
 import physics.Physical;
 import utility.Instance;
-import utility.abs.Allocated;
 import utility.nncollection.NNArrayList;
 import utility.nncollection.NNHashSet;
 
 import java.io.*;
 import java.util.Set;
 
-public class Scene extends NNArrayList<Entity> implements Physical, Allocated, Serializable {
+public class Scene extends NNArrayList<Entity> implements Physical, Serializable {
     public final Set<Material> materials = new NNHashSet<>();
     public final Set<Texture> textures = new NNHashSet<>();
     public final Set<Mesh> meshes = new NNHashSet<>();
@@ -23,23 +22,6 @@ public class Scene extends NNArrayList<Entity> implements Physical, Allocated, S
     public final SceneSelectedData selected = new SceneSelectedData();
 
     public Scene() {}
-
-    @Override
-    public void free() {
-        for (Texture texture : textures) {
-            texture.free();
-        }
-        for (Mesh mesh : meshes) {
-            mesh.free();
-        }
-        materials.clear();
-        textures.clear();
-        meshes.clear();
-        this.clear();
-
-        names.free();
-        selected.free();
-    }
 
     @Override
     public boolean add(Entity entity) {

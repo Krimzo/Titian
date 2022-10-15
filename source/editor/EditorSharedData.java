@@ -6,9 +6,8 @@ import glparts.Texture;
 import imgui.extension.imguizmo.flag.Mode;
 import material.Material;
 import math.Int2;
-import utility.abs.Allocated;
 
-public class EditorSharedData implements Allocated {
+public class EditorSharedData {
     public final Shaders frustumShaders;
     public final Shaders unlitShaders;
 
@@ -41,16 +40,5 @@ public class EditorSharedData implements Allocated {
         defaultMaterial.colorMap = defaultTexture;
         defaultMaterial.normalMap = defaultTexture;
         defaultMaterial.roughnessMap = defaultTexture;
-    }
-
-    @Override
-    public void free() {
-        frustumShaders.free();
-        unlitShaders.free();
-
-        defaultMesh.free();
-        frustumMesh.free();
-
-        defaultTexture.free();
     }
 }

@@ -17,11 +17,6 @@ public class TransformComponent extends EntityComponent implements Serializable 
         super(entity);
     }
 
-    @Override
-    public void free() {
-
-    }
-
     public Mat4 scalingMatrix() {
         return Mat4.scaling(scale);
     }

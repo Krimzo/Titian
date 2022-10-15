@@ -17,11 +17,6 @@ public class PhysicsComponent extends EntityComponent implements Serializable {
     }
 
     @Override
-    public void free() {
-
-    }
-
-    @Override
     public void renderGUI() {
         GUIEdit.editFloat3("Acceleration", acceleration, 0.1f);
         GUIEdit.editFloat3("Velocity", velocity, 0.1f);

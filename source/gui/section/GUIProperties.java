@@ -18,11 +18,6 @@ public final class GUIProperties extends GUISection {
         super(editor);
     }
 
-    @Override
-    public void free() {
-
-    }
-
     private void renderTransform(Entity selected) {
         selected.components.transform.renderGUI();
     }

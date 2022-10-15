@@ -14,11 +14,6 @@ public final class GUILogView extends GUISection {
     }
 
     @Override
-    public void free() {
-
-    }
-
-    @Override
     public void renderGUI() {
         Logger logger = editor.logger;
         int unseenCount = logger.getUnseenCount();

@@ -35,9 +35,6 @@ public class Script implements GUIRenderable, Serializable {
         load(filepath, entity);
     }
 
-    @Override
-    public void free() {}
-
     @Serial
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();

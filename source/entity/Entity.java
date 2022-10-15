@@ -64,6 +64,6 @@ public class Entity extends Named implements Physical, Renderable, Serializable 
     }
 
     public void renderInfoGUI(Editor editor) {
-        ImGui.bulletText(getName());
+        ImGui.bulletText(this.getName());
     }
 }

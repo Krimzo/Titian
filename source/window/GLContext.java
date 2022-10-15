@@ -1,26 +1,18 @@
-package glparts.abs;
+package window;
 
 import math.Float4;
 import math.Int2;
 import org.lwjgl.opengl.GL;
-import utility.abs.Allocated;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public final class GLContext implements Allocated {
-    private boolean valid;
-
+public final class GLContext {
     public GLContext() {
         GL.createCapabilities();
-        valid = true;
     }
 
-    @Override
-    public void free() {
-        if (valid) {
-            GL.setCapabilities(null);
-            valid = false;
-        }
+    public void destroy() {
+        GL.setCapabilities(null);
     }
 
     public void setViewport(Int2 size) {
@@ -55,10 +47,10 @@ public final class GLContext implements Allocated {
     public void setCull(boolean enabled, boolean cullBack) {
         if (enabled) {
             glEnable(GL_CULL_FACE);
+            glCullFace(cullBack ? GL_BACK : GL_FRONT);
         }
         else {
             glDisable(GL_CULL_FACE);
         }
-        glCullFace(cullBack ? GL_BACK : GL_FRONT);
     }
 }

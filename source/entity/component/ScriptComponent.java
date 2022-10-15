@@ -17,11 +17,6 @@ public class ScriptComponent extends EntityComponent implements Serializable {
         super(entity);
     }
 
-    @Override
-    public void free() {
-
-    }
-
     public void reload() {
         for (Script script : scripts) {
             script.reload(entity);

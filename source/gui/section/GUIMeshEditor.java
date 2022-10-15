@@ -30,8 +30,6 @@ import java.util.Iterator;
 public final class GUIMeshEditor extends GUISection {
     private GUITextInput textInput = null;
 
-    private final Material material;
-
     private final PerspectiveCamera camera;
     private final Float2 startCameraInfo;
     private final Float2 cameraInfo;
@@ -48,7 +46,7 @@ public final class GUIMeshEditor extends GUISection {
         camera.components.transform.position.z = 1;
         camera.sensitivity = 0.5f;
 
-        material = new Material(null, "Mesh Editor Material");
+        Material material = new Material(null, "Mesh Editor Material");
         material.colorMap = new Texture(null, "Mesh Editor Texture", editor.window.getContext(),
             new Int2(1, 1), new byte[] { (byte) 200, (byte) 200, (byte) 200, (byte) 0xFF }
         );
@@ -60,11 +58,6 @@ public final class GUIMeshEditor extends GUISection {
         scene.selected.ambientLight = new AmbientLight(null, null, editor);
         scene.selected.directionalLight = new DirectionalLight(null, null, editor);
         scene.add(entity);
-    }
-
-    @Override
-    public void free() {
-        material.colorMap.free();
     }
 
     private void displayMeshes(Scene scene) {
@@ -100,8 +93,6 @@ public final class GUIMeshEditor extends GUISection {
                             entity.components.mesh.mesh = null;
                         }
                     }
-
-                    mesh.free();
 
                     GUIPopup.close();
                 }

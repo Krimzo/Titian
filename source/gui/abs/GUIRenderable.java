@@ -1,7 +1,5 @@
 package gui.abs;
 
-import utility.abs.Allocated;
-
-public interface GUIRenderable extends Allocated {
+public interface GUIRenderable {
     void renderGUI();
 }

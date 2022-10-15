@@ -17,11 +17,6 @@ public class MaterialComponent extends EntityComponent implements Serializable {
         super(entity);
     }
 
-    @Override
-    public void free() {
-
-    }
-
     public void use(EmptyCallback callback) {
         if (Instance.isValid(material)) {
             material.use(callback);

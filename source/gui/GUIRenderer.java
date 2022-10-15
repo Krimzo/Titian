@@ -11,7 +11,7 @@ import imgui.glfw.ImGuiImplGlfw;
 import utility.nncollection.NNArrayList;
 import window.Window;
 
-public class GUIRenderer extends NNArrayList<GUIRenderable> implements GUIRenderable {
+public class GUIRenderer extends NNArrayList<GUIRenderable> {
     private final ImGuiImplGlfw implGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 implGl3 = new ImGuiImplGl3();
 
@@ -30,20 +30,13 @@ public class GUIRenderer extends NNArrayList<GUIRenderable> implements GUIRender
         textures = new GUITextureData(window.getContext());
     }
 
-    @Override
-    public void free() {
-        for (GUIRenderable renderable : this) {
-            renderable.free();
-        }
-
-        textures.free();
+    public void destroy() {
         implGl3.dispose();
         implGlfw.dispose();
         ImGui.destroyContext();
     }
 
-    @Override
-    public void renderGUI() {
+    public void render() {
         implGlfw.newFrame();
         ImGui.newFrame();
         ImGuizmo.beginFrame();

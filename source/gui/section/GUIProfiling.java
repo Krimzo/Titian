@@ -13,11 +13,6 @@ public final class GUIProfiling extends GUISection {
     }
 
     @Override
-    public void free() {
-
-    }
-
-    @Override
     public void renderGUI() {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 14, 14);
 

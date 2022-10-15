@@ -1,13 +1,13 @@
 package glparts;
 
 import callback.EmptyCallback;
-import glparts.abs.GLContext;
 import glparts.abs.GLObject;
 import math.Int2;
 import named.NameHolder;
 import utility.Files;
 import utility.Instance;
 import utility.Memory;
+import window.GLContext;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,7 +19,7 @@ import java.util.Arrays;
 import static org.lwjgl.opengl.GL33.*;
 
 public class Texture extends GLObject implements Serializable {
-    private Int2 size;
+    private final Int2 size;
     private final byte[] pixels;
     private transient int buffer;
 
@@ -41,11 +41,14 @@ public class Texture extends GLObject implements Serializable {
     }
 
     @Override
-    public void free() {
-        if (buffer != 0) {
-            glDeleteTextures(buffer);
-            buffer = 0;
-        }
+    public void deallocate() {
+        glDeleteTextures(buffer);
+        buffer = 0;
+    }
+
+    @Override
+    public boolean isAllocated() {
+        return buffer != 0;
     }
 
     @Serial
@@ -93,7 +96,7 @@ public class Texture extends GLObject implements Serializable {
             glBindTexture(GL_TEXTURE_2D, buffer);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
             glBindTexture(GL_TEXTURE_2D, 0);
-            this.size = new Int2(size);
+            this.size.set(size);
         }
     }
 

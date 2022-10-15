@@ -30,11 +30,6 @@ public final class GUIExplorer extends GUISection {
         super(editor);
     }
 
-    @Override
-    public void free() {
-
-    }
-
     private Texture getFolderIcon(File folder) {
         if (Files.isEmpty(folder.toString())) {
             return editor.guiRenderer.textures.emptyFolderIcon;
