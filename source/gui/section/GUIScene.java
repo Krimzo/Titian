@@ -32,9 +32,9 @@ public final class GUIScene extends GUISection {
     private void addEntity() {
         if (ImGui.button("Entity", -1, 0)) {
             Entity entity = new Entity(editor.scene.names.entity, "Entity", editor);
+            editor.scene.add(entity);
             entity.components.mesh.mesh = editor.data.defaultMesh;
             entity.components.material.material = editor.data.defaultMaterial;
-            editor.scene.addUnsaved(entity);
 
             GUIPopup.close();
         }

@@ -41,15 +41,9 @@ public class Scene extends NNArrayList<Entity> implements Physical, Allocated, S
         selected.free();
     }
 
-    public boolean addUnsaved(Entity entity) {
-        return super.add(entity);
-    }
-
     @Override
     public boolean add(Entity entity) {
-        boolean added = addUnsaved(entity);
-
-        if (added) {
+        if (super.add(entity)) {
             meshes.add(entity.components.mesh.mesh);
             materials.add(entity.components.material.material);
 
@@ -58,9 +52,10 @@ public class Scene extends NNArrayList<Entity> implements Physical, Allocated, S
                 textures.add(entity.components.material.material.normalMap);
                 textures.add(entity.components.material.material.roughnessMap);
             }
-        }
 
-        return added;
+            return true;
+        }
+        return false;
     }
 
     @Override
