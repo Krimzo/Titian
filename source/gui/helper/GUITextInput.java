@@ -14,14 +14,19 @@ public class GUITextInput {
     private final ImString text;
 
     public GUITextInput(String text, StringCallback onEdit) {
+        this(text, 30, onEdit);
+    }
+
+    public GUITextInput(String text, int bufferSize, StringCallback onEdit) {
         id = idCounter++;
-        this.text = new ImString(text, 30);
+        this.text = new ImString(text, bufferSize);
         this.onEdit = onEdit;
     }
 
     public void update() {
-        if (ImGui.begin("Text input##" + id, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize)) {
-            if (ImGui.inputText("Input", text, ImGuiInputTextFlags.EnterReturnsTrue)) {
+        if (ImGui.begin("Text input##" + id, ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar)) {
+            ImGui.setNextItemWidth(-1);
+            if (ImGui.inputText("##Input", text, ImGuiInputTextFlags.EnterReturnsTrue)) {
                 String text = this.text.toString();
                 if (text.length() > 0) {
                     onEdit.method(text);

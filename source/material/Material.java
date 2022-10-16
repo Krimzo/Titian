@@ -11,12 +11,14 @@ import utility.Instance;
 import java.io.Serializable;
 
 public class Material extends Named implements Serializable {
+    public float colorBlend = 0;
     public final Float3 color = new Float3(1);
-    public float roughness = 0.5f;
-
     public Texture colorMap = null;
-    public Texture normalMap = null;
+
+    public float roughness = 0.5f;
     public Texture roughnessMap = null;
+
+    public Texture normalMap = null;
 
     public Material(NameHolder holder, String name) {
         super(holder, name);
@@ -31,9 +33,8 @@ public class Material extends Named implements Serializable {
     }
 
     public void updateUniforms(Shaders shaders) {
-        final boolean useColorMap = Instance.isValid(colorMap);
         shaders.setUniform("color", color);
-        shaders.setUniform("useColorMap", useColorMap ? 1 : 0);
         shaders.setUniform("colorMap", 0);
+        shaders.setUniform("colorBlend", colorBlend);
     }
 }

@@ -12,26 +12,27 @@ import renderer.EditorRenderer;
 import renderer.GameRenderer;
 import scene.Scene;
 import script.Scripter;
+import utility.Instance;
 import utility.Timer;
 import window.Window;
 
 public class Editor {
-    public EditorSharedData data;
+    public final EditorSharedData data;
 
-    public Window window = new Window(new Int2(1600, 900), "Titian", true);
-    public Timer timer = new Timer();
+    public final Window window = new Window(new Int2(1600, 900), "Titian", true);
+    public final Timer timer = new Timer();
 
     public final PerspectiveCamera camera = new PerspectiveCamera(null, "Editor Camera", this);
-    public EditorRenderer editorRenderer = new EditorRenderer(window.getContext(), window.getSize());
-    public GameRenderer gameRenderer = new GameRenderer(window.getContext(), window.getSize());
-    public GUIRenderer guiRenderer = new GUIRenderer(window);
+    public final EditorRenderer editorRenderer = new EditorRenderer(window.getContext(), window.getSize());
+    public final GameRenderer gameRenderer = new GameRenderer(window.getContext(), window.getSize());
+    public final GUIRenderer guiRenderer = new GUIRenderer(window);
 
-    public Physics physics = new Physics();
+    public final Physics physics = new Physics();
 
-    public Logger logger = new Logger();
-    public Scripter scripter = new Scripter();
+    public final Logger logger = new Logger();
+    public final Scripter scripter = new Scripter();
 
-    public Scene scene = null;
+    private Scene scene = new Scene();
 
     public Editor() throws Exception {
         window.setIcon("resource/textures/titian.png");
@@ -81,5 +82,21 @@ public class Editor {
         window.swapBuffers();
 
         GLObject.cleanup();
+    }
+
+    public Scene getScene() {
+        return scene;
+    }
+
+    public boolean setScene(Scene scene) {
+        if (Instance.isValid(scene)) {
+            this.scene = scene;
+            return true;
+        }
+        return false;
+    }
+
+    public void eraseScene() {
+        scene = new Scene();
     }
 }

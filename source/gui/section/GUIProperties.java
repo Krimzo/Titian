@@ -26,7 +26,7 @@ public final class GUIProperties extends GUISection {
         selected.components.mesh.renderGUI();
 
         if (ImGui.beginListBox("##Loaded meshes", -1, 0)) {
-            for (Mesh mesh : editor.scene.meshes) {
+            for (Mesh mesh : editor.getScene().meshes) {
                 if (ImGui.selectable(mesh.getName(), selected.components.mesh.mesh == mesh)) {
                     selected.components.mesh.mesh = mesh;
                 }
@@ -40,7 +40,7 @@ public final class GUIProperties extends GUISection {
         selected.components.material.renderGUI();
 
         if (ImGui.beginListBox("##Loaded materials", -1, 0)) {
-            for (Material material : editor.scene.materials) {
+            for (Material material : editor.getScene().materials) {
                 if (ImGui.selectable(material.getName(), selected.components.material.material == material)) {
                     selected.components.material.material = material;
                 }
@@ -75,7 +75,7 @@ public final class GUIProperties extends GUISection {
 
     @Override
     public void renderGUI() {
-        Entity selected = Instance.isValid(editor.scene) ? editor.scene.selected.entity : null;
+        final Entity selected = editor.getScene().selected.entity;
 
         if (ImGui.begin("Properties") && Instance.isValid(selected)) {
             if (ImGui.collapsingHeader("Info", ImGuiTreeNodeFlags.DefaultOpen)) {

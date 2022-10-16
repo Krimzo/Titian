@@ -7,6 +7,7 @@ import entity.component.MeshComponent;
 import glparts.Mesh;
 import glparts.Texture;
 import gui.abs.GUISection;
+import gui.helper.GUIDisplay;
 import gui.helper.GUIDragDrop;
 import gui.helper.GUIPopup;
 import gui.helper.GUITextInput;
@@ -84,6 +85,8 @@ public final class GUIMeshEditor extends GUISection {
                 if (ImGui.button("Delete", -1, 0)) {
                     it.remove();
 
+                    mesh.eraseName();
+
                     if (mesh == mc.mesh) {
                         mc.mesh = null;
                     }
@@ -137,42 +140,34 @@ public final class GUIMeshEditor extends GUISection {
         editor.window.getContext().setWireframe(false);
     }
 
-    private void displayFrame(Int2 viewportSize) {
-        ImGui.image(editor.editorRenderer.renderBuffer.getColorMap().getBuffer(),
-            viewportSize.x, viewportSize.y,
-            0, 1,
-            1, 0
-        );
-    }
-
     @Override
     public void renderGUI() {
         if (ImGui.begin("Mesh Editor", ImGuiWindowFlags.NoScrollbar)) {
-            ImGui.columns(2);
-            if (ImGui.beginChild("Meshes") && Instance.isValid(editor.scene)) {
-                displayMeshes(editor.scene);
+            final float availWidth = ImGui.getContentRegionAvailX();
+
+            ImGui.columns(2, "MeshEditorColumns", false);
+            ImGui.setColumnWidth(ImGui.getColumnIndex(), availWidth * 0.25f);
+            if (ImGui.beginChild("Meshes")) {
+                displayMeshes(editor.getScene());
             }
             ImGui.endChild();
 
             GUIDragDrop.getData("MeshFile", path -> {
-                if (Instance.isValid(editor.scene)) {
-                    try {
-                        String fileName = Files.getNameWithoutExtension((String) path);
-                        editor.scene.meshes.add(new Mesh(editor.scene.names.mesh, fileName, editor.window.getContext(), (String) path));
-                    }
-                    catch (Exception ignored) {
-                        System.out.println("Mesh \"" + path + "\" loading error!");
-                    }
+                try {
+                    String fileName = Files.getNameWithoutExtension((String) path);
+                    editor.getScene().meshes.add(new Mesh(editor.getScene().names.mesh, fileName, editor.window.getContext(), (String) path));
+                }
+                catch (Exception ignored) {
+                    System.out.println("Mesh \"" + path + "\" loading error!");
                 }
             });
 
             ImGui.nextColumn();
             if (ImGui.beginChild("Mesh View") && Instance.isValid(entity.components.mesh.mesh)) {
                 Int2 viewportSize = new Int2((int) ImGui.getContentRegionAvailX(), (int) ImGui.getContentRegionAvailY());
-
                 updateCamera();
                 renderSelectedMesh(viewportSize);
-                displayFrame(viewportSize);
+                GUIDisplay.texture(editor.editorRenderer.renderBuffer.getColorMap(), viewportSize);
             }
             ImGui.endChild();
 

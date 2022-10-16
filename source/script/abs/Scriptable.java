@@ -52,6 +52,6 @@ public abstract class Scriptable {
     }
 
     public Camera getSceneCamera() {
-        return editor.scene.selected.camera;
+        return editor.getScene().selected.camera;
     }
 }

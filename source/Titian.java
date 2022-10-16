@@ -25,6 +25,7 @@ public class Titian {
         Mesh monkeMesh = new Mesh(scene.names.mesh, "Monke Mesh", editor.window.getContext(), "resource/meshes/monke.obj");
         Material monkeMaterial = new Material(scene.names.material, "Monke Material");
         monkeMaterial.colorMap = new Texture(scene.names.texture, "Checkers Texture", editor.window.getContext(), "test/textures/checkers.png");
+        monkeMaterial.colorBlend = 1;
 
         final int size = 1;
         for (int y = -size; y <= size; y++) {
@@ -45,7 +46,7 @@ public class Titian {
     }
 
     public static void loadTestScene(Editor editor) {
-        editor.scene = Scene.fromFile("test/scenes/test.titian", editor);
+        editor.setScene(Scene.fromFile("test/scenes/test.titian", editor));
     }
 
     public static void main(String[] args) throws Exception {

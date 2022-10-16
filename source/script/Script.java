@@ -1,8 +1,8 @@
 package script;
 
 import entity.Entity;
-import gui.abs.GUIRenderable;
 import gui.helper.GUIEdit;
+import gui.helper.GUIPopup;
 import imgui.ImGui;
 import script.abs.Scriptable;
 import utility.Files;
@@ -16,8 +16,9 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class Script implements GUIRenderable, Serializable {
+public class Script implements Serializable {
     private String filepath = null;
     private String name = null;
     private byte[] data = null;
@@ -122,11 +123,19 @@ public class Script implements GUIRenderable, Serializable {
         }
     }
 
-    @Override
-    public void renderGUI() {
-        boolean valid = Instance.isValid(fields) && Instance.isValid(instance);
+    public void renderGUI(NNArrayList<Script> scripts, AtomicInteger i) {
+        final boolean valid = Instance.isValid(fields) && Instance.isValid(instance);
 
-        if (ImGui.collapsingHeader(valid ? name : (name + "?")) && valid) {
+        final boolean headerState = ImGui.collapsingHeader(valid ? name : (name + "?"));
+
+        GUIPopup.itemPopup("EditScripts" + i, () -> {
+            if (ImGui.button("Delete")) {
+                scripts.remove(i.getAndDecrement());
+                GUIPopup.close();
+            }
+        });
+
+        if (headerState && valid) {
             for (Field field : fields) {
                 try {
                     GUIEdit.editField(field, instance);

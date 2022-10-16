@@ -29,8 +29,8 @@ in vec3 NORMAL;
 
 out vec4 outPixel;
 
+uniform float colorBlend;
 uniform vec3 color;
-uniform int useColorMap;
 uniform sampler2D colorMap;
 
 uniform vec3 ambientColor;
@@ -38,7 +38,7 @@ uniform vec3 sunDirection;
 uniform vec3 sunColor;
 
 void main() {
-    vec3 baseColor = (useColorMap != 0) ? texture(colorMap, TEXTURE).xyz : color;
+    vec3 baseColor = mix(color, texture(colorMap, TEXTURE).xyz, colorBlend);
 
     vec3 normal = normalize(NORMAL);
     float diffuseFactor = max(dot(normal, -sunDirection), 0);

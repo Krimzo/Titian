@@ -6,6 +6,8 @@ import entity.component.TransformComponent;
 import glparts.Mesh;
 import glparts.Shaders;
 import gui.abs.GUISection;
+import gui.helper.GUIDisplay;
+import gui.helper.GUIDragDrop;
 import gui.helper.GUIEdit;
 import gui.helper.GUIStyle;
 import imgui.ImGui;
@@ -16,6 +18,7 @@ import imgui.flag.ImGuiMouseButton;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
 import math.*;
+import scene.Scene;
 import utility.Instance;
 import window.input.Input;
 import window.input.Key;
@@ -54,10 +57,10 @@ public final class GUIViewport extends GUISection {
         if (ImGui.begin("Viewport Info")) {
             ImGui.bulletText("Camera");
 
-            GUIEdit.editFloat3("##Position", editor.camera.components.transform.position, 0.1f);
+            GUIEdit.editFloat3("Position", editor.camera.components.transform.position, 0.1f);
 
             float[] data = editor.camera.getForward().array();
-            if (ImGui.dragFloat3("##Forward", data, 0.05f)) {
+            if (ImGui.dragFloat3("Forward", data, 0.05f)) {
                 editor.camera.setForward(new Float3(data));
             }
         }
@@ -88,7 +91,7 @@ public final class GUIViewport extends GUISection {
     }
 
     private void objectSelection() {
-        if (Instance.isNull(editor.scene) || ImGuizmo.isOver()) {
+        if (ImGuizmo.isOver()) {
             return;
         }
 
@@ -100,7 +103,7 @@ public final class GUIViewport extends GUISection {
             Float2 mousePosition = new Float2(ImGui.getMousePosX() - viewportPosition.x, ImGui.getMousePosY() - viewportPosition.y);
 
             int objectIndex = (int) editor.editorRenderer.indexBuffer.getPixel(new Int2(mousePosition)).x - 1;
-            editor.scene.selected.entity = (objectIndex >= 0) ? editor.scene.get(objectIndex) : null;
+            editor.getScene().selected.entity = (objectIndex >= 0) ? editor.getScene().get(objectIndex) : null;
         }
     }
 
@@ -121,38 +124,24 @@ public final class GUIViewport extends GUISection {
             });
         }
 
-        if (Instance.isValid(editor.scene)) {
-            int selectedIndex = editor.scene.indexOf(editor.scene.selected.entity);
+        int selectedIndex = editor.getScene().indexOf(editor.getScene().selected.entity);
 
-            editor.window.getContext().setWireframe(editor.data.wireframeState);
-            editor.editorRenderer.renderScene(editor.scene, editor.camera);
-            editor.editorRenderer.renderIndices(editor.scene, editor.camera);
-            editor.window.getContext().setWireframe(false);
+        editor.window.getContext().setWireframe(editor.data.wireframeState);
+        editor.editorRenderer.renderScene(editor.getScene(), editor.camera);
+        editor.editorRenderer.renderIndices(editor.getScene(), editor.camera);
+        editor.window.getContext().setWireframe(false);
 
-            if (selectedIndex >= 0) {
-                editor.editorRenderer.renderOutline(new Float2(viewportSize), GUIStyle.special, selectedIndex);
-            }
+        if (selectedIndex >= 0) {
+            editor.editorRenderer.renderOutline(new Float2(viewportSize), GUIStyle.special, selectedIndex);
         }
-    }
-
-    private void displayFrame() {
-        ImGui.image(editor.editorRenderer.renderBuffer.getColorMap().getBuffer(),
-            viewportSize.x, viewportSize.y,
-            0, 1,
-            1, 0
-        );
     }
 
     private void renderGizmos() {
-        if (Instance.isNull(editor.scene)) {
-            return;
-        }
-
         ImGuizmo.setEnabled(true);
         ImGuizmo.setDrawList();
         ImGuizmo.setRect(viewportPosition.x, viewportPosition.y, viewportSize.x, viewportSize.y);
 
-        Entity selected = editor.scene.selected.entity;
+        Entity selected = editor.getScene().selected.entity;
         if (Instance.isNull(selected) || editor.data.gizmoOperation == 0) {
             float[] ignored = new float[16];
             ImGuizmo.manipulate(ignored, ignored, ignored, editor.data.gizmoOperation, editor.data.gizmoMode);
@@ -206,7 +195,13 @@ public final class GUIViewport extends GUISection {
             }
 
             renderScene();
-            displayFrame();
+            GUIDisplay.texture(editor.editorRenderer.renderBuffer.getColorMap(), viewportSize);
+            GUIDragDrop.getData("SceneFile", path -> {
+                if (editor.setScene(Scene.fromFile((String) path, editor))) {
+                    System.out.println("Scene \"" + path + "\" loaded!");
+                }
+            });
+
             renderGizmos();
         }
         ImGui.end();

@@ -31,9 +31,9 @@ public class DirectionalLight extends Light implements Serializable {
         GUIEdit.editFloat3("Direction", direction, 0.1f);
         direction.set(direction.normalize());
 
-        boolean isMain = editor.scene.selected.directionalLight == this;
+        boolean isMain = editor.getScene().selected.directionalLight == this;
         if (ImGui.checkbox("Main directional light", isMain)) {
-            editor.scene.selected.directionalLight = isMain ? null : this;
+            editor.getScene().selected.directionalLight = isMain ? null : this;
         }
     }
 }

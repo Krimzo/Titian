@@ -47,29 +47,31 @@ public class Scene extends NNArrayList<Entity> implements Physical, Serializable
         }
     }
 
-    public void toFile(String filepath) {
+    public boolean toFile(String filepath) {
         try {
             boolean ignored = new File(filepath).getParentFile().mkdirs();
             try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(filepath))) {
                 stream.writeObject(this);
             }
+            return true;
         }
         catch (Exception ignored) {
             System.out.println("Scene saving error, \"" + filepath + '"');
+            return false;
         }
     }
 
     public static Scene fromFile(String filepath, Editor editor) {
-        Scene scene = null;
         try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(filepath))) {
-            scene = (Scene) stream.readObject();
+            Scene scene = (Scene) stream.readObject();
             for (Entity entity : scene) {
                 entity.editor = editor;
             }
+            return scene;
         }
         catch (Exception ignored) {
             System.out.println("Scene loading error, \"" + filepath + '"');
+            return null;
         }
-        return scene;
     }
 }

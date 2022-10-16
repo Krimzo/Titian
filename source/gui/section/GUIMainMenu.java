@@ -3,21 +3,24 @@ package gui.section;
 import editor.Editor;
 import entity.Entity;
 import gui.abs.GUISection;
+import gui.helper.GUIDisplay;
 import gui.helper.GUIEdit;
 import gui.helper.GUIStyle;
+import gui.helper.GUITextInput;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.ImVec4;
-import imgui.extension.imguifiledialog.ImGuiFileDialog;
 import imgui.flag.ImGuiStyleVar;
 import math.Float2;
 import math.Int2;
-import scene.Scene;
+import utility.Files;
 import utility.Instance;
 import window.input.Input;
 import window.input.Mouse;
 
 public final class GUIMainMenu extends GUISection {
+    private GUITextInput textInput = null;
+
     public GUIMainMenu(Editor editor) {
         super(editor);
     }
@@ -50,12 +53,18 @@ public final class GUIMainMenu extends GUISection {
 
     private void fileMenu() {
         if (ImGui.beginMenu("File")) {
-            if (ImGui.menuItem("Load scene")) {
-                ImGuiFileDialog.openDialog("LoadSceneDlg", "Load scene", ".titian", ".", "", 1, 0, 0);
+            if (ImGui.menuItem("New scene")) {
+                editor.eraseScene();
             }
 
-            if (ImGui.menuItem("Save scene") && Instance.isValid(editor.scene)) {
-                ImGuiFileDialog.openDialog("SaveSceneDlg", "Save scene", ".titian", ".", "", 1, 0, 0);
+            if (ImGui.menuItem("Save scene")) {
+                textInput = new GUITextInput(Files.defaultPath() + Files.separator, 100, path -> {
+                    final String fullPath = path + ".titian";
+                    if (editor.getScene().toFile(fullPath)) {
+                        System.out.println("Scene \"" + fullPath + "\" saved!");
+                    }
+                    textInput = null;
+                });
             }
 
             if (ImGui.menuItem("Exit")) {
@@ -68,8 +77,8 @@ public final class GUIMainMenu extends GUISection {
 
     private void editMenu() {
         if (ImGui.beginMenu("Edit")) {
-            if (ImGui.menuItem("Reload scripts") && Instance.isValid(editor.scene)) {
-                for (Entity entity : editor.scene) {
+            if (ImGui.menuItem("Reload scripts")) {
+                for (Entity entity : editor.getScene()) {
                     entity.components.script.reload();
                 }
             }
@@ -107,12 +116,12 @@ public final class GUIMainMenu extends GUISection {
             Float2 size = new Float2(1280, 720);
 
             if (ImGui.beginMenu("Depth Texture")) {
-                ImGui.image(editor.editorRenderer.renderBuffer.getDepthMap().getBuffer(), size.x, size.y, 0, 1, 1, 0);
+                GUIDisplay.texture(editor.editorRenderer.renderBuffer.getDepthMap(), size);
                 ImGui.endMenu();
             }
 
             if (ImGui.beginMenu("Index Texture")) {
-                ImGui.image(editor.editorRenderer.indexBuffer.getColorMap().getBuffer(), size.x, size.y, 0, 1, 1, 0);
+                GUIDisplay.texture(editor.editorRenderer.indexBuffer.getColorMap(), size);
                 ImGui.endMenu();
             }
 
@@ -146,24 +155,6 @@ public final class GUIMainMenu extends GUISection {
         barButtonSizes += ImGui.getItemRectSizeX();
     }
 
-    private void displayDialogs() {
-        if (ImGuiFileDialog.display("LoadSceneDlg", 0, 192, 108, 1920, 1080)) {
-            if (ImGuiFileDialog.isOk()) {
-                editor.scene = Scene.fromFile(ImGuiFileDialog.getFilePathName(), editor);
-            }
-
-            ImGuiFileDialog.close();
-        }
-
-        if (ImGuiFileDialog.display("SaveSceneDlg", 0, 192, 108, 1920, 1080)) {
-            if (ImGuiFileDialog.isOk() && Instance.isValid(editor.scene)) {
-                editor.scene.toFile(ImGuiFileDialog.getFilePathName());
-            }
-
-            ImGuiFileDialog.close();
-        }
-    }
-
     @Override
     public void renderGUI() {
         ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 0, 8);
@@ -180,7 +171,9 @@ public final class GUIMainMenu extends GUISection {
 
             barButtons();
 
-            displayDialogs();
+            if (Instance.isValid(textInput)) {
+                textInput.update();
+            }
         }
         ImGui.endMainMenuBar();
 

@@ -11,11 +11,18 @@ import java.awt.*;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL33.*;
 
 public final class Files {
     private Files() {}
+
+    public static final String separator = System.getProperty("file.separator");
+
+    public static String defaultPath() {
+        return Paths.get("").toFile().getAbsolutePath();
+    }
 
     public static boolean isEmpty(String filepath) {
         try {

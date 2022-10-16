@@ -27,15 +27,8 @@ public class ScriptComponent extends EntityComponent implements Serializable {
     public void renderGUI() {
         for (AtomicInteger i = new AtomicInteger(); i.get() < scripts.size(); i.getAndIncrement()) {
             ImGui.pushID(i.get());
-            scripts.get(i.get()).renderGUI();
+            scripts.get(i.get()).renderGUI(scripts, i);
             ImGui.popID();
-
-            GUIPopup.itemPopup("EditScripts" + i, () -> {
-                if (ImGui.button("Delete")) {
-                    scripts.remove(i.getAndDecrement());
-                    GUIPopup.close();
-                }
-            });
         }
     }
 }

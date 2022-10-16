@@ -16,12 +16,11 @@ import utility.Files;
 import utility.Instance;
 
 import java.io.File;
-import java.nio.file.Paths;
 
 public final class GUIExplorer extends GUISection {
     private GUITextInput textInput = null;
 
-    private File currentPath = new File(Paths.get("").toUri());
+    private File currentPath = new File(Files.defaultPath());
     private float buttonSize = 0;
 
     public int columnCount = 12;

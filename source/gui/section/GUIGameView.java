@@ -3,6 +3,7 @@ package gui.section;
 import camera.PerspectiveCamera;
 import editor.Editor;
 import gui.abs.GUISection;
+import gui.helper.GUIDisplay;
 import imgui.ImGui;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
@@ -22,25 +23,21 @@ public final class GUIGameView extends GUISection {
     }
 
     private void renderScene() {
-        if (Instance.isNull(editor.scene) || Instance.isNull(editor.scene.selected.camera)) {
+        if (Instance.isNull(editor.getScene().selected.camera)) {
             editor.gameRenderer.clear(null);
             return;
         }
 
-        editor.gameRenderer.clear(editor.scene.selected.camera);
+        editor.gameRenderer.clear(editor.getScene().selected.camera);
 
         editor.window.getContext().setViewport(windowSize);
         editor.gameRenderer.resize(windowSize);
 
-        if (editor.scene.selected.camera.getClass() == PerspectiveCamera.class) {
-            ((PerspectiveCamera) editor.scene.selected.camera).updateAspect(windowSize);
+        if (editor.getScene().selected.camera.getClass() == PerspectiveCamera.class) {
+            ((PerspectiveCamera) editor.getScene().selected.camera).updateAspect(windowSize);
         }
 
-        editor.gameRenderer.renderScene(editor.scene, editor.scene.selected.camera);
-    }
-
-    private void displayFrame() {
-        ImGui.image(editor.gameRenderer.renderBuffer.getColorMap().getBuffer(), windowSize.x, windowSize.y, 0, 1, 1, 0);
+        editor.gameRenderer.renderScene(editor.getScene(), editor.getScene().selected.camera);
     }
 
     @Override
@@ -49,9 +46,8 @@ public final class GUIGameView extends GUISection {
 
         if (ImGui.begin("Game View", ImGuiWindowFlags.NoScrollbar)) {
             updateWindowInfo();
-
             renderScene();
-            displayFrame();
+            GUIDisplay.texture(editor.gameRenderer.renderBuffer.getColorMap(), windowSize);
         }
         ImGui.end();
 

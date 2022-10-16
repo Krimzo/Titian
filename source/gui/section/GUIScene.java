@@ -26,8 +26,8 @@ public final class GUIScene extends GUISection {
 
     private void addEntity() {
         if (ImGui.button("Entity", -1, 0)) {
-            Entity entity = new Entity(editor.scene.names.entity, "Entity", editor);
-            editor.scene.add(entity);
+            Entity entity = new Entity(editor.getScene().names.entity, "Entity", editor);
+            editor.getScene().add(entity);
 
             // Mesh/material bind after add() call so defaults don't get added to the scene list
             entity.components.mesh.mesh = editor.data.defaultMesh;
@@ -40,15 +40,15 @@ public final class GUIScene extends GUISection {
     private void addCamera() {
         if (ImGui.beginMenu("Camera")) {
             if (ImGui.button("Perspective", -1, 0)) {
-                Entity camera = new PerspectiveCamera(editor.scene.names.entity, "Perspective camera", editor);
-                editor.scene.add(camera);
+                Entity camera = new PerspectiveCamera(editor.getScene().names.entity, "Perspective camera", editor);
+                editor.getScene().add(camera);
 
                 GUIPopup.close();
             }
 
             if (ImGui.button("Orthographic")) {
-                Entity camera = new OrthographicCamera(editor.scene.names.entity, "Orthographic camera", editor);
-                editor.scene.add(camera);
+                Entity camera = new OrthographicCamera(editor.getScene().names.entity, "Orthographic camera", editor);
+                editor.getScene().add(camera);
 
                 GUIPopup.close();
             }
@@ -60,22 +60,22 @@ public final class GUIScene extends GUISection {
     private void addLight() {
         if (ImGui.beginMenu("Light")) {
             if (ImGui.button("Ambient", -1, 0)) {
-                Entity light = new AmbientLight(editor.scene.names.entity, "Ambient Light", editor);
-                editor.scene.add(light);
+                Entity light = new AmbientLight(editor.getScene().names.entity, "Ambient Light", editor);
+                editor.getScene().add(light);
 
                 GUIPopup.close();
             }
 
             if (ImGui.button("Directional")) {
-                Entity camera = new DirectionalLight(editor.scene.names.entity, "Directional Light", editor);
-                editor.scene.add(camera);
+                Entity camera = new DirectionalLight(editor.getScene().names.entity, "Directional Light", editor);
+                editor.getScene().add(camera);
 
                 GUIPopup.close();
             }
 
             if (ImGui.button("Positional", -1, 0)) {
-                Entity camera = new PositionalLight(editor.scene.names.entity, "Positional Light", editor);
-                editor.scene.add(camera);
+                Entity camera = new PositionalLight(editor.getScene().names.entity, "Positional Light", editor);
+                editor.getScene().add(camera);
 
                 GUIPopup.close();
             }
@@ -96,14 +96,14 @@ public final class GUIScene extends GUISection {
 
     @Override
     public void renderGUI() {
-        if (ImGui.begin("Scene", ImGuiWindowFlags.NoScrollbar) && Instance.isValid(editor.scene)) {
+        if (ImGui.begin("Scene", ImGuiWindowFlags.NoScrollbar)) {
             GUIPopup.windowPopup("SceneWindow", this::windowPopup);
 
-            for (AtomicInteger i = new AtomicInteger(); i.get() < editor.scene.size(); i.getAndIncrement()) {
-                Entity entity = editor.scene.get(i.get());
+            for (AtomicInteger i = new AtomicInteger(); i.get() < editor.getScene().size(); i.getAndIncrement()) {
+                Entity entity = editor.getScene().get(i.get());
 
-                if (ImGui.selectable(entity.getName(), entity == editor.scene.selected.entity)) {
-                    editor.scene.selected.entity = entity;
+                if (ImGui.selectable(entity.getName(), entity == editor.getScene().selected.entity)) {
+                    editor.getScene().selected.entity = entity;
                 }
 
                 GUIPopup.itemPopup("EditEntity" + i, () -> {
@@ -119,14 +119,16 @@ public final class GUIScene extends GUISection {
                     }
 
                     if (ImGui.button("Delete", -1, 0)) {
-                        Entity removed = editor.scene.remove(i.getAndDecrement());
+                        Entity removed = editor.getScene().remove(i.getAndDecrement());
 
-                        if (removed == editor.scene.selected.entity) {
-                            editor.scene.selected.entity = null;
+                        removed.eraseName();
+
+                        if (removed == editor.getScene().selected.entity) {
+                            editor.getScene().selected.entity = null;
                         }
 
-                        if (removed == editor.scene.selected.camera) {
-                            editor.scene.selected.camera = null;
+                        if (removed == editor.getScene().selected.camera) {
+                            editor.getScene().selected.camera = null;
                         }
 
                         GUIPopup.close();
