@@ -1,16 +1,9 @@
-improve save/load scene ui
-
 depth texture display
 camera skyboxes
 collision detection with physx
 multi entity selection
 script public entity field
 game class
-
-material editor
-3d material editor view
-loading texture files
-normal/roughness maps
 
 script editor
 script node view
