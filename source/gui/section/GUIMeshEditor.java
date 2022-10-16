@@ -7,10 +7,7 @@ import entity.component.MeshComponent;
 import glparts.Mesh;
 import glparts.Texture;
 import gui.abs.GUISection;
-import gui.helper.GUIDisplay;
-import gui.helper.GUIDragDrop;
-import gui.helper.GUIPopup;
-import gui.helper.GUITextInput;
+import gui.helper.*;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiWindowFlags;
@@ -170,6 +167,16 @@ public final class GUIMeshEditor extends GUISection {
                 GUIDisplay.texture(editor.editorRenderer.renderBuffer.getColorMap(), viewportSize);
             }
             ImGui.endChild();
+
+            if (ImGui.begin("Mesh")) {
+                Mesh mesh = entity.components.mesh.mesh;
+                if (Instance.isValid(mesh)) {
+                    ImGui.bulletText(mesh.getName());
+                    GUIEdit.editInt("Vertex count", mesh.getVertexCount(), 0);
+                    GUIEdit.editFloat("Max radius", mesh.maxRadius, 0);
+                }
+            }
+            ImGui.end();
 
             if (Instance.isValid(textInput)) {
                 textInput.update();

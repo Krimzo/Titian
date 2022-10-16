@@ -1,6 +1,7 @@
 package gui;
 
 import gui.abs.GUIRenderable;
+import gui.helper.GUIFonts;
 import gui.helper.GUIStyle;
 import imgui.ImGui;
 import imgui.extension.imguizmo.ImGuizmo;
@@ -15,6 +16,7 @@ public class GUIRenderer extends NNArrayList<GUIRenderable> {
     private final ImGuiImplGlfw implGlfw = new ImGuiImplGlfw();
     private final ImGuiImplGl3 implGl3 = new ImGuiImplGl3();
 
+    public final GUIFontData fonts;
     public final GUITextureData textures;
 
     public GUIRenderer(Window window) {
@@ -22,7 +24,8 @@ public class GUIRenderer extends NNArrayList<GUIRenderable> {
         ImGui.getIO().setConfigFlags(ImGuiConfigFlags.DockingEnable);
 
         GUIStyle.reloadStyle();
-        GUIStyle.setFont("resource/fonts/Roboto.ttf", 15);
+        GUIFonts.clearGlobalAtlas();
+        fonts = new GUIFontData();
 
         implGlfw.init(window.getWindow(), true);
         implGl3.init("#version 330");

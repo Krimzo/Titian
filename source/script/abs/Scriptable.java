@@ -3,6 +3,8 @@ package script.abs;
 import camera.abs.Camera;
 import editor.Editor;
 import entity.Entity;
+import light.AmbientLight;
+import light.DirectionalLight;
 import logging.LogInfo;
 import logging.LogType;
 import math.Int2;
@@ -53,5 +55,13 @@ public abstract class Scriptable {
 
     public Camera getSceneCamera() {
         return editor.getScene().selected.camera;
+    }
+
+    public AmbientLight getSceneAmbientLight() {
+        return editor.getScene().selected.ambientLight;
+    }
+
+    public DirectionalLight getSceneDirectionalLight() {
+        return editor.getScene().selected.directionalLight;
     }
 }

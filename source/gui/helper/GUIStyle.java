@@ -1,10 +1,8 @@
 package gui.helper;
 
-import imgui.ImFontAtlas;
 import imgui.ImGui;
 import imgui.ImGuiStyle;
 import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiFreeTypeBuilderFlags;
 import math.Float3;
 
 import java.awt.*;
@@ -135,15 +133,5 @@ public final class GUIStyle {
         style.setColor(ImGuiCol.NavWindowingDimBg, normal.x, normal.y, normal.z, 1);
 
         style.setColor(ImGuiCol.ModalWindowDimBg, normal.x, normal.y, normal.z, 1);
-    }
-
-    public static void setFont(String filepath, int size) {
-        ImFontAtlas fontAtlas = ImGui.getIO().getFonts();
-
-        fontAtlas.clear();
-        fontAtlas.addFontFromFileTTF(filepath, size, fontAtlas.getGlyphRangesDefault());
-
-        fontAtlas.setFlags(ImGuiFreeTypeBuilderFlags.LightHinting);
-        fontAtlas.build();
     }
 }

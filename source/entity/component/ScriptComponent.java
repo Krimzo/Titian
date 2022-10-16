@@ -2,7 +2,6 @@ package entity.component;
 
 import entity.Entity;
 import entity.abs.EntityComponent;
-import gui.helper.GUIPopup;
 import imgui.ImGui;
 import script.Script;
 import utility.nncollection.NNArrayList;

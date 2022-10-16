@@ -8,6 +8,7 @@ import gui.abs.GUISection;
 import gui.helper.*;
 import imgui.ImGui;
 import imgui.ImVec2;
+import imgui.flag.ImGuiTableFlags;
 import light.AmbientLight;
 import light.DirectionalLight;
 import material.Material;
@@ -53,23 +54,20 @@ public final class GUIMaterialEditor extends GUISection {
     }
 
     private void displayMaterials(Scene scene) {
-        int counter = 0;
         Iterator<Material> it = scene.materials.iterator();
 
         while (it.hasNext()) {
             final Material material = it.next();
+            final String name = material.getName();
 
-            final boolean headerState = ImGui.collapsingHeader(material.getName());
+            if (ImGui.selectable(name, material == selected)) {
+                selected = material;
+            }
 
-            GUIPopup.itemPopup("EditMaterials" + counter++, () -> {
-                if (ImGui.button("Display", -1, 0)) {
-                    selected = material;
-                    GUIPopup.close();
-                }
-
+            GUIPopup.itemPopup("EditMaterials" + name, () -> {
                 if (ImGui.button("Rename")) {
-                    textInput = new GUITextInput(material.getName(), name -> {
-                        material.setName(name);
+                    textInput = new GUITextInput(material.getName(), newName -> {
+                        material.setName(newName);
                         textInput = null;
                     });
                 }
@@ -92,55 +90,6 @@ public final class GUIMaterialEditor extends GUISection {
                     GUIPopup.close();
                 }
             });
-
-            if (headerState) {
-                final String id = "##" + material.getName();
-
-                material.colorBlend = GUIEdit.editFloat("Blend" + id, material.colorBlend, 0.01f, 0, 1);
-
-                GUIEdit.editColor3("Color" + id, material.color);
-
-                if (ImGui.selectable(Instance.isValid(material.colorMap) ? material.colorMap.getName() : "None")) {
-                    selected = material.colorMap;
-                }
-                GUIDragDrop.getData("TextureTransfer", texture -> {
-                    material.colorMap = (Texture) texture;
-                });
-                GUIPopup.itemPopup("EditMaterialColorMap" + counter++, () -> {
-                    if (ImGui.button("Remove")) {
-                        material.colorMap = null;
-                        GUIPopup.close();
-                    }
-                });
-
-                material.roughness = GUIEdit.editFloat("Roughness" + id, material.roughness, 0.01f);
-
-                if (ImGui.selectable(Instance.isValid(material.roughnessMap) ? material.roughnessMap.getName() : "None")) {
-                    selected = material.roughnessMap;
-                }
-                GUIDragDrop.getData("TextureTransfer", texture -> {
-                    material.roughnessMap = (Texture) texture;
-                });
-                GUIPopup.itemPopup("EditMaterialRoughnessMap" + counter++, () -> {
-                    if (ImGui.button("Remove")) {
-                        material.roughnessMap = null;
-                        GUIPopup.close();
-                    }
-                });
-
-                if (ImGui.selectable(Instance.isValid(material.normalMap) ? material.normalMap.getName() : "None")) {
-                    selected = material.normalMap;
-                }
-                GUIDragDrop.getData("TextureTransfer", texture -> {
-                    material.normalMap = (Texture) texture;
-                });
-                GUIPopup.itemPopup("EditMaterialNormalMap" + counter++, () -> {
-                    if (ImGui.button("Remove")) {
-                        material.normalMap = null;
-                        GUIPopup.close();
-                    }
-                });
-            }
         }
 
         GUIPopup.windowPopup("NewMaterial", () -> {
@@ -203,6 +152,81 @@ public final class GUIMaterialEditor extends GUISection {
         }
     }
 
+    private void displayMaterialInfo(Material material) {
+        final String name = material.getName();
+
+        ImGui.bulletText(name);
+
+        GUIEdit.editColor3("Color##" + name, material.color);
+
+        material.colorBlend = GUIEdit.editFloat("Color blend##" + name, material.colorBlend, 0.01f, 0, 1);
+
+        material.roughness = GUIEdit.editFloat("Roughness##" + name, material.roughness, 0.01f);
+
+        if (ImGui.beginTable("##MaterialInfoTable", 2, ImGuiTableFlags.SizingStretchSame)) {
+            ImGui.tableNextRow();
+            ImGui.tableNextColumn();
+            if (ImGui.selectable(Instance.isValid(material.colorMap) ? material.colorMap.getName() : "None")) {
+                selected = material.colorMap;
+            }
+            GUIDragDrop.getData("TextureTransfer", texture -> {
+                material.colorMap = (Texture) texture;
+            });
+            GUIPopup.itemPopup("EditMaterialColorMap" + name, () -> {
+                if (ImGui.button("Remove")) {
+                    material.colorMap = null;
+                    GUIPopup.close();
+                }
+            });
+
+            ImGui.tableNextColumn();
+            ImGui.text("Color map");
+
+            ImGui.tableNextRow();
+            ImGui.tableNextColumn();
+            if (ImGui.selectable(Instance.isValid(material.roughnessMap) ? material.roughnessMap.getName() : "None")) {
+                selected = material.roughnessMap;
+            }
+            GUIDragDrop.getData("TextureTransfer", texture -> {
+                material.roughnessMap = (Texture) texture;
+            });
+            GUIPopup.itemPopup("EditMaterialRoughnessMap" + name, () -> {
+                if (ImGui.button("Remove")) {
+                    material.roughnessMap = null;
+                    GUIPopup.close();
+                }
+            });
+
+            ImGui.tableNextColumn();
+            ImGui.text("Roughness map");
+
+            ImGui.tableNextRow();
+            ImGui.tableNextColumn();
+            if (ImGui.selectable(Instance.isValid(material.normalMap) ? material.normalMap.getName() : "None")) {
+                selected = material.normalMap;
+            }
+            GUIDragDrop.getData("TextureTransfer", texture -> {
+                material.normalMap = (Texture) texture;
+            });
+            GUIPopup.itemPopup("EditMaterialNormalMap" + name, () -> {
+                if (ImGui.button("Remove")) {
+                    material.normalMap = null;
+                    GUIPopup.close();
+                }
+            });
+
+            ImGui.tableNextColumn();
+            ImGui.text("Normal map");
+
+            ImGui.endTable();
+        }
+    }
+
+    private void displayTextureInfo(Texture texture) {
+        ImGui.bulletText(texture.getName());
+        GUIEdit.editFloat2("Size", new Float2(texture.getSize()), 0);
+    }
+
     private void updateCamera() {
         Float3 position = camera.components.transform.position;
 
@@ -228,7 +252,7 @@ public final class GUIMaterialEditor extends GUISection {
         scene.selected.directionalLight.setDirection(camera.getForward());
     }
 
-    private void displayMaterial(Int2 viewportSize) {
+    private void renderSelectedMaterial(Int2 viewportSize) {
         editor.editorRenderer.clear(camera);
 
         editor.window.getContext().setViewport(viewportSize);
@@ -271,22 +295,41 @@ public final class GUIMaterialEditor extends GUISection {
                 }
             });
 
+            Material selectedMaterial = null;
+            Texture selectedTexture = null;
+            if (Instance.isValid(selected)) {
+                if (selected.getClass() == Material.class) {
+                    selectedMaterial = (Material) selected;
+                    entity.components.material.material = selectedMaterial;
+                }
+                else if (selected.getClass() == Texture.class) {
+                    selectedTexture = (Texture) selected;
+                }
+            }
+
             ImGui.nextColumn();
             if (ImGui.beginChild("Texture View")) {
                 Int2 viewportSize = new Int2((int) ImGui.getContentRegionAvailX(), (int) ImGui.getContentRegionAvailY());
 
-                if (Instance.isValid(selected)) {
-                    if (selected.getClass() == Material.class) {
-                        entity.components.material.material = (Material) selected;
-                        updateCamera();
-                        displayMaterial(viewportSize);
-                    }
-                    else if (selected.getClass() == Texture.class) {
-                        GUIDisplay.texture((Texture) selected, viewportSize);
-                    }
+                if (Instance.isValid(selectedMaterial)) {
+                    updateCamera();
+                    renderSelectedMaterial(viewportSize);
+                }
+                else if (Instance.isValid(selectedTexture)) {
+                    GUIDisplay.texture(selectedTexture, viewportSize);
                 }
             }
             ImGui.endChild();
+
+            if (ImGui.begin("Material/Texture")) {
+                if (Instance.isValid(selectedMaterial)) {
+                    displayMaterialInfo(selectedMaterial);
+                }
+                else if (Instance.isValid(selectedTexture)) {
+                    displayTextureInfo(selectedTexture);
+                }
+            }
+            ImGui.end();
 
             if (Instance.isValid(textInput)) {
                 textInput.update();

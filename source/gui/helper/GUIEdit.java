@@ -38,60 +38,59 @@ public final class GUIEdit {
         return dataArray[0];
     }
 
+    public static void editFloat2(String name, Float2 data, float precision) {
+        float[] dataArray = data.array();
+        if (ImGui.dragFloat2(name, dataArray, precision)) {
+            data.set(dataArray);
+        }
+    }
+
+    public static void editFloat2(String name, Float2 data, float precision, float min, float max) {
+        float[] dataArray = data.array();
+        if (ImGui.dragFloat2(name, dataArray, precision, min, max)) {
+            data.set(dataArray);
+        }
+    }
+
     public static void editFloat3(String name, Float3 data, float precision) {
         float[] dataArray = data.array();
         if (ImGui.dragFloat3(name, dataArray, precision)) {
-            data.x = dataArray[0];
-            data.y = dataArray[1];
-            data.z = dataArray[2];
+            data.set(dataArray);
         }
     }
 
     public static void editFloat3(String name, Float3 data, float precision, float min, float max) {
         float[] dataArray = data.array();
         if (ImGui.dragFloat3(name, dataArray, precision, min, max)) {
-            data.x = dataArray[0];
-            data.y = dataArray[1];
-            data.z = dataArray[2];
+            data.set(dataArray);
         }
     }
 
     public static void editFloat4(String name, Float4 data, float precision) {
         float[] dataArray = data.array();
         if (ImGui.dragFloat4(name, dataArray, precision)) {
-            data.x = dataArray[0];
-            data.y = dataArray[1];
-            data.z = dataArray[2];
-            data.w = dataArray[3];
+            data.set(dataArray);
         }
     }
 
     public static void editFloat4(String name, Float4 data, float precision, float min, float max) {
         float[] dataArray = data.array();
         if (ImGui.dragFloat4(name, dataArray, precision, min, max)) {
-            data.x = dataArray[0];
-            data.y = dataArray[1];
-            data.z = dataArray[2];
-            data.w = dataArray[3];
+            data.set(dataArray);
         }
     }
 
     public static void editColor3(String name, Float3 data) {
         float[] dataArray = data.array();
         if (ImGui.colorEdit3(name, dataArray)) {
-            data.x = dataArray[0];
-            data.y = dataArray[1];
-            data.z = dataArray[2];
+            data.set(dataArray);
         }
     }
 
     public static void editColor4(String name, Float4 data) {
         float[] dataArray = data.array();
         if (ImGui.colorEdit4(name, dataArray)) {
-            data.x = dataArray[0];
-            data.y = dataArray[1];
-            data.z = dataArray[2];
-            data.w = dataArray[3];
+            data.set(dataArray);
         }
     }
 

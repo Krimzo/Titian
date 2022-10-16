@@ -65,6 +65,10 @@ public class Mesh extends GLObject implements Serializable {
         vbo = result.second;
     }
 
+    public int getVertexCount() {
+        return vertices.length;
+    }
+
     public void renderCustom(int type, Shaders shaders) {
         shaders.use(() -> {
             glBindVertexArray(vao);

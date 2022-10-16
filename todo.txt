@@ -5,11 +5,8 @@ multi entity selection
 script public entity field
 game class
 
-script editor
 script node view
-better script compilation method
-better script compilation error printing
 script intellisense
 script state serialization
-script allowed entity field
-more script information about editor state
+script entity field
+scripts information about editor state

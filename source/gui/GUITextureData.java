@@ -3,7 +3,7 @@ package gui;
 import glparts.Texture;
 import window.GLContext;
 
-public class GUITextureData {
+public final class GUITextureData {
     public final Texture folderIcon;
     public final Texture emptyFolderIcon;
     public final Texture fileIcon;

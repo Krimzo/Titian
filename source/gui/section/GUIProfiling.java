@@ -2,6 +2,7 @@ package gui.section;
 
 import editor.Editor;
 import gui.abs.GUISection;
+import gui.helper.GUIEdit;
 import imgui.ImGui;
 import imgui.flag.ImGuiStyleVar;
 
@@ -23,8 +24,8 @@ public final class GUIProfiling extends GUISection {
                 editor.window.setVSync(vSync = !vSync);
             }
 
-            ImGui.dragFloat("FPS", new float[]{ 1 / deltaTime });
-            ImGui.dragFloat("Frame", new float[]{ deltaTime });
+            GUIEdit.editFloat("FPS", 1 / deltaTime, 0);
+            GUIEdit.editFloat("Frame", deltaTime, 0);
         }
         ImGui.end();
 
