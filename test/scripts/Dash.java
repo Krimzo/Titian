@@ -21,13 +21,13 @@ public class Dash extends Scriptable {
         if (Input.isKeyPressed(Key.Space)) {
             Camera camera = getSceneCamera();
 
-            Plane plane = new Plane(Float3.getPosY(), entity.components.transform.position);
+            Plane plane = new Plane(Float3.getPosY(), self.components.transform.position);
             Ray ray = new Ray(camera.components.transform.position, camera.getForward());
 
             Float3 intersection = new Float3();
             ray.intersect(plane, intersection);
 
-            this.entity.components.transform.position.set(intersection);
+            self.components.transform.position.set(intersection);
         }
     }
 }

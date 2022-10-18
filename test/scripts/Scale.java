@@ -14,12 +14,12 @@ public class Scale extends Scriptable {
 
     @Override
     public void start() {
-        originalScale = new Float3(entity.components.transform.scale);
+        originalScale = new Float3(self.components.transform.scale);
     }
 
     @Override
     public void update() {
-        Float3 scale = entity.components.transform.scale;
+        Float3 scale = self.components.transform.scale;
 
         if (Input.isKeyDown(Key.R)) {
             scale.x = originalScale.x * multiplier;

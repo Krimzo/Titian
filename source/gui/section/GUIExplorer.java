@@ -71,7 +71,7 @@ public final class GUIExplorer extends GUISection {
 
         GUIPopup.itemPopup("EditExplorerFolder" + folder, () -> {
             if (ImGui.button("Rename")) {
-                textInput = new GUITextInput(folder.getAbsolutePath(), name -> {
+                textInput = new GUITextInput(folder.getName(), name -> {
                     Files.rename(folder.getAbsolutePath(), name);
                     textInput = null;
                 });

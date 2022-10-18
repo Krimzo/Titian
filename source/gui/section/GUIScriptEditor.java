@@ -79,6 +79,7 @@ class LanguageData {
 
     public static String[] getKeywords() {
         return new String[] {
+            // Built in
             "do", "if", "for", "new", "int", "try", "null",
             "else", "case", "enum", "this", "byte", "char",
             "void", "long", "throw", "catch", "final", "break",
@@ -87,6 +88,9 @@ class LanguageData {
             "throws", "switch", "finally", "boolean", "extends", "default",
             "package", "private", "abstract", "continue", "strictfp", "volatile",
             "interface", "transient", "protected", "instanceof", "implements", "synchronized",
+
+            // Custom
+            "self"
         };
     }
 
@@ -140,7 +144,7 @@ public final class GUIScriptEditor extends GUISection {
     }
 
     private void saveFileText() {
-        Files.writeString(filepath, textEditor.getText());
+        Files.writeString(filepath, textEditor.getText().replaceAll("\t", " ".repeat(4)));
     }
 
     private void loadFileText() {

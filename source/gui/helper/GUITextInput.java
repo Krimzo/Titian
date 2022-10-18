@@ -6,7 +6,7 @@ import imgui.flag.ImGuiInputTextFlags;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImString;
 
-public class GUITextInput {
+public final class GUITextInput {
     private static int idCounter = 0;
     private final int id;
 
@@ -14,12 +14,8 @@ public class GUITextInput {
     private final ImString text;
 
     public GUITextInput(String text, StringCallback onEdit) {
-        this(text, 30, onEdit);
-    }
-
-    public GUITextInput(String text, int bufferSize, StringCallback onEdit) {
         id = idCounter++;
-        this.text = new ImString(text, bufferSize);
+        this.text = new ImString(text, 100);
         this.onEdit = onEdit;
     }
 

@@ -70,7 +70,7 @@ public final class Files {
     public static boolean rename(String filepath, String name) {
         try {
             File file = new File(filepath);
-            String newPath = file.getParent() + "/" + name;
+            String newPath = file.getParent() + separator + name;
             return file.renameTo(new File(newPath));
         }
         catch (Exception ignored) {
@@ -82,7 +82,7 @@ public final class Files {
     public static boolean move(String filepath, String toFolder) {
         try {
             File from = new File(filepath);
-            String to = toFolder + "/" + from.getName();
+            String to = toFolder + separator + from.getName();
             return from.renameTo(new File(to));
         }
         catch (Exception ignored) {

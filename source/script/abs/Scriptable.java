@@ -11,10 +11,10 @@ import math.Int2;
 
 public abstract class Scriptable {
     private static Editor editor = null;
-    protected Entity entity = null;
+    protected final Entity self;
 
     public Scriptable(Entity entity) {
-        this.entity = entity;
+        this.self = entity;
     }
 
     public abstract void start();
@@ -25,7 +25,7 @@ public abstract class Scriptable {
     }
 
     public void log(Object object) {
-        String sender = entity.getName() + " [" + this.getClass().getName() + "]";
+        String sender = self.getName() + " [" + this.getClass().getName() + "]";
         editor.logger.log(new LogInfo(LogType.SCRIPT, sender, object));
     }
 

@@ -58,7 +58,7 @@ public final class GUIMainMenu extends GUISection {
             }
 
             if (ImGui.menuItem("Save scene")) {
-                textInput = new GUITextInput(Files.defaultPath() + Files.separator, 100, path -> {
+                textInput = new GUITextInput(Files.defaultPath() + Files.separator, path -> {
                     final String fullPath = path + ".titian";
                     if (editor.getScene().toFile(fullPath)) {
                         System.out.println("Scene \"" + fullPath + "\" saved!");

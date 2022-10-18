@@ -18,9 +18,11 @@ public class Move extends Scriptable {
 
     @Override
     public void update() {
-        Camera camera = (Camera) this.entity;
-        camera.useDefaultMovement(Mouse.Right, Key.W, Key.S, Key.D, Key.A, Key.E, Key.Q,
-            getWindowSize(), getDeltaT()
-        );
+        if (self instanceof Camera) {
+            ((Camera) self).useDefaultMovement(Mouse.Right, Key.W, Key.S, Key.D, Key.A, Key.E, Key.Q,
+                2, getWindowSize(), getDeltaT()
+            );
+        }
     }
 }
+
