@@ -5,6 +5,7 @@ import camera.PerspectiveCamera;
 import glparts.abs.GLObject;
 import gui.GUIRenderer;
 import gui.section.*;
+import gui.section.script_editor.GUIScriptEditor;
 import logging.Logger;
 import math.Int2;
 import physics.Physics;

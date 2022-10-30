@@ -1,4 +1,4 @@
-package gui.section;
+package gui.section.script_editor;
 
 import editor.Editor;
 import gui.abs.GUISection;
@@ -13,104 +13,8 @@ import utility.Instance;
 import window.input.Input;
 import window.input.Key;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-
-class ColorPalette {
-    private ColorPalette() {}
-
-    public static final int Default = 0;
-    public static final int Keyword = 1;
-    public static final int Number = 2;
-    public static final int String = 3;
-    public static final int CharLiteral = 4;
-    public static final int Punctuation = 5;
-    public static final int Preprocessor = 6;
-    public static final int Identifier = 7;
-    public static final int KnownIdentifier = 8;
-    public static final int PreprocIdentifier = 9;
-    public static final int Comment = 10;
-    public static final int MultiLineComment = 11;
-    public static final int Background = 12;
-    public static final int Cursor = 13;
-    public static final int Selection = 14;
-    public static final int ErrorMarker = 15;
-    public static final int Breakpoint = 16;
-    public static final int LineNumber = 17;
-    public static final int CurrentLineFill = 18;
-    public static final int CurrentLineFillInactive = 19;
-    public static final int CurrentLineEdge = 20;
-
-    public static final int MAX = 21;
-
-    public static int convertColor(Color color) {
-        return new Color(color.getBlue(), color.getGreen(), color.getRed(), color.getAlpha()).getRGB();
-    }
-
-    public static int[] getCustomDark(TextEditor textEditor) {
-        final int[] result = textEditor.getDarkPalette();
-        result[Keyword] = convertColor(new Color(240, 155, 120));
-        result[Number] = convertColor(new Color(200, 95, 95));
-        result[String] = convertColor(new Color(211, 158, 104));
-        result[CharLiteral] = convertColor(new Color(204, 170, 135));
-        result[Punctuation] = convertColor(new Color(225, 225, 225));
-        result[Preprocessor] = convertColor(new Color(224, 179, 215));
-        result[Identifier] = convertColor(new Color(210, 210, 210));
-        result[KnownIdentifier] = convertColor(new Color(105, 210, 190));
-        result[PreprocIdentifier] = convertColor(new Color(210, 178, 203));
-        result[Comment] = convertColor(new Color(128, 128, 128));
-        result[MultiLineComment] = convertColor(new Color(116, 116, 116));
-        result[Background] = convertColor(new Color(25, 25, 25));
-        result[Cursor] = convertColor(new Color(220, 220, 220));
-        result[Selection] = convertColor(new Color(70, 70, 70));
-        result[ErrorMarker] = convertColor(new Color(196, 57, 57));
-        result[Breakpoint] = convertColor(new Color(222, 73, 73));
-        result[LineNumber] = convertColor(new Color(210, 210, 210));
-        result[CurrentLineFill] = convertColor(new Color(51, 51, 51, 10));
-        result[CurrentLineFillInactive] = convertColor(new Color(51, 51, 51, 20));
-        result[CurrentLineEdge] = convertColor(new Color(89, 89, 89));
-        return result;
-    }
-}
-
-class LanguageData {
-    private LanguageData() {}
-
-    public static String[] getKeywords() {
-        return new String[] {
-            // Built in
-            "do", "if", "for", "new", "int", "try", "null",
-            "else", "case", "enum", "this", "byte", "char",
-            "void", "long", "throw", "catch", "final", "break",
-            "class", "short", "float", "super", "while", "assert",
-            "static", "return", "double", "import", "public", "native",
-            "throws", "switch", "finally", "boolean", "extends", "default",
-            "package", "private", "abstract", "continue", "strictfp", "volatile",
-            "interface", "transient", "protected", "instanceof", "implements", "synchronized",
-
-            // Custom
-            "self"
-        };
-    }
-
-    public static String[] getIdentifiers() {
-        return new String[] {
-            "Override", "Serial",
-            "Math", "Time",
-            "String", "Color",
-            "Int2", "Int3", "Int4",
-            "Float2", "Float3", "Float4",
-            "Matrix", "Mat3", "Mat4",
-            "Ray", "Plane", "Sphere", "Vertex", "Triangle",
-            "Entity", "Mesh", "Texture", "Material",
-            "Camera", "PerspectiveCamera", "OrthographicCamera",
-            "Light", "AmbientLight", "DirectionalLight", "PositionalLight",
-            "Scene", "Scriptable",
-            "Window", "Input", "Key", "Mouse",
-        };
-    }
-}
 
 public final class GUIScriptEditor extends GUISection {
     private final TextEditor textEditor = new TextEditor();
@@ -167,12 +71,17 @@ public final class GUIScriptEditor extends GUISection {
 
         if (ImGui.beginMenuBar()) {
             if (ImGui.beginMenu("File")) {
-                if (ImGui.menuItem("Save", "Ctrl-R")) {
+                if (ImGui.menuItem("Save", "Ctrl-S")) {
                     saveFileText();
                 }
 
-                if (ImGui.menuItem("Reload", "Ctrl-R")) {
+                if (ImGui.menuItem("Reload")) {
                     loadFileText();
+                }
+
+                if (ImGui.menuItem("Close")) {
+                    filepath = null;
+                    textEditor.setText("");
                 }
 
                 ImGui.endMenu();
