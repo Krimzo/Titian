@@ -4,9 +4,9 @@ import glparts.abs.GLObject;
 import math.Float3;
 import math.Vertex;
 import named.NameHolder;
-import utility.Files;
 import utility.Memory;
 import utility.Pair;
+import utility.helper.FileHelper;
 import window.GLContext;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class Mesh extends GLObject implements Serializable {
     }
 
     public Mesh(NameHolder holder, String name, GLContext context, String filePath) throws Exception {
-        this(holder, name, context, Files.parseMeshFile(filePath));
+        this(holder, name, context, FileHelper.parseMeshFile(filePath));
     }
 
     @Override

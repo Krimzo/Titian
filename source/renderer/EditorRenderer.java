@@ -33,7 +33,6 @@ public class EditorRenderer extends GameRenderer {
     @Override
     public void resize(Int2 size) {
         super.resize(size);
-
         indexBuffer.resize(size);
     }
 

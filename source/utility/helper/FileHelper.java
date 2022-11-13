@@ -1,10 +1,12 @@
-package utility;
+package utility.helper;
 
 import math.Float2;
 import math.Float3;
 import math.Int2;
 import math.Vertex;
 import org.lwjgl.stb.STBImage;
+import utility.Instance;
+import utility.Memory;
 import utility.nncollection.NNArrayList;
 
 import java.awt.*;
@@ -15,8 +17,8 @@ import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL33.*;
 
-public final class Files {
-    private Files() {}
+public final class FileHelper {
+    private FileHelper() {}
 
     public static final String separator = System.getProperty("file.separator");
 

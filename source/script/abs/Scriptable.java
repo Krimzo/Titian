@@ -25,7 +25,7 @@ public abstract class Scriptable {
     }
 
     public void log(Object object) {
-        String sender = self.getName() + " [" + this.getClass().getName() + "]";
+        final String sender = self.getName() + " [" + this.getClass().getName() + "]";
         editor.logger.log(new LogInfo(LogType.SCRIPT, sender, object));
     }
 

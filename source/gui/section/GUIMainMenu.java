@@ -13,8 +13,8 @@ import imgui.ImVec4;
 import imgui.flag.ImGuiStyleVar;
 import math.Float2;
 import math.Int2;
-import utility.Files;
 import utility.Instance;
+import utility.helper.FileHelper;
 import window.input.Input;
 import window.input.Mouse;
 
@@ -58,7 +58,7 @@ public final class GUIMainMenu extends GUISection {
             }
 
             if (ImGui.menuItem("Save scene")) {
-                textInput = new GUITextInput(Files.defaultPath() + Files.separator, path -> {
+                textInput = new GUITextInput(FileHelper.defaultPath() + FileHelper.separator, path -> {
                     final String fullPath = path + ".titian";
                     if (editor.getScene().toFile(fullPath)) {
                         System.out.println("Scene \"" + fullPath + "\" saved!");

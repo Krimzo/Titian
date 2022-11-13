@@ -29,7 +29,7 @@ public final class GUIScene extends GUISection {
             Entity entity = new Entity(editor.getScene().names.entity, "Entity", editor);
             editor.getScene().add(entity);
 
-            // Mesh/material bind after add() call so defaults don't get added to the scene list
+            // (Mesh, Material) bind after .add() call so defaults don't get added to the scene list
             entity.components.mesh.mesh = editor.data.defaultMesh;
             entity.components.material.material = editor.data.defaultMaterial;
 

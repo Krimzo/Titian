@@ -1,10 +1,10 @@
 import editor.Editor;
 import entity.Entity;
+import entity.material.Material;
 import glparts.Mesh;
 import glparts.Texture;
 import light.AmbientLight;
 import light.DirectionalLight;
-import material.Material;
 import math.Float2;
 import math.Float3;
 import scene.Scene;

@@ -3,7 +3,7 @@ package glparts;
 import callback.EmptyCallback;
 import glparts.abs.GLObject;
 import math.*;
-import utility.Files;
+import utility.helper.FileHelper;
 import utility.nncollection.NNHashMap;
 import window.GLContext;
 
@@ -32,7 +32,7 @@ public class Shaders extends GLObject implements Serializable {
     }
 
     public Shaders(GLContext context, String filepath) {
-        this(context, Files.parseShader(filepath, GL_VERTEX_SHADER), Files.parseShader(filepath, GL_FRAGMENT_SHADER));
+        this(context, FileHelper.parseShader(filepath, GL_VERTEX_SHADER), FileHelper.parseShader(filepath, GL_FRAGMENT_SHADER));
     }
 
     @Override

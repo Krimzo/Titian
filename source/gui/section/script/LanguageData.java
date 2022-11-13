@@ -1,4 +1,4 @@
-package gui.section.script_editor;
+package gui.section.script;
 
 final class LanguageData {
     private LanguageData() {}
@@ -16,7 +16,7 @@ final class LanguageData {
                 "interface", "transient", "protected", "instanceof", "implements", "synchronized",
 
                 // Custom
-                "self"
+                "self", "true", "false",
         };
     }
 

@@ -3,8 +3,8 @@ package script;
 import entity.Entity;
 import scene.Scene;
 
-public class Scripter {
-    public Scripter() {}
+public class ScriptEngine {
+    public ScriptEngine() {}
 
     public void callStarts(Scene scene) {
         for (Entity entity : scene) {

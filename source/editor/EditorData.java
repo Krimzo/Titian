@@ -1,11 +1,11 @@
 package editor;
 
+import entity.material.Material;
 import glparts.Mesh;
 import glparts.Shaders;
 import imgui.extension.imguizmo.flag.Mode;
-import material.Material;
 
-public class EditorSharedData {
+public class EditorData {
     public final Shaders frustumShaders;
     public final Shaders unlitShaders;
 
@@ -21,7 +21,7 @@ public class EditorSharedData {
     public int gizmoOperation = 0;
     public int gizmoMode = Mode.WORLD;
 
-    public EditorSharedData(Editor editor) throws Exception {
+    public EditorData(Editor editor) throws Exception {
         frustumShaders = new Shaders(editor.window.getContext(), "shaders/Frustum.glsl");
         unlitShaders = new Shaders(editor.window.getContext(), "shaders/Unlit.glsl");
 

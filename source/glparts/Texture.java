@@ -4,9 +4,9 @@ import callback.EmptyCallback;
 import glparts.abs.GLObject;
 import math.Int2;
 import named.NameHolder;
-import utility.Files;
 import utility.Instance;
 import utility.Memory;
+import utility.helper.FileHelper;
 import window.GLContext;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class Texture extends GLObject implements Serializable {
     }
 
     public Texture(NameHolder holder, String name, GLContext context, String filepath, boolean flipY) {
-        this(holder, name, context, Files.getImageSize(filepath), Files.getImageData(filepath, flipY));
+        this(holder, name, context, FileHelper.getImageSize(filepath), FileHelper.getImageData(filepath, flipY));
     }
 
     public Texture(NameHolder holder, String name, GLContext context, String filepath) {

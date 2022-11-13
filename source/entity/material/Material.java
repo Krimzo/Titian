@@ -1,4 +1,4 @@
-package material;
+package entity.material;
 
 import callback.EmptyCallback;
 import glparts.Shaders;

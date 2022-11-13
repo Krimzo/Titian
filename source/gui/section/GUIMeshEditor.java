@@ -4,6 +4,7 @@ import camera.PerspectiveCamera;
 import editor.Editor;
 import entity.Entity;
 import entity.component.MeshComponent;
+import entity.material.Material;
 import glparts.Mesh;
 import glparts.Texture;
 import gui.abs.GUISection;
@@ -13,13 +14,12 @@ import imgui.ImVec2;
 import imgui.flag.ImGuiWindowFlags;
 import light.AmbientLight;
 import light.DirectionalLight;
-import material.Material;
 import math.Float2;
 import math.Float3;
 import math.Int2;
 import scene.Scene;
-import utility.Files;
 import utility.Instance;
+import utility.helper.FileHelper;
 import window.input.Input;
 import window.input.Mouse;
 
@@ -151,7 +151,7 @@ public final class GUIMeshEditor extends GUISection {
 
             GUIDragDrop.getData("MeshFile", path -> {
                 try {
-                    String fileName = Files.getNameWithoutExtension((String) path);
+                    String fileName = FileHelper.getNameWithoutExtension((String) path);
                     editor.getScene().meshes.add(new Mesh(editor.getScene().names.mesh, fileName, editor.window.getContext(), (String) path));
                 }
                 catch (Exception ignored) {

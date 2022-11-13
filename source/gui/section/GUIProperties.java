@@ -2,6 +2,7 @@ package gui.section;
 
 import editor.Editor;
 import entity.Entity;
+import entity.material.Material;
 import glparts.Mesh;
 import gui.abs.GUISection;
 import gui.helper.GUIDragDrop;
@@ -9,7 +10,6 @@ import gui.helper.GUIPopup;
 import imgui.ImGui;
 import imgui.ImVec2;
 import imgui.flag.ImGuiTreeNodeFlags;
-import material.Material;
 import script.Script;
 import utility.Instance;
 

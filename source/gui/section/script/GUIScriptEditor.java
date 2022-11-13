@@ -1,4 +1,4 @@
-package gui.section.script_editor;
+package gui.section.script;
 
 import editor.Editor;
 import gui.abs.GUISection;
@@ -8,8 +8,8 @@ import imgui.extension.texteditor.TextEditor;
 import imgui.extension.texteditor.TextEditorLanguageDefinition;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiWindowFlags;
-import utility.Files;
 import utility.Instance;
+import utility.helper.FileHelper;
 import window.input.Input;
 import window.input.Key;
 
@@ -48,11 +48,11 @@ public final class GUIScriptEditor extends GUISection {
     }
 
     private void saveFileText() {
-        Files.writeString(filepath, textEditor.getText().replaceAll("\t", " ".repeat(4)));
+        FileHelper.writeString(filepath, textEditor.getText().replaceAll("\t", " ".repeat(4)));
     }
 
     private void loadFileText() {
-        textEditor.setText(Files.readString(filepath));
+        textEditor.setText(FileHelper.readString(filepath));
     }
 
     private void handleInput() {

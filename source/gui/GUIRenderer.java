@@ -46,8 +46,8 @@ public class GUIRenderer extends NNArrayList<GUIRenderable> {
 
         ImGui.dockSpaceOverViewport(ImGui.getMainViewport(), ImGuiDockNodeFlags.PassthruCentralNode);
 
-        for (GUIRenderable guiRenderable : this) {
-            guiRenderable.renderGUI();
+        for (GUIRenderable renderable : this) {
+            renderable.renderGUI();
         }
 
         ImGui.render();

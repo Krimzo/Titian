@@ -11,5 +11,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lwjgl" level="project" />
     <orderEntry type="library" name="imgui" level="project" />
+    <orderEntry type="library" name="physx" level="project" />
   </component>
 </module>

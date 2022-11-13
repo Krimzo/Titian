@@ -1,8 +1,8 @@
 package logging;
 
 import callback.LogInfoCallback;
-import utility.Strings;
 import utility.Time;
+import utility.helper.StringHelper;
 import utility.nncollection.NNArrayList;
 
 import java.io.OutputStream;
@@ -46,7 +46,7 @@ public class Logger extends PrintStream {
     }
 
     public String formatSpaces(LogInfo log) {
-        return Strings.spaces(longestSender - log.senderLength + 2);
+        return StringHelper.spaces(longestSender - log.senderLength + 2);
     }
 
     public void iterate(LogInfoCallback callback) {

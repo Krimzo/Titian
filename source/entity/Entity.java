@@ -5,14 +5,14 @@ import glparts.Shaders;
 import imgui.ImGui;
 import named.NameHolder;
 import named.Named;
-import physics.Physical;
+import physics.abs.Physical;
 import renderer.abs.Renderable;
 import script.Script;
 
 import java.io.Serializable;
 
 public class Entity extends Named implements Physical, Renderable, Serializable {
-    public final ComponentData components = new ComponentData(this);
+    public final EntityComponents components = new EntityComponents(this);
     public transient Editor editor;
 
     public Entity(NameHolder holder, String name, Editor editor) {

@@ -12,15 +12,15 @@ import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiWindowFlags;
 import script.Script;
-import utility.Files;
 import utility.Instance;
+import utility.helper.FileHelper;
 
 import java.io.File;
 
 public final class GUIExplorer extends GUISection {
     private GUITextInput textInput = null;
 
-    private File currentPath = new File(Files.defaultPath());
+    private File currentPath = new File(FileHelper.defaultPath());
     private float buttonSize = 0;
 
     public int columnCount = 12;
@@ -30,14 +30,14 @@ public final class GUIExplorer extends GUISection {
     }
 
     private Texture getFolderIcon(File folder) {
-        if (Files.isEmpty(folder.toString())) {
+        if (FileHelper.isEmpty(folder.toString())) {
             return editor.guiRenderer.textures.emptyFolderIcon;
         }
         return editor.guiRenderer.textures.folderIcon;
     }
 
     private String getFileType(File file) {
-        return switch (Files.getExtension(file.toString())) {
+        return switch (FileHelper.getExtension(file.toString())) {
             case "obj" -> "MeshFile";
             case "jpg", "png", "bmp" -> "ImageFile";
             case "c", "cpp", "h", "glsl" -> "CodeFile";
@@ -72,20 +72,20 @@ public final class GUIExplorer extends GUISection {
         GUIPopup.itemPopup("EditExplorerFolder" + folder, () -> {
             if (ImGui.button("Rename")) {
                 textInput = new GUITextInput(folder.getName(), name -> {
-                    Files.rename(folder.getAbsolutePath(), name);
+                    FileHelper.rename(folder.getAbsolutePath(), name);
                     textInput = null;
                 });
                 GUIPopup.close();
             }
 
-            if (Files.isEmpty(folder.getAbsolutePath()) && ImGui.button("Delete", -1, 0)) {
-                Files.delete(folder.getAbsolutePath());
+            if (FileHelper.isEmpty(folder.getAbsolutePath()) && ImGui.button("Delete", -1, 0)) {
+                FileHelper.delete(folder.getAbsolutePath());
                 GUIPopup.close();
             }
         });
 
         ObjectCallback callback = path -> {
-            Files.move((String) path, folder.getAbsolutePath());
+            FileHelper.move((String) path, folder.getAbsolutePath());
         };
         GUIDragDrop.getData("Folder", callback);
         GUIDragDrop.getData("File", callback);
@@ -105,7 +105,7 @@ public final class GUIExplorer extends GUISection {
 
         ImGui.pushID(file.toString());
         if (ImGui.imageButton(fileIcon.getBuffer(), buttonSize, buttonSize)) {
-            Files.openDefault(file.getAbsolutePath());
+            FileHelper.openDefault(file.getAbsolutePath());
         }
         ImGui.popID();
 
@@ -114,14 +114,14 @@ public final class GUIExplorer extends GUISection {
         GUIPopup.itemPopup("EditExplorerFile" + file, () -> {
             if (ImGui.button("Rename")) {
                 textInput = new GUITextInput(file.getName(), name -> {
-                    Files.rename(file.getAbsolutePath(), name);
+                    FileHelper.rename(file.getAbsolutePath(), name);
                     textInput = null;
                 });
                 GUIPopup.close();
             }
 
             if (ImGui.button("Delete", -1, 0)) {
-                Files.delete(file.getAbsolutePath());
+                FileHelper.delete(file.getAbsolutePath());
                 GUIPopup.close();
             }
         });
@@ -152,14 +152,14 @@ public final class GUIExplorer extends GUISection {
                 renderFolder(parent, true);
             }
 
-            File[] folders = Files.listFolders(currentPath.toString());
+            File[] folders = FileHelper.listFolders(currentPath.toString());
             if (Instance.isValid(folders)) {
                 for (File folder : folders) {
                     renderFolder(folder, false);
                 }
             }
 
-            File[] files = Files.listFiles(currentPath.toString());
+            File[] files = FileHelper.listFiles(currentPath.toString());
             if (Instance.isValid(files)) {
                 for (File file : files) {
                     renderFile(file);
@@ -171,7 +171,7 @@ public final class GUIExplorer extends GUISection {
             GUIPopup.windowPopup("ExplorerWindow", () -> {
                 if (ImGui.button("New File", -1, 0)) {
                     textInput = new GUITextInput("", name -> {
-                        Files.createFile(currentPath + "/" + name);
+                        FileHelper.createFile(currentPath + "/" + name);
                         textInput = null;
                     });
                     GUIPopup.close();
@@ -180,7 +180,7 @@ public final class GUIExplorer extends GUISection {
                 if (ImGui.button("New Script", -1, 0)) {
                     textInput = new GUITextInput("", name -> {
                         String path = currentPath + "/" + name + ".java";
-                        Files.writeString(path, Script.getTemplate(name));
+                        FileHelper.writeString(path, Script.getTemplate(name));
                         textInput = null;
                     });
                     GUIPopup.close();
@@ -188,7 +188,7 @@ public final class GUIExplorer extends GUISection {
 
                 if (ImGui.button("New Folder")) {
                     textInput = new GUITextInput("", name -> {
-                        Files.createFolder(currentPath + "/" + name);
+                        FileHelper.createFolder(currentPath + "/" + name);
                         textInput = null;
                     });
                     GUIPopup.close();

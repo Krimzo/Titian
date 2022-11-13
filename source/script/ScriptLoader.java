@@ -1,7 +1,7 @@
 package script;
 
-public class Loader extends ClassLoader {
-    public Loader() {}
+public class ScriptLoader extends ClassLoader {
+    public ScriptLoader() {}
 
     public Class<?> load(String name, byte[] data) {
         defineClass(name, data, 0, data.length);

@@ -19,7 +19,7 @@ public final class GUIControlPanel extends GUISection {
 
     private void onGameStart() {
         editor.getScene().toFile(SAVED_PLAY_PATH);
-        editor.scripter.callStarts(editor.getScene());
+        editor.scriptEngine.callStarts(editor.getScene());
         editor.timer.reset();
     }
 

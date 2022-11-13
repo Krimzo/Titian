@@ -2,10 +2,10 @@ package scene;
 
 import editor.Editor;
 import entity.Entity;
+import entity.material.Material;
 import glparts.Mesh;
 import glparts.Texture;
-import material.Material;
-import physics.Physical;
+import physics.abs.Physical;
 import utility.Instance;
 import utility.nncollection.NNArrayList;
 import utility.nncollection.NNHashSet;
@@ -34,7 +34,6 @@ public class Scene extends NNArrayList<Entity> implements Physical, Serializable
                 textures.add(entity.components.material.material.normalMap);
                 textures.add(entity.components.material.material.roughnessMap);
             }
-
             return true;
         }
         return false;

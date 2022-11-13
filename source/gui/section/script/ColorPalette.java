@@ -1,4 +1,4 @@
-package gui.section.script_editor;
+package gui.section.script;
 
 import imgui.extension.texteditor.TextEditor;
 
@@ -8,6 +8,7 @@ final class ColorPalette {
     private ColorPalette() {}
 
     static final int Default = 0;
+
     static final int Keyword = 1;
     static final int Number = 2;
     static final int String = 3;

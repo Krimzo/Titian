@@ -5,20 +5,20 @@ import camera.PerspectiveCamera;
 import glparts.abs.GLObject;
 import gui.GUIRenderer;
 import gui.section.*;
-import gui.section.script_editor.GUIScriptEditor;
+import gui.section.script.GUIScriptEditor;
 import logging.Logger;
 import math.Int2;
-import physics.Physics;
+import physics.PhysicsEngine;
 import renderer.EditorRenderer;
 import renderer.GameRenderer;
 import scene.Scene;
-import script.Scripter;
+import script.ScriptEngine;
 import utility.Instance;
 import utility.Timer;
 import window.Window;
 
 public class Editor {
-    public final EditorSharedData data;
+    public final EditorData data;
 
     public final Window window = new Window(new Int2(1600, 900), "Titian", true);
     public final Timer timer = new Timer();
@@ -28,10 +28,10 @@ public class Editor {
     public final GameRenderer gameRenderer = new GameRenderer(window.getContext(), window.getSize());
     public final GUIRenderer guiRenderer = new GUIRenderer(window);
 
-    public final Physics physics = new Physics();
+    public final PhysicsEngine physicsEngine = new PhysicsEngine();
 
     public final Logger logger = new Logger();
-    public final Scripter scripter = new Scripter();
+    public final ScriptEngine scriptEngine = new ScriptEngine();
 
     private Scene scene = new Scene();
 
@@ -40,7 +40,7 @@ public class Editor {
         window.getContext().setDepthTest(true);
         window.setVSync(true);
 
-        data = new EditorSharedData(this);
+        data = new EditorData(this);
 
         guiRenderer.add(new GUIMainMenu(this));
         guiRenderer.add(new GUIScene(this));
@@ -71,8 +71,8 @@ public class Editor {
         timer.updateDeltaT();
 
         if (data.gameRunning) {
-            physics.update(scene, timer.getDeltaT());
-            scripter.callUpdates(scene);
+            physicsEngine.update(scene, timer.getDeltaT());
+            scriptEngine.callUpdates(scene);
         }
 
         window.getContext().clear(false);

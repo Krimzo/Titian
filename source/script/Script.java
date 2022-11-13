@@ -5,8 +5,8 @@ import gui.helper.GUIEdit;
 import gui.helper.GUIPopup;
 import imgui.ImGui;
 import script.abs.Scriptable;
-import utility.Files;
 import utility.Instance;
+import utility.helper.FileHelper;
 import utility.nncollection.NNArrayList;
 
 import java.io.IOException;
@@ -62,7 +62,7 @@ public class Script implements Serializable {
 
     public void load(String filepath, Entity entity) {
         this.filepath = filepath;
-        load(Files.getNameWithoutExtension(filepath), new Compiler().compile(filepath), entity);
+        load(FileHelper.getNameWithoutExtension(filepath), new ScriptCompiler().compile(filepath), entity);
     }
 
     public void reload(Entity entity) {
@@ -71,7 +71,7 @@ public class Script implements Serializable {
 
     private void loadType(String name, byte[] data) {
         try {
-            type = new Loader().load(name, data);
+            type = new ScriptLoader().load(name, data);
         }
         catch (Exception ignored) {
             System.out.println("Script \"" + name + "\" type loading error");

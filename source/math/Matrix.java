@@ -1,6 +1,6 @@
 package math;
 
-import utility.Strings;
+import utility.helper.StringHelper;
 
 import java.io.Serializable;
 
@@ -231,13 +231,13 @@ public class Matrix implements Serializable {
             stream.append("[");
 
             for (int x = 0; x < (width - 1); x++) {
-                stream.append(Strings.spaces(maxLengths[x] - outputData[y * width + x].length()));
+                stream.append(StringHelper.spaces(maxLengths[x] - outputData[y * width + x].length()));
                 stream.append(outputData[y * width + x]);
                 stream.append(" ");
             }
 
             String lastLine = outputData[y * width + (width - 1)];
-            stream.append(Strings.spaces(maxLengths[width - 1] - lastLine.length()));
+            stream.append(StringHelper.spaces(maxLengths[width - 1] - lastLine.length()));
             stream.append(lastLine);
             stream.append((y == (height - 1) ? "]" : "]\n"));
         }

@@ -1,11 +1,11 @@
-package utility;
+package utility.helper;
 
 import utility.nncollection.NNHashMap;
 
 import java.util.Map;
 
-public final class Strings {
-    private Strings() {}
+public final class StringHelper {
+    private StringHelper() {}
 
     private static final Map<Integer, String> spaces = new NNHashMap<>();
 

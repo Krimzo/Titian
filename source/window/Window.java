@@ -2,9 +2,9 @@ package window;
 
 import math.Int2;
 import org.lwjgl.glfw.GLFWImage;
-import utility.Files;
 import utility.Instance;
 import utility.Memory;
+import utility.helper.FileHelper;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -139,8 +139,8 @@ public class Window {
     }
 
     public void setIcon(String filepath) {
-        Int2 imageSize = Files.getImageSize(filepath);
-        byte[] imageData = Files.getImageData(filepath, false);
+        Int2 imageSize = FileHelper.getImageSize(filepath);
+        byte[] imageData = FileHelper.getImageData(filepath, false);
 
         if (Instance.isValid(imageData)) {
             GLFWImage image = GLFWImage.create();
