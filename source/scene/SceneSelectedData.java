@@ -7,7 +7,7 @@ import light.DirectionalLight;
 
 import java.io.Serializable;
 
-public class SceneSelectedData implements Serializable {
+public final class SceneSelectedData implements Serializable {
     public Entity entity = null;
     public Camera camera = null;
     public AmbientLight ambientLight = null;

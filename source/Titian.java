@@ -12,7 +12,7 @@ import script.abs.Scriptable;
 
 import java.util.Random;
 
-public class Titian {
+public final class Titian {
     public static void saveTestScene(Editor editor) throws Exception {
         Scene scene = new Scene();
 
@@ -22,10 +22,10 @@ public class Titian {
         scene.add(scene.selected.ambientLight);
         scene.add(scene.selected.directionalLight);
 
-        Mesh monkeMesh = new Mesh(scene.names.mesh, "Monke Mesh", editor.window.getContext(), "resource/meshes/monke.obj");
-        Material monkeMaterial = new Material(scene.names.material, "Monke Material");
-        monkeMaterial.colorMap = new Texture(scene.names.texture, "Checkers Texture", editor.window.getContext(), "test/textures/checkers.png");
-        monkeMaterial.colorBlend = 1;
+        final Mesh mesh = new Mesh(scene.names.mesh, "Monke Mesh", editor.window.getContext(), "resource/meshes/monke.obj");
+        final Material material = new Material(scene.names.material, "Monke Material");
+        material.colorMap = new Texture(scene.names.texture, "Checkers Texture", editor.window.getContext(), "test/textures/checkers.png");
+        material.colorBlend = 1;
 
         final int size = 1;
         for (int y = -size; y <= size; y++) {
@@ -35,8 +35,8 @@ public class Titian {
                 monke.components.transform.position.set(new Float2(x, y).multiply(2.5f), 0);
                 monke.components.physics.angular.y = (new Random().nextFloat() * 2 - 1) * 36;
 
-                monke.components.mesh.mesh = monkeMesh;
-                monke.components.material.material = monkeMaterial;
+                monke.components.mesh.mesh = mesh;
+                monke.components.material.material = material;
 
                 scene.add(monke);
             }
@@ -70,7 +70,6 @@ public class Titian {
         while (editor.window.process()) {
             editor.update();
         }
-
         editor.destroy();
     }
 }
