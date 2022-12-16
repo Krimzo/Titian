@@ -12,5 +12,6 @@
     <orderEntry type="library" name="lwjgl" level="project" />
     <orderEntry type="library" name="imgui" level="project" />
     <orderEntry type="library" name="physx" level="project" />
+    <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
   </component>
 </module>
