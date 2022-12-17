@@ -37,6 +37,7 @@ class GUIScene(editor: Editor) : GUISection(editor) {
                 editor.scene.add(camera)
                 GUIPopup.close()
             }
+
             if (ImGui.button("Orthographic")) {
                 val camera: Entity = OrthographicCamera(editor.scene.names.entity, "Orthographic camera", editor)
                 editor.scene.add(camera)
@@ -53,11 +54,13 @@ class GUIScene(editor: Editor) : GUISection(editor) {
                 editor.scene.add(light)
                 GUIPopup.close()
             }
+
             if (ImGui.button("Directional")) {
                 val camera: Entity = DirectionalLight(editor.scene.names.entity, "Directional Light", editor)
                 editor.scene.add(camera)
                 GUIPopup.close()
             }
+
             if (ImGui.button("Positional", -1f, 0f)) {
                 val camera: Entity = PositionalLight(editor.scene.names.entity, "Positional Light", editor)
                 editor.scene.add(camera)
@@ -100,9 +103,11 @@ class GUIScene(editor: Editor) : GUISection(editor) {
                     if (ImGui.button("Delete", -1f, 0f)) {
                         val removed = editor.scene.removeAt(i.getAndDecrement())
                         removed.eraseName()
+
                         if (removed === editor.scene.selected.entity) {
                             editor.scene.selected.entity = null
                         }
+
                         if (removed === editor.scene.selected.camera) {
                             editor.scene.selected.camera = null
                         }

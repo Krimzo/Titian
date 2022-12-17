@@ -32,9 +32,9 @@ class PhysicsEngine {
         allocator.destroy()
     }
 
-    fun update(scene: Scene?, deltaT: Float) {
-        for (physical in scene!!) {
-            physical?.updatePhysics(deltaT)
+    fun update(scene: Scene, deltaT: Float) {
+        for (physical in scene) {
+            physical.updatePhysics(deltaT)
         }
     }
 }

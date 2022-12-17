@@ -7,18 +7,18 @@ import java.io.PrintStream
 import java.util.*
 
 class Logger : PrintStream(object : OutputStream() { override fun write(b: Int) {} }) {
-    private val maxSize = 100
-    private val logs = ArrayList<LogInfo>()
-    private var lastClearMessage: String? = null
-    private var longestSender = 0
-    private var unseenCount = 0
+    private val maxSize: Int = 100
+    private val logs: ArrayList<LogInfo> = ArrayList()
+    private var lastClearMessage: String = ""
+    private var longestSender: Int = 0
+    private var unseenCount: Int = 0
 
     init {
         clear()
     }
 
     fun log(log: LogInfo) {
-        longestSender = Math.max(longestSender, log.senderLength)
+        longestSender = longestSender.coerceAtLeast(log.senderLength)
         logs.add(log)
         if (logs.size >= maxSize) {
             logs.removeAt(0)
@@ -34,17 +34,17 @@ class Logger : PrintStream(object : OutputStream() { override fun write(b: Int) 
         unseenCount = 0
     }
 
-    fun getLastClearMessage(): String? {
+    fun getLastClearMessage(): String {
         return lastClearMessage
     }
 
-    fun formatSpaces(log: LogInfo): String? {
+    fun formatSpaces(log: LogInfo): String {
         return StringHelper.spaces(longestSender - log.senderLength + 2)
     }
 
     fun iterate(callback: (LogInfo) -> Unit) {
         for (log in logs) {
-            callback(log!!)
+            callback(log)
         }
     }
 
@@ -55,8 +55,8 @@ class Logger : PrintStream(object : OutputStream() { override fun write(b: Int) 
         unseenCount = 0
     }
 
-    private fun logSystemOut(`object`: Any) {
-        log(LogInfo(LogType.INFO, "System.print", `object`))
+    private fun logSystemOut(obj: Any) {
+        log(LogInfo(LogType.INFO, "System.print", obj))
     }
 
     override fun print(data: Boolean) {
@@ -87,12 +87,12 @@ class Logger : PrintStream(object : OutputStream() { override fun write(b: Int) 
         logSystemOut(String(data))
     }
 
-    override fun print(data: String) {
-        logSystemOut(data)
+    override fun print(data: String?) {
+        data?.let { logSystemOut(it) }
     }
 
-    override fun print(data: Any) {
-        logSystemOut(data)
+    override fun print(data: Any?) {
+        data?.let { logSystemOut(it) }
     }
 
     override fun println() {
@@ -127,11 +127,11 @@ class Logger : PrintStream(object : OutputStream() { override fun write(b: Int) 
         print(data)
     }
 
-    override fun println(data: String) {
+    override fun println(data: String?) {
         print(data)
     }
 
-    override fun println(data: Any) {
+    override fun println(data: Any?) {
         print(data)
     }
 

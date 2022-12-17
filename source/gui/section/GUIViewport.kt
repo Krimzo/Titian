@@ -24,12 +24,12 @@ import window.input.Mouse
 class GUIViewport(editor: Editor) : GUISection(editor) {
     private var viewportPosition = Int2()
     private var viewportSize = Int2()
-    private var gridMesh: Mesh? = null
-    private var gridShaders: Shaders? = null
-    private val snap = arrayOf(floatArrayOf(0.1f, 0.1f, 0.1f), floatArrayOf(30f, 30f, 30f), floatArrayOf(1f, 1f, 1f), floatArrayOf(0f, 0f, 0f))
+    private var gridMesh: Mesh
+    private var gridShaders: Shaders
+    private val snap: Array<FloatArray> = arrayOf(floatArrayOf(0.1f, 0.1f, 0.1f), floatArrayOf(30f, 30f, 30f), floatArrayOf(1f, 1f, 1f), floatArrayOf(0f, 0f, 0f))
 
     init {
-        gridMesh = Mesh.Companion.generateGridMesh(50)
+        gridMesh = Mesh.generateGridMesh(editor.window.context, 50)
         gridShaders = Shaders(editor.window.context, "shaders/Grid.glsl")
     }
 
@@ -44,7 +44,8 @@ class GUIViewport(editor: Editor) : GUISection(editor) {
         if (ImGui.begin("Viewport Info")) {
             ImGui.bulletText("Camera")
             GUIEdit.editFloat3("Position", editor.camera.components.transform.position, 0.1f)
-            val data = editor.camera.getForward().array()
+
+            val data = editor.camera.getForward().array
             if (ImGui.dragFloat3("Forward", data, 0.05f)) {
                 editor.camera.setForward(Float3(data))
             }
@@ -55,7 +56,7 @@ class GUIViewport(editor: Editor) : GUISection(editor) {
 
     private fun updateCamera() {
         editor.camera.useDefaultMovement(Mouse.Right, Key.W, Key.S, Key.D, Key.A, Key.E, Key.Q, 2f,
-                editor.window.size, editor.timer.getDeltaT()
+            editor.window.size, editor.timer.getDeltaT()
         )
     }
 
@@ -63,12 +64,15 @@ class GUIViewport(editor: Editor) : GUISection(editor) {
         if (ImGui.isKeyPressed(Key.Num1)) {
             editor.data.gizmoOperation = if (editor.data.gizmoOperation != Operation.SCALE) Operation.SCALE else 0
         }
+
         if (ImGui.isKeyPressed(Key.Num2)) {
             editor.data.gizmoOperation = if (editor.data.gizmoOperation != Operation.ROTATE) Operation.ROTATE else 0
         }
+
         if (ImGui.isKeyPressed(Key.Num3)) {
             editor.data.gizmoOperation = if (editor.data.gizmoOperation != Operation.TRANSLATE) Operation.TRANSLATE else 0
         }
+
         if (ImGui.isKeyPressed(Key.Num4)) {
             editor.data.gizmoMode = if (editor.data.gizmoMode == Mode.WORLD) Mode.LOCAL else Mode.WORLD
         }
@@ -78,13 +82,14 @@ class GUIViewport(editor: Editor) : GUISection(editor) {
         if (ImGuizmo.isOver()) {
             return
         }
+
         val viewportRect = Float4(
-                viewportPosition.x.toFloat(), viewportPosition.y.toFloat(), (viewportPosition.x + viewportSize.x).toFloat(), (viewportPosition.y + viewportSize.y
-                ).toFloat()
+            viewportPosition.x.toFloat(), viewportPosition.y.toFloat(), (viewportPosition.x + viewportSize.x).toFloat(), (viewportPosition.y + viewportSize.y).toFloat()
         )
+
         if (ImGui.isMouseHoveringRect(viewportRect.x, viewportRect.y, viewportRect.z, viewportRect.w) && ImGui.isMouseClicked(ImGuiMouseButton.Left)) {
             val mousePosition = Float2(ImGui.getMousePosX() - viewportPosition.x, ImGui.getMousePosY() - viewportPosition.y)
-            val objectIndex = editor.editorRenderer.indexBuffer.getPixel(Int2(mousePosition))!!.x.toInt() - 1
+            val objectIndex = editor.editorRenderer.indexBuffer.getPixel(Int2(mousePosition)).x.toInt() - 1
             editor.scene.selected.entity = if (objectIndex >= 0) editor.scene[objectIndex] else null
         }
     }
@@ -94,20 +99,23 @@ class GUIViewport(editor: Editor) : GUISection(editor) {
         editor.window.context.setViewport(viewportSize)
         editor.editorRenderer.resize(viewportSize)
         editor.camera.updateAspect(viewportSize)
+
         if (editor.data.renderGrid) {
             editor.editorRenderer.renderBuffer.use {
                 var position = editor.camera.components.transform.position
                 position = Float3(position.x.toInt().toFloat(), 0f, position.z.toInt().toFloat())
-                gridShaders!!.setUniform("W", Mat4.translation(position))
-                gridShaders!!.setUniform("VP", editor.camera.matrix())
-                gridMesh!!.renderLines(gridShaders)
+                gridShaders.setUniform("W", Mat4.translation(position))
+                gridShaders.setUniform("VP", editor.camera.matrix())
+                gridMesh.renderLines(gridShaders)
             }
         }
+
         val selectedIndex = editor.scene.indexOf(editor.scene.selected.entity)
         editor.window.context.setWireframe(editor.data.wireframeState)
         editor.editorRenderer.renderScene(editor.scene, editor.camera)
         editor.editorRenderer.renderIndices(editor.scene, editor.camera)
         editor.window.context.setWireframe(false)
+
         if (selectedIndex >= 0) {
             editor.editorRenderer.renderOutline(Float2(viewportSize), GUIStyle.special, selectedIndex)
         }
@@ -128,7 +136,7 @@ class GUIViewport(editor: Editor) : GUISection(editor) {
         val transform = selected.components.transform
         val viewMatrix = editor.camera.viewMatrix().transpose()
         val projectionMatrix = editor.camera.projectionMatrix().transpose()
-        val transformMatrix = transform.matrix()!!.transpose()
+        val transformMatrix = transform.matrix().transpose()
         var snap = snap[3]
         if (Input.isShiftDown) {
             when (editor.data.gizmoOperation) {
@@ -146,10 +154,11 @@ class GUIViewport(editor: Editor) : GUISection(editor) {
         if (ImGuizmo.isUsing()) {
             val decomposed = Array(3) { FloatArray(3) }
             ImGuizmo.decomposeMatrixToComponents(transformMatrix.data, decomposed[2], decomposed[1], decomposed[0])
-            transform.scale.set(Float3(decomposed[0]))
-            transform.position.set(Float3(decomposed[2]))
+            transform.scale = Float3(decomposed[0])
+            transform.position = Float3(decomposed[2])
+
             ImGuizmo.decomposeMatrixToComponents(result, decomposed[2], decomposed[1], decomposed[0])
-            transform.rotation.set(transform.rotation.add(Float3(decomposed[1])))
+            transform.rotation = transform.rotation + Float3(decomposed[1])
         }
     }
 
@@ -159,13 +168,16 @@ class GUIViewport(editor: Editor) : GUISection(editor) {
         if (ImGui.begin("Viewport", ImGuiWindowFlags.NoScrollbar)) {
             updateViewport()
             renderViewportInfo()
+
             if (ImGui.isWindowFocused()) {
                 updateCamera()
                 updateGizmoState()
                 objectSelection()
             }
+
             renderScene()
             GUIDisplay.texture(editor.editorRenderer.renderBuffer.getColorMap(), viewportSize)
+
             GUIDragDrop.getData("SceneFile") { path: Any? ->
                 Scene.fromFile(path as String, editor)?.let {
                     editor.scene = it

@@ -15,11 +15,11 @@ import java.io.File
 
 class GUIExplorer(editor: Editor) : GUISection(editor) {
     private var textInput: GUITextInput? = null
-    private var currentPath: File? = File(FileHelper.defaultPath())
+    private var currentPath: File = File(FileHelper.defaultPath())
     private var buttonSize = 0f
-    var columnCount = 12
+    private var columnCount = 12
 
-    private fun getFolderIcon(folder: File?): Texture {
+    private fun getFolderIcon(folder: File): Texture {
         return if (FileHelper.isEmpty(folder.toString())) {
             editor.guiRenderer.textures.emptyFolderIcon
         }
@@ -28,7 +28,7 @@ class GUIExplorer(editor: Editor) : GUISection(editor) {
         }
     }
 
-    private fun getFileType(file: File?): String {
+    private fun getFileType(file: File): String {
         return when (FileHelper.getExtension(file.toString())) {
             "obj" -> "MeshFile"
             "jpg", "png", "bmp" -> "ImageFile"
@@ -39,7 +39,7 @@ class GUIExplorer(editor: Editor) : GUISection(editor) {
         }
     }
 
-    private fun getFileIcon(file: File?): Texture {
+    private fun getFileIcon(file: File): Texture {
         return when (getFileType(file)) {
             "MeshFile" -> editor.guiRenderer.textures.meshFileIcon
             "ImageFile" -> editor.guiRenderer.textures.imageFileIcon
@@ -50,14 +50,15 @@ class GUIExplorer(editor: Editor) : GUISection(editor) {
         }
     }
 
-    private fun renderFolder(folder: File?, parent: Boolean) {
+    private fun renderFolder(folder: File, parent: Boolean) {
         val folderIcon = getFolderIcon(folder)
         ImGui.pushID(folder.toString())
         if (ImGui.imageButton(folderIcon.buffer, buttonSize, buttonSize)) {
             currentPath = folder
         }
         ImGui.popID()
-        GUIDragDrop.setData("Folder", folder!!.absolutePath, folderIcon)
+
+        GUIDragDrop.setData("Folder", folder.absolutePath, folderIcon)
         GUIPopup.itemPopup("EditExplorerFolder$folder") {
             if (ImGui.button("Rename")) {
                 textInput = GUITextInput(folder.name) { name: String ->
@@ -71,7 +72,10 @@ class GUIExplorer(editor: Editor) : GUISection(editor) {
                 GUIPopup.close()
             }
         }
-        val callback = { path: Any? -> FileHelper.move(path as String, folder.absolutePath); Unit }
+
+        val callback = { path: Any? ->
+            FileHelper.move(path as String, folder.absolutePath); Unit
+        }
         GUIDragDrop.getData("Folder", callback)
         GUIDragDrop.getData("File", callback)
         GUIDragDrop.getData("MeshFile", callback)
@@ -83,14 +87,15 @@ class GUIExplorer(editor: Editor) : GUISection(editor) {
         ImGui.nextColumn()
     }
 
-    private fun renderFile(file: File?) {
+    private fun renderFile(file: File) {
         val fileIcon = getFileIcon(file)
         ImGui.pushID(file.toString())
         if (ImGui.imageButton(fileIcon.buffer, buttonSize, buttonSize)) {
-            FileHelper.openDefault(file!!.absolutePath)
+            FileHelper.openDefault(file.absolutePath)
         }
         ImGui.popID()
-        GUIDragDrop.setData(getFileType(file), file!!.absolutePath, fileIcon)
+
+        GUIDragDrop.setData(getFileType(file), file.absolutePath, fileIcon)
         GUIPopup.itemPopup("EditExplorerFile$file") {
             if (ImGui.button("Rename")) {
                 textInput = GUITextInput(file.name) { name: String ->
@@ -110,7 +115,7 @@ class GUIExplorer(editor: Editor) : GUISection(editor) {
 
     override fun renderGUI() {
         if (ImGui.begin("Explorer", ImGuiWindowFlags.NoScrollbar)) {
-            ImGui.bulletText(currentPath!!.absolutePath)
+            ImGui.bulletText(currentPath.absolutePath)
             ImGui.separator()
             var color = ImGui.getStyle().getColor(ImGuiCol.Button)
 
@@ -122,7 +127,7 @@ class GUIExplorer(editor: Editor) : GUISection(editor) {
 
             ImGui.columns(columnCount, "ExplorerColumns", false)
             buttonSize = ImGui.calcItemWidth()
-            currentPath!!.parentFile?.let {
+            currentPath.parentFile?.let {
                 renderFolder(it, true)
             }
 
@@ -144,7 +149,7 @@ class GUIExplorer(editor: Editor) : GUISection(editor) {
             GUIPopup.windowPopup("ExplorerWindow") {
                 if (ImGui.button("New File", -1f, 0f)) {
                     textInput = GUITextInput("") { name: String ->
-                        FileHelper.createFile(currentPath.toString() + "/" + name)
+                        FileHelper.createFile("$currentPath/$name")
                         textInput = null
                     }
                     GUIPopup.close()
@@ -152,8 +157,8 @@ class GUIExplorer(editor: Editor) : GUISection(editor) {
 
                 if (ImGui.button("New Script", -1f, 0f)) {
                     textInput = GUITextInput("") { name: String ->
-                        val path = currentPath.toString() + "/" + name + ".java"
-                        FileHelper.writeString(path, Script.Companion.getTemplate(name))
+                        val path = "$currentPath/$name.java"
+                        FileHelper.writeString(path, Script.getTemplate(name))
                         textInput = null
                     }
                     GUIPopup.close()
@@ -161,7 +166,7 @@ class GUIExplorer(editor: Editor) : GUISection(editor) {
 
                 if (ImGui.button("New Folder")) {
                     textInput = GUITextInput("") { name: String ->
-                        FileHelper.createFolder(currentPath.toString() + "/" + name)
+                        FileHelper.createFolder("$currentPath/$name")
                         textInput = null
                     }
                     GUIPopup.close()

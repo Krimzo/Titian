@@ -30,6 +30,7 @@ object Key {
     const val B = 'B'.code
     const val N = 'N'.code
     const val M = 'M'.code
+
     const val Num0 = '0'.code
     const val Num1 = '1'.code
     const val Num2 = '2'.code
@@ -40,23 +41,30 @@ object Key {
     const val Num7 = '7'.code
     const val Num8 = '8'.code
     const val Num9 = '9'.code
+
     const val Period = '.'.code
     const val Comma = ','.code
     const val Minus = '-'.code
     const val Plus = '+'.code
+
     val Esc = ImGui.getKeyIndex(ImGuiKey.Escape)
     val Tab = ImGui.getKeyIndex(ImGuiKey.Tab)
     val Space = ImGui.getKeyIndex(ImGuiKey.Space)
     val Enter = ImGui.getKeyIndex(ImGuiKey.Enter)
+
     val Insert = ImGui.getKeyIndex(ImGuiKey.Insert)
     val Delete = ImGui.getKeyIndex(ImGuiKey.Delete)
     val Backspace = ImGui.getKeyIndex(ImGuiKey.Backspace)
+
     val PageUp = ImGui.getKeyIndex(ImGuiKey.PageUp)
     val PageDown = ImGui.getKeyIndex(ImGuiKey.PageDown)
+
     val Up = ImGui.getKeyIndex(ImGuiKey.UpArrow)
     val Down = ImGui.getKeyIndex(ImGuiKey.DownArrow)
     val Left = ImGui.getKeyIndex(ImGuiKey.LeftArrow)
-    val Right = ImGui.getKeyIndex(ImGuiKey.RightArrow) /* UNKNOWN
+    val Right = ImGui.getKeyIndex(ImGuiKey.RightArrow)
+
+/* UNKNOWN
     public static final int Caps = 595;
 
     public static final int F1 = 572;
@@ -71,5 +79,5 @@ object Key {
     public static final int F10 = 581;
     public static final int F11 = 582;
     public static final int F12 = 583;
-     */
+*/
 }

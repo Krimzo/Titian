@@ -17,17 +17,22 @@ class Window(size: Int2, title: String, resizable: Boolean) {
         if (!GLFW.glfwInit()) {
             throw Error("Unable to initialize GLFW")
         }
+
         GLFW.glfwDefaultWindowHints()
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE)
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, if (resizable) GLFW.GLFW_TRUE else GLFW.GLFW_FALSE)
         GLFW.glfwWindowHint(GLFW.GLFW_DECORATED, GLFW.GLFW_FALSE)
+
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3)
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 3)
+
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE)
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE)
+
         if (GLFW.glfwCreateWindow(size.x, size.y, title, MemoryUtil.NULL, MemoryUtil.NULL).also { window = it } == 0L) {
             throw Error("Failed to create a GLFW window")
         }
+
         GLFW.glfwMakeContextCurrent(window)
         context = GLContext()
         setHidden(false)
@@ -68,6 +73,7 @@ class Window(size: Int2, title: String, resizable: Boolean) {
 
     val isMaximized: Boolean
         get() = GLFW.glfwGetWindowAttrib(window, GLFW.GLFW_MAXIMIZED) != 0
+
     val size: Int2
         get() {
             val sizeX = IntArray(1)
@@ -75,6 +81,7 @@ class Window(size: Int2, title: String, resizable: Boolean) {
             GLFW.glfwGetWindowSize(window, sizeX, sizeY)
             return Int2(sizeX[0], sizeY[0])
         }
+
     var position: Int2
         get() {
             val posX = IntArray(1)
@@ -89,7 +96,8 @@ class Window(size: Int2, title: String, resizable: Boolean) {
     fun setHidden(state: Boolean) {
         if (state) {
             GLFW.glfwHideWindow(window)
-        } else {
+        }
+        else {
             GLFW.glfwShowWindow(window)
         }
     }
@@ -98,14 +106,14 @@ class Window(size: Int2, title: String, resizable: Boolean) {
         GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, if (enabled) GLFW.GLFW_CURSOR_NORMAL else GLFW.GLFW_CURSOR_DISABLED)
     }
 
-    var mousePosition: Int2?
+    var mousePosition: Int2
         get() {
             val position = arrayOf(DoubleArray(1), DoubleArray(1))
             GLFW.glfwGetCursorPos(window, position[0], position[1])
             return Int2(position[0][0].toInt(), position[1][0].toInt())
         }
         set(position) {
-            GLFW.glfwSetCursorPos(window, position!!.x.toDouble(), position.y.toDouble())
+            GLFW.glfwSetCursorPos(window, position.x.toDouble(), position.y.toDouble())
         }
 
     fun swapBuffers() {
@@ -121,13 +129,16 @@ class Window(size: Int2, title: String, resizable: Boolean) {
     }
 
     fun setIcon(filepath: String) {
-        val imageSize = FileHelper.getImageSize(filepath)
-        FileHelper.getImageData(filepath, false)?.let {
-            val image = GLFWImage.create()
-            image[imageSize.x, imageSize.y] = Memory.createByteBuffer(it)
-            val imageBuffer = GLFWImage.create(1)
-            imageBuffer.put(0, image)
-            GLFW.glfwSetWindowIcon(window, imageBuffer)
+        FileHelper.getImageSize(filepath)?.let { imageSize ->
+            FileHelper.getImageData(filepath, false)?.let { data ->
+                val image = GLFWImage.create()
+                image[imageSize.x, imageSize.y] = Memory.createByteBuffer(data)
+
+                val imageBuffer = GLFWImage.create(1)
+                imageBuffer.put(0, image)
+
+                GLFW.glfwSetWindowIcon(window, imageBuffer)
+            }
         }
     }
 }

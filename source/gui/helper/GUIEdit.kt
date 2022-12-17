@@ -9,88 +9,105 @@ import java.awt.Color
 import java.lang.reflect.Field
 
 object GUIEdit {
-    fun editInt(name: String?, data: Int, precision: Int): Int {
+    fun editInt(name: String, data: Int, precision: Int): Int {
         val dataArray = intArrayOf(data)
         ImGui.dragInt(name, dataArray, precision.toFloat())
         return dataArray[0]
     }
 
-    fun editInt(name: String?, data: Int, precision: Int, min: Int, max: Int): Int {
+    fun editInt(name: String, data: Int, precision: Int, min: Int, max: Int): Int {
         val dataArray = intArrayOf(data)
         ImGui.dragInt(name, dataArray, precision.toFloat(), min.toFloat(), max.toFloat())
         return dataArray[0]
     }
 
-    fun editFloat(name: String?, data: Float, precision: Float): Float {
+    fun editFloat(name: String, data: Float, precision: Float): Float {
         val dataArray = floatArrayOf(data)
         ImGui.dragFloat(name, dataArray, precision)
         return dataArray[0]
     }
 
-    fun editFloat(name: String?, data: Float, precision: Float, min: Float, max: Float): Float {
+    fun editFloat(name: String, data: Float, precision: Float, min: Float, max: Float): Float {
         val dataArray = floatArrayOf(data)
         ImGui.dragFloat(name, dataArray, precision, min, max)
         return dataArray[0]
     }
 
-    fun editFloat2(name: String?, data: Float2, precision: Float) {
-        val dataArray = data.array()
+    fun editFloat2(name: String, data: Float2, precision: Float) {
+        val dataArray = data.array
         if (ImGui.dragFloat2(name, dataArray, precision)) {
-            data.set(dataArray)
+            data.x = dataArray[0]
+            data.y = dataArray[1]
         }
     }
 
-    fun editFloat2(name: String?, data: Float2, precision: Float, min: Float, max: Float) {
-        val dataArray = data.array()
+    fun editFloat2(name: String, data: Float2, precision: Float, min: Float, max: Float) {
+        val dataArray = data.array
         if (ImGui.dragFloat2(name, dataArray, precision, min, max)) {
-            data.set(dataArray)
+            data.x = dataArray[0]
+            data.y = dataArray[1]
         }
     }
 
-    fun editFloat3(name: String?, data: Float3?, precision: Float) {
-        val dataArray = data!!.array()
+    fun editFloat3(name: String, data: Float3, precision: Float) {
+        val dataArray = data.array
         if (ImGui.dragFloat3(name, dataArray, precision)) {
-            data.set(dataArray)
+            data.x = dataArray[0]
+            data.y = dataArray[1]
+            data.z = dataArray[2]
         }
     }
 
-    fun editFloat3(name: String?, data: Float3, precision: Float, min: Float, max: Float) {
-        val dataArray = data.array()
+    fun editFloat3(name: String, data: Float3, precision: Float, min: Float, max: Float) {
+        val dataArray = data.array
         if (ImGui.dragFloat3(name, dataArray, precision, min, max)) {
-            data.set(dataArray)
+            data.x = dataArray[0]
+            data.y = dataArray[1]
+            data.z = dataArray[2]
         }
     }
 
-    fun editFloat4(name: String?, data: Float4, precision: Float) {
-        val dataArray = data.array()
+    fun editFloat4(name: String, data: Float4, precision: Float) {
+        val dataArray = data.array
         if (ImGui.dragFloat4(name, dataArray, precision)) {
-            data.set(dataArray)
+            data.x = dataArray[0]
+            data.y = dataArray[1]
+            data.z = dataArray[2]
+            data.w = dataArray[3]
         }
     }
 
-    fun editFloat4(name: String?, data: Float4, precision: Float, min: Float, max: Float) {
-        val dataArray = data.array()
+    fun editFloat4(name: String, data: Float4, precision: Float, min: Float, max: Float) {
+        val dataArray = data.array
         if (ImGui.dragFloat4(name, dataArray, precision, min, max)) {
-            data.set(dataArray)
+            data.x = dataArray[0]
+            data.y = dataArray[1]
+            data.z = dataArray[2]
+            data.w = dataArray[3]
         }
     }
 
-    fun editColor3(name: String?, data: Float3?) {
-        val dataArray = data!!.array()
+    fun editColor3(name: String, data: Float3) {
+        val dataArray = data.array
         if (ImGui.colorEdit3(name, dataArray)) {
-            data.set(dataArray)
+            data.x = dataArray[0]
+            data.y = dataArray[1]
+            data.z = dataArray[2]
         }
     }
 
-    fun editColor4(name: String?, data: Float4) {
-        val dataArray = data.array()
+    fun editColor4(name: String, data: Float4) {
+        val dataArray = data.array
         if (ImGui.colorEdit4(name, dataArray)) {
-            data.set(dataArray)
+            data.x = dataArray[0]
+            data.y = dataArray[1]
+            data.z = dataArray[2]
+            data.w = dataArray[3]
         }
     }
 
-    fun useColor3(styleType: Int, color: Float3?, callback: () -> Unit) {
-        ImGui.pushStyleColor(styleType, color!!.x, color.y, color.z, 1f)
+    fun useColor3(styleType: Int, color: Float3, callback: () -> Unit) {
+        ImGui.pushStyleColor(styleType, color.x, color.y, color.z, 1f)
         callback()
         ImGui.popStyleColor()
     }
@@ -102,9 +119,8 @@ object GUIEdit {
     }
 
     @Throws(Exception::class)
-    fun editField(field: Field, instance: Scriptable?) {
-        val type = field.genericType.typeName
-        when (type) {
+    fun editField(field: Field, instance: Scriptable) {
+        when (val type = field.genericType.typeName) {
             "boolean" -> {
                 val state = field.getBoolean(instance)
                 if (ImGui.checkbox(field.name, state)) {
@@ -170,9 +186,10 @@ object GUIEdit {
                     ImGui.text("Field \"" + field.name + "\" is null")
                     return
                 }
-                val data = obj.array()
+                val data = obj.array
                 if (ImGui.dragInt2(field.name, data)) {
-                    obj.set(data)
+                    obj.x = data[0]
+                    obj.y = data[1]
                 }
             }
 
@@ -182,9 +199,11 @@ object GUIEdit {
                     ImGui.text("Field \"" + field.name + "\" is null")
                     return
                 }
-                val data = obj.array()
+                val data = obj.array
                 if (ImGui.dragInt3(field.name, data)) {
-                    obj.set(data)
+                    obj.x = data[0]
+                    obj.y = data[1]
+                    obj.z = data[2]
                 }
             }
 
@@ -194,9 +213,12 @@ object GUIEdit {
                     ImGui.text("Field \"" + field.name + "\" is null")
                     return
                 }
-                val data = obj.array()
+                val data = obj.array
                 if (ImGui.dragInt4(field.name, data)) {
-                    obj.set(data)
+                    obj.x = data[0]
+                    obj.y = data[1]
+                    obj.z = data[2]
+                    obj.w = data[3]
                 }
             }
 
@@ -206,9 +228,10 @@ object GUIEdit {
                     ImGui.text("Field \"" + field.name + "\" is null")
                     return
                 }
-                val data = obj.array()
+                val data = obj.array
                 if (ImGui.dragFloat2(field.name, data)) {
-                    obj.set(data)
+                    obj.x = data[0]
+                    obj.y = data[1]
                 }
             }
 
@@ -218,9 +241,11 @@ object GUIEdit {
                     ImGui.text("Field \"" + field.name + "\" is null")
                     return
                 }
-                val data = obj.array()
+                val data = obj.array
                 if (ImGui.dragFloat3(field.name, data)) {
-                    obj.set(data)
+                    obj.x = data[0]
+                    obj.y = data[1]
+                    obj.z = data[2]
                 }
             }
 
@@ -230,9 +255,12 @@ object GUIEdit {
                     ImGui.text("Field \"" + field.name + "\" is null")
                     return
                 }
-                val data = obj.array()
+                val data = obj.array
                 if (ImGui.dragFloat4(field.name, data)) {
-                    obj.set(data)
+                    obj.x = data[0]
+                    obj.y = data[1]
+                    obj.z = data[2]
+                    obj.w = data[3]
                 }
             }
 
@@ -242,9 +270,9 @@ object GUIEdit {
                     ImGui.text("Field \"" + field.name + "\" is null")
                     return
                 }
-                val data = Float4(obj).array()
+                val data = Float4(obj).array
                 if (ImGui.colorEdit4(field.name, data)) {
-                    field[instance] = Float4(data).color()
+                    field[instance] = Float4(data).color
                 }
             }
 

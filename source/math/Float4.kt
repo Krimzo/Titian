@@ -2,6 +2,8 @@ package math
 
 import java.awt.Color
 import java.io.Serializable
+import kotlin.math.acos
+import kotlin.math.sqrt
 
 class Float4 : Serializable {
     var x = 0f
@@ -9,178 +11,104 @@ class Float4 : Serializable {
     var z = 0f
     var w = 0f
 
-    constructor() {
-        set(0f)
-    }
-
-    constructor(a: Float) {
-        set(a)
-    }
-
-    constructor(data: FloatArray?) {
-        set(data)
-    }
-
     constructor(x: Float, y: Float, z: Float, w: Float) {
-        set(x, y, z, w)
-    }
-
-    constructor(v: Float2, z: Float, w: Float) {
-        set(v, z, w)
-    }
-
-    constructor(x: Float, v: Float2, w: Float) {
-        set(x, v, w)
-    }
-
-    constructor(x: Float, y: Float, v: Float2) {
-        set(x, y, v)
-    }
-
-    constructor(v1: Float2, v2: Float2) {
-        set(v1, v2)
-    }
-
-    constructor(v: Float3?, w: Float) {
-        set(v, w)
-    }
-
-    constructor(x: Float, v: Float3) {
-        set(x, v)
-    }
-
-    constructor(v: Float4) {
-        set(v)
-    }
-
-    constructor(v: Int4) {
-        set(v)
-    }
-
-    constructor(color: Color) {
-        set(color)
-    }
-
-    // Setters
-    operator fun set(x: Float, y: Float, z: Float, w: Float) {
         this.x = x
         this.y = y
         this.z = z
         this.w = w
     }
 
-    fun set(a: Float) {
-        set(a, a, a, a)
-    }
+    constructor() : this(0f, 0f, 0f, 0f)
 
-    fun set(data: FloatArray?) {
-        set(data!![0], data[1], data[2], data[3])
-    }
+    constructor(a: Float) : this(a, a, a, a)
 
-    operator fun set(v: Float2, z: Float, w: Float) {
-        set(v.x, v.y, z, w)
-    }
+    constructor(data: FloatArray) : this(data[0], data[1], data[2], data[3])
 
-    operator fun set(x: Float, v: Float2, w: Float) {
-        set(x, v.x, v.y, w)
-    }
+    constructor(v: Float2, z: Float, w: Float) : this(v.x, v.y, z, w)
 
-    operator fun set(x: Float, y: Float, v: Float2) {
-        set(x, y, v.x, v.y)
-    }
+    constructor(x: Float, v: Float2, w: Float) : this(x, v.x, v.y, w)
 
-    operator fun set(v1: Float2, v2: Float2) {
-        set(v1.x, v1.y, v2.x, v2.y)
-    }
+    constructor(x: Float, y: Float, v: Float2) : this(x, y, v.x, v.y)
 
-    operator fun set(v: Float3?, w: Float) {
-        set(v!!.x, v.y, v.z, w)
-    }
+    constructor(v1: Float2, v2: Float2) : this(v1.x, v1.y, v2.x, v2.y)
 
-    operator fun set(x: Float, v: Float3) {
-        set(x, v.x, v.y, v.z)
-    }
+    constructor(v: Float3, w: Float) : this(v.x, v.y, v.z, w)
 
-    fun set(v: Float4) {
-        set(v.x, v.y, v.z, v.w)
-    }
+    constructor(x: Float, v: Float3) : this(x, v.x, v.y, v.z)
 
-    fun set(v: Int4) {
-        set(v.x.toFloat(), v.y.toFloat(), v.z.toFloat(), v.w.toFloat())
-    }
+    constructor(v: Float4) : this(v.x, v.y, v.z, v.w)
 
-    fun set(color: Color) {
-        set(Float3(color), color.alpha / 255.0f)
-    }
+    constructor(v: Int4) : this(v.x.toFloat(), v.y.toFloat(), v.z.toFloat(), v.w.toFloat())
+
+    constructor(color: Color) : this(Float3(color), color.alpha / 255f)
 
     // Getters
-    fun xy(): Float2 {
-        return Float2(x, y)
-    }
+    val length: Float
+        get() = sqrt(this * this)
 
-    fun xyz(): Float3 {
-        return Float3(x, y, z)
-    }
+    val xy: Float2
+        get() = Float2(x, y)
 
-    fun array(): FloatArray {
-        return floatArrayOf(x, y, z, w)
-    }
+    val xyz: Float3
+        get() = Float3(x, y, z)
 
-    fun color(): Color {
-        return Color(Math.min(Math.max(x * 255, 0f), 255f).toInt(), Math.min(Math.max(y * 255, 0f), 255f).toInt(), Math.min(Math.max(z * 255, 0f), 255f).toInt(), Math.min(Math.max(w * 255, 0f), 255f).toInt())
-    }
+    val array: FloatArray
+        get() = floatArrayOf(x, y, z, w)
+
+    val color: Color
+        get() = Color(
+            (x * 255).toInt().coerceAtLeast(0).coerceAtMost(255),
+            (y * 255).toInt().coerceAtLeast(0).coerceAtMost(255),
+            (z * 255).toInt().coerceAtLeast(0).coerceAtMost(255),
+            (w * 255).toInt().coerceAtLeast(0).coerceAtMost(255)
+        )
 
     // Math
-    fun add(v: Float4): Float4 {
+    operator fun plus(v: Float4): Float4 {
         return Float4(x + v.x, y + v.y, z + v.z, w + v.w)
     }
 
-    fun subtract(v: Float4): Float4 {
+    operator fun minus(v: Float4): Float4 {
         return Float4(x - v.x, y - v.y, z - v.z, w - v.w)
     }
 
-    fun multiply(a: Float): Float4 {
+    operator fun times(a: Float): Float4 {
         return Float4(x * a, y * a, z * a, w * a)
     }
 
-    fun multiply(v: Float4): Float4 {
-        return Float4(x * v.x, y * v.y, z * v.z, w * v.w)
-    }
-
-    fun divide(a: Float): Float4 {
-        return multiply(1.0f / a)
-    }
-
-    fun divide(v: Float4): Float4 {
-        return Float4(x / v.x, y / v.y, z / v.z, w / v.w)
-    }
-
-    fun equals(v: Float4): Boolean {
-        return x == v.x && y == v.y && z == v.z && w == v.w
-    }
-
-    fun negate(): Float4 {
-        return multiply(-1f)
-    }
-
-    fun length(): Float {
-        return Math.sqrt(dot(this).toDouble()).toFloat()
-    }
-
-    fun normalize(): Float4 {
-        return divide(length())
-    }
-
-    fun dot(v: Float4): Float {
+    operator fun times(v: Float4): Float {
         return x * v.x + y * v.y + z * v.z + w * v.w
     }
 
+    operator fun div(a: Float): Float4 {
+        return this * (1f / a)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other is Float4) {
+            return x == other.x && y == other.y && z == other.z && w == other.w
+        }
+        return false
+    }
+
+    operator fun unaryMinus(): Float4 {
+        return this * -1f
+    }
+
     fun angle(v: Float4): Float {
-        return Math.toDegrees(Math.acos(normalize().dot(v.normalize()).toDouble())).toFloat()
+        return toDegrees(acos(normalize(this) * normalize(v)))
     }
 
     override fun toString(): String {
         return "($x, $y, $z, $w)"
+    }
+
+    override fun hashCode(): Int {
+        var result = x.hashCode()
+        result = 31 * result + y.hashCode()
+        result = 31 * result + z.hashCode()
+        result = 31 * result + w.hashCode()
+        return result
     }
 
     companion object {

@@ -31,6 +31,6 @@ object Input {
         get() = ImGui.getIO().keyShift
     val isCtrlDown: Boolean
         get() = ImGui.getIO().keyCtrl
-    val isAlDown: Boolean
+    val isAltDown: Boolean
         get() = ImGui.getIO().keyAlt
 }

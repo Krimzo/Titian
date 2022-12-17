@@ -5,7 +5,7 @@ import named.Named
 import window.GLContext
 import java.io.Serializable
 
-abstract class GLObject(holder: NameHolder?, name: String?, @field:Transient val context: GLContext?) : Named(holder, name), Serializable {
+abstract class GLObject(holder: NameHolder, name: String, @field:Transient val context: GLContext) : Named(holder, name), Serializable {
     protected fun finalize() {
         if (isAllocated()) {
             synchronized(objects) {
@@ -23,8 +23,8 @@ abstract class GLObject(holder: NameHolder?, name: String?, @field:Transient val
 
         fun cleanup() {
             synchronized(objects) {
-                for (`object` in objects) {
-                    `object`.deallocate()
+                for (obj in objects) {
+                    obj.deallocate()
                 }
                 objects.clear()
             }

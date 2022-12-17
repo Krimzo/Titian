@@ -16,9 +16,15 @@ object Titian {
         val scene = Scene()
         scene.selected.ambientLight = AmbientLight(scene.names.entity, "Ambient Light", editor)
         scene.selected.directionalLight = DirectionalLight(scene.names.entity, "Directional Light", editor)
-        scene.selected.directionalLight!!.setDirection(Float3(1f, -1f, -1f))
-        scene.add(scene.selected.ambientLight!!)
-        scene.add(scene.selected.directionalLight!!)
+
+        scene.selected.ambientLight?.let {
+            scene.add(it)
+        }
+
+        scene.selected.directionalLight?.let {
+            it.setDirection(Float3(1f, -1f, -1f))
+            scene.add(it)
+        }
 
         val mesh = Mesh(scene.names.mesh, "Monke Mesh", editor.window.context, "resource/meshes/monke.obj")
         val material = Material(scene.names.material, "Monke Material")
@@ -29,7 +35,7 @@ object Titian {
         for (y in -size..size) {
             for (x in -size..size) {
                 val monke = Entity(scene.names.entity, "Monke", editor)
-                monke.components.transform.position[Float2(x.toFloat(), y.toFloat()).multiply(2.5f)] = 0f
+                monke.components.transform.position = Float3(Float2(x.toFloat(), y.toFloat()) * 2.5f, 0f)
                 monke.components.physics.angular.y = (Random().nextFloat() * 2 - 1) * 36
                 monke.components.mesh.mesh = mesh
                 monke.components.material.material = material
@@ -40,7 +46,7 @@ object Titian {
     }
 
     private fun loadTestScene(editor: Editor) {
-        editor.scene = Scene.fromFile("test/scenes/test.titian", editor)!!
+        editor.scene = Scene.fromFile("test/scenes/test.titian", editor) ?: Scene()
     }
 
     @JvmStatic

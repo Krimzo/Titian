@@ -47,7 +47,8 @@ object FileHelper {
             val file = File(filepath)
             file.parentFile.mkdirs()
             file.createNewFile()
-        } catch (ignored: Exception) {
+        }
+        catch (ignored: Exception) {
             println("File/folder \"$filepath\" create() error")
             false
         }
@@ -56,7 +57,8 @@ object FileHelper {
     fun createFolder(filepath: String): Boolean {
         return try {
             File(filepath).mkdirs()
-        } catch (ignored: Exception) {
+        }
+        catch (ignored: Exception) {
             println("File/folder \"$filepath\" create() error")
             false
         }
@@ -67,7 +69,8 @@ object FileHelper {
             val file = File(filepath)
             val newPath = file.parent + separator + name
             file.renameTo(File(newPath))
-        } catch (ignored: Exception) {
+        }
+        catch (ignored: Exception) {
             println("File/folder \"$filepath\" rename() error")
             false
         }
@@ -78,7 +81,8 @@ object FileHelper {
             val from = File(filepath)
             val to = toFolder + separator + from.name
             from.renameTo(File(to))
-        } catch (ignored: Exception) {
+        }
+        catch (ignored: Exception) {
             println("File/folder \"$filepath\" move() error")
             false
         }
@@ -88,19 +92,20 @@ object FileHelper {
         return try {
             Desktop.getDesktop().open(File(filepath))
             true
-        } catch (ignored: Exception) {
+        }
+        catch (ignored: Exception) {
             println("File \"$filepath\" openDefault() error")
             false
         }
     }
 
-    fun readString(filepath: String): String {
+    fun readString(filepath: String): String? {
         return try {
             Files.readString(Path.of(filepath))
         }
         catch (ignored: Exception) {
             println("File \"$filepath\" readString() error")
-            ""
+            null
         }
     }
 
@@ -127,22 +132,22 @@ object FileHelper {
         }
     }
 
-    fun getName(filepath: String): String {
+    fun getName(filepath: String): String? {
         return try {
             File(filepath).name
         }
         catch (ignored: Exception) {
             println("File/folder \"$filepath\" getName() error")
-            ""
+            null
         }
     }
 
     fun getExtension(filepath: String): String {
         val index = filepath.lastIndexOf('.')
-        return if (index >= 0) filepath.substring(index + 1) else ""
+        return if (index >= 0) { filepath.substring(index + 1) } else ""
     }
 
-    fun getWithoutExtension(filepath: String): String {
+    fun getWithoutExtension(filepath: String): String? {
         val index = filepath.indexOf('.')
         if (index > 0) {
             return filepath.substring(0, index)
@@ -151,12 +156,15 @@ object FileHelper {
             filepath
         }
         else {
-            ""
+            null
         }
     }
 
-    fun getNameWithoutExtension(filepath: String): String {
-        return getWithoutExtension(getName(filepath))
+    fun getNameWithoutExtension(filepath: String): String? {
+        getName(filepath)?.let {
+            return getWithoutExtension(it)
+        }
+        return null
     }
 
     fun listFolders(filepath: String): Array<File>? {
@@ -179,11 +187,12 @@ object FileHelper {
         }
     }
 
-    fun parseShader(filepath: String, type: Int): String {
+    fun parseShader(filepath: String, type: Int): String? {
         return try {
             val file = FileReader(filepath)
             val reader = BufferedReader(file)
             val builder = StringBuilder()
+
             var shouldSave = false
             val shaderName = when (type) {
                 GL20.GL_VERTEX_SHADER -> "//vertexshader"
@@ -191,32 +200,34 @@ object FileHelper {
                 GL32.GL_GEOMETRY_SHADER -> "//geometryshader"
                 else -> ""
             }
+
             var line = ""
             while (reader.readLine()?.also { line = it } != null) {
                 val formattedLine = line.lowercase(Locale.getDefault()).replace("\\s".toRegex(), "")
                 if (shouldSave) {
-                    if (when (formattedLine) {
-                            "//vertexshader", "//fragmentshader", "//geometryshader" -> false
-                            else -> true
-                        }) {
+                    if (when (formattedLine) { "//vertexshader", "//fragmentshader", "//geometryshader" -> false else -> true }) {
                         builder.append(line).append('\n')
-                    } else {
+                    }
+                    else {
                         break
                     }
-                } else if (formattedLine == shaderName) {
+                }
+                else if (formattedLine == shaderName) {
                     shouldSave = true
                 }
             }
+
             reader.close()
             file.close()
             builder.toString()
-        } catch (e: Exception) {
+        }
+        catch (e: Exception) {
             e.printStackTrace()
-            ""
+            null
         }
     }
 
-    fun parseMeshFile(filepath: String): Array<Vertex> {
+    fun parseMeshFile(filepath: String): Array<Vertex>? {
         return try {
             val file = FileReader(filepath)
             val reader = BufferedReader(file)
@@ -225,8 +236,8 @@ object FileHelper {
             val uvBuffer = ArrayList<Float2>()
             val normBuffer = ArrayList<Float3>()
 
-            var fileLine: String
-            while (reader.readLine().also { fileLine = it } != null) {
+            var fileLine = ""
+            while (reader.readLine()?.let { fileLine = it } != null) {
                 val lineParts = fileLine.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 when (lineParts[0]) {
                     "v" -> {
@@ -252,20 +263,22 @@ object FileHelper {
             }
             reader.close()
             file.close()
-            var result: Array<Vertex> = Array(vertices.size) { Vertex() }
-            result = vertices.toArray(result)
-            result
+
+            val result: Array<Vertex> = Array(vertices.size) { Vertex() }
+            vertices.toArray(result)
         }
         catch (ignored: Exception) {
             println("File \"$filepath\" parseMesh() error")
-            Array(0) { Vertex() }
+            null
         }
     }
 
-    fun getImageSize(filePath: String): Int2 {
+    fun getImageSize(filePath: String): Int2? {
         val data = Array(3) { IntArray(1) }
-        STBImage.stbi_info(filePath, data[0], data[1], data[2])
-        return Int2(data[0][0], data[1][0])
+        if (STBImage.stbi_info(filePath, data[0], data[1], data[2])) {
+            return Int2(data[0][0], data[1][0])
+        }
+        return null
     }
 
     fun getImageData(filepath: String, flipY: Boolean): ByteArray? {

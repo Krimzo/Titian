@@ -7,14 +7,16 @@ import math.Float3
 import named.NameHolder
 import java.io.Serializable
 
-class PositionalLight(holder: NameHolder?, name: String?, editor: Editor?) : Light(holder, name, editor), Serializable {
+class PositionalLight(holder: NameHolder, name: String, editor: Editor) : Light(holder, name, editor), Serializable {
     var intensity = 1f
-    override fun getColor(): Float3? {
-        return super.getColor()!!.multiply(intensity)
+
+    override fun fullLight(): Float3 {
+        return super.fullLight() * intensity
     }
 
     override fun renderInfoGUI(editor: Editor) {
         super.renderInfoGUI(editor)
+
         intensity = GUIEdit.editFloat("Intensity", intensity, 0.1f)
     }
 }

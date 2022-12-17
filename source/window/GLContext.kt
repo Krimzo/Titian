@@ -14,12 +14,12 @@ class GLContext {
         GL.setCapabilities(null)
     }
 
-    fun setViewport(size: Int2?) {
+    fun setViewport(size: Int2) {
         setViewport(Int2(), size)
     }
 
-    fun setViewport(pos: Int2, size: Int2?) {
-        GL11.glViewport(pos.x, pos.y, size!!.x, size.y)
+    fun setViewport(pos: Int2, size: Int2) {
+        GL11.glViewport(pos.x, pos.y, size.x, size.y)
     }
 
     fun setClearColor(color: Float4) {
@@ -33,7 +33,8 @@ class GLContext {
     fun setDepthTest(enabled: Boolean) {
         if (enabled) {
             GL11.glEnable(GL11.GL_DEPTH_TEST)
-        } else {
+        }
+        else {
             GL11.glDisable(GL11.GL_DEPTH_TEST)
         }
     }
@@ -46,7 +47,8 @@ class GLContext {
         if (enabled) {
             GL11.glEnable(GL11.GL_CULL_FACE)
             GL11.glCullFace(if (cullBack) GL11.GL_BACK else GL11.GL_FRONT)
-        } else {
+        }
+        else {
             GL11.glDisable(GL11.GL_CULL_FACE)
         }
     }

@@ -3,9 +3,9 @@ package math
 import java.io.Serializable
 
 class Vertex : Serializable {
-    var world: Float3?
-    var texture: Float2?
-    var normal: Float3?
+    var world: Float3 = Float3()
+    var texture: Float2 = Float2()
+    var normal: Float3 = Float3()
 
     constructor() {
         world = Float3()
@@ -13,19 +13,19 @@ class Vertex : Serializable {
         normal = Float3()
     }
 
-    constructor(world: Float3?) {
+    constructor(world: Float3) {
         this.world = world
         texture = Float2()
         normal = Float3()
     }
 
-    constructor(world: Float3?, texture: Float2?) {
+    constructor(world: Float3, texture: Float2) {
         this.world = world
         this.texture = texture
         normal = Float3()
     }
 
-    constructor(world: Float3?, texture: Float2?, normal: Float3?) {
+    constructor(world: Float3, texture: Float2, normal: Float3) {
         this.world = world
         this.texture = texture
         this.normal = normal

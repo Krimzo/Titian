@@ -2,6 +2,7 @@ package math
 
 import utility.helper.StringHelper
 import java.io.Serializable
+import kotlin.math.abs
 
 open class Matrix(val width: Int, val height: Int) : Serializable {
     val data: FloatArray = FloatArray(width * height)
@@ -71,14 +72,14 @@ open class Matrix(val width: Int, val height: Int) : Serializable {
         return result
     }
 
-    fun multiply(data: FloatArray?, W: Int, H: Int): Matrix {
+    fun multiply(data: FloatArray, W: Int, H: Int): Matrix {
         val result = Matrix(W, height)
         if (width == H) {
             for (y in 0 until height) {
                 for (x in 0 until W) {
                     result[x, y] = 0f
                     for (i in 0 until width) {
-                        result[x, y] = result[x, y] + get(i, y) * data!![i * W + x]
+                        result[x, y] = result[x, y] + get(i, y) * data[i * W + x]
                     }
                 }
             }
@@ -86,35 +87,38 @@ open class Matrix(val width: Int, val height: Int) : Serializable {
         return result
     }
 
-    fun multiply(matrix: Matrix?): Matrix {
-        return multiply(matrix!!.data, matrix.width, matrix.height)
+    fun multiply(matrix: Matrix): Matrix {
+        return multiply(matrix.data, matrix.width, matrix.height)
     }
 
-    fun equals(matrix: Matrix): Boolean {
-        if (!sizeEquals(matrix)) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is Matrix) {
+            return false
+        }
+        if (!sizeEquals(other)) {
             return false
         }
         for (i in 0 until width * height) {
-            if (get(i) != matrix[i]) {
+            if (get(i) != other[i]) {
                 return false
             }
         }
         return true
     }
 
-    open fun absolute(): Matrix {
+    fun absolute(): Matrix {
         val result = Matrix(width, height)
         for (i in 0 until width * height) {
-            result[i] = Math.abs(get(i))
+            result[i] = abs(get(i))
         }
         return result
     }
 
-    open fun negate(): Matrix {
+    fun negate(): Matrix {
         return multiply(-1f)
     }
 
-    open fun transpose(): Matrix {
+    fun transpose(): Matrix {
         val result = Matrix(width, height)
         for (y in 0 until height) {
             for (x in 0 until width) {
@@ -164,7 +168,7 @@ open class Matrix(val width: Int, val height: Int) : Serializable {
                 var multi = -1
                 var result = 0f
                 for (i in 0 until width) {
-                    result += -1.let { multi *= it; multi } * get(i) * cofactor(i).determinant()
+                    result += (-1).let { multi *= it; multi } * get(i) * cofactor(i).determinant()
                 }
                 return result
             }
@@ -175,34 +179,42 @@ open class Matrix(val width: Int, val height: Int) : Serializable {
     fun adjoint(): Matrix {
         return if (isSquare) {
             cofactor().transpose()
-        } else Matrix(width, height)
+        }
+        else {
+            Matrix(width, height)
+        }
     }
 
-    open fun inverse(): Matrix {
+    fun inverse(): Matrix {
         return if (isSquare) {
             adjoint().multiply(1 / determinant())
-        } else Matrix(width, height)
+        }
+        else {
+            Matrix(width, height)
+        }
     }
 
     override fun toString(): String {
         val maxLengths = IntArray(width)
-        val outputData = arrayOfNulls<String>(width * height)
+        val outputData = Array(width * height) { "" }
         for (x in 0 until width) {
             for (y in 0 until height) {
                 outputData[y * width + x] = String.format("%.2f", get(y * width + x))
-                maxLengths[x] = Math.max(maxLengths[x], outputData[y * width + x]!!.length)
+                maxLengths[x] = maxLengths[x].coerceAtLeast(outputData[y * width + x].length)
             }
         }
+
         val stream = StringBuilder()
         for (y in 0 until height) {
             stream.append("[")
             for (x in 0 until width - 1) {
-                stream.append(StringHelper.spaces(maxLengths[x] - outputData[y * width + x]!!.length))
+                stream.append(StringHelper.spaces(maxLengths[x] - outputData[y * width + x].length))
                 stream.append(outputData[y * width + x])
                 stream.append(" ")
             }
+
             val lastLine = outputData[y * width + (width - 1)]
-            stream.append(StringHelper.spaces(maxLengths[width - 1] - lastLine!!.length))
+            stream.append(StringHelper.spaces(maxLengths[width - 1] - lastLine.length))
             stream.append(lastLine)
             stream.append(if (y == height - 1) "]" else "]\n")
         }

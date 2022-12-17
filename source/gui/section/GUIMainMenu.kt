@@ -18,24 +18,28 @@ import window.input.Mouse
 
 class GUIMainMenu(editor: Editor) : GUISection(editor) {
     private var textInput: GUITextInput? = null
+
     private fun windowControl() {
         val rect = ImVec4(ImGui.getWindowPosX(), ImGui.getWindowPosY(), 0f, 0f)
         rect.z = rect.x + ImGui.getWindowWidth()
         rect.w = rect.y + ImGui.getWindowHeight()
+
         if (ImGui.isMouseHoveringRect(rect.x, rect.y, rect.z, rect.w)) {
             var maximized = editor.window.isMaximized
             if (ImGui.isMouseDoubleClicked(Mouse.Left)) {
                 if (maximized) {
                     editor.window.restore()
-                } else {
+                }
+                else {
                     editor.window.maximize()
                 }
                 maximized = !maximized
             }
+
             if (!maximized && Input.isMouseDown(Mouse.Left)) {
                 val pos = editor.window.position
                 val drag = ImGui.getMouseDragDelta()
-                editor.window.position = Int2(pos!!.x + drag.x.toInt(), pos.y + drag.y.toInt())
+                editor.window.position = Int2(pos.x + drag.x.toInt(), pos.y + drag.y.toInt())
             }
         }
     }
@@ -45,6 +49,7 @@ class GUIMainMenu(editor: Editor) : GUISection(editor) {
             if (ImGui.menuItem("New scene")) {
                 editor.scene = Scene()
             }
+
             if (ImGui.menuItem("Save scene")) {
                 textInput = GUITextInput(FileHelper.defaultPath() + FileHelper.separator) { path: String ->
                     val fullPath = "$path.titian"
@@ -54,6 +59,7 @@ class GUIMainMenu(editor: Editor) : GUISection(editor) {
                     textInput = null
                 }
             }
+
             if (ImGui.menuItem("Exit")) {
                 editor.window.close()
             }
@@ -65,7 +71,7 @@ class GUIMainMenu(editor: Editor) : GUISection(editor) {
         if (ImGui.beginMenu("Edit")) {
             if (ImGui.menuItem("Reload scripts")) {
                 for (entity in editor.scene) {
-                    entity?.components?.script?.reload()
+                    entity.components.script.reload()
                 }
             }
             ImGui.endMenu()
@@ -80,9 +86,11 @@ class GUIMainMenu(editor: Editor) : GUISection(editor) {
                 GUIEdit.editColor3("Normal", GUIStyle.normal)
                 GUIEdit.editColor3("Light", GUIStyle.light)
                 GUIEdit.editColor3("Special", GUIStyle.special)
+
                 if (ImGui.button("Reload style", -1f, 0f)) {
                     GUIStyle.reloadStyle()
                 }
+
                 if (ImGui.button("Load defaults", -1f, 0f)) {
                     GUIStyle.loadDefaults()
                 }
@@ -95,10 +103,12 @@ class GUIMainMenu(editor: Editor) : GUISection(editor) {
     private fun renderMenu() {
         if (ImGui.beginMenu("Render")) {
             val size = Float2(1280f, 720f)
+
             if (ImGui.beginMenu("Depth Texture")) {
                 GUIDisplay.texture(editor.editorRenderer.renderBuffer.getDepthMap(), size)
                 ImGui.endMenu()
             }
+
             if (ImGui.beginMenu("Index Texture")) {
                 GUIDisplay.texture(editor.editorRenderer.indexBuffer.getColorMap(), size)
                 ImGui.endMenu()
@@ -111,18 +121,22 @@ class GUIMainMenu(editor: Editor) : GUISection(editor) {
     private fun barButtons() {
         ImGui.setCursorPosX(ImGui.getWindowPosX() + ImGui.getWindowWidth() - barButtonSizes)
         barButtonSizes = 0f
+
         if (ImGui.menuItem("  --  ")) {
             editor.window.minimize()
         }
         barButtonSizes += ImGui.getItemRectSizeX()
+
         if (ImGui.menuItem("  O  ")) {
             if (editor.window.isMaximized) {
                 editor.window.restore()
-            } else {
+            }
+            else {
                 editor.window.maximize()
             }
         }
         barButtonSizes += ImGui.getItemRectSizeX()
+
         if (ImGui.menuItem("  X  ")) {
             editor.window.close()
         }

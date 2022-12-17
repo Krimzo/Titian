@@ -5,7 +5,7 @@ import imgui.flag.ImGuiInputTextFlags
 import imgui.flag.ImGuiWindowFlags
 import imgui.type.ImString
 
-class GUITextInput(text: String?, private val onEdit: (String) -> Unit) {
+class GUITextInput(text: String, private val onEdit: (String) -> Unit) {
     private val id: Int = idCounter++
     private val text: ImString
 

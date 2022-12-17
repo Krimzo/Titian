@@ -7,11 +7,13 @@ import named.NameHolder
 import named.Named
 import java.io.Serializable
 
-class Material(holder: NameHolder?, name: String?) : Named(holder, name), Serializable {
-    var colorBlend = 0f
-    val color = Float3(1f)
+class Material(holder: NameHolder, name: String) : Named(holder, name), Serializable {
+    var colorBlend: Float = 0f
+    var roughness: Float = 0.5f
+
+    var color: Float3 = Float3(1f)
+
     var colorMap: Texture? = null
-    var roughness = 0.5f
     var roughnessMap: Texture? = null
     var normalMap: Texture? = null
 

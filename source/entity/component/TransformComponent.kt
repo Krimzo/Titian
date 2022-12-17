@@ -8,23 +8,24 @@ import math.Mat4
 import java.io.Serializable
 
 class TransformComponent(entity: Entity) : EntityComponent(entity), Serializable {
-    val scale = Float3(1f)
-    val rotation = Float3()
-    val position = Float3()
+    var scale: Float3 = Float3(1f)
+    var rotation: Float3 = Float3()
+    var position: Float3 = Float3()
+
     fun scalingMatrix(): Mat4 {
-        return Mat4.Companion.scaling(scale)
+        return Mat4.scaling(scale)
     }
 
     fun rotationMatrix(): Mat4 {
-        return Mat4.Companion.rotation(rotation)
+        return Mat4.rotation(rotation)
     }
 
     fun translationMatrix(): Mat4 {
-        return Mat4.Companion.translation(position)
+        return Mat4.translation(position)
     }
 
-    fun matrix(): Mat4? {
-        return translationMatrix().multiply(rotationMatrix()).multiply(scalingMatrix())
+    fun matrix(): Mat4 {
+        return translationMatrix() * rotationMatrix() * scalingMatrix()
     }
 
     override fun renderGUI() {

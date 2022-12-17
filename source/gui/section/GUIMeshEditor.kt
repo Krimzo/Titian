@@ -14,10 +14,16 @@ import light.AmbientLight
 import light.DirectionalLight
 import math.Float2
 import math.Int2
+import math.normalize
+import math.toRadians
+import named.NameHolder
 import scene.Scene
 import utility.helper.FileHelper
 import window.input.Input
 import window.input.Mouse
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.tan
 
 class GUIMeshEditor(editor: Editor) : GUISection(editor) {
     private var textInput: GUITextInput? = null
@@ -28,30 +34,36 @@ class GUIMeshEditor(editor: Editor) : GUISection(editor) {
     private val scene: Scene
 
     init {
-        camera = PerspectiveCamera(null, null, editor)
-        startCameraInfo = Float2()
-        cameraInfo = Float2()
+        val holder = NameHolder()
+        camera = PerspectiveCamera(holder, "", editor)
         camera.components.transform.position.z = 1f
         camera.sensitivity = 0.5f
-        val material = Material(null, "Mesh Editor Material")
-        material.colorMap = Texture(null, "Mesh Editor Texture", editor.window.context, Int2(1, 1), byteArrayOf(200.toByte(), 200.toByte(), 200.toByte(), 0xFF.toByte()))
-        entity = Entity(null, null, editor)
+        startCameraInfo = Float2()
+        cameraInfo = Float2()
+
+        val material = Material(holder, "Mesh Editor Material")
+        material.colorMap = Texture(holder, "Mesh Editor Texture", editor.window.context, Int2(1, 1), byteArrayOf(200.toByte(), 200.toByte(), 200.toByte(), 0xFF.toByte()))
+
+        entity = Entity(holder, "", editor)
         entity.components.material.material = material
+
         scene = Scene()
-        scene.selected.ambientLight = AmbientLight(null, null, editor)
-        scene.selected.directionalLight = DirectionalLight(null, null, editor)
+        scene.selected.ambientLight = AmbientLight(holder, "", editor)
+        scene.selected.directionalLight = DirectionalLight(holder, "", editor)
         scene.add(entity)
     }
 
-    private fun displayMeshes(scene: Scene?) {
+    private fun displayMeshes(scene: Scene) {
         var counter = 0
-        val it = scene!!.meshes.iterator()
+        val iter = scene.meshes.iterator()
         val mc = entity.components.mesh
-        while (it.hasNext()) {
-            val mesh = it.next()
+
+        while (iter.hasNext()) {
+            val mesh = iter.next()
             if (ImGui.selectable(mesh.name, mesh === mc.mesh)) {
                 mc.mesh = mesh
             }
+
             GUIPopup.itemPopup("EditMeshes" + counter++) {
                 if (ImGui.button("Rename")) {
                     textInput = GUITextInput(mesh.name) { name: String ->
@@ -59,12 +71,14 @@ class GUIMeshEditor(editor: Editor) : GUISection(editor) {
                         textInput = null
                     }
                 }
+
                 if (ImGui.button("Delete", -1f, 0f)) {
-                    it.remove()
+                    iter.remove()
                     mesh.eraseName()
                     if (mesh === mc.mesh) {
                         mc.mesh = null
                     }
+
                     for (entity in scene) {
                         if (entity.components.mesh.mesh === mesh) {
                             entity.components.mesh.mesh = null
@@ -77,23 +91,27 @@ class GUIMeshEditor(editor: Editor) : GUISection(editor) {
     }
 
     private fun updateCamera() {
-        val position = camera.components.transform.position
         if (Input.isMousePressed(Mouse.Right)) {
-            startCameraInfo.set(cameraInfo)
+            startCameraInfo.x = cameraInfo.x
+            startCameraInfo.y = cameraInfo.y
         }
+
         if (Input.isMouseDown(Mouse.Right)) {
             val dragDelta = ImGui.getMouseDragDelta(Mouse.Right)
             cameraInfo.x = startCameraInfo.x + dragDelta.x * camera.sensitivity
             cameraInfo.y = startCameraInfo.y + dragDelta.y * camera.sensitivity
-            cameraInfo.y = Math.min(Math.max(cameraInfo.y, -85f), 85f)
-            position.x = -Math.sin(Math.toRadians(cameraInfo.x.toDouble())).toFloat()
-            position.z = Math.cos(Math.toRadians(cameraInfo.x.toDouble())).toFloat()
-            position.y = Math.tan(Math.toRadians(cameraInfo.y.toDouble())).toFloat()
+            cameraInfo.y = cameraInfo.y.coerceAtLeast(-85f).coerceAtMost(85f)
+
+            val position = camera.components.transform.position
+            position.x = -sin(toRadians(cameraInfo.x))
+            position.z = cos(toRadians(cameraInfo.x))
+            position.y = tan(toRadians(cameraInfo.y))
         }
-        val cameraDistance = entity.components.mesh.mesh!!.maxRadius + 1
-        position.set(position.normalize().multiply(cameraDistance))
-        camera.setForward(position.negate())
-        scene.selected.directionalLight!!.setDirection(camera.getForward())
+
+        val cameraDistance = (entity.components.mesh.mesh?.maxRadius ?: 0f) + 1f
+        camera.components.transform.position = normalize(camera.components.transform.position) * cameraDistance
+        camera.setForward(-camera.components.transform.position)
+        scene.selected.directionalLight?.setDirection(camera.getForward())
     }
 
     private fun renderSelectedMesh(viewportSize: Int2) {
@@ -119,9 +137,11 @@ class GUIMeshEditor(editor: Editor) : GUISection(editor) {
 
             GUIDragDrop.getData("MeshFile") { path: Any? ->
                 try {
-                    val fileName = FileHelper.getNameWithoutExtension(path as String)
-                    editor.scene.meshes.add(Mesh(editor.scene.names.mesh, fileName, editor.window.context, path))
-                } catch (ignored: Exception) {
+                    FileHelper.getNameWithoutExtension(path as String)?.let {
+                        editor.scene.meshes.add(Mesh(editor.scene.names.mesh, it, editor.window.context, path))
+                    }
+                }
+                catch (ignored: Exception) {
                     println("Mesh \"$path\" loading error!")
                 }
             }

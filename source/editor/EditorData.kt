@@ -4,8 +4,10 @@ import entity.material.Material
 import glparts.Mesh
 import glparts.Shaders
 import imgui.extension.imguizmo.flag.Mode
+import named.NameHolder
+import window.GLContext
 
-class EditorData(editor: Editor) {
+class EditorData(context: GLContext, editor: Editor) {
     val frustumShaders: Shaders
     val unlitShaders: Shaders
     val defaultMesh: Mesh
@@ -20,8 +22,8 @@ class EditorData(editor: Editor) {
     init {
         frustumShaders = Shaders(editor.window.context, "shaders/Frustum.glsl")
         unlitShaders = Shaders(editor.window.context, "shaders/Unlit.glsl")
-        defaultMesh = Mesh(null, "Default Mesh", editor.window.context, "resource/meshes/cube.obj")
-        frustumMesh = Mesh.Companion.generateFrustumMesh()
-        defaultMaterial = Material(null, "Default Material")
+        defaultMesh = Mesh(NameHolder(), "Default Mesh", editor.window.context, "resource/meshes/cube.obj")
+        frustumMesh = Mesh.generateFrustumMesh(context)
+        defaultMaterial = Material(NameHolder(), "Default Material")
     }
 }

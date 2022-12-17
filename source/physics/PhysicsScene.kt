@@ -8,15 +8,17 @@ import physx.physics.PxPhysics
 import physx.physics.PxScene
 import physx.physics.PxSceneDesc
 
-class PhysicsScene(physics: PxPhysics, tolerances: PxTolerancesScale?) {
+class PhysicsScene(physics: PxPhysics, tolerances: PxTolerancesScale) {
     private val scene: PxScene
 
     init {
         val gravity = PxVec3(0f, -9.81f, 0f)
         val descriptor = PxSceneDesc(tolerances)
+
         descriptor.gravity = gravity
         descriptor.cpuDispatcher = PxTopLevelFunctions.DefaultCpuDispatcherCreate(2)
         descriptor.filterShader = PxTopLevelFunctions.DefaultFilterShader()
+
         scene = physics.createScene(descriptor)
         gravity.destroy()
     }

@@ -8,14 +8,14 @@ object GUIPopup {
         ImGui.closeCurrentPopup()
     }
 
-    fun windowPopup(name: String?, callback: () -> Unit) {
+    fun windowPopup(name: String, callback: () -> Unit) {
         if (ImGui.beginPopupContextWindow(name, ImGuiPopupFlags.MouseButtonRight or ImGuiPopupFlags.NoOpenOverItems)) {
             callback()
             ImGui.endPopup()
         }
     }
 
-    fun itemPopup(name: String?, callback: () -> Unit) {
+    fun itemPopup(name: String, callback: () -> Unit) {
         if (ImGui.beginPopupContextItem(name, ImGuiPopupFlags.MouseButtonRight)) {
             callback()
             ImGui.endPopup()

@@ -11,7 +11,7 @@ import math.Mat4
 import named.NameHolder
 import java.io.Serializable
 
-class PerspectiveCamera(holder: NameHolder?, name: String?, editor: Editor?) : Camera(holder, name, editor), Serializable {
+class PerspectiveCamera(holder: NameHolder, name: String, editor: Editor) : Camera(holder, name, editor), Serializable {
     var aspect = 1.78f
     var fov = 90f
 
@@ -23,8 +23,8 @@ class PerspectiveCamera(holder: NameHolder?, name: String?, editor: Editor?) : C
         return Mat4.perspective(fov, aspect, near, far)
     }
 
-    override fun matrix(): Mat4? {
-        return projectionMatrix().multiply(viewMatrix())
+    override fun matrix(): Mat4 {
+        return projectionMatrix() * viewMatrix()
     }
 
     override fun renderInfoGUI(editor: Editor) {
@@ -34,10 +34,10 @@ class PerspectiveCamera(holder: NameHolder?, name: String?, editor: Editor?) : C
     }
 
     override fun editorRender(shaders: Shaders) {
-        editor!!.data.frustumShaders.setUniform("iVP", matrix()!!.inverse())
-        editor!!.data.frustumShaders.setUniform("VP", editor!!.camera.matrix())
-        editor!!.data.frustumShaders.setUniform("color", if (this === editor!!.scene.selected.entity) GUIStyle.special else Float3(1f))
-        editor!!.data.frustumMesh.renderLines(editor!!.data.frustumShaders)
+        editor.data.frustumShaders.setUniform("iVP", matrix().inv())
+        editor.data.frustumShaders.setUniform("VP", editor.camera.matrix())
+        editor.data.frustumShaders.setUniform("color", if (this === editor.scene.selected.entity) GUIStyle.special else Float3(1f))
+        editor.data.frustumMesh.renderLines(editor.data.frustumShaders)
         super.editorRender(shaders)
     }
 }

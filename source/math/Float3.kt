@@ -2,158 +2,104 @@ package math
 
 import java.awt.Color
 import java.io.Serializable
+import kotlin.math.acos
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class Float3 : Serializable {
     var x = 0f
     var y = 0f
     var z = 0f
 
-    constructor() {
-        set(0f)
-    }
-
-    constructor(a: Float) {
-        set(a)
-    }
-
-    constructor(data: FloatArray?) {
-        set(data)
-    }
-
     constructor(x: Float, y: Float, z: Float) {
-        set(x, y, z)
-    }
-
-    constructor(v: Float2?, z: Float) {
-        set(v, z)
-    }
-
-    constructor(x: Float, v: Float2) {
-        set(x, v)
-    }
-
-    constructor(v: Float3?) {
-        set(v)
-    }
-
-    constructor(v: Int3) {
-        set(v)
-    }
-
-    constructor(color: Color) {
-        set(color)
-    }
-
-    // Setters
-    operator fun set(x: Float, y: Float, z: Float) {
         this.x = x
         this.y = y
         this.z = z
     }
 
-    fun set(a: Float) {
-        set(a, a, a)
-    }
+    constructor() : this(0f, 0f, 0f)
 
-    fun set(data: FloatArray?) {
-        set(data!![0], data[1], data[2])
-    }
+    constructor(a: Float) : this(a, a, a)
 
-    operator fun set(v: Float2?, z: Float) {
-        set(v!!.x, v.y, z)
-    }
+    constructor(data: FloatArray) : this(data[0], data[1], data[2])
 
-    operator fun set(x: Float, v: Float2) {
-        set(x, v.x, v.y)
-    }
+    constructor(v: Float2, z: Float) : this(v.x, v.y, z)
 
-    fun set(v: Float3?) {
-        set(v!!.x, v.y, v.z)
-    }
+    constructor(x: Float, v: Float2) : this(x, v.x, v.y)
 
-    fun set(v: Int3) {
-        set(v.x.toFloat(), v.y.toFloat(), v.z.toFloat())
-    }
+    constructor(v: Float3) : this(v.x, v.y, v.z)
 
-    fun set(color: Color) {
-        val conv = 1.0f / 255.0f
-        set(color.red * conv, color.green * conv, color.blue * conv)
+    constructor(v: Int3) : this(v.x.toFloat(), v.y.toFloat(), v.z.toFloat())
+
+    constructor(color: Color) {
+        val conv = 1f / 255f
+        x = color.red * conv
+        y = color.green * conv
+        z = color.blue * conv
     }
 
     // Getters
-    fun xy(): Float2 {
-        return Float2(x, y)
-    }
+    val length: Float
+        get() = sqrt(this * this)
 
-    fun array(): FloatArray {
-        return floatArrayOf(x, y, z)
-    }
+    val xy: Float2
+        get() = Float2(x, y)
 
-    fun color(): Color {
-        return Color(Math.min(Math.max(x * 255, 0f), 255f).toInt(), Math.min(Math.max(y * 255, 0f), 255f).toInt(), Math.min(Math.max(z * 255, 0f), 255f).toInt())
-    }
+    val array: FloatArray
+        get() = floatArrayOf(x, y, z)
+
+    val color: Color
+        get() = Color(
+            (x * 255).toInt().coerceAtLeast(0).coerceAtMost(255),
+            (y * 255).toInt().coerceAtLeast(0).coerceAtMost(255),
+            (z * 255).toInt().coerceAtLeast(0).coerceAtMost(255)
+        )
 
     // Math
-    fun add(v: Float3?): Float3 {
-        return Float3(x + v!!.x, y + v.y, z + v.z)
+    operator fun plus(v: Float3): Float3 {
+        return Float3(x + v.x, y + v.y, z + v.z)
     }
 
-    fun subtract(v: Float3?): Float3 {
-        return Float3(x - v!!.x, y - v.y, z - v.z)
+    operator fun minus(v: Float3): Float3 {
+        return Float3(x - v.x, y - v.y, z - v.z)
     }
 
-    fun multiply(a: Float): Float3 {
+    operator fun times(a: Float): Float3 {
         return Float3(x * a, y * a, z * a)
     }
 
-    fun multiply(v: Float3): Float3 {
-        return Float3(x * v.x, y * v.y, z * v.z)
+    operator fun times(v: Float3): Float {
+        return x * v.x + y * v.y + z * v.z
     }
 
-    fun divide(a: Float): Float3 {
-        return multiply(1.0f / a)
+    infix fun x(v: Float3): Float3 {
+        return Float3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x)
     }
 
-    fun divide(v: Float3): Float3 {
-        return Float3(x / v.x, y / v.y, z / v.z)
+    operator fun div(a: Float): Float3 {
+        return this * (1f / a)
     }
 
-    fun equals(v: Float3): Boolean {
-        return x == v.x && y == v.y && z == v.z
+    override fun equals(other: Any?): Boolean {
+        if (other is Float3) {
+            return x == other.x && y == other.y && z == other.z
+        }
+        return false
     }
 
-    fun negate(): Float3 {
-        return multiply(-1.0f)
+    operator fun unaryMinus(): Float3 {
+        return this * -1f
     }
 
-    fun absolute(): Float3 {
-        return Float3(Math.abs(x), Math.abs(y), Math.abs(z))
+    fun angle(v: Float3): Float {
+        return toDegrees(acos(normalize(this) * normalize(v)))
     }
 
-    fun length(): Float {
-        return Math.sqrt(dot(this).toDouble()).toFloat()
-    }
-
-    fun normalize(): Float3 {
-        return divide(length())
-    }
-
-    fun dot(v: Float3?): Float {
-        return x * v!!.x + y * v.y + z * v.z
-    }
-
-    fun cross(v: Float3?): Float3 {
-        return Float3(y * v!!.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x)
-    }
-
-    fun angle(v: Float3?): Float {
-        return Math.toDegrees(Math.acos(normalize().dot(v!!.normalize()).toDouble())).toFloat()
-    }
-
-    fun rotate(angle: Float, axis: Float3?): Float3 {
-        val angleSin = Math.sin(Math.toRadians((angle * 0.5f).toDouble())).toFloat()
-        val angleCos = Math.cos(Math.toRadians((angle * 0.5f).toDouble())).toFloat()
-        val qx = axis!!.x * angleSin
+    fun rotate(angle: Float, axis: Float3): Float3 {
+        val angleSin = sin(toRadians(angle * 0.5f))
+        val angleCos = cos(toRadians(angle * 0.5f))
+        val qx = axis.x * angleSin
         val qy = axis.y * angleSin
         val qz = axis.z * angleSin
         val x2 = qx * qx
@@ -166,6 +112,7 @@ class Float3 : Serializable {
         val xw = qx * angleCos
         val yw = qy * angleCos
         val zw = qz * angleCos
+
         val temp = Float3(0f)
         temp.x = (w2 + x2 - z2 - y2) * x + (-zw + xy - zw + xy) * y + (yw + xz + xz + yw) * z
         temp.y = (xy + zw + zw + xy) * x + (y2 - z2 + w2 - x2) * y + (yz + yz - xw - xw) * z
@@ -174,26 +121,33 @@ class Float3 : Serializable {
     }
 
     fun reflect(v: Float3): Float3 {
-        val normal = v.normalize()
-        return this.subtract(normal.multiply(2 * dot(normal)))
+        val normal = normalize(v)
+        return this - (normal * (this * normal * 2f))
     }
 
     override fun toString(): String {
         return "($x, $y, $z)"
     }
 
+    override fun hashCode(): Int {
+        var result = x.hashCode()
+        result = 31 * result + y.hashCode()
+        result = 31 * result + z.hashCode()
+        return result
+    }
+
     companion object {
         val posX: Float3
-            get() = Float3(1.0f, 0.0f, 0.0f)
+            get() = Float3(1f, 0f, 0f)
         val negX: Float3
-            get() = Float3(-1.0f, 0.0f, 0.0f)
+            get() = Float3(-1f, 0f, 0f)
         val posY: Float3
-            get() = Float3(0.0f, 1.0f, 0.0f)
+            get() = Float3(0f, 1f, 0f)
         val negY: Float3
-            get() = Float3(0.0f, -1.0f, 0.0f)
+            get() = Float3(0f, -1f, 0f)
         val posZ: Float3
-            get() = Float3(0.0f, 0.0f, 1.0f)
+            get() = Float3(0f, 0f, 1f)
         val negZ: Float3
-            get() = Float3(0.0f, 0.0f, -1.0f)
+            get() = Float3(0f, 0f, -1f)
     }
 }

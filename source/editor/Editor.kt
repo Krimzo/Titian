@@ -7,6 +7,7 @@ import gui.section.*
 import gui.section.script.GUIScriptEditor
 import logging.Logger
 import math.Int2
+import named.NameHolder
 import physics.PhysicsEngine
 import renderer.EditorRenderer
 import renderer.GameRenderer
@@ -18,21 +19,23 @@ import window.Window
 class Editor {
     val data: EditorData
     val window: Window = Window(Int2(1600, 900), "Titian", true)
-    val timer = Timer()
-    val camera = PerspectiveCamera(null, "Editor Camera", this)
-    val editorRenderer = EditorRenderer(window.context, window.size)
-    val gameRenderer = GameRenderer(window.context, window.size)
-    val guiRenderer = GUIRenderer(window)
-    val physicsEngine = PhysicsEngine()
-    val logger = Logger()
-    val scriptEngine = ScriptEngine()
+    val timer: Timer = Timer()
+    val camera: PerspectiveCamera = PerspectiveCamera(NameHolder(), "Editor Camera", this)
+    val editorRenderer: EditorRenderer = EditorRenderer(window.context, window.size)
+    val gameRenderer: GameRenderer = GameRenderer(window.context, window.size)
+    val guiRenderer: GUIRenderer = GUIRenderer(window)
+    val physicsEngine: PhysicsEngine = PhysicsEngine()
+    val logger: Logger = Logger()
+    val scriptEngine: ScriptEngine = ScriptEngine()
     var scene: Scene = Scene()
 
     init {
         window.setIcon("resource/textures/titian.png")
         window.context.setDepthTest(true)
         window.setVSync(true)
-        data = EditorData(this)
+
+        data = EditorData(window.context, this)
+
         guiRenderer.add(GUIMainMenu(this))
         guiRenderer.add(GUIScene(this))
         guiRenderer.add(GUIControlPanel(this))
@@ -60,14 +63,18 @@ class Editor {
 
     fun update() {
         timer.updateDeltaT()
+
         if (data.gameRunning) {
             physicsEngine.update(scene, timer.getDeltaT())
             scriptEngine.callUpdates(scene)
         }
+
         window.context.clear(false)
         window.context.setViewport(window.size)
+
         guiRenderer.render()
         window.swapBuffers()
+
         GLObject.cleanup()
     }
 }

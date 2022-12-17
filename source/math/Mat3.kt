@@ -1,44 +1,49 @@
 package math
 
 import java.io.Serializable
+import kotlin.math.cos
+import kotlin.math.sin
 
 class Mat3() : Matrix(3, 3), Serializable {
-    constructor(data: FloatArray?) : this() {
+    constructor(data: FloatArray) : this() {
         System.arraycopy(data, 0, this.data, 0, this.data.size)
     }
 
-    constructor(matrix: Matrix?) : this(matrix!!.data)
-    constructor(mat: Mat3) : this(mat.data)
+    constructor(matrix: Matrix) : this(matrix.data)
 
-    fun add(mat: Mat3): Mat3 {
+    operator fun plus(mat: Mat3): Mat3 {
         return Mat3(super.add(mat))
     }
 
-    fun subtract(mat: Mat3): Mat3 {
+    operator fun minus(mat: Mat3): Mat3 {
         return Mat3(super.subtract(mat))
     }
 
-    fun multiply(vec: Float3): Float3 {
-        return Float3(super.multiply(vec.array(), 1, 3).data)
+    operator fun times(value: Float): Mat3 {
+        return Mat3(super.multiply(value))
     }
 
-    fun multiply(mat: Mat3?): Mat3 {
+    operator fun times(vec: Float3): Float3 {
+        return Float3(super.multiply(vec.array, 1, 3).data)
+    }
+
+    operator fun times(mat: Mat3): Mat3 {
         return Mat3(super.multiply(mat))
     }
 
-    override fun absolute(): Mat3 {
+    fun abs(): Mat3 {
         return Mat3(super.absolute())
     }
 
-    override fun negate(): Mat3 {
+    operator fun unaryMinus(): Mat3 {
         return Mat3(super.negate())
     }
 
-    override fun transpose(): Mat3 {
+    fun tran(): Mat3 {
         return Mat3(super.transpose())
     }
 
-    override fun inverse(): Mat3 {
+    fun inv(): Mat3 {
         return Mat3(super.inverse())
     }
 
@@ -51,8 +56,8 @@ class Mat3() : Matrix(3, 3), Serializable {
         }
 
         fun rotation(rotation: Float): Mat3 {
-            val zSin = Math.sin(Math.toRadians(rotation.toDouble())).toFloat()
-            val zCos = Math.cos(Math.toRadians(rotation.toDouble())).toFloat()
+            val zSin = sin(toRadians(rotation))
+            val zCos = cos(toRadians(rotation))
             val result = Mat3()
             result.data[0] = zCos
             result.data[1] = -zSin

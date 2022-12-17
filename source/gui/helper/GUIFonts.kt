@@ -6,7 +6,7 @@ import imgui.ImGui
 import imgui.flag.ImGuiFreeTypeBuilderFlags
 
 object GUIFonts {
-    fun loadFont(filepath: String?, size: Int): ImFont {
+    fun loadFont(filepath: String, size: Int): ImFont {
         val fontAtlas = globalAtlas
         val font = fontAtlas.addFontFromFileTTF(filepath, size.toFloat(), fontAtlas.glyphRangesDefault)
         fontAtlas.flags = ImGuiFreeTypeBuilderFlags.LightHinting

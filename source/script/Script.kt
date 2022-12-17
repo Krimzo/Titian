@@ -6,12 +6,10 @@ import gui.helper.GUIPopup
 import imgui.ImGui
 import script.abs.Scriptable
 import utility.helper.FileHelper
-import java.io.IOException
 import java.io.ObjectInputStream
 import java.io.Serial
 import java.io.Serializable
 import java.lang.reflect.Field
-import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 class Script : Serializable {
@@ -38,11 +36,16 @@ class Script : Serializable {
     }
 
     @Serial
-    @Throws(IOException::class, ClassNotFoundException::class)
     private fun readObject(stream: ObjectInputStream) {
         stream.defaultReadObject()
-        loadType(name, data)
-        loadInstance(entity)
+        name?.let { name ->
+            data?.let { data ->
+                loadType(name, data)
+            }
+        }
+        entity?.let {
+            loadInstance(it)
+        }
         loadFields()
     }
 
@@ -51,39 +54,48 @@ class Script : Serializable {
             this.name = name
             this.data = data.copyOf()
             this.entity = entity
+
             loadType(name, data)
             loadInstance(entity)
             loadFields()
-        } catch (ignored: Exception) {
+        }
+        catch (ignored: Exception) {
             println("Script \"$name\" loading error")
         }
     }
 
     fun load(filepath: String, entity: Entity) {
         this.filepath = filepath
-        ScriptCompiler().compile(filepath)?.let {
-            load(FileHelper.getNameWithoutExtension(filepath), it, entity)
+        ScriptCompiler().compile(filepath)?.let { data ->
+            FileHelper.getNameWithoutExtension(filepath)?.let { name ->
+                load(name, data, entity)
+            }
         }
     }
 
     fun reload(entity: Entity) {
-        filepath?.let { load(it, entity) }
+        filepath?.let {
+            load(it, entity)
+        }
     }
 
-    private fun loadType(name: String?, data: ByteArray?) {
+    private fun loadType(name: String, data: ByteArray) {
         type = try {
             ScriptLoader().load(name, data)
-        } catch (ignored: Exception) {
+        }
+        catch (ignored: Exception) {
             println("Script \"$name\" type loading error")
             null
         }
     }
 
-    private fun loadInstance(entity: Entity?) {
+    private fun loadInstance(entity: Entity) {
         instance = try {
-            val constructor = type!!.getDeclaredConstructor(Entity::class.java)
-            constructor.newInstance(entity) as Scriptable
-        } catch (ignored: Exception) {
+            type?.getDeclaredConstructor(Entity::class.java)?.let {
+                it.newInstance(entity) as Scriptable
+            }
+        }
+        catch (ignored: Exception) {
             println("Script \"$name\" instance creation error")
             null
         }
@@ -92,9 +104,11 @@ class Script : Serializable {
     private fun loadFields() {
         try {
             fields = ArrayList()
-            for (field in type!!.declaredFields) {
-                if (field.canAccess(instance)) {
-                    fields!!.add(field)
+            type?.let {
+                for (field in it.declaredFields) {
+                    if (field.canAccess(instance)) {
+                        fields?.add(field)
+                    }
                 }
             }
         }
@@ -106,7 +120,7 @@ class Script : Serializable {
 
     fun callStarts() {
         try {
-            instance!!.start()
+            instance?.start()
         }
         catch (ignored: Exception) {
             println("Script \"$name\" start call error")
@@ -115,7 +129,7 @@ class Script : Serializable {
 
     fun callUpdates() {
         try {
-            instance!!.update()
+            instance?.update()
         }
         catch (ignored: Exception) {
             println("Script \"$name\" update call error")
@@ -134,12 +148,16 @@ class Script : Serializable {
         }
 
         if (headerState && valid) {
-            for (field in fields!!) {
-                try {
-                    field.let { GUIEdit.editField(it, instance) }
-                }
-                catch (ignored: Exception) {
-                    println("Script \"$name\" field gui error")
+            fields?.let { fields ->
+                for (field in fields) {
+                    try {
+                        instance?.let {
+                            GUIEdit.editField(field, it)
+                        }
+                    }
+                    catch (ignored: Exception) {
+                        println("Script \"$name\" field gui error")
+                    }
                 }
             }
         }

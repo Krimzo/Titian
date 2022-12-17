@@ -31,7 +31,7 @@ public class Fields extends Scriptable {
 
     @Override
     public void start() {
-
+        log("Yey");
     }
 
     @Override
@@ -39,3 +39,4 @@ public class Fields extends Scriptable {
 
     }
 }
+

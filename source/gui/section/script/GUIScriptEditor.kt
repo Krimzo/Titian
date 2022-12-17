@@ -22,7 +22,7 @@ class GUIScriptEditor(editor: Editor) : GUISection(editor) {
         val languageDefinition = TextEditorLanguageDefinition.cPlusPlus()
         languageDefinition.setName("Java")
         languageDefinition.setKeywords(LanguageData.keywords)
-        val identifiers: MutableMap<String?, String> = HashMap()
+        val identifiers: HashMap<String, String> = HashMap()
         for (iden in LanguageData.identifiers) {
             identifiers[iden] = ""
         }

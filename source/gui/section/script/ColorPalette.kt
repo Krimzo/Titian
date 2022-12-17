@@ -26,6 +26,7 @@ internal object ColorPalette {
     const val CurrentLineFillInactive = 19
     const val CurrentLineEdge = 20
     const val MAX = 21
+
     fun convertColor(color: Color): Int {
         return Color(color.blue, color.green, color.red, color.alpha).rgb
     }

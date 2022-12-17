@@ -9,31 +9,31 @@ import physics.abs.Physical
 import renderer.abs.Renderable
 import java.io.Serializable
 
-open class Entity(holder: NameHolder?, name: String?, @field:Transient var editor: Editor?) : Named(holder, name), Physical, Renderable, Serializable {
+open class Entity(holder: NameHolder, name: String, @field:Transient var editor: Editor) : Named(holder, name), Physical, Renderable, Serializable {
     val components = EntityComponents(this)
 
     fun callScriptStarts() {
         for (script in components.script.scripts) {
-            script!!.callStarts()
+            script.callStarts()
         }
     }
 
     fun callScriptUpdates() {
         for (script in components.script.scripts) {
-            script!!.callUpdates()
+            script.callUpdates()
         }
     }
 
     override fun updatePhysics(deltaT: Float) {
-        components.physics.velocity.set(components.physics.velocity.add(components.physics.acceleration.multiply(deltaT)))
-        components.transform.position.set(components.transform.position.add(components.physics.velocity.multiply(deltaT)))
-        components.transform.rotation.set(components.transform.rotation.add(components.physics.angular.multiply(deltaT)))
+        components.physics.velocity = components.physics.velocity + components.physics.acceleration * deltaT
+        components.transform.position = components.transform.position + components.physics.velocity * deltaT
+        components.transform.rotation = components.transform.rotation + components.physics.angular * deltaT
     }
 
     override fun gameRender(shaders: Shaders) {
         shaders.setUniform("W", components.transform.matrix())
         components.material.use {
-            components.material.material!!.updateUniforms(shaders)
+            components.material.material?.updateUniforms(shaders)
             components.mesh.gameRender(shaders)
         }
     }
@@ -41,7 +41,7 @@ open class Entity(holder: NameHolder?, name: String?, @field:Transient var edito
     override fun editorRender(shaders: Shaders) {
         shaders.setUniform("W", components.transform.matrix())
         components.material.use {
-            components.material.material!!.updateUniforms(shaders)
+            components.material.material?.updateUniforms(shaders)
             components.mesh.editorRender(shaders)
         }
     }

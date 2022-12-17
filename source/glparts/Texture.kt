@@ -15,21 +15,25 @@ import java.io.Serial
 import java.io.Serializable
 import java.nio.ByteBuffer
 
-class Texture(holder: NameHolder?, name: String?, context: GLContext?, size: Int2, pixels: ByteArray?) : GLObject(holder, name, context), Serializable {
-    private val size: Int2
+class Texture : GLObject, Serializable {
+    private var size: Int2
     private val pixels: ByteArray?
 
     @Transient
     var buffer: Int
         private set
 
-    init {
+    constructor(holder: NameHolder, name: String, context: GLContext, size: Int2, pixels: ByteArray?) : super(holder, name, context) {
         this.size = Int2(size)
         this.pixels = pixels?.copyOf()
         buffer = generateTexture(size, pixels)
     }
 
-    constructor(holder: NameHolder?, name: String?, context: GLContext?, filepath: String, flipY: Boolean = true) : this(holder, name, context, FileHelper.getImageSize(filepath), FileHelper.getImageData(filepath, flipY)!!)
+    constructor(holder: NameHolder, name: String, context: GLContext, filepath: String, flipY: Boolean = true) : super(holder, name, context) {
+        this.size = FileHelper.getImageSize(filepath) ?: Int2()
+        this.pixels = FileHelper.getImageData(filepath, flipY)?.copyOf()
+        buffer = generateTexture(size, pixels)
+    }
 
     override fun deallocate() {
         GL11.glDeleteTextures(buffer)
@@ -75,11 +79,11 @@ class Texture(holder: NameHolder?, name: String?, context: GLContext?, size: Int
     }
 
     fun resize(size: Int2) {
-        if (!this.size.equals(size)) {
+        if (this.size != size) {
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, buffer)
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL30.GL_RGBA32F, size.x, size.y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, null as ByteBuffer?)
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0)
-            this.size.set(size)
+            this.size = Int2(size)
         }
     }
 

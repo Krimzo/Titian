@@ -8,7 +8,7 @@ import java.io.Serializable
 import java.util.concurrent.atomic.AtomicInteger
 
 class ScriptComponent(entity: Entity) : EntityComponent(entity), Serializable {
-    val scripts = ArrayList<Script>()
+    var scripts: ArrayList<Script> = ArrayList()
 
     fun reload() {
         for (script in scripts) {

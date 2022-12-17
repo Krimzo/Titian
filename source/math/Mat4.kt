@@ -1,44 +1,50 @@
 package math
 
 import java.io.Serializable
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.tan
 
 class Mat4() : Matrix(4, 4), Serializable {
-    constructor(data: FloatArray?) : this() {
+    constructor(data: FloatArray) : this() {
         System.arraycopy(data, 0, this.data, 0, this.data.size)
     }
 
-    constructor(matrix: Matrix?) : this(matrix!!.data)
-    constructor(mat: Mat4) : this(mat.data)
+    constructor(matrix: Matrix) : this(matrix.data)
 
-    fun add(mat: Mat4): Mat4 {
+    operator fun plus(mat: Mat4): Mat4 {
         return Mat4(super.add(mat))
     }
 
-    fun subtract(mat: Mat4): Mat4 {
+    operator fun minus(mat: Mat4): Mat4 {
         return Mat4(super.subtract(mat))
     }
 
-    fun multiply(vec: Float4): Float4 {
-        return Float4(super.multiply(vec.array(), 1, 4).data)
+    operator fun times(value: Float): Mat4 {
+        return Mat4(super.multiply(value))
     }
 
-    fun multiply(mat: Mat4?): Mat4 {
+    operator fun times(vec: Float4): Float4 {
+        return Float4(super.multiply(vec.array, 1, 4).data)
+    }
+
+    operator fun times(mat: Mat4): Mat4 {
         return Mat4(super.multiply(mat))
     }
 
-    override fun absolute(): Mat4 {
+    fun abs(): Mat4 {
         return Mat4(super.absolute())
     }
 
-    override fun negate(): Mat4 {
+    operator fun unaryMinus(): Mat4 {
         return Mat4(super.negate())
     }
 
-    override fun transpose(): Mat4 {
+    fun tran(): Mat4 {
         return Mat4(super.transpose())
     }
 
-    override fun inverse(): Mat4 {
+    fun inv(): Mat4 {
         return Mat4(super.inverse())
     }
 
@@ -52,28 +58,31 @@ class Mat4() : Matrix(4, 4), Serializable {
         }
 
         fun rotation(rotation: Float3): Mat4 {
-            val xSin = Math.sin(Math.toRadians(rotation.x.toDouble())).toFloat()
-            val xCos = Math.cos(Math.toRadians(rotation.x.toDouble())).toFloat()
+            val xSin = sin(toRadians(rotation.x))
+            val xCos = cos(toRadians(rotation.x))
             val xRot = Mat4()
             xRot.data[5] = xCos
             xRot.data[6] = -xSin
             xRot.data[9] = xSin
             xRot.data[10] = xCos
-            val ySin = Math.sin(Math.toRadians(rotation.y.toDouble())).toFloat()
-            val yCos = Math.cos(Math.toRadians(rotation.y.toDouble())).toFloat()
+
+            val ySin = sin(toRadians(rotation.y))
+            val yCos = cos(toRadians(rotation.y))
             val yRot = Mat4()
             yRot.data[0] = yCos
             yRot.data[2] = ySin
             yRot.data[8] = -ySin
             yRot.data[10] = yCos
-            val zSin = Math.sin(Math.toRadians(rotation.z.toDouble())).toFloat()
-            val zCos = Math.cos(Math.toRadians(rotation.z.toDouble())).toFloat()
+
+            val zSin = sin(toRadians(rotation.z))
+            val zCos = cos(toRadians(rotation.z))
             val zRot = Mat4()
             zRot.data[0] = zCos
             zRot.data[1] = -zSin
             zRot.data[4] = zSin
             zRot.data[5] = zCos
-            return zRot.multiply(yRot).multiply(xRot)
+
+            return zRot * yRot * xRot
         }
 
         fun scaling(size: Float3): Mat4 {
@@ -85,9 +94,10 @@ class Mat4() : Matrix(4, 4), Serializable {
         }
 
         fun perspective(fov: Float, aspect: Float, zNear: Float, zFar: Float): Mat4 {
-            val xScale = 1.0f / Math.tan(Math.toRadians((fov * 0.5f).toDouble())).toFloat()
+            val xScale = 1f / tan(toRadians(fov * 0.5f))
             val yScale = xScale * aspect
             val result = Mat4()
+
             result.data[0] = xScale
             result.data[5] = yScale
             result.data[10] = zFar / (zNear - zFar)
@@ -106,23 +116,24 @@ class Mat4() : Matrix(4, 4), Serializable {
             return result
         }
 
-        fun lookAt(pos: Float3?, tar: Float3?, up: Float3?): Mat4 {
-            val f = pos!!.subtract(tar).normalize()
-            val s = up!!.cross(f).normalize()
-            val u = f!!.cross(s)
+        fun lookAt(pos: Float3, tar: Float3, up: Float3): Mat4 {
+            val f = normalize(pos - tar)
+            val s = normalize(up x f)
+            val u = f x s
+
             val result = Mat4()
-            result.data[0] = s!!.x
+            result.data[0] = s.x
             result.data[1] = s.y
             result.data[2] = s.z
-            result.data[3] = -s.dot(pos)
-            result.data[4] = u!!.x
+            result.data[3] = -(s * pos)
+            result.data[4] = u.x
             result.data[5] = u.y
             result.data[6] = u.z
-            result.data[7] = -u.dot(pos)
+            result.data[7] = -(u * pos)
             result.data[8] = f.x
             result.data[9] = f.y
             result.data[10] = f.z
-            result.data[11] = -f.dot(pos)
+            result.data[11] = -(f * pos)
             return result
         }
     }

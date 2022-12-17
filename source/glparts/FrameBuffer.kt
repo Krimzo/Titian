@@ -3,19 +3,21 @@ package glparts
 import glparts.abs.GLObject
 import math.Float4
 import math.Int2
+import named.NameHolder
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30
 import window.GLContext
 
-class FrameBuffer(context: GLContext?, size: Int2) : GLObject(null, null, context) {
+class FrameBuffer(context: GLContext, size: Int2) : GLObject(NameHolder(), "Frame Buffer", context) {
     private val colorMap: Texture
     private val depthMap: DepthTexture
     private var buffer: Int
 
     init {
-        colorMap = Texture(null, null, context, size, null)
+        colorMap = Texture(NameHolder(), "Texture", context, size, null)
         depthMap = DepthTexture(context, size)
         buffer = GL30.glGenFramebuffers()
+
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, buffer)
         GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, colorMap.buffer, 0)
         GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depthMap.buffer, 0)
@@ -58,22 +60,24 @@ class FrameBuffer(context: GLContext?, size: Int2) : GLObject(null, null, contex
         }
     }
 
-    fun getPixel(pos: Int2): Float4? {
+    fun getPixel(pos: Int2): Float4 {
         return getPixels(pos, Int2(1))[0]
     }
 
-    fun getPixels(pos: Int2, size: Int2): Array<Float4?> {
-        val result = arrayOfNulls<Float4>(size.x * size.y)
+    fun getPixels(pos: Int2, size: Int2): Array<Float4> {
+        val result = Array(size.x * size.y) { Float4() }
         val data = FloatArray(result.size * 4)
+
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, buffer)
         GL11.glReadPixels(pos.x, colorMap.getSize().y - 1 - pos.y, size.x, size.y, GL11.GL_RGBA, GL11.GL_FLOAT, data)
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
+
         for (i in result.indices) {
             result[i] = Float4(
-                    data[i * 4],
-                    data[i * 4 + 1],
-                    data[i * 4 + 2],
-                    data[i * 4 + 3]
+                data[i * 4],
+                data[i * 4 + 1],
+                data[i * 4 + 2],
+                data[i * 4 + 3]
             )
         }
         return result

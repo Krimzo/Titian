@@ -8,121 +8,75 @@ class Int3 : Serializable {
     var y = 0
     var z = 0
 
-    constructor() {
-        set(0)
-    }
-
-    constructor(a: Int) {
-        set(a)
-    }
-
     constructor(x: Int, y: Int, z: Int) {
-        set(x, y, z)
-    }
-
-    constructor(v: Int2, z: Int) {
-        set(v, z)
-    }
-
-    constructor(x: Int, v: Int2) {
-        set(x, v)
-    }
-
-    constructor(v: Float3) {
-        set(v)
-    }
-
-    constructor(v: Int3) {
-        set(v)
-    }
-
-    // Setters
-    operator fun set(x: Int, y: Int, z: Int) {
         this.x = x
         this.y = y
         this.z = z
     }
 
-    fun set(a: Int) {
-        set(a, a, a)
-    }
+    constructor() : this(0, 0, 0)
 
-    fun set(data: IntArray?) {
-        set(data!![0], data[1], data[2])
-    }
+    constructor(a: Int) : this(a, a, a)
 
-    operator fun set(v: Int2, z: Int) {
-        set(v.x, v.y, z)
-    }
+    constructor(data: IntArray) : this(data[0], data[1], data[2])
 
-    operator fun set(x: Int, v: Int2) {
-        set(x, v.x, v.y)
-    }
+    constructor(v: Int2, z: Int) : this(v.x, v.y, z)
 
-    fun set(v: Int3) {
-        set(v.x, v.y, v.z)
-    }
+    constructor(x: Int, v: Int2) : this(x, v.x, v.y)
 
-    fun set(v: Float3) {
-        set(v.x.toInt(), v.y.toInt(), v.z.toInt())
-    }
+    constructor(v: Int3): this(v.x, v.y, v.z)
 
-    fun set(color: Color) {
-        set(color.red, color.green, color.blue)
-    }
+    constructor(v: Float3) : this(v.x.toInt(), v.y.toInt(), v.z.toInt())
+
+    constructor(color: Color) : this(color.red, color.green, color.blue)
 
     // Getters
-    fun xy(): Int2 {
-        return Int2(x, y)
-    }
+    val xy: Int2
+        get() = Int2(x, y)
 
-    fun array(): IntArray {
-        return intArrayOf(x, y, z)
-    }
+    val array: IntArray
+        get() = intArrayOf(x, y, z)
 
-    fun color(): Color {
-        return Color(x, y, z)
-    }
+    val color: Color
+        get() = Color(x, y, z)
 
     // Math
-    fun add(v: Int3): Int3 {
+    operator fun plus(v: Int3): Int3 {
         return Int3(x + v.x, y + v.y, z + v.z)
     }
 
-    fun subtract(v: Int3): Int3 {
+    operator fun minus(v: Int3): Int3 {
         return Int3(x - v.x, y - v.y, z - v.z)
     }
 
-    fun multiply(a: Int): Int3 {
+    operator fun times(a: Int): Int3 {
         return Int3(x * a, y * a, z * a)
     }
 
-    fun multiply(v: Int3): Int3 {
-        return Int3(x * v.x, y * v.y, z * v.z)
-    }
-
-    fun divide(a: Int): Int3 {
+    operator fun div(a: Int): Int3 {
         return Int3(x / a, y / a, z / a)
     }
 
-    fun divide(v: Int3): Int3 {
-        return Int3(x / v.x, y / v.y, z / v.z)
+    override fun equals(other: Any?): Boolean {
+        if (other is Int3) {
+            return x == other.x && y == other.y && z == other.z
+        }
+        return false
     }
 
-    fun equals(v: Int3): Boolean {
-        return x == v.x && y == v.y && z == v.z
-    }
-
-    fun negate(): Int3 {
-        return multiply(-1)
-    }
-
-    fun absolute(): Int3 {
-        return Int3(Math.abs(x), Math.abs(y), Math.abs(z))
+    operator fun unaryMinus(): Int3 {
+        return this * -1
     }
 
     override fun toString(): String {
         return "($x, $y, $z)"
+    }
+
+    override fun hashCode(): Int {
+        var result = x
+        result = 31 * result + y
+        result = 31 * result + z
+        return result
     }
 
     companion object {

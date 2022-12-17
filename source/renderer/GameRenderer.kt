@@ -11,7 +11,7 @@ import renderer.abs.Renderer
 import scene.Scene
 import window.GLContext
 
-open class GameRenderer(context: GLContext?, size: Int2) : Renderer() {
+open class GameRenderer(context: GLContext, size: Int2) : Renderer() {
     val renderBuffer: FrameBuffer
     protected val renderShaders: Shaders
 
@@ -24,9 +24,8 @@ open class GameRenderer(context: GLContext?, size: Int2) : Renderer() {
         renderBuffer.resize(size)
     }
 
-    override fun clear(camera: Camera?) {
-        val color = camera?.background ?: Float3()
-        renderBuffer.context!!.setClearColor(Float4(color, 1f))
+    override fun clear(camera: Camera) {
+        renderBuffer.context.setClearColor(Float4(camera.background, 1f))
         renderBuffer.clear()
     }
 
@@ -34,16 +33,14 @@ open class GameRenderer(context: GLContext?, size: Int2) : Renderer() {
         renderable.gameRender(renderShaders)
     }
 
-    override fun renderScene(scene: Scene?, camera: Camera?) {
+    override fun renderScene(scene: Scene, camera: Camera) {
         renderBuffer.use {
-            renderShaders.setUniform("VP", camera!!.matrix())
-            renderShaders.setUniform("ambientColor", scene?.selected?.ambientLight?.getColor() ?: Float3())
-            renderShaders.setUniform("sunDirection", scene?.selected?.directionalLight?.direction ?: Float3())
-            renderShaders.setUniform("sunColor", scene?.selected?.directionalLight?.getColor() ?: Float3())
-            scene?.let {
-                for (obj in it) {
-                    renderRenderable(obj)
-                }
+            renderShaders.setUniform("VP", camera.matrix())
+            renderShaders.setUniform("ambientColor", scene.selected.ambientLight?.fullLight() ?: Float3())
+            renderShaders.setUniform("sunDirection", scene.selected.directionalLight?.direction ?: Float3())
+            renderShaders.setUniform("sunColor", scene.selected.directionalLight?.fullLight() ?: Float3())
+            for (obj in scene) {
+                renderRenderable(obj)
             }
         }
     }

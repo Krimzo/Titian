@@ -13,7 +13,7 @@ import renderer.abs.Renderable
 import scene.Scene
 import window.GLContext
 
-class EditorRenderer(context: GLContext?, size: Int2) : GameRenderer(context, size) {
+class EditorRenderer(context: GLContext, size: Int2) : GameRenderer(context, size) {
     val indexBuffer: FrameBuffer
     private val indexShaders: Shaders
     private val outlineShaders: Shaders
@@ -24,7 +24,7 @@ class EditorRenderer(context: GLContext?, size: Int2) : GameRenderer(context, si
         indexBuffer.getColorMap().setWrap(GL12.GL_CLAMP_TO_EDGE, GL12.GL_CLAMP_TO_EDGE)
         indexShaders = Shaders(context, "shaders/Index.glsl")
         outlineShaders = Shaders(context, "shaders/Outline.glsl")
-        screenMesh = Mesh.generateScreenMesh()
+        screenMesh = Mesh.generateScreenMesh(context)
     }
 
     override fun resize(size: Int2) {
@@ -36,21 +36,21 @@ class EditorRenderer(context: GLContext?, size: Int2) : GameRenderer(context, si
         renderable.editorRender(renderShaders)
     }
 
-    fun renderIndices(scene: Scene?, camera: Camera?) {
-        indexBuffer.context!!.setClearColor(Float4(0f))
+    fun renderIndices(scene: Scene, camera: Camera) {
+        indexBuffer.context.setClearColor(Float4(0f))
         indexBuffer.clear()
         indexBuffer.use {
-            indexShaders.setUniform("VP", camera!!.matrix())
-            for (i in scene!!.indices) {
+            indexShaders.setUniform("VP", camera.matrix())
+            for (i in scene.indices) {
                 indexShaders.setUniform("index", i + 1)
-                scene[i]!!.indexRender(indexShaders)
+                scene[i].indexRender(indexShaders)
             }
         }
     }
 
-    fun renderOutline(frameSize: Float2, outlineColor: Float3?, objectIndex: Int) {
+    fun renderOutline(frameSize: Float2, outlineColor: Float3, objectIndex: Int) {
         indexBuffer.getColorMap().use(0) {
-            renderBuffer.context!!.setDepthTest(false)
+            renderBuffer.context.setDepthTest(false)
             renderBuffer.use {
                 outlineShaders.setUniform("indexMap", 0)
                 outlineShaders.setUniform("outlineColor", Float4(outlineColor, 1f))

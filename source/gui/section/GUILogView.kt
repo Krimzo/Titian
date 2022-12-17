@@ -11,7 +11,8 @@ import logging.LogInfo
 class GUILogView(editor: Editor) : GUISection(editor) {
     override fun renderGUI() {
         val logger = editor.logger
-        val unseenCount = logger!!.getUnseenCount()
+        val unseenCount = logger.getUnseenCount()
+
         if (ImGui.begin("Log View" + if (unseenCount > 0) " [$unseenCount]###" else "###")) {
             ImGui.bulletText(logger.getLastClearMessage())
             ImGui.separator()
@@ -20,6 +21,7 @@ class GUILogView(editor: Editor) : GUISection(editor) {
                     ImGui.text(log.firstMessagePart + logger.formatSpaces(log) + log.secondMessagePart)
                 }
             }
+
             logger.clearUnseen()
             GUIPopup.windowPopup("EditLogView") {
                 if (ImGui.button("Clear")) {

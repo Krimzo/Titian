@@ -14,36 +14,43 @@ abstract class Scriptable(private val self: Entity) {
 
     abstract fun update()
 
-    fun log(`object`: Any) {
+    fun log(obj: Any) {
         val sender = self.name + " [" + this.javaClass.name + "]"
-        editor!!.logger.log(LogInfo(LogType.SCRIPT, sender, `object`))
+        editor?.logger?.log(LogInfo(LogType.SCRIPT, sender, obj))
     }
 
     val windowPosition: Int2?
-        get() = editor!!.window.position
+        get() = editor?.window?.position
+
     val windowSize: Int2?
-        get() = editor!!.window.size
+        get() = editor?.window?.size
 
     fun setVSync(enabled: Boolean) {
-        editor!!.window.setVSync(enabled)
+        editor?.window?.setVSync(enabled)
     }
 
     val mousePosition: Int2?
-        get() = editor!!.window.mousePosition
-    val deltaT: Float
-        get() = editor!!.timer.getDeltaT()
-    val elapsedT: Float
-        get() = editor!!.timer.getElapsedT()
+        get() = editor?.window?.mousePosition
+
+    val deltaT: Float?
+        get() = editor?.timer?.getDeltaT()
+
+    val elapsedT: Float?
+        get() = editor?.timer?.getElapsedT()
+
     val sceneCamera: Camera?
         get() = editor?.scene?.selected?.camera
+
     val sceneAmbientLight: AmbientLight?
         get() = editor?.scene?.selected?.ambientLight
+
     val sceneDirectionalLight: DirectionalLight?
         get() = editor?.scene?.selected?.directionalLight
 
     companion object {
         private var editor: Editor? = null
-        fun setEditor(editor: Editor?) {
+
+        fun setEditor(editor: Editor) {
             Companion.editor = editor
         }
     }

@@ -18,7 +18,7 @@ class GUIControlPanel(editor: Editor) : GUISection(editor) {
     }
 
     private fun onGameEnd() {
-        editor.scene = Scene.fromFile(SAVED_PLAY_PATH, editor)!!
+        editor.scene = Scene.fromFile(SAVED_PLAY_PATH, editor) ?: Scene()
     }
 
     override fun renderGUI() {
@@ -27,35 +27,43 @@ class GUIControlPanel(editor: Editor) : GUISection(editor) {
             if (ImGui.beginTable("##ControlTable", 3, ImGuiTableFlags.SizingStretchSame or ImGuiTableFlags.Borders, -1f, -1f)) {
                 ImGui.tableNextRow()
                 ImGui.tableNextColumn()
+
                 if (ImGui.checkbox("Playing", editor.data.gameRunning)) {
                     if (!editor.data.gameRunning) {
                         onGameStart()
-                    } else {
+                    }
+                    else {
                         onGameEnd()
                     }
                     editor.data.gameRunning = !editor.data.gameRunning
                 }
                 ImGui.tableNextColumn()
+
                 if (ImGui.checkbox("Wireframe", editor.data.wireframeState)) {
                     editor.data.wireframeState = !editor.data.wireframeState
                 }
                 ImGui.sameLine()
+
                 if (ImGui.checkbox("Grid", editor.data.renderGrid)) {
                     editor.data.renderGrid = !editor.data.renderGrid
                 }
                 ImGui.tableNextColumn()
+
                 if (ImGui.checkbox("Local", editor.data.gizmoMode == Mode.LOCAL)) {
                     editor.data.gizmoMode = if (editor.data.gizmoMode != Mode.LOCAL) Mode.LOCAL else Mode.WORLD
                 }
                 ImGui.sameLine()
+
                 if (ImGui.checkbox("Scale", editor.data.gizmoOperation == Operation.SCALE)) {
                     editor.data.gizmoOperation = if (editor.data.gizmoOperation != Operation.SCALE) Operation.SCALE else 0
                 }
                 ImGui.sameLine()
+
                 if (ImGui.checkbox("Rotation", editor.data.gizmoOperation == Operation.ROTATE)) {
                     editor.data.gizmoOperation = if (editor.data.gizmoOperation != Operation.ROTATE) Operation.ROTATE else 0
                 }
                 ImGui.sameLine()
+
                 if (ImGui.checkbox("Translation", editor.data.gizmoOperation == Operation.TRANSLATE)) {
                     editor.data.gizmoOperation = if (editor.data.gizmoOperation != Operation.TRANSLATE) Operation.TRANSLATE else 0
                 }

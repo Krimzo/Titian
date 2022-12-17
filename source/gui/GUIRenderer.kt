@@ -38,10 +38,13 @@ class GUIRenderer(window: Window) : ArrayList<GUIRenderable>() {
         implGlfw.newFrame()
         ImGui.newFrame()
         ImGuizmo.beginFrame()
+
         ImGui.dockSpaceOverViewport(ImGui.getMainViewport(), ImGuiDockNodeFlags.PassthruCentralNode)
+
         for (obj in this) {
-            obj?.renderGUI()
+            obj.renderGUI()
         }
+
         ImGui.render()
         implGl3.renderDrawData(ImGui.getDrawData())
     }

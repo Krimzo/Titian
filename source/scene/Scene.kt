@@ -12,13 +12,15 @@ class Scene : ArrayList<Entity>(), Physical, Serializable {
     val materials: MutableSet<Material> = HashSet()
     val textures: MutableSet<Texture> = HashSet()
     val meshes: MutableSet<Mesh> = HashSet()
-    val names = SceneNameHolders()
-    val selected = SceneSelectedData()
+    val names: SceneNameHolders = SceneNameHolders()
+    val selected: SceneSelectedData = SceneSelectedData()
 
-    override fun add(entity: Entity): Boolean {
-        if (super.add(entity)) {
-            entity.components.mesh.mesh?.let { meshes.add(it) }
-            entity.components.material.material?.let {
+    override fun add(element: Entity): Boolean {
+        if (super.add(element)) {
+            element.components.mesh.mesh?.let {
+                meshes.add(it)
+            }
+            element.components.material.material?.let {
                 materials.add(it)
                 it.colorMap?.let { it1 -> textures.add(it1) }
                 it.normalMap?.let { it1 -> textures.add(it1) }
@@ -38,9 +40,12 @@ class Scene : ArrayList<Entity>(), Physical, Serializable {
     fun toFile(filepath: String): Boolean {
         return try {
             File(filepath).parentFile.mkdirs()
-            ObjectOutputStream(FileOutputStream(filepath)).use { stream -> stream.writeObject(this) }
+            ObjectOutputStream(FileOutputStream(filepath)).use { stream ->
+                stream.writeObject(this)
+            }
             true
-        } catch (ignored: Exception) {
+        }
+        catch (ignored: Exception) {
             println("Scene saving error, \"$filepath\"")
             false
         }

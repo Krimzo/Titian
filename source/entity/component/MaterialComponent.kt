@@ -9,6 +9,7 @@ import java.io.Serializable
 
 class MaterialComponent(entity: Entity) : EntityComponent(entity), Serializable {
     var material: Material? = null
+
     fun use(callback: () -> Unit) {
         material?.use(callback)
     }
