@@ -13,11 +13,11 @@ class EditorData(context: GLContext, editor: Editor) {
     val defaultMesh: Mesh
     val frustumMesh: Mesh
     val defaultMaterial: Material
-    var gameRunning = false
-    var wireframeState = false
-    var renderGrid = true
-    var gizmoOperation = 0
-    var gizmoMode = Mode.WORLD
+    var gameRunning: Boolean = false
+    var wireframeState: Boolean = false
+    var renderGrid: Boolean = true
+    var gizmoOperation: Int = 0
+    var gizmoMode: Int = Mode.WORLD
 
     init {
         frustumShaders = Shaders(editor.window.context, "shaders/Frustum.glsl")
