@@ -3,9 +3,11 @@ package math
 import java.io.Serializable
 
 class Triangle : Serializable {
-    var a: Vertex
-    var b: Vertex
-    var c: Vertex
+    var a: Vertex = Vertex()
+    var b: Vertex = Vertex()
+    var c: Vertex = Vertex()
+
+    constructor()
 
     constructor(A: Vertex, B: Vertex, C: Vertex) {
         a = A

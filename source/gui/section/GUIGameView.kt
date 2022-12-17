@@ -11,7 +11,7 @@ import math.Int2
 import named.NameHolder
 
 class GUIGameView(editor: Editor) : GUISection(editor) {
-    private var windowSize = Int2()
+    private var windowSize: Int2 = Int2()
 
     private fun updateWindowInfo() {
         val tabSize = ImGui.getWindowContentRegionMinY().toInt()

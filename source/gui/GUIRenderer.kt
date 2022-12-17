@@ -12,8 +12,8 @@ import imgui.glfw.ImGuiImplGlfw
 import window.Window
 
 class GUIRenderer(window: Window) : ArrayList<GUIRenderable>() {
-    private val implGlfw = ImGuiImplGlfw()
-    private val implGl3 = ImGuiImplGl3()
+    private val implGlfw: ImGuiImplGlfw = ImGuiImplGlfw()
+    private val implGl3: ImGuiImplGl3 = ImGuiImplGl3()
     val fonts: GUIFontData
     val textures: GUITextureData
 

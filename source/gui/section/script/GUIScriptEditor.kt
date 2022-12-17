@@ -13,8 +13,8 @@ import window.input.Input
 import window.input.Key
 
 class GUIScriptEditor(editor: Editor) : GUISection(editor) {
-    private val textEditor = TextEditor()
-    private val darkPalette: IntArray?
+    private var textEditor: TextEditor = TextEditor()
+    private var darkPalette: IntArray? = null
     private var filepath: String? = null
     private var lastMenuTextSize = 0f
 

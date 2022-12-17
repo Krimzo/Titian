@@ -16,8 +16,8 @@ import java.io.File
 class GUIExplorer(editor: Editor) : GUISection(editor) {
     private var textInput: GUITextInput? = null
     private var currentPath: File = File(FileHelper.defaultPath())
-    private var buttonSize = 0f
-    private var columnCount = 12
+    private var buttonSize: Float = 0f
+    private var columnCount: Int = 12
 
     private fun getFolderIcon(folder: File): Texture {
         return if (FileHelper.isEmpty(folder.toString())) {

@@ -8,7 +8,7 @@ import named.NameHolder
 import java.io.Serializable
 
 abstract class Light(holder: NameHolder, name: String, editor: Editor) : Entity(holder, name, editor), Serializable {
-    var color = Float3(1f)
+    var color: Float3 = Float3(1f)
 
     open fun fullLight(): Float3 {
         return color

@@ -4,28 +4,28 @@ import imgui.extension.texteditor.TextEditor
 import java.awt.Color
 
 internal object ColorPalette {
-    const val Default = 0
-    const val Keyword = 1
-    const val Number = 2
-    const val String = 3
-    const val CharLiteral = 4
-    const val Punctuation = 5
-    const val Preprocessor = 6
-    const val Identifier = 7
-    const val KnownIdentifier = 8
-    const val PreprocIdentifier = 9
-    const val Comment = 10
-    const val MultiLineComment = 11
-    const val Background = 12
-    const val Cursor = 13
-    const val Selection = 14
-    const val ErrorMarker = 15
-    const val Breakpoint = 16
-    const val LineNumber = 17
-    const val CurrentLineFill = 18
-    const val CurrentLineFillInactive = 19
-    const val CurrentLineEdge = 20
-    const val MAX = 21
+    const val Default: Int = 0
+    const val Keyword: Int = 1
+    const val Number: Int = 2
+    const val String: Int = 3
+    const val CharLiteral: Int = 4
+    const val Punctuation: Int = 5
+    const val Preprocessor: Int = 6
+    const val Identifier: Int = 7
+    const val KnownIdentifier: Int = 8
+    const val PreprocIdentifier: Int = 9
+    const val Comment: Int = 10
+    const val MultiLineComment: Int = 11
+    const val Background: Int = 12
+    const val Cursor: Int = 13
+    const val Selection: Int = 14
+    const val ErrorMarker: Int = 15
+    const val Breakpoint: Int = 16
+    const val LineNumber: Int = 17
+    const val CurrentLineFill: Int = 18
+    const val CurrentLineFillInactive: Int = 19
+    const val CurrentLineEdge: Int = 20
+    const val MAX: Int = 21
 
     fun convertColor(color: Color): Int {
         return Color(color.blue, color.green, color.red, color.alpha).rgb

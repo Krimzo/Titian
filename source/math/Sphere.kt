@@ -3,8 +3,10 @@ package math
 import java.io.Serializable
 
 class Sphere : Serializable {
-    var center: Float3
-    var radius: Float
+    var center: Float3 = Float3()
+    var radius: Float = 0f
+
+    constructor()
 
     constructor(center: Float3, radius: Float) {
         this.center = center

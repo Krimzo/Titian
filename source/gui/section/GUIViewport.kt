@@ -22,15 +22,16 @@ import window.input.Key
 import window.input.Mouse
 
 class GUIViewport(editor: Editor) : GUISection(editor) {
-    private var viewportPosition = Int2()
-    private var viewportSize = Int2()
+    private var viewportPosition: Int2 = Int2()
+    private var viewportSize: Int2 = Int2()
     private var gridMesh: Mesh
     private var gridShaders: Shaders
-    private val snap: Array<FloatArray> = arrayOf(floatArrayOf(0.1f, 0.1f, 0.1f), floatArrayOf(30f, 30f, 30f), floatArrayOf(1f, 1f, 1f), floatArrayOf(0f, 0f, 0f))
+    private val snap: Array<FloatArray>
 
     init {
         gridMesh = Mesh.generateGridMesh(editor.window.context, 50)
         gridShaders = Shaders(editor.window.context, "shaders/Grid.glsl")
+        snap = arrayOf(floatArrayOf(0.1f, 0.1f, 0.1f), floatArrayOf(30f, 30f, 30f), floatArrayOf(1f, 1f, 1f), floatArrayOf(0f, 0f, 0f))
     }
 
     private fun updateViewport() {

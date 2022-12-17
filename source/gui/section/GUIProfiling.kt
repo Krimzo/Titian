@@ -7,7 +7,7 @@ import imgui.ImGui
 import imgui.flag.ImGuiStyleVar
 
 class GUIProfiling(editor: Editor) : GUISection(editor) {
-    private var vSync = true
+    private var vSync: Boolean = true
 
     override fun renderGUI() {
         ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 14f, 14f)

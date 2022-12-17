@@ -7,8 +7,8 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 class Float2 : Serializable {
-    var x = 0f
-    var y = 0f
+    var x: Float = 0f
+    var y: Float = 0f
 
     constructor(x: Float, y: Float) {
         this.x = x

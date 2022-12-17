@@ -3,8 +3,8 @@ package math
 import java.io.Serializable
 
 class Int2 : Serializable {
-    var x = 0
-    var y = 0
+    var x: Int = 0
+    var y: Int = 0
 
     constructor(x: Int, y: Int) {
         this.x = x

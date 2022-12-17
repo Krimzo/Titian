@@ -12,8 +12,8 @@ import named.NameHolder
 import java.io.Serializable
 
 class PerspectiveCamera(holder: NameHolder, name: String, editor: Editor) : Camera(holder, name, editor), Serializable {
-    var aspect = 1.78f
-    var fov = 90f
+    var aspect: Float = 1.78f
+    var fov: Float = 90f
 
     fun updateAspect(frameSize: Int2) {
         aspect = frameSize.x.toFloat() / frameSize.y

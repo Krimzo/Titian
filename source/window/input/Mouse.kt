@@ -3,7 +3,7 @@ package window.input
 import imgui.flag.ImGuiMouseButton
 
 object Mouse {
-    const val Left = ImGuiMouseButton.Left
-    const val Middle = ImGuiMouseButton.Middle
-    const val Right = ImGuiMouseButton.Right
+    const val Left: Int = ImGuiMouseButton.Left
+    const val Middle: Int = ImGuiMouseButton.Middle
+    const val Right: Int = ImGuiMouseButton.Right
 }

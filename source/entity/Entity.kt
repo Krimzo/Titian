@@ -10,7 +10,7 @@ import renderer.abs.Renderable
 import java.io.Serializable
 
 open class Entity(holder: NameHolder, name: String, @field:Transient var editor: Editor) : Named(holder, name), Physical, Renderable, Serializable {
-    val components = EntityComponents(this)
+    val components: EntityComponents = EntityComponents(this)
 
     fun callScriptStarts() {
         for (script in components.script.scripts) {

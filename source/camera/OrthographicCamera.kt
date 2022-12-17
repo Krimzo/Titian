@@ -11,8 +11,8 @@ import named.NameHolder
 import java.io.Serializable
 
 class OrthographicCamera(holder: NameHolder, name: String, editor: Editor) : Camera(holder, name, editor), Serializable {
-    var width = 160f
-    var height = 90f
+    var width: Float = 160f
+    var height: Float = 90f
 
     override fun projectionMatrix(): Mat4 {
         return Mat4.orthographic(width, height, near, far)

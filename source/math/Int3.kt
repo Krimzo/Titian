@@ -4,9 +4,9 @@ import java.awt.Color
 import java.io.Serializable
 
 class Int3 : Serializable {
-    var x = 0
-    var y = 0
-    var z = 0
+    var x: Int = 0
+    var y: Int = 0
+    var z: Int = 0
 
     constructor(x: Int, y: Int, z: Int) {
         this.x = x

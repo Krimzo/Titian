@@ -57,10 +57,10 @@ object Titian {
         System.setErr(editor.logger)
         Scriptable.setEditor(editor)
 
-        editor.setup { ed: Editor ->
+        editor.setup {
             try {
-                saveTestScene(ed)
-                loadTestScene(ed)
+                saveTestScene(it)
+                loadTestScene(it)
             }
             catch (ignored: Exception) {
                 println("Editor setup error")

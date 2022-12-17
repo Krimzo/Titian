@@ -9,7 +9,7 @@ import named.NameHolder
 import java.io.Serializable
 
 class AmbientLight(holder: NameHolder, name: String, editor: Editor) : Light(holder, name, editor), Serializable {
-    var intensity = 0.1f
+    var intensity: Float = 0.1f
 
     override fun fullLight(): Float3 {
         return super.fullLight() * intensity
