@@ -48,7 +48,7 @@ class GUIProperties(editor: Editor) : GUISection(editor) {
         val contentMax = ImGui.getWindowContentRegionMax()
         ImGui.dummy(contentMax.x - contentMin.x, contentMax.y - contentMin.y)
 
-        GUIDragDrop.getData("ScriptFile") { path: Any? ->
+        GUIDragDrop.getData("ScriptFile") { path: Any ->
             if (path is String) {
                 selected.components.script.scripts.add(Script(path, selected))
             }

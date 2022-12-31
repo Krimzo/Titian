@@ -117,7 +117,7 @@ class GUIScriptEditor(editor: Editor) : GUISection(editor) {
     private fun renderTextEditor() {
         ImGui.pushFont(editor.guiRenderer.fonts.scriptEditorFont)
         textEditor.render("Script Editor")
-        GUIDragDrop.getData("ScriptFile") { filepath: Any? ->
+        GUIDragDrop.getData("ScriptFile") { filepath: Any ->
             this.filepath = filepath as String?
             loadFileText()
         }

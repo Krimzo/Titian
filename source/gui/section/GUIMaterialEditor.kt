@@ -155,7 +155,7 @@ class GUIMaterialEditor(editor: Editor) : GUISection(editor) {
                 selected = material.colorMap
             }
 
-            GUIDragDrop.getData("TextureTransfer") { texture: Any? ->
+            GUIDragDrop.getData("TextureTransfer") { texture: Any ->
                 material.colorMap = texture as Texture?
             }
 
@@ -175,7 +175,7 @@ class GUIMaterialEditor(editor: Editor) : GUISection(editor) {
                 selected = material.roughnessMap
             }
 
-            GUIDragDrop.getData("TextureTransfer") { texture: Any? ->
+            GUIDragDrop.getData("TextureTransfer") { texture: Any ->
                 material.roughnessMap = texture as Texture?
             }
 
@@ -195,7 +195,7 @@ class GUIMaterialEditor(editor: Editor) : GUISection(editor) {
                 selected = material.normalMap
             }
 
-            GUIDragDrop.getData("TextureTransfer") { texture: Any? ->
+            GUIDragDrop.getData("TextureTransfer") { texture: Any ->
                 material.normalMap = texture as Texture?
             }
 
@@ -271,7 +271,7 @@ class GUIMaterialEditor(editor: Editor) : GUISection(editor) {
             }
             ImGui.endChild()
 
-            GUIDragDrop.getData("ImageFile") { path: Any? ->
+            GUIDragDrop.getData("ImageFile") { path: Any ->
                 try {
                     FileHelper.getNameWithoutExtension(path as String)?.let {
                         editor.scene.textures.add(Texture(editor.scene.names.texture, it, editor.window.context, path))

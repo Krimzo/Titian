@@ -179,12 +179,15 @@ class GUIViewport(editor: Editor) : GUISection(editor) {
             renderScene()
             GUIDisplay.texture(editor.editorRenderer.renderBuffer.getColorMap(), viewportSize)
 
-            GUIDragDrop.getData("SceneFile") { path: Any? ->
-                Scene.fromFile(path as String, editor)?.let {
-                    editor.scene = it
-                    println("Scene \"$path\" loaded!")
+            GUIDragDrop.getData("SceneFile") { path: Any ->
+                if (path is String) {
+                    Scene.fromFile(path, editor)?.let {
+                        editor.scene = it
+                        println("Scene \"$path\" loaded")
+                    }
                 }
             }
+
             renderGizmos()
         }
         ImGui.end()

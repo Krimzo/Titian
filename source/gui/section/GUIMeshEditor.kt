@@ -135,7 +135,7 @@ class GUIMeshEditor(editor: Editor) : GUISection(editor) {
             }
             ImGui.endChild()
 
-            GUIDragDrop.getData("MeshFile") { path: Any? ->
+            GUIDragDrop.getData("MeshFile") { path: Any ->
                 try {
                     FileHelper.getNameWithoutExtension(path as String)?.let {
                         editor.scene.meshes.add(Mesh(editor.scene.names.mesh, it, editor.window.context, path))

@@ -74,7 +74,9 @@ class GUIExplorer(editor: Editor) : GUISection(editor) {
         }
 
         val callback = { path: Any? ->
-            FileHelper.move(path as String, folder.absolutePath); Unit
+            if (path is String) {
+                FileHelper.move(path, folder.absolutePath)
+            }
         }
         GUIDragDrop.getData("Folder", callback)
         GUIDragDrop.getData("File", callback)
