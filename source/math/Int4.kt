@@ -70,15 +70,15 @@ class Int4 : Serializable {
         return Int4(x / a, y / a, z / a, w / a)
     }
 
+    operator fun unaryMinus(): Int4 {
+        return this * -1
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other is Int4) {
             return x == other.x && y == other.y && z == other.z && w == other.w
         }
         return false
-    }
-
-    operator fun unaryMinus(): Int4 {
-        return this * -1
     }
 
     override fun toString(): String {

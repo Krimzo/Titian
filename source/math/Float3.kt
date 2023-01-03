@@ -81,15 +81,15 @@ class Float3 : Serializable {
         return this * (1f / a)
     }
 
+    operator fun unaryMinus(): Float3 {
+        return this * -1f
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other is Float3) {
             return x == other.x && y == other.y && z == other.z
         }
         return false
-    }
-
-    operator fun unaryMinus(): Float3 {
-        return this * -1f
     }
 
     fun angle(v: Float3): Float {

@@ -15,11 +15,11 @@ abstract class Camera(holder: NameHolder, name: String, editor: Editor) : Entity
     private var right: Float3 = Float3.posX
     private var up: Float3 = Float3.posY
 
-    var near = 0.01f
-    var far = 500f
-    var speed = 2f
-    var sensitivity = 0.1f
-    var background = Float3(0.1f)
+    var near: Float = 0.01f
+    var far: Float = 500f
+    var speed: Float = 2f
+    var sensitivity: Float = 0.1f
+    var background: Float3 = Float3(0.1f)
 
     private var firstClick = true
     private var camMoving = false

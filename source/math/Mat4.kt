@@ -32,12 +32,12 @@ class Mat4() : Matrix(4, 4), Serializable {
         return Mat4(super.multiply(mat))
     }
 
-    fun abs(): Mat4 {
-        return Mat4(super.absolute())
-    }
-
     operator fun unaryMinus(): Mat4 {
         return Mat4(super.negate())
+    }
+
+    fun abs(): Mat4 {
+        return Mat4(super.absolute())
     }
 
     fun tran(): Mat4 {

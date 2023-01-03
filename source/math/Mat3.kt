@@ -31,12 +31,12 @@ class Mat3() : Matrix(3, 3), Serializable {
         return Mat3(super.multiply(mat))
     }
 
-    fun abs(): Mat3 {
-        return Mat3(super.absolute())
-    }
-
     operator fun unaryMinus(): Mat3 {
         return Mat3(super.negate())
+    }
+
+    fun abs(): Mat3 {
+        return Mat3(super.absolute())
     }
 
     fun tran(): Mat3 {

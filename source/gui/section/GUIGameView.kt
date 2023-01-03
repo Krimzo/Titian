@@ -30,7 +30,10 @@ class GUIGameView(editor: Editor) : GUISection(editor) {
         editor.gameRenderer.resize(windowSize)
 
         if (editor.scene.selected.camera?.javaClass == PerspectiveCamera::class.java) {
-            (editor.scene.selected.camera as PerspectiveCamera).updateAspect(windowSize)
+            val selectedCamera = editor.scene.selected.camera
+            if (selectedCamera is PerspectiveCamera) {
+                selectedCamera.updateAspect(windowSize)
+            }
         }
         editor.gameRenderer.renderScene(editor.scene, camera)
     }

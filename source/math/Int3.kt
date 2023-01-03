@@ -57,15 +57,15 @@ class Int3 : Serializable {
         return Int3(x / a, y / a, z / a)
     }
 
+    operator fun unaryMinus(): Int3 {
+        return this * -1
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other is Int3) {
             return x == other.x && y == other.y && z == other.z
         }
         return false
-    }
-
-    operator fun unaryMinus(): Int3 {
-        return this * -1
     }
 
     override fun toString(): String {

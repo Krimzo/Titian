@@ -118,8 +118,10 @@ class GUIScriptEditor(editor: Editor) : GUISection(editor) {
         ImGui.pushFont(editor.guiRenderer.fonts.scriptEditorFont)
         textEditor.render("Script Editor")
         GUIDragDrop.getData("ScriptFile") { filepath: Any ->
-            this.filepath = filepath as String?
-            loadFileText()
+            if (filepath is String) {
+                this.filepath = filepath
+                loadFileText()
+            }
         }
         ImGui.popFont()
     }

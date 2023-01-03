@@ -156,7 +156,9 @@ class GUIMaterialEditor(editor: Editor) : GUISection(editor) {
             }
 
             GUIDragDrop.getData("TextureTransfer") { texture: Any ->
-                material.colorMap = texture as Texture?
+                if (texture is Texture) {
+                    material.colorMap = texture
+                }
             }
 
             GUIPopup.itemPopup("EditMaterialColorMap$name") {
@@ -176,7 +178,9 @@ class GUIMaterialEditor(editor: Editor) : GUISection(editor) {
             }
 
             GUIDragDrop.getData("TextureTransfer") { texture: Any ->
-                material.roughnessMap = texture as Texture?
+                if (texture is Texture) {
+                    material.roughnessMap = texture
+                }
             }
 
             GUIPopup.itemPopup("EditMaterialRoughnessMap$name") {
@@ -196,7 +200,9 @@ class GUIMaterialEditor(editor: Editor) : GUISection(editor) {
             }
 
             GUIDragDrop.getData("TextureTransfer") { texture: Any ->
-                material.normalMap = texture as Texture?
+                if (texture is Texture) {
+                    material.normalMap = texture
+                }
             }
 
             GUIPopup.itemPopup("EditMaterialNormalMap$name") {
@@ -285,12 +291,12 @@ class GUIMaterialEditor(editor: Editor) : GUISection(editor) {
             var selectedTexture: Texture? = null
 
             selected?.let { selected ->
-                if (selected.javaClass == Material::class.java) {
-                    selectedMaterial = selected as Material?
+                if (selected is Material) {
+                    selectedMaterial = selected
                     entity.components.material.material = selectedMaterial
                 }
-                else if (selected.javaClass == Texture::class.java) {
-                    selectedTexture = selected as Texture?
+                else if (selected is Texture) {
+                    selectedTexture = selected
                 }
             }
             ImGui.nextColumn()

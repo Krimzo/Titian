@@ -11,7 +11,7 @@ internal object LanguageData {
             "throws", "switch", "finally", "boolean", "extends", "default",
             "package", "private", "abstract", "continue", "strictfp", "volatile",
             "interface", "transient", "protected", "instanceof", "implements", "synchronized",
-            "self", "true", "false"
+            "var", "self", "true", "false"
         )
 
     val identifiers: Array<String>

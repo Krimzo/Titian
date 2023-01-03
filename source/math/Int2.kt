@@ -42,15 +42,15 @@ class Int2 : Serializable {
         return Int2(x / a, y / a)
     }
 
+    operator fun unaryMinus(): Int2 {
+        return this * -1
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other is Int2) {
             return x == other.x && y == other.y
         }
         return false
-    }
-
-    operator fun unaryMinus(): Int2 {
-        return this * -1
     }
 
     override fun toString(): String {
