@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main", "main\main.vcxproj", "{518254C9-3AC0-40A5-B820-59939FAEE33A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klib", "klib\klib.vcxproj", "{5B9896B1-803A-45DD-A262-8055D73C6DD0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rendering", "rendering\rendering.vcxproj", "{C716EBB7-6902-4345-AD73-3BD269411300}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{518254C9-3AC0-40A5-B820-59939FAEE33A}.Debug|x64.ActiveCfg = Debug|x64
+		{518254C9-3AC0-40A5-B820-59939FAEE33A}.Debug|x64.Build.0 = Debug|x64
+		{518254C9-3AC0-40A5-B820-59939FAEE33A}.Release|x64.ActiveCfg = Release|x64
+		{518254C9-3AC0-40A5-B820-59939FAEE33A}.Release|x64.Build.0 = Release|x64
+		{5B9896B1-803A-45DD-A262-8055D73C6DD0}.Debug|x64.ActiveCfg = Debug|x64
+		{5B9896B1-803A-45DD-A262-8055D73C6DD0}.Debug|x64.Build.0 = Debug|x64
+		{5B9896B1-803A-45DD-A262-8055D73C6DD0}.Release|x64.ActiveCfg = Release|x64
+		{5B9896B1-803A-45DD-A262-8055D73C6DD0}.Release|x64.Build.0 = Release|x64
+		{C716EBB7-6902-4345-AD73-3BD269411300}.Debug|x64.ActiveCfg = Debug|x64
+		{C716EBB7-6902-4345-AD73-3BD269411300}.Debug|x64.Build.0 = Debug|x64
+		{C716EBB7-6902-4345-AD73-3BD269411300}.Release|x64.ActiveCfg = Release|x64
+		{C716EBB7-6902-4345-AD73-3BD269411300}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8DC56732-0F34-4844-84B2-C2342E97464A}
+	EndGlobalSection
+EndGlobal

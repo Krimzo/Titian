@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{5b9896b1-803a-45dd-a262-8055d73c6dd0}</ProjectGuid>
+    <RootNamespace>klib</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="source\graphics\buffer\buffer.cpp" />
+    <ClCompile Include="source\graphics\buffer\const_buffer.cpp" />
+    <ClCompile Include="source\graphics\gpu.cpp" />
+    <ClCompile Include="source\graphics\states\depth_state.cpp" />
+    <ClCompile Include="source\graphics\states\raster_state.cpp" />
+    <ClCompile Include="source\graphics\states\sampler_state.cpp" />
+    <ClCompile Include="source\graphics\utility\shaders.cpp" />
+    <ClCompile Include="source\graphics\utility\texture.cpp" />
+    <ClCompile Include="source\graphics\utility\vertex_buffer.cpp" />
+    <ClCompile Include="source\graphics\views\access_view.cpp" />
+    <ClCompile Include="source\graphics\views\depth_view.cpp" />
+    <ClCompile Include="source\graphics\views\shader_view.cpp" />
+    <ClCompile Include="source\graphics\views\target_view.cpp" />
+    <ClCompile Include="source\media\audio.cpp" />
+    <ClCompile Include="source\media\color.cpp" />
+    <ClCompile Include="source\media\image.cpp" />
+    <ClCompile Include="source\media\video.cpp" />
+    <ClCompile Include="source\memory\dll.cpp" />
+    <ClCompile Include="source\memory\file.cpp" />
+    <ClCompile Include="source\memory\reference.cpp" />
+    <ClCompile Include="source\render\camera.cpp" />
+    <ClCompile Include="source\render\entity.cpp" />
+    <ClCompile Include="source\render\plane.cpp" />
+    <ClCompile Include="source\render\ray.cpp" />
+    <ClCompile Include="source\render\sphere.cpp" />
+    <ClCompile Include="source\render\triangle.cpp" />
+    <ClCompile Include="source\render\vertex.cpp" />
+    <ClCompile Include="source\time\date.cpp" />
+    <ClCompile Include="source\time\time.cpp" />
+    <ClCompile Include="source\time\timer.cpp" />
+    <ClCompile Include="source\utility\async.cpp" />
+    <ClCompile Include="source\utility\console.cpp" />
+    <ClCompile Include="source\utility\encryptor.cpp" />
+    <ClCompile Include="source\utility\random.cpp" />
+    <ClCompile Include="source\utility\strings.cpp" />
+    <ClCompile Include="source\web\socket.cpp" />
+    <ClCompile Include="source\web\web.cpp" />
+    <ClCompile Include="source\window\frame_buffer.cpp" />
+    <ClCompile Include="source\window\key.cpp" />
+    <ClCompile Include="source\window\keyboard.cpp" />
+    <ClCompile Include="source\window\mouse.cpp" />
+    <ClCompile Include="source\window\system_handler.cpp" />
+    <ClCompile Include="source\window\window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\graphics\dx_types.h" />
+    <ClInclude Include="source\graphics\gpu.h" />
+    <ClInclude Include="source\klib.h" />
+    <ClInclude Include="source\math\math.h" />
+    <ClInclude Include="source\math\matrix.h" />
+    <ClInclude Include="source\math\matrix2x2.h" />
+    <ClInclude Include="source\math\matrix3x3.h" />
+    <ClInclude Include="source\math\matrix4x4.h" />
+    <ClInclude Include="source\math\vector2.h" />
+    <ClInclude Include="source\math\vector3.h" />
+    <ClInclude Include="source\math\vector4.h" />
+    <ClInclude Include="source\media\audio.h" />
+    <ClInclude Include="source\media\color.h" />
+    <ClInclude Include="source\media\image.h" />
+    <ClInclude Include="source\media\video.h" />
+    <ClInclude Include="source\memory\dll.h" />
+    <ClInclude Include="source\memory\file.h" />
+    <ClInclude Include="source\memory\reference.h" />
+    <ClInclude Include="source\render\camera.h" />
+    <ClInclude Include="source\render\entity.h" />
+    <ClInclude Include="source\render\plane.h" />
+    <ClInclude Include="source\render\ray.h" />
+    <ClInclude Include="source\render\sphere.h" />
+    <ClInclude Include="source\render\triangle.h" />
+    <ClInclude Include="source\render\vertex.h" />
+    <ClInclude Include="source\time\date.h" />
+    <ClInclude Include="source\time\time.h" />
+    <ClInclude Include="source\time\timer.h" />
+    <ClInclude Include="source\utility\async.h" />
+    <ClInclude Include="source\utility\console.h" />
+    <ClInclude Include="source\utility\encryptor.h" />
+    <ClInclude Include="source\utility\random.h" />
+    <ClInclude Include="source\utility\strings.h" />
+    <ClInclude Include="source\web\socket.h" />
+    <ClInclude Include="source\web\web.h" />
+    <ClInclude Include="source\window\frame_buffer.h" />
+    <ClInclude Include="source\window\key.h" />
+    <ClInclude Include="source\window\keyboard.h" />
+    <ClInclude Include="source\window\mouse.h" />
+    <ClInclude Include="source\window\system_handler.h" />
+    <ClInclude Include="source\window\window.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
