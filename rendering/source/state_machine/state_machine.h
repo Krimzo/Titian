@@ -6,8 +6,8 @@
 struct state_machine
 {
 	// System
-	kl::window* window = nullptr;
-	kl::gpu* gpu = nullptr;
+	kl::ref<kl::window> window = {};
+	kl::ref<kl::gpu> gpu = {};
 
 	// Buffers
 	std::unordered_map<std::string, kl::shaders>          shaders = {};

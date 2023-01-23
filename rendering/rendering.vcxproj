@@ -78,18 +78,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="source\callbacks\callbacks.h" />
-    <ClInclude Include="source\cbuffers\render.h" />
+    <ClInclude Include="source\callbacks\main_callbacks.h" />
+    <ClInclude Include="source\cbuffers\entity_render.h" />
     <ClInclude Include="source\rendering.h" />
     <ClInclude Include="source\scene\scene.h" />
+    <ClInclude Include="source\setup\setup_state.h" />
     <ClInclude Include="source\state_machine\state_machine.h" />
+    <ClInclude Include="source\update\update_frame.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\callbacks\setup_callback.cpp" />
     <ClCompile Include="source\callbacks\update_callback.cpp" />
     <ClCompile Include="source\rendering.cpp" />
     <ClCompile Include="source\scene\scene.cpp" />
+    <ClCompile Include="source\setup\setup_meshes.cpp" />
+    <ClCompile Include="source\setup\setup_scene.cpp" />
+    <ClCompile Include="source\setup\setup_shaders.cpp" />
+    <ClCompile Include="source\setup\setup_textures.cpp" />
     <ClCompile Include="source\state_machine\state_machine.cpp" />
+    <ClCompile Include="source\update\custom_update.cpp" />
+    <ClCompile Include="source\update\finalize_frame.cpp" />
+    <ClCompile Include="source\update\handle_resizes.cpp" />
+    <ClCompile Include="source\update\handle_camera.cpp" />
+    <ClCompile Include="source\update\render_scene.cpp" />
+    <ClCompile Include="source\update\update_light.cpp" />
+    <ClCompile Include="source\update\update_physics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\klib\klib.vcxproj">

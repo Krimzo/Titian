@@ -20,6 +20,8 @@ namespace kl {
         dx::shader_view texture = nullptr;
         float4 color = (float4) colors::gray;
 
+        void* user_data = nullptr;
+
         entity();
 
         void update_physics(float delta_time);

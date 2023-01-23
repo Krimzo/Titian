@@ -14,118 +14,39 @@ namespace kl::random {
     int get_int(int start_inclusive, int end_exclusive);
     int get_int(int end_exclusive);
 
+    int2 get_int2(int start_inclusive, int end_exclusive);
+    int2 get_int2(int end_exclusive);
+
+    int3 get_int3(int start_inclusive, int end_exclusive);
+    int3 get_int3(int end_exclusive);
+
+    int4 get_int4(int start_inclusive, int end_exclusive);
+    int4 get_int4(int end_exclusive);
+
     float get_float(float start_inclusive, float end_inclusive);
     float get_float(float end_inclusive);
     float get_float();
 
+    float2 get_float2(float start_inclusive, float end_inclusive);
+    float2 get_float2(float end_inclusive);
+    float2 get_float2();
+
+    float3 get_float3(float start_inclusive, float end_inclusive);
+    float3 get_float3(float end_inclusive);
+    float3 get_float3();
+
+    float4 get_float4(float start_inclusive, float end_inclusive);
+    float4 get_float4(float end_inclusive);
+    float4 get_float4();
+
+    mat3 get_mat3(float start_inclusive, float end_inclusive);
+    mat3 get_mat3(float end_inclusive);
+    mat3 get_mat3();
+
+    mat4 get_mat4(float start_inclusive, float end_inclusive);
+    mat4 get_mat4(float end_inclusive);
+    mat4 get_mat4();
+
     char get_char(bool upper = false);
     std::string get_string(int length);
-
-    template <typename T>
-    vector2<T> get_vector2(T start_inclusive, T end_inclusive)
-    {
-        return {
-            get_float(start_inclusive, end_inclusive),
-            get_float(start_inclusive, end_inclusive)
-        };
-    }
-
-    template <typename T>
-    vector2<T> get_vector2(T end_inclusive)
-    {
-        return {
-            get_float(end_inclusive),
-            get_float(end_inclusive)
-        };
-    }
-
-    template <typename T>
-    vector2<T> get_vector2()
-    {
-        return {get_float(), get_float()};
-    }
-
-    template <typename T>
-    vector3<T> get_vector3(T start_inclusive, T end_inclusive)
-    {
-        return {
-            get_float(start_inclusive, end_inclusive),
-            get_float(start_inclusive, end_inclusive),
-            get_float(start_inclusive, end_inclusive)
-        };
-    }
-
-    template <typename T>
-    vector3<T> get_vector3(T end_inclusive)
-    {
-        return {
-            get_float(end_inclusive),
-            get_float(end_inclusive),
-            get_float(end_inclusive)
-        };
-    }
-
-    template <typename T>
-    vector3<T> get_vector3()
-    {
-        return {get_float(), get_float(), get_float()};
-    }
-
-    template <typename T>
-    vector4<T> get_vector4(T start_inclusive, T end_inclusive)
-    {
-        return {
-            get_float(start_inclusive, end_inclusive),
-            get_float(start_inclusive, end_inclusive),
-            get_float(start_inclusive, end_inclusive),
-            get_float(start_inclusive, end_inclusive)
-        };
-    }
-
-    template <typename T>
-    vector4<T> get_vector4(T end_inclusive)
-    {
-        return {
-            get_float(end_inclusive),
-            get_float(end_inclusive),
-            get_float(end_inclusive),
-            get_float(end_inclusive)
-        };
-    }
-
-    template <typename T>
-    vector4<T> get_vector4()
-    {
-        return {get_float(), get_float(), get_float(), get_float()};
-    }
-
-    template <typename T, int W, int H>
-    matrix<T, W, H> get_matrix(T start_inclusive, T end_inclusive)
-    {
-        matrix<T, W, H> m;
-        for (auto& val : m) {
-            val = get_float(start_inclusive, end_inclusive);
-        }
-        return m;
-    }
-
-    template <typename T, int W, int H>
-    matrix<T, W, H> get_matrix(T end_inclusive)
-    {
-        matrix<T, W, H> m;
-        for (auto& val : m) {
-            val = get_float(end_inclusive);
-        }
-        return m;
-    }
-
-    template <typename T, int W, int H>
-    matrix<T, W, H> get_matrix()
-    {
-        matrix<T, W, H> m;
-        for (auto& val : m) {
-            val = get_float();
-        }
-        return m;
-    }
 }

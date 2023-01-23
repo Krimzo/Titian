@@ -63,8 +63,8 @@ kl::gpu::gpu(const HWND window)
 
     context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    resize_internal({window_client_area.right, window_client_area.bottom});
-    set_viewport({window_client_area.right, window_client_area.bottom});
+    resize_internal({ window_client_area.right, window_client_area.bottom });
+    set_viewport({ window_client_area.right, window_client_area.bottom });
     bind_raster_state(new_raster_state(false, false));
 
     for (int i = 0; i < cbuffer_predefined_size; i++) {

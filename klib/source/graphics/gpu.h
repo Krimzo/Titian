@@ -72,8 +72,7 @@ namespace kl {
         void unbind_all_targets() const;
         void bind_internal_targets() const;
         void bind_targets(const std::vector<dx::target_view>& targets, dx::depth_view depth_view = nullptr) const;
-        void bind_targets_with_internal(const std::vector<dx::target_view>& additional_targets,
-                                     dx::depth_view depth_view = nullptr) const;
+        void bind_targets_with_internal(const std::vector<dx::target_view>& additional_targets, dx::depth_view depth_view = nullptr) const;
 
         void resize_internal(const int2& size);
 
@@ -98,14 +97,12 @@ namespace kl {
         void bind_depth_state(dx::depth_state state) const;
 
         // Shaders
-        dx::vertex_shader new_vertex_shader(const std::string& source, dx::layout* out_layout = nullptr,
-                                         const std::vector<dx::layout_descriptor>& descriptors = {});
+        dx::vertex_shader new_vertex_shader(const std::string& source, dx::layout* out_layout = nullptr, const std::vector<dx::layout_descriptor>& descriptors = {});
         dx::pixel_shader new_pixel_shader(const std::string& source);
         dx::geometry_shader new_geometry_shader(const std::string& source);
         dx::compute_shader new_compute_shader(const std::string& source);
 
-        shaders new_shaders(const std::string& vertex_source, const std::string& pixel_source,
-                           const std::vector<dx::layout_descriptor>& descriptors = {});
+        shaders new_shaders(const std::string& vertex_source, const std::string& pixel_source, const std::vector<dx::layout_descriptor>& descriptors = {});
         shaders new_shaders(const std::string& source, const std::vector<dx::layout_descriptor>& descriptors = {});
 
         void bind_vertex_shader(dx::vertex_shader shader) const;
@@ -124,8 +121,7 @@ namespace kl {
 
         // Buffer
         dx::buffer new_buffer(const dx::buffer_descriptor* descriptor, const dx::subresource_descriptor* subresource_data = nullptr);
-        dx::buffer new_structured_buffer(const void* data, int element_count, int element_size,
-                                       bool has_unordered_access = false, bool cpu_read = false);
+        dx::buffer new_structured_buffer(const void* data, int element_count, int element_size, bool has_unordered_access = false, bool cpu_read = false);
         dx::buffer new_staging_buffer(dx::buffer buffer, int byte_size = 0);
 
         // Constant buffer
@@ -194,8 +190,7 @@ namespace kl {
         dx::texture new_texture(const dx::texture_descriptor* descriptor, const dx::subresource_descriptor* subresource_data = nullptr);
 
         dx::texture new_texture(const image& image, bool has_unordered_access = false, bool is_target = false);
-        dx::texture new_texture(const image& front, const image& back, const image& left, const image& right,
-                                const image& top, const image& bottom);
+        dx::texture new_texture(const image& front, const image& back, const image& left, const image& right, const image& top, const image& bottom);
 
         dx::texture new_staging_texture(dx::texture texture, const int2& size = {});
 
