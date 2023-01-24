@@ -62,4 +62,5 @@ void fill_with_cubes(state_machine* state, const int size)
 
 	state->scene->sun_direction = { 1.5f, -1, 2 };
 	state->scene->camera.position = { 0, 1, -4 };
+	state->scene->camera.skybox = state->skyboxes["clouds"];
 }

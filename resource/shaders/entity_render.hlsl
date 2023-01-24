@@ -38,6 +38,6 @@ float4 p_shader(vs_out vs_data) : SV_Target
 
     const float light_intensity = max(dot(-sun_direction.xyz, vs_data.normal), 0.0f);
     pixel *= light_intensity;
- 
+    
     return float4(pixel, 1.0f);
 }

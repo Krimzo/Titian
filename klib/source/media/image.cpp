@@ -143,7 +143,7 @@ const kl::color* kl::image::data() const
     return pixels_.data();
 }
 
-kl::image kl::image::get_square(int2 top_left, int2 bottom_right) const
+kl::image kl::image::get_rectangle(int2 top_left, int2 bottom_right) const
 {
     if (bottom_right.x < top_left.x) {
         std::swap(top_left.x, bottom_right.x);

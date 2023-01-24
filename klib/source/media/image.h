@@ -44,7 +44,7 @@ namespace kl {
 
         [[nodiscard]] const color* data() const;
 
-        [[nodiscard]] image get_square(int2 top_left, int2 bottom_right) const;
+        [[nodiscard]] image get_rectangle(int2 top_left, int2 bottom_right) const;
 
         bool load_from_file(const std::string& filepath);
 

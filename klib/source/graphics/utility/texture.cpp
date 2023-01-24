@@ -74,12 +74,12 @@ kl::dx::texture kl::gpu::new_texture(const image& front, const image& back, cons
 
     const UINT mem_pitch = UINT(front.width() * sizeof(color));
     const dx::subresource_descriptor data[6] = {
-        {right.data(), mem_pitch, 0},
-        {left.data(), mem_pitch, 0},
-        {top.data(), mem_pitch, 0},
-        {bottom.data(), mem_pitch, 0},
-        {front.data(), mem_pitch, 0},
-        {back.data(), mem_pitch, 0}
+        { right.data(),  mem_pitch, 0 },
+        { left.data(),   mem_pitch, 0 },
+        { top.data(),    mem_pitch, 0 },
+        { bottom.data(), mem_pitch, 0 },
+        { front.data(),  mem_pitch, 0 },
+        { back.data(),   mem_pitch, 0 }
     };
 
     return new_texture(&descriptor, data);

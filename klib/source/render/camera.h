@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/math.h"
+#include "graphics/dx_types.h"
 
 
 namespace kl {
@@ -17,6 +18,9 @@ namespace kl {
         float far_plane = 500.0f;
         float sensitivity = 0.1f;
         float speed = 2.0f;
+
+        color background = kl::colors::gray;
+        dx::shader_view skybox = nullptr;
 
         template <typename T>
         void update_aspect_ratio(const vector2<T>& size)
