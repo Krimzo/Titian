@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scene/scene.h"
+#include "klib.h"
 
 
 struct state_machine
@@ -23,5 +23,5 @@ struct state_machine
 	kl::timer timer = {};
 
 	// Scene
-	kl::ref<scene> scene = {};
+	kl::ref<kl::scene> scene = {};
 };

@@ -6,8 +6,9 @@ void fill_with_cubes(state_machine* state, int size);
 
 void setup_scene(state_machine* state)
 {
-	state->scene = kl::make<::scene>();
+	state->scene = kl::make<kl::scene>();
 	fill_with_cubes(state, 3);
+	fill_with_monkes(state, 15);
 }
 
 void fill_with_monkes(state_machine* state, const int size)
@@ -30,12 +31,14 @@ void fill_with_monkes(state_machine* state, const int size)
 		const float normalized = kl::math::minmax(percentage, 0.0f, 1.0f);
 
 		entity->mesh = state->meshes["monke"];
-		entity->color = kl::float4::splash(normalized);
+		entity->material.color = kl::float4::splash(normalized);
 
 		state->scene->push_back(entity);
 	}
 
 	state->scene->sun_direction = { 0, 0, 1 };
+	state->scene->camera.position = { 0, 1, -4 };
+	state->scene->camera.skybox = state->skyboxes["clouds"];
 }
 
 void fill_with_cubes(state_machine* state, const int size)
@@ -51,7 +54,7 @@ void fill_with_cubes(state_machine* state, const int size)
 				entity->position = kl::float3(x, y, z) - kl::float3::splash(half_size);
 
 				entity->mesh = state->meshes["cube"];
-				entity->color = (kl::float4) kl::colors::red;
+				entity->material.color = (kl::float4) kl::colors::red;
 
 				entity->user_data = new kl::int3{ x - half_size, y - half_size, z - half_size };
 

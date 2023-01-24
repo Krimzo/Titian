@@ -19,10 +19,10 @@ vs_out v_shader(float3 position : KL_Position, float2 textur : KL_Texture)
 }
 
 // Pixel shader
-SamplerState box_sampler : register(s0);
-TextureCube skybox : register(t0);
+SamplerState skybox_sampler : register(s0);
+TextureCube skybox_texture : register(t0);
 
 float4 p_shader(vs_out data) : SV_Target
 {
-	return skybox.Sample(box_sampler, data.textur);
+	return skybox_texture.Sample(skybox_sampler, data.textur);
 }

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "graphics/dx_types.h"
-#include "math/math.h"
+#include "render/mesh.h"
+#include "render/material.h"
+#include "math/matrix/matrix4x4.h"
 
 
 namespace kl {
@@ -16,9 +17,8 @@ namespace kl {
         float3 velocity = {};
         float3 angular = {};
 
-        dx::buffer mesh = nullptr;
-        dx::shader_view texture = nullptr;
-        float4 color = (float4) colors::gray;
+        mesh mesh = {};
+        material material = {};
 
         void* user_data = nullptr;
 

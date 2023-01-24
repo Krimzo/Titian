@@ -7,11 +7,7 @@
 // Render
 #include "render/camera.h"
 #include "render/entity.h"
-#include "render/plane.h"
-#include "render/sphere.h"
-#include "render/vertex.h"
-#include "render/triangle.h"
-#include "render/ray.h"
+#include "render/scene.h"
 
 // Media
 #include "media/color.h"

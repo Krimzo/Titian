@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math/vector3.h"
+#include "math/vector/vector3.h"
 
 
 namespace kl {

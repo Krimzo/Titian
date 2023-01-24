@@ -83,7 +83,6 @@
     <ClInclude Include="source\cbuffers\skybox_render.h" />
     <ClInclude Include="source\rendering.h" />
     <ClInclude Include="source\render\render_chain.h" />
-    <ClInclude Include="source\scene\scene.h" />
     <ClInclude Include="source\setup\setup_state.h" />
     <ClInclude Include="source\state\state_machine.h" />
     <ClInclude Include="source\update\update_state.h" />
@@ -93,7 +92,6 @@
     <ClCompile Include="source\callbacks\update_callback.cpp" />
     <ClCompile Include="source\rendering.cpp" />
     <ClCompile Include="source\render\render_chain.cpp" />
-    <ClCompile Include="source\scene\scene.cpp" />
     <ClCompile Include="source\setup\states\setup_depth_states.cpp" />
     <ClCompile Include="source\setup\buffers\setup_meshes.cpp" />
     <ClCompile Include="source\setup\states\setup_sampler_states.cpp" />

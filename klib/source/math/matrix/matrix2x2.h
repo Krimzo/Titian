@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math/matrix.h"
+#include "math/matrix/matrix.h"
 
 
 namespace kl {

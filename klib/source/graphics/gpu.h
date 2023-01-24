@@ -1,7 +1,7 @@
 #pragma once
 
 #include "graphics/dx_types.h"
-#include "render/vertex.h"
+#include "math/ray_casting/vertex.h"
 #include "media/image.h"
 
 #include <set>

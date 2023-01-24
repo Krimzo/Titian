@@ -1,6 +1,6 @@
 #pragma once
 
-#include "render/vertex.h"
+#include "math/ray_casting/vertex.h"
 
 #include <filesystem>
 #include <string>

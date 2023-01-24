@@ -32,9 +32,16 @@ cbuffer PS_CB : register(b0)
     float4  ps_misc_data;
 };
 
+SamplerState texture_sampler : register(s0);
+Texture2D entity_texture : register(t0);
+
 float4 p_shader(vs_out vs_data) : SV_Target
 {
     float3 pixel = object_color;
+
+    if (ps_misc_data.x) {
+        pixel = entity_texture.Sample(texture_sampler, vs_data.textur);
+    }
 
     const float light_intensity = max(dot(-sun_direction.xyz, vs_data.normal), 0.0f);
     pixel *= light_intensity;

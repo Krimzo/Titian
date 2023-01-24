@@ -1,11 +1,18 @@
 #pragma once
 
-#include "math/vector2.h"
-#include "math/vector3.h"
-#include "math/vector4.h"
-#include "math/matrix2x2.h"
-#include "math/matrix3x3.h"
-#include "math/matrix4x4.h"
+#include "math/vector/vector2.h"
+#include "math/vector/vector3.h"
+#include "math/vector/vector4.h"
+
+#include "math/matrix/matrix2x2.h"
+#include "math/matrix/matrix3x3.h"
+#include "math/matrix/matrix4x4.h"
+
+#include "math/ray_casting/plane.h"
+#include "math/ray_casting/sphere.h"
+#include "math/ray_casting/vertex.h"
+#include "math/ray_casting/triangle.h"
+#include "math/ray_casting/ray.h"
 
 
 namespace kl::math {

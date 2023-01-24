@@ -21,9 +21,6 @@
     <ClInclude Include="source\cbuffers\entity_render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\state\state_machine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -48,9 +45,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\callbacks\update_callback.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scene\scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\rendering.cpp">

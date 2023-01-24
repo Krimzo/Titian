@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math/vector4.h"
+#include "math/vector/vector4.h"
 #include "utility/strings.h"
 
 #include <array>
