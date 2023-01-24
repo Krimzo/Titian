@@ -3,8 +3,6 @@
 
 void update_physics(state_machine* state)
 {
-	if (!state->scene) { return; }
-	
 	const float delta_t = state->timer.get_interval();
 
 	for (auto& entity : *state->scene) {

@@ -3,8 +3,6 @@
 
 void handle_camera(state_machine* state)
 {
-	if (!state->scene) { return; }
-
 	kl::camera& camera = state->scene->camera;
 	camera.update_aspect_ratio(state->window->size());
 

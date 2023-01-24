@@ -9,7 +9,7 @@ void render_skybox(state_machine* state)
 	state->gpu->bind_shaders(state->shaders["skybox"]);
 
 	state->gpu->bind_sampler_state(state->sampler_states["skybox"], 0);
-	state->gpu->bind_pixel_shader_view(state->skyboxes["clouds"], 0);
+	state->gpu->bind_pixel_shader_view(state->scene->camera.skybox, 0);
 	
 	skybox_render_vs_cb vs_cb = {};
 	vs_cb.vp_matrix = state->scene->camera.matrix();

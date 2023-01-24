@@ -7,9 +7,11 @@
 void update_callback(state_machine* state)
 {
 	// Pre-Render
-	update_physics(state);
-	update_light(state);
-	handle_camera(state);
+	if (state->scene) {
+		update_physics(state);
+		update_light(state);
+		handle_camera(state);
+	}
 
 	// Custom-Pre-Render
 	custom_pre_render_update(state);

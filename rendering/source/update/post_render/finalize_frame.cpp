@@ -1,9 +1,10 @@
 #include "update/update_state.h"
 
 
+static constexpr int update_interval = 10;
+
 void finalize_frame(state_machine* state)
 {
-	static constexpr int update_interval = 10;
 	static size_t counter = 0;
 	counter += 1;
 
