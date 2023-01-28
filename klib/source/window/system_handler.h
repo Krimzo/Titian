@@ -4,6 +4,8 @@
 #include <ws2tcpip.h>
 
 #include <mfapi.h>
+#include <mfidl.h>
+#include <mferror.h>
 #include <mfplay.h>
 #include <mfreadwrite.h>
 #include <propvarutil.h>

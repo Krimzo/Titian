@@ -54,7 +54,7 @@ void fill_with_cubes(state_machine* state, const int size)
 				entity->position = kl::float3(x, y, z) - kl::float3::splash(half_size);
 
 				entity->mesh = state->meshes["cube"];
-				entity->material.color = (kl::float4) kl::colors::red;
+				entity->material.color = (kl::float4)kl::colors::white;
 
 				entity->user_data = new kl::int3{ x - half_size, y - half_size, z - half_size };
 

@@ -15,7 +15,7 @@ namespace kl {
         static image get_screenshot();
 
         image() = default;
-        explicit image(const int2& size, const color& color = {});
+        image(const int2& size, const color& color = {});
         explicit image(const std::string& filepath);
 
         std::vector<color>::iterator begin();

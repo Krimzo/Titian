@@ -54,16 +54,22 @@
     <ClCompile Include="source\graphics\gpu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\media\audio.cpp">
+    <ClCompile Include="source\media\audio\audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\media\color.cpp">
+    <ClCompile Include="source\media\image\color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\media\image.cpp">
+    <ClCompile Include="source\media\image\image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\media\video.cpp">
+    <ClCompile Include="source\media\video\video_reader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\media\video\video_writer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\media\media_utility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\memory\dll.cpp">
@@ -72,13 +78,22 @@
     <ClCompile Include="source\memory\file.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\memory\reference.cpp">
+    <ClCompile Include="source\memory\ref.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\render\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\render\entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\time\date.cpp">
@@ -129,24 +144,12 @@
     <ClCompile Include="source\window\window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\render\mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\render\material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\render\scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\graphics\dx_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\graphics\gpu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\math\math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\math\matrix\matrix.h">
@@ -159,42 +162,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\math\matrix\matrix4x4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\math\vector\vector2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\math\vector\vector3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\math\vector\vector4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\media\audio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\media\color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\media\image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\media\video.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\memory\dll.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\memory\file.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\memory\reference.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\render\camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\render\entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\math\ray_casting\plane.h">
@@ -210,6 +177,63 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\math\ray_casting\vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\vector\vector2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\vector\vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\vector\vector4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\media\audio\audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\media\image\color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\media\image\image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\media\video\video.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\media\video\video_reader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\media\video\video_writer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\media\media_utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\memory\dll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\memory\file.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\memory\ref.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\time\date.h">
@@ -261,15 +285,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\klib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\render\mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\render\material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\render\scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

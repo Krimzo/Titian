@@ -10,6 +10,100 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\graphics\buffer\buffer.cpp" />
+    <ClCompile Include="source\graphics\buffer\const_buffer.cpp" />
+    <ClCompile Include="source\graphics\gpu.cpp" />
+    <ClCompile Include="source\graphics\states\depth_state.cpp" />
+    <ClCompile Include="source\graphics\states\raster_state.cpp" />
+    <ClCompile Include="source\graphics\states\sampler_state.cpp" />
+    <ClCompile Include="source\graphics\utility\shaders.cpp" />
+    <ClCompile Include="source\graphics\utility\texture.cpp" />
+    <ClCompile Include="source\graphics\utility\vertex_buffer.cpp" />
+    <ClCompile Include="source\graphics\views\access_view.cpp" />
+    <ClCompile Include="source\graphics\views\depth_view.cpp" />
+    <ClCompile Include="source\graphics\views\shader_view.cpp" />
+    <ClCompile Include="source\graphics\views\target_view.cpp" />
+    <ClCompile Include="source\media\audio\audio.cpp" />
+    <ClCompile Include="source\media\image\color.cpp" />
+    <ClCompile Include="source\media\image\image.cpp" />
+    <ClCompile Include="source\media\media_utility.cpp" />
+    <ClCompile Include="source\media\video\video_reader.cpp" />
+    <ClCompile Include="source\media\video\video_writer.cpp" />
+    <ClCompile Include="source\memory\dll.cpp" />
+    <ClCompile Include="source\memory\file.cpp" />
+    <ClCompile Include="source\memory\ref.cpp" />
+    <ClCompile Include="source\render\camera.cpp" />
+    <ClCompile Include="source\render\entity.cpp" />
+    <ClCompile Include="source\render\material.cpp" />
+    <ClCompile Include="source\render\mesh.cpp" />
+    <ClCompile Include="source\render\scene.cpp" />
+    <ClCompile Include="source\time\date.cpp" />
+    <ClCompile Include="source\time\time.cpp" />
+    <ClCompile Include="source\time\timer.cpp" />
+    <ClCompile Include="source\utility\async.cpp" />
+    <ClCompile Include="source\utility\console.cpp" />
+    <ClCompile Include="source\utility\encryptor.cpp" />
+    <ClCompile Include="source\utility\random.cpp" />
+    <ClCompile Include="source\utility\strings.cpp" />
+    <ClCompile Include="source\web\socket.cpp" />
+    <ClCompile Include="source\web\web.cpp" />
+    <ClCompile Include="source\window\frame_buffer.cpp" />
+    <ClCompile Include="source\window\key.cpp" />
+    <ClCompile Include="source\window\keyboard.cpp" />
+    <ClCompile Include="source\window\mouse.cpp" />
+    <ClCompile Include="source\window\system_handler.cpp" />
+    <ClCompile Include="source\window\window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\graphics\dx_types.h" />
+    <ClInclude Include="source\graphics\gpu.h" />
+    <ClInclude Include="source\klib.h" />
+    <ClInclude Include="source\math\math.h" />
+    <ClInclude Include="source\math\matrix\matrix.h" />
+    <ClInclude Include="source\math\matrix\matrix2x2.h" />
+    <ClInclude Include="source\math\matrix\matrix3x3.h" />
+    <ClInclude Include="source\math\matrix\matrix4x4.h" />
+    <ClInclude Include="source\math\ray_casting\plane.h" />
+    <ClInclude Include="source\math\ray_casting\ray.h" />
+    <ClInclude Include="source\math\ray_casting\sphere.h" />
+    <ClInclude Include="source\math\ray_casting\triangle.h" />
+    <ClInclude Include="source\math\ray_casting\vertex.h" />
+    <ClInclude Include="source\math\vector\vector2.h" />
+    <ClInclude Include="source\math\vector\vector3.h" />
+    <ClInclude Include="source\math\vector\vector4.h" />
+    <ClInclude Include="source\media\audio\audio.h" />
+    <ClInclude Include="source\media\image\color.h" />
+    <ClInclude Include="source\media\image\image.h" />
+    <ClInclude Include="source\media\media_utility.h" />
+    <ClInclude Include="source\media\video\video.h" />
+    <ClInclude Include="source\media\video\video_reader.h" />
+    <ClInclude Include="source\media\video\video_writer.h" />
+    <ClInclude Include="source\memory\dll.h" />
+    <ClInclude Include="source\memory\file.h" />
+    <ClInclude Include="source\memory\ref.h" />
+    <ClInclude Include="source\render\camera.h" />
+    <ClInclude Include="source\render\entity.h" />
+    <ClInclude Include="source\render\material.h" />
+    <ClInclude Include="source\render\mesh.h" />
+    <ClInclude Include="source\render\scene.h" />
+    <ClInclude Include="source\time\date.h" />
+    <ClInclude Include="source\time\time.h" />
+    <ClInclude Include="source\time\timer.h" />
+    <ClInclude Include="source\utility\async.h" />
+    <ClInclude Include="source\utility\console.h" />
+    <ClInclude Include="source\utility\encryptor.h" />
+    <ClInclude Include="source\utility\random.h" />
+    <ClInclude Include="source\utility\strings.h" />
+    <ClInclude Include="source\web\socket.h" />
+    <ClInclude Include="source\web\web.h" />
+    <ClInclude Include="source\window\frame_buffer.h" />
+    <ClInclude Include="source\window\key.h" />
+    <ClInclude Include="source\window\keyboard.h" />
+    <ClInclude Include="source\window\mouse.h" />
+    <ClInclude Include="source\window\system_handler.h" />
+    <ClInclude Include="source\window\window.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -77,95 +171,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="source\graphics\buffer\buffer.cpp" />
-    <ClCompile Include="source\graphics\buffer\const_buffer.cpp" />
-    <ClCompile Include="source\graphics\gpu.cpp" />
-    <ClCompile Include="source\graphics\states\depth_state.cpp" />
-    <ClCompile Include="source\graphics\states\raster_state.cpp" />
-    <ClCompile Include="source\graphics\states\sampler_state.cpp" />
-    <ClCompile Include="source\graphics\utility\shaders.cpp" />
-    <ClCompile Include="source\graphics\utility\texture.cpp" />
-    <ClCompile Include="source\graphics\utility\vertex_buffer.cpp" />
-    <ClCompile Include="source\graphics\views\access_view.cpp" />
-    <ClCompile Include="source\graphics\views\depth_view.cpp" />
-    <ClCompile Include="source\graphics\views\shader_view.cpp" />
-    <ClCompile Include="source\graphics\views\target_view.cpp" />
-    <ClCompile Include="source\media\audio.cpp" />
-    <ClCompile Include="source\media\color.cpp" />
-    <ClCompile Include="source\media\image.cpp" />
-    <ClCompile Include="source\media\video.cpp" />
-    <ClCompile Include="source\memory\dll.cpp" />
-    <ClCompile Include="source\memory\file.cpp" />
-    <ClCompile Include="source\memory\reference.cpp" />
-    <ClCompile Include="source\render\camera.cpp" />
-    <ClCompile Include="source\render\entity.cpp" />
-    <ClCompile Include="source\render\material.cpp" />
-    <ClCompile Include="source\render\mesh.cpp" />
-    <ClCompile Include="source\render\scene.cpp" />
-    <ClCompile Include="source\time\date.cpp" />
-    <ClCompile Include="source\time\time.cpp" />
-    <ClCompile Include="source\time\timer.cpp" />
-    <ClCompile Include="source\utility\async.cpp" />
-    <ClCompile Include="source\utility\console.cpp" />
-    <ClCompile Include="source\utility\encryptor.cpp" />
-    <ClCompile Include="source\utility\random.cpp" />
-    <ClCompile Include="source\utility\strings.cpp" />
-    <ClCompile Include="source\web\socket.cpp" />
-    <ClCompile Include="source\web\web.cpp" />
-    <ClCompile Include="source\window\frame_buffer.cpp" />
-    <ClCompile Include="source\window\key.cpp" />
-    <ClCompile Include="source\window\keyboard.cpp" />
-    <ClCompile Include="source\window\mouse.cpp" />
-    <ClCompile Include="source\window\system_handler.cpp" />
-    <ClCompile Include="source\window\window.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="source\graphics\dx_types.h" />
-    <ClInclude Include="source\graphics\gpu.h" />
-    <ClInclude Include="source\klib.h" />
-    <ClInclude Include="source\math\math.h" />
-    <ClInclude Include="source\math\matrix\matrix.h" />
-    <ClInclude Include="source\math\matrix\matrix2x2.h" />
-    <ClInclude Include="source\math\matrix\matrix3x3.h" />
-    <ClInclude Include="source\math\matrix\matrix4x4.h" />
-    <ClInclude Include="source\math\vector\vector2.h" />
-    <ClInclude Include="source\math\vector\vector3.h" />
-    <ClInclude Include="source\math\vector\vector4.h" />
-    <ClInclude Include="source\media\audio.h" />
-    <ClInclude Include="source\media\color.h" />
-    <ClInclude Include="source\media\image.h" />
-    <ClInclude Include="source\media\video.h" />
-    <ClInclude Include="source\memory\dll.h" />
-    <ClInclude Include="source\memory\file.h" />
-    <ClInclude Include="source\memory\reference.h" />
-    <ClInclude Include="source\render\camera.h" />
-    <ClInclude Include="source\render\entity.h" />
-    <ClInclude Include="source\render\material.h" />
-    <ClInclude Include="source\render\mesh.h" />
-    <ClInclude Include="source\math\ray_casting\plane.h" />
-    <ClInclude Include="source\math\ray_casting\ray.h" />
-    <ClInclude Include="source\render\scene.h" />
-    <ClInclude Include="source\math\ray_casting\sphere.h" />
-    <ClInclude Include="source\math\ray_casting\triangle.h" />
-    <ClInclude Include="source\math\ray_casting\vertex.h" />
-    <ClInclude Include="source\time\date.h" />
-    <ClInclude Include="source\time\time.h" />
-    <ClInclude Include="source\time\timer.h" />
-    <ClInclude Include="source\utility\async.h" />
-    <ClInclude Include="source\utility\console.h" />
-    <ClInclude Include="source\utility\encryptor.h" />
-    <ClInclude Include="source\utility\random.h" />
-    <ClInclude Include="source\utility\strings.h" />
-    <ClInclude Include="source\web\socket.h" />
-    <ClInclude Include="source\web\web.h" />
-    <ClInclude Include="source\window\frame_buffer.h" />
-    <ClInclude Include="source\window\key.h" />
-    <ClInclude Include="source\window\keyboard.h" />
-    <ClInclude Include="source\window\mouse.h" />
-    <ClInclude Include="source\window\system_handler.h" />
-    <ClInclude Include="source\window\window.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -1,4 +1,4 @@
-#include "media/image.h"
+#include "media/image/image.h"
 
 #include "window/system_handler.h"
 #include "utility/console.h"
@@ -170,14 +170,19 @@ bool kl::image::load_from_file(const std::string& filepath)
     }
 
     {
-        Gdiplus::BitmapData bitmap_data = {};
         Gdiplus::Bitmap loaded_bitmap(strings::to_w_string(filepath).c_str());
         if (warning_check(loaded_bitmap.GetLastStatus(), "Failed to open image file \"" + filepath + "\"")) {
             return false;
         }
 
-        set_size(int2(loaded_bitmap.GetWidth(), loaded_bitmap.GetHeight()));
+        set_size({ loaded_bitmap.GetWidth(), loaded_bitmap.GetHeight() });
+
+        Gdiplus::BitmapData bitmap_data = {};
         loaded_bitmap.LockBits(nullptr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bitmap_data);
+        if (warning_check(!bitmap_data.Scan0, "Failed to load image data from fiel \"" + filepath + "\"")) {
+            return false;
+        }
+
         memcpy(pixels_.data(), bitmap_data.Scan0, pixels_.size() * sizeof(color));
     }
 
@@ -235,13 +240,19 @@ bool kl::image::save_to_file(const std::string& filepath) const
     }
 
     {
-        Gdiplus::BitmapData bitmap_data = {};
         Gdiplus::Bitmap temp_bitmap(size_.x, size_.y, PixelFormat32bppARGB);
+        if (warning_check(temp_bitmap.GetLastStatus(), "Failed to create bitmap")) {
+            return false;
+        }
 
+        Gdiplus::BitmapData bitmap_data = {};
         temp_bitmap.LockBits(nullptr, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bitmap_data);
+        if (warning_check(!bitmap_data.Scan0, "Failed to lock bitmap bits")) {
+            return false;
+        }
+
         memcpy(bitmap_data.Scan0, pixels_.data(), pixels_.size() * sizeof(color));
         temp_bitmap.UnlockBits(&bitmap_data);
-
         temp_bitmap.Save(strings::to_w_string(filepath).c_str(), format_to_use, nullptr);
     }
 

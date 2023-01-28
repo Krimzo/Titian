@@ -1,4 +1,4 @@
-#include "media/color.h"
+#include "media/image/color.h"
 
 #include "math/math.h"
 

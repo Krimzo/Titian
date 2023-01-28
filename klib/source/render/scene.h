@@ -2,7 +2,7 @@
 
 #include "render/entity.h"
 #include "render/camera.h"
-#include "memory/reference.h"
+#include "memory/ref.h"
 
 
 namespace kl {

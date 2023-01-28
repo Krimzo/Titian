@@ -2,7 +2,7 @@
 
 #include "graphics/dx_types.h"
 #include "math/ray_casting/vertex.h"
-#include "media/image.h"
+#include "media/image/image.h"
 
 #include <set>
 
