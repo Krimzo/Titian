@@ -3,3 +3,6 @@
 
 kl::material::material()
 {}
+
+kl::material::~material()
+{}

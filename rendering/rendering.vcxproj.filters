@@ -42,6 +42,9 @@
     <ClInclude Include="source\cbuffers\ocean_render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\setup\scene\setup_scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\callbacks\setup_callback.cpp">
@@ -53,7 +56,7 @@
     <ClCompile Include="source\rendering.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\setup\setup_scene.cpp">
+    <ClCompile Include="source\setup\scene\setup_scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\update\pre_render\update_physics.cpp">
@@ -108,6 +111,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\render\parts\render_ocean.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\setup\scene\parts\scene_ocean.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\setup\scene\parts\scene_cubes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\setup\scene\parts\scene_spheres.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\setup\scene\parts\scene_monkes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\setup\scene\parts\scene_bullets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
