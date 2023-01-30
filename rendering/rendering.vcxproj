@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClInclude Include="source\callbacks\main_callbacks.h" />
     <ClInclude Include="source\cbuffers\entity_render.h" />
+    <ClInclude Include="source\cbuffers\ocean_render.h" />
     <ClInclude Include="source\cbuffers\skybox_render.h" />
     <ClInclude Include="source\rendering.h" />
     <ClInclude Include="source\render\render_chain.h" />
@@ -91,6 +92,7 @@
     <ClCompile Include="source\callbacks\setup_callback.cpp" />
     <ClCompile Include="source\callbacks\update_callback.cpp" />
     <ClCompile Include="source\rendering.cpp" />
+    <ClCompile Include="source\render\parts\render_ocean.cpp" />
     <ClCompile Include="source\render\render_chain.cpp" />
     <ClCompile Include="source\setup\states\setup_depth_states.cpp" />
     <ClCompile Include="source\setup\buffers\setup_meshes.cpp" />

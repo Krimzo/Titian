@@ -14,6 +14,8 @@ namespace kl {
         dx::pixel_shader pixel_shader = nullptr;
         dx::layout layout = nullptr;
 
+        dx::geometry_shader geometry_shader = nullptr;
+
         explicit operator bool() const
         {
             return vertex_shader && pixel_shader && layout;

@@ -11,6 +11,7 @@ namespace kl {
 	public:
 		kl::camera camera = {};
 		kl::float3 sun_direction = {};
+		kl::dx::buffer ocean_mesh = nullptr;
 
 		scene();
 	};

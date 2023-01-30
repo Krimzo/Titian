@@ -12,6 +12,9 @@ void render_chain(state_machine* state)
 		if (state->scene->camera.skybox) {
 			render_skybox(state);
 		}
+		if (state->scene->ocean_mesh) {
+			render_ocean(state);
+		}
 		render_scene(state);
 	}
 
