@@ -1,9 +1,10 @@
 #include "render/render_chain.h"
 
 
+static kl::int2 last_size = {};
+
 void handle_resizes(state_machine* state)
 {
-	static kl::int2 last_size = {};
 	const kl::int2 current_size = state->window->size();
 
 	if (current_size.x > 0 && current_size.y > 0 && current_size != last_size) {

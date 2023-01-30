@@ -1,12 +1,12 @@
 #include "setup/scene/setup_scene.h"
 
 
+static constexpr float x_offset = -10.0f;
+
 void setup_monkes(state_machine* state, const int size)
 {
 	const int entity_count = size * size;
 	const int half_size = size / 2;
-
-	const float x_offset = -10.0f;
 
 	for (int i = 0; i < entity_count; i++) {
 		auto entity = kl::make<kl::entity>();
@@ -28,8 +28,4 @@ void setup_monkes(state_machine* state, const int size)
 
 		state->scene->push_back(entity);
 	}
-
-	state->scene->sun_direction = { 0, 0, 1 };
-	state->scene->camera.position = { 0, 1, -4 };
-	state->scene->camera.skybox = state->skyboxes["clouds"];
 }

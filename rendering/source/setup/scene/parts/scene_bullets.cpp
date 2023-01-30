@@ -1,12 +1,13 @@
 #include "setup/scene/setup_scene.h"
 
 
+static constexpr float bullet_scale = 10.0f;
+static constexpr float fire_velocity = 2.0f;
+
 void setup_bullets(state_machine* state, const int size)
 {
-	static constexpr float bullet_scale = 10.0f;
-	static constexpr float fire_velocity = 2.0f;
-
 	const int half_size = size / 2;
+
 	std::vector<std::function<void()>> all_callbacks = {};
 
 	for (int i = 0; i < size; i++) {
