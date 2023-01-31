@@ -19,8 +19,8 @@ void setup_bullets(state_machine* state, const int size)
 		bullet->position.x = (float) (i - half_size);
 
 		kl::material bullet_material = {};
-		bullet_material.color = (kl::float4)kl::color(232, 230, 227);
-		bullet_material.roughness = 0.85f;
+		bullet_material.color = (kl::float4) kl::color(232, 230, 227);
+		bullet_material.reflection_factor = 0.15f;
 
 		bullet->mesh = state->meshes["bmg_bullet"];
 		bullet->material = bullet_material;
@@ -35,8 +35,8 @@ void setup_bullets(state_machine* state, const int size)
 		bullet_casing->position = bullet->position;
 
 		kl::material bullet_casing_material = {};
-		bullet_casing_material.color = (kl::float4)kl::color(210, 180, 130);
-		bullet_casing_material.roughness = 0.8f;
+		bullet_casing_material.color = (kl::float4) kl::color(210, 180, 130);
+		bullet_casing_material.reflection_factor = 0.2f;
 
 		bullet_casing->mesh = state->meshes["bmg_casing"];
 		bullet_casing->material = bullet_casing_material;
@@ -51,8 +51,8 @@ void setup_bullets(state_machine* state, const int size)
 		casing_primer->position = bullet_casing->position;
 
 		kl::material casing_primer_material = {};
-		casing_primer_material.color = (kl::float4)kl::color(232, 230, 227);
-		casing_primer_material.roughness = 0.9f;
+		casing_primer_material.color = (kl::float4) kl::color(232, 230, 227);
+		casing_primer_material.reflection_factor = 0.1f;
 
 		casing_primer->mesh = state->meshes["bmg_primer"];
 		casing_primer->material = casing_primer_material;

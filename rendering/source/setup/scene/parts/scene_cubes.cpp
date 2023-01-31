@@ -16,6 +16,9 @@ void setup_cubes(state_machine* state, const int size)
 
 				entity->mesh = state->meshes["cube"];
 				entity->material.color = (kl::float4) kl::colors::white;
+
+				entity->material.refraction_factor = 0.75f;
+				entity->material.refraction_index = 1.0f / 1.52f;
 				
 				entity->user_data = new kl::int3{ x - half_size, y - half_size, z - half_size };
 

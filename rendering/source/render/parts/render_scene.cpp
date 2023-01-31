@@ -33,8 +33,12 @@ void render_scene(state_machine* state)
 		}
 
 		vs_cb.w_matrix = entity->matrix();
+
 		ps_cb.object_color = entity->material.color;
-		ps_cb.object_data.y = entity->material.roughness;
+		ps_cb.object_data.y = entity->material.reflection_factor;
+
+		ps_cb.object_data.z = entity->material.refraction_factor;
+		ps_cb.object_data.w = entity->material.refraction_index;
 
 		state->gpu->set_vertex_const_buffer(vs_cb);
 		state->gpu->set_pixel_const_buffer(ps_cb);

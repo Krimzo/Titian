@@ -13,12 +13,12 @@ void setup_spheres(state_machine* state, const int size)
 		for (int x = 0; x < size; x++) {
 			kl::ref<kl::entity> sphere = kl::make<kl::entity>();
 
-			sphere->position.x = (half_size - x) * 2.25f + x_offset;
-			sphere->position.y = (half_size - y) * 2.25f;
+			sphere->position.x = (x - half_size) * 2.25f + x_offset;
+			sphere->position.y = (y - half_size) * 2.25f;
 			sphere->position.z = 5.0f;
 
 			sphere->material.color = kl::float4::splash(1.0f);
-			sphere->material.roughness = (float) ++sphere_counter / (size * size);
+			sphere->material.reflection_factor = (float) ++sphere_counter / (size * size);
 
 			sphere->mesh = state->meshes["sphere"];
 
