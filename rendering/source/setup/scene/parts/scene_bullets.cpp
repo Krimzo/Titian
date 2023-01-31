@@ -16,7 +16,7 @@ void setup_bullets(state_machine* state, const int size)
 
 		bullet->scale *= bullet_scale;
 		bullet->rotation = kl::random::get_float3(360.0f);
-		bullet->position.x = (float)(i - half_size);
+		bullet->position.x = (float) (i - half_size);
 
 		kl::material bullet_material = {};
 		bullet_material.color = (kl::float4)kl::color(232, 230, 227);

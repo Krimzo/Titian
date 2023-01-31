@@ -6,8 +6,8 @@ cbuffer VS_CB : register(b0)
 
 struct vs_out
 {
-	float4 world : SV_Position;
-	float3 textur : VS_Texture;
+	float4  world : SV_Position;
+	float3 textur :  VS_Texture;
 };
 
 vs_out v_shader(float3 position : KL_Position, float2 textur : KL_Texture)
