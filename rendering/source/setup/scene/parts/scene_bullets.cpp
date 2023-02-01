@@ -14,9 +14,12 @@ void setup_bullets(state_machine* state, const int size)
 		// Bullet
 		kl::ref<kl::entity> bullet = kl::make<kl::entity>();
 
-		bullet->scale *= bullet_scale;
-		bullet->rotation = kl::random::get_float3(360.0f);
-		bullet->position.x = (float) (i - half_size);
+		bullet->set_scale(bullet->get_scale() * bullet_scale);
+		bullet->set_rotation(kl::random::get_float3(360.0f));
+
+		kl::float3 old_position = bullet->get_position();
+		old_position.x = (float) (i - half_size);
+		bullet->set_position(old_position);
 
 		kl::material bullet_material = {};
 		bullet_material.color = (kl::float4) kl::color(232, 230, 227);
@@ -25,14 +28,14 @@ void setup_bullets(state_machine* state, const int size)
 		bullet->mesh = state->meshes["bmg_bullet"];
 		bullet->material = bullet_material;
 
-		state->scene->push_back(bullet);
+		state->scene->add(bullet);
 
 		// Bullet casing
 		kl::ref<kl::entity> bullet_casing = kl::make<kl::entity>();
 
-		bullet_casing->scale = bullet->scale;
-		bullet_casing->rotation = bullet->rotation;
-		bullet_casing->position = bullet->position;
+		bullet_casing->set_scale(bullet->get_scale());
+		bullet_casing->set_rotation(bullet->get_rotation());
+		bullet_casing->set_position(bullet->get_position());
 
 		kl::material bullet_casing_material = {};
 		bullet_casing_material.color = (kl::float4) kl::color(210, 180, 130);
@@ -41,14 +44,14 @@ void setup_bullets(state_machine* state, const int size)
 		bullet_casing->mesh = state->meshes["bmg_casing"];
 		bullet_casing->material = bullet_casing_material;
 
-		state->scene->push_back(bullet_casing);
+		state->scene->add(bullet_casing);
 
 		// Casing primer
 		kl::ref<kl::entity> casing_primer = kl::make<kl::entity>();
 
-		casing_primer->scale = bullet_casing->scale;
-		casing_primer->rotation = bullet_casing->rotation;
-		casing_primer->position = bullet_casing->position;
+		casing_primer->set_scale(bullet_casing->get_scale());
+		casing_primer->set_rotation(bullet_casing->get_rotation());
+		casing_primer->set_position(bullet_casing->get_position());
 
 		kl::material casing_primer_material = {};
 		casing_primer_material.color = (kl::float4) kl::color(232, 230, 227);
@@ -57,7 +60,7 @@ void setup_bullets(state_machine* state, const int size)
 		casing_primer->mesh = state->meshes["bmg_primer"];
 		casing_primer->material = casing_primer_material;
 
-		state->scene->push_back(casing_primer);
+		state->scene->add(casing_primer);
 
 		// Callbacks
 		kl::ref<bool> bullet_fired = kl::make<bool>(false);
@@ -66,9 +69,14 @@ void setup_bullets(state_machine* state, const int size)
 		{
 			if (!*bullet_fired) {
 				const kl::float4 default_bullet_direction = { 0.0f, 1.0f, 0.0f, 1.0f };
-				auto correct_direction = (kl::mat4::rotation(bullet->rotation) * default_bullet_direction).xyz;
+				auto correct_direction = (kl::mat4::rotation(bullet->get_rotation()) * default_bullet_direction).xyz;
 
-				bullet->velocity = correct_direction.normalize() * fire_velocity;
+				state->scene->remove(bullet);
+				bullet->set_mass(1.0f);
+				state->scene->add(bullet);
+
+				bullet->clear_gravity();
+				bullet->set_velocity(correct_direction.normalize() * fire_velocity);
 
 				casing_primer->mesh = state->meshes["bmg_primer_fired"];
 

@@ -16,6 +16,4 @@ void setup_callback(state_machine* state)
 	setup_skyboxes(state);
 
 	setup_scene(state);
-
-	setup_physics(state);
 }

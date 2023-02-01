@@ -25,7 +25,7 @@ void render_scene(state_machine* state)
 	ps_cb.light_data = { state->scene->sun_direction.normalize(), state->scene->ambient_light };
 
 	for (auto& entity : *state->scene) {
-		if (entity->mesh.empty()) { continue; }
+		if (!entity->mesh) { continue; }
 
 		if (entity->material.color_map) {
 			state->gpu->bind_pixel_shader_view(entity->material.color_map, 0);
@@ -43,8 +43,6 @@ void render_scene(state_machine* state)
 		state->gpu->set_vertex_const_buffer(vs_cb);
 		state->gpu->set_pixel_const_buffer(ps_cb);
 
-		for (auto& mesh_part : entity->mesh) {
-			state->gpu->draw_vertex_buffer(mesh_part);
-		}
+		state->gpu->draw_vertex_buffer(entity->mesh);
 	}
 }

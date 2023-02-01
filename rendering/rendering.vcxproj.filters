@@ -45,9 +45,6 @@
     <ClInclude Include="source\setup\scene\setup_scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\physics\physics_scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\callbacks\setup_callback.cpp">
@@ -131,10 +128,7 @@
     <ClCompile Include="source\setup\scene\parts\scene_bullets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\setup\physics\setup_physics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\physics\physics_scene.cpp">
+    <ClCompile Include="source\setup\scene\parts\scene_physics_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

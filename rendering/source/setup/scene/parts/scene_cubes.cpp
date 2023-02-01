@@ -1,29 +1,33 @@
 #include "setup/scene/setup_scene.h"
 
 
+static constexpr float x_offset = 16.0f;
+
 void setup_cubes(state_machine* state, const int size)
 {
 	const int half_size = size / 2;
 
-	for (int z = 0; z < size; z++) {
-		for (int y = 0; y < size; y++) {
-			for (int x = 0; x < size; x++) {
-				auto entity = kl::make<kl::entity>();
+	int cube_counter = 0;
 
-				entity->scale = kl::float3::splash(0.45f);
-				entity->position = kl::float3(x, y, z) - kl::float3::splash(half_size);
-				entity->position.z += 5.0f;
+	for (int y = 0; y < size; y++) {
+		for (int x = 0; x < size; x++) {
+			auto cube = kl::make<kl::entity>();
 
-				entity->mesh = state->meshes["cube"];
-				entity->material.color = (kl::float4) kl::colors::white;
+			cube->set_scale(kl::float3::splash(0.45f));
 
-				entity->material.refraction_factor = 0.75f;
-				entity->material.refraction_index = 1.0f / 1.52f;
-				
-				entity->user_data = new kl::int3{ x - half_size, y - half_size, z - half_size };
+			cube->set_position({
+				(x - half_size) + x_offset,
+				(y - half_size),
+				5.0f
+			});
 
-				state->scene->push_back(entity);
-			}
+			cube->mesh = state->meshes["cube"];
+			cube->material.color = (kl::float4) kl::colors::orange;
+
+			cube->material.refraction_factor = (float) ++cube_counter / (size * size);;
+			cube->material.refraction_index = 1.0f / 1.52f;
+
+			state->scene->add(cube);
 		}
 	}
 }

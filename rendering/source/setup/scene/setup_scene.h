@@ -10,3 +10,5 @@ void setup_spheres(state_machine* state, int size);
 
 void setup_monkes(state_machine* state, int size);
 void setup_bullets(state_machine* state, int size);
+
+void setup_physics_test(state_machine* state, int size);

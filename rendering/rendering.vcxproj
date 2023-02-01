@@ -82,7 +82,6 @@
     <ClInclude Include="source\cbuffers\entity_render.h" />
     <ClInclude Include="source\cbuffers\ocean_render.h" />
     <ClInclude Include="source\cbuffers\skybox_render.h" />
-    <ClInclude Include="source\physics\physics_scene.h" />
     <ClInclude Include="source\rendering.h" />
     <ClInclude Include="source\render\render_chain.h" />
     <ClInclude Include="source\setup\scene\setup_scene.h" />
@@ -93,15 +92,14 @@
   <ItemGroup>
     <ClCompile Include="source\callbacks\setup_callback.cpp" />
     <ClCompile Include="source\callbacks\update_callback.cpp" />
-    <ClCompile Include="source\physics\physics_scene.cpp" />
     <ClCompile Include="source\rendering.cpp" />
     <ClCompile Include="source\render\parts\render_ocean.cpp" />
     <ClCompile Include="source\render\render_chain.cpp" />
-    <ClCompile Include="source\setup\physics\setup_physics.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_bullets.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_cubes.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_monkes.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_ocean.cpp" />
+    <ClCompile Include="source\setup\scene\parts\scene_physics_test.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_spheres.cpp" />
     <ClCompile Include="source\setup\states\setup_depth_states.cpp" />
     <ClCompile Include="source\setup\buffers\setup_meshes.cpp" />
