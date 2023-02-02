@@ -44,6 +44,10 @@ namespace kl {
 
         void rotate(const float2& mouse_pos, const float2& frame_center, float vertical_angle_limit = 85.0f);
 
+        [[nodiscard]] mat4 view_matrix() const;
+
+        [[nodiscard]] mat4 projection_matrix() const;
+
         [[nodiscard]] mat4 matrix() const;
     };
 }

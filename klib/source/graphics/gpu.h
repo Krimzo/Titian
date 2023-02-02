@@ -70,6 +70,7 @@ namespace kl {
 
         void set_viewport(const int2& size) const;
         void set_viewport(const int2& position, const int2& size) const;
+        int2 get_viewport() const;
 
         void unbind_all_targets() const;
         void bind_internal_targets() const;

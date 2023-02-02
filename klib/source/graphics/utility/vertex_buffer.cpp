@@ -24,8 +24,8 @@ kl::dx::buffer kl::gpu::new_vertex_buffer(const std::string& filepath, const boo
 kl::dx::buffer kl::gpu::generate_screen_mesh()
 {
     return new_vertex_buffer({
-        vertex({-1.0f, -1.0f, 0.5f}), vertex({-1.0f, 1.0f, 0.5f}), vertex({1.0f, 1.0f, 0.5f}),
-        vertex({1.0f, 1.0f, 0.5f}), vertex({1.0f, -1.0f, 0.5f}), vertex({-1.0f, -1.0f, 0.5f})
+        vertex({ -1, -1, 0.5f }, float2(0, 0)), vertex({ -1,  1, 0.5f }, float2(0, 1)), vertex({  1,  1, 0.5f }, float2(1, 1)),
+        vertex({  1,  1, 0.5f }, float2(1, 1)), vertex({  1, -1, 0.5f }, float2(1, 0)), vertex({ -1, -1, 0.5f }, float2(0, 0))
     });
 }
 

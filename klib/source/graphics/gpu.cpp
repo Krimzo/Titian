@@ -130,6 +130,14 @@ void kl::gpu::set_viewport(const int2& position, const int2& size) const
     context_->RSSetViewports(1, &viewport);
 }
 
+kl::int2 kl::gpu::get_viewport() const
+{
+    UINT number_of_viewports = 1;
+    D3D11_VIEWPORT viewport = {};
+    context_->RSGetViewports(&number_of_viewports, &viewport);
+    return { viewport.Width, viewport.Height };
+}
+
 void kl::gpu::unbind_all_targets() const
 {
     context_->OMSetRenderTargets(0, nullptr, nullptr);

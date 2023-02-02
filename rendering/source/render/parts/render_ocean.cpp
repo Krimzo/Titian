@@ -10,7 +10,9 @@ static constexpr float wave_shift = 1.0f;
 
 void render_ocean(state_machine* state)
 {
+	state->gpu->bind_raster_state(state->raster_states["ocean"]);
 	state->gpu->bind_depth_state(state->depth_states["ocean"]);
+
 	state->gpu->bind_shaders(state->shaders["ocean"]);
 	state->gpu->bind_geometry_shader(state->shaders["ocean"].geometry_shader);
 

@@ -5,7 +5,9 @@
 
 void render_skybox(state_machine* state)
 {
+	state->gpu->bind_raster_state(state->raster_states["skybox"]);
 	state->gpu->bind_depth_state(state->depth_states["skybox"]);
+
 	state->gpu->bind_shaders(state->shaders["skybox"]);
 
 	state->gpu->bind_sampler_state(state->sampler_states["skybox"], 0);

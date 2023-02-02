@@ -16,6 +16,15 @@ kl::ref<btCollisionShape> kl::make_sphere_collider(const float radius)
 	return make<btSphereShape>(radius);
 }
 
+kl::ref<btCollisionShape> kl::make_sphere_collider(const mesh_data& data)
+{
+	float max_length = 0.0f;
+	for (auto& vertex : data) {
+		max_length = std::max(max_length, vertex.world.length());
+	}
+	return make_sphere_collider(max_length);
+}
+
 kl::ref<btCollisionShape> kl::make_capsule_collider(const float radius, const float height)
 {
 	return make<btCapsuleShape>(radius, height);

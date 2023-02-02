@@ -45,6 +45,9 @@
     <ClInclude Include="source\setup\scene\setup_scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\cbuffers\shadow_render.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\callbacks\setup_callback.cpp">
@@ -129,6 +132,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\setup\scene\parts\scene_physics_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\parts\render_shadows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\setup\states\setup_raster_states.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\setup\views\setup_target_views.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\setup\views\setup_depth_views.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\parts\display_depth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

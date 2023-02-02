@@ -19,6 +19,8 @@ namespace kl {
 
 	kl::ref<btCollisionShape> make_sphere_collider(float radius);
 
+	kl::ref<btCollisionShape> make_sphere_collider(const mesh_data& data);
+
 	kl::ref<btCollisionShape> make_capsule_collider(float radius, float height);
 
 	kl::ref<btCollisionShape> make_static_mesh_collider(const mesh_data& data);

@@ -5,6 +5,8 @@ std::vector<kl::vertex> parse_mesh(const std::string& name);
 
 void setup_meshes(state_machine* state)
 {
+	state->meshes["screen"] = state->gpu->generate_screen_mesh();
+
 	auto cube_mesh = parse_mesh("cube.obj");
 	state->meshes["cube"] = state->gpu->new_vertex_buffer(cube_mesh);
 

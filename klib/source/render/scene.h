@@ -45,5 +45,7 @@ namespace kl {
 		void remove(kl::ref<entity> entity);
 
 		void update_physics(float delta_t);
+
+		kl::mat4 sun_matrix();
 	};
 }

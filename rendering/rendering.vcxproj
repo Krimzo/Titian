@@ -81,6 +81,7 @@
     <ClInclude Include="source\callbacks\main_callbacks.h" />
     <ClInclude Include="source\cbuffers\entity_render.h" />
     <ClInclude Include="source\cbuffers\ocean_render.h" />
+    <ClInclude Include="source\cbuffers\shadow_render.h" />
     <ClInclude Include="source\cbuffers\skybox_render.h" />
     <ClInclude Include="source\rendering.h" />
     <ClInclude Include="source\render\render_chain.h" />
@@ -94,6 +95,8 @@
     <ClCompile Include="source\callbacks\update_callback.cpp" />
     <ClCompile Include="source\rendering.cpp" />
     <ClCompile Include="source\render\parts\render_ocean.cpp" />
+    <ClCompile Include="source\render\parts\render_shadows.cpp" />
+    <ClCompile Include="source\render\parts\display_depth.cpp" />
     <ClCompile Include="source\render\render_chain.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_bullets.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_cubes.cpp" />
@@ -103,11 +106,14 @@
     <ClCompile Include="source\setup\scene\parts\scene_spheres.cpp" />
     <ClCompile Include="source\setup\states\setup_depth_states.cpp" />
     <ClCompile Include="source\setup\buffers\setup_meshes.cpp" />
+    <ClCompile Include="source\setup\states\setup_raster_states.cpp" />
     <ClCompile Include="source\setup\states\setup_sampler_states.cpp" />
     <ClCompile Include="source\setup\scene\setup_scene.cpp" />
     <ClCompile Include="source\setup\buffers\setup_shaders.cpp" />
     <ClCompile Include="source\setup\buffers\setup_skyboxes.cpp" />
     <ClCompile Include="source\setup\buffers\setup_textures.cpp" />
+    <ClCompile Include="source\setup\views\setup_depth_views.cpp" />
+    <ClCompile Include="source\setup\views\setup_target_views.cpp" />
     <ClCompile Include="source\state\state_machine.cpp" />
     <ClCompile Include="source\update\custom\custom_post_render_update.cpp" />
     <ClCompile Include="source\update\custom\custom_pre_render_update.cpp" />

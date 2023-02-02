@@ -106,7 +106,7 @@ namespace kl {
             matrix4x4<T> result;
             result[0] = T(2.0f) / (right - left);
             result[5] = T(2.0f) / (top - bottom);
-            result[10] = T(-2.0f) / (far_plane - near_plane);
+            result[10] = T(2.0f) / (far_plane - near_plane);
             result[3] = -(right + left) / (right - left);
             result[7] = -(top + bottom) / (top - bottom);
             result[11] = -(far_plane + near_plane) / (far_plane - near_plane);

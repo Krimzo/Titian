@@ -67,9 +67,17 @@ void kl::camera::rotate(const float2& mouse_pos, const float2& frame_center, con
     set_forward(forward_.rotate(rotation.x, up_));
 }
 
+kl::mat4 kl::camera::view_matrix() const
+{
+    return mat4::look_at(position, position + forward_, up_);
+}
+
+kl::mat4 kl::camera::projection_matrix() const
+{
+    return mat4::perspective(field_of_view, aspect_ratio, near_plane, far_plane);
+}
+
 kl::mat4 kl::camera::matrix() const
 {
-    const mat4 view = mat4::look_at(position, position + forward_, up_);
-    const mat4 proj = mat4::perspective(field_of_view, aspect_ratio, near_plane, far_plane);
-    return proj * view;
+    return projection_matrix() * view_matrix();
 }

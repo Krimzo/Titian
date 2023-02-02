@@ -42,7 +42,7 @@ void setup_objects(state_machine* state, const int size)
 			box->set_position({ (half_size - x) * 2.25f, 15.0f, -25.0f + (half_size - z) * 2.25f });
 
 			box->mesh = state->meshes["cube"];
-			box->material.color = (kl::float4)kl::random::get_color();
+			box->material.color = (kl::float4) kl::random::get_color();
 
 			state->scene->add(box);
 		}
