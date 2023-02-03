@@ -140,12 +140,6 @@
     <ClCompile Include="source\setup\states\setup_raster_states.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\setup\views\setup_target_views.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\setup\views\setup_depth_views.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\render\parts\display_depth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -26,7 +26,7 @@ void kl::entity::set_scale(const float3& scale)
 
 kl::float3 kl::entity::get_scale() const
 {
-    const btVector3 scaling = collider_shape_->getLocalScaling();
+    const btVector3& scaling = collider_shape_->getLocalScaling();
     return { scaling.x(), scaling.y(), scaling.z() };
 }
 
@@ -54,8 +54,8 @@ void kl::entity::set_position(const float3& position)
 
 kl::float3 kl::entity::get_position() const
 {
-    const btTransform transform = physics_body_->getWorldTransform();
-    const btVector3 position = transform.getOrigin();
+    const btTransform& transform = physics_body_->getWorldTransform();
+    const btVector3& position = transform.getOrigin();
     return { position.x(), position.y(), position.z() };
 }
 

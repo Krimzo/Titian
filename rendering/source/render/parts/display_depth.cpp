@@ -15,7 +15,7 @@ void display_depth(state_machine* state)
 	state->gpu->bind_shaders(state->shaders["display_depth"]);
 
 	state->gpu->bind_sampler_state(state->sampler_states["shadow"], 0);
-	state->gpu->bind_pixel_shader_view(state->textures["shadow_map"], 0);
+	state->gpu->bind_pixel_shader_view(state->scene->directional_light->get_shader_view(0), 0);
 
 	state->gpu->draw_vertex_buffer(state->meshes["screen"]);
 

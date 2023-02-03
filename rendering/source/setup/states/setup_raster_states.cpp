@@ -18,7 +18,7 @@ void setup_raster_states(state_machine* state)
 	shadow_raster_descriptor.FrontCounterClockwise = true;
 	shadow_raster_descriptor.MultisampleEnable = true;
 	shadow_raster_descriptor.AntialiasedLineEnable = true;
-	shadow_raster_descriptor.SlopeScaledDepthBias = 2.0f;
+	shadow_raster_descriptor.SlopeScaledDepthBias = 2.5f;
 
 	const auto shadow_raster = state->gpu->new_raster_state(&shadow_raster_descriptor);
 	state->raster_states["shadow"] = shadow_raster;

@@ -112,8 +112,6 @@
     <ClCompile Include="source\setup\buffers\setup_shaders.cpp" />
     <ClCompile Include="source\setup\buffers\setup_skyboxes.cpp" />
     <ClCompile Include="source\setup\buffers\setup_textures.cpp" />
-    <ClCompile Include="source\setup\views\setup_depth_views.cpp" />
-    <ClCompile Include="source\setup\views\setup_target_views.cpp" />
     <ClCompile Include="source\state\state_machine.cpp" />
     <ClCompile Include="source\update\custom\custom_post_render_update.cpp" />
     <ClCompile Include="source\update\custom\custom_pre_render_update.cpp" />

@@ -2,29 +2,32 @@
 
 #include "render/entity.h"
 #include "render/camera.h"
-#include "memory/ref.h"
 
+#include "render/light/ambient_light.h"
+#include "render/light/directional_light.h"
+
+#include "memory/ref.h"
 #include <set>
 
 
 namespace kl {
 	class scene 
 	{
-		std::set<kl::ref<kl::entity>> entities_;
+		std::set<ref<entity>> entities_;
 
-		kl::ref<btDefaultCollisionConfiguration>    configuration_ = {};
-		kl::ref<btCollisionDispatcher>                 dispatcher_ = {};
-		kl::ref<btBroadphaseInterface>                 pair_cache_ = {};
-		kl::ref<btSequentialImpulseConstraintSolver>       solver_ = {};
-		kl::ref<btDiscreteDynamicsWorld>                    world_ = {};
+		ref<btDefaultCollisionConfiguration>    configuration_ = {};
+		ref<btCollisionDispatcher>                 dispatcher_ = {};
+		ref<btBroadphaseInterface>                 pair_cache_ = {};
+		ref<btSequentialImpulseConstraintSolver>       solver_ = {};
+		ref<btDiscreteDynamicsWorld>                    world_ = {};
 
 	public:
-		kl::camera camera = {};
+		camera camera = {};
 
-		float ambient_light = 0.1f;
-		kl::float3 sun_direction = {};
+		ref<ambient_light>         ambient_light = {};
+		ref<directional_light> directional_light = {};
 
-		kl::dx::buffer ocean_mesh = nullptr;
+		dx::buffer ocean_mesh = nullptr;
 
 		scene();
 		~scene();
@@ -38,14 +41,12 @@ namespace kl {
 		void set_gravity(const float3& gravity);
 		float3 get_gravity() const;
 
-		std::set<kl::ref<kl::entity>>::iterator begin();
-		std::set<kl::ref<kl::entity>>::iterator end();
+		std::set<ref<entity>>::iterator begin();
+		std::set<ref<entity>>::iterator end();
 
-		void add(kl::ref<entity> entity);
-		void remove(kl::ref<entity> entity);
+		void add(ref<entity> entity);
+		void remove(ref<entity> entity);
 
 		void update_physics(float delta_t);
-
-		kl::mat4 sun_matrix();
 	};
 }

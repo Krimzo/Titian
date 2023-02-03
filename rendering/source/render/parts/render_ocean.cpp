@@ -24,7 +24,7 @@ void render_ocean(state_machine* state)
 
 	ocean_render_ps_cb ps_cb = {};
 	ps_cb.object_color = (kl::float4) kl::colors::white;
-	ps_cb.sun_direction = kl::float4(state->scene->sun_direction.normalize(), 0);
+	ps_cb.sun_direction = kl::float4(state->scene->directional_light->get_direction(), 0);
 
 	state->gpu->set_vertex_const_buffer(vs_cb);
 	state->gpu->set_pixel_const_buffer(ps_cb);

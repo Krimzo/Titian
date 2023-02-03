@@ -17,10 +17,6 @@ void setup_callback(state_machine* state)
 	setup_meshes(state);
 	setup_textures(state);
 	setup_skyboxes(state);
-	
-	// Views
-	setup_target_views(state);
-	setup_depth_views(state);
 
 	setup_scene(state);
 }

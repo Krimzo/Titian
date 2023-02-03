@@ -12,7 +12,4 @@ void   setup_meshes(state_machine* state);
 void setup_textures(state_machine* state);
 void setup_skyboxes(state_machine* state);
 
-void setup_target_views(state_machine* state);
-void  setup_depth_views(state_machine* state);
-
 void setup_scene(state_machine* state);
