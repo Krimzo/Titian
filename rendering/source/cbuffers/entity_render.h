@@ -15,6 +15,7 @@ struct entity_render_ps_cb
 {
     kl::float4 object_color;
     kl::float4  object_data;
+    kl::float4 texture_info;
 
     kl::float4 camera_position;
     kl::float4      light_data;

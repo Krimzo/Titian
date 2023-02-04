@@ -18,6 +18,7 @@ void setup_platform(state_machine* state)
 	platform->set_collider(kl::make_box_collider());
 
 	platform->set_scale({ 15.0f, 0.1f, 15.0f });
+	platform->set_rotation({ 1.0f, 0.0f, 0.0f });
 	platform->set_position({ 0.0f, -7.0f, -25.0f });
 
 	platform->mesh = state->meshes["cube"];
@@ -43,6 +44,7 @@ void setup_objects(state_machine* state, const int size)
 
 			box->mesh = state->meshes["cube"];
 			box->material.color_map = state->textures["dogo"];
+			box->material.normal_map = state->textures["concrete_normal"];
 
 			box->material.color = (kl::float4) kl::random::get_color();
 			box->material.texture_blend = 0.5f;

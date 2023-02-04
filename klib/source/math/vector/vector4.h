@@ -72,7 +72,7 @@ namespace kl {
         template <typename T0>
         static vector4<T> splash(const T0& value)
         {
-            return {value, value, value, value};
+            return { value, value, value, value };
         }
 
         T& operator[](int ind)
@@ -88,12 +88,12 @@ namespace kl {
         template <typename T0>
         explicit operator vector4<T0>() const
         {
-            return {T0(x), T0(y), T0(z), T0(w)};
+            return { T0(x), T0(y), T0(z), T0(w) };
         }
 
         explicit operator color() const
         {
-            return {to_byte_color(x), to_byte_color(y), to_byte_color(z), to_byte_color(w)};
+            return { to_byte_color(x), to_byte_color(y), to_byte_color(z), to_byte_color(w) };
         }
 
         vector4<T> operator+(const vector4<T>& obj) const

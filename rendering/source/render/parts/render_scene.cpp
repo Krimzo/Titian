@@ -43,6 +43,22 @@ void render_scene(state_machine* state)
 			state->gpu->bind_pixel_shader_view(entity->material.color_map, 5);
 		}
 
+		if (entity->material.normal_map) {
+			state->gpu->bind_pixel_shader_view(entity->material.normal_map, 6);
+			ps_cb.texture_info.x = 1.0f;
+		}
+		else {
+			ps_cb.texture_info.x = 0.0f;
+		}
+
+		if (entity->material.roughness_map) {
+			state->gpu->bind_pixel_shader_view(entity->material.roughness_map, 7);
+			ps_cb.texture_info.y = 1.0f;
+		}
+		else {
+			ps_cb.texture_info.y = 0.0f;
+		}
+
 		vs_cb.w_matrix = entity->matrix();
 
 		ps_cb.object_color  = entity->material.color;
