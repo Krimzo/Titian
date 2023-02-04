@@ -76,22 +76,22 @@ kl::dx::shader_view kl::directional_light::get_shader_view(const int cascade_ind
 
 kl::mat4 kl::directional_light::get_matrix(camera camera, const int cascade_index) const
 {
-	const float plane_diff = camera.far_plane - camera.near_plane;
-	camera.far_plane  = camera.near_plane + plane_diff * CASCADE_SPLITS[cascade_index + 1];
-	camera.near_plane = camera.near_plane + plane_diff * CASCADE_SPLITS[cascade_index + 0];
+	const float2 old_camera_planes = { camera.near_plane, camera.far_plane };
+	camera.near_plane = math::interpolate(CASCADE_SPLITS[cascade_index + 0], old_camera_planes.x, old_camera_planes.y);
+	camera.far_plane  = math::interpolate(CASCADE_SPLITS[cascade_index + 1], old_camera_planes.x, old_camera_planes.y);
 	const mat4 inverse_camera_matrix = camera.matrix().inverse();
 
 	// Calculate 8 corners in world-space
 	float4 frustum_corners[8] = {
-		inverse_camera_matrix * float4(-1, -1, 0, 1),
-		inverse_camera_matrix * float4( 1, -1, 0, 1),
-		inverse_camera_matrix * float4(-1,  1, 0, 1),
-		inverse_camera_matrix * float4( 1,  1, 0, 1),
+		inverse_camera_matrix * float4(-1, -1, -1, 1),
+		inverse_camera_matrix * float4( 1, -1, -1, 1),
+		inverse_camera_matrix * float4(-1,  1, -1, 1),
+		inverse_camera_matrix * float4( 1,  1, -1, 1),
 
-		inverse_camera_matrix * float4(-1, -1, 1, 1),
-		inverse_camera_matrix * float4( 1, -1, 1, 1),
-		inverse_camera_matrix * float4(-1,  1, 1, 1),
-		inverse_camera_matrix * float4( 1,  1, 1, 1),
+		inverse_camera_matrix * float4(-1, -1,  1, 1),
+		inverse_camera_matrix * float4( 1, -1,  1, 1),
+		inverse_camera_matrix * float4(-1,  1,  1, 1),
+		inverse_camera_matrix * float4( 1,  1,  1, 1),
 	};
 
 	for (auto& corner : frustum_corners) {

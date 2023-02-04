@@ -32,6 +32,12 @@ namespace kl::math {
         return (T(val) - T(lower)) / (T(upper) - T(lower));
     }
 
+    template <typename T = float, typename T0, typename T1, typename T2>
+    T interpolate(const T0& val, const T1& lower, const T2& upper)
+    {
+        return (T(upper) - T(lower)) * val + T(lower);
+    }
+
     template <typename T, typename T0, typename T1>
     T minmax(const T& val, const T0& min_value, const T1& max_value)
     {

@@ -32,8 +32,7 @@ void render_scene(state_machine* state)
 	ps_cb.v_matrix = state->scene->camera.view_matrix();
 
 	for (int i = 0; i < kl::directional_light::MAP_COUNT; i++) {
-		const float plane_diff = state->scene->camera.far_plane - state->scene->camera.near_plane;
-		ps_cb.cascade_distances[i] = state->scene->camera.near_plane + plane_diff * state->scene->directional_light->CASCADE_SPLITS[i + 1];
+		ps_cb.cascade_distances[i] = kl::math::interpolate(state->scene->directional_light->CASCADE_SPLITS[i + 1], state->scene->camera.near_plane, state->scene->camera.far_plane);
 	}
 
 	for (auto& entity : *state->scene) {

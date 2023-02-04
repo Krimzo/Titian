@@ -89,7 +89,7 @@ float4 p_shader(vs_out vs_data) : SV_Target
     const float3 refracted_sky_color = skybox_texture.Sample(skybox_sampler, refracted_pixel_direction);
 
     // Shadow calculations
-    const float camera_z = mul(float4(vs_data.world, 1), v_matrix).z;
+    const float camera_z = abs(mul(float4(vs_data.world, 1), v_matrix).z);
     const float shadow_factor = get_shadow_factor(vs_data, camera_z);
 
     // Light calculations
