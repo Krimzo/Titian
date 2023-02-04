@@ -47,7 +47,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -69,11 +69,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)klib\source\;$(SolutionDir)physics\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)klib\source\;$(SolutionDir)physics\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -88,12 +88,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h" />
     <ClInclude Include="source\callbacks\main_callbacks.h" />
     <ClInclude Include="source\cbuffers\entity_render.h" />
     <ClInclude Include="source\cbuffers\ocean_render.h" />
     <ClInclude Include="source\cbuffers\shadow_render.h" />
     <ClInclude Include="source\cbuffers\skybox_render.h" />
+    <ClInclude Include="source\gui\gui_render.h" />
     <ClInclude Include="source\rendering.h" />
     <ClInclude Include="source\render\render_chain.h" />
     <ClInclude Include="source\setup\scene\setup_scene.h" />
@@ -104,11 +104,14 @@
   <ItemGroup>
     <ClCompile Include="source\callbacks\setup_callback.cpp" />
     <ClCompile Include="source\callbacks\update_callback.cpp" />
+    <ClCompile Include="source\gui\parts\gui_scene_info.cpp" />
+    <ClCompile Include="source\gui\gui_render.cpp" />
     <ClCompile Include="source\rendering.cpp" />
     <ClCompile Include="source\render\parts\render_ocean.cpp" />
     <ClCompile Include="source\render\parts\render_shadows.cpp" />
     <ClCompile Include="source\render\parts\display_depth.cpp" />
     <ClCompile Include="source\render\render_chain.cpp" />
+    <ClCompile Include="source\setup\gui\setup_gui.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_bullets.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_cubes.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_monkes.cpp" />
@@ -138,9 +141,6 @@
     <ProjectReference Include="..\klib\klib.vcxproj">
       <Project>{5b9896b1-803a-45dd-a262-8055d73c6dd0}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="rendering.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

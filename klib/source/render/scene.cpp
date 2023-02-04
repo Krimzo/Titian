@@ -73,6 +73,11 @@ void kl::scene::remove(ref<entity> entity)
 	entities_.erase(entity);
 }
 
+int kl::scene::entity_count() const
+{
+	return (int) entities_.size();
+}
+
 void kl::scene::update_physics(float delta_t)
 {
 	scene_->simulate(delta_t);

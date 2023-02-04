@@ -1,5 +1,7 @@
 #include "render/render_chain.h"
 
+#include "gui/gui_render.h"
+
 
 void render_chain(state_machine* state)
 {
@@ -23,6 +25,8 @@ void render_chain(state_machine* state)
 		if (debug_display_depth) {
 			display_depth(state);
 		}
+
+		gui_render(state);
 	}
 
 	state->gpu->swap_buffers(v_sync);

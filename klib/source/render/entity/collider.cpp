@@ -3,7 +3,7 @@
 
 kl::collider::collider(PxPhysics* physics, const PxGeometry& geometry)
 {
-	material_ = physics->createMaterial(0.0f, 0.0f, 0.0f);
+	material_ = physics->createMaterial(0.25f, 0.25f, 0.25f);
 	shape_ = physics->createShape(geometry, *material_);
 }
 

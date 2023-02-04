@@ -13,3 +13,5 @@ void setup_textures(state_machine* state);
 void setup_skyboxes(state_machine* state);
 
 void setup_scene(state_machine* state);
+
+void setup_gui(state_machine* state);

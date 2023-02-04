@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rendering", "rendering\rend
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "physics", "physics\physics.vcxproj", "{A885895C-A34E-4BE4-9FC9-BF25C60EDCBA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "imgui\imgui.vcxproj", "{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{A885895C-A34E-4BE4-9FC9-BF25C60EDCBA}.Release|x64.Build.0 = Release|x64
 		{A885895C-A34E-4BE4-9FC9-BF25C60EDCBA}.Release|x86.ActiveCfg = Release|Win32
 		{A885895C-A34E-4BE4-9FC9-BF25C60EDCBA}.Release|x86.Build.0 = Release|Win32
+		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Debug|x64.ActiveCfg = Debug|x64
+		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Debug|x64.Build.0 = Debug|x64
+		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Debug|x86.ActiveCfg = Debug|Win32
+		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Debug|x86.Build.0 = Debug|Win32
+		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Release|x64.ActiveCfg = Release|x64
+		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Release|x64.Build.0 = Release|x64
+		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Release|x86.ActiveCfg = Release|Win32
+		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

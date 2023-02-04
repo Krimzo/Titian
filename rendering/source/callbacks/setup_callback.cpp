@@ -18,5 +18,9 @@ void setup_callback(state_machine* state)
 	setup_textures(state);
 	setup_skyboxes(state);
 
+	// Scene
 	setup_scene(state);
+
+	// GUI
+	setup_gui(state);
 }

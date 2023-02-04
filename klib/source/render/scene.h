@@ -53,6 +53,8 @@ namespace kl {
 		void add(ref<entity> entity);
 		void remove(ref<entity> entity);
 
+		int entity_count() const;
+
 		void update_physics(float delta_t);
 
 		// Entity
