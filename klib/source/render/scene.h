@@ -17,10 +17,10 @@ namespace kl {
 	{
 		std::set<ref<entity>> entities_;
 
-		PxDefaultAllocator          allocator_ = {};
-		PxDefaultErrorCallback error_callback_ = {};
+		static PxDefaultAllocator          allocator_;
+		static PxDefaultErrorCallback error_callback_;
+		static PxFoundation*              foundation_;
 
-		PxFoundation*           foundation_ = nullptr;
 		PxPhysics*                 physics_ = nullptr;
 		PxCooking*                 cooking_ = nullptr;
 		PxDefaultCpuDispatcher* dispatcher_ = nullptr;

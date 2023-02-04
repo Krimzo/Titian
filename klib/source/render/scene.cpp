@@ -3,11 +3,14 @@
 #include "utility/console.h"
 
 
+PxDefaultAllocator kl::scene::allocator_ = {};
+
+PxDefaultErrorCallback kl::scene::error_callback_ = {};
+
+PxFoundation* kl::scene::foundation_ = PxCreateFoundation(PX_PHYSICS_VERSION, allocator_, error_callback_);
+
 kl::scene::scene()
 {
-	foundation_ = PxCreateFoundation(PX_PHYSICS_VERSION, allocator_, error_callback_);
-	error_check(!foundation_, "Failed to create physics foundation");
-
 	physics_ = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation_, PxTolerancesScale());
 	error_check(!physics_, "Failed to create physics");
 
@@ -36,7 +39,6 @@ kl::scene::~scene()
 	dispatcher_->release();
 	   cooking_->release();
 	   physics_->release();
-	foundation_->release();
 }
 
 // Scene properties
