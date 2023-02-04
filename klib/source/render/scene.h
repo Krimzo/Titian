@@ -1,12 +1,14 @@
 #pragma once
 
-#include "render/entity.h"
 #include "render/camera.h"
+
+#include "render/entity/entity.h"
 
 #include "render/light/ambient_light.h"
 #include "render/light/directional_light.h"
 
 #include "memory/ref.h"
+
 #include <set>
 
 
@@ -15,11 +17,14 @@ namespace kl {
 	{
 		std::set<ref<entity>> entities_;
 
-		ref<btDefaultCollisionConfiguration>    configuration_ = {};
-		ref<btCollisionDispatcher>                 dispatcher_ = {};
-		ref<btBroadphaseInterface>                 pair_cache_ = {};
-		ref<btSequentialImpulseConstraintSolver>       solver_ = {};
-		ref<btDiscreteDynamicsWorld>                    world_ = {};
+		PxDefaultAllocator          allocator_ = {};
+		PxDefaultErrorCallback error_callback_ = {};
+
+		PxFoundation*           foundation_ = nullptr;
+		PxPhysics*                 physics_ = nullptr;
+		PxCooking*                 cooking_ = nullptr;
+		PxDefaultCpuDispatcher* dispatcher_ = nullptr;
+		PxScene*                     scene_ = nullptr;
 
 	public:
 		camera camera = {};
@@ -38,6 +43,7 @@ namespace kl {
 		void operator=(const scene&) = delete;
 		void operator=(const scene&&) = delete;
 
+		// Scene properties
 		void set_gravity(const float3& gravity);
 		float3 get_gravity() const;
 
@@ -48,5 +54,17 @@ namespace kl {
 		void remove(ref<entity> entity);
 
 		void update_physics(float delta_t);
+
+		// Entity
+		ref<entity> make_entity(bool dynamic);
+
+		// Dynamic colliders
+		ref<collider> make_box_collider(const float3& scale);
+		ref<collider> make_sphere_collider(float radius);
+		ref<collider> make_capsule_collider(float radius, float height);
+
+		// Static colliders
+		ref<collider> make_plane_collider();
+		ref<collider> make_mesh_collider(const mesh_data& mesh_data, const float3& scale);
 	};
 }

@@ -11,7 +11,7 @@ void setup_spheres(state_machine* state, const int size)
 
 	for (int y = 0; y < size; y++) {
 		for (int x = 0; x < size; x++) {
-			kl::ref<kl::entity> sphere = kl::make<kl::entity>();
+			kl::ref<kl::entity> sphere = state->scene->make_entity(false);
 
 			sphere->set_position({
 				(x - half_size) * 2.25f + x_offset,

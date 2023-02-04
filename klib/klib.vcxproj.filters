@@ -84,10 +84,10 @@
     <ClCompile Include="source\render\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\render\entity.cpp">
+    <ClCompile Include="source\render\entity\entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\render\material.cpp">
+    <ClCompile Include="source\render\entity\material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\render\scene.cpp">
@@ -141,13 +141,16 @@
     <ClCompile Include="source\window\window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\render\mesh.cpp">
+    <ClCompile Include="source\render\entity\mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\render\light\directional_light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\render\light\ambient_light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\entity\collider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -230,10 +233,10 @@
     <ClInclude Include="source\render\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\render\entity.h">
+    <ClInclude Include="source\render\entity\entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\render\material.h">
+    <ClInclude Include="source\render\entity\material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\render\scene.h">
@@ -290,13 +293,16 @@
     <ClInclude Include="source\klib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\render\mesh.h">
+    <ClInclude Include="source\render\entity\mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\render\light\directional_light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\render\light\ambient_light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\entity\collider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

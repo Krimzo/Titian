@@ -48,6 +48,9 @@
     <ClInclude Include="source\cbuffers\shadow_render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\callbacks\setup_callback.cpp">
@@ -143,5 +146,10 @@
     <ClCompile Include="source\render\parts\display_depth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="rendering.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

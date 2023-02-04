@@ -11,9 +11,9 @@ void setup_cubes(state_machine* state, const int size)
 
 	for (int y = 0; y < size; y++) {
 		for (int x = 0; x < size; x++) {
-			auto cube = kl::make<kl::entity>();
+			auto cube = state->scene->make_entity(false);
 
-			cube->set_scale(kl::float3::splash(0.45f));
+			cube->render_scale = kl::float3::splash(0.45f);
 
 			cube->set_position({
 				(x - half_size) + x_offset,

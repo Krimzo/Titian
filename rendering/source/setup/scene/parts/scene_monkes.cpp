@@ -9,9 +9,9 @@ void setup_monkes(state_machine* state, const int size)
 	const int half_size = size / 2;
 
 	for (int i = 0; i < entity_count; i++) {
-		auto entity = kl::make<kl::entity>();
+		auto entity = state->scene->make_entity(false);
 
-		entity->set_scale(kl::float3::splash(0.5f));
+		entity->render_scale = kl::float3::splash(0.5f);
 
 		const int x = i % size;
 		const int y = i / size;
