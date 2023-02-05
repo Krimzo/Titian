@@ -20,6 +20,8 @@ namespace kl {
 		dx::shader_view shadow_shader_views_[MAP_COUNT] = {};
 
 	public:
+		float point_size = 1.0f;
+
 		directional_light(gpu* gpu, int map_resolution);
 		~directional_light();
 

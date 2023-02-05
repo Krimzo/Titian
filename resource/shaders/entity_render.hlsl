@@ -41,15 +41,18 @@ vs_out v_shader(float3 position : KL_Position, float2 textur : KL_Texture, float
 // Pixel shader
 cbuffer PS_CB : register(b0)
 {
-    float4 object_color;
-    float4  object_data; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
-    float4 texture_info; // (has_normal_map, has_roughness_map, none, none)
+    float4        object_color; // (color.r, color.g, color.b, none)
+    float4     object_material; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
+    float4 object_texture_info; // (has_normal_map, has_roughness_map, none, none)
     
-    float4 camera_position;
-    float4      light_data; // (sun.x, sun.y, sun.z, ambient_factor)
+    float4 camera_info; // (camera.x, camera.y, camera.z, none)
+    matrix    v_matrix; // View matrix
 
-    matrix v_matrix;
-    float4 cascade_distances;
+    float4     ambient_light; // (color.r, color.g, color.b, intensity)
+    float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
+
+    float4   shadow_map_info; // (width, height, texel_width, texel_size)
+    float4 cascade_distances; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
 };
 
 SamplerState skybox_sampler : register(s0);
@@ -70,45 +73,46 @@ float3 get_pixel_normal(float3 world_position, float3 interpolated_normal, float
 float get_pixel_reflectivity(float reflectivity, float2 texture_coords);
 
 vs_out compute_light_transforms(vs_out vs_data);
-float get_shadow_factor(vs_out vs_data, float camera_z);
+float get_shadow_factor(vs_out vs_data, float camera_z, const int half_kernel_size);
+float get_pcf_shadow(Texture2D shadow_map, float3 light_coords, const int half_kernel_size);
 
 float4 p_shader(vs_out vs_data) : SV_Target
 {
     // Setup
     const float3 pixel_normal = get_pixel_normal(vs_data.world, normalize(vs_data.normal), vs_data.textur);
-    const float pixel_reflectivity = get_pixel_reflectivity(object_data.y, vs_data.textur);
+    const float pixel_reflectivity = get_pixel_reflectivity(object_material.y, vs_data.textur);
     vs_data = compute_light_transforms(vs_data);
 
     // Reflection calculations
-    const float3 camera_pixel_direction = normalize(vs_data.world - camera_position);
+    const float3 camera_pixel_direction = normalize(vs_data.world - camera_info.xyz);
     const float3 reflected_pixel_direction = reflect(camera_pixel_direction, pixel_normal);
-    const float3 reflected_sky_color = skybox_texture.Sample(skybox_sampler, reflected_pixel_direction);
+    const float3 reflected_sky_color = skybox_texture.Sample(skybox_sampler, reflected_pixel_direction).xyz;
 
     // Refraction calculations
-    const float3 refracted_pixel_direction = refract(camera_pixel_direction, pixel_normal, object_data.w);
-    const float3 refracted_sky_color = skybox_texture.Sample(skybox_sampler, refracted_pixel_direction);
+    const float3 refracted_pixel_direction = refract(camera_pixel_direction, pixel_normal, object_material.w);
+    const float3 refracted_sky_color = skybox_texture.Sample(skybox_sampler, refracted_pixel_direction).xyz;
 
     // Shadow calculations
     const float camera_z = abs(mul(float4(vs_data.world, 1), v_matrix).z);
-    const float shadow_factor = get_shadow_factor(vs_data, camera_z);
+    const float shadow_factor = get_shadow_factor(vs_data, camera_z, 1);
 
     // Light calculations
-    const float3 reflected_sun_direction = reflect(-light_data.xyz, pixel_normal);
+    const float3 reflected_sun_direction = reflect(-directional_light.xyz, pixel_normal);
     const float specular_strength = dot(camera_pixel_direction, reflected_sun_direction);
 
-    const float ambient_factor = light_data.w;
-    const float diffuse_factor = max(dot(-light_data.xyz, pixel_normal), 0);
+    const float3 ambient_factor = ambient_light.xyz * ambient_light.w;
+    const float diffuse_factor = max(dot(-directional_light.xyz, pixel_normal), 0);
     const float specular_factor = pow(max(specular_strength, 0), 64) * pixel_reflectivity;
 
-    const float light_intensity = ambient_factor + (diffuse_factor + specular_factor) * shadow_factor;
+    const float3 light_intensity = ambient_factor + (diffuse_factor + specular_factor) * shadow_factor;
 
     // Color calculations
-    const float3 texture_color = entity_texture.Sample(entity_sampler, vs_data.textur);
-    const float3 unlit_color = lerp(object_color, texture_color, object_data.x);
+    const float3 texture_color = entity_texture.Sample(entity_sampler, vs_data.textur).xyz;
+    const float3 unlit_color = lerp(object_color.xyz, texture_color, object_material.x);
     const float3 lit_color = unlit_color * light_intensity;
 
     const float3 reflected_color = lerp(lit_color, reflected_sky_color, pixel_reflectivity);
-    const float3 refracted_color = lerp(reflected_color, refracted_sky_color, object_data.z);
+    const float3 refracted_color = lerp(reflected_color, refracted_sky_color, object_material.z);
 
     // Final
     return float4(refracted_color, 1);
@@ -116,7 +120,7 @@ float4 p_shader(vs_out vs_data) : SV_Target
 
 float3 get_pixel_normal(float3 world_position, float3 interpolated_normal, float2 texture_coords)
 {
-    if (!texture_info.x) {
+    if (!object_texture_info.x) {
         return interpolated_normal;
     }
 
@@ -133,7 +137,7 @@ float3 get_pixel_normal(float3 world_position, float3 interpolated_normal, float
 
 float get_pixel_reflectivity(float reflectivity, float2 texture_coords)
 {
-    if (!texture_info.y) {
+    if (!object_texture_info.y) {
         return reflectivity;
     }
 
@@ -150,23 +154,40 @@ vs_out compute_light_transforms(vs_out vs_data)
     return vs_data;
 }
 
-float get_shadow_factor(vs_out vs_data, float camera_z)
+float get_shadow_factor(vs_out vs_data, float camera_z, const int half_kernel_size)
 {
     if (camera_z < cascade_distances.x) {
-        const float shadow_depth = shadow_texture_0.Sample(shadow_sampler, vs_data.light_coords[0].xy).r;
-        return (shadow_depth < vs_data.light_coords[0].z) ? 0 : 1;
+        return get_pcf_shadow(shadow_texture_0, vs_data.light_coords[0].xyz, half_kernel_size);
     }
     
     if (camera_z < cascade_distances.y) {
-        const float shadow_depth = shadow_texture_1.Sample(shadow_sampler, vs_data.light_coords[1].xy).r;
-        return (shadow_depth < vs_data.light_coords[1].z) ? 0 : 1;
+        return get_pcf_shadow(shadow_texture_1, vs_data.light_coords[1].xyz, half_kernel_size);
     }
     
     if (camera_z < cascade_distances.z) {
-        const float shadow_depth = shadow_texture_2.Sample(shadow_sampler, vs_data.light_coords[2].xy).r;
-        return (shadow_depth < vs_data.light_coords[2].z) ? 0 : 1;
+        return get_pcf_shadow(shadow_texture_2, vs_data.light_coords[2].xyz, half_kernel_size);
     }
     
-    const float shadow_depth = shadow_texture_3.Sample(shadow_sampler, vs_data.light_coords[3].xy).r;
-    return (shadow_depth < vs_data.light_coords[3].z) ? 0 : 1;
+    return get_pcf_shadow(shadow_texture_3, vs_data.light_coords[3].xyz, half_kernel_size);
+}
+
+float get_pcf_shadow(Texture2D shadow_map, float3 light_coords, const int half_kernel_size)
+{
+    static const float2 adder = 0.25f;
+
+    float shadow_factor = 0;
+    float sample_counter = 0;
+
+    for (int y = -half_kernel_size; y <= half_kernel_size; y++) {
+        for (int x = -half_kernel_size; x <= half_kernel_size; x++) {
+            const float2 kernel_coords = float2(x, y) + adder;
+            const float2 altered_coords = light_coords.xy + kernel_coords * shadow_map_info.zw;
+            const float depth = shadow_map.Sample(shadow_sampler, altered_coords).r;
+            
+            shadow_factor += (depth < light_coords.z) ? 0 : 1;
+            sample_counter += 1;
+        }
+    }
+
+    return (shadow_factor / sample_counter);
 }
