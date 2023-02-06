@@ -3,6 +3,8 @@
 #include "utility/console.h"
 
 
+#ifdef KL_USING_PHYSX
+
 kl::entity::entity(PxPhysics* physics, bool dynamic)
     : is_dynamic_(dynamic)
 {
@@ -148,3 +150,18 @@ kl::mat4 kl::entity::matrix() const
 {
     return mat4::translation(get_position()) * mat4::rotation(get_rotation()) * mat4::scaling(render_scale);
 }
+
+#else
+
+kl::entity::entity()
+{}
+
+kl::entity::~entity()
+{}
+
+kl::mat4 kl::entity::matrix() const
+{
+    return mat4::translation(position) * mat4::rotation(rotation) * mat4::scaling(scale);
+}
+
+#endif

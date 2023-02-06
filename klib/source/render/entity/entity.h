@@ -8,6 +8,8 @@
 
 
 namespace kl {
+#ifdef KL_USING_PHYSX
+
     class entity
     {
         const bool is_dynamic_;
@@ -21,6 +23,8 @@ namespace kl {
         material material = {};
 
         entity(PxPhysics* physics, bool dynamic);
+        entity();
+
         ~entity();
 
         entity(const entity&) = delete;
@@ -58,4 +62,27 @@ namespace kl {
         // Graphics
         mat4 matrix() const;
     };
+#else
+
+    class entity
+    {
+    public:
+        float3 scale = float3::splash(1.0f);
+        float3 rotation = {};
+        float3 position = {};
+
+        float3 acceleration = {};
+        float3 velocity = {};
+        float3 angular = {};
+
+        mesh mesh = {};
+        material material = {};
+
+        entity();
+        ~entity();
+
+        mat4 matrix() const;
+    };
+
+#endif
 }

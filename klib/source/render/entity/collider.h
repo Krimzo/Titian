@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef KL_USING_PHYSX
+
 #include "render/entity/mesh.h"
 
 #include "PxPhysicsAPI.h"
@@ -37,3 +39,5 @@ namespace kl {
 		PxShape* get_shape();
 	};
 }
+
+#endif

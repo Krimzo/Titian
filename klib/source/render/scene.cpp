@@ -3,6 +3,8 @@
 #include "utility/console.h"
 
 
+#ifdef KL_USING_PHYSX
+
 PxDefaultAllocator kl::scene::allocator_ = {};
 
 PxDefaultErrorCallback kl::scene::error_callback_ = {};
@@ -118,3 +120,23 @@ kl::ref<kl::collider> kl::scene::make_mesh_collider(const mesh_data& mesh_data, 
 {
 	return nullptr;
 }
+
+#else
+
+kl::scene::scene()
+{}
+
+kl::scene::~scene()
+{}
+
+void kl::scene::update_physics(const float delta_t)
+{
+	for (auto& entity : *this) {
+		entity->velocity += gravity * delta_t;
+		entity->velocity += entity->acceleration * delta_t;
+		entity->position += entity->velocity * delta_t;
+		entity->rotation += entity->angular * delta_t;
+	}
+}
+
+#endif

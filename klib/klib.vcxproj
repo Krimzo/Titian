@@ -35,11 +35,11 @@
     <ClCompile Include="source\memory\ref.cpp" />
     <ClCompile Include="source\render\camera.cpp" />
     <ClCompile Include="source\render\entity\collider.cpp" />
-    <ClCompile Include="source\render\light\ambient_light.cpp" />
-    <ClCompile Include="source\render\light\directional_light.cpp" />
     <ClCompile Include="source\render\entity\entity.cpp" />
     <ClCompile Include="source\render\entity\material.cpp" />
     <ClCompile Include="source\render\entity\mesh.cpp" />
+    <ClCompile Include="source\render\light\ambient_light.cpp" />
+    <ClCompile Include="source\render\light\directional_light.cpp" />
     <ClCompile Include="source\render\scene.cpp" />
     <ClCompile Include="source\time\date.cpp" />
     <ClCompile Include="source\time\time.cpp" />
@@ -87,11 +87,11 @@
     <ClInclude Include="source\memory\ref.h" />
     <ClInclude Include="source\render\camera.h" />
     <ClInclude Include="source\render\entity\collider.h" />
-    <ClInclude Include="source\render\light\ambient_light.h" />
-    <ClInclude Include="source\render\light\directional_light.h" />
     <ClInclude Include="source\render\entity\entity.h" />
     <ClInclude Include="source\render\entity\material.h" />
     <ClInclude Include="source\render\entity\mesh.h" />
+    <ClInclude Include="source\render\light\ambient_light.h" />
+    <ClInclude Include="source\render\light\directional_light.h" />
     <ClInclude Include="source\render\scene.h" />
     <ClInclude Include="source\time\date.h" />
     <ClInclude Include="source\time\time.h" />
@@ -155,7 +155,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -178,7 +178,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>

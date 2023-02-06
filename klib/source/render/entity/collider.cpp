@@ -1,6 +1,8 @@
 #include "render/entity/collider.h"
 
 
+#ifdef KL_USING_PHYSX
+
 kl::collider::collider(PxPhysics* physics, const PxGeometry& geometry)
 {
 	material_ = physics->createMaterial(0.25f, 0.25f, 0.25f);
@@ -49,3 +51,5 @@ PxShape* kl::collider::get_shape()
 {
 	return shape_;
 }
+
+#endif

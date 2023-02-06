@@ -81,18 +81,6 @@
     <ClCompile Include="source\memory\ref.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\render\camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\render\entity\entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\render\entity\material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\render\scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\time\date.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -141,16 +129,28 @@
     <ClCompile Include="source\window\window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\render\entity\mesh.cpp">
+    <ClCompile Include="source\render\entity\collider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\render\light\directional_light.cpp">
+    <ClCompile Include="source\render\entity\entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\entity\material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\entity\mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\render\light\ambient_light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\render\entity\collider.cpp">
+    <ClCompile Include="source\render\light\directional_light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -230,18 +230,6 @@
     <ClInclude Include="source\memory\ref.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\render\camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\render\entity\entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\render\entity\material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\render\scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\time\date.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -293,16 +281,28 @@
     <ClInclude Include="source\klib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\render\entity\mesh.h">
+    <ClInclude Include="source\render\entity\collider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\render\light\directional_light.h">
+    <ClInclude Include="source\render\entity\entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\entity\material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\entity\mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\render\light\ambient_light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\render\entity\collider.h">
+    <ClInclude Include="source\render\light\directional_light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

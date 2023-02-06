@@ -13,6 +13,8 @@
 
 
 namespace kl {
+#ifdef KL_USING_PHYSX
+
 	class scene 
 	{
 		std::set<ref<entity>> entities_;
@@ -69,4 +71,24 @@ namespace kl {
 		ref<collider> make_plane_collider();
 		ref<collider> make_mesh_collider(const mesh_data& mesh_data, const float3& scale);
 	};
+
+#else
+
+	class scene : public std::set<ref<entity>>
+	{
+	public:
+		camera camera = {};
+
+		ref<ambient_light>         ambient_light = {};
+		ref<directional_light> directional_light = {};
+
+		float3 gravity = { 0.0f, -9.81f, 0.0f };
+
+		scene();
+		~scene();
+
+		void update_physics(float delta_t);
+	};
+
+#endif
 }
