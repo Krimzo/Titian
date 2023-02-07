@@ -92,7 +92,7 @@ int kl::console::width()
 
 void kl::console::set_width(int width)
 {
-    set_size({width, height()});
+    set_size({ width, height() });
 }
 
 int kl::console::height()
@@ -102,7 +102,7 @@ int kl::console::height()
 
 void kl::console::set_height(int height)
 {
-    set_size({width(), height});
+    set_size({ width(), height });
 }
 
 void kl::console::set_title(const std::string& text)
@@ -114,12 +114,12 @@ kl::int2 kl::console::size()
 {
     CONSOLE_SCREEN_BUFFER_INFO info = {};
     GetConsoleScreenBufferInfo(console_handle, &info);
-    return {info.srWindow.Right - info.srWindow.Left + 1, info.srWindow.Bottom - info.srWindow.Top + 1};
+    return { info.srWindow.Right - info.srWindow.Left + 1, info.srWindow.Bottom - info.srWindow.Top + 1 };
 }
 
 void kl::console::set_size(const int2& size)
 {
-    const SMALL_RECT rect = {0, 0, SHORT(size.x - 1), SHORT(size.y - 1)};
+    const SMALL_RECT rect = { 0, 0, SHORT(size.x - 1), SHORT(size.y - 1) };
     SetConsoleWindowInfo(console_handle, true, &rect);
 }
 
@@ -190,7 +190,7 @@ void kl::console::progress_bar(const std::string& message, int output_y, float p
     for (int i = 0; i < empty_length; i++) {
         stream << ' ';
     }
-    move_cursor({0, output_y});
+    move_cursor({ 0, output_y });
 
     printf("%s] %3d%% ", stream.str().c_str(), int(percentage * 100.0f));
 }

@@ -5,22 +5,22 @@
 
 void setup_callback(state_machine* state)
 {
-	state->window->maximize();
+    state->window->maximize();
 
-	// States
-	setup_depth_states(state);
-	setup_sampler_states(state);
-	setup_raster_states(state);
+    // States
+    setup_depth_states(state);
+    setup_sampler_states(state);
+    setup_raster_states(state);
 
-	// Buffers
-	setup_shaders(state);
-	setup_meshes(state);
-	setup_textures(state);
-	setup_skyboxes(state);
+    // Buffers
+    setup_shaders(state);
+    setup_meshes(state);
+    setup_textures(state);
+    setup_skyboxes(state);
 
-	// Scene
-	setup_scene(state);
+    // Scene
+    setup_scene(state);
 
-	// GUI
-	setup_gui(state);
+    // GUI
+    setup_gui(state);
 }

@@ -37,98 +37,94 @@
 #include "foundation/PxSimpleTypes.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief Input stream class for I/O.
+    /**
+    \brief Input stream class for I/O.
 
-The user needs to supply a PxInputStream implementation to a number of methods to allow the SDK to read data.
-*/
+    The user needs to supply a PxInputStream implementation to a number of methods to allow the SDK to read data.
+    */
 
-class PxInputStream
-{
-  public:
-	/**
-	\brief read from the stream. The number of bytes read may be less than the number requested.
+    class PxInputStream
+    {
+    public:
+        /**
+        \brief read from the stream. The number of bytes read may be less than the number requested.
 
-	\param[in] dest the destination address to which the data will be read
-	\param[in] count the number of bytes requested
+        \param[in] dest the destination address to which the data will be read
+        \param[in] count the number of bytes requested
 
-	\return the number of bytes read from the stream.
-	*/
+        \return the number of bytes read from the stream.
+        */
 
-	virtual uint32_t read(void* dest, uint32_t count) = 0;
+        virtual uint32_t read(void* dest, uint32_t count) = 0;
 
-	virtual ~PxInputStream()
-	{
-	}
-};
+        virtual ~PxInputStream()
+        {}
+    };
 
-/**
-\brief Input data class for I/O which provides random read access.
+    /**
+    \brief Input data class for I/O which provides random read access.
 
-The user needs to supply a PxInputData implementation to a number of methods to allow the SDK to read data.
-*/
+    The user needs to supply a PxInputData implementation to a number of methods to allow the SDK to read data.
+    */
 
-class PxInputData : public PxInputStream
-{
-  public:
-	/**
-	\brief return the length of the input data
+    class PxInputData : public PxInputStream
+    {
+    public:
+        /**
+        \brief return the length of the input data
 
-	\return size in bytes of the input data
-	*/
+        \return size in bytes of the input data
+        */
 
-	virtual uint32_t getLength() const = 0;
+        virtual uint32_t getLength() const = 0;
 
-	/**
-	\brief seek to the given offset from the start of the data.
+        /**
+        \brief seek to the given offset from the start of the data.
 
-	\param[in] offset the offset to seek to. 	If greater than the length of the data, this call is equivalent to
-	seek(length);
-	*/
+        \param[in] offset the offset to seek to. 	If greater than the length of the data, this call is equivalent to
+        seek(length);
+        */
 
-	virtual void seek(uint32_t offset) = 0;
+        virtual void seek(uint32_t offset) = 0;
 
-	/**
-	\brief return the current offset from the start of the data
+        /**
+        \brief return the current offset from the start of the data
 
-	\return the offset to seek to.
-	*/
+        \return the offset to seek to.
+        */
 
-	virtual uint32_t tell() const = 0;
+        virtual uint32_t tell() const = 0;
 
-	virtual ~PxInputData()
-	{
-	}
-};
+        virtual ~PxInputData()
+        {}
+    };
 
-/**
-\brief Output stream class for I/O.
+    /**
+    \brief Output stream class for I/O.
 
-The user needs to supply a PxOutputStream implementation to a number of methods to allow the SDK to write data.
-*/
+    The user needs to supply a PxOutputStream implementation to a number of methods to allow the SDK to write data.
+    */
 
-class PxOutputStream
-{
-  public:
-	/**
-	\brief write to the stream. The number of bytes written may be less than the number sent.
+    class PxOutputStream
+    {
+    public:
+        /**
+        \brief write to the stream. The number of bytes written may be less than the number sent.
 
-	\param[in] src the destination address from which the data will be written
-	\param[in] count the number of bytes to be written
+        \param[in] src the destination address from which the data will be written
+        \param[in] count the number of bytes to be written
 
-	\return the number of bytes written to the stream by this call.
-	*/
+        \return the number of bytes written to the stream by this call.
+        */
 
-	virtual uint32_t write(const void* src, uint32_t count) = 0;
+        virtual uint32_t write(const void* src, uint32_t count) = 0;
 
-	virtual ~PxOutputStream()
-	{
-	}
-};
+        virtual ~PxOutputStream()
+        {}
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

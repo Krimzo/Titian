@@ -38,29 +38,28 @@
 */
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief Unique identifiers for extensions classes which implement a constraint based on PxConstraint.
+    /**
+    \brief Unique identifiers for extensions classes which implement a constraint based on PxConstraint.
 
-\note Users which want to create their own custom constraint types should choose an ID larger or equal to eNEXT_FREE_ID
-and not eINVALID_ID.
+    \note Users which want to create their own custom constraint types should choose an ID larger or equal to eNEXT_FREE_ID
+    and not eINVALID_ID.
 
-@see PxConstraint PxSimulationEventCallback.onConstraintBreak()
-*/
-struct PxConstraintExtIDs
-{
-	enum Enum
-	{
-		eJOINT,
-		eVEHICLE_SUSP_LIMIT,
-		eVEHICLE_STICKY_TYRE,
-		eNEXT_FREE_ID,
-		eINVALID_ID = 0x7fffffff
-	};
-};
+    @see PxConstraint PxSimulationEventCallback.onConstraintBreak()
+    */
+    struct PxConstraintExtIDs
+    {
+        enum Enum
+        {
+            eJOINT,
+            eVEHICLE_SUSP_LIMIT,
+            eVEHICLE_STICKY_TYRE,
+            eNEXT_FREE_ID,
+            eINVALID_ID = 0x7fffffff
+        };
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

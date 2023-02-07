@@ -10,10 +10,10 @@
 
 namespace kl {
     template <typename T, int W, int H>
-    struct matrix : std::array<T, W * H>
+    struct matrix : std::array<T, W* H>
     {
         matrix()
-            : std::array<T, W * H>()
+            : std::array<T, W* H>()
         {
             if constexpr (W == H) {
                 for (int i = 0; i < (W * H); i += (W + 1)) {

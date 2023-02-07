@@ -37,175 +37,174 @@
 #include "extensions/PxJointLimit.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-class PxSphericalJoint;
+    class PxSphericalJoint;
 
-/**
-\brief Create a spherical joint.
+    /**
+    \brief Create a spherical joint.
 
- \param[in] physics		The physics SDK
- \param[in] actor0		An actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
- \param[in] localFrame0	The position and orientation of the joint relative to actor0
- \param[in] actor1		An actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
- \param[in] localFrame1	The position and orientation of the joint relative to actor1 
+     \param[in] physics		The physics SDK
+     \param[in] actor0		An actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
+     \param[in] localFrame0	The position and orientation of the joint relative to actor0
+     \param[in] actor1		An actor to which the joint is attached. NULL may be used to attach the joint to a specific point in the world frame
+     \param[in] localFrame1	The position and orientation of the joint relative to actor1
 
-@see PxSphericalJoint
-*/
-PxSphericalJoint*	PxSphericalJointCreate(PxPhysics& physics, PxRigidActor* actor0, const PxTransform& localFrame0, PxRigidActor* actor1, const PxTransform& localFrame1);
+    @see PxSphericalJoint
+    */
+    PxSphericalJoint* PxSphericalJointCreate(PxPhysics& physics, PxRigidActor* actor0, const PxTransform& localFrame0, PxRigidActor* actor1, const PxTransform& localFrame1);
 
 
-/**
-\brief Flags specific to the spherical joint.
+    /**
+    \brief Flags specific to the spherical joint.
 
-@see PxSphericalJoint
-*/
-struct PxSphericalJointFlag
-{
-	enum Enum
-	{
-		eLIMIT_ENABLED	= 1<<1	//!< the cone limit for the spherical joint is enabled
-	};
-};
-typedef PxFlags<PxSphericalJointFlag::Enum, PxU16> PxSphericalJointFlags;
-PX_FLAGS_OPERATORS(PxSphericalJointFlag::Enum, PxU16)
+    @see PxSphericalJoint
+    */
+    struct PxSphericalJointFlag
+    {
+        enum Enum
+        {
+            eLIMIT_ENABLED = 1 << 1	//!< the cone limit for the spherical joint is enabled
+        };
+    };
+    typedef PxFlags<PxSphericalJointFlag::Enum, PxU16> PxSphericalJointFlags;
+    PX_FLAGS_OPERATORS(PxSphericalJointFlag::Enum, PxU16)
 
-/**
-\brief A joint which behaves in a similar way to a ball and socket.
+        /**
+        \brief A joint which behaves in a similar way to a ball and socket.
 
- A spherical joint removes all linear degrees of freedom from two objects.
+         A spherical joint removes all linear degrees of freedom from two objects.
 
- The position of the joint on each actor is specified by the origin of the body's joint frame.
- 
- A spherical joint may have a cone limit, to restrict the motion to within a certain range. In
- addition, the bodies may be projected together if the distance between them exceeds a given threshold.
- 
- Projection, drive and limits are activated by setting the appropriate flags on the joint.
+         The position of the joint on each actor is specified by the origin of the body's joint frame.
 
- @see PxRevoluteJointCreate() PxJoint
-*/
-class PxSphericalJoint : public PxJoint
-{
-public:
-	
-	/**
-	\brief Set the limit cone.
+         A spherical joint may have a cone limit, to restrict the motion to within a certain range. In
+         addition, the bodies may be projected together if the distance between them exceeds a given threshold.
 
-	If enabled, the limit cone will constrain the angular movement of the joint to lie
-	within an elliptical cone.
+         Projection, drive and limits are activated by setting the appropriate flags on the joint.
 
-	\return the limit cone
+         @see PxRevoluteJointCreate() PxJoint
+        */
+        class PxSphericalJoint : public PxJoint
+    {
+    public:
 
-	@see PxJointLimitCone setLimit() 
-	*/
-	virtual PxJointLimitCone	getLimitCone()	const	= 0;
+        /**
+        \brief Set the limit cone.
 
-	/**
-	\brief Get the limit cone.
+        If enabled, the limit cone will constrain the angular movement of the joint to lie
+        within an elliptical cone.
 
-	\param[in] limit the limit cone
+        \return the limit cone
 
-	@see PxJointLimitCone getLimit() 
-	*/
-	virtual void				setLimitCone(const PxJointLimitCone& limit)	= 0;
+        @see PxJointLimitCone setLimit()
+        */
+        virtual PxJointLimitCone	getLimitCone()	const = 0;
 
-	/**
-	\brief get the swing angle of the joint from the Y axis
-	*/
-	virtual PxReal				getSwingYAngle()	const	= 0;
+        /**
+        \brief Get the limit cone.
 
-	/**
-	\brief get the swing angle of the joint from the Z axis
-	*/
-	virtual PxReal				getSwingZAngle()	const	= 0;
+        \param[in] limit the limit cone
 
-	/**
-	\brief Set the flags specific to the Spherical Joint.
+        @see PxJointLimitCone getLimit()
+        */
+        virtual void				setLimitCone(const PxJointLimitCone& limit) = 0;
 
-	<b>Default</b> PxSphericalJointFlags(0)
+        /**
+        \brief get the swing angle of the joint from the Y axis
+        */
+        virtual PxReal				getSwingYAngle()	const = 0;
 
-	\param[in] flags The joint flags.
+        /**
+        \brief get the swing angle of the joint from the Z axis
+        */
+        virtual PxReal				getSwingZAngle()	const = 0;
 
-	@see PxSphericalJointFlag setFlag() getFlags()
-	*/
-	virtual void				setSphericalJointFlags(PxSphericalJointFlags flags) = 0;
+        /**
+        \brief Set the flags specific to the Spherical Joint.
 
-	/**
-	\brief Set a single flag specific to a Spherical Joint to true or false.
+        <b>Default</b> PxSphericalJointFlags(0)
 
-	\param[in] flag The flag to set or clear.
-	\param[in] value the value to which to set the flag
+        \param[in] flags The joint flags.
 
-	@see PxSphericalJointFlag, getFlags() setFlags()
-	*/
-	virtual void				setSphericalJointFlag(PxSphericalJointFlag::Enum flag, bool value) = 0;
+        @see PxSphericalJointFlag setFlag() getFlags()
+        */
+        virtual void				setSphericalJointFlags(PxSphericalJointFlags flags) = 0;
 
-	/**
-	\brief Get the flags specific to the Spherical Joint.
+        /**
+        \brief Set a single flag specific to a Spherical Joint to true or false.
 
-	\return the joint flags
+        \param[in] flag The flag to set or clear.
+        \param[in] value the value to which to set the flag
 
-	@see PxSphericalJoint::flags, PxSphericalJointFlag setFlag() setFlags()
-	*/
-	virtual PxSphericalJointFlags	getSphericalJointFlags()	const	= 0;
+        @see PxSphericalJointFlag, getFlags() setFlags()
+        */
+        virtual void				setSphericalJointFlag(PxSphericalJointFlag::Enum flag, bool value) = 0;
 
-	/**
-	\brief Set the linear tolerance threshold for projection. Projection is enabled if PxConstraintFlag::ePROJECTION
-	is set for the joint.
+        /**
+        \brief Get the flags specific to the Spherical Joint.
 
-	If the joint separates by more than this distance along its locked degrees of freedom, the solver 
-	will move the bodies to close the distance.
+        \return the joint flags
 
-	Setting a very small tolerance may result in simulation jitter or other artifacts.
+        @see PxSphericalJoint::flags, PxSphericalJointFlag setFlag() setFlags()
+        */
+        virtual PxSphericalJointFlags	getSphericalJointFlags()	const = 0;
 
-	Sometimes it is not possible to project (for example when the joints form a cycle).
+        /**
+        \brief Set the linear tolerance threshold for projection. Projection is enabled if PxConstraintFlag::ePROJECTION
+        is set for the joint.
 
-	<b>Range:</b> [0, PX_MAX_F32)<br>
-	<b>Default:</b> 1e10f
+        If the joint separates by more than this distance along its locked degrees of freedom, the solver
+        will move the bodies to close the distance.
 
-	\param[in] tolerance the linear tolerance threshold
+        Setting a very small tolerance may result in simulation jitter or other artifacts.
 
-	@see getProjectionLinearTolerance() PxJoint::setConstraintFlags() PxConstraintFlag::ePROJECTION
-	*/
-	virtual void				setProjectionLinearTolerance(PxReal tolerance)	= 0;
+        Sometimes it is not possible to project (for example when the joints form a cycle).
 
-	/**
-	\brief Get the linear tolerance threshold for projection.
+        <b>Range:</b> [0, PX_MAX_F32)<br>
+        <b>Default:</b> 1e10f
 
-	\return the linear tolerance threshold
+        \param[in] tolerance the linear tolerance threshold
 
-	@see setProjectionLinearTolerance()
-	*/
-	virtual PxReal				getProjectionLinearTolerance()	const	= 0;
+        @see getProjectionLinearTolerance() PxJoint::setConstraintFlags() PxConstraintFlag::ePROJECTION
+        */
+        virtual void				setProjectionLinearTolerance(PxReal tolerance) = 0;
 
-	/**
-	\brief Returns string name of PxSphericalJoint, used for serialization
-	*/
-	virtual	const char*			getConcreteTypeName() const { return "PxSphericalJoint"; }
+        /**
+        \brief Get the linear tolerance threshold for projection.
 
-protected:
+        \return the linear tolerance threshold
 
-	//serialization
+        @see setProjectionLinearTolerance()
+        */
+        virtual PxReal				getProjectionLinearTolerance()	const = 0;
 
-	/**
-	\brief Constructor
-	*/
-	PX_INLINE					PxSphericalJoint(PxType concreteType, PxBaseFlags baseFlags) : PxJoint(concreteType, baseFlags) {}
+        /**
+        \brief Returns string name of PxSphericalJoint, used for serialization
+        */
+        virtual	const char* getConcreteTypeName() const { return "PxSphericalJoint"; }
 
-	/**
-	\brief Deserialization constructor
-	*/
-	PX_INLINE					PxSphericalJoint(PxBaseFlags baseFlags) : PxJoint(baseFlags)	{}
+    protected:
 
-	/**
-	\brief Returns whether a given type name matches with the type of this instance
-	*/
-	virtual	bool				isKindOf(const char* name) const { return !::strcmp("PxSphericalJoint", name) || PxJoint::isKindOf(name); }
+        //serialization
 
-	//~serialization
-};
+        /**
+        \brief Constructor
+        */
+        PX_INLINE					PxSphericalJoint(PxType concreteType, PxBaseFlags baseFlags) : PxJoint(concreteType, baseFlags) {}
+
+        /**
+        \brief Deserialization constructor
+        */
+        PX_INLINE					PxSphericalJoint(PxBaseFlags baseFlags) : PxJoint(baseFlags) {}
+
+        /**
+        \brief Returns whether a given type name matches with the type of this instance
+        */
+        virtual	bool				isKindOf(const char* name) const { return !::strcmp("PxSphericalJoint", name) || PxJoint::isKindOf(name); }
+
+        //~serialization
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

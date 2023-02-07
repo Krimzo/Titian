@@ -39,65 +39,63 @@
 #include "foundation/PxFoundationConfig.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief Foundation SDK singleton class.
+    /**
+    \brief Foundation SDK singleton class.
 
-You need to have an instance of this class to instance the higher level SDKs.
-*/
-class PX_FOUNDATION_API PxFoundation
-{
-  public:
-	/**
-	\brief Destroys the instance it is called on.
+    You need to have an instance of this class to instance the higher level SDKs.
+    */
+    class PX_FOUNDATION_API PxFoundation
+    {
+    public:
+        /**
+        \brief Destroys the instance it is called on.
 
-	The operation will fail, if there are still modules referencing the foundation object. Release all dependent modules
-	prior
-	to calling this method.
+        The operation will fail, if there are still modules referencing the foundation object. Release all dependent modules
+        prior
+        to calling this method.
 
-	@see PxCreateFoundation()
-	*/
-	virtual void release() = 0;
+        @see PxCreateFoundation()
+        */
+        virtual void release() = 0;
 
-	/**
-	retrieves error callback
-	*/
-	virtual PxErrorCallback& getErrorCallback() = 0;
+        /**
+        retrieves error callback
+        */
+        virtual PxErrorCallback& getErrorCallback() = 0;
 
-	/**
-	Sets mask of errors to report.
-	*/
-	virtual void setErrorLevel(PxErrorCode::Enum mask = PxErrorCode::eMASK_ALL) = 0;
+        /**
+        Sets mask of errors to report.
+        */
+        virtual void setErrorLevel(PxErrorCode::Enum mask = PxErrorCode::eMASK_ALL) = 0;
 
-	/**
-	Retrieves mask of errors to be reported.
-	*/
-	virtual PxErrorCode::Enum getErrorLevel() const = 0;
+        /**
+        Retrieves mask of errors to be reported.
+        */
+        virtual PxErrorCode::Enum getErrorLevel() const = 0;
 
-	/**
-	Retrieves the allocator this object was created with.
-	*/
-	virtual PxAllocatorCallback& getAllocatorCallback() = 0;
+        /**
+        Retrieves the allocator this object was created with.
+        */
+        virtual PxAllocatorCallback& getAllocatorCallback() = 0;
 
-	/**
-	Retrieves if allocation names are being passed to allocator callback.
-	*/
-	virtual bool getReportAllocationNames() const = 0;
+        /**
+        Retrieves if allocation names are being passed to allocator callback.
+        */
+        virtual bool getReportAllocationNames() const = 0;
 
-	/**
-	Set if allocation names are being passed to allocator callback.
-	\details Enabled by default in debug and checked build, disabled by default in profile and release build.
-	*/
-	virtual void setReportAllocationNames(bool value) = 0;
+        /**
+        Set if allocation names are being passed to allocator callback.
+        \details Enabled by default in debug and checked build, disabled by default in profile and release build.
+        */
+        virtual void setReportAllocationNames(bool value) = 0;
 
-  protected:
-	virtual ~PxFoundation()
-	{
-	}
-};
+    protected:
+        virtual ~PxFoundation()
+        {}
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx
@@ -140,9 +138,8 @@ PX_C_EXPORT PX_FOUNDATION_API physx::PxFoundation& PX_CALL_CONV PxGetFoundation(
 #endif // PX_LINUX
 #endif // PX_CLANG
 
-namespace physx
-{
-class PxProfilerCallback;
+namespace physx {
+    class PxProfilerCallback;
 }
 
 /**

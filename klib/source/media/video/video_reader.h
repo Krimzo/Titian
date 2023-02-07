@@ -24,7 +24,7 @@ namespace kl {
 
         video_reader(const video_reader&) = delete;
         video_reader(const video_reader&&) = delete;
-        
+
         void operator=(const video_reader&) = delete;
         void operator=(const video_reader&&) = delete;
 
@@ -33,7 +33,7 @@ namespace kl {
         [[nodiscard]] int64_t duration_100ns() const;
 
         [[nodiscard]] float duration_seconds() const;
-        
+
         [[nodiscard]] int2 frame_size() const;
 
         [[nodiscard]] int frame_count() const;

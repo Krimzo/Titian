@@ -39,113 +39,111 @@
 #include "PxRigidActor.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief utility functions for use with PxRigidActor and subclasses
+    /**
+    \brief utility functions for use with PxRigidActor and subclasses
 
-@see PxRigidActor PxRigidStatic PxRigidBody PxRigidDynamic PxArticulationLink
-*/
+    @see PxRigidActor PxRigidStatic PxRigidBody PxRigidDynamic PxArticulationLink
+    */
 
-class PxRigidActorExt
-{
-public:
+    class PxRigidActorExt
+    {
+    public:
 
-	/**
-	\brief Creates a new shape with default properties and a list of materials and adds it to the list of shapes of this actor.
-	
-	This is equivalent to the following
+        /**
+        \brief Creates a new shape with default properties and a list of materials and adds it to the list of shapes of this actor.
 
-	PxShape* shape(...) = PxGetPhysics().createShape(...);	// reference count is 1
-	actor->attachShape(shape);								// increments reference count
-	shape->release();										// releases user reference, leaving reference count at 1
+        This is equivalent to the following
 
-	As a consequence, detachShape() will result in the release of the last reference, and the shape will be deleted.
+        PxShape* shape(...) = PxGetPhysics().createShape(...);	// reference count is 1
+        actor->attachShape(shape);								// increments reference count
+        shape->release();										// releases user reference, leaving reference count at 1
 
-	\note The default shape flags to be set are: eVISUALIZATION, eSIMULATION_SHAPE, eSCENE_QUERY_SHAPE (see #PxShapeFlag).
-	Triangle mesh, heightfield or plane geometry shapes configured as eSIMULATION_SHAPE are not supported for 
-	non-kinematic PxRigidDynamic instances.
+        As a consequence, detachShape() will result in the release of the last reference, and the shape will be deleted.
 
-	\note Creating compounds with a very large number of shapes may adversely affect performance and stability.
+        \note The default shape flags to be set are: eVISUALIZATION, eSIMULATION_SHAPE, eSCENE_QUERY_SHAPE (see #PxShapeFlag).
+        Triangle mesh, heightfield or plane geometry shapes configured as eSIMULATION_SHAPE are not supported for
+        non-kinematic PxRigidDynamic instances.
 
-	<b>Sleeping:</b> Does <b>NOT</b> wake the actor up automatically.
+        \note Creating compounds with a very large number of shapes may adversely affect performance and stability.
 
-	\param[in] actor the actor to which to attach the shape
-	\param[in] geometry	the geometry of the shape
-	\param[in] materials a pointer to an array of material pointers
-	\param[in] materialCount the count of materials
-	\param[in] shapeFlags optional PxShapeFlags
+        <b>Sleeping:</b> Does <b>NOT</b> wake the actor up automatically.
 
-	\return The newly created shape.
+        \param[in] actor the actor to which to attach the shape
+        \param[in] geometry	the geometry of the shape
+        \param[in] materials a pointer to an array of material pointers
+        \param[in] materialCount the count of materials
+        \param[in] shapeFlags optional PxShapeFlags
 
-	@see PxShape PxShape::release(), PxPhysics::createShape(), PxRigidActor::attachShape()
-	*/
+        \return The newly created shape.
 
-	static PxShape* createExclusiveShape(PxRigidActor& actor, const PxGeometry& geometry, PxMaterial*const* materials, PxU16 materialCount, 
-								         PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE)
-	{
-		PxShape* shape = PxGetPhysics().createShape(geometry, materials, materialCount, true, shapeFlags);
-		if(shape)
-		{
-			bool status = actor.attachShape(*shape);	// attach can fail, if e.g. we try and attach a trimesh simulation shape to a dynamic actor
-			shape->release();		// if attach fails, we hold the only counted reference, and so this cleans up properly
-			if(!status)
-				shape = NULL;
-		}
-		return shape;
-	}
-	
-	/**
-	\brief Creates a new shape with default properties and a single material adds it to the list of shapes of this actor.
+        @see PxShape PxShape::release(), PxPhysics::createShape(), PxRigidActor::attachShape()
+        */
 
-	This is equivalent to the following
+        static PxShape* createExclusiveShape(PxRigidActor& actor, const PxGeometry& geometry, PxMaterial* const* materials, PxU16 materialCount,
+            PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE)
+        {
+            PxShape* shape = PxGetPhysics().createShape(geometry, materials, materialCount, true, shapeFlags);
+            if (shape) {
+                bool status = actor.attachShape(*shape);	// attach can fail, if e.g. we try and attach a trimesh simulation shape to a dynamic actor
+                shape->release();		// if attach fails, we hold the only counted reference, and so this cleans up properly
+                if (!status)
+                    shape = NULL;
+            }
+            return shape;
+        }
 
-	PxShape* shape(...) = PxGetPhysics().createShape(...);	// reference count is 1
-	actor->attachShape(shape);								// increments reference count
-	shape->release();										// releases user reference, leaving reference count at 1
+        /**
+        \brief Creates a new shape with default properties and a single material adds it to the list of shapes of this actor.
 
-	As a consequence, detachShape() will result in the release of the last reference, and the shape will be deleted.
+        This is equivalent to the following
 
-	\note The default shape flags to be set are: eVISUALIZATION, eSIMULATION_SHAPE, eSCENE_QUERY_SHAPE (see #PxShapeFlag).
-	Triangle mesh, heightfield or plane geometry shapes configured as eSIMULATION_SHAPE are not supported for 
-	non-kinematic PxRigidDynamic instances.
+        PxShape* shape(...) = PxGetPhysics().createShape(...);	// reference count is 1
+        actor->attachShape(shape);								// increments reference count
+        shape->release();										// releases user reference, leaving reference count at 1
 
-	\note Creating compounds with a very large number of shapes may adversely affect performance and stability.
+        As a consequence, detachShape() will result in the release of the last reference, and the shape will be deleted.
 
-	<b>Sleeping:</b> Does <b>NOT</b> wake the actor up automatically.
+        \note The default shape flags to be set are: eVISUALIZATION, eSIMULATION_SHAPE, eSCENE_QUERY_SHAPE (see #PxShapeFlag).
+        Triangle mesh, heightfield or plane geometry shapes configured as eSIMULATION_SHAPE are not supported for
+        non-kinematic PxRigidDynamic instances.
 
-	\param[in] actor the actor to which to attach the shape
-	\param[in] geometry	the geometry of the shape
-	\param[in] material	the material for the shape
-	\param[in] shapeFlags optional PxShapeFlags
+        \note Creating compounds with a very large number of shapes may adversely affect performance and stability.
 
-	\return The newly created shape.
+        <b>Sleeping:</b> Does <b>NOT</b> wake the actor up automatically.
 
-	@see PxShape PxShape::release(), PxPhysics::createShape(), PxRigidActor::attachShape()
-	*/
+        \param[in] actor the actor to which to attach the shape
+        \param[in] geometry	the geometry of the shape
+        \param[in] material	the material for the shape
+        \param[in] shapeFlags optional PxShapeFlags
 
-	static PX_FORCE_INLINE	PxShape*	createExclusiveShape(PxRigidActor& actor, const PxGeometry& geometry, const PxMaterial& material, 
-													         PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE)
-	{
-		PxMaterial* materialPtr = const_cast<PxMaterial*>(&material);
-		return createExclusiveShape(actor, geometry, &materialPtr, 1, shapeFlags);
-	}
+        \return The newly created shape.
+
+        @see PxShape PxShape::release(), PxPhysics::createShape(), PxRigidActor::attachShape()
+        */
+
+        static PX_FORCE_INLINE	PxShape* createExclusiveShape(PxRigidActor& actor, const PxGeometry& geometry, const PxMaterial& material,
+            PxShapeFlags shapeFlags = PxShapeFlag::eVISUALIZATION | PxShapeFlag::eSCENE_QUERY_SHAPE | PxShapeFlag::eSIMULATION_SHAPE)
+        {
+            PxMaterial* materialPtr = const_cast<PxMaterial*>(&material);
+            return createExclusiveShape(actor, geometry, &materialPtr, 1, shapeFlags);
+        }
 
 
-	/**
-	\brief Gets a list of bounds based on shapes in rigid actor. This list can be used to cook/create
-	bounding volume hierarchy though PxCooking API.
+        /**
+        \brief Gets a list of bounds based on shapes in rigid actor. This list can be used to cook/create
+        bounding volume hierarchy though PxCooking API.
 
-	\param[in] actor The actor from which the bounds list is retrieved.
-	\param[out] numBounds Number of bounds in returned list.
+        \param[in] actor The actor from which the bounds list is retrieved.
+        \param[out] numBounds Number of bounds in returned list.
 
-	@see PxShape PxBVHStructure PxCooking::createBVHStructure PxCooking::cookBVHStructure
-	*/
-	static PxBounds3*					getRigidActorShapeLocalBoundsList(const PxRigidActor& actor, PxU32& numBounds);
+        @see PxShape PxBVHStructure PxCooking::createBVHStructure PxCooking::cookBVHStructure
+        */
+        static PxBounds3* getRigidActorShapeLocalBoundsList(const PxRigidActor& actor, PxU32& numBounds);
 
-};
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

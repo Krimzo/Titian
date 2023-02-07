@@ -70,13 +70,13 @@ Compiler defines, see http://sourceforge.net/p/predef/wiki/Compilers/
 #endif
 #elif defined(__clang__)
 #define PX_CLANG 1
-	#if defined (__clang_major__) 
-		#define PX_CLANG_MAJOR __clang_major__
-	#elif defined (_clang_major)
-		#define PX_CLANG_MAJOR _clang_major
-	#else
-		#define PX_CLANG_MAJOR 0
-	#endif	
+#if defined (__clang_major__) 
+#define PX_CLANG_MAJOR __clang_major__
+#elif defined (_clang_major)
+#define PX_CLANG_MAJOR _clang_major
+#else
+#define PX_CLANG_MAJOR 0
+#endif	
 #elif defined(__GNUC__) // note: __clang__ implies __GNUC__
 #define PX_GCC 1
 #else
@@ -464,8 +464,7 @@ General defines
 // preferred solution: omit the parameter's name from the declaration
 template <class T>
 PX_CUDA_CALLABLE PX_INLINE void PX_UNUSED(T const&)
-{
-}
+{}
 
 // Ensure that the application hasn't tweaked the pack value to less than 8, which would break
 // matching between the API headers and the binaries
@@ -475,20 +474,20 @@ PX_CUDA_CALLABLE PX_INLINE void PX_UNUSED(T const&)
 #if PX_PS4 || PX_APPLE_FAMILY || (PX_CLANG && !PX_ARM)
 struct PxPackValidation
 {
-	char _;
-	long a;
+    char _;
+    long a;
 };
 #elif PX_ANDROID || (PX_CLANG && PX_ARM)
 struct PxPackValidation
 {
-	char _;
-	double a;
+    char _;
+    double a;
 };
 #else
 struct PxPackValidation
 {
-	char _;
-	long long a;
+    char _;
+    long long a;
 };
 #endif
 // clang (as of version 3.9) cannot align doubles on 8 byte boundary  when compiling for Intel 32 bit target

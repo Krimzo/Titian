@@ -27,7 +27,7 @@ kl::window::window(const int2& size, const std::string& name)
     RECT size_buffer = { 0, 0, LONG(size.x), LONG(size.y) };
     AdjustWindowRect(&size_buffer, window_style_, false);
 
-    const int2 new_size = {size_buffer.right - size_buffer.left, size_buffer.bottom - size_buffer.top};
+    const int2 new_size = { size_buffer.right - size_buffer.left, size_buffer.bottom - size_buffer.top };
     const int2 new_position = int2(screen::size / 2 - new_size / 2);
 
     window_ = CreateWindowExA(NULL, name.c_str(), name.c_str(), window_style_, new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, instance_, nullptr);
@@ -151,7 +151,7 @@ kl::int2 kl::window::position(const bool client) const
     else {
         GetWindowRect(window_, &rect);
     }
-    return {rect.left, rect.top};
+    return { rect.left, rect.top };
 }
 
 void kl::window::set_position(const int2& position) const
@@ -191,7 +191,7 @@ kl::int2 kl::window::size(const bool client) const
     else {
         GetWindowRect(window_, &rect);
     }
-    return {rect.right - rect.left, rect.bottom - rect.top};
+    return { rect.right - rect.left, rect.bottom - rect.top };
 }
 
 void kl::window::set_size(const int2& size, const bool client) const
@@ -203,7 +203,7 @@ void kl::window::set_size(const int2& size, const bool client) const
         if (client) {
             RECT rect = { LONG(position.x), LONG(position.y), LONG(position.x + size.x), LONG(position.y + size.y) };
             AdjustWindowRect(&rect, window_style_, false);
-            new_size = {rect.right - rect.left, rect.bottom - rect.top};
+            new_size = { rect.right - rect.left, rect.bottom - rect.top };
         }
 
         MoveWindow(window_, position.x, position.y, new_size.x, new_size.y, false);

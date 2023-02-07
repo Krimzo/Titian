@@ -62,9 +62,9 @@ void kl::mouse::update_scroll(const HWND access_check, const int delta_scroll)
 kl::int2 kl::mouse::position(const bool client) const
 {
     if (!client) {
-        POINT client_position = {position_.x, position_.y};
+        POINT client_position = { position_.x, position_.y };
         ClientToScreen(window_, &client_position);
-        return {client_position.x, client_position.y};
+        return { client_position.x, client_position.y };
     }
     return position_;
 }
@@ -79,7 +79,7 @@ void kl::mouse::update_position(const HWND access_check, const int2& position)
 void kl::mouse::set_position(const int2& position) const
 {
     if (window_) {
-        POINT client_position = {position.x, position.y};
+        POINT client_position = { position.x, position.y };
         ClientToScreen(window_, &client_position);
         SetCursorPos(client_position.x, client_position.y);
     }
@@ -90,12 +90,12 @@ kl::float2 kl::mouse::get_normalized_position() const
     if (window_) {
         RECT client_area = {};
         GetClientRect(window_, &client_area);
-        const int2 frame_size = {client_area.right - client_area.left, client_area.bottom - client_area.top};
+        const int2 frame_size = { client_area.right - client_area.left, client_area.bottom - client_area.top };
 
         float2 result = { float(position_.x) / frame_size.x, float(frame_size.y - position_.y) / frame_size.y };
         result *= 2.0f;
         result -= float2::splash(1);
-        
+
         return result;
     }
     return {};

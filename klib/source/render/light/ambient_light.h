@@ -4,13 +4,13 @@
 
 
 namespace kl {
-	class ambient_light
-	{
-	public:
-		float3 color = float3::splash(1.0f);
-		float intensity = 0.1f;
+    class ambient_light
+    {
+    public:
+        float3 color = float3::splash(1.0f);
+        float intensity = 0.1f;
 
-		ambient_light();
-		~ambient_light();
-	};
+        ambient_light();
+        ~ambient_light();
+    };
 }

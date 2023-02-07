@@ -39,45 +39,43 @@
 #include "geometry/PxGeometry.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-	/**
-	\brief A structure to cache contact information produced by LL contact gen functions.
-	*/
-	struct PxCache
-	{
-		PxU8*		mCachedData;	//!< Cached data pointer. Allocated via PxCacheAllocator
-		PxU16		mCachedSize;	//!< The total size of the cached data 
-		PxU8		mPairData;		//!< Pair data information used and cached internally by some contact gen functions to accelerate performance.
-		PxU8		mManifoldFlags;	//!< Manifold flags used to identify the format the cached data is stored in.
+    /**
+    \brief A structure to cache contact information produced by LL contact gen functions.
+    */
+    struct PxCache
+    {
+        PxU8* mCachedData;	//!< Cached data pointer. Allocated via PxCacheAllocator
+        PxU16		mCachedSize;	//!< The total size of the cached data 
+        PxU8		mPairData;		//!< Pair data information used and cached internally by some contact gen functions to accelerate performance.
+        PxU8		mManifoldFlags;	//!< Manifold flags used to identify the format the cached data is stored in.
 
-		PX_FORCE_INLINE	PxCache() : mCachedData(NULL), mCachedSize(0), mPairData(0), mManifoldFlags(0)
-		{
-		}
+        PX_FORCE_INLINE	PxCache() : mCachedData(NULL), mCachedSize(0), mPairData(0), mManifoldFlags(0)
+        {}
 
-		PX_FORCE_INLINE void reset() { mCachedData = NULL; mCachedSize = 0; mPairData = 0; mManifoldFlags = 0;}
-	};
+        PX_FORCE_INLINE void reset() { mCachedData = NULL; mCachedSize = 0; mPairData = 0; mManifoldFlags = 0; }
+    };
 
 
-	/**
-	A callback class to allocate memory to cache information used in contact generation.
-	*/
-	class PxCacheAllocator
-	{
-	public:
-		/**
-		\brief Allocates cache data for contact generation. This data is stored inside PxCache objects. The application can retain and provide this information for future contact generation passes
-		for a given pair to improve contact generation performance. It is the application's responsibility to release this memory appropriately. If the memory is released, the application must ensure that
-		this memory is no longer referenced by any PxCache objects passed to PxGenerateContacts.
-		\param byteSize The size of the allocation in bytes
-		\return the newly-allocated memory. The returned address must be 16-byte aligned.
-		*/
-		virtual PxU8* allocateCacheData(const PxU32 byteSize) = 0;
+    /**
+    A callback class to allocate memory to cache information used in contact generation.
+    */
+    class PxCacheAllocator
+    {
+    public:
+        /**
+        \brief Allocates cache data for contact generation. This data is stored inside PxCache objects. The application can retain and provide this information for future contact generation passes
+        for a given pair to improve contact generation performance. It is the application's responsibility to release this memory appropriately. If the memory is released, the application must ensure that
+        this memory is no longer referenced by any PxCache objects passed to PxGenerateContacts.
+        \param byteSize The size of the allocation in bytes
+        \return the newly-allocated memory. The returned address must be 16-byte aligned.
+        */
+        virtual PxU8* allocateCacheData(const PxU32 byteSize) = 0;
 
-		virtual ~PxCacheAllocator() {}
-	};
+        virtual ~PxCacheAllocator() {}
+    };
 
 #if !PX_DOXYGEN
 }

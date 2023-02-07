@@ -32,171 +32,170 @@
 #include "foundation/PxSimpleTypes.h"
 #include "foundation/PxErrorCallback.h"
 
-namespace physx
-{
-PX_PUSH_PACK_DEFAULT
+namespace physx {
+    PX_PUSH_PACK_DEFAULT
 
-class PxBaseTask;
-class PxTask;
-class PxLightCpuTask;
-typedef unsigned int PxTaskID;
+        class PxBaseTask;
+    class PxTask;
+    class PxLightCpuTask;
+    typedef unsigned int PxTaskID;
 
-/**
-\brief Identifies the type of each heavyweight PxTask object
+    /**
+    \brief Identifies the type of each heavyweight PxTask object
 
-\note This enum type is only used by PxTask and GpuTask objects, LightCpuTasks do not use this enum.
+    \note This enum type is only used by PxTask and GpuTask objects, LightCpuTasks do not use this enum.
 
-@see PxTask
-@see PxLightCpuTask
-*/
-struct PxTaskType
-{
-	/**
-	 * \brief Identifies the type of each heavyweight PxTask object
-	 */
-	enum Enum
-	{
-		TT_CPU,				//!< PxTask will be run on the CPU
-		TT_NOT_PRESENT,		//!< Return code when attempting to find a task that does not exist
-		TT_COMPLETED		//!< PxTask execution has been completed
-	};
-};
+    @see PxTask
+    @see PxLightCpuTask
+    */
+    struct PxTaskType
+    {
+        /**
+         * \brief Identifies the type of each heavyweight PxTask object
+         */
+        enum Enum
+        {
+            TT_CPU,				//!< PxTask will be run on the CPU
+            TT_NOT_PRESENT,		//!< Return code when attempting to find a task that does not exist
+            TT_COMPLETED		//!< PxTask execution has been completed
+        };
+    };
 
-class PxCpuDispatcher;
+    class PxCpuDispatcher;
 
-/** 
- \brief The PxTaskManager interface
- 
- A PxTaskManager instance holds references to user-provided dispatcher objects, when tasks are
- submitted the PxTaskManager routes them to the appropriate dispatcher and handles task profiling if enabled. 
- Users should not implement the PxTaskManager interface, the SDK creates its own concrete PxTaskManager object
- per-scene which users can configure by passing dispatcher objects into the PxSceneDesc.
+    /**
+     \brief The PxTaskManager interface
 
- @see CpuDispatcher
- 
-*/
-class PxTaskManager
-{
-public:
+     A PxTaskManager instance holds references to user-provided dispatcher objects, when tasks are
+     submitted the PxTaskManager routes them to the appropriate dispatcher and handles task profiling if enabled.
+     Users should not implement the PxTaskManager interface, the SDK creates its own concrete PxTaskManager object
+     per-scene which users can configure by passing dispatcher objects into the PxSceneDesc.
 
-	/**
-	\brief Set the user-provided dispatcher object for CPU tasks
+     @see CpuDispatcher
 
-	\param[in] ref The dispatcher object.
+    */
+    class PxTaskManager
+    {
+    public:
 
-	@see CpuDispatcher
-	*/
-	virtual void     setCpuDispatcher(PxCpuDispatcher& ref) = 0;
+        /**
+        \brief Set the user-provided dispatcher object for CPU tasks
 
-	/**
-	\brief Get the user-provided dispatcher object for CPU tasks
+        \param[in] ref The dispatcher object.
 
-	\return The CPU dispatcher object.
+        @see CpuDispatcher
+        */
+        virtual void     setCpuDispatcher(PxCpuDispatcher& ref) = 0;
 
-	@see CpuDispatcher
-	*/
-	virtual PxCpuDispatcher*			getCpuDispatcher() const = 0;
+        /**
+        \brief Get the user-provided dispatcher object for CPU tasks
 
-	/**
-	\brief Reset any dependencies between Tasks
+        \return The CPU dispatcher object.
 
-	\note Will be called at the start of every frame before tasks are submitted.
+        @see CpuDispatcher
+        */
+        virtual PxCpuDispatcher* getCpuDispatcher() const = 0;
 
-	@see PxTask
-	*/
-	virtual void	resetDependencies() = 0;
-	
-	/**
-	\brief Called by the owning scene to start the task graph.
+        /**
+        \brief Reset any dependencies between Tasks
 
-	\note All tasks with with ref count of 1 will be dispatched.
+        \note Will be called at the start of every frame before tasks are submitted.
 
-	@see PxTask
-	*/
-	virtual void	startSimulation() = 0;
+        @see PxTask
+        */
+        virtual void	resetDependencies() = 0;
 
-	/**
-	\brief Called by the owning scene at the end of a simulation step.
-	*/
-	virtual void	stopSimulation() = 0;
+        /**
+        \brief Called by the owning scene to start the task graph.
 
-	/**
-	\brief Called by the worker threads to inform the PxTaskManager that a task has completed processing
+        \note All tasks with with ref count of 1 will be dispatched.
 
-	\param[in] task The task which has been completed
-	*/
-	virtual void	taskCompleted(PxTask& task) = 0;
+        @see PxTask
+        */
+        virtual void	startSimulation() = 0;
 
-	/**
-	\brief Retrieve a task by name
+        /**
+        \brief Called by the owning scene at the end of a simulation step.
+        */
+        virtual void	stopSimulation() = 0;
 
-	\param[in] name The unique name of a task
-	\return The ID of the task with that name, or TT_NOT_PRESENT if not found
-	*/
-	virtual PxTaskID  getNamedTask(const char* name) = 0;
+        /**
+        \brief Called by the worker threads to inform the PxTaskManager that a task has completed processing
 
-	/**
-	\brief Submit a task with a unique name.
+        \param[in] task The task which has been completed
+        */
+        virtual void	taskCompleted(PxTask& task) = 0;
 
-	\param[in] task The task to be executed
-	\param[in] name The unique name of a task
-	\param[in] type The type of the task (default TT_CPU)
-	\return The ID of the task with that name, or TT_NOT_PRESENT if not found
-	*/
-	virtual PxTaskID  submitNamedTask(PxTask* task, const char* name, PxTaskType::Enum type = PxTaskType::TT_CPU) = 0;
+        /**
+        \brief Retrieve a task by name
 
-	/**
-	\brief Submit an unnamed task.
+        \param[in] name The unique name of a task
+        \return The ID of the task with that name, or TT_NOT_PRESENT if not found
+        */
+        virtual PxTaskID  getNamedTask(const char* name) = 0;
 
-	\param[in] task The task to be executed
-	\param[in] type The type of the task (default TT_CPU)
+        /**
+        \brief Submit a task with a unique name.
 
-	\return The ID of the task with that name, or TT_NOT_PRESENT if not found
-	*/
-	virtual PxTaskID  submitUnnamedTask(PxTask& task, PxTaskType::Enum type = PxTaskType::TT_CPU) = 0;
+        \param[in] task The task to be executed
+        \param[in] name The unique name of a task
+        \param[in] type The type of the task (default TT_CPU)
+        \return The ID of the task with that name, or TT_NOT_PRESENT if not found
+        */
+        virtual PxTaskID  submitNamedTask(PxTask* task, const char* name, PxTaskType::Enum type = PxTaskType::TT_CPU) = 0;
 
-	/**
-	\brief Retrieve a task given a task ID
+        /**
+        \brief Submit an unnamed task.
 
-	\param[in] id The ID of the task to return, a valid ID must be passed or results are undefined
+        \param[in] task The task to be executed
+        \param[in] type The type of the task (default TT_CPU)
 
-	\return The task associated with the ID
-	*/
-	virtual PxTask*   getTaskFromID(PxTaskID id) = 0;
+        \return The ID of the task with that name, or TT_NOT_PRESENT if not found
+        */
+        virtual PxTaskID  submitUnnamedTask(PxTask& task, PxTaskType::Enum type = PxTaskType::TT_CPU) = 0;
 
-	/**
-	\brief Release the PxTaskManager object, referenced dispatchers will not be released
-	*/
-	virtual void        release() = 0;
+        /**
+        \brief Retrieve a task given a task ID
 
-	/**
-	\brief Construct a new PxTaskManager instance with the given [optional] dispatchers
-	*/
-	static PxTaskManager* createTaskManager(PxErrorCallback& errorCallback, PxCpuDispatcher* = 0);
-	
-protected:
-	virtual ~PxTaskManager() {}
+        \param[in] id The ID of the task to return, a valid ID must be passed or results are undefined
 
-	/*! \cond PRIVATE */
+        \return The task associated with the ID
+        */
+        virtual PxTask* getTaskFromID(PxTaskID id) = 0;
 
-	virtual void finishBefore(PxTask& task, PxTaskID taskID) = 0;
-	virtual void startAfter(PxTask& task, PxTaskID taskID) = 0;
+        /**
+        \brief Release the PxTaskManager object, referenced dispatchers will not be released
+        */
+        virtual void        release() = 0;
 
-	virtual void addReference(PxTaskID taskID) = 0;
-	virtual void decrReference(PxTaskID taskID) = 0;
-	virtual int32_t getReference(PxTaskID taskID) const = 0;
+        /**
+        \brief Construct a new PxTaskManager instance with the given [optional] dispatchers
+        */
+        static PxTaskManager* createTaskManager(PxErrorCallback& errorCallback, PxCpuDispatcher* = 0);
 
-	virtual void decrReference(PxLightCpuTask&) = 0;
-	virtual void addReference(PxLightCpuTask&) = 0;
+    protected:
+        virtual ~PxTaskManager() {}
 
-	/*! \endcond */
+        /*! \cond PRIVATE */
 
-	friend class PxBaseTask;
-	friend class PxTask;
-	friend class PxLightCpuTask;
-};
+        virtual void finishBefore(PxTask& task, PxTaskID taskID) = 0;
+        virtual void startAfter(PxTask& task, PxTaskID taskID) = 0;
 
-PX_POP_PACK
+        virtual void addReference(PxTaskID taskID) = 0;
+        virtual void decrReference(PxTaskID taskID) = 0;
+        virtual int32_t getReference(PxTaskID taskID) const = 0;
+
+        virtual void decrReference(PxLightCpuTask&) = 0;
+        virtual void addReference(PxLightCpuTask&) = 0;
+
+        /*! \endcond */
+
+        friend class PxBaseTask;
+        friend class PxTask;
+        friend class PxLightCpuTask;
+    };
+
+    PX_POP_PACK
 
 } // end physx namespace
 

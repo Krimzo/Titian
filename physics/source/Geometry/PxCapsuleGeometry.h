@@ -37,69 +37,68 @@
 #include "foundation/PxFoundationConfig.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief Class representing the geometry of a capsule.
+    /**
+    \brief Class representing the geometry of a capsule.
 
-Capsules are shaped as the union of a cylinder of length 2 * halfHeight and with the 
-given radius centered at the origin and extending along the x axis, and two hemispherical ends.
-\note The scaling of the capsule is expected to be baked into these values, there is no additional scaling parameter.
+    Capsules are shaped as the union of a cylinder of length 2 * halfHeight and with the
+    given radius centered at the origin and extending along the x axis, and two hemispherical ends.
+    \note The scaling of the capsule is expected to be baked into these values, there is no additional scaling parameter.
 
-The function PxTransformFromSegment is a helper for generating an appropriate transform for the capsule from the capsule's interior line segment.
+    The function PxTransformFromSegment is a helper for generating an appropriate transform for the capsule from the capsule's interior line segment.
 
-@see PxTransformFromSegment
-*/
-class PxCapsuleGeometry : public PxGeometry      
-{
-public:
-	/**
-	\brief Default constructor, initializes to a capsule with zero height and radius.
-	*/
-	PX_INLINE PxCapsuleGeometry() : PxGeometry(PxGeometryType::eCAPSULE), radius(0), halfHeight(0)		{}
+    @see PxTransformFromSegment
+    */
+    class PxCapsuleGeometry : public PxGeometry
+    {
+    public:
+        /**
+        \brief Default constructor, initializes to a capsule with zero height and radius.
+        */
+        PX_INLINE PxCapsuleGeometry() : PxGeometry(PxGeometryType::eCAPSULE), radius(0), halfHeight(0) {}
 
-	/**
-	\brief Constructor, initializes to a capsule with passed radius and half height.
-	*/
-	PX_INLINE PxCapsuleGeometry(PxReal radius_, PxReal halfHeight_) :	PxGeometry(PxGeometryType::eCAPSULE), radius(radius_), halfHeight(halfHeight_)	{}
+        /**
+        \brief Constructor, initializes to a capsule with passed radius and half height.
+        */
+        PX_INLINE PxCapsuleGeometry(PxReal radius_, PxReal halfHeight_) : PxGeometry(PxGeometryType::eCAPSULE), radius(radius_), halfHeight(halfHeight_) {}
 
-	/**
-	\brief Returns true if the geometry is valid.
+        /**
+        \brief Returns true if the geometry is valid.
 
-	\return True if the current settings are valid.
+        \return True if the current settings are valid.
 
-	\note A valid capsule has radius > 0, halfHeight > 0.
-	It is illegal to call PxRigidActor::createShape and PxPhysics::createShape with a capsule that has zero radius or height.
+        \note A valid capsule has radius > 0, halfHeight > 0.
+        It is illegal to call PxRigidActor::createShape and PxPhysics::createShape with a capsule that has zero radius or height.
 
-	@see PxRigidActor::createShape, PxPhysics::createShape
-	*/
-	PX_INLINE bool isValid() const;
+        @see PxRigidActor::createShape, PxPhysics::createShape
+        */
+        PX_INLINE bool isValid() const;
 
-public:
-	/**
-	\brief The radius of the capsule.
-	*/
-	PxReal radius;
+    public:
+        /**
+        \brief The radius of the capsule.
+        */
+        PxReal radius;
 
-	/**
-	\brief half of the capsule's height, measured between the centers of the hemispherical ends.
-	*/
-	PxReal halfHeight;
-};
+        /**
+        \brief half of the capsule's height, measured between the centers of the hemispherical ends.
+        */
+        PxReal halfHeight;
+    };
 
-PX_INLINE bool PxCapsuleGeometry::isValid() const
-{
-	if (mType != PxGeometryType::eCAPSULE)
-		return false;
-	if (!PxIsFinite(radius) || !PxIsFinite(halfHeight))
-		return false;
-	if (radius <= 0.0f || halfHeight <= 0.0f)
-		return false;
+    PX_INLINE bool PxCapsuleGeometry::isValid() const
+    {
+        if (mType != PxGeometryType::eCAPSULE)
+            return false;
+        if (!PxIsFinite(radius) || !PxIsFinite(halfHeight))
+            return false;
+        if (radius <= 0.0f || halfHeight <= 0.0f)
+            return false;
 
-	return true;
-}
+        return true;
+    }
 
 #if !PX_DOXYGEN
 } // namespace physx

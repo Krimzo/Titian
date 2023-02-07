@@ -40,65 +40,63 @@
 #include "foundation/PxBounds3.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
+    /**
 
-\brief Descriptor class for #PxBVHStructure.
+    \brief Descriptor class for #PxBVHStructure.
 
-@see PxBVHStructure
-*/
-class PxBVHStructureDesc
-{
-public:
-	PX_INLINE PxBVHStructureDesc();
+    @see PxBVHStructure
+    */
+    class PxBVHStructureDesc
+    {
+    public:
+        PX_INLINE PxBVHStructureDesc();
 
-	/**
-	\brief Pointer to first bounding box.
-	*/
-	PxBoundedData bounds;
+        /**
+        \brief Pointer to first bounding box.
+        */
+        PxBoundedData bounds;
 
-	/**
-	\brief	Initialize the BVH structure descriptor
-	*/
-	PX_INLINE void setToDefault();
+        /**
+        \brief	Initialize the BVH structure descriptor
+        */
+        PX_INLINE void setToDefault();
 
-	/**
-	\brief Returns true if the descriptor is valid.
-	\return true if the current settings are valid.
-	*/
-	PX_INLINE bool isValid() const;
-
-
-protected:	
-};
+        /**
+        \brief Returns true if the descriptor is valid.
+        \return true if the current settings are valid.
+        */
+        PX_INLINE bool isValid() const;
 
 
+    protected:
+    };
 
-PX_INLINE PxBVHStructureDesc::PxBVHStructureDesc()
-{
-}
 
-PX_INLINE void PxBVHStructureDesc::setToDefault()
-{
-	*this = PxBVHStructureDesc();
-}
 
-PX_INLINE bool PxBVHStructureDesc::isValid() const
-{
-	// Check BVH desc data
-	if(!bounds.data)
-		return false;
-	if(bounds.stride < sizeof(PxBounds3))	//should be at least one point's worth of data
-		return false;
+    PX_INLINE PxBVHStructureDesc::PxBVHStructureDesc()
+    {}
 
-	if(bounds.count == 0)
-		return false;
+    PX_INLINE void PxBVHStructureDesc::setToDefault()
+    {
+        *this = PxBVHStructureDesc();
+    }
 
-	return true;
-}
+    PX_INLINE bool PxBVHStructureDesc::isValid() const
+    {
+        // Check BVH desc data
+        if (!bounds.data)
+            return false;
+        if (bounds.stride < sizeof(PxBounds3))	//should be at least one point's worth of data
+            return false;
+
+        if (bounds.count == 0)
+            return false;
+
+        return true;
+    }
 
 #if !PX_DOXYGEN
 } // namespace physx

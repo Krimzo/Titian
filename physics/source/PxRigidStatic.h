@@ -38,36 +38,35 @@
 #include "PxRigidActor.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief PxRigidStatic represents a static rigid body simulation object in the physics SDK.
+    /**
+    \brief PxRigidStatic represents a static rigid body simulation object in the physics SDK.
 
-PxRigidStatic objects are static rigid physics entities. They shall be used to define solid objects which are fixed in the world.
+    PxRigidStatic objects are static rigid physics entities. They shall be used to define solid objects which are fixed in the world.
 
-<h3>Creation</h3>
-Instances of this class are created by calling #PxPhysics::createRigidStatic() and deleted with #release().
+    <h3>Creation</h3>
+    Instances of this class are created by calling #PxPhysics::createRigidStatic() and deleted with #release().
 
-<h3>Visualizations</h3>
-\li #PxVisualizationParameter::eACTOR_AXES
+    <h3>Visualizations</h3>
+    \li #PxVisualizationParameter::eACTOR_AXES
 
-@see PxRigidActor  PxPhysics.createRigidStatic()  release()
-*/
+    @see PxRigidActor  PxPhysics.createRigidStatic()  release()
+    */
 
-class PxRigidStatic : public PxRigidActor
-{
-public:
-	virtual		const char*		getConcreteTypeName() const { return "PxRigidStatic"; }
+    class PxRigidStatic : public PxRigidActor
+    {
+    public:
+        virtual		const char* getConcreteTypeName() const { return "PxRigidStatic"; }
 
-protected:
-	PX_INLINE					PxRigidStatic(PxType concreteType, PxBaseFlags baseFlags) : PxRigidActor(concreteType, baseFlags) {}
-	PX_INLINE					PxRigidStatic(PxBaseFlags baseFlags) : PxRigidActor(baseFlags) {}
-	virtual						~PxRigidStatic() {}
-	virtual		bool			isKindOf(const char* name)	const { return !::strcmp("PxRigidStatic", name) || PxRigidActor::isKindOf(name); }
+    protected:
+        PX_INLINE					PxRigidStatic(PxType concreteType, PxBaseFlags baseFlags) : PxRigidActor(concreteType, baseFlags) {}
+        PX_INLINE					PxRigidStatic(PxBaseFlags baseFlags) : PxRigidActor(baseFlags) {}
+        virtual						~PxRigidStatic() {}
+        virtual		bool			isKindOf(const char* name)	const { return !::strcmp("PxRigidStatic", name) || PxRigidActor::isKindOf(name); }
 
-};
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

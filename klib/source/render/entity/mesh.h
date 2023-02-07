@@ -8,6 +8,6 @@
 
 
 namespace kl {
-	using mesh = dx::buffer;
-	using mesh_data = std::vector<vertex>;
+    using mesh = dx::buffer;
+    using mesh_data = std::vector<vertex>;
 }

@@ -37,88 +37,87 @@
 #include "common/PxPhysXCommonConfig.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief an enumeration of concrete classes inheriting from PxBase
+    /**
+    \brief an enumeration of concrete classes inheriting from PxBase
 
-Enumeration space is reserved for future PhysX core types, PhysXExtensions, 
-PhysXVehicle and Custom application types.
+    Enumeration space is reserved for future PhysX core types, PhysXExtensions,
+    PhysXVehicle and Custom application types.
 
-@see PxBase, PxTypeInfo
-*/
+    @see PxBase, PxTypeInfo
+    */
 
-struct PxConcreteType
-{
-	enum Enum
-	{
-		eUNDEFINED,
+    struct PxConcreteType
+    {
+        enum Enum
+        {
+            eUNDEFINED,
 
-		eHEIGHTFIELD,
-		eCONVEX_MESH,
-		eTRIANGLE_MESH_BVH33,
-		eTRIANGLE_MESH_BVH34,
+            eHEIGHTFIELD,
+            eCONVEX_MESH,
+            eTRIANGLE_MESH_BVH33,
+            eTRIANGLE_MESH_BVH34,
 
-		eRIGID_DYNAMIC,
-		eRIGID_STATIC,
-		eSHAPE,
-		eMATERIAL,
-		eCONSTRAINT,
-		eAGGREGATE,
-		eARTICULATION,
-		eARTICULATION_REDUCED_COORDINATE,
-		eARTICULATION_LINK,
-		eARTICULATION_JOINT,
-		eARTICULATION_JOINT_REDUCED_COORDINATE,
-		ePRUNING_STRUCTURE,
-		eBVH_STRUCTURE,
-		
-		ePHYSX_CORE_COUNT,
-        eFIRST_PHYSX_EXTENSION = 256,
-		eFIRST_VEHICLE_EXTENSION = 512,
-        eFIRST_USER_EXTENSION = 1024
-	};
-};
+            eRIGID_DYNAMIC,
+            eRIGID_STATIC,
+            eSHAPE,
+            eMATERIAL,
+            eCONSTRAINT,
+            eAGGREGATE,
+            eARTICULATION,
+            eARTICULATION_REDUCED_COORDINATE,
+            eARTICULATION_LINK,
+            eARTICULATION_JOINT,
+            eARTICULATION_JOINT_REDUCED_COORDINATE,
+            ePRUNING_STRUCTURE,
+            eBVH_STRUCTURE,
 
-/** 
-\brief a structure containing per-type information for types inheriting from PxBase
+            ePHYSX_CORE_COUNT,
+            eFIRST_PHYSX_EXTENSION = 256,
+            eFIRST_VEHICLE_EXTENSION = 512,
+            eFIRST_USER_EXTENSION = 1024
+        };
+    };
 
-@see PxBase, PxConcreteType
-*/
+    /**
+    \brief a structure containing per-type information for types inheriting from PxBase
 
-template<typename T> struct PxTypeInfo {};
+    @see PxBase, PxConcreteType
+    */
+
+    template<typename T> struct PxTypeInfo {};
 
 #define PX_DEFINE_TYPEINFO(_name, _fastType) \
 	class _name; \
 	template <> struct PxTypeInfo<_name>	{	static const char* name() { return #_name;	}	enum { eFastTypeId = _fastType };	};
 
-/* the semantics of the fastType are as follows: an object A can be cast to a type B if B's fastType is defined, and A has the same fastType.
- * This implies that B has no concrete subclasses or superclasses.
- */
+    /* the semantics of the fastType are as follows: an object A can be cast to a type B if B's fastType is defined, and A has the same fastType.
+     * This implies that B has no concrete subclasses or superclasses.
+     */
 
-PX_DEFINE_TYPEINFO(PxBase,									PxConcreteType::eUNDEFINED)
-PX_DEFINE_TYPEINFO(PxMaterial,								PxConcreteType::eMATERIAL)
-PX_DEFINE_TYPEINFO(PxConvexMesh,							PxConcreteType::eCONVEX_MESH)
-PX_DEFINE_TYPEINFO(PxTriangleMesh,							PxConcreteType::eUNDEFINED)
-PX_DEFINE_TYPEINFO(PxBVH33TriangleMesh,						PxConcreteType::eTRIANGLE_MESH_BVH33)
-PX_DEFINE_TYPEINFO(PxBVH34TriangleMesh,						PxConcreteType::eTRIANGLE_MESH_BVH34)
-PX_DEFINE_TYPEINFO(PxHeightField,							PxConcreteType::eHEIGHTFIELD)
-PX_DEFINE_TYPEINFO(PxActor,									PxConcreteType::eUNDEFINED)
-PX_DEFINE_TYPEINFO(PxRigidActor,							PxConcreteType::eUNDEFINED)
-PX_DEFINE_TYPEINFO(PxRigidBody,								PxConcreteType::eUNDEFINED)
-PX_DEFINE_TYPEINFO(PxRigidDynamic,							PxConcreteType::eRIGID_DYNAMIC)
-PX_DEFINE_TYPEINFO(PxRigidStatic,							PxConcreteType::eRIGID_STATIC)
-PX_DEFINE_TYPEINFO(PxArticulationLink,						PxConcreteType::eARTICULATION_LINK)
-PX_DEFINE_TYPEINFO(PxArticulationJoint,						PxConcreteType::eARTICULATION_JOINT)
-PX_DEFINE_TYPEINFO(PxArticulationJointReducedCoordinate,	PxConcreteType::eARTICULATION_JOINT_REDUCED_COORDINATE)
-PX_DEFINE_TYPEINFO(PxArticulation,							PxConcreteType::eARTICULATION)
-PX_DEFINE_TYPEINFO(PxArticulationReducedCoordinate,			PxConcreteType::eARTICULATION_REDUCED_COORDINATE)
-PX_DEFINE_TYPEINFO(PxAggregate,								PxConcreteType::eAGGREGATE)
-PX_DEFINE_TYPEINFO(PxConstraint,							PxConcreteType::eCONSTRAINT)
-PX_DEFINE_TYPEINFO(PxShape,									PxConcreteType::eSHAPE)
-PX_DEFINE_TYPEINFO(PxPruningStructure,						PxConcreteType::ePRUNING_STRUCTURE)
+    PX_DEFINE_TYPEINFO(PxBase, PxConcreteType::eUNDEFINED)
+        PX_DEFINE_TYPEINFO(PxMaterial, PxConcreteType::eMATERIAL)
+        PX_DEFINE_TYPEINFO(PxConvexMesh, PxConcreteType::eCONVEX_MESH)
+        PX_DEFINE_TYPEINFO(PxTriangleMesh, PxConcreteType::eUNDEFINED)
+        PX_DEFINE_TYPEINFO(PxBVH33TriangleMesh, PxConcreteType::eTRIANGLE_MESH_BVH33)
+        PX_DEFINE_TYPEINFO(PxBVH34TriangleMesh, PxConcreteType::eTRIANGLE_MESH_BVH34)
+        PX_DEFINE_TYPEINFO(PxHeightField, PxConcreteType::eHEIGHTFIELD)
+        PX_DEFINE_TYPEINFO(PxActor, PxConcreteType::eUNDEFINED)
+        PX_DEFINE_TYPEINFO(PxRigidActor, PxConcreteType::eUNDEFINED)
+        PX_DEFINE_TYPEINFO(PxRigidBody, PxConcreteType::eUNDEFINED)
+        PX_DEFINE_TYPEINFO(PxRigidDynamic, PxConcreteType::eRIGID_DYNAMIC)
+        PX_DEFINE_TYPEINFO(PxRigidStatic, PxConcreteType::eRIGID_STATIC)
+        PX_DEFINE_TYPEINFO(PxArticulationLink, PxConcreteType::eARTICULATION_LINK)
+        PX_DEFINE_TYPEINFO(PxArticulationJoint, PxConcreteType::eARTICULATION_JOINT)
+        PX_DEFINE_TYPEINFO(PxArticulationJointReducedCoordinate, PxConcreteType::eARTICULATION_JOINT_REDUCED_COORDINATE)
+        PX_DEFINE_TYPEINFO(PxArticulation, PxConcreteType::eARTICULATION)
+        PX_DEFINE_TYPEINFO(PxArticulationReducedCoordinate, PxConcreteType::eARTICULATION_REDUCED_COORDINATE)
+        PX_DEFINE_TYPEINFO(PxAggregate, PxConcreteType::eAGGREGATE)
+        PX_DEFINE_TYPEINFO(PxConstraint, PxConcreteType::eCONSTRAINT)
+        PX_DEFINE_TYPEINFO(PxShape, PxConcreteType::eSHAPE)
+        PX_DEFINE_TYPEINFO(PxPruningStructure, PxConcreteType::ePRUNING_STRUCTURE)
 
 #if !PX_DOXYGEN
 } // namespace physx

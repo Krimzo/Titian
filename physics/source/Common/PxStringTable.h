@@ -38,32 +38,31 @@
 */
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
- *	\brief a table to manage strings.  Strings allocated through this object are expected to be owned by this object.
- */
-class PxStringTable
-{
-protected:
-	virtual ~PxStringTable(){}
-public:
-	/**
-	 *	\brief Allocate a new string.
-	 *
-	 *	\param[in] inSrc Source string, null terminated or null.
-	 *	
-	 *	\return *Always* a valid null terminated string.  "" is returned if "" or null is passed in.
-	 */
-	virtual const char* allocateStr( const char* inSrc ) = 0;
+    /**
+     *	\brief a table to manage strings.  Strings allocated through this object are expected to be owned by this object.
+     */
+    class PxStringTable
+    {
+    protected:
+        virtual ~PxStringTable() {}
+    public:
+        /**
+         *	\brief Allocate a new string.
+         *
+         *	\param[in] inSrc Source string, null terminated or null.
+         *
+         *	\return *Always* a valid null terminated string.  "" is returned if "" or null is passed in.
+         */
+        virtual const char* allocateStr(const char* inSrc) = 0;
 
-	/**
-	 *	Release the string table and all the strings associated with it.
-	 */
-	virtual void release() = 0;
-};
+        /**
+         *	Release the string table and all the strings associated with it.
+         */
+        virtual void release() = 0;
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

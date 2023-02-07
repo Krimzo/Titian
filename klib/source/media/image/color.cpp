@@ -34,7 +34,7 @@ kl::color kl::color::inverted() const
 
 char kl::color::as_ascii() const
 {
-    static constexpr char ascii_table[10] = {'@', '%', '#', 'x', '+', '=', ':', '-', '.', ' '};
+    static constexpr char ascii_table[10] = { '@', '%', '#', 'x', '+', '=', ':', '-', '.', ' ' };
     static constexpr float conversion = 9.0f / 255.0f;
     return ascii_table[size_t(gray().r * conversion)];
 }

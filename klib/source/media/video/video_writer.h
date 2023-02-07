@@ -5,7 +5,7 @@
 
 
 namespace kl {
-	class video_writer
+    class video_writer
     {
         const uint32_t width_;
         const uint32_t height_;
@@ -28,7 +28,7 @@ namespace kl {
 
         int frame_counter_ = 0;
 
-	public:
+    public:
         video_writer(const std::string& filepath, const kl::int2& frame_size, int fps, int bit_rate, const GUID& encoding_format);
         ~video_writer();
 
@@ -55,5 +55,5 @@ namespace kl {
         [[nodiscard]] float duration_seconds() const;
 
         bool finalize();
-	};
+    };
 }

@@ -60,9 +60,9 @@
 #include "extensions/PxMassProperties.h"
 #include "extensions/PxSceneQueryExt.h"
 
-/** \brief Initialize the PhysXExtensions library. 
+/** \brief Initialize the PhysXExtensions library.
 
-This should be called before calling any functions or methods in extensions which may require allocation. 
+This should be called before calling any functions or methods in extensions which may require allocation.
 \note This function does not need to be called before creating a PxDefaultAllocator object.
 
 \param physics a PxPhysics object
@@ -73,9 +73,9 @@ This should be called before calling any functions or methods in extensions whic
 
 PX_C_EXPORT bool PX_CALL_CONV PxInitExtensions(physx::PxPhysics& physics, physx::PxPvd* pvd);
 
-/** \brief Shut down the PhysXExtensions library. 
+/** \brief Shut down the PhysXExtensions library.
 
-This function should be called to cleanly shut down the PhysXExtensions library before application exit. 
+This function should be called to cleanly shut down the PhysXExtensions library before application exit.
 
 \note This function is required to be called to release foundation usage.
 

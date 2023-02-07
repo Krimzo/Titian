@@ -37,19 +37,19 @@
 */
 
 #if defined PX_PHYSX_STATIC_LIB
-	#define PX_FOUNDATION_API
+#define PX_FOUNDATION_API
 #else
-	#if (PX_WINDOWS_FAMILY || PX_XBOXONE || PX_PS4 || PX_XBOX_SERIES_X) && !defined(__CUDACC__)
-		#if defined PX_PHYSX_FOUNDATION_EXPORTS
-			#define PX_FOUNDATION_API __declspec(dllexport)
-		#else
-			#define PX_FOUNDATION_API __declspec(dllimport)
-		#endif
-	#elif PX_UNIX_FAMILY
-		#define PX_FOUNDATION_API PX_UNIX_EXPORT
-	#else
-		#define PX_FOUNDATION_API
-	#endif
+#if (PX_WINDOWS_FAMILY || PX_XBOXONE || PX_PS4 || PX_XBOX_SERIES_X) && !defined(__CUDACC__)
+#if defined PX_PHYSX_FOUNDATION_EXPORTS
+#define PX_FOUNDATION_API __declspec(dllexport)
+#else
+#define PX_FOUNDATION_API __declspec(dllimport)
+#endif
+#elif PX_UNIX_FAMILY
+#define PX_FOUNDATION_API PX_UNIX_EXPORT
+#else
+#define PX_FOUNDATION_API
+#endif
 #endif 
 
 

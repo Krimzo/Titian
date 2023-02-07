@@ -38,67 +38,65 @@
 #include "common/PxPhysXCommonConfig.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-class PxPhysics;
+    class PxPhysics;
 
-/**
-\brief Class to define the scale at which simulation runs. Most simulation tolerances are
-calculated in terms of the values here. 
+    /**
+    \brief Class to define the scale at which simulation runs. Most simulation tolerances are
+    calculated in terms of the values here.
 
-\note if you change the simulation scale, you will probablly also wish to change the scene's
-default value of gravity, and stable simulation will probably require changes to the scene's 
-bounceThreshold also.
-*/
+    \note if you change the simulation scale, you will probablly also wish to change the scene's
+    default value of gravity, and stable simulation will probably require changes to the scene's
+    bounceThreshold also.
+    */
 
-class PxTolerancesScale
-{
-public: 
+    class PxTolerancesScale
+    {
+    public:
 
-	/** brief
-	The approximate size of objects in the simulation. 
-	
-	For simulating roughly human-sized in metric units, 1 is a good choice.
-	If simulation is done in centimetres, use 100 instead. This is used to
-	estimate certain length-related tolerances.
-	*/
-	PxReal	length;
+        /** brief
+        The approximate size of objects in the simulation.
 
-	/** brief
-	The typical magnitude of velocities of objects in simulation. This is used to estimate 
-	whether a contact should be treated as bouncing or resting based on its impact velocity,
-	and a kinetic energy threshold below which the simulation may put objects to sleep.
+        For simulating roughly human-sized in metric units, 1 is a good choice.
+        If simulation is done in centimetres, use 100 instead. This is used to
+        estimate certain length-related tolerances.
+        */
+        PxReal	length;
 
-	For normal physical environments, a good choice is the approximate speed of an object falling
-	under gravity for one second.
-	*/
-	PxReal	speed;
+        /** brief
+        The typical magnitude of velocities of objects in simulation. This is used to estimate
+        whether a contact should be treated as bouncing or resting based on its impact velocity,
+        and a kinetic energy threshold below which the simulation may put objects to sleep.
 
-	/**
-	\brief constructor sets to default 
-	*/
-	PX_INLINE PxTolerancesScale();
+        For normal physical environments, a good choice is the approximate speed of an object falling
+        under gravity for one second.
+        */
+        PxReal	speed;
 
-	/**
-	\brief Returns true if the descriptor is valid.
-	\return true if the current settings are valid (returns always true).
-	*/
-	PX_INLINE bool isValid() const;
+        /**
+        \brief constructor sets to default
+        */
+        PX_INLINE PxTolerancesScale();
 
-};
+        /**
+        \brief Returns true if the descriptor is valid.
+        \return true if the current settings are valid (returns always true).
+        */
+        PX_INLINE bool isValid() const;
 
-PX_INLINE PxTolerancesScale::PxTolerancesScale():
-	length(1.0f),
-	speed(10.0f)
-	{
-	}
+    };
 
-PX_INLINE bool PxTolerancesScale::isValid() const
-{
-	return length>0.0f;
-}
+    PX_INLINE PxTolerancesScale::PxTolerancesScale() :
+        length(1.0f),
+        speed(10.0f)
+    {}
+
+    PX_INLINE bool PxTolerancesScale::isValid() const
+    {
+        return length > 0.0f;
+    }
 
 #if !PX_DOXYGEN
 } // namespace physx

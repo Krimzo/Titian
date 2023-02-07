@@ -37,30 +37,28 @@
 */
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-// Needed for clang 7
+    // Needed for clang 7
 #if PX_CLANG && PX_CLANG_MAJOR >= 7
- #define USE_VOLATILE_UNION volatile 
+#define USE_VOLATILE_UNION volatile 
 #else
- #define USE_VOLATILE_UNION
+#define USE_VOLATILE_UNION
 #endif
 
-template <class A, class B>
-PX_FORCE_INLINE A PxUnionCast(B b)
-{
-	union AB
-	{
-		AB(B bb) : _b(bb)
-		{
-		}
-		 B _b;
-		 A _a;
-	} USE_VOLATILE_UNION u(b);
-	return u._a;
-}
+    template <class A, class B>
+    PX_FORCE_INLINE A PxUnionCast(B b)
+    {
+        union AB
+        {
+            AB(B bb) : _b(bb)
+            {}
+            B _b;
+            A _a;
+        } USE_VOLATILE_UNION u(b);
+        return u._a;
+    }
 
 #undef USE_VOLATILE_UNION
 

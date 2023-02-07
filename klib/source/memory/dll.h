@@ -8,38 +8,39 @@
 
 
 namespace kl {
-	class dll
-	{
-	public:
-		template<typename Return, typename... Args>
-		using function = Return(__stdcall*)(Args...);
+    class dll
+    {
+    public:
+        template<typename Return, typename... Args>
+        using function = Return(__stdcall*)(Args...);
 
-	private:
-		std::string path = "";
-		HMODULE module = nullptr;
+    private:
+        std::string path = "";
+        HMODULE module = nullptr;
 
-	public:
-		dll();
-		explicit dll(const std::string& path);
-		~dll();
+    public:
+        dll();
+        explicit dll(const std::string& path);
+        ~dll();
 
-		dll(const dll&) = delete;
-		dll(const dll&&) = delete;
+        dll(const dll&) = delete;
+        dll(const dll&&) = delete;
 
-		void operator=(const dll&) = delete;
-		void operator=(const dll&&) = delete;
+        void operator=(const dll&) = delete;
+        void operator=(const dll&&) = delete;
 
-		void load(const std::string& path);
+        void load(const std::string& path);
 
-		void reload();
+        void reload();
 
-		void unload();
+        void unload();
 
-		[[nodiscard]] bool is_valid();
+        [[nodiscard]] bool is_valid();
 
-		template<typename Return, typename... Args>
-		[[nodiscard]] function<Return, Args...> load_function(const std::string& function_name) {
-			return (function<Return, Args...>) (module ? GetProcAddress(module, function_name.c_str()) : nullptr);
-		}
-	};
+        template<typename Return, typename... Args>
+        [[nodiscard]] function<Return, Args...> load_function(const std::string& function_name)
+        {
+            return (function<Return, Args...>) (module ? GetProcAddress(module, function_name.c_str()) : nullptr);
+        }
+    };
 }

@@ -20,7 +20,7 @@ namespace kl {
 
         void operator=(const frame_buffer&) = delete;
         void operator=(const frame_buffer&&) = delete;
-        
+
         [[nodiscard]] int2 size() const;
 
         image* back_buffer();

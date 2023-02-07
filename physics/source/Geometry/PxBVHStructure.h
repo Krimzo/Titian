@@ -39,95 +39,94 @@
 #include "foundation/PxBounds3.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief Class representing the bounding volume hierarchy structure.
+    /**
+    \brief Class representing the bounding volume hierarchy structure.
 
-PxBVHStructure can be  provided to PxScene::addActor. In this case the scene query 
-pruning structure inside PhysX SDK will store/update one bound per actor. 
-The scene queries against such an actor will query actor bounds and then 
-make a local space query against the provided BVH structure, which is in
-actor's local space.
+    PxBVHStructure can be  provided to PxScene::addActor. In this case the scene query
+    pruning structure inside PhysX SDK will store/update one bound per actor.
+    The scene queries against such an actor will query actor bounds and then
+    make a local space query against the provided BVH structure, which is in
+    actor's local space.
 
-@see PxScene::addActor
-*/
-class PxBVHStructure: public PxBase
-{
-public:
+    @see PxScene::addActor
+    */
+    class PxBVHStructure : public PxBase
+    {
+    public:
 
-	/**
-	\brief Raycast test against a BVH structure.
+        /**
+        \brief Raycast test against a BVH structure.
 
-	\param[in] origin		The origin of the ray.
-	\param[in] unitDir		Normalized direction of the ray.
-	\param[in] maxDist		Maximum ray length, has to be in the [0, inf) range
-	\param[in] maxHits		Max number of returned hits = size of 'rayHits' buffer
-	\param[out] rayHits		Raycast hits information, bounds indices 
-	\return Number of hits  
-	*/
-	virtual PxU32					raycast(const PxVec3& origin,
-										const PxVec3& unitDir,
-										PxReal maxDist,
-										PxU32 maxHits,
-										PxU32* PX_RESTRICT rayHits) const = 0;
+        \param[in] origin		The origin of the ray.
+        \param[in] unitDir		Normalized direction of the ray.
+        \param[in] maxDist		Maximum ray length, has to be in the [0, inf) range
+        \param[in] maxHits		Max number of returned hits = size of 'rayHits' buffer
+        \param[out] rayHits		Raycast hits information, bounds indices
+        \return Number of hits
+        */
+        virtual PxU32					raycast(const PxVec3& origin,
+            const PxVec3& unitDir,
+            PxReal maxDist,
+            PxU32 maxHits,
+            PxU32* PX_RESTRICT rayHits) const = 0;
 
-	/**
-	\brief Sweep test against a BVH structure.
+        /**
+        \brief Sweep test against a BVH structure.
 
-	\param[in] aabb			The axis aligned bounding box to sweep
-	\param[in] unitDir		Normalized direction of the sweep.
-	\param[in] maxDist		Maximum sweep length, has to be in the [0, inf) range
-	\param[in] maxHits		Max number of returned hits = size of 'sweepHits' buffer
-	\param[out] sweepHits	Sweep hits information, bounds indices 
-	\return Number of hits 
-	*/
-	virtual PxU32					sweep(const PxBounds3& aabb, 
-										const PxVec3& unitDir,
-										PxReal maxDist,
-										PxU32 maxHits,
-										PxU32* PX_RESTRICT sweepHits) const = 0;
+        \param[in] aabb			The axis aligned bounding box to sweep
+        \param[in] unitDir		Normalized direction of the sweep.
+        \param[in] maxDist		Maximum sweep length, has to be in the [0, inf) range
+        \param[in] maxHits		Max number of returned hits = size of 'sweepHits' buffer
+        \param[out] sweepHits	Sweep hits information, bounds indices
+        \return Number of hits
+        */
+        virtual PxU32					sweep(const PxBounds3& aabb,
+            const PxVec3& unitDir,
+            PxReal maxDist,
+            PxU32 maxHits,
+            PxU32* PX_RESTRICT sweepHits) const = 0;
 
-	/**
-	\brief AABB overlap test against a BVH structure.
+        /**
+        \brief AABB overlap test against a BVH structure.
 
-	\param[in] aabb			The axis aligned bounding box		
-	\param[in] maxHits		Max number of returned hits = size of 'overlapHits' buffer
-	\param[out] overlapHits	Overlap hits information, bounds indices 
-	\return Number of hits 
-	*/
-	virtual PxU32					overlap(const PxBounds3& aabb, 
-										PxU32 maxHits,
-										PxU32* PX_RESTRICT overlapHits) const = 0;
+        \param[in] aabb			The axis aligned bounding box
+        \param[in] maxHits		Max number of returned hits = size of 'overlapHits' buffer
+        \param[out] overlapHits	Overlap hits information, bounds indices
+        \return Number of hits
+        */
+        virtual PxU32					overlap(const PxBounds3& aabb,
+            PxU32 maxHits,
+            PxU32* PX_RESTRICT overlapHits) const = 0;
 
-	/**
-	\brief Retrieve the bounds in the BVH.
+        /**
+        \brief Retrieve the bounds in the BVH.
 
-	@see PxBounds3
-	*/
-	virtual const PxBounds3*		getBounds() const = 0;
+        @see PxBounds3
+        */
+        virtual const PxBounds3* getBounds() const = 0;
 
-	/**
-	\brief Returns the number of bounds in the BVH.
+        /**
+        \brief Returns the number of bounds in the BVH.
 
-	You can use #getBounds() to retrieve the bounds.
+        You can use #getBounds() to retrieve the bounds.
 
-	\return Number of bounds in the BVH.
+        \return Number of bounds in the BVH.
 
-	*/
-	virtual PxU32					getNbBounds() const = 0;
-	
-	virtual	const char*				getConcreteTypeName() const	{ return "PxBVHStructure";	}
-protected:
-	PX_INLINE						PxBVHStructure(PxType concreteType, PxBaseFlags baseFlags) : PxBase(concreteType, baseFlags)	{}
-	PX_INLINE						PxBVHStructure(PxBaseFlags baseFlags) : PxBase(baseFlags)										{}
-	virtual							~PxBVHStructure() {}
+        */
+        virtual PxU32					getNbBounds() const = 0;
 
-	virtual	bool					isKindOf(const char* name) const { return !::strcmp("PxBVHStructure", name) || PxBase::isKindOf(name); }
+        virtual	const char* getConcreteTypeName() const { return "PxBVHStructure"; }
+    protected:
+        PX_INLINE						PxBVHStructure(PxType concreteType, PxBaseFlags baseFlags) : PxBase(concreteType, baseFlags) {}
+        PX_INLINE						PxBVHStructure(PxBaseFlags baseFlags) : PxBase(baseFlags) {}
+        virtual							~PxBVHStructure() {}
 
-};
+        virtual	bool					isKindOf(const char* name) const { return !::strcmp("PxBVHStructure", name) || PxBase::isKindOf(name); }
+
+    };
 
 
 #if !PX_DOXYGEN

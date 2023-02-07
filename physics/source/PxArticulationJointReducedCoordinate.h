@@ -39,51 +39,50 @@
 #include "PxArticulationJoint.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-	/**
-	\brief a joint between two links in an articulation.
+    /**
+    \brief a joint between two links in an articulation.
 
-	The joint model is very similar to a PxSphericalJoint with swing and twist limits,
-	and an implicit drive model.
+    The joint model is very similar to a PxSphericalJoint with swing and twist limits,
+    and an implicit drive model.
 
-	@see PxArticulation PxArticulationLink
-	*/
+    @see PxArticulation PxArticulationLink
+    */
 
-	class PxArticulationJointReducedCoordinate : public PxArticulationJointBase
-	{
-	public:
+    class PxArticulationJointReducedCoordinate : public PxArticulationJointBase
+    {
+    public:
 
-		virtual	void							setJointType(PxArticulationJointType::Enum jointType) = 0;
-		virtual	PxArticulationJointType::Enum	getJointType() const = 0;
+        virtual	void							setJointType(PxArticulationJointType::Enum jointType) = 0;
+        virtual	PxArticulationJointType::Enum	getJointType() const = 0;
 
-		virtual	void							setMotion(PxArticulationAxis::Enum axis, PxArticulationMotion::Enum motion) = 0;
-		virtual	PxArticulationMotion::Enum		getMotion(PxArticulationAxis::Enum axis) const = 0;
+        virtual	void							setMotion(PxArticulationAxis::Enum axis, PxArticulationMotion::Enum motion) = 0;
+        virtual	PxArticulationMotion::Enum		getMotion(PxArticulationAxis::Enum axis) const = 0;
 
-		virtual void							setLimit(PxArticulationAxis::Enum axis, const PxReal lowLimit, const PxReal highLimit) = 0;
-		virtual void							getLimit(PxArticulationAxis::Enum axis, PxReal& lowLimit, PxReal& highLimit) = 0;
-		virtual void							setDrive(PxArticulationAxis::Enum axis, const PxReal stiffness, const PxReal damping, const PxReal maxForce, PxArticulationDriveType::Enum driveType = PxArticulationDriveType::eFORCE) = 0;
-		virtual void							getDrive(PxArticulationAxis::Enum axis, PxReal& stiffness, PxReal& damping, PxReal& maxForce, PxArticulationDriveType::Enum& driveType) = 0;
-		virtual void							setDriveTarget(PxArticulationAxis::Enum axis, const PxReal target) = 0;
-		virtual void							setDriveVelocity(PxArticulationAxis::Enum axis, const PxReal targetVel) = 0;
-		virtual PxReal							getDriveTarget(PxArticulationAxis::Enum axis) = 0;
-		virtual PxReal							getDriveVelocity(PxArticulationAxis::Enum axis) = 0;
+        virtual void							setLimit(PxArticulationAxis::Enum axis, const PxReal lowLimit, const PxReal highLimit) = 0;
+        virtual void							getLimit(PxArticulationAxis::Enum axis, PxReal& lowLimit, PxReal& highLimit) = 0;
+        virtual void							setDrive(PxArticulationAxis::Enum axis, const PxReal stiffness, const PxReal damping, const PxReal maxForce, PxArticulationDriveType::Enum driveType = PxArticulationDriveType::eFORCE) = 0;
+        virtual void							getDrive(PxArticulationAxis::Enum axis, PxReal& stiffness, PxReal& damping, PxReal& maxForce, PxArticulationDriveType::Enum& driveType) = 0;
+        virtual void							setDriveTarget(PxArticulationAxis::Enum axis, const PxReal target) = 0;
+        virtual void							setDriveVelocity(PxArticulationAxis::Enum axis, const PxReal targetVel) = 0;
+        virtual PxReal							getDriveTarget(PxArticulationAxis::Enum axis) = 0;
+        virtual PxReal							getDriveVelocity(PxArticulationAxis::Enum axis) = 0;
 
-		virtual	void							setFrictionCoefficient(const PxReal coefficient) = 0;
-		virtual	PxReal							getFrictionCoefficient() const = 0;
-		virtual	const char*						getConcreteTypeName() const { return "PxArticulationJointReducedCoordinate"; }
+        virtual	void							setFrictionCoefficient(const PxReal coefficient) = 0;
+        virtual	PxReal							getFrictionCoefficient() const = 0;
+        virtual	const char* getConcreteTypeName() const { return "PxArticulationJointReducedCoordinate"; }
 
-		virtual void							setMaxJointVelocity(const PxReal maxJointV) = 0;
-		virtual PxReal							getMaxJointVelocity() const = 0;
+        virtual void							setMaxJointVelocity(const PxReal maxJointV) = 0;
+        virtual PxReal							getMaxJointVelocity() const = 0;
 
-	protected:
-		PX_INLINE								PxArticulationJointReducedCoordinate(PxType concreteType, PxBaseFlags baseFlags) : PxArticulationJointBase(concreteType, baseFlags) {}
-		PX_INLINE								PxArticulationJointReducedCoordinate(PxBaseFlags baseFlags) : PxArticulationJointBase(baseFlags) {}
-		virtual									~PxArticulationJointReducedCoordinate() {}
-		virtual	bool							isKindOf(const char* name)	const { return !::strcmp("PxArticulationJointReducedCoordinate", name) || PxBase::isKindOf(name); }
-	};
+    protected:
+        PX_INLINE								PxArticulationJointReducedCoordinate(PxType concreteType, PxBaseFlags baseFlags) : PxArticulationJointBase(concreteType, baseFlags) {}
+        PX_INLINE								PxArticulationJointReducedCoordinate(PxBaseFlags baseFlags) : PxArticulationJointBase(baseFlags) {}
+        virtual									~PxArticulationJointReducedCoordinate() {}
+        virtual	bool							isKindOf(const char* name)	const { return !::strcmp("PxArticulationJointReducedCoordinate", name) || PxBase::isKindOf(name); }
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

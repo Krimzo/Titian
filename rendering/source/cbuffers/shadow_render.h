@@ -5,5 +5,5 @@
 
 struct shadow_render_vs_cb
 {
-	kl::mat4 WVP;
+    kl::mat4 WVP;
 };

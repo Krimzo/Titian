@@ -11,7 +11,7 @@ namespace kl {
         inline static const std::string self_ip = "127.0.0.1";
         static void init_utility();
         static void free_utility();
-        
+
     private:
         sockaddr_in address_ = {};
         size_t socket_ = {};

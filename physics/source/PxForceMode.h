@@ -38,25 +38,24 @@
 */
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief Parameter to addForce() and addTorque() calls, determines the exact operation that is carried out.
+    /**
+    \brief Parameter to addForce() and addTorque() calls, determines the exact operation that is carried out.
 
-@see PxRigidBody.addForce() PxRigidBody.addTorque()
-*/
-struct PxForceMode
-{
-	enum Enum
-	{
-		eFORCE,				//!< parameter has unit of mass * distance/ time^2, i.e. a force
-		eIMPULSE,			//!< parameter has unit of mass * distance /time
-		eVELOCITY_CHANGE,	//!< parameter has unit of distance / time, i.e. the effect is mass independent: a velocity change.
-		eACCELERATION		//!< parameter has unit of distance/ time^2, i.e. an acceleration. It gets treated just like a force except the mass is not divided out before integration.
-	};
-};
+    @see PxRigidBody.addForce() PxRigidBody.addTorque()
+    */
+    struct PxForceMode
+    {
+        enum Enum
+        {
+            eFORCE,				//!< parameter has unit of mass * distance/ time^2, i.e. a force
+            eIMPULSE,			//!< parameter has unit of mass * distance /time
+            eVELOCITY_CHANGE,	//!< parameter has unit of distance / time, i.e. the effect is mass independent: a velocity change.
+            eACCELERATION		//!< parameter has unit of distance/ time^2, i.e. an acceleration. It gets treated just like a force except the mass is not divided out before integration.
+        };
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

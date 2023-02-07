@@ -38,87 +38,86 @@
 #include "PxScene.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief RAII wrapper for the PxScene read lock.
+    /**
+    \brief RAII wrapper for the PxScene read lock.
 
-Use this class as follows to lock the scene for reading by the current thread 
-for the duration of the enclosing scope:
+    Use this class as follows to lock the scene for reading by the current thread
+    for the duration of the enclosing scope:
 
-	PxSceneReadLock lock(sceneRef);
+        PxSceneReadLock lock(sceneRef);
 
-\see PxScene::lockRead(), PxScene::unlockRead(), PxSceneFlag::eREQUIRE_RW_LOCK
-*/
-class PxSceneReadLock
-{
-	PxSceneReadLock(const PxSceneReadLock&);
-	PxSceneReadLock& operator=(const PxSceneReadLock&);
+    \see PxScene::lockRead(), PxScene::unlockRead(), PxSceneFlag::eREQUIRE_RW_LOCK
+    */
+    class PxSceneReadLock
+    {
+        PxSceneReadLock(const PxSceneReadLock&);
+        PxSceneReadLock& operator=(const PxSceneReadLock&);
 
-public:
-	
-	/**
-	\brief Constructor
-	\param scene The scene to lock for reading
-	\param file Optional string for debugging purposes
-	\param line Optional line number for debugging purposes
-	*/
-	PxSceneReadLock(PxScene& scene, const char* file=NULL, PxU32 line=0)
-		: mScene(scene)
-	{
-		mScene.lockRead(file, line);
-	}
+    public:
 
-	~PxSceneReadLock()
-	{
-		mScene.unlockRead();
-	}
+        /**
+        \brief Constructor
+        \param scene The scene to lock for reading
+        \param file Optional string for debugging purposes
+        \param line Optional line number for debugging purposes
+        */
+        PxSceneReadLock(PxScene& scene, const char* file = NULL, PxU32 line = 0)
+            : mScene(scene)
+        {
+            mScene.lockRead(file, line);
+        }
 
-private:
+        ~PxSceneReadLock()
+        {
+            mScene.unlockRead();
+        }
 
-	PxScene& mScene;
-};
+    private:
 
-/**
-\brief RAII wrapper for the PxScene write lock.
+        PxScene& mScene;
+    };
 
-Use this class as follows to lock the scene for writing by the current thread 
-for the duration of the enclosing scope:
+    /**
+    \brief RAII wrapper for the PxScene write lock.
 
-	PxSceneWriteLock lock(sceneRef);
+    Use this class as follows to lock the scene for writing by the current thread
+    for the duration of the enclosing scope:
 
-\see PxScene::lockWrite(), PxScene::unlockWrite(), PxSceneFlag::eREQUIRE_RW_LOCK
-*/
-class PxSceneWriteLock
-{
-	PxSceneWriteLock(const PxSceneWriteLock&);
-	PxSceneWriteLock& operator=(const PxSceneWriteLock&);
+        PxSceneWriteLock lock(sceneRef);
 
-public:
+    \see PxScene::lockWrite(), PxScene::unlockWrite(), PxSceneFlag::eREQUIRE_RW_LOCK
+    */
+    class PxSceneWriteLock
+    {
+        PxSceneWriteLock(const PxSceneWriteLock&);
+        PxSceneWriteLock& operator=(const PxSceneWriteLock&);
 
-	/**
-	\brief Constructor
-	\param scene The scene to lock for writing
-	\param file Optional string for debugging purposes
-	\param line Optional line number for debugging purposes
-	*/
-	PxSceneWriteLock(PxScene& scene, const char* file=NULL, PxU32 line=0)
-		: mScene(scene)
-	{
-		mScene.lockWrite(file, line);
-	}
+    public:
 
-	~PxSceneWriteLock()
-	{
-		mScene.unlockWrite();
-	}
+        /**
+        \brief Constructor
+        \param scene The scene to lock for writing
+        \param file Optional string for debugging purposes
+        \param line Optional line number for debugging purposes
+        */
+        PxSceneWriteLock(PxScene& scene, const char* file = NULL, PxU32 line = 0)
+            : mScene(scene)
+        {
+            mScene.lockWrite(file, line);
+        }
 
-private:
+        ~PxSceneWriteLock()
+        {
+            mScene.unlockWrite();
+        }
 
-	PxScene& mScene;
-};
+    private:
+
+        PxScene& mScene;
+    };
 
 
 #if !PX_DOXYGEN

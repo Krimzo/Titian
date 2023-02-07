@@ -38,48 +38,47 @@
 #include "foundation/PxSimpleTypes.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
+    /**
 
-\brief Structure describing parameters affecting BVH34 midphase mesh structure.
+    \brief Structure describing parameters affecting BVH34 midphase mesh structure.
 
-@see PxCookingParams, PxMidphaseDesc
-*/
-struct PxBVH34MidphaseDesc
-{
-	/**
-	\brief Mesh cooking hint for max primitives per leaf limit. 
-	Less primitives per leaf produces larger meshes with better runtime performance 
-	and worse cooking performance. More triangles per leaf results in faster cooking speed and
-	smaller mesh sizes, but with worse runtime performance.
-
-	<b>Default value:</b> 4
-	<b>Range:</b> <4, 15>
-	*/
-	PxU32			numPrimsPerLeaf;
-
-	/**
-	\brief Desc initialization to default value.
-	*/
-    void setToDefault()
+    @see PxCookingParams, PxMidphaseDesc
+    */
+    struct PxBVH34MidphaseDesc
     {
-		numPrimsPerLeaf = 4;
-    }
+        /**
+        \brief Mesh cooking hint for max primitives per leaf limit.
+        Less primitives per leaf produces larger meshes with better runtime performance
+        and worse cooking performance. More triangles per leaf results in faster cooking speed and
+        smaller mesh sizes, but with worse runtime performance.
 
-	/**
-	\brief Returns true if the descriptor is valid.
-	\return true if the current settings are valid.
-	*/
-	bool isValid() const
-	{
-		if(numPrimsPerLeaf < 4 || numPrimsPerLeaf > 15)
-			return false;
-		return true;
-	}
-};
+        <b>Default value:</b> 4
+        <b>Range:</b> <4, 15>
+        */
+        PxU32			numPrimsPerLeaf;
+
+        /**
+        \brief Desc initialization to default value.
+        */
+        void setToDefault()
+        {
+            numPrimsPerLeaf = 4;
+        }
+
+        /**
+        \brief Returns true if the descriptor is valid.
+        \return true if the current settings are valid.
+        */
+        bool isValid() const
+        {
+            if (numPrimsPerLeaf < 4 || numPrimsPerLeaf > 15)
+                return false;
+            return true;
+        }
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

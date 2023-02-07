@@ -37,210 +37,209 @@
 #include "characterkinematic/PxController.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-struct PxCapsuleClimbingMode
-{
-	enum Enum
-	{
-		eEASY,			//!< Standard mode, let the capsule climb over surfaces according to impact normal
-		eCONSTRAINED,	//!< Constrained mode, try to limit climbing according to the step offset
+    struct PxCapsuleClimbingMode
+    {
+        enum Enum
+        {
+            eEASY,			//!< Standard mode, let the capsule climb over surfaces according to impact normal
+            eCONSTRAINED,	//!< Constrained mode, try to limit climbing according to the step offset
 
-		eLAST
-	};
-};
+            eLAST
+        };
+    };
 
-/**
-\brief A descriptor for a capsule character controller.
+    /**
+    \brief A descriptor for a capsule character controller.
 
-@see PxCapsuleController PxControllerDesc
-*/
-class PxCapsuleControllerDesc : public PxControllerDesc
-{
-public:
-	/**
-	\brief constructor sets to default.
-	*/
-	PX_INLINE									PxCapsuleControllerDesc ();
-	PX_INLINE virtual							~PxCapsuleControllerDesc () {}
+    @see PxCapsuleController PxControllerDesc
+    */
+    class PxCapsuleControllerDesc : public PxControllerDesc
+    {
+    public:
+        /**
+        \brief constructor sets to default.
+        */
+        PX_INLINE									PxCapsuleControllerDesc();
+        PX_INLINE virtual							~PxCapsuleControllerDesc() {}
 
-	/**
-	\brief copy constructor.
-	*/
-	PX_INLINE									PxCapsuleControllerDesc(const PxCapsuleControllerDesc&);
+        /**
+        \brief copy constructor.
+        */
+        PX_INLINE									PxCapsuleControllerDesc(const PxCapsuleControllerDesc&);
 
-	/**
-	\brief assignment operator.
-	*/
-	PX_INLINE PxCapsuleControllerDesc&			operator=(const PxCapsuleControllerDesc&);
+        /**
+        \brief assignment operator.
+        */
+        PX_INLINE PxCapsuleControllerDesc& operator=(const PxCapsuleControllerDesc&);
 
-	/**
-	\brief (re)sets the structure to the default.
-	*/
-	PX_INLINE virtual	void				setToDefault();
-	/**
-	\brief returns true if the current settings are valid
+        /**
+        \brief (re)sets the structure to the default.
+        */
+        PX_INLINE virtual	void				setToDefault();
+        /**
+        \brief returns true if the current settings are valid
 
-	\return True if the descriptor is valid.
-	*/
-	PX_INLINE virtual	bool				isValid()		const;
+        \return True if the descriptor is valid.
+        */
+        PX_INLINE virtual	bool				isValid()		const;
 
-	/**
-	\brief The radius of the capsule
+        /**
+        \brief The radius of the capsule
 
-	<b>Default:</b> 0.0
+        <b>Default:</b> 0.0
 
-	@see PxCapsuleController
-	*/
-	PxF32				radius;
+        @see PxCapsuleController
+        */
+        PxF32				radius;
 
-	/**
-	\brief The height of the controller
+        /**
+        \brief The height of the controller
 
-	<b>Default:</b> 0.0
+        <b>Default:</b> 0.0
 
-	@see PxCapsuleController
-	*/
-	PxF32				height;
+        @see PxCapsuleController
+        */
+        PxF32				height;
 
-	/**
-	\brief The climbing mode
+        /**
+        \brief The climbing mode
 
-	<b>Default:</b> PxCapsuleClimbingMode::eEASY
+        <b>Default:</b> PxCapsuleClimbingMode::eEASY
 
-	@see PxCapsuleController
-	*/
-	PxCapsuleClimbingMode::Enum		climbingMode;
-	
-protected:
-	PX_INLINE void								copy(const PxCapsuleControllerDesc&);
-};
+        @see PxCapsuleController
+        */
+        PxCapsuleClimbingMode::Enum		climbingMode;
 
-PX_INLINE PxCapsuleControllerDesc::PxCapsuleControllerDesc () : PxControllerDesc(PxControllerShapeType::eCAPSULE)
-{
-	radius = height = 0.0f;
-	climbingMode = PxCapsuleClimbingMode::eEASY;
-}
+    protected:
+        PX_INLINE void								copy(const PxCapsuleControllerDesc&);
+    };
 
-PX_INLINE PxCapsuleControllerDesc::PxCapsuleControllerDesc(const PxCapsuleControllerDesc& other) : PxControllerDesc(other)
-{
-	copy(other);
-}
+    PX_INLINE PxCapsuleControllerDesc::PxCapsuleControllerDesc() : PxControllerDesc(PxControllerShapeType::eCAPSULE)
+    {
+        radius = height = 0.0f;
+        climbingMode = PxCapsuleClimbingMode::eEASY;
+    }
 
-PX_INLINE PxCapsuleControllerDesc& PxCapsuleControllerDesc::operator=(const PxCapsuleControllerDesc& other)
-{
-	PxControllerDesc::operator=(other);
-	copy(other);
-	return *this;
-}
+    PX_INLINE PxCapsuleControllerDesc::PxCapsuleControllerDesc(const PxCapsuleControllerDesc& other) : PxControllerDesc(other)
+    {
+        copy(other);
+    }
 
-PX_INLINE void PxCapsuleControllerDesc::copy(const PxCapsuleControllerDesc& other)
-{
-	radius			= other.radius;
-	height			= other.height;
-	climbingMode	= other.climbingMode;
-}
+    PX_INLINE PxCapsuleControllerDesc& PxCapsuleControllerDesc::operator=(const PxCapsuleControllerDesc& other)
+    {
+        PxControllerDesc::operator=(other);
+        copy(other);
+        return *this;
+    }
 
-PX_INLINE void PxCapsuleControllerDesc::setToDefault()
-{
-	*this = PxCapsuleControllerDesc();
-}
+    PX_INLINE void PxCapsuleControllerDesc::copy(const PxCapsuleControllerDesc& other)
+    {
+        radius = other.radius;
+        height = other.height;
+        climbingMode = other.climbingMode;
+    }
 
-PX_INLINE bool PxCapsuleControllerDesc::isValid() const
-{
-	if(!PxControllerDesc::isValid())	return false;
-	if(radius<=0.0f)					return false;
-	if(height<=0.0f)					return false;
-	if(stepOffset>height+radius*2.0f)	return false;	// Prevents obvious mistakes
-	return true;
-}
-/**
-\brief A capsule character controller.
+    PX_INLINE void PxCapsuleControllerDesc::setToDefault()
+    {
+        *this = PxCapsuleControllerDesc();
+    }
 
-The capsule is defined as a position, a vertical height, and a radius.
-The height is the distance between the two sphere centers at the end of the capsule.
-In other words:
+    PX_INLINE bool PxCapsuleControllerDesc::isValid() const
+    {
+        if (!PxControllerDesc::isValid())	return false;
+        if (radius <= 0.0f)					return false;
+        if (height <= 0.0f)					return false;
+        if (stepOffset > height + radius * 2.0f)	return false;	// Prevents obvious mistakes
+        return true;
+    }
+    /**
+    \brief A capsule character controller.
 
-p = pos (returned by controller)<br>
-h = height<br>
-r = radius<br>
+    The capsule is defined as a position, a vertical height, and a radius.
+    The height is the distance between the two sphere centers at the end of the capsule.
+    In other words:
 
-p = center of capsule<br>
-top sphere center = p.y + h*0.5<br>
-bottom sphere center = p.y - h*0.5<br>
-top capsule point = p.y + h*0.5 + r<br>
-bottom capsule point = p.y - h*0.5 - r<br>
-*/
-class PxCapsuleController : public PxController
-{
-public:
+    p = pos (returned by controller)<br>
+    h = height<br>
+    r = radius<br>
 
-	/**
-	\brief Gets controller's radius.
+    p = center of capsule<br>
+    top sphere center = p.y + h*0.5<br>
+    bottom sphere center = p.y - h*0.5<br>
+    top capsule point = p.y + h*0.5 + r<br>
+    bottom capsule point = p.y - h*0.5 - r<br>
+    */
+    class PxCapsuleController : public PxController
+    {
+    public:
 
-	\return The radius of the controller.
+        /**
+        \brief Gets controller's radius.
 
-	@see PxCapsuleControllerDesc.radius setRadius()
-	*/
-	virtual		PxF32			getRadius() const = 0;
+        \return The radius of the controller.
 
-	/**
-	\brief Sets controller's radius.
+        @see PxCapsuleControllerDesc.radius setRadius()
+        */
+        virtual		PxF32			getRadius() const = 0;
 
-	\warning this doesn't check for collisions.
+        /**
+        \brief Sets controller's radius.
 
-	\param[in] radius The new radius for the controller.
-	\return Currently always true.
+        \warning this doesn't check for collisions.
 
-	@see PxCapsuleControllerDesc.radius getRadius()
-	*/
-	virtual		bool			setRadius(PxF32 radius) = 0;
+        \param[in] radius The new radius for the controller.
+        \return Currently always true.
 
-	/**
-	\brief Gets controller's height.
+        @see PxCapsuleControllerDesc.radius getRadius()
+        */
+        virtual		bool			setRadius(PxF32 radius) = 0;
 
-	\return The height of the capsule controller.
+        /**
+        \brief Gets controller's height.
 
-	@see PxCapsuleControllerDesc.height setHeight()
-	*/
-	virtual		PxF32			getHeight() const = 0;
+        \return The height of the capsule controller.
 
-	/**
-	\brief Resets controller's height.
+        @see PxCapsuleControllerDesc.height setHeight()
+        */
+        virtual		PxF32			getHeight() const = 0;
 
-	\warning this doesn't check for collisions.
+        /**
+        \brief Resets controller's height.
 
-	\param[in] height The new height for the controller.
-	\return Currently always true.
+        \warning this doesn't check for collisions.
 
-	@see PxCapsuleControllerDesc.height getHeight()
-	*/
-	virtual		bool			setHeight(PxF32 height) = 0;
+        \param[in] height The new height for the controller.
+        \return Currently always true.
 
-	/**
-	\brief Gets controller's climbing mode.
+        @see PxCapsuleControllerDesc.height getHeight()
+        */
+        virtual		bool			setHeight(PxF32 height) = 0;
 
-	\return The capsule controller's climbing mode.
+        /**
+        \brief Gets controller's climbing mode.
 
-	@see PxCapsuleControllerDesc.climbingMode setClimbingMode()
-	*/
-	virtual		PxCapsuleClimbingMode::Enum		getClimbingMode()	const	= 0;
+        \return The capsule controller's climbing mode.
 
-	/**
-	\brief Sets controller's climbing mode.
+        @see PxCapsuleControllerDesc.climbingMode setClimbingMode()
+        */
+        virtual		PxCapsuleClimbingMode::Enum		getClimbingMode()	const = 0;
 
-	\param[in] mode The capsule controller's climbing mode.
+        /**
+        \brief Sets controller's climbing mode.
 
-	@see PxCapsuleControllerDesc.climbingMode getClimbingMode()
-	*/
-	virtual		bool			setClimbingMode(PxCapsuleClimbingMode::Enum mode)	= 0;
-	
-protected:
-	PX_INLINE					PxCapsuleController()	{}
-	virtual						~PxCapsuleController()	{}
-};
+        \param[in] mode The capsule controller's climbing mode.
+
+        @see PxCapsuleControllerDesc.climbingMode getClimbingMode()
+        */
+        virtual		bool			setClimbingMode(PxCapsuleClimbingMode::Enum mode) = 0;
+
+    protected:
+        PX_INLINE					PxCapsuleController() {}
+        virtual						~PxCapsuleController() {}
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

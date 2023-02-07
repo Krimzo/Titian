@@ -15,80 +15,80 @@
 namespace kl {
 #ifdef KL_USING_PHYSX
 
-	class scene 
-	{
-		std::set<ref<entity>> entities_;
+    class scene
+    {
+        std::set<ref<entity>> entities_;
 
-		static PxDefaultAllocator          allocator_;
-		static PxDefaultErrorCallback error_callback_;
-		static PxFoundation*              foundation_;
+        static PxDefaultAllocator          allocator_;
+        static PxDefaultErrorCallback error_callback_;
+        static PxFoundation* foundation_;
 
-		PxPhysics*                 physics_ = nullptr;
-		PxCooking*                 cooking_ = nullptr;
-		PxDefaultCpuDispatcher* dispatcher_ = nullptr;
-		PxScene*                     scene_ = nullptr;
+        PxPhysics* physics_ = nullptr;
+        PxCooking* cooking_ = nullptr;
+        PxDefaultCpuDispatcher* dispatcher_ = nullptr;
+        PxScene* scene_ = nullptr;
 
-	public:
-		camera camera = {};
+    public:
+        camera camera = {};
 
-		ref<ambient_light>         ambient_light = {};
-		ref<directional_light> directional_light = {};
+        ref<ambient_light>         ambient_light = {};
+        ref<directional_light> directional_light = {};
 
-		dx::buffer ocean_mesh = nullptr;
+        dx::buffer ocean_mesh = nullptr;
 
-		scene();
-		~scene();
+        scene();
+        ~scene();
 
-		scene(const scene&) = delete;
-		scene(const scene&&) = delete;
+        scene(const scene&) = delete;
+        scene(const scene&&) = delete;
 
-		void operator=(const scene&) = delete;
-		void operator=(const scene&&) = delete;
+        void operator=(const scene&) = delete;
+        void operator=(const scene&&) = delete;
 
-		// Scene properties
-		void set_gravity(const float3& gravity);
-		float3 get_gravity() const;
+        // Scene properties
+        void set_gravity(const float3& gravity);
+        float3 get_gravity() const;
 
-		std::set<ref<entity>>::iterator begin();
-		std::set<ref<entity>>::iterator end();
+        std::set<ref<entity>>::iterator begin();
+        std::set<ref<entity>>::iterator end();
 
-		void add(ref<entity> entity);
-		void remove(ref<entity> entity);
+        void add(ref<entity> entity);
+        void remove(ref<entity> entity);
 
-		int entity_count() const;
+        int entity_count() const;
 
-		void update_physics(float delta_t);
+        void update_physics(float delta_t);
 
-		// Entity
-		ref<entity> make_entity(bool dynamic);
+        // Entity
+        ref<entity> make_entity(bool dynamic);
 
-		// Dynamic colliders
-		ref<collider> make_box_collider(const float3& scale);
-		ref<collider> make_sphere_collider(float radius);
-		ref<collider> make_capsule_collider(float radius, float height);
+        // Dynamic colliders
+        ref<collider> make_box_collider(const float3& scale);
+        ref<collider> make_sphere_collider(float radius);
+        ref<collider> make_capsule_collider(float radius, float height);
 
-		// Static colliders
-		ref<collider> make_plane_collider();
-		ref<collider> make_mesh_collider(const mesh_data& mesh_data, const float3& scale);
-	};
+        // Static colliders
+        ref<collider> make_plane_collider();
+        ref<collider> make_mesh_collider(const mesh_data& mesh_data, const float3& scale);
+    };
 
 #else
 
-	class scene : public std::set<ref<entity>>
-	{
-	public:
-		camera camera = {};
+    class scene : public std::set<ref<entity>>
+    {
+    public:
+        camera camera = {};
 
-		ref<ambient_light>         ambient_light = {};
-		ref<directional_light> directional_light = {};
+        ref<ambient_light>         ambient_light = {};
+        ref<directional_light> directional_light = {};
 
-		float3 gravity = { 0.0f, -9.81f, 0.0f };
+        float3 gravity = { 0.0f, -9.81f, 0.0f };
 
-		scene();
-		~scene();
+        scene();
+        ~scene();
 
-		void update_physics(float delta_t);
-	};
+        void update_physics(float delta_t);
+    };
 
 #endif
 }

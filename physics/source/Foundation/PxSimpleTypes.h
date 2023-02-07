@@ -63,19 +63,18 @@
 #define PX_PRIu64 PRIu64
 #endif
 
-namespace physx
-{
-typedef int64_t PxI64;
-typedef uint64_t PxU64;
-typedef int32_t PxI32;
-typedef uint32_t PxU32;
-typedef int16_t PxI16;
-typedef uint16_t PxU16;
-typedef int8_t PxI8;
-typedef uint8_t PxU8;
-typedef float PxF32;
-typedef double PxF64;
-typedef float PxReal;
+namespace physx {
+    typedef int64_t PxI64;
+    typedef uint64_t PxU64;
+    typedef int32_t PxI32;
+    typedef uint32_t PxU32;
+    typedef int16_t PxI16;
+    typedef uint16_t PxU16;
+    typedef int8_t PxI8;
+    typedef uint8_t PxU8;
+    typedef float PxF32;
+    typedef double PxF64;
+    typedef float PxReal;
 }
 
 // Type ranges

@@ -38,42 +38,41 @@
 */
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-	/**
+    /**
 
-	\brief Callback interface that permits PxCooking to insert a
-	TriangleMesh, HeightfieldMesh or ConvexMesh directly into PxPhysics without the need to store
-	the cooking results into a stream.
+    \brief Callback interface that permits PxCooking to insert a
+    TriangleMesh, HeightfieldMesh or ConvexMesh directly into PxPhysics without the need to store
+    the cooking results into a stream.
 
 
-	Using this is advised only if real-time cooking is required; using "offline" cooking and
-	streams is otherwise preferred.
+    Using this is advised only if real-time cooking is required; using "offline" cooking and
+    streams is otherwise preferred.
 
-	The default PxPhysicsInsertionCallback implementation must be used. The PxPhysics
-	default callback can be obtained using the PxPhysics::getPhysicsInsertionCallback().
+    The default PxPhysicsInsertionCallback implementation must be used. The PxPhysics
+    default callback can be obtained using the PxPhysics::getPhysicsInsertionCallback().
 
-	@see PxCooking PxPhysics
-	*/
-	class PxPhysicsInsertionCallback
-	{
-	public:
-		PxPhysicsInsertionCallback()				{}		
+    @see PxCooking PxPhysics
+    */
+    class PxPhysicsInsertionCallback
+    {
+    public:
+        PxPhysicsInsertionCallback() {}
 
-		/**
-		\brief Builds object (TriangleMesh, HeightfieldMesh or ConvexMesh) from given data in PxPhysics.		
+        /**
+        \brief Builds object (TriangleMesh, HeightfieldMesh or ConvexMesh) from given data in PxPhysics.
 
-		\param type Object type to build.
-		\param data Object data
-		\return PxBase Created object in PxPhysics.
-		*/
-		virtual PxBase* buildObjectFromData(PxConcreteType::Enum type, void* data) = 0;
+        \param type Object type to build.
+        \param data Object data
+        \return PxBase Created object in PxPhysics.
+        */
+        virtual PxBase* buildObjectFromData(PxConcreteType::Enum type, void* data) = 0;
 
-	protected:
-		virtual ~PxPhysicsInsertionCallback()		{}
-	};
+    protected:
+        virtual ~PxPhysicsInsertionCallback() {}
+    };
 
 
 #if !PX_DOXYGEN

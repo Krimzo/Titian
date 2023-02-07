@@ -6,34 +6,34 @@ kl::dll::dll()
 
 kl::dll::dll(const std::string& path)
 {
-	load(path);
+    load(path);
 }
 
 kl::dll::~dll()
 {
-	unload();
+    unload();
 }
 
 void kl::dll::load(const std::string& path)
 {
-	unload();
-	this->path = path;
-	module = LoadLibraryA(path.c_str());
+    unload();
+    this->path = path;
+    module = LoadLibraryA(path.c_str());
 }
 
 void kl::dll::reload()
 {
-	unload();
-	module = LoadLibraryA(path.c_str());
+    unload();
+    module = LoadLibraryA(path.c_str());
 }
 
 void kl::dll::unload()
 {
-	if (module) FreeLibrary(module);
-	module = nullptr;
+    if (module) FreeLibrary(module);
+    module = nullptr;
 }
 
 bool kl::dll::is_valid()
 {
-	return (bool) module;
+    return (bool) module;
 }

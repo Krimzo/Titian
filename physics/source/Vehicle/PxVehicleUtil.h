@@ -36,25 +36,24 @@
 #include "foundation/Px.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-struct PxVehicleWheelQueryResult;
+    struct PxVehicleWheelQueryResult;
 
-/**
-\brief Test if all wheels of a vehicle are in the air by querying the wheel query data 
-stored in the last call to PxVehicleUpdates. If all wheels are in the air then true is returned.  
+    /**
+    \brief Test if all wheels of a vehicle are in the air by querying the wheel query data
+    stored in the last call to PxVehicleUpdates. If all wheels are in the air then true is returned.
 
-\note False is returned if any wheel can reach to the ground.
+    \note False is returned if any wheel can reach to the ground.
 
-\note If vehWheelQueryResults.wheelQueryResults is NULL or vehWheelQueryResults.nbWheelQueryResults is 0 then true is returned.
-This function does not account for wheels that have been disabled since the last execution of PxVehicleUpdates so it is possible
-that wheels disabled more recently than the last call to PxVehicleUpdates report are treated as touching the ground.
+    \note If vehWheelQueryResults.wheelQueryResults is NULL or vehWheelQueryResults.nbWheelQueryResults is 0 then true is returned.
+    This function does not account for wheels that have been disabled since the last execution of PxVehicleUpdates so it is possible
+    that wheels disabled more recently than the last call to PxVehicleUpdates report are treated as touching the ground.
 
-\return True if the vehicle is in the air, false if any wheel is touching the ground.
-*/
-bool PxVehicleIsInAir(const PxVehicleWheelQueryResult& vehWheelQueryResults);
+    \return True if the vehicle is in the air, false if any wheel is touching the ground.
+    */
+    bool PxVehicleIsInAir(const PxVehicleWheelQueryResult& vehWheelQueryResults);
 
 #if !PX_DOXYGEN
 } // namespace physx

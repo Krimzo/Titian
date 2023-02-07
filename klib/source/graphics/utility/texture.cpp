@@ -54,10 +54,10 @@ kl::dx::texture kl::gpu::new_texture(const image& image, const bool has_unordere
 kl::dx::texture kl::gpu::new_texture(const image& front, const image& back, const image& left, const image& right, const image& top, const image& bottom)
 {
     if (warning_check(!(front.size() == back.size() &&
-                    front.size() == left.size() &&
-                    front.size() == right.size() &&
-                    front.size() == top.size() &&
-                    front.size() == bottom.size()), "Sizes of the 6 given images do not match")) {
+        front.size() == left.size() &&
+        front.size() == right.size() &&
+        front.size() == top.size() &&
+        front.size() == bottom.size()), "Sizes of the 6 given images do not match")) {
         return nullptr;
     }
 

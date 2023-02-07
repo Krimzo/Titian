@@ -6,23 +6,23 @@
 
 void update_callback(state_machine* state)
 {
-	// Pre-Render
-	if (state->scene) {
-		update_physics(state);
-		update_light(state);
-		handle_camera(state);
-	}
+    // Pre-Render
+    if (state->scene) {
+        update_physics(state);
+        update_light(state);
+        handle_camera(state);
+    }
 
-	// Custom-Pre-Render
-	custom_pre_render_update(state);
+    // Custom-Pre-Render
+    custom_pre_render_update(state);
 
-	// Render
-	handle_resizes(state);
-	render_chain(state);
+    // Render
+    handle_resizes(state);
+    render_chain(state);
 
-	// Post-Render
-	finalize_frame(state);
+    // Post-Render
+    finalize_frame(state);
 
-	// Custom-Post-Render
-	custom_post_render_update(state);
+    // Custom-Post-Render
+    custom_post_render_update(state);
 }

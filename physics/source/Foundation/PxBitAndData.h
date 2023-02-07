@@ -36,48 +36,45 @@
   @{
 */
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-template <typename storageType, storageType bitMask>
-class PxBitAndDataT
-{
-  public:
-	PX_FORCE_INLINE PxBitAndDataT(const PxEMPTY)
-	{
-	}
-	PX_FORCE_INLINE PxBitAndDataT() : mData(0)
-	{
-	}
-	PX_FORCE_INLINE PxBitAndDataT(storageType data, bool bit = false)
-	{
-		mData = bit ? storageType(data | bitMask) : data;
-	}
+    template <typename storageType, storageType bitMask>
+    class PxBitAndDataT
+    {
+    public:
+        PX_FORCE_INLINE PxBitAndDataT(const PxEMPTY)
+        {}
+        PX_FORCE_INLINE PxBitAndDataT() : mData(0)
+        {}
+        PX_FORCE_INLINE PxBitAndDataT(storageType data, bool bit = false)
+        {
+            mData = bit ? storageType(data | bitMask) : data;
+        }
 
-	PX_CUDA_CALLABLE PX_FORCE_INLINE operator storageType() const
-	{
-		return storageType(mData & ~bitMask);
-	}
-	PX_CUDA_CALLABLE PX_FORCE_INLINE void setBit()
-	{
-		mData |= bitMask;
-	}
-	PX_CUDA_CALLABLE PX_FORCE_INLINE void clearBit()
-	{
-		mData &= ~bitMask;
-	}
-	PX_CUDA_CALLABLE PX_FORCE_INLINE storageType isBitSet() const
-	{
-		return storageType(mData & bitMask);
-	}
+        PX_CUDA_CALLABLE PX_FORCE_INLINE operator storageType() const
+        {
+            return storageType(mData & ~bitMask);
+        }
+        PX_CUDA_CALLABLE PX_FORCE_INLINE void setBit()
+        {
+            mData |= bitMask;
+        }
+        PX_CUDA_CALLABLE PX_FORCE_INLINE void clearBit()
+        {
+            mData &= ~bitMask;
+        }
+        PX_CUDA_CALLABLE PX_FORCE_INLINE storageType isBitSet() const
+        {
+            return storageType(mData & bitMask);
+        }
 
-  protected:
-	storageType mData;
-};
-typedef PxBitAndDataT<unsigned char, 0x80> PxBitAndByte;
-typedef PxBitAndDataT<unsigned short, 0x8000> PxBitAndWord;
-typedef PxBitAndDataT<unsigned int, 0x80000000> PxBitAndDword;
+    protected:
+        storageType mData;
+    };
+    typedef PxBitAndDataT<unsigned char, 0x80> PxBitAndByte;
+    typedef PxBitAndDataT<unsigned short, 0x8000> PxBitAndWord;
+    typedef PxBitAndDataT<unsigned int, 0x80000000> PxBitAndDword;
 
 #if !PX_DOXYGEN
 } // namespace physx

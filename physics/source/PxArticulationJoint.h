@@ -30,7 +30,7 @@
 
 #ifndef PX_PHYSICS_NX_ARTICULATION_JOINT
 #define PX_PHYSICS_NX_ARTICULATION_JOINT
-/** \addtogroup physics 
+/** \addtogroup physics
 @{ */
 
 #include "PxPhysXConfig.h"
@@ -38,454 +38,453 @@
 #include "solver/PxSolverDefs.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-class PxArticulationJointImpl;
+    class PxArticulationJointImpl;
 
-/**
-\brief The type of joint drive to use for the articulation joint.
+    /**
+    \brief The type of joint drive to use for the articulation joint.
 
-Two drive models are currently supported. in the TARGET model, the drive spring displacement will be determined 
-as the rotation vector from the relative quaternion beetween child and parent, and the target quaternion.
+    Two drive models are currently supported. in the TARGET model, the drive spring displacement will be determined
+    as the rotation vector from the relative quaternion beetween child and parent, and the target quaternion.
 
-In the ERROR model, the drive spring displacement will be taken directly from the imaginary part of the relative
-quaternion. This drive model requires more computation on the part of the application, but allows driving the joint
-with a spring displacement that is more than a complete rotation.
+    In the ERROR model, the drive spring displacement will be taken directly from the imaginary part of the relative
+    quaternion. This drive model requires more computation on the part of the application, but allows driving the joint
+    with a spring displacement that is more than a complete rotation.
 
-@see PxArticulationJoint
-*/
+    @see PxArticulationJoint
+    */
 
-struct PxArticulationJointDriveType
-{
-	enum Enum
-	{
-		eTARGET = 0,			// use the quaternion as the drive target
-		eERROR 	= 1				// use the vector part of the quaternion as the drive error.
-	};
-};
+    struct PxArticulationJointDriveType
+    {
+        enum Enum
+        {
+            eTARGET = 0,			// use the quaternion as the drive target
+            eERROR = 1				// use the vector part of the quaternion as the drive error.
+        };
+    };
 
-class PxArticulationJointBase : public PxBase
-{
-public:
-	/**
-	\brief get the parent articulation link to which this articulation joint belongs
+    class PxArticulationJointBase : public PxBase
+    {
+    public:
+        /**
+        \brief get the parent articulation link to which this articulation joint belongs
 
-	\return the articulation link to which this joint belongs
-	*/
-	virtual		PxArticulationLink&	getParentArticulationLink() const = 0;
+        \return the articulation link to which this joint belongs
+        */
+        virtual		PxArticulationLink& getParentArticulationLink() const = 0;
 
-	/**
-	\brief set the joint pose in the parent frame
+        /**
+        \brief set the joint pose in the parent frame
 
-	\param[in] pose the joint pose in the parent frame
-	<b>Default:</b> the identity matrix
+        \param[in] pose the joint pose in the parent frame
+        <b>Default:</b> the identity matrix
 
-	@see getParentPose()
-	*/
-	virtual		void			setParentPose(const PxTransform& pose) = 0;
+        @see getParentPose()
+        */
+        virtual		void			setParentPose(const PxTransform& pose) = 0;
 
-	/**
-	\brief get the joint pose in the parent frame
+        /**
+        \brief get the joint pose in the parent frame
 
-	\return the joint pose in the parent frame
+        \return the joint pose in the parent frame
 
-	@see setParentPose()
-	*/
-	virtual		PxTransform		getParentPose() const = 0;
+        @see setParentPose()
+        */
+        virtual		PxTransform		getParentPose() const = 0;
 
-	/**
-	\brief get the child articulation link to which this articulation joint belongs
+        /**
+        \brief get the child articulation link to which this articulation joint belongs
 
-	\return the articulation link to which this joint belongs
-	*/
-	virtual		PxArticulationLink&	getChildArticulationLink() const = 0;
+        \return the articulation link to which this joint belongs
+        */
+        virtual		PxArticulationLink& getChildArticulationLink() const = 0;
 
-	/**
-	\brief set the joint pose in the child frame
+        /**
+        \brief set the joint pose in the child frame
 
-	\param[in] pose the joint pose in the child frame
-	<b>Default:</b> the identity matrix
+        \param[in] pose the joint pose in the child frame
+        <b>Default:</b> the identity matrix
 
-	@see getChildPose()
-	*/
-	virtual		void			setChildPose(const PxTransform& pose) = 0;
+        @see getChildPose()
+        */
+        virtual		void			setChildPose(const PxTransform& pose) = 0;
 
-	/**
-	\brief get the joint pose in the child frame
+        /**
+        \brief get the joint pose in the child frame
 
-	\return the joint pose in the child frame
+        \return the joint pose in the child frame
 
-	@see setChildPose()
-	*/
-	virtual		PxTransform		getChildPose() const = 0;
+        @see setChildPose()
+        */
+        virtual		PxTransform		getChildPose() const = 0;
 
-	virtual		PxArticulationJointImpl* getImpl() = 0;
-	virtual		const PxArticulationJointImpl* getImpl() const = 0;
+        virtual		PxArticulationJointImpl* getImpl() = 0;
+        virtual		const PxArticulationJointImpl* getImpl() const = 0;
 
-	virtual						~PxArticulationJointBase() {}
+        virtual						~PxArticulationJointBase() {}
 
-private:
-protected:
-	PX_INLINE					PxArticulationJointBase(PxType concreteType, PxBaseFlags baseFlags) : PxBase(concreteType, baseFlags) {}
-	PX_INLINE					PxArticulationJointBase(PxBaseFlags baseFlags) : PxBase(baseFlags) {}
-	
-	virtual		bool			isKindOf(const char* name)	const { return !::strcmp("PxArticulationJointBase", name) || PxBase::isKindOf(name); }
-};
+    private:
+    protected:
+        PX_INLINE					PxArticulationJointBase(PxType concreteType, PxBaseFlags baseFlags) : PxBase(concreteType, baseFlags) {}
+        PX_INLINE					PxArticulationJointBase(PxBaseFlags baseFlags) : PxBase(baseFlags) {}
 
+        virtual		bool			isKindOf(const char* name)	const { return !::strcmp("PxArticulationJointBase", name) || PxBase::isKindOf(name); }
+    };
 
 
-/**
-\brief a joint between two links in an articulation.
 
-The joint model is very similar to a PxSphericalJoint with swing and twist limits,
-and an implicit drive model.
+    /**
+    \brief a joint between two links in an articulation.
 
-@see PxArticulation PxArticulationLink
-*/
+    The joint model is very similar to a PxSphericalJoint with swing and twist limits,
+    and an implicit drive model.
 
-class PxArticulationJoint : public PxArticulationJointBase
-{
-public:
+    @see PxArticulation PxArticulationLink
+    */
 
-	/**
-	\brief set the target drive
+    class PxArticulationJoint : public PxArticulationJointBase
+    {
+    public:
 
-	This is the target position for the joint drive, measured in the parent constraint frame.
+        /**
+        \brief set the target drive
 
-	\param[in] orientation the target orientation for the joint
-	<b>Range:</b> a unit quaternion
-	<b>Default:</b> the identity quaternion
+        This is the target position for the joint drive, measured in the parent constraint frame.
 
-	@see getTargetOrientation()
-	*/
-	virtual		void			setTargetOrientation(const PxQuat& orientation) = 0;
+        \param[in] orientation the target orientation for the joint
+        <b>Range:</b> a unit quaternion
+        <b>Default:</b> the identity quaternion
 
-	/**
-	\brief get the target drive position
+        @see getTargetOrientation()
+        */
+        virtual		void			setTargetOrientation(const PxQuat& orientation) = 0;
 
-	\return the joint drive target position
+        /**
+        \brief get the target drive position
 
-	@see setTargetOrientation()
-	*/
-	virtual		PxQuat			getTargetOrientation() const = 0;
+        \return the joint drive target position
 
-	/**
-	\brief set the target drive velocity
+        @see setTargetOrientation()
+        */
+        virtual		PxQuat			getTargetOrientation() const = 0;
 
-	This is the target velocity for the joint drive, measured in the parent constraint frame
+        /**
+        \brief set the target drive velocity
 
-	\param[in] velocity the target velocity for the joint
-	<b>Default:</b> the zero vector
+        This is the target velocity for the joint drive, measured in the parent constraint frame
 
-	@see getTargetVelocity()
-	*/
-	virtual		void			setTargetVelocity(const PxVec3& velocity) = 0;
+        \param[in] velocity the target velocity for the joint
+        <b>Default:</b> the zero vector
 
-	/**
-	\brief get the target drive velocity
+        @see getTargetVelocity()
+        */
+        virtual		void			setTargetVelocity(const PxVec3& velocity) = 0;
 
-	\return the target velocity for the joint
+        /**
+        \brief get the target drive velocity
 
-	@see setTargetVelocity()
-	*/
-	virtual		PxVec3			getTargetVelocity() const = 0;
+        \return the target velocity for the joint
 
-	/**
-	\brief set the drive type
+        @see setTargetVelocity()
+        */
+        virtual		PxVec3			getTargetVelocity() const = 0;
 
-	\param[in] driveType the drive type for the joint
-	<b>Default:</b> PxArticulationJointDriveType::eTARGET
+        /**
+        \brief set the drive type
 
-	@see getDriveType()
-	*/
-	virtual		void			setDriveType(PxArticulationJointDriveType::Enum driveType) = 0;
+        \param[in] driveType the drive type for the joint
+        <b>Default:</b> PxArticulationJointDriveType::eTARGET
 
-	/**
-	\brief get the drive type
+        @see getDriveType()
+        */
+        virtual		void			setDriveType(PxArticulationJointDriveType::Enum driveType) = 0;
 
-	\return the drive type
+        /**
+        \brief get the drive type
 
-	@see setDriveType()
-	*/
-	virtual		PxArticulationJointDriveType::Enum	getDriveType() const = 0;
+        \return the drive type
 
-	/**
-	\brief set the drive strength of the joint acceleration spring. 
+        @see setDriveType()
+        */
+        virtual		PxArticulationJointDriveType::Enum	getDriveType() const = 0;
 
-	The acceleration generated by the spring drive is proportional to
-	this value and the angle between the drive target position and the
-	current position.
+        /**
+        \brief set the drive strength of the joint acceleration spring.
 
-	\param[in] spring the spring strength of the joint 
-	<b>Range:</b> [0, PX_MAX_F32)<br>
-	<b>Default:</b> 0.0
+        The acceleration generated by the spring drive is proportional to
+        this value and the angle between the drive target position and the
+        current position.
 
-	@see getStiffness()
-	*/
-	virtual		void			setStiffness(PxReal spring) = 0;
+        \param[in] spring the spring strength of the joint
+        <b>Range:</b> [0, PX_MAX_F32)<br>
+        <b>Default:</b> 0.0
 
-	/**
-	\brief get the drive strength of the joint acceleration spring
+        @see getStiffness()
+        */
+        virtual		void			setStiffness(PxReal spring) = 0;
 
-	\return the spring strength of the joint
+        /**
+        \brief get the drive strength of the joint acceleration spring
 
-	@see setStiffness()
-	*/
-	virtual		PxReal			getStiffness() const = 0;
+        \return the spring strength of the joint
 
-	/**
-	\brief set the damping of the joint acceleration spring
+        @see setStiffness()
+        */
+        virtual		PxReal			getStiffness() const = 0;
 
-	The acceleration generated by the spring drive is proportional to
-	this value and the difference between the angular velocity of the
-	joint and the target drive velocity.
+        /**
+        \brief set the damping of the joint acceleration spring
 
-	\param[in] damping the damping of the joint drive
-	<b>Range:</b> [0, PX_MAX_F32)<br>
-	<b>Default:</b> 0.0
+        The acceleration generated by the spring drive is proportional to
+        this value and the difference between the angular velocity of the
+        joint and the target drive velocity.
 
-	@see getDamping()
-	*/
-	virtual		void			setDamping(PxReal damping) = 0;
+        \param[in] damping the damping of the joint drive
+        <b>Range:</b> [0, PX_MAX_F32)<br>
+        <b>Default:</b> 0.0
 
-	/**
-	\brief get the damping of the joint acceleration spring
+        @see getDamping()
+        */
+        virtual		void			setDamping(PxReal damping) = 0;
 
-	@see setDamping()
-	*/
-	virtual		PxReal			getDamping() const = 0;
+        /**
+        \brief get the damping of the joint acceleration spring
 
-	/**
-	\brief set the internal compliance
+        @see setDamping()
+        */
+        virtual		PxReal			getDamping() const = 0;
 
-	Compliance determines the extent to which the joint resists acceleration. 
-	
-	There are separate values for resistance to accelerations caused by external
-	forces such as gravity and contact forces, and internal forces generated from
-	other joints.
+        /**
+        \brief set the internal compliance
 
-	A low compliance means that forces have little effect, a compliance of 1 means 
-	the joint does not resist such forces at all.
+        Compliance determines the extent to which the joint resists acceleration.
 
-	\param[in] compliance the compliance to internal forces
-	<b> Range: (0, 1]</b>
-	<b> Default:</b> 0.0
+        There are separate values for resistance to accelerations caused by external
+        forces such as gravity and contact forces, and internal forces generated from
+        other joints.
 
-	@see getInternalCompliance()
-	*/
-	virtual		void			setInternalCompliance(PxReal compliance) = 0;
+        A low compliance means that forces have little effect, a compliance of 1 means
+        the joint does not resist such forces at all.
 
-	/**
-	\brief get the internal compliance
+        \param[in] compliance the compliance to internal forces
+        <b> Range: (0, 1]</b>
+        <b> Default:</b> 0.0
 
-	\return the compliance to internal forces
+        @see getInternalCompliance()
+        */
+        virtual		void			setInternalCompliance(PxReal compliance) = 0;
 
-	@see setInternalCompliance()
-	*/
-	virtual		PxReal			getInternalCompliance() const = 0;
+        /**
+        \brief get the internal compliance
 
-	/**
-	\brief get the drive external compliance
+        \return the compliance to internal forces
 
-	Compliance determines the extent to which the joint resists acceleration. 
-	
-	There are separate values for resistance to accelerations caused by external
-	forces such as gravity and contact forces, and internal forces generated from
-	other joints.
+        @see setInternalCompliance()
+        */
+        virtual		PxReal			getInternalCompliance() const = 0;
 
-	A low compliance means that forces have little effect, a compliance of 1 means 
-	the joint does not resist such forces at all.
+        /**
+        \brief get the drive external compliance
 
-	\param[in] compliance the compliance to external forces
-	<b> Range: (0, 1]</b>
-	<b> Default:</b> 0.0
+        Compliance determines the extent to which the joint resists acceleration.
 
-	@see getExternalCompliance()
-	*/
-	virtual		void			setExternalCompliance(PxReal compliance) = 0;
+        There are separate values for resistance to accelerations caused by external
+        forces such as gravity and contact forces, and internal forces generated from
+        other joints.
 
-	/**
-	\brief get the drive external compliance
+        A low compliance means that forces have little effect, a compliance of 1 means
+        the joint does not resist such forces at all.
 
-	\return the compliance to external forces
+        \param[in] compliance the compliance to external forces
+        <b> Range: (0, 1]</b>
+        <b> Default:</b> 0.0
 
-	@see setExternalCompliance()
-	*/
-	virtual		PxReal			getExternalCompliance() const = 0;
+        @see getExternalCompliance()
+        */
+        virtual		void			setExternalCompliance(PxReal compliance) = 0;
 
-	/**
-	\brief set the extents of the cone limit. The extents are measured in the frame
-	of the parent.
+        /**
+        \brief get the drive external compliance
 
-	Note that very small or highly elliptical limit cones may result in jitter.
+        \return the compliance to external forces
 
-	\param[in] zLimit the allowed extent of rotation around the z-axis
-	\param[in] yLimit the allowed extent of rotation around the y-axis
-	<b> Range:</b> ( (0, Pi), (0, Pi) )
-	<b> Default:</b> (Pi/4, Pi/4)
+        @see setExternalCompliance()
+        */
+        virtual		PxReal			getExternalCompliance() const = 0;
 
-	\note Please note the order of zLimit and yLimit. 
-	*/
-	virtual		void			setSwingLimit(PxReal zLimit, PxReal yLimit) = 0;
+        /**
+        \brief set the extents of the cone limit. The extents are measured in the frame
+        of the parent.
 
-	/**
-	\brief get the extents for the swing limit cone
+        Note that very small or highly elliptical limit cones may result in jitter.
 
-	\param[out] zLimit the allowed extent of rotation around the z-axis
-	\param[out] yLimit the allowed extent of rotation around the y-axis
+        \param[in] zLimit the allowed extent of rotation around the z-axis
+        \param[in] yLimit the allowed extent of rotation around the y-axis
+        <b> Range:</b> ( (0, Pi), (0, Pi) )
+        <b> Default:</b> (Pi/4, Pi/4)
 
-	\note Please note the order of zLimit and yLimit.
+        \note Please note the order of zLimit and yLimit.
+        */
+        virtual		void			setSwingLimit(PxReal zLimit, PxReal yLimit) = 0;
 
-	@see setSwingLimit()
-	*/
-	virtual		void			getSwingLimit(PxReal& zLimit, PxReal& yLimit) const = 0;
+        /**
+        \brief get the extents for the swing limit cone
 
-	/**
-	\brief set the tangential spring for the limit cone
-	<b> Range:</b> ([0, PX_MAX_F32), [0, PX_MAX_F32))
-	<b> Default:</b> (0.0, 0.0)
-	*/
-	virtual		void			setTangentialStiffness(PxReal spring) = 0;
+        \param[out] zLimit the allowed extent of rotation around the z-axis
+        \param[out] yLimit the allowed extent of rotation around the y-axis
 
-	/**
-	\brief get the tangential spring for the swing limit cone
-	
-	\return the tangential spring
+        \note Please note the order of zLimit and yLimit.
 
-	@see setTangentialStiffness()
-	*/
-	virtual		PxReal			getTangentialStiffness() const = 0;
+        @see setSwingLimit()
+        */
+        virtual		void			getSwingLimit(PxReal& zLimit, PxReal& yLimit) const = 0;
 
-	/**
-	\brief set the tangential damping for the limit cone
-	<b> Range:</b> ([0, PX_MAX_F32), [0, PX_MAX_F32))
-	<b> Default:</b> (0.0, 0.0)
-	*/
-	virtual		void			setTangentialDamping(PxReal damping) = 0;
+        /**
+        \brief set the tangential spring for the limit cone
+        <b> Range:</b> ([0, PX_MAX_F32), [0, PX_MAX_F32))
+        <b> Default:</b> (0.0, 0.0)
+        */
+        virtual		void			setTangentialStiffness(PxReal spring) = 0;
 
-	/**
-	\brief get the tangential damping for the swing limit cone
-	
-	\return the tangential damping
+        /**
+        \brief get the tangential spring for the swing limit cone
 
-	@see setTangentialDamping()
-	*/
-	virtual		PxReal			getTangentialDamping() const = 0;
+        \return the tangential spring
 
-	/**
-	\brief set the contact distance for the swing limit
+        @see setTangentialStiffness()
+        */
+        virtual		PxReal			getTangentialStiffness() const = 0;
 
-	The contact distance should be less than either limit angle. 
+        /**
+        \brief set the tangential damping for the limit cone
+        <b> Range:</b> ([0, PX_MAX_F32), [0, PX_MAX_F32))
+        <b> Default:</b> (0.0, 0.0)
+        */
+        virtual		void			setTangentialDamping(PxReal damping) = 0;
 
-	<b> Range:</b> [0, Pi]
-	<b> Default:</b> 0.05 radians
+        /**
+        \brief get the tangential damping for the swing limit cone
 
-	@see getSwingLimitContactDistance()
-	*/
-	virtual		void			setSwingLimitContactDistance(PxReal contactDistance) = 0;
+        \return the tangential damping
 
-	/**
-	\brief get the contact distance for the swing limit
-	
-	\return the contact distance for the swing limit cone
+        @see setTangentialDamping()
+        */
+        virtual		PxReal			getTangentialDamping() const = 0;
 
-	@see setSwingLimitContactDistance()
-	*/
-	virtual		PxReal			getSwingLimitContactDistance() const = 0;
+        /**
+        \brief set the contact distance for the swing limit
 
-	/**
-	\brief set the flag which enables the swing limit
+        The contact distance should be less than either limit angle.
 
-	\param[in] enabled whether the limit is enabled
-	<b>Default:</b> false
+        <b> Range:</b> [0, Pi]
+        <b> Default:</b> 0.05 radians
 
-	@see getSwingLimitEnabled()
-	*/
-	virtual		void			setSwingLimitEnabled(bool enabled) = 0;
+        @see getSwingLimitContactDistance()
+        */
+        virtual		void			setSwingLimitContactDistance(PxReal contactDistance) = 0;
 
-	/**
-	\brief get the flag which enables the swing limit
+        /**
+        \brief get the contact distance for the swing limit
 
-	\return whether the swing limit is enabled
+        \return the contact distance for the swing limit cone
 
-	@see setSwingLimitEnabled()
-	*/
-	virtual		bool			getSwingLimitEnabled() const = 0;
+        @see setSwingLimitContactDistance()
+        */
+        virtual		PxReal			getSwingLimitContactDistance() const = 0;
 
-	/**
-	\brief set the bounds of the twistLimit
+        /**
+        \brief set the flag which enables the swing limit
 
-	\param[in] lower the lower extent of the twist limit
-	\param[in] upper the upper extent of the twist limit
-	<b> Range: (-Pi, Pi)</b>
-	<b> Default:</b> (-Pi/4, Pi/4)
+        \param[in] enabled whether the limit is enabled
+        <b>Default:</b> false
 
-	The lower limit value must be less than the upper limit if the limit is enabled
+        @see getSwingLimitEnabled()
+        */
+        virtual		void			setSwingLimitEnabled(bool enabled) = 0;
 
-	@see getTwistLimit()
-	*/
-	virtual		void			setTwistLimit(PxReal lower, PxReal upper) = 0;
+        /**
+        \brief get the flag which enables the swing limit
 
-	/**
-	\brief get the bounds of the twistLimit
+        \return whether the swing limit is enabled
 
-	\param[out] lower the lower extent of the twist limit
-	\param[out] upper the upper extent of the twist limit
+        @see setSwingLimitEnabled()
+        */
+        virtual		bool			getSwingLimitEnabled() const = 0;
 
-	@see setTwistLimit()
-	*/
-	virtual		void			getTwistLimit(PxReal &lower, PxReal &upper) const = 0;
+        /**
+        \brief set the bounds of the twistLimit
 
-	/**
-	\brief set the flag which enables the twist limit
+        \param[in] lower the lower extent of the twist limit
+        \param[in] upper the upper extent of the twist limit
+        <b> Range: (-Pi, Pi)</b>
+        <b> Default:</b> (-Pi/4, Pi/4)
 
-	\param[in] enabled whether the twist limit is enabled
-	<b>Default:</b> false
+        The lower limit value must be less than the upper limit if the limit is enabled
 
-	@see getTwistLimitEnabled()
-	*/
-	virtual		void			setTwistLimitEnabled(bool enabled) = 0;
+        @see getTwistLimit()
+        */
+        virtual		void			setTwistLimit(PxReal lower, PxReal upper) = 0;
 
-	/**
-	\brief get the twistLimitEnabled flag
+        /**
+        \brief get the bounds of the twistLimit
 
-	\return whether the twist limit is enabled
+        \param[out] lower the lower extent of the twist limit
+        \param[out] upper the upper extent of the twist limit
 
-	@see setTwistLimitEnabled()
-	*/
-	virtual		bool			getTwistLimitEnabled() const = 0;
+        @see setTwistLimit()
+        */
+        virtual		void			getTwistLimit(PxReal& lower, PxReal& upper) const = 0;
 
-	/**
-	\brief set the contact distance for the swing limit
+        /**
+        \brief set the flag which enables the twist limit
 
-	The contact distance should be less than half the distance between the upper and lower limits. 
+        \param[in] enabled whether the twist limit is enabled
+        <b>Default:</b> false
 
-	<b> Range:</b> [0, Pi)
-	<b> Default:</b> 0.05 radians
+        @see getTwistLimitEnabled()
+        */
+        virtual		void			setTwistLimitEnabled(bool enabled) = 0;
 
-	@see getTwistLimitContactDistance()
-	*/
-	virtual		void			setTwistLimitContactDistance(PxReal contactDistance) = 0;
+        /**
+        \brief get the twistLimitEnabled flag
 
-	/**
-	\brief get the contact distance for the swing limit
-	
-	\return the contact distance for the twist limit
+        \return whether the twist limit is enabled
 
-	@see setTwistLimitContactDistance()
-	*/
-	virtual		PxReal			getTwistLimitContactDistance() const = 0;
+        @see setTwistLimitEnabled()
+        */
+        virtual		bool			getTwistLimitEnabled() const = 0;
 
-	virtual		const char*		getConcreteTypeName() const			{ return "PxArticulationJoint"; }
+        /**
+        \brief set the contact distance for the swing limit
 
-protected:
-	PX_INLINE					PxArticulationJoint(PxType concreteType, PxBaseFlags baseFlags) : PxArticulationJointBase(concreteType, baseFlags) {}
-	PX_INLINE					PxArticulationJoint(PxBaseFlags baseFlags) : PxArticulationJointBase(baseFlags)	{}
-	virtual						~PxArticulationJoint() {}
-	virtual		bool			isKindOf(const char* name)	const	{ return !::strcmp("PxArticulationJoint", name) || PxArticulationJointBase::isKindOf(name); }
-};
+        The contact distance should be less than half the distance between the upper and lower limits.
+
+        <b> Range:</b> [0, Pi)
+        <b> Default:</b> 0.05 radians
+
+        @see getTwistLimitContactDistance()
+        */
+        virtual		void			setTwistLimitContactDistance(PxReal contactDistance) = 0;
+
+        /**
+        \brief get the contact distance for the swing limit
+
+        \return the contact distance for the twist limit
+
+        @see setTwistLimitContactDistance()
+        */
+        virtual		PxReal			getTwistLimitContactDistance() const = 0;
+
+        virtual		const char* getConcreteTypeName() const { return "PxArticulationJoint"; }
+
+    protected:
+        PX_INLINE					PxArticulationJoint(PxType concreteType, PxBaseFlags baseFlags) : PxArticulationJointBase(concreteType, baseFlags) {}
+        PX_INLINE					PxArticulationJoint(PxBaseFlags baseFlags) : PxArticulationJointBase(baseFlags) {}
+        virtual						~PxArticulationJoint() {}
+        virtual		bool			isKindOf(const char* name)	const { return !::strcmp("PxArticulationJoint", name) || PxArticulationJointBase::isKindOf(name); }
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

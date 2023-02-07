@@ -39,360 +39,359 @@
 #include "common/PxBase.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-class PxRigidActor;
-class PxScene;
-class PxPhysics;
-class PxConstraint;
-
-/**
-\brief an enumeration of PhysX' built-in joint types
-
-@see PxJoint
-*/
-struct PxJointConcreteType
-{
-	enum Enum
-	{
-		eSPHERICAL = PxConcreteType::eFIRST_PHYSX_EXTENSION,
-		eREVOLUTE,
-		ePRISMATIC,
-		eFIXED,
-		eDISTANCE,
-		eD6,
-		eCONTACT,
-		eLast
-	};
-};
-
-PX_DEFINE_TYPEINFO(PxJoint,				PxConcreteType::eUNDEFINED)
-PX_DEFINE_TYPEINFO(PxD6Joint,			PxJointConcreteType::eD6)
-PX_DEFINE_TYPEINFO(PxDistanceJoint,		PxJointConcreteType::eDISTANCE)
-PX_DEFINE_TYPEINFO(PxContactJoint,		PxJointConcreteType::eCONTACT)
-PX_DEFINE_TYPEINFO(PxFixedJoint,		PxJointConcreteType::eFIXED)
-PX_DEFINE_TYPEINFO(PxPrismaticJoint,	PxJointConcreteType::ePRISMATIC)
-PX_DEFINE_TYPEINFO(PxRevoluteJoint,		PxJointConcreteType::eREVOLUTE)
-PX_DEFINE_TYPEINFO(PxSphericalJoint,	PxJointConcreteType::eSPHERICAL)
-
-
-/**
-\brief an enumeration for specifying one or other of the actors referenced by a joint
-
-@see PxJoint
-*/
-
-struct PxJointActorIndex
-{
-	enum Enum
-	{
-		eACTOR0,
-		eACTOR1,
-		COUNT
-	};
-};
-
-/** 
-\brief a base interface providing common functionality for PhysX joints
-*/
-
-class PxJoint : public PxBase
-{
-//= ATTENTION! =====================================================================================
-// Changing the data layout of this class breaks the binary serialization format.  See comments for 
-// PX_BINARY_SERIAL_VERSION.  If a modification is required, please adjust the getBinaryMetaData 
-// function.  If the modification is made on a custom branch, please change PX_BINARY_SERIAL_VERSION
-// accordingly.
-//==================================================================================================
-public:
-
-	/**
-	\brief Set the actors for this joint. 
-	
-	An actor may be NULL to indicate the world frame. At most one of the actors may be NULL.
-
-	\param[in] actor0 the first actor.
-	\param[in] actor1 the second actor
-
-	@see getActors()
-	*/
-	virtual void				setActors(PxRigidActor* actor0, PxRigidActor* actor1)	= 0;
-
-	/**
-	\brief Get the actors for this joint. 
-	
-	\param[out] actor0 the first actor.
-	\param[out] actor1 the second actor
-
-	@see setActors()
-	*/
-	virtual void				getActors(PxRigidActor*& actor0, PxRigidActor*& actor1)	const	= 0;
-
-	/**
-	\brief Set the joint local pose for an actor. 
-	
-	This is the relative pose which locates the joint frame relative to the actor.
-
-	\param[in] actor 0 for the first actor, 1 for the second actor.
-	\param[in] localPose the local pose for the actor this joint
-
-	@see getLocalPose()
-	*/
-	virtual void				setLocalPose(PxJointActorIndex::Enum actor, const PxTransform& localPose) = 0;
-
-	/**
-	\brief get the joint local pose for an actor. 
-	
-	\param[in] actor 0 for the first actor, 1 for the second actor.
+    class PxRigidActor;
+    class PxScene;
+    class PxPhysics;
+    class PxConstraint;
+
+    /**
+    \brief an enumeration of PhysX' built-in joint types
+
+    @see PxJoint
+    */
+    struct PxJointConcreteType
+    {
+        enum Enum
+        {
+            eSPHERICAL = PxConcreteType::eFIRST_PHYSX_EXTENSION,
+            eREVOLUTE,
+            ePRISMATIC,
+            eFIXED,
+            eDISTANCE,
+            eD6,
+            eCONTACT,
+            eLast
+        };
+    };
+
+    PX_DEFINE_TYPEINFO(PxJoint, PxConcreteType::eUNDEFINED)
+        PX_DEFINE_TYPEINFO(PxD6Joint, PxJointConcreteType::eD6)
+        PX_DEFINE_TYPEINFO(PxDistanceJoint, PxJointConcreteType::eDISTANCE)
+        PX_DEFINE_TYPEINFO(PxContactJoint, PxJointConcreteType::eCONTACT)
+        PX_DEFINE_TYPEINFO(PxFixedJoint, PxJointConcreteType::eFIXED)
+        PX_DEFINE_TYPEINFO(PxPrismaticJoint, PxJointConcreteType::ePRISMATIC)
+        PX_DEFINE_TYPEINFO(PxRevoluteJoint, PxJointConcreteType::eREVOLUTE)
+        PX_DEFINE_TYPEINFO(PxSphericalJoint, PxJointConcreteType::eSPHERICAL)
+
+
+        /**
+        \brief an enumeration for specifying one or other of the actors referenced by a joint
+
+        @see PxJoint
+        */
+
+        struct PxJointActorIndex
+    {
+        enum Enum
+        {
+            eACTOR0,
+            eACTOR1,
+            COUNT
+        };
+    };
+
+    /**
+    \brief a base interface providing common functionality for PhysX joints
+    */
+
+    class PxJoint : public PxBase
+    {
+        //= ATTENTION! =====================================================================================
+        // Changing the data layout of this class breaks the binary serialization format.  See comments for 
+        // PX_BINARY_SERIAL_VERSION.  If a modification is required, please adjust the getBinaryMetaData 
+        // function.  If the modification is made on a custom branch, please change PX_BINARY_SERIAL_VERSION
+        // accordingly.
+        //==================================================================================================
+    public:
 
-	return the local pose for this joint
+        /**
+        \brief Set the actors for this joint.
 
-	@see setLocalPose()
-	*/
-	virtual PxTransform			getLocalPose(PxJointActorIndex::Enum actor) const = 0;
+        An actor may be NULL to indicate the world frame. At most one of the actors may be NULL.
+
+        \param[in] actor0 the first actor.
+        \param[in] actor1 the second actor
 
-	/**
-	\brief get the relative pose for this joint
+        @see getActors()
+        */
+        virtual void				setActors(PxRigidActor* actor0, PxRigidActor* actor1) = 0;
 
-	This function returns the pose of the joint frame of actor1 relative to actor0
+        /**
+        \brief Get the actors for this joint.
 
-	*/
-	virtual PxTransform			getRelativeTransform()	const	= 0;
+        \param[out] actor0 the first actor.
+        \param[out] actor1 the second actor
 
-	/**
-	\brief get the relative linear velocity of the joint
+        @see setActors()
+        */
+        virtual void				getActors(PxRigidActor*& actor0, PxRigidActor*& actor1)	const = 0;
 
-	This function returns the linear velocity of the origin of the constraint frame of actor1, relative to the origin of the constraint
-	frame of actor0. The value is returned in the constraint frame of actor0
-	*/
-	virtual PxVec3				getRelativeLinearVelocity()	const	= 0;
+        /**
+        \brief Set the joint local pose for an actor.
 
-	/**
-	\brief get the relative angular velocity of the joint
+        This is the relative pose which locates the joint frame relative to the actor.
 
-	This function returns the angular velocity of  actor1 relative to actor0. The value is returned in the constraint frame of actor0
-	*/
-	virtual PxVec3				getRelativeAngularVelocity()	const	= 0;
+        \param[in] actor 0 for the first actor, 1 for the second actor.
+        \param[in] localPose the local pose for the actor this joint
 
-	/**
-	\brief set the break force for this joint. 
-	
-	if the constraint force or torque on the joint exceeds the specified values, the joint will break, 
-	at which point it will not constrain the two actors and the flag PxConstraintFlag::eBROKEN will be set. The
-	force and torque are measured in the joint frame of the first actor
+        @see getLocalPose()
+        */
+        virtual void				setLocalPose(PxJointActorIndex::Enum actor, const PxTransform& localPose) = 0;
 
-	\param[in] force the maximum force the joint can apply before breaking
-	\param[in] torque the maximum torque the joint can apply before breaking
-	*/
-	virtual void				setBreakForce(PxReal force, PxReal torque)	= 0;
+        /**
+        \brief get the joint local pose for an actor.
 
-	/**
-	\brief get the break force for this joint. 
-	
-	\param[out] force the maximum force the joint can apply before breaking
-	\param[out] torque the maximum torque the joint can apply before breaking
+        \param[in] actor 0 for the first actor, 1 for the second actor.
 
-	@see setBreakForce() 
-	*/
-	virtual void				getBreakForce(PxReal& force, PxReal& torque)	const	= 0;
+        return the local pose for this joint
 
-	/**
-	\brief set the constraint flags for this joint. 
-	
-	\param[in] flags the constraint flags
+        @see setLocalPose()
+        */
+        virtual PxTransform			getLocalPose(PxJointActorIndex::Enum actor) const = 0;
 
-	@see PxConstraintFlag
-	*/
-	virtual void				setConstraintFlags(PxConstraintFlags flags)	= 0;
+        /**
+        \brief get the relative pose for this joint
 
-	/**
-	\brief set a constraint flags for this joint to a specified value. 
-	
-	\param[in] flag the constraint flag
-	\param[in] value the value to which to set the flag
+        This function returns the pose of the joint frame of actor1 relative to actor0
 
-	@see PxConstraintFlag
-	*/
-	virtual void				setConstraintFlag(PxConstraintFlag::Enum flag, bool value)	= 0;
+        */
+        virtual PxTransform			getRelativeTransform()	const = 0;
 
-	/**
-	\brief get the constraint flags for this joint. 
-	
-	\return the constraint flags
+        /**
+        \brief get the relative linear velocity of the joint
 
-	@see PxConstraintFlag
-	*/
-	virtual PxConstraintFlags	getConstraintFlags()	const	= 0;
+        This function returns the linear velocity of the origin of the constraint frame of actor1, relative to the origin of the constraint
+        frame of actor0. The value is returned in the constraint frame of actor0
+        */
+        virtual PxVec3				getRelativeLinearVelocity()	const = 0;
 
-	/**
-	\brief set the inverse mass scale for actor0.
+        /**
+        \brief get the relative angular velocity of the joint
 
-	\param[in] invMassScale the scale to apply to the inverse mass of actor 0 for resolving this constraint
+        This function returns the angular velocity of  actor1 relative to actor0. The value is returned in the constraint frame of actor0
+        */
+        virtual PxVec3				getRelativeAngularVelocity()	const = 0;
 
-	@see getInvMassScale0
-	*/
-	virtual void				setInvMassScale0(PxReal invMassScale)	= 0;
+        /**
+        \brief set the break force for this joint.
 
-	/**
-	\brief get the inverse mass scale for actor0.
+        if the constraint force or torque on the joint exceeds the specified values, the joint will break,
+        at which point it will not constrain the two actors and the flag PxConstraintFlag::eBROKEN will be set. The
+        force and torque are measured in the joint frame of the first actor
 
-	\return inverse mass scale for actor0
+        \param[in] force the maximum force the joint can apply before breaking
+        \param[in] torque the maximum torque the joint can apply before breaking
+        */
+        virtual void				setBreakForce(PxReal force, PxReal torque) = 0;
 
-	@see setInvMassScale0
-	*/
-	virtual PxReal				getInvMassScale0()	const	= 0;
+        /**
+        \brief get the break force for this joint.
 
-	/**
-	\brief set the inverse inertia scale for actor0.
+        \param[out] force the maximum force the joint can apply before breaking
+        \param[out] torque the maximum torque the joint can apply before breaking
 
-	\param[in] invInertiaScale the scale to apply to the inverse inertia of actor0 for resolving this constraint
+        @see setBreakForce()
+        */
+        virtual void				getBreakForce(PxReal& force, PxReal& torque)	const = 0;
 
-	@see getInvMassScale0
-	*/
-	virtual void				setInvInertiaScale0(PxReal invInertiaScale)	= 0;
+        /**
+        \brief set the constraint flags for this joint.
 
-	/**
-	\brief get the inverse inertia scale for actor0.
+        \param[in] flags the constraint flags
 
-	\return inverse inertia scale for actor0
+        @see PxConstraintFlag
+        */
+        virtual void				setConstraintFlags(PxConstraintFlags flags) = 0;
 
-	@see setInvInertiaScale0
-	*/
-	virtual PxReal				getInvInertiaScale0()	const	= 0;
+        /**
+        \brief set a constraint flags for this joint to a specified value.
 
-	/**
-	\brief set the inverse mass scale for actor1.
+        \param[in] flag the constraint flag
+        \param[in] value the value to which to set the flag
 
-	\param[in] invMassScale the scale to apply to the inverse mass of actor 1 for resolving this constraint
+        @see PxConstraintFlag
+        */
+        virtual void				setConstraintFlag(PxConstraintFlag::Enum flag, bool value) = 0;
 
-	@see getInvMassScale1
-	*/
-	virtual void				setInvMassScale1(PxReal invMassScale)	= 0;
+        /**
+        \brief get the constraint flags for this joint.
 
-	/**
-	\brief get the inverse mass scale for actor1.
+        \return the constraint flags
 
-	\return inverse mass scale for actor1
+        @see PxConstraintFlag
+        */
+        virtual PxConstraintFlags	getConstraintFlags()	const = 0;
 
-	@see setInvMassScale1
-	*/
-	virtual PxReal				getInvMassScale1()	const	= 0;
+        /**
+        \brief set the inverse mass scale for actor0.
 
-	/**
-	\brief set the inverse inertia scale for actor1.
+        \param[in] invMassScale the scale to apply to the inverse mass of actor 0 for resolving this constraint
 
-	\param[in] invInertiaScale the scale to apply to the inverse inertia of actor1 for resolving this constraint
+        @see getInvMassScale0
+        */
+        virtual void				setInvMassScale0(PxReal invMassScale) = 0;
 
-	@see getInvInertiaScale1
-	*/
-	virtual void				setInvInertiaScale1(PxReal invInertiaScale)	= 0;
+        /**
+        \brief get the inverse mass scale for actor0.
 
-	/**
-	\brief get the inverse inertia scale for actor1.
+        \return inverse mass scale for actor0
 
-	\return inverse inertia scale for actor1
+        @see setInvMassScale0
+        */
+        virtual PxReal				getInvMassScale0()	const = 0;
 
-	@see setInvInertiaScale1
-	*/
-	virtual PxReal				getInvInertiaScale1()	const	= 0;
+        /**
+        \brief set the inverse inertia scale for actor0.
 
-	/**
-	\brief Retrieves the PxConstraint corresponding to this joint.
-	
-	This can be used to determine, among other things, the force applied at the joint.
+        \param[in] invInertiaScale the scale to apply to the inverse inertia of actor0 for resolving this constraint
 
-	\return the constraint
-	*/
-	virtual PxConstraint*		getConstraint()	const	= 0;
+        @see getInvMassScale0
+        */
+        virtual void				setInvInertiaScale0(PxReal invInertiaScale) = 0;
 
-	/**
-	\brief Sets a name string for the object that can be retrieved with getName().
-	
-	This is for debugging and is not used by the SDK. The string is not copied by the SDK, 
-	only the pointer is stored.
+        /**
+        \brief get the inverse inertia scale for actor0.
 
-	\param[in] name String to set the objects name to.
+        \return inverse inertia scale for actor0
 
-	@see getName()
-	*/
-	virtual void				setName(const char* name)	= 0;
+        @see setInvInertiaScale0
+        */
+        virtual PxReal				getInvInertiaScale0()	const = 0;
 
-	/**
-	\brief Retrieves the name string set with setName().
+        /**
+        \brief set the inverse mass scale for actor1.
 
-	\return Name string associated with object.
+        \param[in] invMassScale the scale to apply to the inverse mass of actor 1 for resolving this constraint
 
-	@see setName()
-	*/
-	virtual const char*			getName()	const	= 0;
+        @see getInvMassScale1
+        */
+        virtual void				setInvMassScale1(PxReal invMassScale) = 0;
 
-	/**
-	\brief Deletes the joint.
+        /**
+        \brief get the inverse mass scale for actor1.
 
-	\note This call does not wake up the connected rigid bodies.
-	*/
-	virtual void				release()	= 0;
+        \return inverse mass scale for actor1
 
-	/**
-	\brief Retrieves the scene which this joint belongs to.
+        @see setInvMassScale1
+        */
+        virtual PxReal				getInvMassScale1()	const = 0;
 
-	\return Owner Scene. NULL if not part of a scene.
+        /**
+        \brief set the inverse inertia scale for actor1.
 
-	@see PxScene
-	*/
-	virtual PxScene*			getScene()	const	= 0;
+        \param[in] invInertiaScale the scale to apply to the inverse inertia of actor1 for resolving this constraint
 
-	void*						userData;	//!< user can assign this to whatever, usually to create a 1:1 relationship with a user object.
+        @see getInvInertiaScale1
+        */
+        virtual void				setInvInertiaScale1(PxReal invInertiaScale) = 0;
 
-	//serialization
+        /**
+        \brief get the inverse inertia scale for actor1.
 
-	/**
-	\brief Put class meta data in stream, used for serialization
-	*/
-	static	void				getBinaryMetaData(PxOutputStream& stream);
+        \return inverse inertia scale for actor1
 
-	//~serialization
-					
-protected:
-	virtual						~PxJoint() {}
+        @see setInvInertiaScale1
+        */
+        virtual PxReal				getInvInertiaScale1()	const = 0;
 
-	//serialization
+        /**
+        \brief Retrieves the PxConstraint corresponding to this joint.
 
-	/**
-	\brief Constructor
-	*/
-	PX_INLINE					PxJoint(PxType concreteType, PxBaseFlags baseFlags) : PxBase(concreteType, baseFlags), userData(NULL) {}
-	
-	/**
-	\brief Deserialization constructor
-	*/
-	PX_INLINE					PxJoint(PxBaseFlags baseFlags)	: PxBase(baseFlags)	{}
+        This can be used to determine, among other things, the force applied at the joint.
 
-	/**
-	\brief Returns whether a given type name matches with the type of this instance
-	*/
-	virtual	bool				isKindOf(const char* name) const { return !::strcmp("PxJoint", name) || PxBase::isKindOf(name); }
+        \return the constraint
+        */
+        virtual PxConstraint* getConstraint()	const = 0;
 
-	//~serialization
-};
+        /**
+        \brief Sets a name string for the object that can be retrieved with getName().
 
-class PxSpring
-{
-//= ATTENTION! =====================================================================================
-// Changing the data layout of this class breaks the binary serialization format.  See comments for 
-// PX_BINARY_SERIAL_VERSION.  If a modification is required, please adjust the getBinaryMetaData 
-// function.  If the modification is made on a custom branch, please change PX_BINARY_SERIAL_VERSION
-// accordingly.
-//==================================================================================================
-public:
+        This is for debugging and is not used by the SDK. The string is not copied by the SDK,
+        only the pointer is stored.
 
-	PxReal	stiffness;	//!< the spring strength of the drive: that is, the force proportional to the position error
-	PxReal	damping;	//!< the damping strength of the drive: that is, the force proportional to the velocity error
+        \param[in] name String to set the objects name to.
 
-	PxSpring(PxReal stiffness_, PxReal damping_): stiffness(stiffness_), damping(damping_) {}
-};
+        @see getName()
+        */
+        virtual void				setName(const char* name) = 0;
+
+        /**
+        \brief Retrieves the name string set with setName().
+
+        \return Name string associated with object.
+
+        @see setName()
+        */
+        virtual const char* getName()	const = 0;
+
+        /**
+        \brief Deletes the joint.
+
+        \note This call does not wake up the connected rigid bodies.
+        */
+        virtual void				release() = 0;
+
+        /**
+        \brief Retrieves the scene which this joint belongs to.
+
+        \return Owner Scene. NULL if not part of a scene.
+
+        @see PxScene
+        */
+        virtual PxScene* getScene()	const = 0;
+
+        void* userData;	//!< user can assign this to whatever, usually to create a 1:1 relationship with a user object.
+
+        //serialization
+
+        /**
+        \brief Put class meta data in stream, used for serialization
+        */
+        static	void				getBinaryMetaData(PxOutputStream& stream);
+
+        //~serialization
+
+    protected:
+        virtual						~PxJoint() {}
+
+        //serialization
+
+        /**
+        \brief Constructor
+        */
+        PX_INLINE					PxJoint(PxType concreteType, PxBaseFlags baseFlags) : PxBase(concreteType, baseFlags), userData(NULL) {}
+
+        /**
+        \brief Deserialization constructor
+        */
+        PX_INLINE					PxJoint(PxBaseFlags baseFlags) : PxBase(baseFlags) {}
+
+        /**
+        \brief Returns whether a given type name matches with the type of this instance
+        */
+        virtual	bool				isKindOf(const char* name) const { return !::strcmp("PxJoint", name) || PxBase::isKindOf(name); }
+
+        //~serialization
+    };
+
+    class PxSpring
+    {
+        //= ATTENTION! =====================================================================================
+        // Changing the data layout of this class breaks the binary serialization format.  See comments for 
+        // PX_BINARY_SERIAL_VERSION.  If a modification is required, please adjust the getBinaryMetaData 
+        // function.  If the modification is made on a custom branch, please change PX_BINARY_SERIAL_VERSION
+        // accordingly.
+        //==================================================================================================
+    public:
+
+        PxReal	stiffness;	//!< the spring strength of the drive: that is, the force proportional to the position error
+        PxReal	damping;	//!< the damping strength of the drive: that is, the force proportional to the velocity error
+
+        PxSpring(PxReal stiffness_, PxReal damping_) : stiffness(stiffness_), damping(damping_) {}
+    };
 
 
 #if !PX_DOXYGEN
@@ -401,16 +400,16 @@ public:
 
 /** \brief Helper function to setup a joint's global frame
 
-	This replaces the following functions from previous SDK versions:
+    This replaces the following functions from previous SDK versions:
 
-	void NxJointDesc::setGlobalAnchor(const NxVec3& wsAnchor);
-	void NxJointDesc::setGlobalAxis(const NxVec3& wsAxis);
+    void NxJointDesc::setGlobalAnchor(const NxVec3& wsAnchor);
+    void NxJointDesc::setGlobalAxis(const NxVec3& wsAxis);
 
-	The function sets the joint's localPose using world-space input parameters.
+    The function sets the joint's localPose using world-space input parameters.
 
-	\param[in] wsAnchor Global frame anchor point. <b>Range:</b> position vector
-	\param[in] wsAxis Global frame axis. <b>Range:</b> direction vector
-	\param[in,out] joint Joint having its global frame set.
+    \param[in] wsAnchor Global frame anchor point. <b>Range:</b> position vector
+    \param[in] wsAxis Global frame axis. <b>Range:</b> direction vector
+    \param[in,out] joint Joint having its global frame set.
 */
 
 PX_C_EXPORT void PX_CALL_CONV PxSetJointGlobalFrame(physx::PxJoint& joint, const physx::PxVec3* wsAnchor, const physx::PxVec3* wsAxis);

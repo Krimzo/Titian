@@ -155,7 +155,7 @@ void kl::gpu::bind_targets(const std::vector<dx::target_view>& targets, const dx
 
 void kl::gpu::bind_targets_with_internal(const std::vector<dx::target_view>& additional_targets, const dx::depth_view depth_view) const
 {
-    std::vector combined_targets = {frame_buffer_};
+    std::vector combined_targets = { frame_buffer_ };
     combined_targets.insert(combined_targets.end(), additional_targets.begin(), additional_targets.end());
     context_->OMSetRenderTargets(UINT(combined_targets.size()), combined_targets.data(), depth_view ? depth_view : depth_buffer_);
 }

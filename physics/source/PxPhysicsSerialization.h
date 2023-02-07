@@ -61,7 +61,7 @@ PX_C_EXPORT PX_PHYSX_CORE_API void PX_CALL_CONV PxUnregisterPhysicsSerializers(p
 \brief Adds collected objects to PxPhysics.
 
 This function adds all objects contained in the input collection to the PxPhysics instance. This is used after deserializing
-the collection, to populate the physics with inplace deserialized objects. This function is used in the implementation of 
+the collection, to populate the physics with inplace deserialized objects. This function is used in the implementation of
 PxSerialization.createCollectionFromBinary and is not intended to be needed otherwise.
 \param[in] collection Objects to add to the PxPhysics instance.
 

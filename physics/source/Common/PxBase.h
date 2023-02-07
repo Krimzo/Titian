@@ -42,156 +42,156 @@
 #include <string.h>	// For strcmp
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-typedef PxU16 PxType;
+    typedef PxU16 PxType;
 
-/**
-\brief Flags for PxBase.
-*/
-struct PxBaseFlag
-{	
-	enum Enum
-	{
-		eOWNS_MEMORY			= (1<<0),
-		eIS_RELEASABLE			= (1<<1)
-	};
-};
+    /**
+    \brief Flags for PxBase.
+    */
+    struct PxBaseFlag
+    {
+        enum Enum
+        {
+            eOWNS_MEMORY = (1 << 0),
+            eIS_RELEASABLE = (1 << 1)
+        };
+    };
 
-typedef PxFlags<PxBaseFlag::Enum, PxU16> PxBaseFlags;
-PX_FLAGS_OPERATORS(PxBaseFlag::Enum, PxU16)
+    typedef PxFlags<PxBaseFlag::Enum, PxU16> PxBaseFlags;
+    PX_FLAGS_OPERATORS(PxBaseFlag::Enum, PxU16)
 
-/**
-\brief Base class for objects that can be members of a PxCollection.
+        /**
+        \brief Base class for objects that can be members of a PxCollection.
 
-All PxBase sub-classes can be serialized.
+        All PxBase sub-classes can be serialized.
 
-@see PxCollection 
-*/
-class PxBase
-{
-//= ATTENTION! =====================================================================================
-// Changing the data layout of this class breaks the binary serialization format.  See comments for 
-// PX_BINARY_SERIAL_VERSION.  If a modification is required, please adjust the getBinaryMetaData 
-// function.  If the modification is made on a custom branch, please change PX_BINARY_SERIAL_VERSION
-// accordingly.
-//==================================================================================================
-public:
-	/**
-	\brief Releases the PxBase instance, please check documentation of release in derived class.
-	*/
-	virtual     void                        release()										= 0;	
+        @see PxCollection
+        */
+        class PxBase
+    {
+        //= ATTENTION! =====================================================================================
+        // Changing the data layout of this class breaks the binary serialization format.  See comments for 
+        // PX_BINARY_SERIAL_VERSION.  If a modification is required, please adjust the getBinaryMetaData 
+        // function.  If the modification is made on a custom branch, please change PX_BINARY_SERIAL_VERSION
+        // accordingly.
+        //==================================================================================================
+    public:
+        /**
+        \brief Releases the PxBase instance, please check documentation of release in derived class.
+        */
+        virtual     void                        release() = 0;
 
-	/**
-	\brief Returns string name of dynamic type.
-	\return	Class name of most derived type of this object.
-	*/
-	virtual		const char*					getConcreteTypeName() const						= 0;
+        /**
+        \brief Returns string name of dynamic type.
+        \return	Class name of most derived type of this object.
+        */
+        virtual		const char* getConcreteTypeName() const = 0;
 
-	/* brief Implements dynamic cast functionality. 
+        /* brief Implements dynamic cast functionality.
 
-	Example use:
-	
-	if(actor->is<PxRigidDynamic>()) {...}
+        Example use:
 
-	\return A pointer to the specified type if object matches, otherwise NULL
-	*/
-	template<class T> T*					is()											{ return typeMatch<T>() ? static_cast<T*>(this) : NULL; }
+        if(actor->is<PxRigidDynamic>()) {...}
 
-	/* brief Implements dynamic cast functionality for const objects. 
+        \return A pointer to the specified type if object matches, otherwise NULL
+        */
+        template<class T> T* is() { return typeMatch<T>() ? static_cast<T*>(this) : NULL; }
 
-	Example use:
-	
-	if(actor->is<PxRigidDynamic>()) {...}
+        /* brief Implements dynamic cast functionality for const objects.
 
-	\return A pointer to the specified type if object matches, otherwise NULL
-	*/
-	template<class T> const T*				is() const										{ return typeMatch<T>() ? static_cast<const T*>(this) : NULL; }
+        Example use:
 
-	/**
-	\brief	Returns concrete type of object.
-	\return	PxConcreteType::Enum of serialized object
+        if(actor->is<PxRigidDynamic>()) {...}
 
-	@see PxConcreteType
-	*/
-	PX_FORCE_INLINE	PxType					getConcreteType() const							{ return mConcreteType;	}
-				
-	/**
-	\brief Set PxBaseFlag	
+        \return A pointer to the specified type if object matches, otherwise NULL
+        */
+        template<class T> const T* is() const { return typeMatch<T>() ? static_cast<const T*>(this) : NULL; }
 
-	\param[in] flag The flag to be set
-	\param[in] value The flags new value
-	*/
-	PX_FORCE_INLINE	void					setBaseFlag(PxBaseFlag::Enum flag, bool value)	{ mBaseFlags = value ? mBaseFlags|flag : mBaseFlags&~flag; }
-	
-	/**
-	\brief Set PxBaseFlags	
+        /**
+        \brief	Returns concrete type of object.
+        \return	PxConcreteType::Enum of serialized object
 
-	\param[in] inFlags The flags to be set
+        @see PxConcreteType
+        */
+        PX_FORCE_INLINE	PxType					getConcreteType() const { return mConcreteType; }
 
-	@see PxBaseFlags
-	*/
-	PX_FORCE_INLINE	void					setBaseFlags(PxBaseFlags inFlags)				{ mBaseFlags = inFlags; }
-	
-	/**
-	\brief Returns PxBaseFlags 
+        /**
+        \brief Set PxBaseFlag
 
-	\return	PxBaseFlags
+        \param[in] flag The flag to be set
+        \param[in] value The flags new value
+        */
+        PX_FORCE_INLINE	void					setBaseFlag(PxBaseFlag::Enum flag, bool value) { mBaseFlags = value ? mBaseFlags | flag : mBaseFlags & ~flag; }
 
-	@see PxBaseFlags
-	*/
-	PX_FORCE_INLINE	PxBaseFlags				getBaseFlags() const							{ return mBaseFlags; }
+        /**
+        \brief Set PxBaseFlags
 
-	/**
-	\brief Whether the object is subordinate.
-	
-	A class is subordinate, if it can only be instantiated in the context of another class.
+        \param[in] inFlags The flags to be set
 
-	\return	Whether the class is subordinate
-	
-	@see PxSerialization::isSerializable
-	*/
-	virtual		bool						isReleasable() const							{ return mBaseFlags & PxBaseFlag::eIS_RELEASABLE; }
+        @see PxBaseFlags
+        */
+        PX_FORCE_INLINE	void					setBaseFlags(PxBaseFlags inFlags) { mBaseFlags = inFlags; }
 
-protected:
-	/**
-	\brief Constructor setting concrete type and base flags.
-	*/
-	PX_INLINE								PxBase(PxType concreteType, PxBaseFlags baseFlags)
-												: mConcreteType(concreteType), mBaseFlags(baseFlags) {}
+        /**
+        \brief Returns PxBaseFlags
 
-	/**
-	\brief Deserialization constructor setting base flags.
-	*/
-	PX_INLINE								PxBase(PxBaseFlags baseFlags) : mBaseFlags(baseFlags) {}
+        \return	PxBaseFlags
 
-	/**
-	\brief Destructor.
-	*/
-	virtual									~PxBase()										{}
+        @see PxBaseFlags
+        */
+        PX_FORCE_INLINE	PxBaseFlags				getBaseFlags() const { return mBaseFlags; }
 
-	/**
-	\brief Returns whether a given type name matches with the type of this instance
-	*/	
-	virtual				bool				isKindOf(const char* superClass) const { return !::strcmp(superClass, "PxBase"); }
+        /**
+        \brief Whether the object is subordinate.
 
-	template<class T>	bool				typeMatch() const
-											{
-												return PxU32(PxTypeInfo<T>::eFastTypeId)!=PxU32(PxConcreteType::eUNDEFINED) ? 
-													PxU32(getConcreteType()) == PxU32(PxTypeInfo<T>::eFastTypeId) : isKindOf(PxTypeInfo<T>::name());
-											}
+        A class is subordinate, if it can only be instantiated in the context of another class.
+
+        \return	Whether the class is subordinate
+
+        @see PxSerialization::isSerializable
+        */
+        virtual		bool						isReleasable() const { return mBaseFlags & PxBaseFlag::eIS_RELEASABLE; }
+
+    protected:
+        /**
+        \brief Constructor setting concrete type and base flags.
+        */
+        PX_INLINE								PxBase(PxType concreteType, PxBaseFlags baseFlags)
+            : mConcreteType(concreteType), mBaseFlags(baseFlags)
+        {}
+
+        /**
+        \brief Deserialization constructor setting base flags.
+        */
+        PX_INLINE								PxBase(PxBaseFlags baseFlags) : mBaseFlags(baseFlags) {}
+
+        /**
+        \brief Destructor.
+        */
+        virtual									~PxBase() {}
+
+        /**
+        \brief Returns whether a given type name matches with the type of this instance
+        */
+        virtual				bool				isKindOf(const char* superClass) const { return !::strcmp(superClass, "PxBase"); }
+
+        template<class T>	bool				typeMatch() const
+        {
+            return PxU32(PxTypeInfo<T>::eFastTypeId) != PxU32(PxConcreteType::eUNDEFINED) ?
+                PxU32(getConcreteType()) == PxU32(PxTypeInfo<T>::eFastTypeId) : isKindOf(PxTypeInfo<T>::name());
+        }
 
 
-private:
-	friend				void				getBinaryMetaData_PxBase(PxOutputStream& stream);
+    private:
+        friend				void				getBinaryMetaData_PxBase(PxOutputStream& stream);
 
-protected:
-	PxType									mConcreteType;			// concrete type identifier - see PxConcreteType.
-	PxBaseFlags								mBaseFlags;				// internal flags
+    protected:
+        PxType									mConcreteType;			// concrete type identifier - see PxConcreteType.
+        PxBaseFlags								mBaseFlags;				// internal flags
 
-};
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

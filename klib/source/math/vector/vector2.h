@@ -56,7 +56,7 @@ namespace kl {
         template <typename T0>
         static vector2<T> splash(const T0& value)
         {
-            return {value, value};
+            return { value, value };
         }
 
         T& operator[](int ind)
@@ -72,7 +72,7 @@ namespace kl {
         template <typename T0>
         explicit operator vector2<T0>() const
         {
-            return {T0(x), T0(y)};
+            return { T0(x), T0(y) };
         }
 
         vector2<T> operator+(const vector2<T>& obj) const
@@ -223,7 +223,7 @@ namespace kl {
         {
             const T sin_a = T(std::sin(math::to_radians(angle)));
             const T cos_a = T(std::cos(math::to_radians(angle)));
-            return {cos_a * x - sin_a * y, sin_a * x + cos_a * y};
+            return { cos_a * x - sin_a * y, sin_a * x + cos_a * y };
         }
 
         [[nodiscard]] vector2<T> reflect(const vector2<T>& normal) const

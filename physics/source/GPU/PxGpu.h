@@ -43,21 +43,21 @@
 /**
 \brief PxGpuLoadHook
 
-This is a helper class for loading the PhysXGpu dll. 
-If a PhysXGpu dll with a non-default file name needs to be loaded, 
+This is a helper class for loading the PhysXGpu dll.
+If a PhysXGpu dll with a non-default file name needs to be loaded,
 PxGpuLoadHook can be sub-classed to provide the custom filenames.
 
-Once the names are set, the instance must be set for use by PhysX.dll using PxSetPhysXGpuLoadHook(), 
+Once the names are set, the instance must be set for use by PhysX.dll using PxSetPhysXGpuLoadHook(),
 
 @see PxSetPhysXGpuLoadHook()
 */
 class PxGpuLoadHook
 {
 public:
-	PxGpuLoadHook() {}
-	virtual ~PxGpuLoadHook() {}
+    PxGpuLoadHook() {}
+    virtual ~PxGpuLoadHook() {}
 
-	virtual const char* getPhysXGpuDllName() const = 0;
+    virtual const char* getPhysXGpuDllName() const = 0;
 
 protected:
 private:
@@ -82,7 +82,7 @@ PX_C_EXPORT PX_PHYSX_CORE_API int PX_CALL_CONV PxGetSuggestedCudaDeviceOrdinal(p
 /**
  * \brief Allocate a CUDA Context manager, complete with heaps.
  * You only need one CUDA context manager per GPU device you intend to use for
- * CUDA tasks. 
+ * CUDA tasks.
  \param[in] foundation PhysXFoundation instance.
  \param[in] desc Cuda context manager desc.
  \param[in] profilerCallback PhysX profiler callback instance.

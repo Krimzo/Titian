@@ -38,57 +38,56 @@
 #include "task/PxCpuDispatcher.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief A default implementation for a CPU task dispatcher.
+    /**
+    \brief A default implementation for a CPU task dispatcher.
 
-@see PxDefaultCpuDispatcherCreate() PxCpuDispatcher
-*/
-class PxDefaultCpuDispatcher: public PxCpuDispatcher
-{
-public:
-	/**
-	\brief Deletes the dispatcher.
-	
-	Do not keep a reference to the deleted instance.
+    @see PxDefaultCpuDispatcherCreate() PxCpuDispatcher
+    */
+    class PxDefaultCpuDispatcher : public PxCpuDispatcher
+    {
+    public:
+        /**
+        \brief Deletes the dispatcher.
 
-	@see PxDefaultCpuDispatcherCreate()
-	*/
-	virtual void release() = 0;
+        Do not keep a reference to the deleted instance.
 
-	/**
-	\brief Enables profiling at task level.
+        @see PxDefaultCpuDispatcherCreate()
+        */
+        virtual void release() = 0;
 
-	\note By default enabled only in profiling builds.
-	
-	\param[in] runProfiled True if tasks should be profiled.
-	*/
-	virtual void setRunProfiled(bool runProfiled) = 0;
+        /**
+        \brief Enables profiling at task level.
 
-	/**
-	\brief Checks if profiling is enabled at task level.
+        \note By default enabled only in profiling builds.
 
-	\return True if tasks should be profiled.
-	*/
-	virtual bool getRunProfiled() const = 0;
-};
+        \param[in] runProfiled True if tasks should be profiled.
+        */
+        virtual void setRunProfiled(bool runProfiled) = 0;
+
+        /**
+        \brief Checks if profiling is enabled at task level.
+
+        \return True if tasks should be profiled.
+        */
+        virtual bool getRunProfiled() const = 0;
+    };
 
 
-/**
-\brief Create default dispatcher, extensions SDK needs to be initialized first.
+    /**
+    \brief Create default dispatcher, extensions SDK needs to be initialized first.
 
-\param[in] numThreads Number of worker threads the dispatcher should use.
-\param[in] affinityMasks Array with affinity mask for each thread. If not defined, default masks will be used.
+    \param[in] numThreads Number of worker threads the dispatcher should use.
+    \param[in] affinityMasks Array with affinity mask for each thread. If not defined, default masks will be used.
 
-\note numThreads may be zero in which case no worker thread are initialized and
-simulation tasks will be executed on the thread that calls PxScene::simulate()
+    \note numThreads may be zero in which case no worker thread are initialized and
+    simulation tasks will be executed on the thread that calls PxScene::simulate()
 
-@see PxDefaultCpuDispatcher
-*/
-PxDefaultCpuDispatcher* PxDefaultCpuDispatcherCreate(PxU32 numThreads, PxU32* affinityMasks = NULL);
+    @see PxDefaultCpuDispatcher
+    */
+    PxDefaultCpuDispatcher* PxDefaultCpuDispatcherCreate(PxU32 numThreads, PxU32* affinityMasks = NULL);
 
 #if !PX_DOXYGEN
 } // namespace physx

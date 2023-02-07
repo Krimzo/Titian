@@ -34,21 +34,20 @@
 #include "common/PxStringTable.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief a factory class for creating PxStringTable with a specific allocator.
+    /**
+    \brief a factory class for creating PxStringTable with a specific allocator.
 
-@see PxStringTable 
-*/
+    @see PxStringTable
+    */
 
-class PxStringTableExt
-{
-public:
-	static PxStringTable& createStringTable( physx::PxAllocatorCallback& inAllocator );
-};
+    class PxStringTableExt
+    {
+    public:
+        static PxStringTable& createStringTable(physx::PxAllocatorCallback& inAllocator);
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

@@ -65,7 +65,7 @@ int kl::image::width() const
 
 void kl::image::set_width(int width)
 {
-    set_size({width, size_.y});
+    set_size({ width, size_.y });
 }
 
 int kl::image::height() const
@@ -75,7 +75,7 @@ int kl::image::height() const
 
 void kl::image::set_height(int height)
 {
-    set_size({size_.x, height});
+    set_size({ size_.x, height });
 }
 
 kl::int2 kl::image::size() const
@@ -333,14 +333,14 @@ void kl::image::draw_rectangle(int2 top_left, int2 bottom_right, const color& co
             std::swap(top_left, bottom_right);
         }
         for (int y = top_left.y; y <= bottom_right.y; y++) {
-            draw_line({top_left.x, y}, {bottom_right.x, y}, color);
+            draw_line({ top_left.x, y }, { bottom_right.x, y }, color);
         }
     }
     else {
-        draw_line(top_left, {top_left.x, bottom_right.y}, color);
-        draw_line(top_left, {bottom_right.x, top_left.y}, color);
-        draw_line(bottom_right, {top_left.x, bottom_right.y}, color);
-        draw_line(bottom_right, {bottom_right.x, top_left.y}, color);
+        draw_line(top_left, { top_left.x, bottom_right.y }, color);
+        draw_line(top_left, { bottom_right.x, top_left.y }, color);
+        draw_line(bottom_right, { top_left.x, bottom_right.y }, color);
+        draw_line(bottom_right, { bottom_right.x, top_left.y }, color);
     }
 }
 
@@ -351,20 +351,20 @@ void kl::image::draw_circle(const int2& center, const float radius, const color&
         for (int y = int(f_center.y - radius); y <= int(f_center.y + radius); y++) {
             const int x = int(f_center.x + std::sqrt(
                 radius * radius - (y - f_center.y) * (y - f_center.y)));
-            draw_line({2 * center.x - x, y}, {x, y}, color);
+            draw_line({ 2 * center.x - x, y }, { x, y }, color);
         }
     }
     else {
         for (int i = 0; i < int(2 * radius); i++) {
             const int x1 = int(f_center.x - radius + i);
             const int y1 = int(f_center.y + std::sqrt(radius * radius - (x1 - f_center.x) * (x1 - f_center.x)));
-            set_pixel({x1, y1}, color);
-            set_pixel({x1, 2 * center.y - y1}, color);
+            set_pixel({ x1, y1 }, color);
+            set_pixel({ x1, 2 * center.y - y1 }, color);
 
             const int y2 = int(f_center.y - radius + i);
             const int x2 = int(f_center.x + std::sqrt(radius * radius - (y2 - f_center.y) * (y2 - f_center.y)));
-            set_pixel({x2, y2}, color);
-            set_pixel({2 * center.x - x2, y2}, color);
+            set_pixel({ x2, y2 }, color);
+            set_pixel({ 2 * center.x - x2, y2 }, color);
         }
     }
 }

@@ -59,7 +59,7 @@ namespace kl {
 
         gpu(const gpu&) = delete;
         gpu(const gpu&&) = delete;
-        
+
         void operator=(const gpu&) = delete;
         void operator=(const gpu&&) = delete;
 

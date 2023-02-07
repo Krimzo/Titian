@@ -34,30 +34,29 @@
 #include "foundation/PxFlags.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief An ID to identify different clients for multiclient support.
+    /**
+    \brief An ID to identify different clients for multiclient support.
 
-@see PxScene::createClient() 
-*/
-typedef PxU8 PxClientID;
+    @see PxScene::createClient()
+    */
+    typedef PxU8 PxClientID;
 
-/**
-\brief The predefined default PxClientID value.
+    /**
+    \brief The predefined default PxClientID value.
 
-@see PxClientID PxScene::createClient() 
-*/
-static const PxClientID PX_DEFAULT_CLIENT = 0;
+    @see PxClientID PxScene::createClient()
+    */
+    static const PxClientID PX_DEFAULT_CLIENT = 0;
 
-/**
-\brief The maximum number of clients we support.
+    /**
+    \brief The maximum number of clients we support.
 
-@see PxClientID PxScene::createClient() 
-*/
-static const PxClientID PX_MAX_CLIENTS = 128;
+    @see PxClientID PxScene::createClient()
+    */
+    static const PxClientID PX_MAX_CLIENTS = 128;
 
 #if !PX_DOXYGEN
 } // namespace physx

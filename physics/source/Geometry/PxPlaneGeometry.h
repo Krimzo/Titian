@@ -39,43 +39,42 @@
 #include "foundation/PxFoundationConfig.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief Class describing a plane geometry.
+    /**
+    \brief Class describing a plane geometry.
 
-The plane geometry specifies the half-space volume x<=0. As with other geometry types, 
-when used in a PxShape the collision volume is obtained by transforming the halfspace 
-by the shape local pose and the actor global pose.
+    The plane geometry specifies the half-space volume x<=0. As with other geometry types,
+    when used in a PxShape the collision volume is obtained by transforming the halfspace
+    by the shape local pose and the actor global pose.
 
-To generate a PxPlane from a PxTransform, transform PxPlane(1,0,0,0).
+    To generate a PxPlane from a PxTransform, transform PxPlane(1,0,0,0).
 
-To generate a PxTransform from a PxPlane, use PxTransformFromPlaneEquation.
+    To generate a PxTransform from a PxPlane, use PxTransformFromPlaneEquation.
 
-@see PxShape.setGeometry() PxShape.getPlaneGeometry() PxTransformFromPlaneEquation 
-*/
-class PxPlaneGeometry : public PxGeometry 
-{
-public:
-	PX_INLINE PxPlaneGeometry() : PxGeometry(PxGeometryType::ePLANE) {}
+    @see PxShape.setGeometry() PxShape.getPlaneGeometry() PxTransformFromPlaneEquation
+    */
+    class PxPlaneGeometry : public PxGeometry
+    {
+    public:
+        PX_INLINE PxPlaneGeometry() : PxGeometry(PxGeometryType::ePLANE) {}
 
-	/**
-	\brief Returns true if the geometry is valid.
+        /**
+        \brief Returns true if the geometry is valid.
 
-	\return True if the current settings are valid
-	*/
-	PX_INLINE bool isValid() const;
-};
+        \return True if the current settings are valid
+        */
+        PX_INLINE bool isValid() const;
+    };
 
-PX_INLINE bool PxPlaneGeometry::isValid() const
-{
-	if (mType != PxGeometryType::ePLANE)
-		return false;
+    PX_INLINE bool PxPlaneGeometry::isValid() const
+    {
+        if (mType != PxGeometryType::ePLANE)
+            return false;
 
-	return true;
-}
+        return true;
+    }
 
 #if !PX_DOXYGEN
 } // namespace physx

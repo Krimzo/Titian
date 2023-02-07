@@ -40,35 +40,34 @@
 #include "common/PxPhysXCommonConfig.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-class PxPhysics;
-class PxShape;
+    class PxPhysics;
+    class PxShape;
 
-class PxActor;
-class PxRigidActor;
-class PxRigidStatic;
-class PxRigidDynamic;
-class PxConstraint;
-class PxConstraintDesc;
+    class PxActor;
+    class PxRigidActor;
+    class PxRigidStatic;
+    class PxRigidDynamic;
+    class PxConstraint;
+    class PxConstraintDesc;
 
-class PxArticulation;
-class PxArticulationReducedCoordinate;
-class PxArticulationBase;
-class PxArticulationLink;
-class PxArticulationJoint;
-class PxArticulationJointReducedCoordinate;
-class PxArticulationJointBase;
+    class PxArticulation;
+    class PxArticulationReducedCoordinate;
+    class PxArticulationBase;
+    class PxArticulationLink;
+    class PxArticulationJoint;
+    class PxArticulationJointReducedCoordinate;
+    class PxArticulationJointBase;
 
-class PxMaterial;
+    class PxMaterial;
 
-class PxScene;
-class PxSceneDesc;
-class PxTolerancesScale;
+    class PxScene;
+    class PxSceneDesc;
+    class PxTolerancesScale;
 
-class PxAggregate;
+    class PxAggregate;
 
 #if !PX_DOXYGEN
 } // namespace physx

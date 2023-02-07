@@ -31,48 +31,47 @@
 #include "task/PxTaskDefine.h"
 #include "foundation/PxSimpleTypes.h"
 
-namespace physx
-{
+namespace physx {
 
-class PxBaseTask;
+    class PxBaseTask;
 
-/** 
- \brief A CpuDispatcher is responsible for scheduling the execution of tasks passed to it by the SDK.
+    /**
+     \brief A CpuDispatcher is responsible for scheduling the execution of tasks passed to it by the SDK.
 
- A typical implementation would for example use a thread pool with the dispatcher
- pushing tasks onto worker thread queues or a global queue.
+     A typical implementation would for example use a thread pool with the dispatcher
+     pushing tasks onto worker thread queues or a global queue.
 
- @see PxBaseTask
- @see PxTask
- @see PxTaskManager
-*/
-class PxCpuDispatcher
-{
-public:
-	/**
-	\brief Called by the TaskManager when a task is to be queued for execution.
-	
-	Upon receiving a task, the dispatcher should schedule the task
-	to run when resource is available.  After the task has been run,
-	it should call the release() method and discard it's pointer.
+     @see PxBaseTask
+     @see PxTask
+     @see PxTaskManager
+    */
+    class PxCpuDispatcher
+    {
+    public:
+        /**
+        \brief Called by the TaskManager when a task is to be queued for execution.
 
-	\param[in] task The task to be run.
+        Upon receiving a task, the dispatcher should schedule the task
+        to run when resource is available.  After the task has been run,
+        it should call the release() method and discard it's pointer.
 
-	@see PxBaseTask
-	*/
-    virtual void submitTask( PxBaseTask& task ) = 0;
+        \param[in] task The task to be run.
 
-	/**
-	\brief Returns the number of available worker threads for this dispatcher.
-	
-	The SDK will use this count to control how many tasks are submitted. By
-	matching the number of tasks with the number of execution units task
-	overhead can be reduced.
-	*/
-	virtual uint32_t getWorkerCount() const = 0;
+        @see PxBaseTask
+        */
+        virtual void submitTask(PxBaseTask& task) = 0;
 
-	virtual ~PxCpuDispatcher() {}
-};
+        /**
+        \brief Returns the number of available worker threads for this dispatcher.
+
+        The SDK will use this count to control how many tasks are submitted. By
+        matching the number of tasks with the number of execution units task
+        overhead can be reduced.
+        */
+        virtual uint32_t getWorkerCount() const = 0;
+
+        virtual ~PxCpuDispatcher() {}
+    };
 
 } // end physx namespace
 

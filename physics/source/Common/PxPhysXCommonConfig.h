@@ -31,7 +31,7 @@
 #ifndef PX_PHYSICS_COMMON_NX
 #define PX_PHYSICS_COMMON_NX
 
-/** \addtogroup common 
+/** \addtogroup common
 @{ */
 
 #include "foundation/Px.h"
@@ -45,37 +45,37 @@ https://developercommunity.visualstudio.com/content/problem/66047/possible-compi
 
 // define API function declaration (public API only needed because of extensions)
 #if defined PX_PHYSX_STATIC_LIB
-	#define PX_PHYSX_CORE_API
+#define PX_PHYSX_CORE_API
 #else
-	#if (PX_WINDOWS_FAMILY || PX_XBOXONE || PX_PS4 || PX_XBOX_SERIES_X)
-		#if defined PX_PHYSX_CORE_EXPORTS
-			#define PX_PHYSX_CORE_API __declspec(dllexport)
-		#else
-			#define PX_PHYSX_CORE_API __declspec(dllimport)
-		#endif
-	#elif PX_UNIX_FAMILY
-		#define PX_PHYSX_CORE_API PX_UNIX_EXPORT
-    #else
-		#define PX_PHYSX_CORE_API
-    #endif
+#if (PX_WINDOWS_FAMILY || PX_XBOXONE || PX_PS4 || PX_XBOX_SERIES_X)
+#if defined PX_PHYSX_CORE_EXPORTS
+#define PX_PHYSX_CORE_API __declspec(dllexport)
+#else
+#define PX_PHYSX_CORE_API __declspec(dllimport)
+#endif
+#elif PX_UNIX_FAMILY
+#define PX_PHYSX_CORE_API PX_UNIX_EXPORT
+#else
+#define PX_PHYSX_CORE_API
+#endif
 #endif
 
 #if PX_SUPPORT_GPU_PHYSX
 // define API function declaration
 #if defined PX_PHYSX_GPU_STATIC
-	#define PX_PHYSX_GPU_API
+#define PX_PHYSX_GPU_API
 #else
-	#if PX_WINDOWS 
-	#if defined PX_PHYSX_GPU_EXPORTS
-	#define PX_PHYSX_GPU_API __declspec(dllexport)
-	#else
-	#define PX_PHYSX_GPU_API __declspec(dllimport)
-	#endif
-	#elif PX_UNIX_FAMILY
-	#define PX_PHYSX_GPU_API PX_UNIX_EXPORT
-	#else
-	#define PX_PHYSX_GPU_API
-	#endif
+#if PX_WINDOWS 
+#if defined PX_PHYSX_GPU_EXPORTS
+#define PX_PHYSX_GPU_API __declspec(dllexport)
+#else
+#define PX_PHYSX_GPU_API __declspec(dllimport)
+#endif
+#elif PX_UNIX_FAMILY
+#define PX_PHYSX_GPU_API PX_UNIX_EXPORT
+#else
+#define PX_PHYSX_GPU_API
+#endif
 #endif
 
 #else // PX_SUPPORT_GPU_PHYSX
@@ -83,38 +83,37 @@ https://developercommunity.visualstudio.com/content/problem/66047/possible-compi
 #endif // PX_SUPPORT_GPU_PHYSX
 
 #if defined PX_PHYSX_STATIC_LIB
-	#define PX_PHYSX_COMMON_API
+#define PX_PHYSX_COMMON_API
 #else
-	#if (PX_WINDOWS_FAMILY || PX_XBOXONE || PX_PS4 || PX_XBOX_SERIES_X) && !defined(__CUDACC__)
-		#if defined PX_PHYSX_COMMON_EXPORTS
-			#define PX_PHYSX_COMMON_API __declspec(dllexport)
-		#else
-			#define PX_PHYSX_COMMON_API __declspec(dllimport)
-		#endif
-	#elif PX_UNIX_FAMILY
-		#define PX_PHYSX_COMMON_API PX_UNIX_EXPORT
-	#else
-		#define PX_PHYSX_COMMON_API
-	#endif
+#if (PX_WINDOWS_FAMILY || PX_XBOXONE || PX_PS4 || PX_XBOX_SERIES_X) && !defined(__CUDACC__)
+#if defined PX_PHYSX_COMMON_EXPORTS
+#define PX_PHYSX_COMMON_API __declspec(dllexport)
+#else
+#define PX_PHYSX_COMMON_API __declspec(dllimport)
+#endif
+#elif PX_UNIX_FAMILY
+#define PX_PHYSX_COMMON_API PX_UNIX_EXPORT
+#else
+#define PX_PHYSX_COMMON_API
+#endif
 #endif 
 
 // Changing these parameters requires recompilation of the SDK
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
-	class PxCollection;
-	class PxBase;
+    class PxCollection;
+    class PxBase;
 
-	class PxHeightField;
-	class PxHeightFieldDesc;
+    class PxHeightField;
+    class PxHeightFieldDesc;
 
-	class PxTriangleMesh;
-	class PxConvexMesh;
+    class PxTriangleMesh;
+    class PxConvexMesh;
 
-	typedef PxU32 PxTriangleID;
-	typedef PxU16 PxMaterialTableIndex;
+    typedef PxU32 PxTriangleID;
+    typedef PxU16 PxMaterialTableIndex;
 
 #if !PX_DOXYGEN
 } // namespace physx

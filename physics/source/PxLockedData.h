@@ -38,52 +38,51 @@
 #include "foundation/PxFlags.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-struct PxDataAccessFlag
-{
-	enum Enum
-	{
-		eREADABLE = (1 << 0),
-		eWRITABLE = (1 << 1),
-		eDEVICE	  = (1 << 2)
-	};
-};
+    struct PxDataAccessFlag
+    {
+        enum Enum
+        {
+            eREADABLE = (1 << 0),
+            eWRITABLE = (1 << 1),
+            eDEVICE = (1 << 2)
+        };
+    };
 
-/**
-\brief collection of set bits defined in PxDataAccessFlag.
+    /**
+    \brief collection of set bits defined in PxDataAccessFlag.
 
-@see PxDataAccessFlag
-*/
-typedef PxFlags<PxDataAccessFlag::Enum,PxU8> PxDataAccessFlags;
-PX_FLAGS_OPERATORS(PxDataAccessFlag::Enum,PxU8)
+    @see PxDataAccessFlag
+    */
+    typedef PxFlags<PxDataAccessFlag::Enum, PxU8> PxDataAccessFlags;
+    PX_FLAGS_OPERATORS(PxDataAccessFlag::Enum, PxU8)
 
 
-/**
-\brief Parent class for bulk data that is shared between the SDK and the application.
-*/
-class PxLockedData
-{ 
-public:
+        /**
+        \brief Parent class for bulk data that is shared between the SDK and the application.
+        */
+        class PxLockedData
+    {
+    public:
 
-	/**
-	\brief Any combination of PxDataAccessFlag::eREADABLE and PxDataAccessFlag::eWRITABLE
-	@see PxDataAccessFlag
-	*/
-    virtual PxDataAccessFlags getDataAccessFlags() = 0;
+        /**
+        \brief Any combination of PxDataAccessFlag::eREADABLE and PxDataAccessFlag::eWRITABLE
+        @see PxDataAccessFlag
+        */
+        virtual PxDataAccessFlags getDataAccessFlags() = 0;
 
-	/**
-	\brief Unlocks the bulk data.
-	*/
-    virtual void unlock() = 0;
+        /**
+        \brief Unlocks the bulk data.
+        */
+        virtual void unlock() = 0;
 
-	/**
-	\brief virtual destructor
-	*/
-	virtual ~PxLockedData() {}
-}; 
+        /**
+        \brief virtual destructor
+        */
+        virtual ~PxLockedData() {}
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

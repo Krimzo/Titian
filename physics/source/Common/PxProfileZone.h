@@ -32,18 +32,18 @@
 #include "PxFoundation.h"
 
 #if PX_DEBUG || PX_CHECKED || PX_PROFILE
-	#define PX_PROFILE_ZONE(x, y)										\
+#define PX_PROFILE_ZONE(x, y)										\
 		physx::PxProfileScoped PX_CONCAT(_scoped, __LINE__)(PxGetProfilerCallback(), x, false, y)
-	#define PX_PROFILE_START_CROSSTHREAD(x, y)							\
+#define PX_PROFILE_START_CROSSTHREAD(x, y)							\
 		if(PxGetProfilerCallback())										\
 			PxGetProfilerCallback()->zoneStart(x, true, y)
-	#define PX_PROFILE_STOP_CROSSTHREAD(x, y)							\
+#define PX_PROFILE_STOP_CROSSTHREAD(x, y)							\
 		if(PxGetProfilerCallback())										\
 			PxGetProfilerCallback()->zoneEnd(NULL, x, true, y)
 #else
-	#define PX_PROFILE_ZONE(x, y)
-	#define PX_PROFILE_START_CROSSTHREAD(x, y)
-	#define PX_PROFILE_STOP_CROSSTHREAD(x, y)
+#define PX_PROFILE_ZONE(x, y)
+#define PX_PROFILE_START_CROSSTHREAD(x, y)
+#define PX_PROFILE_STOP_CROSSTHREAD(x, y)
 #endif
 
 #define PX_PROFILE_POINTER_TO_U64(pointer) static_cast<uint64_t>(reinterpret_cast<size_t>(pointer))

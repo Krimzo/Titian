@@ -36,54 +36,53 @@
 #include "foundation/Px.h"
 
 #if !PX_DOXYGEN
-namespace physx
-{
+namespace physx {
 #endif
 
-/**
-\brief Error codes
+    /**
+    \brief Error codes
 
-These error codes are passed to #PxErrorCallback
+    These error codes are passed to #PxErrorCallback
 
-@see PxErrorCallback
-*/
+    @see PxErrorCallback
+    */
 
-struct PxErrorCode
-{
-	enum Enum
-	{
-		eNO_ERROR          = 0,
+    struct PxErrorCode
+    {
+        enum Enum
+        {
+            eNO_ERROR = 0,
 
-		//! \brief An informational message.
-		eDEBUG_INFO        = 1,
+            //! \brief An informational message.
+            eDEBUG_INFO = 1,
 
-		//! \brief a warning message for the user to help with debugging
-		eDEBUG_WARNING     = 2,
+            //! \brief a warning message for the user to help with debugging
+            eDEBUG_WARNING = 2,
 
-		//! \brief method called with invalid parameter(s)
-		eINVALID_PARAMETER = 4,
+            //! \brief method called with invalid parameter(s)
+            eINVALID_PARAMETER = 4,
 
-		//! \brief method was called at a time when an operation is not possible
-		eINVALID_OPERATION = 8,
+            //! \brief method was called at a time when an operation is not possible
+            eINVALID_OPERATION = 8,
 
-		//! \brief method failed to allocate some memory
-		eOUT_OF_MEMORY     = 16,
+            //! \brief method failed to allocate some memory
+            eOUT_OF_MEMORY = 16,
 
-		/** \brief The library failed for some reason.
-	    Possibly you have passed invalid values like NaNs, which are not checked for.
-	    */
-		eINTERNAL_ERROR    = 32,
+            /** \brief The library failed for some reason.
+            Possibly you have passed invalid values like NaNs, which are not checked for.
+            */
+            eINTERNAL_ERROR = 32,
 
-		//! \brief An unrecoverable error, execution should be halted and log output flushed
-		eABORT             = 64,
+            //! \brief An unrecoverable error, execution should be halted and log output flushed
+            eABORT = 64,
 
-		//! \brief The SDK has determined that an operation may result in poor performance.
-		ePERF_WARNING      = 128,
+            //! \brief The SDK has determined that an operation may result in poor performance.
+            ePERF_WARNING = 128,
 
-		//! \brief A bit mask for including all errors
-		eMASK_ALL          = -1
-	};
-};
+            //! \brief A bit mask for including all errors
+            eMASK_ALL = -1
+        };
+    };
 
 #if !PX_DOXYGEN
 } // namespace physx

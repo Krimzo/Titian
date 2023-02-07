@@ -12,7 +12,7 @@ struct shader_blobs
 
     shader_blobs(const shader_blobs&) = delete;
     shader_blobs(const shader_blobs&&) = delete;
-    
+
     void operator=(const shader_blobs&) = delete;
     void operator=(const shader_blobs&&) = delete;
 
@@ -46,7 +46,7 @@ struct shader_blobs
     [[nodiscard]] std::string get_error() const
     {
         if (error) {
-            return (char*)error->GetBufferPointer();
+            return (char*) error->GetBufferPointer();
         }
         return "Unknown";
     }
@@ -163,7 +163,7 @@ kl::shaders kl::gpu::new_shaders(const std::string& vertex_source, const std::st
 {
     dx::layout layout = nullptr;
     const dx::vertex_shader vertex_shader = new_vertex_shader(vertex_source, &layout, descriptors);
-    return {vertex_shader, new_pixel_shader(pixel_source), layout};
+    return { vertex_shader, new_pixel_shader(pixel_source), layout };
 }
 
 kl::shaders kl::gpu::new_shaders(const std::string& source, const std::vector<dx::layout_descriptor>& descriptors)

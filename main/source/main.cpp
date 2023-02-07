@@ -5,5 +5,5 @@
 
 int main()
 {
-	return rendering_main();
+    return rendering_main();
 }

@@ -3,6 +3,6 @@
 
 void custom_pre_render_update(state_machine* state)
 {
-	if (!state->scene) { return; }
+    if (!state->scene) { return; }
 
 }

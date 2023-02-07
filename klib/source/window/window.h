@@ -9,7 +9,7 @@
 
 
 namespace kl::screen {
-    inline const int2 size = {GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)};
+    inline const int2 size = { GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
 }
 
 namespace kl {
@@ -39,7 +39,7 @@ namespace kl {
 
         window(const window&) = delete;
         window(const window&&) = delete;
-        
+
         void operator=(const window&) = delete;
         void operator=(const window&&) = delete;
 
