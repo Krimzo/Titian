@@ -14,9 +14,12 @@ void setup_callback(state_machine* state)
 
     // Buffers
     setup_shaders(state);
-    setup_meshes(state);
     setup_textures(state);
     setup_skyboxes(state);
+
+    // Components
+    setup_meshes(state);
+    setup_materials(state);
 
     // Scene
     setup_scene(state);

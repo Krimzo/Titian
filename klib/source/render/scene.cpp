@@ -43,6 +43,16 @@ kl::scene::~scene()
     physics_->release();
 }
 
+PxPhysics* kl::scene::get_physics() const
+{
+    return physics_;
+}
+
+PxCooking* kl::scene::get_cooking() const
+{
+    return cooking_;
+}
+
 // Scene properties
 void kl::scene::set_gravity(const float3& gravity)
 {
@@ -116,9 +126,9 @@ kl::ref<kl::collider> kl::scene::make_plane_collider()
     return make<collider>(physics_, PxPlaneGeometry());
 }
 
-kl::ref<kl::collider> kl::scene::make_mesh_collider(const mesh_data& mesh_data, const float3& scale)
+kl::ref<kl::collider> kl::scene::make_mesh_collider(const mesh& mesh, const float3& scale)
 {
-    return nullptr;
+    return make<collider>(physics_, PxTriangleMeshGeometry(mesh.physics_buffer, *(PxVec3*) &scale));
 }
 
 #else

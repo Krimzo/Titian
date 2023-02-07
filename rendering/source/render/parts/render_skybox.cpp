@@ -17,5 +17,5 @@ void render_skybox(state_machine* state)
     vs_cb.vp_matrix = state->scene->camera.matrix();
 
     state->gpu->set_vertex_const_buffer(vs_cb);
-    state->gpu->draw_vertex_buffer(state->meshes["cube"]);
+    state->gpu->draw_vertex_buffer(state->meshes["cube"]->graphics_buffer);
 }

@@ -7,8 +7,6 @@ static constexpr bool use_ocean = false;
 
 void setup_scene(state_machine* state)
 {
-    state->scene = kl::make<kl::scene>();
-
     state->scene->camera.far_plane = 75.0f;
     state->scene->camera.position = { 0, 1, -4 };
     state->scene->camera.skybox = state->skyboxes["clouds"];

@@ -22,10 +22,12 @@ void setup_cubes(state_machine* state, const int size)
                 });
 
             cube->mesh = state->meshes["cube"];
-            cube->material.color = (kl::float4) kl::colors::orange;
+            cube->material = kl::make<kl::material>();
 
-            cube->material.refraction_factor = (float) ++cube_counter / (size * size);;
-            cube->material.refraction_index = 1.0f / 1.52f;
+            cube->material->color = (kl::float4) kl::colors::orange;
+
+            cube->material->refraction_factor = (float) ++cube_counter / (size * size);;
+            cube->material->refraction_index = 1.0f / 1.52f;
 
             state->scene->add(cube);
         }

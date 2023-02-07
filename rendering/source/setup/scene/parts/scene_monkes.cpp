@@ -26,7 +26,9 @@ void setup_monkes(state_machine* state, const int size)
         const float normalized = kl::math::minmax(percentage, 0.0f, 1.0f);
 
         entity->mesh = state->meshes["monke"];
-        entity->material.color = kl::float4::splash(normalized);
+        entity->material = kl::make<kl::material>();
+
+        entity->material->color = kl::float4::splash(normalized);
 
         state->scene->add(entity);
     }

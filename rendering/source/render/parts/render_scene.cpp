@@ -36,22 +36,22 @@ void render_scene(state_machine* state)
     }
 
     for (auto& entity : *state->scene) {
-        if (!entity->mesh) { continue; }
+        if (!entity->mesh || !entity->material) { continue; }
 
-        if (entity->material.color_map) {
-            state->gpu->bind_pixel_shader_view(entity->material.color_map, 5);
+        if (entity->material->color_map) {
+            state->gpu->bind_pixel_shader_view(entity->material->color_map, 5);
         }
 
-        if (entity->material.normal_map) {
-            state->gpu->bind_pixel_shader_view(entity->material.normal_map, 6);
+        if (entity->material->normal_map) {
+            state->gpu->bind_pixel_shader_view(entity->material->normal_map, 6);
             ps_cb.object_texture_info.x = 1.0f;
         }
         else {
             ps_cb.object_texture_info.x = 0.0f;
         }
 
-        if (entity->material.roughness_map) {
-            state->gpu->bind_pixel_shader_view(entity->material.roughness_map, 7);
+        if (entity->material->roughness_map) {
+            state->gpu->bind_pixel_shader_view(entity->material->roughness_map, 7);
             ps_cb.object_texture_info.y = 1.0f;
         }
         else {
@@ -60,15 +60,15 @@ void render_scene(state_machine* state)
 
         vs_cb.w_matrix = entity->matrix();
 
-        ps_cb.object_color = entity->material.color;
-        ps_cb.object_material.x = entity->material.texture_blend;
-        ps_cb.object_material.y = entity->material.reflection_factor;
-        ps_cb.object_material.z = entity->material.refraction_factor;
-        ps_cb.object_material.w = entity->material.refraction_index;
+        ps_cb.object_color = entity->material->color;
+        ps_cb.object_material.x = entity->material->texture_blend;
+        ps_cb.object_material.y = entity->material->reflection_factor;
+        ps_cb.object_material.z = entity->material->refraction_factor;
+        ps_cb.object_material.w = entity->material->refraction_index;
 
         state->gpu->set_vertex_const_buffer(vs_cb);
         state->gpu->set_pixel_const_buffer(ps_cb);
 
-        state->gpu->draw_vertex_buffer(entity->mesh);
+        state->gpu->draw_vertex_buffer(entity->mesh->graphics_buffer);
     }
 }

@@ -86,7 +86,7 @@
     <ClCompile Include="source\setup\buffers\setup_shaders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\setup\buffers\setup_meshes.cpp">
+    <ClCompile Include="source\setup\components\setup_meshes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\setup\buffers\setup_textures.cpp">
@@ -153,6 +153,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\setup\gui\setup_gui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\setup\components\setup_materials.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

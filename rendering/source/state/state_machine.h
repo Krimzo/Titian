@@ -19,9 +19,12 @@ struct state_machine
 
     // Graphics buffers
     std::unordered_map<std::string, kl::shaders>          shaders = {};
-    std::unordered_map<std::string, kl::dx::buffer>        meshes = {};
     std::unordered_map<std::string, kl::dx::shader_view> textures = {};
     std::unordered_map<std::string, kl::dx::shader_view> skyboxes = {};
+
+    // Components
+    std::unordered_map<std::string, kl::ref<kl::mesh>> meshes = {};
+    std::unordered_map<std::string, kl::ref<kl::material>> materials = {};
 
     // Scene
     kl::ref<kl::scene> scene = {};

@@ -29,7 +29,7 @@ void render_shadows(state_machine* state)
             vs_cb.WVP = VP * entity->matrix();
             state->gpu->set_vertex_const_buffer(vs_cb);
 
-            state->gpu->draw_vertex_buffer(entity->mesh);
+            state->gpu->draw_vertex_buffer(entity->mesh->graphics_buffer);
         }
     }
 

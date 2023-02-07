@@ -19,7 +19,7 @@ namespace kl {
     {
         std::set<ref<entity>> entities_;
 
-        static PxDefaultAllocator          allocator_;
+        static PxDefaultAllocator allocator_;
         static PxDefaultErrorCallback error_callback_;
         static PxFoundation* foundation_;
 
@@ -31,7 +31,7 @@ namespace kl {
     public:
         camera camera = {};
 
-        ref<ambient_light>         ambient_light = {};
+        ref<ambient_light> ambient_light = {};
         ref<directional_light> directional_light = {};
 
         dx::buffer ocean_mesh = nullptr;
@@ -44,6 +44,9 @@ namespace kl {
 
         void operator=(const scene&) = delete;
         void operator=(const scene&&) = delete;
+
+        PxPhysics* get_physics() const;
+        PxCooking* get_cooking() const;
 
         // Scene properties
         void set_gravity(const float3& gravity);
@@ -69,7 +72,7 @@ namespace kl {
 
         // Static colliders
         ref<collider> make_plane_collider();
-        ref<collider> make_mesh_collider(const mesh_data& mesh_data, const float3& scale);
+        ref<collider> make_mesh_collider(const mesh& mesh, const float3& scale);
     };
 
 #else

@@ -19,8 +19,8 @@ namespace kl {
     public:
         float3 render_scale = float3::splash(1.0f);
 
-        mesh mesh = {};
-        material material = {};
+        ref<mesh> mesh = {};
+        ref<material> material = {};
 
         entity(PxPhysics* physics, bool dynamic);
         entity();

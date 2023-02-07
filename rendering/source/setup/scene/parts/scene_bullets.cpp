@@ -2,7 +2,9 @@
 
 
 static constexpr float bullet_scale = 10.0f;
-static constexpr float fire_velocity = 2.0f;
+static constexpr float fire_velocity = 25.0f;
+
+static const kl::float3 target_position = { 0.0f, -6.5f, -25.0f };
 
 void setup_bullets(state_machine* state, const int size)
 {
@@ -10,25 +12,47 @@ void setup_bullets(state_machine* state, const int size)
 
     std::vector<std::function<void()>> all_callbacks = {};
 
+    const kl::ref<kl::material> bullet_material = kl::make<kl::material>();
+    bullet_material->color = (kl::float4) kl::color(232, 230, 227);
+    bullet_material->reflection_factor = 0.15f;
+
+    const kl::ref<kl::material> bullet_casing_material = kl::make<kl::material>();
+    bullet_casing_material->color = (kl::float4) kl::color(210, 180, 130);
+    bullet_casing_material->reflection_factor = 0.2f;
+
+    const kl::ref<kl::material> casing_primer_material = kl::make<kl::material>();
+    casing_primer_material->color = (kl::float4) kl::color(232, 230, 227);
+    casing_primer_material->reflection_factor = 0.1f;
+
     for (int i = 0; i < size; i++) {
         // Bullet
         kl::ref<kl::entity> bullet = state->scene->make_entity(true);
 
         bullet->set_gravity(false);
+        bullet->set_mass(1.0f);
 
-        bullet->render_scale = bullet->render_scale * bullet_scale;
-        bullet->set_rotation(kl::random::get_float3(360.0f));
+        bullet->render_scale *= bullet_scale;
 
         kl::float3 old_position = bullet->get_position();
         old_position.x = (float) (i - half_size);
+        old_position.y = -6.0f;
         bullet->set_position(old_position);
 
-        kl::material bullet_material = {};
-        bullet_material.color = (kl::float4) kl::color(232, 230, 227);
-        bullet_material.reflection_factor = 0.15f;
+        static const std::function<kl::float3(const kl::float3&)> directional_vector_to_euler = [](const kl::float3& dir) -> kl::float3
+        {
+            static const kl::float2 start_dir_yz = { 1, 0 };
+            const float rx = -start_dir_yz.angle({ dir.y, dir.z });
+            const float ry = -kl::float2(0, dir.z).angle({ dir.x, dir.z }, true);
+            return { rx, ry, 0 };
+        };
+
+        const kl::float3 target_direction = (target_position - bullet->get_position()).normalize();
+        bullet->set_rotation(directional_vector_to_euler(target_direction));
 
         bullet->mesh = state->meshes["bmg_bullet"];
         bullet->material = bullet_material;
+
+        bullet->set_collider(state->scene->make_mesh_collider(*bullet->mesh, bullet->render_scale));
 
         state->scene->add(bullet);
 
@@ -38,10 +62,6 @@ void setup_bullets(state_machine* state, const int size)
         bullet_casing->render_scale = bullet->render_scale;
         bullet_casing->set_rotation(bullet->get_rotation());
         bullet_casing->set_position(bullet->get_position());
-
-        kl::material bullet_casing_material = {};
-        bullet_casing_material.color = (kl::float4) kl::color(210, 180, 130);
-        bullet_casing_material.reflection_factor = 0.2f;
 
         bullet_casing->mesh = state->meshes["bmg_casing"];
         bullet_casing->material = bullet_casing_material;
@@ -54,10 +74,6 @@ void setup_bullets(state_machine* state, const int size)
         casing_primer->render_scale = bullet_casing->render_scale;
         casing_primer->set_rotation(bullet_casing->get_rotation());
         casing_primer->set_position(bullet_casing->get_position());
-
-        kl::material casing_primer_material = {};
-        casing_primer_material.color = (kl::float4) kl::color(232, 230, 227);
-        casing_primer_material.reflection_factor = 0.1f;
 
         casing_primer->mesh = state->meshes["bmg_primer"];
         casing_primer->material = casing_primer_material;
@@ -73,7 +89,6 @@ void setup_bullets(state_machine* state, const int size)
                 const kl::float4 default_bullet_direction = { 0.0f, 1.0f, 0.0f, 1.0f };
                 auto correct_direction = (kl::mat4::rotation(bullet->get_rotation()) * default_bullet_direction).xyz;
 
-                bullet->set_mass(1.0f);
                 bullet->set_velocity(correct_direction.normalize() * fire_velocity);
 
                 casing_primer->mesh = state->meshes["bmg_primer_fired"];

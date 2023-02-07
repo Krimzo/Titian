@@ -23,7 +23,9 @@ void setup_platform(state_machine* state)
     platform->set_position({ 0.0f, -7.0f, -25.0f });
 
     platform->mesh = state->meshes["cube"];
-    platform->material.color = kl::float4::splash(1.0f);
+    platform->material = kl::make<kl::material>();
+
+    platform->material->color = kl::float4::splash(1.0f);
 
     state->scene->add(platform);
 }
@@ -46,11 +48,13 @@ void setup_objects(state_machine* state, const int size)
             box->set_position({ (half_size - x) * 2.25f, 15.0f, -25.0f + (half_size - z) * 2.25f });
 
             box->mesh = state->meshes["cube"];
-            box->material.color_map = state->textures["dogo"];
-            box->material.normal_map = state->textures["concrete_normal"];
+            box->material = kl::make<kl::material>();
 
-            box->material.color = (kl::float4) kl::random::get_color();
-            box->material.texture_blend = 0.5f;
+            box->material->color_map = state->textures["dogo"];
+            box->material->normal_map = state->textures["concrete_normal"];
+
+            box->material->color = (kl::float4) kl::random::get_color();
+            box->material->texture_blend = 0.5f;
 
             state->scene->add(box);
         }
