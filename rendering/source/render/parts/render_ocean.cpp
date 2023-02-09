@@ -10,6 +10,8 @@ static constexpr float wave_shift = 1.0f;
 
 void render_ocean(state_machine* state)
 {
+    if (!state->scene->ocean_mesh) { return; }
+
     state->gpu->bind_raster_state(state->raster_states["ocean"]);
     state->gpu->bind_depth_state(state->depth_states["ocean"]);
 

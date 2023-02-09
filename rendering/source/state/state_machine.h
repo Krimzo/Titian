@@ -1,6 +1,6 @@
 #pragma once
 
-#include "klib.h"
+#include "state/render_state.h"
 
 
 inline const std::string resouce_folder = "../resource/";
@@ -23,9 +23,19 @@ struct state_machine
     std::unordered_map<std::string, kl::dx::shader_view> skyboxes = {};
 
     // Components
-    std::unordered_map<std::string, kl::ref<kl::mesh>> meshes = {};
+    std::unordered_map<std::string, kl::ref<kl::mesh>>        meshes = {};
     std::unordered_map<std::string, kl::ref<kl::material>> materials = {};
 
-    // Scene
-    kl::ref<kl::scene> scene = {};
+    // Render
+    kl::ref<render_state> render_state = {};
+    kl::ref<kl::scene>           scene = {};
+
+    state_machine();
+    ~state_machine();
+
+    state_machine(state_machine&) = delete;
+    state_machine(state_machine&&) = delete;
+
+    void operator=(state_machine&) = delete;
+    void operator=(state_machine&&) = delete;
 };

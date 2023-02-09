@@ -54,7 +54,7 @@ void setup_bullets(state_machine* state, const int size)
 
         bullet->set_collider(state->scene->make_mesh_collider(*bullet->mesh, bullet->render_scale));
 
-        state->scene->add(bullet);
+        state->scene->add(kl::format("Bullet", i), bullet);
 
         // Bullet casing
         kl::ref<kl::entity> bullet_casing = state->scene->make_entity(false);
@@ -66,7 +66,7 @@ void setup_bullets(state_machine* state, const int size)
         bullet_casing->mesh = state->meshes["bmg_casing"];
         bullet_casing->material = bullet_casing_material;
 
-        state->scene->add(bullet_casing);
+        state->scene->add(kl::format("BulletCasing", i), bullet_casing);
 
         // Casing primer
         kl::ref<kl::entity> casing_primer = state->scene->make_entity(false);
@@ -78,7 +78,7 @@ void setup_bullets(state_machine* state, const int size)
         casing_primer->mesh = state->meshes["bmg_primer"];
         casing_primer->material = casing_primer_material;
 
-        state->scene->add(casing_primer);
+        state->scene->add(kl::format("CasingPrimer", i), casing_primer);
 
         // Callbacks
         kl::ref<bool> bullet_fired = kl::make<bool>(false);

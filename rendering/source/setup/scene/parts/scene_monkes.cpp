@@ -9,14 +9,14 @@ void setup_monkes(state_machine* state, const int size)
     const int half_size = size / 2;
 
     for (int i = 0; i < entity_count; i++) {
-        auto entity = state->scene->make_entity(false);
+        auto monke = state->scene->make_entity(false);
 
-        entity->render_scale = kl::float3::splash(0.5f);
+        monke->render_scale = kl::float3::splash(0.5f);
 
         const int x = i % size;
         const int y = i / size;
 
-        entity->set_position({
+        monke->set_position({
             (x - half_size) + x_offset,
             (y - half_size),
             5.0f
@@ -25,11 +25,11 @@ void setup_monkes(state_machine* state, const int size)
         const float percentage = (i + 1.0f) / entity_count;
         const float normalized = kl::math::minmax(percentage, 0.0f, 1.0f);
 
-        entity->mesh = state->meshes["monke"];
-        entity->material = kl::make<kl::material>();
+        monke->mesh = state->meshes["monke"];
+        monke->material = kl::make<kl::material>();
 
-        entity->material->color = kl::float4::splash(normalized);
+        monke->material->color = kl::float4::splash(normalized);
 
-        state->scene->add(entity);
+        state->scene->add(kl::format("Monke", i), monke);
     }
 }

@@ -4,7 +4,6 @@
 void handle_camera(state_machine* state)
 {
     kl::camera& camera = state->scene->camera;
-    camera.update_aspect_ratio(state->window->size());
 
     // Speed
     if (state->window->keyboard.shift.state()) {

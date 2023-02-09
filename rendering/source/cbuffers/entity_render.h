@@ -8,12 +8,14 @@ struct entity_render_vs_cb
     kl::mat4  w_matrix;
     kl::mat4 vp_matrix;
 
-    kl::mat4 vp_light_matrices[kl::directional_light::MAP_COUNT];
+    kl::mat4 vp_light_matrices[kl::directional_light::CASCADE_COUNT];
 };
 
 struct entity_render_ps_cb
 {
-    kl::float4        object_color; // (color.r, color.g, color.b, none)
+    kl::float4 object_color; // (color.r, color.g, color.b, none)
+    kl::float4 object_index; // (index, index, index, index)
+
     kl::float4     object_material; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
     kl::float4 object_texture_info; // (has_normal_map, has_roughness_map, none, none)
 

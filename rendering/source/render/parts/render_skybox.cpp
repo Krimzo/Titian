@@ -5,6 +5,8 @@
 
 void render_skybox(state_machine* state)
 {
+    if (!state->scene->camera.skybox) { return; }
+
     state->gpu->bind_raster_state(state->raster_states["skybox"]);
     state->gpu->bind_depth_state(state->depth_states["skybox"]);
 

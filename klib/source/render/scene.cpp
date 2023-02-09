@@ -33,14 +33,27 @@ kl::scene::scene()
 
 kl::scene::~scene()
 {
+    selected_entity = nullptr;
     while (!entities_.empty()) {
-        this->remove(*entities_.begin());
+        this->remove(entities_.begin()->first);
     }
 
     scene_->release();
     dispatcher_->release();
     cooking_->release();
     physics_->release();
+}
+
+kl::ref<kl::entity> kl::scene::update_selected_entity(uint32_t index)
+{
+    if (index != 0) {
+        for (auto& [name, entity] : *this) {
+            if (entity->unique_index == index) {
+                return selected_entity = entity;
+            }
+        }
+    }
+    return selected_entity = nullptr;
 }
 
 PxPhysics* kl::scene::get_physics() const
@@ -65,26 +78,27 @@ kl::float3 kl::scene::get_gravity() const
     return { gravity.x, gravity.y, gravity.z };
 }
 
-std::set<kl::ref<kl::entity>>::iterator kl::scene::begin()
+std::map<std::string, kl::ref<kl::entity>>::iterator kl::scene::begin()
 {
     return entities_.begin();
 }
 
-std::set<kl::ref<kl::entity>>::iterator kl::scene::end()
+std::map<std::string, kl::ref<kl::entity>>::iterator kl::scene::end()
 {
     return entities_.end();
 }
 
-void kl::scene::add(ref<entity> entity)
+void kl::scene::add(const std::string& name, ref<entity> entity)
 {
-    entities_.insert(entity);
+    entities_[name] = entity;
     scene_->addActor(*entity->get_actor());
 }
 
-void kl::scene::remove(ref<entity> entity)
+void kl::scene::remove(const std::string& name)
 {
-    scene_->removeActor(*entity->get_actor());
-    entities_.erase(entity);
+    kl::ref<kl::entity> entity = entities_[name];
+    if (entity) { scene_->removeActor(*entity->get_actor()); }
+    entities_.erase(name);
 }
 
 int kl::scene::entity_count() const

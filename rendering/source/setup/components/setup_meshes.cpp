@@ -5,8 +5,6 @@ kl::ref<kl::mesh> parse_mesh(state_machine* state, const std::string& name);
 
 void setup_meshes(state_machine* state)
 {
-    state->meshes["screen"] = kl::make<kl::mesh>(&*state->gpu, state->gpu->generate_screen_mesh());
-
     state->meshes["cube"] = parse_mesh(state, "cube.obj");
     state->meshes["sphere"] = parse_mesh(state, "sphere.obj");
     state->meshes["monke"] = parse_mesh(state, "monke.obj");

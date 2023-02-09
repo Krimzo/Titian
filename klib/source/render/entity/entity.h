@@ -17,6 +17,7 @@ namespace kl {
         ref<collider> collider_ = nullptr;
 
     public:
+        const int unique_index;
         float3 render_scale = float3::splash(1.0f);
 
         ref<mesh> mesh = {};

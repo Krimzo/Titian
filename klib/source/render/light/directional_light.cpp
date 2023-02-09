@@ -23,7 +23,7 @@ kl::directional_light::directional_light(gpu* gpu, const int map_resolution)
     shadow_shader_view_descriptor.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     shadow_shader_view_descriptor.Texture2D.MipLevels = 1;
 
-    for (int i = 0; i < MAP_COUNT; i++) {
+    for (int i = 0; i < CASCADE_COUNT; i++) {
         dx::texture shadow_texture = gpu->new_texture(&shadow_map_descriptor);
         shadow_depth_views_[i] = gpu->new_depth_view(shadow_texture, &shadow_depth_view_descriptor);
         shadow_shader_views_[i] = gpu->new_shader_view(shadow_texture, &shadow_shader_view_descriptor);
@@ -33,7 +33,7 @@ kl::directional_light::directional_light(gpu* gpu, const int map_resolution)
 
 kl::directional_light::~directional_light()
 {
-    for (int i = 0; i < MAP_COUNT; i++) {
+    for (int i = 0; i < CASCADE_COUNT; i++) {
         gpu_->destroy(shadow_depth_views_[i]);
         gpu_->destroy(shadow_shader_views_[i]);
     }

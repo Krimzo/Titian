@@ -27,14 +27,15 @@ void setup_platform(state_machine* state)
 
     platform->material->color = kl::float4::splash(1.0f);
 
-    state->scene->add(platform);
+    state->scene->add("PhysicsTestPlatform", platform);
 }
 
 void setup_objects(state_machine* state, const int size)
 {
     const int half_size = size / 2;
-
     const kl::float3 scale = { 0.5f, 0.5f, 0.5f };
+
+    int box_counter = 0;
 
     for (int z = 0; z < size; z++) {
         for (int x = 0; x < size; x++) {
@@ -56,7 +57,9 @@ void setup_objects(state_machine* state, const int size)
             box->material->color = (kl::float4) kl::random::get_color();
             box->material->texture_blend = 0.5f;
 
-            state->scene->add(box);
+            state->scene->add(kl::format("Box", box_counter), box);
+
+            box_counter += 1;
         }
     }
 }

@@ -41,7 +41,9 @@ vs_out v_shader(float3 position : KL_Position, float2 textur : KL_Texture, float
 // Pixel shader
 cbuffer PS_CB : register(b0)
 {
-    float4        object_color; // (color.r, color.g, color.b, none)
+    float4 object_color; // (color.r, color.g, color.b, none)
+    float4 object_index; // (index, index, index, index)
+
     float4     object_material; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
     float4 object_texture_info; // (has_normal_map, has_roughness_map, none, none)
     
@@ -53,6 +55,12 @@ cbuffer PS_CB : register(b0)
 
     float4   shadow_map_info; // (width, height, texel_width, texel_size)
     float4 cascade_distances; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
+};
+
+struct ps_out
+{
+    float4 color : SV_Target0;
+    float  index : SV_Target1;
 };
 
 SamplerState skybox_sampler : register(s0);
@@ -76,7 +84,7 @@ vs_out compute_light_transforms(vs_out vs_data);
 float get_shadow_factor(vs_out vs_data, float camera_z, const int half_kernel_size);
 float get_pcf_shadow(Texture2D shadow_map, float3 light_coords, const int half_kernel_size);
 
-float4 p_shader(vs_out vs_data) : SV_Target
+ps_out p_shader(vs_out vs_data)
 {
     // Setup
     const float3 pixel_normal = get_pixel_normal(vs_data.world, normalize(vs_data.normal), vs_data.textur);
@@ -115,7 +123,10 @@ float4 p_shader(vs_out vs_data) : SV_Target
     const float3 refracted_color = lerp(reflected_color, refracted_sky_color, object_material.z);
 
     // Final
-    return float4(refracted_color, 1);
+    ps_out out_data;
+    out_data.color = float4(refracted_color, 1);
+    out_data.index = object_index.r;
+    return out_data;
 }
 
 float3 get_pixel_normal(float3 world_position, float3 interpolated_normal, float2 texture_coords)

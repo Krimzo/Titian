@@ -7,17 +7,17 @@ void setup_callback(state_machine* state)
 {
     state->window->maximize();
 
-    // States
+    // Render states
     setup_depth_states(state);
     setup_sampler_states(state);
     setup_raster_states(state);
 
-    // Buffers
+    // Render buffers
     setup_shaders(state);
     setup_textures(state);
     setup_skyboxes(state);
 
-    // Components
+    // Render components
     setup_meshes(state);
     setup_materials(state);
 

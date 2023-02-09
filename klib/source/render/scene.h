@@ -9,7 +9,7 @@
 
 #include "memory/ref.h"
 
-#include <set>
+#include <map>
 
 
 namespace kl {
@@ -17,7 +17,7 @@ namespace kl {
 
     class scene
     {
-        std::set<ref<entity>> entities_;
+        std::map<std::string, ref<entity>> entities_;
 
         static PxDefaultAllocator allocator_;
         static PxDefaultErrorCallback error_callback_;
@@ -30,6 +30,7 @@ namespace kl {
 
     public:
         camera camera = {};
+        ref<entity> selected_entity = {};
 
         ref<ambient_light> ambient_light = {};
         ref<directional_light> directional_light = {};
@@ -45,6 +46,8 @@ namespace kl {
         void operator=(const scene&) = delete;
         void operator=(const scene&&) = delete;
 
+        ref<entity> update_selected_entity(uint32_t index);
+
         PxPhysics* get_physics() const;
         PxCooking* get_cooking() const;
 
@@ -52,11 +55,11 @@ namespace kl {
         void set_gravity(const float3& gravity);
         float3 get_gravity() const;
 
-        std::set<ref<entity>>::iterator begin();
-        std::set<ref<entity>>::iterator end();
+        std::map<std::string, ref<entity>>::iterator begin();
+        std::map<std::string, ref<entity>>::iterator end();
 
-        void add(ref<entity> entity);
-        void remove(ref<entity> entity);
+        void add(const std::string& name, ref<entity> entity);
+        void remove(const std::string& name);
 
         int entity_count() const;
 

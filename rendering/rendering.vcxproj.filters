@@ -51,6 +51,12 @@
     <ClInclude Include="source\gui\gui_render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\state\render_state.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\cbuffers\postprocess_render.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\callbacks\setup_callback.cpp">
@@ -143,9 +149,6 @@
     <ClCompile Include="source\setup\states\setup_raster_states.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\render\parts\display_depth.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\gui\gui_render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -156,6 +159,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\setup\components\setup_materials.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\state\render_state.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\parts\gui_viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\parts\gui_scene_items.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\parts\gui_entity_properties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\parts\gui_depth_display.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\parts\render_postprocess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

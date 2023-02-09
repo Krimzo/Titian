@@ -5,8 +5,10 @@
 
 #ifdef KL_USING_PHYSX
 
+static int unique_index_counter = 0;
+
 kl::entity::entity(PxPhysics* physics, bool dynamic)
-    : is_dynamic_(dynamic)
+    : unique_index(++unique_index_counter), is_dynamic_(dynamic)
 {
     PxTransform transform = {};
     transform.q = PxQuat(PxIdentity);
