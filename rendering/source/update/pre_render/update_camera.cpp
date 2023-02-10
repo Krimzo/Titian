@@ -3,6 +3,8 @@
 
 void handle_camera(state_machine* state)
 {
+    if (!state->gui_state.is_viewport_focused) { return; }
+
     kl::camera& camera = state->scene->camera;
 
     // Speed

@@ -99,7 +99,9 @@
     <ClInclude Include="source\render\render_chain.h" />
     <ClInclude Include="source\setup\scene\setup_scene.h" />
     <ClInclude Include="source\setup\setup_state.h" />
+    <ClInclude Include="source\state\gui_state.h" />
     <ClInclude Include="source\state\render_state.h" />
+    <ClInclude Include="source\state\state_logger.h" />
     <ClInclude Include="source\state\state_machine.h" />
     <ClInclude Include="source\update\update_state.h" />
   </ItemGroup>
@@ -108,6 +110,7 @@
     <ClCompile Include="source\callbacks\update_callback.cpp" />
     <ClCompile Include="source\gui\parts\gui_depth_display.cpp" />
     <ClCompile Include="source\gui\parts\gui_entity_properties.cpp" />
+    <ClCompile Include="source\gui\parts\gui_log_view.cpp" />
     <ClCompile Include="source\gui\parts\gui_scene_items.cpp" />
     <ClCompile Include="source\gui\parts\gui_viewport.cpp" />
     <ClCompile Include="source\gui\parts\gui_scene_info.cpp" />
@@ -133,7 +136,9 @@
     <ClCompile Include="source\setup\buffers\setup_shaders.cpp" />
     <ClCompile Include="source\setup\buffers\setup_skyboxes.cpp" />
     <ClCompile Include="source\setup\buffers\setup_textures.cpp" />
+    <ClCompile Include="source\state\gui_state.cpp" />
     <ClCompile Include="source\state\render_state.cpp" />
+    <ClCompile Include="source\state\state_logger.cpp" />
     <ClCompile Include="source\state\state_machine.cpp" />
     <ClCompile Include="source\update\custom\custom_post_render_update.cpp" />
     <ClCompile Include="source\update\custom\custom_pre_render_update.cpp" />

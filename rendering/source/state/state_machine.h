@@ -1,16 +1,21 @@
 #pragma once
 
+#include "state/state_logger.h"
 #include "state/render_state.h"
+#include "state/gui_state.h"
 
 
 inline const std::string resouce_folder = "../resource/";
 
 struct state_machine
 {
-    // System
+    // Utility
+    state_logger logger = {};
+    kl::timer     timer = {};
+
+    // Window
     kl::ref<kl::window> window = {};
     kl::ref<kl::gpu>       gpu = {};
-    kl::timer            timer = {};
 
     // Graphics states
     std::unordered_map<std::string, kl::dx::depth_state>     depth_states = {};
@@ -29,6 +34,9 @@ struct state_machine
     // Render
     kl::ref<render_state> render_state = {};
     kl::ref<kl::scene>           scene = {};
+
+    // GUI
+    gui_state gui_state = {};
 
     state_machine();
     ~state_machine();

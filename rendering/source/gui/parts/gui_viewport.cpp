@@ -3,6 +3,7 @@
 
 kl::int2 get_window_mouse_position();
 int get_entity_index(state_machine* state, const kl::int2& pixel_coords);
+void render_gizmos(state_machine* state);
 
 void gui_viewport(state_machine* state)
 {
@@ -10,11 +11,12 @@ void gui_viewport(state_machine* state)
 
     if (ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar)) {
         // Pre-display
-        const kl::int2 window_size = { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() };
+        state->gui_state.viewport_size = { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() };
+        state->gui_state.is_viewport_focused = ImGui::IsWindowFocused();
 
         // Display scene buffer
-        if (window_size.x > 0 && window_size.y > 0 && window_size != state->render_state->target_size) {
-            state->render_state = kl::make<render_state>(state->gpu, window_size);
+        if (state->gui_state.viewport_size.x > 0 && state->gui_state.viewport_size.y > 0 && state->gui_state.viewport_size != state->render_state->target_size) {
+            state->render_state = kl::make<render_state>(state->gpu, state->gui_state.viewport_size);
         }
         ImGui::Image(state->render_state->render_shader_view, ImGui::GetWindowSize());
 
@@ -23,6 +25,11 @@ void gui_viewport(state_machine* state)
             const kl::int2 pixel_coords = get_window_mouse_position();
             const int entity_index = get_entity_index(state, pixel_coords);
             state->scene->update_selected_entity(entity_index);
+        }
+
+        // Render gizmos
+        if (state->scene->selected_entity) {
+            render_gizmos(state);
         }
     }
     ImGui::End();
@@ -58,4 +65,9 @@ int get_entity_index(state_machine* state, const kl::int2& pixel_coords)
     float result = 0.0f;
     state->gpu->read_from_resource(&result, state->render_state->picking_staging_texture, sizeof(float));
     return (int) result;
+}
+
+void render_gizmos(state_machine* state)
+{
+    state->logger.log("GIZMOS ARE WIP");
 }

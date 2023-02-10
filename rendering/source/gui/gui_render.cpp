@@ -19,6 +19,7 @@ void gui_render(state_machine* state)
 
     // Right
     gui_entity_properties(state);
+    gui_log_view(state);
 
     // Finalize
     finalize_gui_frame(state);
@@ -28,7 +29,9 @@ void prepare_gui_frame(state_machine* state)
 {
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
+
     ImGui::NewFrame();
+    ImGuizmo::BeginFrame();
 
     ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 }
