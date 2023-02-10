@@ -15,24 +15,33 @@ void render_scene(state_machine* state)
     state->gpu->bind_sampler_state(state->sampler_states["entity"], 5);
 
     state->gpu->bind_pixel_shader_view(state->scene->camera.skybox, 0);
-    state->gpu->context()->PSSetShaderResources(1, kl::directional_light::CASCADE_COUNT, state->scene->directional_light->get_shader_views());
 
     entity_render_vs_cb vs_cb = {};
     vs_cb.vp_matrix = state->scene->camera.matrix();
-    for (int i = 0; i < kl::directional_light::CASCADE_COUNT; i++) {
-        vs_cb.vp_light_matrices[i] = state->scene->directional_light->get_matrix(state->scene->camera, i);
+
+    if (state->scene->directional_light) {
+        state->gpu->context()->PSSetShaderResources(1, kl::directional_light::CASCADE_COUNT, state->scene->directional_light->get_shader_views());
+
+        for (int i = 0; i < kl::directional_light::CASCADE_COUNT; i++) {
+            vs_cb.vp_light_matrices[i] = state->scene->directional_light->get_matrix(state->scene->camera, i);
+        }
     }
 
     entity_render_ps_cb ps_cb = {};
     ps_cb.camera_info = { state->scene->camera.position, 0 };
     ps_cb.v_matrix = state->scene->camera.view_matrix();
 
-    ps_cb.ambient_light = { state->scene->ambient_light->color, state->scene->ambient_light->intensity };
-    ps_cb.directional_light = { state->scene->directional_light->get_direction(), state->scene->directional_light->point_size };
+    if (state->scene->ambient_light) {
+        ps_cb.ambient_light = { state->scene->ambient_light->color, state->scene->ambient_light->intensity };
+    }
 
-    ps_cb.shadow_map_info = { kl::float2::splash(state->scene->directional_light->get_map_resolution()), kl::float2::splash(1.0f / state->scene->directional_light->get_map_resolution()) };
-    for (int i = 0; i < kl::directional_light::CASCADE_COUNT; i++) {
-        ps_cb.cascade_distances[i] = kl::math::interpolate(state->scene->directional_light->CASCADE_SPLITS[i + 1], state->scene->camera.near_plane, state->scene->camera.far_plane);
+    if (state->scene->directional_light) {
+        ps_cb.directional_light = { state->scene->directional_light->get_direction(), state->scene->directional_light->point_size };
+
+        ps_cb.shadow_map_info = { kl::float2::splash(state->scene->directional_light->get_map_resolution()), kl::float2::splash(1.0f / state->scene->directional_light->get_map_resolution()) };
+        for (int i = 0; i < kl::directional_light::CASCADE_COUNT; i++) {
+            ps_cb.cascade_distances[i] = kl::math::interpolate(state->scene->directional_light->CASCADE_SPLITS[i + 1], state->scene->camera.near_plane, state->scene->camera.far_plane);
+        }
     }
 
     for (auto& [name, entity] : *state->scene) {

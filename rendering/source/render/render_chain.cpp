@@ -12,10 +12,12 @@ void render_chain(state_machine* state)
 
     if (state->scene) {
         // Pre-render
-        state->gpu->set_viewport(kl::int2::splash(state->scene->directional_light->get_map_resolution()));
-        state->gpu->unbind_all_targets();
+        if (state->scene->directional_light) {
+            state->gpu->set_viewport(kl::int2::splash(state->scene->directional_light->get_map_resolution()));
+            state->gpu->unbind_all_targets();
 
-        render_shadows(state);
+            render_shadows(state);
+        }
 
         // Scene render
         state->gpu->set_viewport(state->render_state->target_size);
