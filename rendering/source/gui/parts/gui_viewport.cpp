@@ -3,7 +3,10 @@
 
 kl::int2 get_window_mouse_position();
 int get_entity_index(state_machine* state, const kl::int2& pixel_coords);
+
+void handle_gizmo_operation_change(state_machine* state, int gizmo_operation, ImGuiKey switch_key);
 void render_gizmos(state_machine* state);
+
 
 void gui_viewport(state_machine* state)
 {
@@ -21,13 +24,18 @@ void gui_viewport(state_machine* state)
         ImGui::Image(state->render_state->render_shader_view, ImGui::GetWindowSize());
 
         // Handle entity picking
-        if (ImGui::IsWindowFocused() && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+        if (ImGui::IsWindowFocused() && !ImGuizmo::IsOver() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
             const kl::int2 pixel_coords = get_window_mouse_position();
             const int entity_index = get_entity_index(state, pixel_coords);
             state->scene->update_selected_entity(entity_index);
         }
 
-        // Render gizmos
+        // Handle gizmos
+        if (ImGui::IsWindowFocused()) {
+            handle_gizmo_operation_change(state, ImGuizmo::OPERATION::SCALE, ImGuiKey_1);
+            handle_gizmo_operation_change(state, ImGuizmo::OPERATION::ROTATE, ImGuiKey_2);
+            handle_gizmo_operation_change(state, ImGuizmo::OPERATION::TRANSLATE, ImGuiKey_3);
+        }
         if (state->scene->selected_entity) {
             render_gizmos(state);
         }
@@ -67,7 +75,67 @@ int get_entity_index(state_machine* state, const kl::int2& pixel_coords)
     return (int) result;
 }
 
+void handle_gizmo_operation_change(state_machine* state, int gizmo_operation, ImGuiKey switch_key)
+{
+    static std::map<ImGuiKey, bool> last_key_states = {};
+
+    if (ImGui::IsKeyDown(switch_key)) {
+        if (!last_key_states[switch_key]) {
+            state->gui_state.gizmo_operation = (state->gui_state.gizmo_operation != gizmo_operation) ? gizmo_operation : 0;
+        }
+        last_key_states[switch_key] = true;
+    }
+    else {
+        last_key_states[switch_key] = false;
+    }
+}
+
 void render_gizmos(state_machine* state)
 {
-    state->logger.log("GIZMOS ARE WIP");
+    if (!state->gui_state.gizmo_operation) { return; }
+
+    const float viewport_tab_height = ImGui::GetWindowContentRegionMin().y;
+    const kl::float2 viewport_position = { ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + viewport_tab_height };
+    const kl::float2 viewport_size = { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() };
+
+    ImGuizmo::Enable(true);
+    ImGuizmo::SetDrawlist();
+    ImGuizmo::SetRect(viewport_position.x, viewport_position.y, viewport_size.x, viewport_size.y);
+
+    kl::float3 selected_snap = {};
+    if (state->window->keyboard.shift.state()) {
+        static const kl::float3 predefined_snaps[3] = {
+            kl::float3::splash(0.1f),
+            kl::float3::splash(30.0f),
+            kl::float3::splash(1.0f)
+        };
+
+        switch (state->gui_state.gizmo_operation) {
+        case ImGuizmo::SCALE:
+            selected_snap = predefined_snaps[0];
+        case ImGuizmo::ROTATE:
+            selected_snap = predefined_snaps[1];
+        case ImGuizmo::TRANSLATE:
+            selected_snap = predefined_snaps[2];
+        }
+    }
+
+    const kl::mat4 view_matrix = state->scene->camera.view_matrix().transpose();
+    const kl::mat4 projection_matrix = state->scene->camera.projection_matrix().transpose();
+    kl::mat4 transform_matrix = state->scene->selected_entity->matrix().transpose();
+
+    ImGuizmo::Manipulate(view_matrix.data(), projection_matrix.data(),
+        (ImGuizmo::OPERATION) state->gui_state.gizmo_operation, (ImGuizmo::MODE) state->gui_state.gizmo_mode,
+        transform_matrix.data(), nullptr,
+        selected_snap.data);
+
+    if (ImGuizmo::IsUsing()) {
+        kl::float3 decomposed_parts[3] = {};
+        ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data(),
+            decomposed_parts[2].data, decomposed_parts[1].data, decomposed_parts[0].data);
+
+        state->scene->selected_entity->render_scale = decomposed_parts[0];
+        state->scene->selected_entity->set_rotation(decomposed_parts[1]);
+        state->scene->selected_entity->set_position(decomposed_parts[2]);
+    }
 }

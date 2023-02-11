@@ -3,15 +3,25 @@
 
 state_logger::state_logger()
 {
-    this->resize(max_size);
+    this->clear();
 }
 
 state_logger::~state_logger()
 {}
 
+void state_logger::clear()
+{
+    std::vector<std::string>::clear();
+    this->resize(max_size);
+    log_counter_ = 0;
+}
+
 size_t state_logger::get_last_log_index() const
 {
-    return (log_counter_ - 1) % this->size();
+    if (log_counter_ > 0) {
+        return (log_counter_ - 1) % this->size();
+    }
+    return 0;
 }
 
 size_t state_logger::get_next_log_index() const

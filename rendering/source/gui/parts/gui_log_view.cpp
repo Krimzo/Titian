@@ -13,6 +13,14 @@ void gui_log_view(state_machine* state)
             }
             ImGui::Text(log.c_str());
         }
+
+        if (ImGui::BeginPopupContextWindow()) {
+            if (ImGui::MenuItem("Clear all")) {
+                state->logger.clear();
+            }
+
+            ImGui::EndPopup();
+        }
     }
     ImGui::End();
 }

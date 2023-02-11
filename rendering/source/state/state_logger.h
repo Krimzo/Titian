@@ -5,7 +5,7 @@
 
 class state_logger : public std::vector<std::string>
 {
-    size_t log_counter_ = 1;
+    size_t log_counter_ = 0;
 
     size_t get_next_log_index() const;
     size_t get_max_size_number_of_digits() const;
@@ -22,7 +22,7 @@ public:
     void operator=(const state_logger&) = delete;
     void operator=(const state_logger&&) = delete;
 
-    size_t get_last_log_index() const;
+    void clear();
 
     template<typename T>
     void log(const T& object)
@@ -36,4 +36,6 @@ public:
         log_stream << ". [" << kl::date() << "]: " << object;
         (*this)[log_index] = log_stream.str();
     }
+
+    size_t get_last_log_index() const;
 };
