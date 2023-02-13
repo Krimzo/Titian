@@ -9,27 +9,29 @@ state_logger::state_logger()
 state_logger::~state_logger()
 {}
 
+size_t state_logger::last_log_index() const
+{
+    return (log_counter_ > 0) ? ((log_counter_ - 1) % this->size()) : 0;
+}
+
+size_t state_logger::size() const
+{
+    return std::vector<log_info>::size();
+}
+
+const log_info& state_logger::get(size_t index) const
+{
+    return std::vector<log_info>::at(index);
+}
+
 void state_logger::clear()
 {
-    std::vector<std::string>::clear();
+    std::vector<log_info>::clear();
     this->resize(max_size);
     log_counter_ = 0;
 }
 
-size_t state_logger::get_last_log_index() const
+void state_logger::log(const log_info& log)
 {
-    if (log_counter_ > 0) {
-        return (log_counter_ - 1) % this->size();
-    }
-    return 0;
-}
-
-size_t state_logger::get_next_log_index() const
-{
-    return log_counter_ % this->size();
-}
-
-size_t state_logger::get_max_size_number_of_digits() const
-{
-    return (size_t) log10(max_size) + 1;
+    (*this)[log_counter_++ % this->size()] = log;
 }

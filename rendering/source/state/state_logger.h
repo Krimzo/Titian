@@ -3,12 +3,22 @@
 #include "klib.h"
 
 
-class state_logger : public std::vector<std::string>
+struct log_info
+{
+    std::string date = kl::format(kl::date());
+    std::string message = {};
+
+    log_info() = default;
+
+    template<typename T>
+    log_info(const T& object)
+        : message(kl::format(object))
+    {}
+};
+
+class state_logger : private std::vector<log_info>
 {
     size_t log_counter_ = 0;
-
-    size_t get_next_log_index() const;
-    size_t get_max_size_number_of_digits() const;
 
 public:
     size_t max_size = 100;
@@ -22,20 +32,13 @@ public:
     void operator=(const state_logger&) = delete;
     void operator=(const state_logger&&) = delete;
 
+    size_t last_log_index() const;
+
+    size_t size() const;
+
+    const log_info& get(size_t index) const;
+
+    void log(const log_info& log);
+
     void clear();
-
-    template<typename T>
-    void log(const T& object)
-    {
-        this->resize(max_size);
-        const size_t log_index = get_next_log_index();
-        log_counter_ += 1;
-
-        std::stringstream log_stream = {};
-        log_stream << std::setw(get_max_size_number_of_digits()) << (log_index + 1);
-        log_stream << ". [" << kl::date() << "]: " << object;
-        (*this)[log_index] = log_stream.str();
-    }
-
-    size_t get_last_log_index() const;
 };

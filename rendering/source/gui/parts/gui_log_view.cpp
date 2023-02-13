@@ -1,17 +1,26 @@
 #include "gui/gui_render.h"
 
 
+void ui_colored_text(const kl::float4& color, const std::string& message);
+
 void gui_log_view(state_machine* state)
 {
     if (ImGui::Begin("Log view")) {
-        const size_t last_log_index = state->logger.get_last_log_index();
+        const size_t last_log_index = state->logger.last_log_index();
 
         for (size_t i = 0; i < state->logger.size(); i++) {
-            std::string log = state->logger[i];
-            if (i == last_log_index) {
-                log += "    <-----";
-            }
-            ImGui::Text(log.c_str());
+            const log_info& log_info = state->logger.get(i);
+
+            ui_colored_text((kl::float4) kl::colors::orange, (i == last_log_index) ? ">" : " ");
+            ImGui::SameLine();
+
+            ui_colored_text({ 0.972f, 0.223f, 0.325f, 1 }, kl::format(std::setw(3), (i + 1), "."));
+            ImGui::SameLine();
+
+            ui_colored_text({ 0.552f, 0.823f, 0.278f, 1 }, kl::format("[", log_info.date, "]:"));
+            ImGui::SameLine();
+
+            ui_colored_text(kl::float4::splash(1), log_info.message);
         }
 
         if (ImGui::BeginPopupContextWindow()) {
@@ -23,4 +32,9 @@ void gui_log_view(state_machine* state)
         }
     }
     ImGui::End();
+}
+
+void ui_colored_text(const kl::float4& color, const std::string& message)
+{
+    ImGui::TextColored(*(ImVec4*) &color, message.c_str());
 }
