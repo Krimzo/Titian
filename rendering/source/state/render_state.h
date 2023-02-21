@@ -18,7 +18,7 @@ public:
     kl::dx::shader_view render_shader_view = nullptr;
 
     // Scene picking
-    kl::dx::texture         picking_texture = nullptr;
+    kl::dx::texture picking_texture = nullptr;
     kl::dx::target_view picking_target_view = nullptr;
     kl::dx::shader_view picking_shader_view = nullptr;
     kl::dx::texture picking_staging_texture = nullptr;

@@ -1,8 +1,9 @@
 #include "render/light/directional_light.h"
 
 
-kl::directional_light::directional_light(gpu* gpu, const int map_resolution)
-    : gpu_(gpu), map_resolution_(map_resolution)
+// Creation
+kl::directional_light::directional_light(gpu& gpu, const UINT map_resolution)
+    : map_resolution_(map_resolution)
 {
     dx::texture_descriptor shadow_map_descriptor = {};
     shadow_map_descriptor.Width = map_resolution;
@@ -23,25 +24,19 @@ kl::directional_light::directional_light(gpu* gpu, const int map_resolution)
     shadow_shader_view_descriptor.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     shadow_shader_view_descriptor.Texture2D.MipLevels = 1;
 
-    for (int i = 0; i < CASCADE_COUNT; i++) {
-        dx::texture shadow_texture = gpu->new_texture(&shadow_map_descriptor);
-        shadow_depth_views_[i] = gpu->new_depth_view(shadow_texture, &shadow_depth_view_descriptor);
-        shadow_shader_views_[i] = gpu->new_shader_view(shadow_texture, &shadow_shader_view_descriptor);
-        gpu->destroy(shadow_texture);
+    for (UINT i = 0; i < CASCADE_COUNT; i++) {
+        auto shadow_texture = gpu.create_texture(&shadow_map_descriptor, nullptr);
+        shadow_depth_views_[i] = gpu.create_depth_view(shadow_texture, &shadow_depth_view_descriptor);
+        shadow_shader_views_[i] = gpu.create_shader_view(shadow_texture, &shadow_shader_view_descriptor);
     }
 }
 
 kl::directional_light::~directional_light()
-{
-    for (int i = 0; i < CASCADE_COUNT; i++) {
-        gpu_->destroy(shadow_depth_views_[i]);
-        gpu_->destroy(shadow_shader_views_[i]);
-    }
-}
+{}
 
 void kl::directional_light::set_direction(const float3& direction)
 {
-    direction_ = direction.normalize();
+    direction_ = math::normalize(direction);
 }
 
 kl::float3 kl::directional_light::get_direction() const
@@ -49,37 +44,27 @@ kl::float3 kl::directional_light::get_direction() const
     return direction_;
 }
 
-int kl::directional_light::get_map_resolution() const
+UINT kl::directional_light::get_map_resolution() const
 {
     return map_resolution_;
 }
 
-const kl::dx::depth_view* kl::directional_light::get_depth_views() const
-{
-    return shadow_depth_views_;
-}
-
-const kl::dx::shader_view* kl::directional_light::get_shader_views() const
-{
-    return shadow_shader_views_;
-}
-
-kl::dx::depth_view kl::directional_light::get_depth_view(const int cascade_index) const
+kl::dx::depth_view kl::directional_light::get_depth_view(const UINT cascade_index) const
 {
     return shadow_depth_views_[cascade_index];
 }
 
-kl::dx::shader_view kl::directional_light::get_shader_view(const int cascade_index) const
+kl::dx::shader_view kl::directional_light::get_shader_view(const UINT cascade_index) const
 {
     return shadow_shader_views_[cascade_index];
 }
 
-kl::mat4 kl::directional_light::get_matrix(camera camera, const int cascade_index) const
+kl::float4x4 kl::directional_light::get_matrix(camera camera, const UINT cascade_index) const
 {
     const float2 old_camera_planes = { camera.near_plane, camera.far_plane };
     camera.near_plane = math::interpolate(CASCADE_SPLITS[cascade_index + 0], old_camera_planes.x, old_camera_planes.y);
     camera.far_plane = math::interpolate(CASCADE_SPLITS[cascade_index + 1], old_camera_planes.x, old_camera_planes.y);
-    const mat4 inverse_camera_matrix = camera.matrix().inverse();
+    const float4x4 inverse_camera_matrix = math::inverse(camera.matrix());
 
     // Calculate 8 corners in world-space
     float4 frustum_corners[8] = {
@@ -95,11 +80,11 @@ kl::mat4 kl::directional_light::get_matrix(camera camera, const int cascade_inde
     };
 
     for (auto& corner : frustum_corners) {
-        corner /= corner.w;
+        corner *= (1.0f / corner.w);
     }
 
     // Convert corners to temp light-view-space
-    const mat4 temp_ligth_view_matrix = mat4::look_at({}, direction_, { 0, 1, 0 });
+    const float4x4 temp_ligth_view_matrix = float4x4::look_at({}, direction_, { 0, 1, 0 });
     for (auto& corner : frustum_corners) {
         corner = temp_ligth_view_matrix * corner;
     }
@@ -109,13 +94,13 @@ kl::mat4 kl::directional_light::get_matrix(camera camera, const int cascade_inde
     float2 max_xy = { -INFINITY, -INFINITY };
     float min_z = INFINITY;
     for (const auto& corner : frustum_corners) {
-        min_xy.x = std::min(min_xy.x, corner.x);
-        min_xy.y = std::min(min_xy.y, corner.y);
+        min_xy.x = min(min_xy.x, corner.x);
+        min_xy.y = min(min_xy.y, corner.y);
 
-        max_xy.x = std::max(max_xy.x, corner.x);
-        max_xy.y = std::max(max_xy.y, corner.y);
+        max_xy.x = max(max_xy.x, corner.x);
+        max_xy.y = max(max_xy.y, corner.y);
 
-        min_z = std::min(min_z, corner.z);
+        min_z = min(min_z, corner.z);
     }
 
     // Find center of near plane in light-space
@@ -126,28 +111,29 @@ kl::mat4 kl::directional_light::get_matrix(camera camera, const int cascade_inde
     };
 
     // Convert temp light-space to world-space
-    const mat4 temp_ligth_view_matrix_inverse = temp_ligth_view_matrix.inverse();
-    light_position = (temp_ligth_view_matrix_inverse * float4(light_position, 1)).xyz;
+    const float4x4 temp_ligth_view_matrix_inverse = math::inverse(temp_ligth_view_matrix);
+    const float4 new_light_pos = temp_ligth_view_matrix_inverse * float4(light_position.x, light_position.y, light_position.z, 1.0f);
+    light_position = { new_light_pos.x, new_light_pos.y, new_light_pos.z };
     for (auto& corner : frustum_corners) {
         corner = temp_ligth_view_matrix_inverse * corner;
     }
 
     // Convert corners to proper light-view-space
-    const mat4 light_view_matrix = mat4::look_at(light_position, light_position + direction_, { 0, 1, 0 });
+    const float4x4 light_view_matrix = float4x4::look_at(light_position, light_position + direction_, { 0, 1, 0 });
     for (auto& corner : frustum_corners) {
         corner = light_view_matrix * corner;
     }
 
     // Find proper coordinates of frustum in light-space
-    float3 max_xyz = float3::splash(-INFINITY);
+    float3 max_xyz = float3(-INFINITY);
     for (const auto& corner : frustum_corners) {
-        max_xyz.x = std::max(max_xyz.x, corner.x);
-        max_xyz.y = std::max(max_xyz.y, corner.y);
-        max_xyz.z = std::max(max_xyz.z, corner.z);
+        max_xyz.x = max(max_xyz.x, corner.x);
+        max_xyz.y = max(max_xyz.y, corner.y);
+        max_xyz.z = max(max_xyz.z, corner.z);
     }
 
     // Calculate final orthographic projection
-    const mat4 light_projection_matrix = mat4::orthographic(
+    const float4x4 light_projection_matrix = float4x4::orthographic(
         -max_xyz.x, max_xyz.x,
         -max_xyz.x, max_xyz.x,
         -max_xyz.z, max_xyz.z

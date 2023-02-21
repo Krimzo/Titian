@@ -1,19 +1,19 @@
 #include "render/entity/mesh.h"
 
-#include "render/scene.h"
+#include "render/render.h"
 
 
-kl::mesh::mesh(gpu* gpu, dx::buffer graphics_buffer)
-    : gpu_(gpu), graphics_buffer(graphics_buffer)
+kl::mesh::mesh(dx::buffer graphics_buffer)
+    : graphics_buffer(graphics_buffer)
 {}
 
-kl::mesh::mesh(gpu* gpu, const std::vector<vertex>& vertices)
-    : mesh(gpu, gpu->new_vertex_buffer(vertices))
+kl::mesh::mesh(gpu& gpu, const mesh_data& vertices)
+    : mesh(gpu.create_mesh(vertices))
 {
     this->vertices = vertices;
 }
 
-kl::mesh::mesh(gpu* gpu, scene* scene, const std::vector<vertex>& vertices)
+kl::mesh::mesh(gpu& gpu, scene& scene, const mesh_data& vertices)
     : mesh(gpu, vertices)
 {
     PxTriangleMeshDesc mesh_descriptor = {};
@@ -22,21 +22,11 @@ kl::mesh::mesh(gpu* gpu, scene* scene, const std::vector<vertex>& vertices)
     mesh_descriptor.points.data = vertices.data();
 
     PxDefaultMemoryOutputStream cook_buffer = {};
-    scene->get_cooking()->cookTriangleMesh(mesh_descriptor, cook_buffer);
+    scene.get_cooking()->cookTriangleMesh(mesh_descriptor, cook_buffer);
 
     PxDefaultMemoryInputData cooked_buffer(cook_buffer.getData(), cook_buffer.getSize());
-    physics_buffer = scene->get_physics()->createTriangleMesh(cooked_buffer);
+    physics_buffer = scene.get_physics()->createTriangleMesh(cooked_buffer);
 }
 
 kl::mesh::~mesh()
-{
-    if (graphics_buffer) {
-        gpu_->destroy(graphics_buffer);
-        graphics_buffer = nullptr;
-    }
-
-    if (physics_buffer) {
-        physics_buffer->release();
-        physics_buffer = nullptr;
-    }
-}
+{}

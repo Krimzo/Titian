@@ -5,40 +5,40 @@
 
 void render_chain(state_machine* state)
 {
-    const kl::color background = state->scene ? state->scene->camera.background : kl::color();
+    const kl::color background = (state->scene && state->scene->camera) ? state->scene->camera->background : kl::color();
 
-    state->gpu->clear_internal_color((kl::float4) background);
-    state->gpu->clear_internal_depth(1.0f);
+    state->gpu->clear_internal(background);
 
-    if (state->scene) {
+    if (state->scene && state->scene->camera) {
         // Pre-render
         if (state->scene->directional_light) {
-            state->gpu->set_viewport(kl::int2::splash(state->scene->directional_light->get_map_resolution()));
-            state->gpu->unbind_all_targets();
-
+            state->gpu->set_viewport_size(kl::int2(state->scene->directional_light->get_map_resolution()));
+            state->gpu->unbind_target_depth_views();
             render_shadows(state);
         }
 
         // Scene render
-        state->gpu->set_viewport(state->render_state->target_size);
-        state->gpu->bind_targets({ state->render_state->render_target_view, state->render_state->picking_target_view });
+        state->gpu->set_viewport_size(state->render_state->target_size);
+        state->gpu->bind_target_depth_views({ state->render_state->render_target_view, state->render_state->picking_target_view }, state->gpu->get_internal_depth());
 
-        state->render_state->clear_targets((kl::float4) background);
-        state->scene->camera.update_aspect_ratio(state->render_state->target_size);
+        state->render_state->clear_targets(background);
+        state->scene->camera->update_aspect_ratio(state->render_state->target_size);
 
-        render_skybox(state);
-        render_ocean(state);
+        if (state->scene->camera->skybox) {
+            render_skybox(state);
+        }
         render_scene(state);
 
         // Postprocess render
-        state->gpu->set_viewport(state->render_state->target_size);
-        state->gpu->bind_targets({ state->render_state->render_target_view });
-
-        render_postprocess(state);
+        if (state->scene->selected_entity) {
+            state->gpu->set_viewport_size(state->render_state->target_size);
+            state->gpu->bind_target_depth_views({ state->render_state->render_target_view }, nullptr);
+            render_postprocess(state);
+        }
 
         // GUI render
-        state->gpu->set_viewport(state->window->size());
-        state->gpu->bind_internal_targets();
+        state->gpu->set_viewport_size(state->window->size());
+        state->gpu->bind_internal_views();
 
         gui_render(state);
     }

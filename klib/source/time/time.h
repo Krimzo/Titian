@@ -1,6 +1,11 @@
 #pragma once
 
-#include "math/math.h"
+
+// Timer
+#include "time/timer/timer.h"
+
+// Date
+#include "time/date/date.h"
 
 
 namespace kl::time {

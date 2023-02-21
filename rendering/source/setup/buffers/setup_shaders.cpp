@@ -6,20 +6,16 @@ std::string parse_shader(const std::string& name);
 void setup_shaders(state_machine* state)
 {
     auto shadow_shaders = parse_shader("shadow_render.hlsl");
-    state->shaders["shadow"] = state->gpu->new_shaders(shadow_shaders);
+    state->shaders["shadow"] = state->gpu->create_render_shaders(shadow_shaders);
 
     auto skybox_shaders = parse_shader("skybox_render.hlsl");
-    state->shaders["skybox"] = state->gpu->new_shaders(skybox_shaders);
-
-    auto ocean_shaders = parse_shader("ocean_render.hlsl");
-    state->shaders["ocean"] = state->gpu->new_shaders(ocean_shaders);
-    state->shaders["ocean"].geometry_shader = state->gpu->new_geometry_shader(ocean_shaders);
+    state->shaders["skybox"] = state->gpu->create_render_shaders(skybox_shaders);
 
     auto render_shaders = parse_shader("entity_render.hlsl");
-    state->shaders["entity"] = state->gpu->new_shaders(render_shaders);
+    state->shaders["entity"] = state->gpu->create_render_shaders(render_shaders);
 
     auto postprocess_shaders = parse_shader("postprocess_render.hlsl");
-    state->shaders["postprocess"] = state->gpu->new_shaders(postprocess_shaders);
+    state->shaders["postprocess"] = state->gpu->create_render_shaders(postprocess_shaders);
 }
 
 std::string parse_shader(const std::string& name)

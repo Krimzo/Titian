@@ -201,7 +201,7 @@
     <ClInclude Include="source\Vehicle\PxVehicleWheels.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\physics_placeholder.cpp" />
+    <ClCompile Include="source\PxPlaceholder.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

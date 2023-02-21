@@ -5,10 +5,10 @@
 
 struct entity_render_vs_cb
 {
-    kl::mat4  w_matrix;
-    kl::mat4 vp_matrix;
+    kl::float4x4  w_matrix;
+    kl::float4x4 vp_matrix;
 
-    kl::mat4 vp_light_matrices[kl::directional_light::CASCADE_COUNT];
+    kl::float4x4 vp_light_matrices[kl::directional_light::CASCADE_COUNT];
 };
 
 struct entity_render_ps_cb
@@ -20,7 +20,7 @@ struct entity_render_ps_cb
     kl::float4 object_texture_info; // (has_normal_map, has_roughness_map, none, none)
 
     kl::float4 camera_info; // (camera.x, camera.y, camera.z, none)
-    kl::mat4      v_matrix; // View matrix
+    kl::float4x4  v_matrix; // View matrix
 
     kl::float4     ambient_light; // (color.r, color.g, color.b, intensity)
     kl::float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
@@ -28,3 +28,6 @@ struct entity_render_ps_cb
     kl::float4   shadow_map_info; // (width, height, texel_width, texel_size)
     kl::float4 cascade_distances; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
 };
+
+inline kl::dx::buffer entity_render_vs_const_buffer = nullptr;
+inline kl::dx::buffer entity_render_ps_const_buffer = nullptr;

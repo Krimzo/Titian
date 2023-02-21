@@ -1,48 +1,37 @@
 #pragma once
 
-#include "math/math.h"
-#include "memory/ref.h"
-#include "graphics/gpu.h"
-
-#include <vector>
+#include "graphics/graphics.h"
+#include "memory/memory.h"
 
 #ifdef KL_USING_PHYSX
-#include "PxPhysicsAPI.h"
+#include <PxPhysicsAPI.h>
 using namespace physx;
 #endif
-
 
 namespace kl {
     class scene;
 }
 
 namespace kl {
+    using mesh_data = std::vector<vertex>;
+
 #ifdef KL_USING_PHYSX
 
     class mesh
     {
-        gpu* gpu_ = nullptr;
-
     public:
-        std::vector<vertex> vertices = {};
+        mesh_data vertices = {};
         dx::buffer graphics_buffer = nullptr;
         PxTriangleMesh* physics_buffer = nullptr;
 
-        mesh(gpu* gpu, dx::buffer graphics_buffer);
-        mesh(gpu* gpu, const std::vector<vertex>& vertices);
-        mesh(gpu* gpu, scene* scene, const std::vector<vertex>& vertices);
-        ~mesh();
-
-        mesh(const mesh&) = delete;
-        mesh(const mesh&&) = delete;
-
-        void operator=(const mesh&) = delete;
-        void operator=(const mesh&&) = delete;
+        mesh(dx::buffer graphics_buffer);
+        mesh(gpu& gpu, const mesh_data& vertices);
+        mesh(gpu& gpu, scene& scene, const mesh_data& vertices);
+        virtual ~mesh();
     };
 
 #else
 
-    using mesh_data = std::vector<vertex>;
     using mesh = dx::buffer;
 
 #endif

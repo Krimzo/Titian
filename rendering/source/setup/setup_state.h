@@ -7,6 +7,7 @@ void   setup_depth_states(state_machine* state);
 void setup_sampler_states(state_machine* state);
 void  setup_raster_states(state_machine* state);
 
+void setup_cbuffers(state_machine* state);
 void  setup_shaders(state_machine* state);
 void setup_textures(state_machine* state);
 void setup_skyboxes(state_machine* state);

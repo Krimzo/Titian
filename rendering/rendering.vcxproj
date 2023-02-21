@@ -90,7 +90,6 @@
   <ItemGroup>
     <ClInclude Include="source\callbacks\main_callbacks.h" />
     <ClInclude Include="source\cbuffers\entity_render.h" />
-    <ClInclude Include="source\cbuffers\ocean_render.h" />
     <ClInclude Include="source\cbuffers\postprocess_render.h" />
     <ClInclude Include="source\cbuffers\shadow_render.h" />
     <ClInclude Include="source\cbuffers\skybox_render.h" />
@@ -116,16 +115,15 @@
     <ClCompile Include="source\gui\parts\gui_scene_info.cpp" />
     <ClCompile Include="source\gui\gui_render.cpp" />
     <ClCompile Include="source\rendering.cpp" />
-    <ClCompile Include="source\render\parts\render_ocean.cpp" />
     <ClCompile Include="source\render\parts\render_postprocess.cpp" />
     <ClCompile Include="source\render\parts\render_shadows.cpp" />
     <ClCompile Include="source\render\render_chain.cpp" />
+    <ClCompile Include="source\setup\buffers\setup_cbuffers.cpp" />
     <ClCompile Include="source\setup\components\setup_materials.cpp" />
     <ClCompile Include="source\setup\gui\setup_gui.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_bullets.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_cubes.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_monkes.cpp" />
-    <ClCompile Include="source\setup\scene\parts\scene_ocean.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_physics_test.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_spheres.cpp" />
     <ClCompile Include="source\setup\states\setup_depth_states.cpp" />

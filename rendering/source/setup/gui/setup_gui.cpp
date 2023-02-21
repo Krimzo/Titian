@@ -1,8 +1,8 @@
 #include "setup/setup_state.h"
 
-#include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
+#include <imgui.h>
+#include <imgui_impl_win32.h>
+#include <imgui_impl_dx11.h>
 
 
 void load_my_theme(state_machine* state);
@@ -15,8 +15,8 @@ void setup_gui(state_machine* state)
     ImGui::StyleColorsDark();
     load_my_theme(state);
 
-    ImGui_ImplWin32_Init(state->window->get_window());
-    ImGui_ImplDX11_Init(state->gpu->device(), state->gpu->context());
+    ImGui_ImplWin32_Init(*state->window);
+    ImGui_ImplDX11_Init(state->gpu->device().Get(), state->gpu->context().Get());
 }
 
 void load_my_theme(state_machine* state)

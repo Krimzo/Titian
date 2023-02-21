@@ -1,80 +1,77 @@
 #pragma once
 
-#include "math/vector/vector2.h"
-#include "math/vector/vector3.h"
-#include "math/vector/vector4.h"
+// Helper
+#include "math/helper/constants.h"
 
-#include "math/matrix/matrix2x2.h"
-#include "math/matrix/matrix3x3.h"
-#include "math/matrix/matrix4x4.h"
+// Vector
+#include "math/vector/int2.h"
+#include "math/vector/float2.h"
+#include "math/vector/float3.h"
+#include "math/vector/float4.h"
 
-#include "math/ray_casting/plane.h"
-#include "math/ray_casting/sphere.h"
-#include "math/ray_casting/vertex.h"
-#include "math/ray_casting/triangle.h"
-#include "math/ray_casting/ray.h"
+// Matrix
+#include "math/matrix/float2x2.h"
+#include "math/matrix/float3x3.h"
+#include "math/matrix/float4x4.h"
+
+// Triangle
+#include "math/triangle/vertex.h"
+#include "math/triangle/triangle.h"
+
+// Ray
+#include "math/ray/plane.h"
+#include "math/ray/sphere.h"
+#include "math/ray/ray.h"
 
 
 namespace kl::math {
-    inline float line_x(const float2& a, const float2& b, float y)
-    {
-        return ((y - a.y) * (b.x - a.x)) / (b.y - a.y) + a.x;
-    }
+    // Lines
+    float line_x(const float2& a, const float2& b, float y);
+    float line_y(const float2& a, const float2& b, float x);
 
-    inline float line_y(const float2& a, const float2& b, float x)
-    {
-        return ((b.y - a.y) * (x - a.x)) / (b.x - a.x) + a.y;
-    }
+    // Normalization
+    float normalize(float value, float lower, float upper);
+    float interpolate(float value, float lower, float upper);
 
-    template <typename T = float, typename T0, typename T1, typename T2>
-    T normalize(const T0& val, const T1& lower, const T2& upper)
-    {
-        return (T(val) - T(lower)) / (T(upper) - T(lower));
-    }
+    // Rotation
+    float4 to_quaternion(const float3& euluer);
+    float3 to_euler(const float4& quaternion);
 
-    template <typename T = float, typename T0, typename T1, typename T2>
-    T interpolate(const T0& val, const T1& lower, const T2& upper)
-    {
-        return (T(upper) - T(lower)) * val + T(lower);
-    }
+    // Int2 operations
+    int2 abs(const int2& vec);
 
-    template <typename T, typename T0, typename T1>
-    T minmax(const T& val, const T0& min_value, const T1& max_value)
-    {
-        return std::min(std::max(val, T(min_value)), T(max_value));
-    }
+    // Float2 operations
+    float2 abs(const float2& vec);
+    float2 normalize(const float2& vec);
+    float angle(const float2& first, const float2& second, bool full);
+    float2 rotate(const float2& vec, float angle);
+    float2 reflect(const float2& vec, const float2& point);
 
-    template <typename T>
-    vector4<T> to_quaternion(const vector3<T>& eul)
-    {
-        const T cr = T(std::cos(math::to_radians(eul.x) * 0.5f));
-        const T sr = T(std::sin(math::to_radians(eul.x) * 0.5f));
-        const T cp = T(std::cos(math::to_radians(eul.y) * 0.5f));
-        const T sp = T(std::sin(math::to_radians(eul.y) * 0.5f));
-        const T cy = T(std::cos(math::to_radians(eul.z) * 0.5f));
-        const T sy = T(std::sin(math::to_radians(eul.z) * 0.5f));
+    // Float3 operations
+    float3 abs(const float3& vec);
+    float3 normalize(const float3& vec);
+    float angle(const float3& first, const float3& second);
+    float3 rotate(const float3& vec, const float3& axis, float angle);
+    float3 reflect(const float3& first, float3 normal);
+    float3 cross(const float3& first, const float3& second);
 
-        return {
-            sr * cp * cy - cr * sp * sy,
-            cr * sp * cy + sr * cp * sy,
-            cr * cp * sy - sr * sp * cy,
-            cr * cp * cy + sr * sp * sy
-        };
-    }
+    // Float4 operations
+    float4 abs(const float4& vec);
+    float4 normalize(const float4& vec);
+    float angle(const float4& first, const float4& second);
 
-    template <typename T>
-    vector3<T> to_euler(const vector4<T>& quaternion)
-    {
-        const T sin_p = T(2.0f * (quaternion.w * quaternion.y - quaternion.z * quaternion.x));
-        const T sin_r_cos_p = T(2.0f * (quaternion.w * quaternion.x + quaternion.y * quaternion.z));
-        const T cos_r_cos_p = T(1.0f - 2.0f * (quaternion.x * quaternion.x + quaternion.y * quaternion.y));
-        const T sin_y_cos_p = T(2.0f * (quaternion.w * quaternion.z + quaternion.x * quaternion.y));
-        const T cos_y_cos_p = T(1.0f - 2.0f * (quaternion.y * quaternion.y + quaternion.z * quaternion.z));
+    // Float2x2
+    float2x2 abs(const float2x2& mat);
+    float2x2 inverse(const float2x2& mat);
+    float2x2 transpose(const float2x2& mat);
 
-        return {
-            math::to_degrees<T>(std::atan2(sin_r_cos_p, cos_r_cos_p)),
-            math::to_degrees<T>((std::abs(sin_p) >= 1.0f) ? std::copysign(pi * 0.5f, sin_p) : std::asin(sin_p)),
-            math::to_degrees<T>(std::atan2(sin_y_cos_p, cos_y_cos_p))
-        };
-    };
+    // Float3x3
+    float3x3 abs(const float3x3& mat);
+    float3x3 inverse(const float3x3& mat);
+    float3x3 transpose(const float3x3& mat);
+
+    // Float4x4
+    float4x4 abs(const float4x4& mat);
+    float4x4 inverse(const float4x4& mat);
+    float4x4 transpose(const float4x4& mat);
 }

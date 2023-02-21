@@ -581,7 +581,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\physics_placeholder.cpp">
+    <ClCompile Include="source\PxPlaceholder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

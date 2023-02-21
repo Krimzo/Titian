@@ -14,14 +14,14 @@ void gui_viewport(state_machine* state)
 
     if (ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar)) {
         // Pre-display
-        state->gui_state.viewport_size = { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() };
+        state->gui_state.viewport_size = { (int) ImGui::GetWindowWidth(), (int) ImGui::GetWindowHeight() };
         state->gui_state.is_viewport_focused = ImGui::IsWindowFocused();
 
         // Display scene buffer
         if (state->gui_state.viewport_size.x > 0 && state->gui_state.viewport_size.y > 0 && state->gui_state.viewport_size != state->render_state->target_size) {
             state->render_state = kl::make<render_state>(state->gpu, state->gui_state.viewport_size);
         }
-        ImGui::Image(state->render_state->render_shader_view, ImGui::GetWindowSize());
+        ImGui::Image(state->render_state->render_shader_view.Get(), ImGui::GetWindowSize());
 
         // Handle entity picking
         if (ImGui::IsWindowFocused() && !ImGuizmo::IsOver() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
@@ -68,7 +68,7 @@ int get_entity_index(state_machine* state, const kl::int2& pixel_coords)
     source_box.front = 0;
     source_box.back = 1;
 
-    state->gpu->context()->CopySubresourceRegion(state->render_state->picking_staging_texture, 0, 0, 0, 0, state->render_state->picking_texture, 0, &source_box);
+    state->gpu->context()->CopySubresourceRegion(state->render_state->picking_staging_texture.Get(), 0, 0, 0, 0, state->render_state->picking_texture.Get(), 0, &source_box);
 
     float result = 0.0f;
     state->gpu->read_from_resource(&result, state->render_state->picking_staging_texture, sizeof(float));
@@ -103,11 +103,11 @@ void render_gizmos(state_machine* state)
     ImGuizmo::SetRect(viewport_position.x, viewport_position.y, viewport_size.x, viewport_size.y);
 
     kl::float3 selected_snap = {};
-    if (state->window->keyboard.shift.state()) {
+    if (state->window->keyboard.shift) {
         static const kl::float3 predefined_snaps[3] = {
-            kl::float3::splash(0.1f),
-            kl::float3::splash(30.0f),
-            kl::float3::splash(1.0f)
+            kl::float3(0.1f),
+            kl::float3(30.0f),
+            kl::float3(1.0f)
         };
 
         switch (state->gui_state.gizmo_operation) {
@@ -120,19 +120,19 @@ void render_gizmos(state_machine* state)
         }
     }
 
-    const kl::mat4 view_matrix = state->scene->camera.view_matrix().transpose();
-    const kl::mat4 projection_matrix = state->scene->camera.projection_matrix().transpose();
-    kl::mat4 transform_matrix = state->scene->selected_entity->matrix().transpose();
+    const kl::float4x4 view_matrix = kl::math::transpose(state->scene->camera->view_matrix());
+    const kl::float4x4 projection_matrix = kl::math::transpose(state->scene->camera->projection_matrix());
+    kl::float4x4 transform_matrix = kl::math::transpose(state->scene->selected_entity->matrix());
 
-    ImGuizmo::Manipulate(view_matrix.data(), projection_matrix.data(),
+    ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
         (ImGuizmo::OPERATION) state->gui_state.gizmo_operation, (ImGuizmo::MODE) state->gui_state.gizmo_mode,
-        transform_matrix.data(), nullptr,
-        selected_snap.data);
+        transform_matrix.data, nullptr,
+        selected_snap);
 
     if (ImGuizmo::IsUsing()) {
         kl::float3 decomposed_parts[3] = {};
-        ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data(),
-            decomposed_parts[2].data, decomposed_parts[1].data, decomposed_parts[0].data);
+        ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
+            decomposed_parts[2], decomposed_parts[1], decomposed_parts[0]);
 
         state->scene->selected_entity->render_scale = decomposed_parts[0];
         state->scene->selected_entity->set_rotation(decomposed_parts[1]);

@@ -39,9 +39,6 @@
     <ClInclude Include="source\cbuffers\skybox_render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\cbuffers\ocean_render.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\setup\scene\setup_scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -128,12 +125,6 @@
     <ClCompile Include="source\update\custom\custom_post_render_update.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\render\parts\render_ocean.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\setup\scene\parts\scene_ocean.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\setup\scene\parts\scene_cubes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -192,6 +183,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\state\state_logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\setup\buffers\setup_cbuffers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

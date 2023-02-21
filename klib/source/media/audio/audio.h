@@ -1,12 +1,14 @@
 #pragma once
 
+#include "apis/apis.h"
+
 
 namespace kl {
     class audio
     {
     public:
         audio();
-        ~audio();
+        virtual ~audio();
 
         audio(const audio&) = delete;
         audio(const audio&&) = delete;

@@ -3,8 +3,7 @@
 #include "render/entity/mesh.h"
 #include "render/entity/material.h"
 #include "render/entity/collider.h"
-
-#include "memory/ref.h"
+#include "memory/memory.h"
 
 
 namespace kl {
@@ -18,15 +17,14 @@ namespace kl {
 
     public:
         const int unique_index;
-        float3 render_scale = float3::splash(1.0f);
+        float3 render_scale = float3(1.0f);
 
-        ref<mesh> mesh = {};
-        ref<material> material = {};
+        ref<mesh> mesh = nullptr;
+        ref<material> material = nullptr;
 
+        // Creation
         entity(PxPhysics* physics, bool dynamic);
-        entity();
-
-        ~entity();
+        virtual ~entity();
 
         entity(const entity&) = delete;
         entity(const entity&&) = delete;
@@ -34,6 +32,7 @@ namespace kl {
         void operator=(const entity&) = delete;
         void operator=(const entity&&) = delete;
 
+        // Get
         PxRigidActor* get_actor() const;
 
         // Geometry
@@ -61,14 +60,14 @@ namespace kl {
         ref<collider> get_collider() const;
 
         // Graphics
-        mat4 matrix() const;
+        float4x4 matrix() const;
     };
 #else
 
     class entity
     {
     public:
-        float3 scale = float3::splash(1.0f);
+        float3 scale = float3(1.0f);
         float3 rotation = {};
         float3 position = {};
 
@@ -76,13 +75,15 @@ namespace kl {
         float3 velocity = {};
         float3 angular = {};
 
-        mesh mesh = {};
-        material material = {};
+        ref<mesh> mesh = nullptr;
+        ref<material> material = nullptr;
 
         entity();
         ~entity();
 
-        mat4 matrix() const;
+        void update_physics(float delta_t);
+
+        float4x4 matrix() const;
     };
 
 #endif

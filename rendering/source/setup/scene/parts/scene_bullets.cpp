@@ -41,12 +41,12 @@ void setup_bullets(state_machine* state, const int size)
         static const std::function<kl::float3(const kl::float3&)> directional_vector_to_euler = [](const kl::float3& dir) -> kl::float3
         {
             static const kl::float2 start_dir_yz = { 1, 0 };
-            const float rx = -start_dir_yz.angle({ dir.y, dir.z });
-            const float ry = -kl::float2(0, dir.z).angle({ dir.x, dir.z }, true);
+            const float rx = -kl::math::angle(start_dir_yz, { dir.y, dir.z }, false);
+            const float ry = -kl::math::angle(kl::float2(0, dir.z), { dir.x, dir.z }, true);
             return { rx, ry, 0 };
         };
 
-        const kl::float3 target_direction = (target_position - bullet->get_position()).normalize();
+        const kl::float3 target_direction = kl::math::normalize(target_position - bullet->get_position());
         bullet->set_rotation(directional_vector_to_euler(target_direction));
 
         bullet->mesh = state->meshes["bmg_bullet"];
@@ -87,9 +87,9 @@ void setup_bullets(state_machine* state, const int size)
         {
             if (!*bullet_fired) {
                 const kl::float4 default_bullet_direction = { 0.0f, 1.0f, 0.0f, 1.0f };
-                auto correct_direction = (kl::mat4::rotation(bullet->get_rotation()) * default_bullet_direction).xyz;
+                auto correct_direction = (kl::float4x4::rotation(bullet->get_rotation()) * default_bullet_direction).xyz();
 
-                bullet->set_velocity(correct_direction.normalize() * fire_velocity);
+                bullet->set_velocity(kl::math::normalize(correct_direction) * fire_velocity);
 
                 casing_primer->mesh = state->meshes["bmg_primer_fired"];
 
@@ -98,10 +98,10 @@ void setup_bullets(state_machine* state, const int size)
         });
     }
 
-    state->window->keyboard.space.on_release = [all_callbacks]
+    state->window->keyboard.space.on_release.push_back([all_callbacks]
     {
         for (auto& callback : all_callbacks) {
             callback();
         }
-    };
+    });
 }

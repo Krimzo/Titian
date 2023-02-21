@@ -20,7 +20,7 @@ void gui_log_view(state_machine* state)
             ui_colored_text({ 0.552f, 0.823f, 0.278f, 1 }, kl::format("[", log_info.date, "]:"));
             ImGui::SameLine();
 
-            ui_colored_text(kl::float4::splash(1), log_info.message);
+            ui_colored_text(kl::float4(1.0f), log_info.message);
         }
 
         if (ImGui::BeginPopupContextWindow()) {

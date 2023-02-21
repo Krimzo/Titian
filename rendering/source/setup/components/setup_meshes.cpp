@@ -19,6 +19,6 @@ void setup_meshes(state_machine* state)
 
 kl::ref<kl::mesh> parse_mesh(state_machine* state, const std::string& name)
 {
-    const std::vector<kl::vertex> vertices = kl::files::parse_mesh(resouce_folder + "meshes/" + name, true);
-    return kl::make<kl::mesh>(&*state->gpu, &*state->scene, vertices);
+    const kl::mesh_data vertices = kl::files::parse_mesh(resouce_folder + "meshes/" + name, true);
+    return kl::ref<kl::mesh>(new kl::mesh(*state->gpu, *state->scene, vertices));
 }

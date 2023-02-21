@@ -1,7 +1,5 @@
 #include "rendering.h"
 
-#include "link_libs.h"
-
 
 int main()
 {

@@ -25,7 +25,7 @@ void setup_platform(state_machine* state)
     platform->mesh = state->meshes["cube"];
     platform->material = kl::make<kl::material>();
 
-    platform->material->color = kl::float4::splash(1.0f);
+    platform->material->color = kl::float4(1.0f);
 
     state->scene->add("PhysicsTestPlatform", platform);
 }

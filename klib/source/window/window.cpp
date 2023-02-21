@@ -1,8 +1,13 @@
 #include "window/window.h"
 
-#include "utility/console.h"
+#include "utility/utility.h"
+
+#ifdef KL_USING_IMGUI
+#include <imgui.h>
+#endif
 
 
+// Class
 kl::window::window(const int2& size, const std::string& name)
     : name_(name)
 {
@@ -27,8 +32,14 @@ kl::window::window(const int2& size, const std::string& name)
     RECT size_buffer = { 0, 0, LONG(size.x), LONG(size.y) };
     AdjustWindowRect(&size_buffer, window_style_, false);
 
-    const int2 new_size = { size_buffer.right - size_buffer.left, size_buffer.bottom - size_buffer.top };
-    const int2 new_position = int2(screen::size / 2 - new_size / 2);
+    const int2 new_size = {
+        size_buffer.right - size_buffer.left,
+        size_buffer.bottom - size_buffer.top,
+    };
+    const int2 new_position = {
+        screen::size.x / 2 - new_size.x / 2,
+        screen::size.y / 2 - new_size.y / 2,
+    };
 
     window_ = CreateWindowExA(NULL, name.c_str(), name.c_str(), window_style_, new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, instance_, nullptr);
     error_check(!window_, "Failed to create window");
@@ -55,14 +66,14 @@ kl::window::~window()
     UnregisterClassA(name_.c_str(), instance_);
 }
 
-HWND kl::window::get_window() const
+kl::window::operator HWND() const
 {
     return window_;
 }
 
 bool kl::window::process(const bool wait)
 {
-    MSG message;
+    MSG message = {};
     if (wait) {
         GetMessageA(&message, window_, 0, 0);
         handle_message(message);
@@ -99,17 +110,18 @@ bool kl::window::is_resizeable() const
 
 void kl::window::set_resizeable(const bool enabled)
 {
-    if (!in_fullscreen_) {
-        if (!resizeable_ && enabled) {
-            SetWindowLongA(window_, GWL_STYLE, GetWindowLongA(window_, GWL_STYLE) | WS_SIZEBOX | WS_MAXIMIZEBOX);
-            window_style_ = GetWindowLongA(window_, GWL_STYLE);
-        }
-        else if (resizeable_ && !enabled) {
-            SetWindowLongA(window_, GWL_STYLE, GetWindowLongA(window_, GWL_STYLE) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX);
-            window_style_ = GetWindowLongA(window_, GWL_STYLE);
-        }
-        resizeable_ = enabled;
+    if (in_fullscreen_) { return; }
+
+    if (!resizeable_ && enabled) {
+        SetWindowLongA(window_, GWL_STYLE, GetWindowLongA(window_, GWL_STYLE) | WS_SIZEBOX | WS_MAXIMIZEBOX);
+        window_style_ = GetWindowLongA(window_, GWL_STYLE);
     }
+    else if (resizeable_ && !enabled) {
+        SetWindowLongA(window_, GWL_STYLE, GetWindowLongA(window_, GWL_STYLE) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX);
+        window_style_ = GetWindowLongA(window_, GWL_STYLE);
+    }
+
+    resizeable_ = enabled;
 }
 
 void kl::window::maximize() const
@@ -196,29 +208,30 @@ kl::int2 kl::window::size(const bool client) const
 
 void kl::window::set_size(const int2& size, const bool client) const
 {
-    if (!in_fullscreen_) {
-        const int2 position = this->position();
-        int2 new_size = size;
+    if (in_fullscreen_) { return; }
 
-        if (client) {
-            RECT rect = { LONG(position.x), LONG(position.y), LONG(position.x + size.x), LONG(position.y + size.y) };
-            AdjustWindowRect(&rect, window_style_, false);
-            new_size = { rect.right - rect.left, rect.bottom - rect.top };
-        }
+    const int2 position = this->position();
+    int2 new_size = size;
 
-        MoveWindow(window_, position.x, position.y, new_size.x, new_size.y, false);
+    if (client) {
+        RECT rect = { LONG(position.x), LONG(position.y), LONG(position.x + size.x), LONG(position.y + size.y) };
+        AdjustWindowRect(&rect, window_style_, false);
+        new_size = { rect.right - rect.left, rect.bottom - rect.top };
     }
+
+    MoveWindow(window_, position.x, position.y, new_size.x, new_size.y, false);
 }
 
 float kl::window::get_aspect_ratio() const
 {
     const int2 win_size = size();
-    return float(win_size.x) / win_size.y;
+    return (float) win_size.x / win_size.y;
 }
 
 kl::int2 kl::window::get_frame_center() const
 {
-    return size() / 2;
+    const int2 size = this->size();
+    return { size.x / 2, size.y / 2 };
 }
 
 void kl::window::set_title(const std::string& data) const
@@ -252,11 +265,93 @@ void kl::window::draw_pixel_data(const color* data, const int2& size, const int2
 
 void kl::window::draw_image(const image& image, const int2& position) const
 {
-    draw_pixel_data(image.data(), image.size(), position);
+    draw_pixel_data(image, image.size(), position);
 }
 
 void kl::window::notify() const
 {
     PostMessageA(window_, WM_NULL, NULL, NULL);
     PostMessageA(window_, WM_NULL, NULL, NULL);
+}
+
+// System
+#ifdef KL_USING_IMGUI
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif
+
+LRESULT CALLBACK kl::window::window_procedure(const HWND window_handle, const UINT message, const WPARAM w_param, const LPARAM l_param) const
+{
+    // On-Resize
+    if (message == WM_SIZE) {
+        const int2 new_size = { LOWORD(l_param), HIWORD(l_param) };
+        for (auto& callback : on_resize) {
+            callback(new_size);
+        }
+    }
+
+    return DefWindowProcA(window_handle, message, w_param, l_param);
+}
+
+void kl::window::handle_message(const MSG& message)
+{
+#ifdef KL_USING_IMGUI
+    TranslateMessage(&message);
+    if (ImGui_ImplWin32_WndProcHandler(message.hwnd, message.message, message.wParam, message.lParam)) {
+        return;
+    }
+#endif
+
+    switch (message.message) {
+#ifdef KL_USING_IMGUI
+    case WM_CHAR:
+        if (*((short*) &message.lParam) > 1) {
+            ImGui::GetIO().AddInputCharacter(int(message.wParam));
+        }
+        break;
+#endif
+
+    case WM_KEYDOWN:
+        keyboard.update_states(message.wParam, true);
+        break;
+
+    case WM_KEYUP:
+        keyboard.update_states(message.wParam, false);
+        break;
+
+    case WM_LBUTTONDOWN:
+        mouse.left.update_state(0, true);
+        break;
+
+    case WM_LBUTTONUP:
+        mouse.left.update_state(0, false);
+        break;
+
+    case WM_MBUTTONDOWN:
+        mouse.middle.update_state(1, true);
+        break;
+
+    case WM_MBUTTONUP:
+        mouse.middle.update_state(1, false);
+        break;
+
+    case WM_RBUTTONDOWN:
+        mouse.right.update_state(2, true);
+        break;
+
+    case WM_RBUTTONUP:
+        mouse.right.update_state(2, false);
+        break;
+
+    case WM_MOUSEMOVE:
+        mouse.update_position(window_, { GET_X_LPARAM(message.lParam), GET_Y_LPARAM(message.lParam) });
+        break;
+
+    case WM_MOUSEWHEEL:
+        mouse.update_scroll(window_, GET_WHEEL_DELTA_WPARAM(message.wParam) / 120);
+        break;
+
+    default:
+        DispatchMessageA(&message);
+        break;
+    }
 }

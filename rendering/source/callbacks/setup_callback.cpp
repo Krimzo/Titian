@@ -13,6 +13,7 @@ void setup_callback(state_machine* state)
     setup_raster_states(state);
 
     // Render buffers
+    setup_cbuffers(state);
     setup_shaders(state);
     setup_textures(state);
     setup_skyboxes(state);

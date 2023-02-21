@@ -1,7 +1,5 @@
 #include "time/time.h"
 
-#include "window/system_handler.h"
-
 
 time_t kl::time::now()
 {

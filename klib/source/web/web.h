@@ -1,6 +1,8 @@
 #pragma once
 
-#include <string>
+
+// Socket
+#include "web/socket/socket.h"
 
 
 namespace kl::web {
