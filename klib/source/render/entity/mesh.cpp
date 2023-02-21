@@ -3,6 +3,8 @@
 #include "render/render.h"
 
 
+#ifdef KL_USING_PHYSX
+
 kl::mesh::mesh(dx::buffer graphics_buffer)
     : graphics_buffer(graphics_buffer)
 {}
@@ -30,3 +32,5 @@ kl::mesh::mesh(gpu& gpu, scene& scene, const mesh_data& vertices)
 
 kl::mesh::~mesh()
 {}
+
+#endif

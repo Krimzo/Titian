@@ -75,8 +75,8 @@ namespace kl {
         float3 velocity = {};
         float3 angular = {};
 
-        ref<mesh> mesh = nullptr;
-        ref<material> material = nullptr;
+        mesh mesh = nullptr;
+        ref<material> material = make<kl::material>();
 
         entity();
         ~entity();
