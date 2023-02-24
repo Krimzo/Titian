@@ -3,7 +3,7 @@
 
 void gui_scene_info(state_machine* state)
 {
-    if (ImGui::Begin("Scene info")) {
+    if (ImGui::Begin("Scene Info")) {
         int entity_count = (int) state->scene->entity_count();
         ImGui::DragInt("Entity count", &entity_count);
 

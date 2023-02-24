@@ -20,14 +20,13 @@ void setup_monkes(state_machine* state, const int size)
             (float) (x - half_size) + x_offset,
             (float) (y - half_size),
             5.0f
-            });
+        });
 
         const float percentage = (i + 1.0f) / entity_count;
         const float normalized = min(max(percentage, 0.0f), 1.0f);
 
         monke->mesh = state->meshes["monke"];
         monke->material = kl::make<kl::material>();
-
         monke->material->color = kl::float4(normalized);
 
         state->scene->add(kl::format("Monke", i), monke);

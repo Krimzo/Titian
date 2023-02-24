@@ -12,18 +12,6 @@ void setup_bullets(state_machine* state, const int size)
 
     std::vector<std::function<void()>> all_callbacks = {};
 
-    const kl::ref<kl::material> bullet_material = kl::make<kl::material>();
-    bullet_material->color = (kl::float4) kl::color(232, 230, 227);
-    bullet_material->reflection_factor = 0.15f;
-
-    const kl::ref<kl::material> bullet_casing_material = kl::make<kl::material>();
-    bullet_casing_material->color = (kl::float4) kl::color(210, 180, 130);
-    bullet_casing_material->reflection_factor = 0.2f;
-
-    const kl::ref<kl::material> casing_primer_material = kl::make<kl::material>();
-    casing_primer_material->color = (kl::float4) kl::color(232, 230, 227);
-    casing_primer_material->reflection_factor = 0.1f;
-
     for (int i = 0; i < size; i++) {
         // Bullet
         kl::ref<kl::entity> bullet = state->scene->make_entity(true);
@@ -50,7 +38,7 @@ void setup_bullets(state_machine* state, const int size)
         bullet->set_rotation(directional_vector_to_euler(target_direction));
 
         bullet->mesh = state->meshes["bmg_bullet"];
-        bullet->material = bullet_material;
+        bullet->material = state->materials["bullet"];
 
         bullet->set_collider(state->scene->make_mesh_collider(*bullet->mesh, bullet->render_scale));
 
@@ -64,7 +52,7 @@ void setup_bullets(state_machine* state, const int size)
         bullet_casing->set_position(bullet->get_position());
 
         bullet_casing->mesh = state->meshes["bmg_casing"];
-        bullet_casing->material = bullet_casing_material;
+        bullet_casing->material = state->materials["bullet_casing"];
 
         state->scene->add(kl::format("BulletCasing", i), bullet_casing);
 
@@ -76,7 +64,7 @@ void setup_bullets(state_machine* state, const int size)
         casing_primer->set_position(bullet_casing->get_position());
 
         casing_primer->mesh = state->meshes["bmg_primer"];
-        casing_primer->material = casing_primer_material;
+        casing_primer->material = state->materials["bullet_primer"];
 
         state->scene->add(kl::format("CasingPrimer", i), casing_primer);
 

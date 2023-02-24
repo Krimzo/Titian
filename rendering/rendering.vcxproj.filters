@@ -161,7 +161,7 @@
     <ClCompile Include="source\state\render_state.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\gui\parts\gui_viewport.cpp">
+    <ClCompile Include="source\gui\parts\gui_scene_editor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\gui\parts\gui_scene_items.cpp">
@@ -186,6 +186,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\setup\buffers\setup_cbuffers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\parts\gui_explorer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\parts\gui_mesh_editor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\parts\gui_material_editor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gui\parts\gui_render_info.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

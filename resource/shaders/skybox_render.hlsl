@@ -10,7 +10,7 @@ struct vs_out
 	float3 textur :  VS_Texture;
 };
 
-vs_out v_shader(float3 position : KL_Position, float2 textur : KL_Texture)
+vs_out v_shader(float3 position : KL_Position)
 {
 	vs_out data;
 	data.world = mul(float4(position, 0.0f), VP).xyww;

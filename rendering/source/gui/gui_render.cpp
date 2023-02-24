@@ -13,13 +13,19 @@ void gui_render(state_machine* state)
     gui_scene_items(state);
     gui_scene_info(state);
 
-    // Middle
+    // Middle-Top
     gui_depth_display(state);
-    gui_viewport(state);
+    gui_mesh_editor(state);
+    gui_material_editor(state);
+    gui_scene_editor(state);
+
+    // Middle-Bottom
+    gui_log_view(state);
+    gui_explorer(state);
 
     // Right
     gui_entity_properties(state);
-    gui_log_view(state);
+    gui_render_info(state);
 
     // Finalize
     finalize_gui_frame(state);

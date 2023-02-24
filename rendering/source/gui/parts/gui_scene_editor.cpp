@@ -8,11 +8,11 @@ void handle_gizmo_operation_change(state_machine* state, int gizmo_operation, Im
 void render_gizmos(state_machine* state);
 
 
-void gui_viewport(state_machine* state)
+void gui_scene_editor(state_machine* state)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 
-    if (ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+    if (ImGui::Begin("Scene Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
         // Pre-display
         state->gui_state.viewport_size = { (int) ImGui::GetWindowWidth(), (int) ImGui::GetWindowHeight() };
         state->gui_state.is_viewport_focused = ImGui::IsWindowFocused();
@@ -24,7 +24,8 @@ void gui_viewport(state_machine* state)
         ImGui::Image(state->render_state->render_shader_view.Get(), ImGui::GetWindowSize());
 
         // Handle entity picking
-        if (ImGui::IsWindowFocused() && !ImGuizmo::IsOver() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+        const ImVec2 vieport_max = { ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + ImGui::GetWindowHeight() };
+        if (ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), vieport_max) && !ImGuizmo::IsOver() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
             const kl::int2 pixel_coords = get_window_mouse_position();
             const int entity_index = get_entity_index(state, pixel_coords);
             state->scene->update_selected_entity(entity_index);
