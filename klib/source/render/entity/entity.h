@@ -11,12 +11,15 @@ namespace kl {
 
     class entity
     {
-        const bool is_dynamic_;
+        PxPhysics* physics_ = nullptr;
         PxRigidActor* physics_actor_ = nullptr;
         ref<collider> collider_ = nullptr;
 
+        void regenerate_actor(const PxTransform& transform, bool dynamic);
+        void wake_up() const;
+
     public:
-        const int unique_index;
+        const uint32_t unique_index;
         float3 render_scale = float3(1.0f);
 
         ref<mesh> mesh = nullptr;
@@ -34,6 +37,7 @@ namespace kl {
 
         // Get
         PxRigidActor* get_actor() const;
+        float4x4 matrix() const;
 
         // Geometry
         void set_rotation(const float3& rotation);
@@ -43,6 +47,12 @@ namespace kl {
         float3 get_position() const;
 
         // Physics
+        void set_dynamic(bool enabled);
+        bool is_dynamic() const;
+
+        void set_gravity(bool enabled);
+        bool has_gravity() const;
+
         void set_mass(float mass);
         float get_mass() const;
 
@@ -52,15 +62,9 @@ namespace kl {
         void set_angular(const float3& angular);
         float3 get_angular() const;
 
-        void set_gravity(bool enabled);
-        bool get_gravity() const;
-
         // Collision
         void set_collider(ref<collider> collider);
         ref<collider> get_collider() const;
-
-        // Graphics
-        float4x4 matrix() const;
     };
 #else
 

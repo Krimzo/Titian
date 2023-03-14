@@ -15,10 +15,6 @@ void setup_bullets(state_machine* state, const int size)
     for (int i = 0; i < size; i++) {
         // Bullet
         kl::ref<kl::entity> bullet = state->scene->make_entity(true);
-
-        bullet->set_gravity(false);
-        bullet->set_mass(1.0f);
-
         bullet->render_scale *= bullet_scale;
 
         kl::float3 old_position = bullet->get_position();

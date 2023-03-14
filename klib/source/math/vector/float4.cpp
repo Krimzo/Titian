@@ -37,6 +37,12 @@ kl::float4::float4(float x, const float3& vec)
     : x(x), y(vec.x), z(vec.y), w(vec.z)
 {}
 
+#ifdef KL_USING_PHYSX
+kl::float4::float4(const PxQuat& quat)
+    : float4(*(float4*) &quat)
+{}
+#endif
+
 // Get
 kl::float4::operator float* () const
 {
@@ -52,6 +58,13 @@ kl::float4::operator kl::color() const
         (byte) min(max((int) (w * math::to_byte_color), 0), 255),
     };
 }
+
+#ifdef KL_USING_PHYSX
+kl::float4::operator physx::PxQuat() const
+{
+    return *(PxQuat*) this;
+}
+#endif
 
 kl::float2 kl::float4::xy() const
 {

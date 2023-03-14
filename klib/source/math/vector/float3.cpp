@@ -21,6 +21,12 @@ kl::float3::float3(float x, const float2& vec)
     : x(x), y(vec.x), z(vec.y)
 {}
 
+#ifdef KL_USING_PHYSX
+kl::float3::float3(const PxVec3& vec)
+    : float3(*(float3*) &vec)
+{}
+#endif
+
 // Get
 kl::float3::operator float* () const
 {
@@ -35,6 +41,13 @@ kl::float3::operator kl::color() const
         (byte) min(max((int) (z * math::to_byte_color), 0), 255),
     };
 }
+
+#ifdef KL_USING_PHYSX
+kl::float3::operator physx::PxVec3() const
+{
+    return *(PxVec3*) this;
+}
+#endif
 
 kl::float2 kl::float3::xy() const
 {

@@ -40,6 +40,8 @@ void setup_objects(state_machine* state, const int size)
             kl::ref<kl::entity> box = state->scene->make_entity(true);
 
             box->set_mass(2.5f);
+            box->set_gravity(true);
+
             box->set_collider(state->scene->make_box_collider(scale));
 
             box->render_scale = scale;

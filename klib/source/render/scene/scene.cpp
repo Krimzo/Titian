@@ -7,9 +7,7 @@
 
 // Static
 PxDefaultAllocator kl::scene::allocator_ = {};
-
 PxDefaultErrorCallback kl::scene::error_callback_ = {};
-
 PxFoundation* kl::scene::foundation_ = PxCreateFoundation(PX_PHYSICS_VERSION, allocator_, error_callback_);
 
 // Creation
@@ -47,12 +45,12 @@ kl::scene::~scene()
 }
 
 // Iterate
-std::unordered_map<std::string, kl::ref<kl::entity>>::iterator kl::scene::begin()
+std::map<std::string, kl::ref<kl::entity>>::iterator kl::scene::begin()
 {
     return entities_.begin();
 }
 
-std::unordered_map<std::string, kl::ref<kl::entity>>::iterator kl::scene::end()
+std::map<std::string, kl::ref<kl::entity>>::iterator kl::scene::end()
 {
     return entities_.end();
 }
@@ -66,6 +64,24 @@ PxPhysics* kl::scene::get_physics() const
 PxCooking* kl::scene::get_cooking() const
 {
     return cooking_;
+}
+
+kl::ref<kl::entity> kl::scene::get_entity(const std::string& name) const
+{
+    if (entities_.contains(name)) {
+        return entities_.at(name);
+    }
+    return nullptr;
+}
+
+std::string kl::scene::get_name(ref<entity> entity) const
+{
+    for (auto& [name, ent] : entities_) {
+        if (ent == entity) {
+            return name;
+        }
+    }
+    return "";
 }
 
 size_t kl::scene::entity_count() const
@@ -127,7 +143,7 @@ kl::ref<kl::entity> kl::scene::make_entity(bool dynamic)
 // Dynamic colliders
 kl::ref<kl::collider> kl::scene::make_box_collider(const float3& scale)
 {
-    return make<collider>(physics_, PxBoxGeometry(*(PxVec3*) &scale));
+    return make<collider>(physics_, PxBoxGeometry(scale));
 }
 
 kl::ref<kl::collider> kl::scene::make_sphere_collider(float radius)
@@ -148,7 +164,7 @@ kl::ref<kl::collider> kl::scene::make_plane_collider()
 
 kl::ref<kl::collider> kl::scene::make_mesh_collider(const mesh& mesh, const float3& scale)
 {
-    return make<collider>(physics_, PxTriangleMeshGeometry(mesh.physics_buffer, *(PxVec3*)&scale));
+    return make<collider>(physics_, PxTriangleMeshGeometry(mesh.physics_buffer, (PxVec3) scale));
 }
 
 #else

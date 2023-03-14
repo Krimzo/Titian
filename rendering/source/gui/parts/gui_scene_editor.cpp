@@ -25,7 +25,7 @@ void gui_scene_editor(state_machine* state)
 
         // Handle entity picking
         const ImVec2 vieport_max = { ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + ImGui::GetWindowHeight() };
-        if (ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), vieport_max) && !ImGuizmo::IsOver() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+        if (ImGui::IsWindowFocused() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), vieport_max) && !ImGuizmo::IsOver()) {
             const kl::int2 pixel_coords = get_window_mouse_position();
             const int entity_index = get_entity_index(state, pixel_coords);
             state->scene->update_selected_entity(entity_index);

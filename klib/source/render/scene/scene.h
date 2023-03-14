@@ -14,7 +14,7 @@ namespace kl {
 
     class scene
     {
-        std::unordered_map<std::string, ref<entity>> entities_ = {};
+        std::map<std::string, ref<entity>> entities_ = {};
 
         static PxDefaultAllocator allocator_;
         static PxDefaultErrorCallback error_callback_;
@@ -34,7 +34,7 @@ namespace kl {
 
         // Creation
         scene();
-        ~scene();
+        virtual ~scene();
 
         scene(const scene&) = delete;
         scene(const scene&&) = delete;
@@ -43,12 +43,15 @@ namespace kl {
         void operator=(const scene&&) = delete;
 
         // Iterate
-        std::unordered_map<std::string, ref<entity>>::iterator begin();
-        std::unordered_map<std::string, ref<entity>>::iterator end();
+        std::map<std::string, ref<entity>>::iterator begin();
+        std::map<std::string, ref<entity>>::iterator end();
 
         // Get
         PxPhysics* get_physics() const;
         PxCooking* get_cooking() const;
+
+        ref<entity> get_entity(const std::string& name) const;
+        std::string get_name(ref<entity> entity) const;
 
         size_t entity_count() const;
 

@@ -19,6 +19,6 @@ namespace kl {
         float refraction_index = 0.0f;
 
         material();
-        ~material();
+        virtual ~material();
     };
 }
