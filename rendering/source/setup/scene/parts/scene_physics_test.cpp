@@ -22,8 +22,8 @@ void setup_platform(state_machine* state)
     platform->set_rotation({ 1.0f, 0.0f, 0.0f });
     platform->set_position({ 0.0f, -7.0f, -25.0f });
 
-    platform->mesh = state->meshes["cube"];
-    platform->material = state->materials["white"];
+    platform->mesh = state->default_meshes["cube"];
+    platform->material = state->default_materials["white"];
 
     state->scene->add("PhysicsTestPlatform", platform);
 }
@@ -48,7 +48,7 @@ void setup_objects(state_machine* state, const int size)
             box->set_rotation(kl::random::get_float3(360.0f));
             box->set_position({ (half_size - x) * 2.25f, 15.0f, -25.0f + (half_size - z) * 2.25f });
 
-            box->mesh = state->meshes["cube"];
+            box->mesh = state->default_meshes["cube"];
             box->material = kl::make<kl::material>();
 
             box->material->color_map = state->textures["dogo"];

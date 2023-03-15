@@ -19,5 +19,5 @@ void render_skybox(state_machine* state)
     state->gpu->bind_cb_for_vertex_shader(skybox_render_vs_const_buffer, 0);
     state->gpu->set_cb_data(skybox_render_vs_const_buffer, vs_cb);
 
-    state->gpu->draw_mesh(state->meshes["cube"]->graphics_buffer);
+    state->gpu->draw_mesh(state->default_meshes["cube"]->graphics_buffer);
 }

@@ -33,6 +33,9 @@ kl::scene::scene()
 
 kl::scene::~scene()
 {
+    meshes.clear();
+    materials.clear();
+
     selected_entity = nullptr;
     while (!entities_.empty()) {
         this->remove(entities_.begin()->first);
@@ -140,7 +143,7 @@ kl::ref<kl::entity> kl::scene::make_entity(bool dynamic)
     return make<entity>(physics_, dynamic);
 }
 
-// Dynamic colliders
+// Colliders
 kl::ref<kl::collider> kl::scene::make_box_collider(const float3& scale)
 {
     return make<collider>(physics_, PxBoxGeometry(scale));
@@ -156,7 +159,6 @@ kl::ref<kl::collider> kl::scene::make_capsule_collider(float radius, float heigh
     return make<collider>(physics_, PxCapsuleGeometry(radius, height));
 }
 
-// Static colliders
 kl::ref<kl::collider> kl::scene::make_plane_collider()
 {
     return make<collider>(physics_, PxPlaneGeometry());
@@ -165,6 +167,24 @@ kl::ref<kl::collider> kl::scene::make_plane_collider()
 kl::ref<kl::collider> kl::scene::make_mesh_collider(const mesh& mesh, const float3& scale)
 {
     return make<collider>(physics_, PxTriangleMeshGeometry(mesh.physics_buffer, (PxVec3) scale));
+}
+
+kl::ref<kl::collider> kl::scene::make_default_collider(PxGeometryType::Enum type, const mesh* optional_mesh)
+{
+    switch (type) {
+    case PxGeometryType::Enum::eBOX:
+        return make_box_collider(float3(1.0f));
+    case PxGeometryType::Enum::eSPHERE:
+        return make_sphere_collider(1.0f);
+    case PxGeometryType::Enum::eCAPSULE:
+        return make_capsule_collider(1.0f, 2.0f);
+
+    case PxGeometryType::Enum::ePLANE:
+        return make_plane_collider();
+    case PxGeometryType::Enum::eTRIANGLEMESH:
+        return make_mesh_collider(*optional_mesh, float3(1.0f));
+    }
+    return nullptr;
 }
 
 #else

@@ -21,7 +21,7 @@ void setup_cubes(state_machine* state, const int size)
                 5.0f
             });
 
-            cube->mesh = state->meshes["cube"];
+            cube->mesh = state->default_meshes["cube"];
             cube->material = kl::make<kl::material>();
             cube->material->color = kl::colors::orange;
 

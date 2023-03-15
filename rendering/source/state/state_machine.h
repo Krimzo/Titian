@@ -27,9 +27,9 @@ struct state_machine
     std::unordered_map<std::string, kl::dx::shader_view> textures = {};
     std::unordered_map<std::string, kl::dx::shader_view> skyboxes = {};
 
-    // Components
-    std::unordered_map<std::string, kl::ref<kl::mesh>> meshes = {};
-    std::unordered_map<std::string, kl::ref<kl::material>> materials = {};
+    // Default Components
+    std::map<std::string, kl::ref<kl::mesh>> default_meshes = {};
+    std::map<std::string, kl::ref<kl::material>> default_materials = {};
 
     // Render
     kl::ref<render_state> render_state = {};
@@ -39,7 +39,7 @@ struct state_machine
     gui_state gui_state = {};
 
     state_machine();
-    ~state_machine();
+    virtual ~state_machine();
 
     state_machine(state_machine&) = delete;
     state_machine(state_machine&&) = delete;

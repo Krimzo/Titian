@@ -123,7 +123,6 @@
     <ClCompile Include="source\render\parts\render_shadows.cpp" />
     <ClCompile Include="source\render\render_chain.cpp" />
     <ClCompile Include="source\setup\buffers\setup_cbuffers.cpp" />
-    <ClCompile Include="source\setup\components\setup_materials.cpp" />
     <ClCompile Include="source\setup\gui\setup_gui.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_bullets.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_cubes.cpp" />
@@ -131,7 +130,6 @@
     <ClCompile Include="source\setup\scene\parts\scene_physics_test.cpp" />
     <ClCompile Include="source\setup\scene\parts\scene_spheres.cpp" />
     <ClCompile Include="source\setup\states\setup_depth_states.cpp" />
-    <ClCompile Include="source\setup\components\setup_meshes.cpp" />
     <ClCompile Include="source\setup\states\setup_raster_states.cpp" />
     <ClCompile Include="source\setup\states\setup_sampler_states.cpp" />
     <ClCompile Include="source\setup\scene\setup_scene.cpp" />

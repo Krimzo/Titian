@@ -22,14 +22,41 @@ kl::collider::~collider()
 }
 
 // Get
+PxShape* kl::collider::get_shape()
+{
+	return shape_;
+}
+
 PxGeometryType::Enum kl::collider::get_type() const
 {
 	return shape_->getGeometryType();
 }
 
-PxShape* kl::collider::get_shape()
+// Geometry
+void kl::collider::set_rotation(const float3& rotation)
 {
-	return shape_;
+	PxTransform transform = shape_->getLocalPose();
+	transform.q = math::to_quaternion(rotation);
+	shape_->setLocalPose(transform);
+}
+
+kl::float3 kl::collider::get_rotation() const
+{
+	const PxTransform transform = shape_->getLocalPose();
+	return math::to_euler(transform.q);
+}
+
+void kl::collider::set_offset(const float3& position)
+{
+	PxTransform transform = shape_->getLocalPose();
+	transform.p = position;
+	shape_->setLocalPose(transform);
+}
+
+kl::float3 kl::collider::get_offset() const
+{
+	const PxTransform transform = shape_->getLocalPose();
+	return transform.p;
 }
 
 // Material

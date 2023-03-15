@@ -8,8 +8,30 @@ static const kl::float3 target_position = { 0.0f, -6.5f, -25.0f };
 
 void setup_bullets(state_machine* state, const int size)
 {
-    const int half_size = size / 2;
+    // Meshes
+    state->scene->meshes["bmg_bullet"] = kl::ref<kl::mesh>(new kl::mesh(*state->gpu, *state->scene, kl::files::parse_mesh(resouce_folder + "/meshes/50_bmg/bullet.obj", true)));
+    state->scene->meshes["bmg_casing"] = kl::ref<kl::mesh>(new kl::mesh(*state->gpu, *state->scene, kl::files::parse_mesh(resouce_folder + "/meshes/50_bmg/casing.obj", true)));
+    state->scene->meshes["bmg_primer"] = kl::ref<kl::mesh>(new kl::mesh(*state->gpu, *state->scene, kl::files::parse_mesh(resouce_folder + "/meshes/50_bmg/primer.obj", true)));
+    state->scene->meshes["bmg_primer_fired"] = kl::ref<kl::mesh>(new kl::mesh(*state->gpu, *state->scene, kl::files::parse_mesh(resouce_folder + "/meshes/50_bmg/primer_fired.obj", true)));
 
+    // Materials
+    const kl::ref<kl::material> bullet_material = kl::make<kl::material>();
+    bullet_material->color = kl::color(232, 230, 227);
+    bullet_material->reflection_factor = 0.15f;
+    state->scene->materials["bullet"] = bullet_material;
+
+    const kl::ref<kl::material> bullet_casing_material = kl::make<kl::material>();
+    bullet_casing_material->color = kl::color(210, 180, 130);
+    bullet_casing_material->reflection_factor = 0.2f;
+    state->scene->materials["bullet_casing"] = bullet_casing_material;
+
+    const kl::ref<kl::material> casing_primer_material = kl::make<kl::material>();
+    casing_primer_material->color = kl::color(232, 230, 227);
+    casing_primer_material->reflection_factor = 0.1f;
+    state->scene->materials["bullet_primer"] = casing_primer_material;
+
+    // Bullets
+    const int half_size = size / 2;
     std::vector<std::function<void()>> all_callbacks = {};
 
     for (int i = 0; i < size; i++) {
@@ -33,8 +55,8 @@ void setup_bullets(state_machine* state, const int size)
         const kl::float3 target_direction = kl::math::normalize(target_position - bullet->get_position());
         bullet->set_rotation(directional_vector_to_euler(target_direction));
 
-        bullet->mesh = state->meshes["bmg_bullet"];
-        bullet->material = state->materials["bullet"];
+        bullet->mesh = state->scene->meshes["bmg_bullet"];
+        bullet->material = state->scene->materials["bullet"];
 
         bullet->set_collider(state->scene->make_mesh_collider(*bullet->mesh, bullet->render_scale));
 
@@ -47,8 +69,8 @@ void setup_bullets(state_machine* state, const int size)
         bullet_casing->set_rotation(bullet->get_rotation());
         bullet_casing->set_position(bullet->get_position());
 
-        bullet_casing->mesh = state->meshes["bmg_casing"];
-        bullet_casing->material = state->materials["bullet_casing"];
+        bullet_casing->mesh = state->scene->meshes["bmg_casing"];
+        bullet_casing->material = state->scene->materials["bullet_casing"];
 
         state->scene->add(kl::format("BulletCasing", i), bullet_casing);
 
@@ -59,8 +81,8 @@ void setup_bullets(state_machine* state, const int size)
         casing_primer->set_rotation(bullet_casing->get_rotation());
         casing_primer->set_position(bullet_casing->get_position());
 
-        casing_primer->mesh = state->meshes["bmg_primer"];
-        casing_primer->material = state->materials["bullet_primer"];
+        casing_primer->mesh = state->scene->meshes["bmg_primer"];
+        casing_primer->material = state->scene->materials["bullet_primer"];
 
         state->scene->add(kl::format("CasingPrimer", i), casing_primer);
 
@@ -75,7 +97,7 @@ void setup_bullets(state_machine* state, const int size)
 
                 bullet->set_velocity(kl::math::normalize(correct_direction) * fire_velocity);
 
-                casing_primer->mesh = state->meshes["bmg_primer_fired"];
+                casing_primer->mesh = state->scene->meshes["bmg_primer_fired"];
 
                 *bullet_fired = true;
             }

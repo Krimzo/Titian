@@ -1,9 +1,10 @@
 #pragma once
 
+#include "apis/apis.h"
+#include "math/math.h"
+
 #ifdef KL_USING_PHYSX
-
 #include <PxPhysicsAPI.h>
-
 using namespace physx;
 
 
@@ -25,8 +26,15 @@ namespace kl {
         void operator=(const collider&&) = delete;
 
         // Get
-        PxGeometryType::Enum get_type() const;
         PxShape* get_shape();
+        PxGeometryType::Enum get_type() const;
+
+        // Geometry
+        void set_rotation(const float3& rotation);
+        float3 get_rotation() const;
+
+        void set_offset(const float3& position);
+        float3 get_offset() const;
 
         // Material
         float get_static_friction() const;

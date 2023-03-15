@@ -18,10 +18,6 @@ void setup_callback(state_machine* state)
     setup_textures(state);
     setup_skyboxes(state);
 
-    // Render components
-    setup_meshes(state);
-    setup_materials(state);
-
     // Scene
     setup_scene(state);
 

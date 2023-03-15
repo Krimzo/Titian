@@ -25,7 +25,7 @@ void setup_monkes(state_machine* state, const int size)
         const float percentage = (i + 1.0f) / entity_count;
         const float normalized = min(max(percentage, 0.0f), 1.0f);
 
-        monke->mesh = state->meshes["monke"];
+        monke->mesh = state->default_meshes["monke"];
         monke->material = kl::make<kl::material>();
         monke->material->color = kl::float4(normalized);
 

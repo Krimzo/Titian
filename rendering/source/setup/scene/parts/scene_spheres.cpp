@@ -15,7 +15,7 @@ void setup_spheres(state_machine* state, const int size)
 
             sphere->set_position({ (x - half_size) * 2.25f + x_offset, (y - half_size) * 2.25f, 5.0f });
 
-            sphere->mesh = state->meshes["sphere"];
+            sphere->mesh = state->default_meshes["sphere"];
 
             sphere->material = kl::make<kl::material>();
             sphere->material->color = kl::float4(1.0f);

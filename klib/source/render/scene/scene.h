@@ -26,6 +26,9 @@ namespace kl {
         PxScene* scene_ = nullptr;
 
     public:
+        std::map<std::string, kl::ref<kl::mesh>> meshes = {};
+        std::map<std::string, kl::ref<kl::material>> materials = {};
+
         ref<camera> camera = nullptr;
         ref<entity> selected_entity = nullptr;
 
@@ -69,14 +72,15 @@ namespace kl {
         // Entity
         ref<entity> make_entity(bool dynamic);
 
-        // Dynamic colliders
+        // Colliders
         ref<collider> make_box_collider(const float3& scale);
         ref<collider> make_sphere_collider(float radius);
         ref<collider> make_capsule_collider(float radius, float height);
 
-        // Static colliders
         ref<collider> make_plane_collider();
         ref<collider> make_mesh_collider(const mesh& mesh, const float3& scale);
+
+        ref<collider> make_default_collider(PxGeometryType::Enum type, const mesh* optional_mesh);
     };
 
 #else
