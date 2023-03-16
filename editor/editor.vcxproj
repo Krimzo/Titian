@@ -13,19 +13,19 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{518254c9-3ac0-40a5-b820-59939faee33a}</ProjectGuid>
-    <RootNamespace>main</RootNamespace>
+    <ProjectGuid>{c716ebb7-6902-4345-ad73-3bd269411300}</ProjectGuid>
+    <RootNamespace>rendering</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -51,15 +51,17 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)sandbox\source\;$(SolutionDir)editor\source\;$(SolutionDir)game\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)physx\lib\debug\</AdditionalLibraryDirectories>
-      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -71,7 +73,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)sandbox\source\;$(SolutionDir)editor\source\;$(SolutionDir)game\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -79,20 +81,61 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)physx\lib\release\</AdditionalLibraryDirectories>
-      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\main.cpp" />
+    <ClInclude Include="source\cbuffers\entity_render.h" />
+    <ClInclude Include="source\cbuffers\postprocess_render.h" />
+    <ClInclude Include="source\cbuffers\shadow_render.h" />
+    <ClInclude Include="source\cbuffers\skybox_render.h" />
+    <ClInclude Include="source\gui\gui_render.h" />
+    <ClInclude Include="source\editor.h" />
+    <ClInclude Include="source\render\render_chain.h" />
+    <ClInclude Include="source\setup\setup_state.h" />
+    <ClInclude Include="source\state\gui_state.h" />
+    <ClInclude Include="source\state\render_state.h" />
+    <ClInclude Include="source\state\logger_state.h" />
+    <ClInclude Include="source\state\editor_state.h" />
+    <ClInclude Include="source\update\update_state.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\editor\editor.vcxproj">
-      <Project>{c716ebb7-6902-4345-ad73-3bd269411300}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\game\game.vcxproj">
-      <Project>{f5d423ff-644f-4f07-b57f-a83cfd49dbf1}</Project>
-    </ProjectReference>
+    <ClCompile Include="source\gui\parts\gui_depth_display.cpp" />
+    <ClCompile Include="source\gui\parts\gui_entity_properties.cpp" />
+    <ClCompile Include="source\gui\parts\gui_explorer.cpp" />
+    <ClCompile Include="source\gui\parts\gui_log_view.cpp" />
+    <ClCompile Include="source\gui\parts\gui_material_editor.cpp" />
+    <ClCompile Include="source\gui\parts\gui_mesh_editor.cpp" />
+    <ClCompile Include="source\gui\parts\gui_render_info.cpp" />
+    <ClCompile Include="source\gui\parts\gui_scene_items.cpp" />
+    <ClCompile Include="source\gui\parts\gui_scene_editor.cpp" />
+    <ClCompile Include="source\gui\parts\gui_scene_info.cpp" />
+    <ClCompile Include="source\gui\gui_render.cpp" />
+    <ClCompile Include="source\editor.cpp" />
+    <ClCompile Include="source\render\parts\render_postprocess.cpp" />
+    <ClCompile Include="source\render\parts\render_shadows.cpp" />
+    <ClCompile Include="source\render\render_chain.cpp" />
+    <ClCompile Include="source\setup\buffers\setup_cbuffers.cpp" />
+    <ClCompile Include="source\setup\gui\setup_gui.cpp" />
+    <ClCompile Include="source\setup\states\setup_depth_states.cpp" />
+    <ClCompile Include="source\setup\states\setup_raster_states.cpp" />
+    <ClCompile Include="source\setup\states\setup_sampler_states.cpp" />
+    <ClCompile Include="source\setup\buffers\setup_shaders.cpp" />
+    <ClCompile Include="source\state\gui_state.cpp" />
+    <ClCompile Include="source\state\render_state.cpp" />
+    <ClCompile Include="source\state\logger_state.cpp" />
+    <ClCompile Include="source\state\editor_state.cpp" />
+    <ClCompile Include="source\update\post_render\finalize_frame.cpp" />
+    <ClCompile Include="source\render\handle_resizes.cpp" />
+    <ClCompile Include="source\update\pre_render\update_camera.cpp" />
+    <ClCompile Include="source\render\parts\render_scene.cpp" />
+    <ClCompile Include="source\render\parts\render_skybox.cpp" />
+    <ClCompile Include="source\update\pre_render\update_physics.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\imgui\imgui.vcxproj">
       <Project>{737a8abd-a62f-4e28-8da3-d24a40d276bd}</Project>
     </ProjectReference>
@@ -102,12 +145,6 @@
     <ProjectReference Include="..\physx\physx.vcxproj">
       <Project>{a885895c-a34e-4be4-9fc9-bf25c60edcba}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\sandbox\sandbox.vcxproj">
-      <Project>{0ee87b2b-4cd6-4b72-a8c2-15693b04da77}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="source\main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

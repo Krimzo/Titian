@@ -1,2 +1,2 @@
-# Fun hobby project
-:)
+# Titian
+C++ Game Engine

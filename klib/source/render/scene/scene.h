@@ -27,6 +27,7 @@ namespace kl {
 
     public:
         std::map<std::string, kl::ref<kl::mesh>> meshes = {};
+        std::map<std::string, kl::dx::shader_view> textures = {};
         std::map<std::string, kl::ref<kl::material>> materials = {};
 
         ref<camera> camera = nullptr;

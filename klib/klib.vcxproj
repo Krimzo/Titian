@@ -14,7 +14,7 @@
     <ProjectReference Include="..\imgui\imgui.vcxproj">
       <Project>{737a8abd-a62f-4e28-8da3-d24a40d276bd}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\physics\physics.vcxproj">
+    <ProjectReference Include="..\physx\physx.vcxproj">
       <Project>{a885895c-a34e-4be4-9fc9-bf25c60edcba}</Project>
     </ProjectReference>
   </ItemGroup>
@@ -184,7 +184,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)physics\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -207,7 +207,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)physics\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
