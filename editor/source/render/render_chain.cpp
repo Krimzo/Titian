@@ -21,16 +21,22 @@ void render_chain(editor_state* state)
         // Scene render
         state->gpu->set_viewport_size(state->render_state->target_size);
         state->gpu->bind_target_depth_views({ state->render_state->render_target_view, state->render_state->picking_target_view }, state->gpu->get_internal_depth());
-        state->render_state->clear_targets(background);
         state->scene->camera->update_aspect_ratio(state->render_state->target_size);
+        state->render_state->clear_targets(background);
 
         if (state->scene->camera->skybox) {
             render_skybox(state);
         }
         render_scene(state);
 
-        // Postprocess render
+        // Selected entity
         if (state->scene->selected_entity) {
+            // Collider
+            if (state->gui_state.render_collider) {
+                render_collider(state);
+            }
+
+            // Postprocess
             state->gpu->set_viewport_size(state->render_state->target_size);
             state->gpu->bind_target_depth_views({ state->render_state->render_target_view }, nullptr);
             render_postprocess(state);

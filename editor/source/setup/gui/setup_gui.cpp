@@ -6,6 +6,7 @@
 
 
 void load_my_theme(editor_state* state);
+void load_custom_font(editor_state* state);
 
 void setup_gui(editor_state* state)
 {
@@ -14,6 +15,8 @@ void setup_gui(editor_state* state)
 
     ImGui::StyleColorsDark();
     load_my_theme(state);
+
+    load_custom_font(state);
 
     ImGui_ImplWin32_Init(*state->window);
     ImGui_ImplDX11_Init(state->gpu->device().Get(), state->gpu->context().Get());
@@ -101,4 +104,13 @@ void load_my_theme(editor_state* state)
     style.Colors[ImGuiCol_NavWindowingHighlight] = colorSpec;
     style.Colors[ImGuiCol_NavWindowingDimBg] = colorMid;
     style.Colors[ImGuiCol_ModalWindowDimBg] = colorMid;
+}
+
+void load_custom_font(editor_state* state)
+{
+    static const std::string font_path = state->gui_state.builtin_path + "fonts/JetBrainsMono.ttf";
+    static const int font_size = 16;
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->AddFontFromFileTTF(font_path.c_str(), font_size);
 }

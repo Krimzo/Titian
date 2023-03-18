@@ -34,6 +34,7 @@ kl::scene::scene()
 kl::scene::~scene()
 {
     meshes.clear();
+    textures.clear();
     materials.clear();
 
     selected_entity = nullptr;
@@ -124,11 +125,11 @@ kl::ref<kl::entity> kl::scene::update_selected_entity(uint32_t index)
     if (index != 0) {
         for (auto& [name, entity] : *this) {
             if (entity->unique_index == index) {
-                return selected_entity = entity;
+                return (selected_entity = entity);
             }
         }
     }
-    return selected_entity = nullptr;
+    return (selected_entity = nullptr);
 }
 
 void kl::scene::update_physics(float delta_t)

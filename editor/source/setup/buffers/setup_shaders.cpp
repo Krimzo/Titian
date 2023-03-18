@@ -14,6 +14,9 @@ void setup_shaders(editor_state* state)
     auto render_shaders = parse_shader("entity_render.hlsl");
     state->shaders["entity"] = state->gpu->create_render_shaders(render_shaders);
 
+    auto collider_shaders = parse_shader("collider_render.hlsl");
+    state->shaders["collider"] = state->gpu->create_render_shaders(collider_shaders);
+
     auto postprocess_shaders = parse_shader("postprocess_render.hlsl");
     state->shaders["postprocess"] = state->gpu->create_render_shaders(postprocess_shaders);
 }

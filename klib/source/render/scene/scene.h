@@ -26,9 +26,9 @@ namespace kl {
         PxScene* scene_ = nullptr;
 
     public:
-        std::map<std::string, kl::ref<kl::mesh>> meshes = {};
-        std::map<std::string, kl::dx::shader_view> textures = {};
-        std::map<std::string, kl::ref<kl::material>> materials = {};
+        std::map<std::string, ref<mesh>> meshes = {};
+        std::map<std::string, ref<texture>> textures = {};
+        std::map<std::string, ref<material>> materials = {};
 
         ref<camera> camera = nullptr;
         ref<entity> selected_entity = nullptr;
@@ -98,7 +98,7 @@ namespace kl {
         float3 gravity = { 0.0f, -9.81f, 0.0f };
 
         scene();
-        ~scene();
+        virtual ~scene();
 
         void update_physics(float delta_t);
     };

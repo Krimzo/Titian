@@ -28,6 +28,7 @@ namespace kl {
         // Get
         PxShape* get_shape();
         PxGeometryType::Enum get_type() const;
+        float4x4 scaling_matrix() const;
 
         // Geometry
         void set_rotation(const float3& rotation);
@@ -45,7 +46,6 @@ namespace kl {
 
         float get_restitution() const;
         void set_restitution(float restitution);
-    
     };
 }
 

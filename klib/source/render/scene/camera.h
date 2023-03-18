@@ -1,5 +1,6 @@
 #pragma once
 
+#include "render/entity/texture.h"
 #include "math/math.h"
 
 
@@ -19,7 +20,7 @@ namespace kl {
         float speed = 2.0f;
 
         color background = kl::colors::gray;
-        dx::shader_view skybox = nullptr;
+        ref<texture> skybox = nullptr;
 
         void update_aspect_ratio(const int2& size);
 

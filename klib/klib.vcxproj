@@ -57,6 +57,7 @@
     <ClCompile Include="source\render\entity\collider.cpp" />
     <ClCompile Include="source\render\entity\entity.cpp" />
     <ClCompile Include="source\render\entity\material.cpp" />
+    <ClCompile Include="source\render\entity\texture.cpp" />
     <ClCompile Include="source\render\entity\mesh.cpp" />
     <ClCompile Include="source\render\light\ambient_light.cpp" />
     <ClCompile Include="source\render\light\directional_light.cpp" />
@@ -121,6 +122,7 @@
     <ClInclude Include="source\render\entity\entity.h" />
     <ClInclude Include="source\render\entity\material.h" />
     <ClInclude Include="source\render\entity\mesh.h" />
+    <ClInclude Include="source\render\entity\texture.h" />
     <ClInclude Include="source\render\light\ambient_light.h" />
     <ClInclude Include="source\render\light\directional_light.h" />
     <ClInclude Include="source\render\render.h" />

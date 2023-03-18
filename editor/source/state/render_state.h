@@ -5,7 +5,7 @@
 
 class render_state
 {
-    kl::ref<kl::gpu> gpu_ = {};
+    kl::ref<kl::gpu> gpu_ = nullptr;
 
 public:
     const kl::int2 target_size;

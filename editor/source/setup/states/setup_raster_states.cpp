@@ -25,6 +25,9 @@ void setup_raster_states(editor_state* state)
     const auto entity_raster = state->gpu->create_raster_state(false, true);
     state->raster_states["entity"] = entity_raster;
 
+    const auto collider_raster = state->gpu->create_raster_state(true, false);
+    state->raster_states["collider"] = collider_raster;
+
     const auto postprocess_raster = state->gpu->create_raster_state(false, false);
     state->raster_states["postprocess"] = postprocess_raster;
 }

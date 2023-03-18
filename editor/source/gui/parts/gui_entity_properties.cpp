@@ -98,6 +98,8 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
     std::string collider_name = possible_colliders.at(collider_type);
 
     // General info
+    ImGui::Checkbox("Render Collider", &state->gui_state.render_collider);
+
     if (collider) {
         float restitution = collider->get_restitution();
         if (ImGui::DragFloat("Restitution", &restitution, 0.1f, 0.0f, 1e9f)) {
@@ -140,7 +142,7 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
         PxBoxGeometry geometry = {};
         collider_shape->getBoxGeometry(geometry);
 
-        if (ImGui::DragFloat3("Collider Size", (float*) &geometry.halfExtents)) {
+        if (ImGui::DragFloat3("Collider Size", (float*) &geometry.halfExtents, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(geometry);
         }
     }
@@ -148,7 +150,7 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
         PxSphereGeometry geometry = {};
         collider_shape->getSphereGeometry(geometry);
 
-        if (ImGui::DragFloat("Collider Radius", &geometry.radius)) {
+        if (ImGui::DragFloat("Collider Radius", &geometry.radius, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(geometry);
         }
     }
@@ -156,11 +158,11 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
         PxCapsuleGeometry geometry = {};
         collider_shape->getCapsuleGeometry(geometry);
 
-        if (ImGui::DragFloat("Collider Radius", &geometry.radius)) {
+        if (ImGui::DragFloat("Collider Radius", &geometry.radius, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(geometry);
         }
 
-        if (ImGui::DragFloat("Collider Height", &geometry.halfHeight)) {
+        if (ImGui::DragFloat("Collider Height", &geometry.halfHeight, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(geometry);
         }
     }
@@ -168,7 +170,7 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
         PxTriangleMeshGeometry geometry = {};
         collider_shape->getTriangleMeshGeometry(geometry);
 
-        if (ImGui::DragFloat3("Collider Scale", (float*) &geometry.scale)) {
+        if (ImGui::DragFloat3("Collider Scale", (float*) &geometry.scale, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(geometry);
         }
     }

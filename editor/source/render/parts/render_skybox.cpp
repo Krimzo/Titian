@@ -11,7 +11,7 @@ void render_skybox(editor_state* state)
     state->gpu->bind_render_shaders(state->shaders["skybox"]);
 
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states["skybox"], 0);
-    state->gpu->bind_shader_view_for_pixel_shader(state->scene->camera->skybox, 0);
+    state->gpu->bind_shader_view_for_pixel_shader(state->scene->camera->skybox->shader_view, 0);
 
     skybox_render_vs_cb vs_cb = {};
     vs_cb.vp_matrix = state->scene->camera->matrix();

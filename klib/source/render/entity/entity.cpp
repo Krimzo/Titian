@@ -32,6 +32,21 @@ kl::float4x4 kl::entity::matrix() const
     return float4x4::translation(get_position()) * float4x4::rotation(get_rotation()) * float4x4::scaling(render_scale);
 }
 
+kl::float4x4 kl::entity::collider_matrix() const
+{
+    if (!collider_) {
+        return {};
+    }
+
+    kl::float4x4 result = {};
+    result = float4x4::translation(get_position());
+    result *= float4x4::rotation(get_rotation());
+    result *= float4x4::translation(collider_->get_offset());
+    result *= float4x4::rotation(collider_->get_rotation());
+    result *= collider_->scaling_matrix();
+    return result;
+}
+
 // Geometry
 void kl::entity::set_rotation(const float3& rotation)
 {

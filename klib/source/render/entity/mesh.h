@@ -19,14 +19,15 @@ namespace kl {
 
     class mesh
     {
+        ref<gpu> gpu_ = nullptr;
+        ref<scene> scene_ = nullptr;
+
     public:
-        mesh_data vertices = {};
+        mesh_data buffer = {};
         dx::buffer graphics_buffer = nullptr;
         PxTriangleMesh* physics_buffer = nullptr;
 
-        mesh(dx::buffer graphics_buffer);
-        mesh(gpu& gpu, const mesh_data& vertices);
-        mesh(gpu& gpu, scene& scene, const mesh_data& vertices);
+        mesh(ref<gpu> gpu, ref<scene> scene, const mesh_data& vertices);
         virtual ~mesh();
     };
 

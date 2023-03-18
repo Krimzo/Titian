@@ -3,8 +3,9 @@
 
 // Entity
 #include "render/entity/mesh.h"
-#include "render/entity/material.h"
 #include "render/entity/collider.h"
+#include "render/entity/texture.h"
+#include "render/entity/material.h"
 #include "render/entity/entity.h"
 
 // Light

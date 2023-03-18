@@ -241,10 +241,9 @@ void kl::window::set_title(const std::string& data) const
 
 bool kl::window::set_icon(const std::string& filepath) const
 {
-    HICON loaded_icon = ExtractIconA(nullptr, filepath.c_str(), NULL);
-    if (!loaded_icon) {
-        return false;
-    }
+    HICON loaded_icon = ExtractIconA(nullptr, filepath.c_str(), 0);
+    if (!loaded_icon) { return false; }
+
     SendMessageA(window_, WM_SETICON, ICON_BIG, LPARAM(loaded_icon));
     SendMessageA(window_, WM_SETICON, ICON_SMALL, LPARAM(loaded_icon));
     return true;

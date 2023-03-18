@@ -32,6 +32,45 @@ PxGeometryType::Enum kl::collider::get_type() const
 	return shape_->getGeometryType();
 }
 
+kl::float4x4 kl::collider::scaling_matrix() const
+{
+	switch (get_type()) {
+	case PxGeometryType::Enum::eBOX:
+	{
+		PxBoxGeometry geometry = {};
+		shape_->getBoxGeometry(geometry);
+		return float4x4::scaling(geometry.halfExtents);
+	}
+
+	case PxGeometryType::Enum::eSPHERE:
+	{
+		PxSphereGeometry geometry = {};
+		shape_->getSphereGeometry(geometry);
+		return float4x4::scaling(float3(geometry.radius));
+	}
+
+	case PxGeometryType::Enum::eCAPSULE:
+	{
+		PxCapsuleGeometry geometry = {};
+		shape_->getCapsuleGeometry(geometry);
+		return float4x4::scaling(float3(geometry.halfHeight * 0.5f, float2(geometry.radius)));
+	}
+
+	case PxGeometryType::Enum::ePLANE:
+	{
+		return {};
+	}
+
+	case PxGeometryType::Enum::eTRIANGLEMESH:
+	{
+		PxTriangleMeshGeometry geomtry = {};
+		shape_->getTriangleMeshGeometry(geomtry);
+		return float4x4::scaling(geomtry.scale.scale);
+	}
+	}
+	return {};
+}
+
 // Geometry
 void kl::collider::set_rotation(const float3& rotation)
 {

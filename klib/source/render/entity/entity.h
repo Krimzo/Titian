@@ -1,8 +1,8 @@
 #pragma once
 
 #include "render/entity/mesh.h"
-#include "render/entity/material.h"
 #include "render/entity/collider.h"
+#include "render/entity/material.h"
 #include "memory/memory.h"
 
 
@@ -38,6 +38,7 @@ namespace kl {
         // Get
         PxRigidActor* get_actor() const;
         float4x4 matrix() const;
+        float4x4 collider_matrix() const;
 
         // Geometry
         void set_rotation(const float3& rotation);
@@ -66,6 +67,7 @@ namespace kl {
         void set_collider(ref<collider> collider);
         ref<collider> get_collider() const;
     };
+
 #else
 
     class entity
@@ -83,7 +85,7 @@ namespace kl {
         ref<material> material = make<kl::material>();
 
         entity();
-        ~entity();
+        virtual ~entity();
 
         void update_physics(float delta_t);
 

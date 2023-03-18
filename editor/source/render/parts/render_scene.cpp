@@ -14,7 +14,7 @@ void render_scene(editor_state* state)
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states["shadow"], 1);
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states["entity"], 5);
 
-    state->gpu->bind_shader_view_for_pixel_shader(state->scene->camera->skybox, 0);
+    state->gpu->bind_shader_view_for_pixel_shader(state->scene->camera->skybox->shader_view, 0);
 
     entity_render_vs_cb vs_cb = {};
     vs_cb.vp_matrix = state->scene->camera->matrix();
@@ -52,11 +52,11 @@ void render_scene(editor_state* state)
         if (!entity->mesh || !entity->material) { continue; }
 
         if (entity->material->color_map) {
-            state->gpu->bind_shader_view_for_pixel_shader(entity->material->color_map, 5);
+            state->gpu->bind_shader_view_for_pixel_shader(entity->material->color_map->shader_view, 5);
         }
 
         if (entity->material->normal_map) {
-            state->gpu->bind_shader_view_for_pixel_shader(entity->material->normal_map, 6);
+            state->gpu->bind_shader_view_for_pixel_shader(entity->material->normal_map->shader_view, 6);
             ps_cb.object_texture_info.x = 1.0f;
         }
         else {
@@ -64,7 +64,7 @@ void render_scene(editor_state* state)
         }
 
         if (entity->material->roughness_map) {
-            state->gpu->bind_shader_view_for_pixel_shader(entity->material->roughness_map, 7);
+            state->gpu->bind_shader_view_for_pixel_shader(entity->material->roughness_map->shader_view, 7);
             ps_cb.object_texture_info.y = 1.0f;
         }
         else {

@@ -2,7 +2,10 @@
 
 #include "editor.h"
 
+// Constants
+inline const std::string resource_path = "./preview/";
 
+// Functions
 int sandbox_main();
 
 void setup_preview_scene(editor_state* state);
