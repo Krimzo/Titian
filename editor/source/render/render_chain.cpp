@@ -49,5 +49,5 @@ void render_chain(editor_state* state)
     gui_render(state);
 
     // Swap
-    state->gpu->swap_buffers(v_sync);
+    state->gpu->swap_buffers(state->v_sync);
 }

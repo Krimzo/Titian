@@ -3,9 +3,6 @@
 #include "state/editor_state.h"
 
 
-// Consts
-inline bool v_sync = true;
-
 // Render
 void handle_resizes(editor_state* state);
 void   render_chain(editor_state* state);

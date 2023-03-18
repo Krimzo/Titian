@@ -5,7 +5,7 @@
 
 void render_scene(editor_state* state)
 {
-    state->gpu->bind_raster_state(state->raster_states["entity"]);
+    state->gpu->bind_raster_state(state->render_wireframe ? state->raster_states["wireframe"] : state->raster_states["entity"]);
     state->gpu->bind_depth_state(state->depth_states["entity"]);
 
     state->gpu->bind_render_shaders(state->shaders["entity"]);

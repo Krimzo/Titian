@@ -13,6 +13,9 @@
 void gui_render(editor_state* state);
 
 /* GUI parts */
+// Top
+void gui_main_menu(editor_state* state);
+
 // Left
 void gui_scene_items(editor_state* state);
 void  gui_scene_info(editor_state* state);

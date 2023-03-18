@@ -98,8 +98,6 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
     std::string collider_name = possible_colliders.at(collider_type);
 
     // General info
-    ImGui::Checkbox("Render Collider", &state->gui_state.render_collider);
-
     if (collider) {
         float restitution = collider->get_restitution();
         if (ImGui::DragFloat("Restitution", &restitution, 0.1f, 0.0f, 1e9f)) {

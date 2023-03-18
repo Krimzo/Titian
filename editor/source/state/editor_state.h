@@ -9,6 +9,10 @@ inline const std::string builtin_path = "./builtin/";
 
 struct editor_state
 {
+    // Render features
+    bool render_wireframe = false;
+    bool v_sync = true;
+
     // Utility
     logger_state logger = {};
     kl::timer timer = {};

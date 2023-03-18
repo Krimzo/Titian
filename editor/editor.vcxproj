@@ -108,6 +108,7 @@
     <ClCompile Include="source\gui\parts\gui_entity_properties.cpp" />
     <ClCompile Include="source\gui\parts\gui_explorer.cpp" />
     <ClCompile Include="source\gui\parts\gui_log_view.cpp" />
+    <ClCompile Include="source\gui\parts\gui_main_menu.cpp" />
     <ClCompile Include="source\gui\parts\gui_material_editor.cpp" />
     <ClCompile Include="source\gui\parts\gui_mesh_editor.cpp" />
     <ClCompile Include="source\gui\parts\gui_render_info.cpp" />

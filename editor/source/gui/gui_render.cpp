@@ -9,6 +9,9 @@ void gui_render(editor_state* state)
     // Prepare
     prepare_gui_frame(state);
 
+    // Top
+    gui_main_menu(state);
+
     // Left
     gui_scene_items(state);
     gui_scene_info(state);

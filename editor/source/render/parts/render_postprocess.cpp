@@ -14,7 +14,7 @@ void render_postprocess(editor_state* state)
 
     postprocess_ps_cb ps_cb = {};
     ps_cb.selected_index = kl::float4((float) state->scene->selected_entity->unique_index);
-    ps_cb.outline_color = kl::colors::orange;
+    ps_cb.outline_color = state->gui_state.selection_color;
 
     state->gpu->bind_cb_for_pixel_shader(postprocess_ps_const_buffer, 0);
     state->gpu->set_cb_data(postprocess_ps_const_buffer, ps_cb);
