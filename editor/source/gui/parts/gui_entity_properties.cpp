@@ -17,15 +17,12 @@ void gui_entity_properties(editor_state* state)
         gui_entity_material(state, entity);
         gui_entity_physics(state, entity);
         gui_entity_collider(state, entity);
-        
-        ImGui::Separator();
     }
     ImGui::End();
 }
 
 void gui_entity_transform(editor_state* state, kl::ref<kl::entity> entity)
 {
-    ImGui::Separator();
     ImGui::Text("Transform");
 
     ImGui::DragFloat3("Scale", entity->render_scale);
@@ -140,7 +137,7 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
         PxBoxGeometry geometry = {};
         collider_shape->getBoxGeometry(geometry);
 
-        if (ImGui::DragFloat3("Collider Size", (float*) &geometry.halfExtents, 0.5f, 0.0f, 1e9f)) {
+        if (ImGui::DragFloat3("Size", (float*) &geometry.halfExtents, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(geometry);
         }
     }
@@ -148,7 +145,7 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
         PxSphereGeometry geometry = {};
         collider_shape->getSphereGeometry(geometry);
 
-        if (ImGui::DragFloat("Collider Radius", &geometry.radius, 0.5f, 0.0f, 1e9f)) {
+        if (ImGui::DragFloat("Radius", &geometry.radius, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(geometry);
         }
     }
@@ -156,11 +153,11 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
         PxCapsuleGeometry geometry = {};
         collider_shape->getCapsuleGeometry(geometry);
 
-        if (ImGui::DragFloat("Collider Radius", &geometry.radius, 0.5f, 0.0f, 1e9f)) {
+        if (ImGui::DragFloat("Radius", &geometry.radius, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(geometry);
         }
 
-        if (ImGui::DragFloat("Collider Height", &geometry.halfHeight, 0.5f, 0.0f, 1e9f)) {
+        if (ImGui::DragFloat("Height", &geometry.halfHeight, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(geometry);
         }
     }
@@ -168,18 +165,18 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
         PxTriangleMeshGeometry geometry = {};
         collider_shape->getTriangleMeshGeometry(geometry);
 
-        if (ImGui::DragFloat3("Collider Scale", (float*) &geometry.scale, 0.5f, 0.0f, 1e9f)) {
+        if (ImGui::DragFloat3("Mesh Scale", (float*) &geometry.scale, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(geometry);
         }
     }
 
     kl::float3 rotation = collider->get_rotation();
-    if (ImGui::DragFloat3("Collider Rotation", rotation)) {
+    if (ImGui::DragFloat3("Offset Rotation", rotation)) {
         collider->set_rotation(rotation);
     }
 
     kl::float3 offset = collider->get_offset();
-    if (ImGui::DragFloat3("Collider Offset", offset)) {
+    if (ImGui::DragFloat3("Offset Position", offset)) {
         collider->set_offset(offset);
     }
 }

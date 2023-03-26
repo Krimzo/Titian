@@ -11,7 +11,7 @@ void gui_scene_editor(editor_state* state)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 
-    if (ImGui::Begin("Scene Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+    if (ImGui::Begin("Scene Editor", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
         // Pre-display
         state->gui_state.viewport_size = { (int) ImGui::GetWindowWidth(), (int) ImGui::GetWindowHeight() };
         state->gui_state.is_viewport_focused = ImGui::IsWindowFocused();

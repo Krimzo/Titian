@@ -8,7 +8,7 @@ void gui_main_menu(editor_state* state)
 
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("New Project")) {
-                
+
             }
 
             if (ImGui::MenuItem("Save Project")) {

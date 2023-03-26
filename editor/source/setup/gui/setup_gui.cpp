@@ -15,7 +15,6 @@ void setup_gui(editor_state* state)
 
     ImGui::StyleColorsDark();
     load_my_theme(state);
-
     load_custom_font(state);
 
     ImGui_ImplWin32_Init(*state->window);

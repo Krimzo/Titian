@@ -13,6 +13,7 @@ public:
 
     int gizmo_operation = 0;
     int gizmo_mode = 1;
+    int explorer_icon_size = 65;
 
     kl::int2 viewport_size = {};
 
