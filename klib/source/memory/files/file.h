@@ -3,20 +3,19 @@
 #include "math/math.h"
 
 
+// Helper
 namespace kl::files {
     std::string get_extension(const std::string& filepath);
-
     std::vector<std::string> get_files(const std::string& path, bool recursive = false);
 
     std::string read_string(const std::string& filepath);
-
     bool write_string(const std::string& filepath, const std::string& data);
-
     bool append_string(const std::string& filepath, const std::string& data, int position = -1);
 
     std::vector<vertex> parse_mesh(const std::string& filepath, bool flip_z);
 }
 
+// File
 namespace kl {
     class file
     {
@@ -33,20 +32,15 @@ namespace kl {
         void operator=(const file&) = delete;
         void operator=(const file&&) = delete;
 
-        explicit operator bool() const;
-
-        bool is_open() const;
+        operator bool() const;
 
         bool open(const std::string& filepath, bool clear = true);
-
         void close();
 
         bool seek(int position) const;
-
         bool move(int delta) const;
 
         bool rewind() const;
-
         bool unwind() const;
 
         int tell() const;

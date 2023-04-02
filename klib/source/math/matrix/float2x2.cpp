@@ -117,8 +117,7 @@ kl::float2 kl::float2x2::operator*(const float2& vec) const
     float2 result = {};
     for (int y = 0; y < 2; y++) {
         for (int i = 0; i < 2; i++) {
-            const float vec_val = ((const float*) &vec)[i];
-            ((float*) &result)[y] += (*this)(i, y) * vec_val;
+            result[y] += (*this)(i, y) * vec[i];
         }
     }
     return result;

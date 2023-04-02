@@ -183,26 +183,29 @@ void kl::context_holder::unbind_cb_for_compute_shader(const UINT slot) const
 }
 
 // Meshes
-UINT kl::context_holder::get_mesh_vertex_count(dx::buffer mesh) const
+UINT kl::context_holder::get_mesh_vertex_count(dx::buffer mesh, const UINT stride) const
 {
-    static const UINT stride = sizeof(vertex);
-    return get_buffer_size(mesh) / stride;
+    return (get_buffer_size(mesh) / stride);
 }
 
-void kl::context_holder::bind_mesh(const dx::buffer mesh, const UINT slot) const
+void kl::context_holder::bind_mesh(const dx::buffer mesh, const UINT slot, const UINT offset, const UINT stride) const
 {
-    static const UINT offset = 0, stride = sizeof(vertex);
-    context_->IASetVertexBuffers(0, 1, mesh.GetAddressOf(), &stride, &offset);
+    context_->IASetVertexBuffers(slot, 1, mesh.GetAddressOf(), &stride, &offset);
 }
 
 void kl::context_holder::unbind_mesh(const UINT slot) const
 {
-    bind_mesh(nullptr, slot);
+    bind_mesh(nullptr, slot, 0, 0);
 }
 
 void kl::context_holder::set_draw_type(const D3D_PRIMITIVE_TOPOLOGY draw_type) const
 {
     context_->IASetPrimitiveTopology(draw_type);
+}
+
+void kl::context_holder::draw(const UINT vertex_count, const UINT start_index) const
+{
+    context_->Draw(vertex_count, start_index);
 }
 
 void kl::context_holder::draw_mesh(const dx::buffer mesh) const
@@ -212,14 +215,14 @@ void kl::context_holder::draw_mesh(const dx::buffer mesh) const
 
 void kl::context_holder::draw_mesh(const dx::buffer mesh, const D3D_PRIMITIVE_TOPOLOGY draw_type) const
 {
-    draw_mesh(mesh, draw_type, get_mesh_vertex_count(mesh), 0);
+    draw_mesh(mesh, draw_type, sizeof(vertex));
 }
 
-void kl::context_holder::draw_mesh(const dx::buffer mesh, const D3D_PRIMITIVE_TOPOLOGY draw_type, const UINT vertex_count, const UINT start_index) const
+void kl::context_holder::draw_mesh(const dx::buffer mesh, const D3D_PRIMITIVE_TOPOLOGY draw_type, const UINT stride) const
 {
-    bind_mesh(mesh, 0);
     set_draw_type(draw_type);
-    context_->Draw(vertex_count, start_index);
+    bind_mesh(mesh, 0, 0, stride);
+    draw(get_mesh_vertex_count(mesh, stride), 0);
 }
 
 // Views

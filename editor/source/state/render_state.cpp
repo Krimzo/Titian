@@ -2,7 +2,7 @@
 
 
 render_state::render_state(kl::ref<kl::gpu> gpu, const kl::int2& size)
-    : gpu_(gpu), target_size(size)
+    : target_size(size)
 {
     // Misc data
     screen_mesh = gpu->create_screen_mesh();
@@ -35,8 +35,8 @@ render_state::render_state(kl::ref<kl::gpu> gpu, const kl::int2& size)
 render_state::~render_state()
 {}
 
-void render_state::clear_targets(const kl::float4& color)
+void render_state::clear_targets(kl::ref<kl::gpu> gpu, const kl::float4& color)
 {
-    gpu_->clear_target_view(render_target_view, color);
-    gpu_->clear_target_view(picking_target_view, {});
+    gpu->clear_target_view(render_target_view, color);
+    gpu->clear_target_view(picking_target_view, {});
 }

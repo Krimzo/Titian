@@ -11,7 +11,7 @@ void render_collider(editor_state* state)
     state->gpu->bind_raster_state(state->raster_states["collider"]);
     state->gpu->bind_depth_state(state->depth_states["collider"]);
 
-    state->gpu->bind_render_shaders(state->shaders["collider"]);
+    state->gpu->bind_render_shaders(state->render_shaders["collider"]);
 
     collider_render_vs_cb vs_cb = {};
     vs_cb.wvp_matrix = state->scene->camera->matrix() * state->scene->selected_entity->collider_matrix();

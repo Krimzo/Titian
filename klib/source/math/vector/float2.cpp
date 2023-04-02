@@ -1,5 +1,7 @@
 #include "math/vector/float2.h"
 
+#include "math/math.h"
+
 
 // Construct
 kl::float2::float2()
@@ -79,14 +81,47 @@ void kl::float2::operator*=(const float value)
     y *= value;
 }
 
-float kl::float2::operator*(const float2& other) const
+kl::float2 kl::float2::operator*(const float2& other) const
 {
-    return (x * other.x + y * other.y);
+    return { x * other.x, y * other.y };
+}
+
+void kl::float2::operator*=(const float2& other)
+{
+    x *= other.x;
+    y *= other.y;
+}
+
+kl::float2 kl::float2::operator/(const float value) const
+{
+    return { x / value, y / value };
+}
+
+void kl::float2::operator/=(const float value)
+{
+    x /= value;
+    y /= value;
+}
+
+kl::float2 kl::float2::operator/(const float2& other) const
+{
+    return { x / other.x, y / other.y };
+}
+
+void kl::float2::operator/=(const float2& other)
+{
+    x /= other.x;
+    y /= other.y;
+}
+
+kl::float2 kl::float2::operator-() const
+{
+    return *this * -1.0f;
 }
 
 float kl::float2::length() const
 {
-    return sqrt(*this * *this);
+    return sqrt(dot(*this, *this));
 }
 
 // Format

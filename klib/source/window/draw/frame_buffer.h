@@ -20,6 +20,7 @@ namespace kl {
         void operator=(const frame_buffer&) = delete;
         void operator=(const frame_buffer&&) = delete;
 
+        void resize(const int2& size);
         int2 size() const;
 
         image* back_buffer();

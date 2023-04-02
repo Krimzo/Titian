@@ -1,19 +1,19 @@
-#include "render/entity/entity.h"
+#include "render/scene/entity.h"
 
 #include "utility/utility.h"
 
 
 #ifdef KL_USING_PHYSX
 
-static uint32_t unique_index_counter = 0;
+static uint64_t unique_index_counter = 0;
 
-kl::entity::entity(PxPhysics* physics, const bool dynamic)
-    : physics_(physics), unique_index(++unique_index_counter)
+kl::entity::entity(PxPhysics* physics, bool dynamic)
+    : unique_index(++unique_index_counter)
 {
     PxTransform transform = {};
     transform.q = PxQuat(PxIdentity);
     transform.p = PxVec3(PxZero);
-    regenerate_actor(transform, dynamic);
+    regenerate_actor(physics, transform, dynamic);
 }
 
 kl::entity::~entity()
@@ -50,43 +50,45 @@ kl::float4x4 kl::entity::collider_matrix() const
 // Geometry
 void kl::entity::set_rotation(const float3& rotation)
 {
+    const float4 quat = to_quaternion(rotation);
+
     PxTransform transform = physics_actor_->getGlobalPose();
-    transform.q = math::to_quaternion(rotation);
+    transform.q = (PxQuat&) quat;
     physics_actor_->setGlobalPose(transform);
 }
 
 kl::float3 kl::entity::get_rotation() const
 {
     const PxTransform transform = physics_actor_->getGlobalPose();
-    return math::to_euler(transform.q);
+    return to_euler((float4&) transform.q);
 }
 
 void kl::entity::set_position(const float3& position)
 {
     PxTransform transform = physics_actor_->getGlobalPose();
-    transform.p = position;
+    transform.p = (PxVec3&) position;
     physics_actor_->setGlobalPose(transform);
 }
 
 kl::float3 kl::entity::get_position() const
 {
     const PxTransform transform = physics_actor_->getGlobalPose();
-    return transform.p;
+    return (float3&) transform.p;
 }
 
 // Physics
-void kl::entity::set_dynamic(const bool enabled)
+void kl::entity::set_dynamic(PxPhysics* physics, const bool enabled)
 {
     const bool old_dynamic = is_dynamic();
     if ((old_dynamic && enabled) || (!old_dynamic && !enabled)) {
         return;
     }
 
-    PxTransform transform = physics_actor_->getGlobalPose();
+    PxTransform old_transform = physics_actor_->getGlobalPose();
     ref<collider> old_collider = collider_;
 
     set_collider(nullptr);
-    regenerate_actor(transform, enabled);
+    regenerate_actor(physics, old_transform, enabled);
     set_collider(old_collider);
 }
 
@@ -128,7 +130,7 @@ void kl::entity::set_velocity(const float3& velocity)
 {
     if (is_dynamic()) {
         PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
-        actor->setLinearVelocity(velocity);
+        actor->setLinearVelocity((PxVec3&) velocity);
     }
 }
 
@@ -137,7 +139,7 @@ kl::float3 kl::entity::get_velocity() const
     if (is_dynamic()) {
         const PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
         const PxVec3 velocity = actor->getLinearVelocity();
-        return velocity;
+        return (float3&) velocity;
     }
     return {};
 }
@@ -146,7 +148,7 @@ void kl::entity::set_angular(const float3& angular)
 {
     if (is_dynamic()) {
         PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
-        actor->setAngularVelocity(angular * math::to_radians);
+        actor->setAngularVelocity((PxVec3&) angular);
     }
 }
 
@@ -154,8 +156,8 @@ kl::float3 kl::entity::get_angular() const
 {
     if (is_dynamic()) {
         const PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
-        const float3 angular = actor->getAngularVelocity();
-        return (angular * math::to_degrees);
+        const PxVec3 angular = actor->getAngularVelocity();
+        return (float3&) angular;
     }
     return {};
 }
@@ -180,14 +182,14 @@ kl::ref<kl::collider> kl::entity::get_collider() const
 }
 
 // Private
-void kl::entity::regenerate_actor(const PxTransform& transform, const bool dynamic)
+void kl::entity::regenerate_actor(PxPhysics* physics, const PxTransform& transform, const bool dynamic)
 {
     if (physics_actor_) {
         physics_actor_->release();
         physics_actor_ = nullptr;
     }
 
-    physics_actor_ = dynamic ? (PxRigidActor*) physics_->createRigidDynamic(transform) : physics_->createRigidStatic(transform);
+    physics_actor_ = dynamic ? (PxRigidActor*) physics->createRigidDynamic(transform) : physics->createRigidStatic(transform);
     error_check(!physics_actor_, "Failed to create physics actor");
 
     if (dynamic) {
@@ -216,7 +218,7 @@ kl::entity::~entity()
 {}
 
 // Methods
-void kl::entity::update_physics(float delta_t)
+void kl::entity::update_physics(const float delta_t)
 {
     velocity += acceleration * delta_t;
     position += velocity * delta_t;

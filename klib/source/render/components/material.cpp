@@ -1,4 +1,4 @@
-#include "render/entity/material.h"
+#include "render/components/material.h"
 
 
 kl::material::material()

@@ -29,12 +29,12 @@ void setup_preview_scene(editor_state* state)
     // Camera
     state->scene->camera = kl::make<kl::camera>();
     state->scene->camera->far_plane = 75.0f;
-    state->scene->camera->position = { 0, 1, -4 };
+    state->scene->camera->origin = { 0, 1, -4 };
     state->scene->camera->skybox = state->scene->textures["clouds"];
 
     // Light
     state->scene->ambient_light = kl::make<kl::ambient_light>();
-    state->scene->directional_light = kl::ref<kl::directional_light>(new kl::directional_light(*state->gpu, 4096));
+    state->scene->directional_light = kl::make<kl::directional_light>(state->gpu.get(), 4096);
     state->scene->directional_light->set_direction({ 0.26f, -0.335f, 0.9f });
 
     // Parts

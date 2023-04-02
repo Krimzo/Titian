@@ -24,6 +24,7 @@ namespace kl {
         const color& operator[](const int2& coords) const;
 
         bool in_bounds(const int2& coords) const;
+        color sample(const float2& uv) const;
 
         // Iterate
         pixel_storage::iterator begin();

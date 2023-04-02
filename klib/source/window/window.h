@@ -28,7 +28,8 @@ namespace kl {
 
         bool in_fullscreen_ = false;
         bool resizeable_ = true;
-        DWORD window_style_ = NULL;
+        LONG window_style_ = NULL;
+        LONG window_ex_style_ = NULL;
         WINDOWPLACEMENT placement_ = {};
 
         // System
@@ -42,7 +43,7 @@ namespace kl {
 
         // Creation
         window(const int2& size, const std::string& name);
-        virtual ~window();
+        ~window();
 
         window(const window&) = delete;
         window(const window&&) = delete;
@@ -63,9 +64,10 @@ namespace kl {
 
         void maximize() const;
         void minimize() const;
+        void restore() const;
 
-        bool is_in_fullscreen() const;
-        void set_fullscreen(bool enable);
+        bool in_fullscreen() const;
+        void set_fullscreen(bool enabled);
 
         int2 position(bool client = false) const;
         void set_position(const int2& position) const;
@@ -77,7 +79,7 @@ namespace kl {
         void set_height(int height) const;
 
         int2 size(bool client = true) const;
-        void set_size(const int2& size, bool client = true) const;
+        void resize(const int2& size, bool client = true) const;
 
         float get_aspect_ratio() const;
         int2 get_frame_center() const;

@@ -5,8 +5,6 @@
 
 class gui_state
 {
-    kl::ref<kl::gpu> gpu_ = nullptr;
-
 public:
     bool is_viewport_focused = false;
     bool render_collider = true;
@@ -26,7 +24,7 @@ public:
     std::unordered_map<std::string, kl::ref<kl::texture>> textures = {};
 
     gui_state(kl::ref<kl::gpu> gpu);
-    virtual ~gui_state();
+    ~gui_state();
 
     gui_state(gui_state&) = delete;
     gui_state(gui_state&&) = delete;

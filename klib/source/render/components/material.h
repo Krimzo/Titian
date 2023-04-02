@@ -1,13 +1,14 @@
 #pragma once
 
-#include "render/entity/texture.h"
+#include "render/components/texture.h"
+#include "memory/memory.h"
 
 
 namespace kl {
     class material
     {
     public:
-        float4 color = {};
+        float4 color = colors::white;
 
         ref<texture> color_map = nullptr;
         ref<texture> normal_map = nullptr;
@@ -19,6 +20,6 @@ namespace kl {
         float refraction_index = 0.0f;
 
         material();
-        virtual ~material();
+        ~material();
     };
 }

@@ -1,5 +1,7 @@
 #include "math/triangle/triangle.h"
 
+#include "math/math.h"
+
 
 // Construct
 kl::triangle::triangle()
@@ -9,7 +11,13 @@ kl::triangle::triangle(const vertex& a, const vertex& b, const vertex& c)
     : a(a), b(b), c(c)
 {}
 
-// Math
+// Normal
+kl::float3 kl::triangle::get_normal() const
+{
+    return normalize(cross(b.world - a.world, c.world - a.world));
+}
+
+// Interpolation
 kl::float4 kl::triangle::get_constants() const
 {
     const float calc_const = (b.world.y - c.world.y) * (a.world.x - c.world.x) + (c.world.x - b.world.x) * (a.world.y - c.world.y);
@@ -39,11 +47,11 @@ kl::float3 kl::triangle::get_weights(const float3& position) const
     const float3 v1 = b.world - c.world;
     const float3 v2 = position - c.world;
 
-    const float d00 = v0 * v0;
-    const float d01 = v0 * v1;
-    const float d11 = v1 * v1;
-    const float d20 = v2 * v0;
-    const float d21 = v2 * v1;
+    const float d00 = dot(v0, v0);
+    const float d01 = dot(v0, v1);
+    const float d11 = dot(v1, v1);
+    const float d20 = dot(v2, v0);
+    const float d21 = dot(v2, v1);
 
     const float inverse_denom = 1.0f / (d00 * d11 - d01 * d01);
     const float w1 = (d11 * d20 - d01 * d21) * inverse_denom;
@@ -80,7 +88,7 @@ bool kl::triangle::is_in_triangle(const float3& weights)
 
 float kl::triangle::interpolate(const float3& weights, const float3& values)
 {
-    return weights * values;
+    return dot(weights, values);
 }
 
 // Format

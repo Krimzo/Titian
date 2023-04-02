@@ -155,7 +155,7 @@ kl::dx::buffer kl::device_holder::create_const_buffer(const UINT byte_size) cons
 kl::dx::buffer kl::device_holder::create_mesh(const mesh_data& vertices) const
 {
     dx::buffer_descriptor descriptor = {};
-    descriptor.ByteWidth = UINT(vertices.size() * sizeof(vertex));
+    descriptor.ByteWidth = (UINT) (vertices.size() * sizeof(vertex));
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
@@ -266,7 +266,7 @@ kl::dx::texture kl::device_holder::create_cube_texture(const image& front, const
     descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     descriptor.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
-    const UINT mem_pitch = UINT(front.width() * sizeof(color));
+    const UINT mem_pitch = (UINT) (front.width() * sizeof(color));
     const dx::subresource_descriptor data[6] = {
         { right,  mem_pitch, 0 },
         { left,   mem_pitch, 0 },
@@ -336,11 +336,11 @@ kl::dx::layout kl::device_holder::create_input_layout(const compiled_shader& com
     static const dx::layout_descriptor default_layout_descriptors[3] = {
         { "KL_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "KL_Texture", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "KL_Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "KL_Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
-    const dx::layout_descriptor* descriptors_ptr = !descriptors.empty() ? descriptors.data() : default_layout_descriptors;
-    const UINT descriptors_count = !descriptors.empty() ? ((UINT) descriptors.size()) : 3;
+    const dx::layout_descriptor* descriptors_ptr = (!descriptors.empty()) ? descriptors.data() : default_layout_descriptors;
+    const UINT descriptors_count = (!descriptors.empty()) ? ((UINT) descriptors.size()) : 3;
 
     dx::layout layout = nullptr;
     device_->CreateInputLayout(descriptors_ptr, descriptors_count, compiled_shader.get_data(), compiled_shader.get_data_size(), &layout);

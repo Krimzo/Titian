@@ -2,10 +2,6 @@
 
 #include "utility/utility.h"
 
-#ifdef KL_USING_IMGUI
-#include <imgui.h>
-#endif
-
 
 // Class
 kl::window::window(const int2& size, const std::string& name)
@@ -29,7 +25,7 @@ kl::window::window(const int2& size, const std::string& name)
     // Creating the window
     window_style_ = WS_OVERLAPPEDWINDOW;
 
-    RECT size_buffer = { 0, 0, LONG(size.x), LONG(size.y) };
+    RECT size_buffer = { 0, 0, (LONG)size.x, (LONG) size.y };
     AdjustWindowRect(&size_buffer, window_style_, false);
 
     const int2 new_size = {
@@ -49,10 +45,10 @@ kl::window::window(const int2& size, const std::string& name)
     window_style_ = GetWindowLongA(window_, GWL_STYLE);
 
     // Setting data
-    SetWindowLongPtrA(window_, GWLP_USERDATA, LONG_PTR(this));
+    SetWindowLongPtrA(window_, GWLP_USERDATA, (LONG_PTR) this);
     ShowWindow(window_, SW_SHOW);
-    SetCursor(LoadCursorA(nullptr, LPCSTR(IDC_ARROW)));
-    mouse.bind_to_window(window_);
+    SetCursor(LoadCursorA(nullptr, (LPCSTR) IDC_ARROW));
+    mouse.window_ = window_;
 }
 
 kl::window::~window()
@@ -134,24 +130,31 @@ void kl::window::minimize() const
     ShowWindow(window_, SW_MINIMIZE);
 }
 
-bool kl::window::is_in_fullscreen() const
+void kl::window::restore() const
+{
+    ShowWindow(window_, SW_RESTORE);
+}
+
+bool kl::window::in_fullscreen() const
 {
     return in_fullscreen_;
 }
 
-void kl::window::set_fullscreen(const bool enable)
+void kl::window::set_fullscreen(const bool enabled)
 {
-    if (!in_fullscreen_ && enable) {
-        GetWindowPlacement(window_, &placement_);
-        SetWindowLongA(window_, GWL_STYLE, LONG(window_style_) & ~WS_OVERLAPPEDWINDOW);
-        SetWindowPos(window_, HWND_TOP, 0, 0, screen::size.x, screen::size.y, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+    if (!in_fullscreen_) {
+        window_style_ = GetWindowLong(window_, GWL_STYLE);
+        window_ex_style_ = GetWindowLong(window_, GWL_EXSTYLE);
     }
-    else if (in_fullscreen_ && !enable) {
-        SetWindowLongA(window_, GWL_STYLE, LONG(window_style_));
-        SetWindowPlacement(window_, &placement_);
-        SetWindowPos(window_, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+
+    if (in_fullscreen_ = enabled) {
+        SetWindowLong(window_, GWL_STYLE, window_style_ & ~(WS_CAPTION | WS_THICKFRAME));
+        SetWindowLong(window_, GWL_EXSTYLE, window_ex_style_ & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
     }
-    in_fullscreen_ = enable;
+    else {
+        SetWindowLong(window_, GWL_STYLE, window_style_);
+        SetWindowLong(window_, GWL_EXSTYLE, window_ex_style_);
+    }
 }
 
 kl::int2 kl::window::position(const bool client) const
@@ -181,7 +184,7 @@ int kl::window::width() const
 
 void kl::window::set_width(int width) const
 {
-    set_size({ width, height() });
+    resize({ width, height() });
 }
 
 int kl::window::height() const
@@ -191,7 +194,7 @@ int kl::window::height() const
 
 void kl::window::set_height(int height) const
 {
-    set_size({ width(), height });
+    resize({ width(), height });
 }
 
 kl::int2 kl::window::size(const bool client) const
@@ -206,7 +209,7 @@ kl::int2 kl::window::size(const bool client) const
     return { rect.right - rect.left, rect.bottom - rect.top };
 }
 
-void kl::window::set_size(const int2& size, const bool client) const
+void kl::window::resize(const int2& size, const bool client) const
 {
     if (in_fullscreen_) { return; }
 
@@ -214,7 +217,7 @@ void kl::window::set_size(const int2& size, const bool client) const
     int2 new_size = size;
 
     if (client) {
-        RECT rect = { LONG(position.x), LONG(position.y), LONG(position.x + size.x), LONG(position.y + size.y) };
+        RECT rect = { (LONG) position.x, (LONG) position.y, (LONG) (position.x + size.x), (LONG) (position.y + size.y) };
         AdjustWindowRect(&rect, window_style_, false);
         new_size = { rect.right - rect.left, rect.bottom - rect.top };
     }
@@ -230,8 +233,7 @@ float kl::window::get_aspect_ratio() const
 
 kl::int2 kl::window::get_frame_center() const
 {
-    const int2 size = this->size();
-    return { size.x / 2, size.y / 2 };
+    return (size() / 2);
 }
 
 void kl::window::set_title(const std::string& data) const
@@ -241,11 +243,12 @@ void kl::window::set_title(const std::string& data) const
 
 bool kl::window::set_icon(const std::string& filepath) const
 {
-    HICON loaded_icon = ExtractIconA(nullptr, filepath.c_str(), 0);
-    if (!loaded_icon) { return false; }
-
-    SendMessageA(window_, WM_SETICON, ICON_BIG, LPARAM(loaded_icon));
-    SendMessageA(window_, WM_SETICON, ICON_SMALL, LPARAM(loaded_icon));
+    HICON loaded_icon = ExtractIconA(nullptr, filepath.c_str(), NULL);
+    if (!loaded_icon) {
+        return false;
+    }
+    SendMessageA(window_, WM_SETICON, ICON_BIG, (LPARAM) loaded_icon);
+    SendMessageA(window_, WM_SETICON, ICON_SMALL, (LPARAM) loaded_icon);
     return true;
 }
 
@@ -256,8 +259,8 @@ void kl::window::draw_pixel_data(const color* data, const int2& size, const int2
     bitmap_info.bmiHeader.biCompression = BI_RGB;
     bitmap_info.bmiHeader.biBitCount = 32;
     bitmap_info.bmiHeader.biPlanes = 1;
-    bitmap_info.bmiHeader.biWidth = LONG(size.x);
-    bitmap_info.bmiHeader.biHeight = -int(size.y);
+    bitmap_info.bmiHeader.biWidth = (LONG) size.x;
+    bitmap_info.bmiHeader.biHeight = (LONG) -size.y;
 
     StretchDIBits(device_context_, position.x, position.y, size.x, size.y, 0, 0, size.x, size.y, data, &bitmap_info, DIB_RGB_COLORS, SRCCOPY);
 }
@@ -304,49 +307,49 @@ void kl::window::handle_message(const MSG& message)
 #ifdef KL_USING_IMGUI
     case WM_CHAR:
         if (*((short*) &message.lParam) > 1) {
-            ImGui::GetIO().AddInputCharacter(int(message.wParam));
+            ImGui::GetIO().AddInputCharacter((int) message.wParam);
         }
         break;
 #endif
 
+        // Keyboard
     case WM_KEYDOWN:
-        keyboard.update_states(message.wParam, true);
+        keyboard.update(message.wParam, true);
         break;
-
     case WM_KEYUP:
-        keyboard.update_states(message.wParam, false);
+        keyboard.update(message.wParam, false);
         break;
 
+        // LMB
     case WM_LBUTTONDOWN:
-        mouse.left.update_state(0, true);
+        mouse.left.update(true);
         break;
-
     case WM_LBUTTONUP:
-        mouse.left.update_state(0, false);
+        mouse.left.update(false);
         break;
 
+        // MMB
     case WM_MBUTTONDOWN:
-        mouse.middle.update_state(1, true);
+        mouse.middle.update(true);
         break;
-
     case WM_MBUTTONUP:
-        mouse.middle.update_state(1, false);
+        mouse.middle.update(false);
         break;
 
+        // RMB
     case WM_RBUTTONDOWN:
-        mouse.right.update_state(2, true);
+        mouse.right.update(true);
         break;
-
     case WM_RBUTTONUP:
-        mouse.right.update_state(2, false);
+        mouse.right.update(false);
         break;
 
+        // Mouse
     case WM_MOUSEMOVE:
-        mouse.update_position(window_, { GET_X_LPARAM(message.lParam), GET_Y_LPARAM(message.lParam) });
+        mouse.position_ = { GET_X_LPARAM(message.lParam), GET_Y_LPARAM(message.lParam) };
         break;
-
     case WM_MOUSEWHEEL:
-        mouse.update_scroll(window_, GET_WHEEL_DELTA_WPARAM(message.wParam) / 120);
+        mouse.scroll_ += GET_WHEEL_DELTA_WPARAM(message.wParam) / 120;
         break;
 
     default:

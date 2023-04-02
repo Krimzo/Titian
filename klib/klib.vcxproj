@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClCompile Include="source\apis\apis.cpp" />
     <ClCompile Include="source\apis\cpp\kl_cpp.cpp" />
+    <ClCompile Include="source\apis\external\kl_imgui.cpp" />
+    <ClCompile Include="source\apis\external\kl_physx.cpp" />
     <ClCompile Include="source\apis\windows\kl_directx.cpp" />
     <ClCompile Include="source\apis\windows\kl_windows.cpp" />
     <ClCompile Include="source\graphics\context_holder\context_holder.cpp" />
@@ -54,11 +56,12 @@
     <ClCompile Include="source\memory\linking\dll.cpp" />
     <ClCompile Include="source\memory\memory.cpp" />
     <ClCompile Include="source\memory\reference\ref.cpp" />
-    <ClCompile Include="source\render\entity\collider.cpp" />
-    <ClCompile Include="source\render\entity\entity.cpp" />
-    <ClCompile Include="source\render\entity\material.cpp" />
-    <ClCompile Include="source\render\entity\texture.cpp" />
-    <ClCompile Include="source\render\entity\mesh.cpp" />
+    <ClCompile Include="source\render\components\collider.cpp" />
+    <ClCompile Include="source\render\light\point_light.cpp" />
+    <ClCompile Include="source\render\scene\entity.cpp" />
+    <ClCompile Include="source\render\components\material.cpp" />
+    <ClCompile Include="source\render\components\texture.cpp" />
+    <ClCompile Include="source\render\components\mesh.cpp" />
     <ClCompile Include="source\render\light\ambient_light.cpp" />
     <ClCompile Include="source\render\light\directional_light.cpp" />
     <ClCompile Include="source\render\render.cpp" />
@@ -84,6 +87,8 @@
   <ItemGroup>
     <ClInclude Include="source\apis\apis.h" />
     <ClInclude Include="source\apis\cpp\kl_cpp.h" />
+    <ClInclude Include="source\apis\external\kl_imgui.h" />
+    <ClInclude Include="source\apis\external\kl_physx.h" />
     <ClInclude Include="source\apis\windows\kl_directx.h" />
     <ClInclude Include="source\apis\windows\kl_windows.h" />
     <ClInclude Include="source\graphics\context_holder\context_holder.h" />
@@ -118,11 +123,12 @@
     <ClInclude Include="source\memory\linking\dll.h" />
     <ClInclude Include="source\memory\memory.h" />
     <ClInclude Include="source\memory\reference\ref.h" />
-    <ClInclude Include="source\render\entity\collider.h" />
-    <ClInclude Include="source\render\entity\entity.h" />
-    <ClInclude Include="source\render\entity\material.h" />
-    <ClInclude Include="source\render\entity\mesh.h" />
-    <ClInclude Include="source\render\entity\texture.h" />
+    <ClInclude Include="source\render\components\collider.h" />
+    <ClInclude Include="source\render\light\point_light.h" />
+    <ClInclude Include="source\render\scene\entity.h" />
+    <ClInclude Include="source\render\components\material.h" />
+    <ClInclude Include="source\render\components\mesh.h" />
+    <ClInclude Include="source\render\components\texture.h" />
     <ClInclude Include="source\render\light\ambient_light.h" />
     <ClInclude Include="source\render\light\directional_light.h" />
     <ClInclude Include="source\render\render.h" />

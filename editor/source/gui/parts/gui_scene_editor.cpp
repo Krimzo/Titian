@@ -120,9 +120,9 @@ void render_gizmos(editor_state* state)
         }
     }
 
-    const kl::float4x4 view_matrix = kl::math::transpose(state->scene->camera->view_matrix());
-    const kl::float4x4 projection_matrix = kl::math::transpose(state->scene->camera->projection_matrix());
-    kl::float4x4 transform_matrix = kl::math::transpose(state->scene->selected_entity->matrix());
+    const kl::float4x4 view_matrix = kl::transpose(state->scene->camera->view_matrix());
+    const kl::float4x4 projection_matrix = kl::transpose(state->scene->camera->projection_matrix());
+    kl::float4x4 transform_matrix = kl::transpose(state->scene->selected_entity->matrix());
 
     ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
         (ImGuizmo::OPERATION) state->gui_state.gizmo_operation, (ImGuizmo::MODE) state->gui_state.gizmo_mode,

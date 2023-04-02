@@ -13,7 +13,14 @@ namespace kl_ignored {
     }();
 }
 
+// Static
+const std::string kl::socket::self_ip = "127.0.0.1";
+
 // Construct
+kl::socket::socket(const size_t socket)
+    : socket_(socket)
+{}
+
 kl::socket::socket()
 {
     socket_ = ::socket(AF_INET, SOCK_STREAM, NULL);
@@ -28,10 +35,6 @@ kl::socket::socket(const std::string& address, const int port)
     set_address(address);
     set_port(port);
 }
-
-kl::socket::socket(const size_t socket)
-    : socket_(socket)
-{}
 
 kl::socket::~socket()
 {
@@ -68,7 +71,7 @@ int kl::socket::get_port() const
 
 void kl::socket::set_port(const int port)
 {
-    address_.sin_port = htons(u_short(port));
+    address_.sin_port = htons((u_short) port);
 }
 
 void kl::socket::listen(const int queue_size)
@@ -99,6 +102,3 @@ int kl::socket::receive(void* buff, const int byte_size) const
 {
     return recv(socket_, (char*) buff, byte_size, NULL);
 }
-
-// Static
-const std::string kl::socket::self_ip = "127.0.0.1";

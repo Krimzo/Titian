@@ -117,8 +117,7 @@ kl::float3 kl::float3x3::operator*(const float3& vec) const
     float3 result = {};
     for (int y = 0; y < 3; y++) {
         for (int i = 0; i < 3; i++) {
-            const float vec_val = ((const float*) &vec)[i];
-            ((float*) &result)[y] += (*this)(i, y) * vec_val;
+            result[y] += (*this)(i, y) * vec[i];
         }
     }
     return result;
@@ -144,8 +143,8 @@ kl::float3x3 kl::float3x3::translation(const float2& val)
 
 kl::float3x3 kl::float3x3::rotation(float rotation)
 {
-    const float z_sin = sin(rotation * math::to_radians);
-    const float z_cos = cos(rotation * math::to_radians);
+    const float z_sin = sin(rotation * to_radians);
+    const float z_cos = cos(rotation * to_radians);
 
     float3x3 result = {};
     result[0] = z_cos;

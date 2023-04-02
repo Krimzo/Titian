@@ -13,41 +13,23 @@ namespace kl {
         int show_counter_ = 0;
         int scroll_ = 0;
 
-    public:
-        union
-        {
-            struct
-            {
-                key left;
-                key middle;
-                key right;
-            };
-
-            key keys[3];
-        };
-
-        mouse();
-        ~mouse();
-
-        mouse(const mouse&) = delete;
-        mouse(const mouse&&) = delete;
-
-        void operator=(const mouse&) = delete;
-        void operator=(const mouse&&) = delete;
-
-        void bind_to_window(HWND window);
         void process() const;
+
+    public:
+        friend class window;
+
+        key left = {};
+        key middle = {};
+        key right = {};
 
         bool is_hidden() const;
         void set_hidden(bool enabled);
 
-        int scroll() const;
-        void update_scroll(HWND access_check, int delta_scroll);
-
         int2 position(bool client = true) const;
-        void update_position(HWND access_check, const int2& position);
-        void set_position(const int2& position) const;
+        void set_position(const int2& position, bool client = true) const;
 
-        float2 get_normalized_position() const;
+        float2 get_normalized_position(bool client = true) const;
+
+        int scroll() const;
     };
 }

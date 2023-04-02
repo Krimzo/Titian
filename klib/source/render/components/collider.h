@@ -1,23 +1,19 @@
 #pragma once
 
-#include "apis/apis.h"
 #include "math/math.h"
 
-#ifdef KL_USING_PHYSX
-#include <PxPhysicsAPI.h>
-using namespace physx;
 
+#ifdef KL_USING_PHYSX
 
 namespace kl {
     class collider
     {
-        PxPhysics* physics_ = nullptr;
         PxMaterial* material_ = nullptr;
         PxShape* shape_ = nullptr;
 
     public:
         collider(PxPhysics* physics, const PxGeometry& geometry);
-        virtual ~collider();
+        ~collider();
 
         collider(const collider&) = delete;
         collider(const collider&&) = delete;

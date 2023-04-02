@@ -41,12 +41,12 @@ void setup_preview_bullets(editor_state* state, const int size)
         static const std::function<kl::float3(const kl::float3&)> directional_vector_to_euler = [](const kl::float3& dir) -> kl::float3
         {
             static const kl::float2 start_dir_yz = { 1, 0 };
-            const float rx = -kl::math::angle(start_dir_yz, { dir.y, dir.z }, false);
-            const float ry = -kl::math::angle(kl::float2(0, dir.z), { dir.x, dir.z }, true);
+            const float rx = -kl::angle(start_dir_yz, { dir.y, dir.z }, false);
+            const float ry = -kl::angle(kl::float2(0, dir.z), { dir.x, dir.z }, true);
             return { rx, ry, 0 };
         };
 
-        const kl::float3 target_direction = kl::math::normalize(target_position - bullet->get_position());
+        const kl::float3 target_direction = kl::normalize(target_position - bullet->get_position());
         bullet->set_rotation(directional_vector_to_euler(target_direction));
 
         bullet->mesh = state->scene->meshes["bmg_bullet"];
@@ -82,26 +82,31 @@ void setup_preview_bullets(editor_state* state, const int size)
 
         // Callbacks
         kl::ref<bool> bullet_fired = kl::make<bool>(false);
-
+        
         all_callbacks.push_back([state, bullet, casing_primer, bullet_fired]
         {
             if (!*bullet_fired) {
                 const kl::float4 default_bullet_direction = { 0.0f, 1.0f, 0.0f, 1.0f };
                 auto correct_direction = (kl::float4x4::rotation(bullet->get_rotation()) * default_bullet_direction).xyz();
-
-                bullet->set_velocity(kl::math::normalize(correct_direction) * fire_velocity);
-
+        
+                bullet->set_velocity(kl::normalize(correct_direction) * fire_velocity);
                 casing_primer->mesh = state->scene->meshes["bmg_primer_fired"];
-
+        
                 *bullet_fired = true;
             }
         });
     }
 
-    state->window->keyboard.space.on_release.push_back([all_callbacks]
-    {
-        for (auto& callback : all_callbacks) {
-            callback();
-        }
-    });
+    /*
+    Callback bug happens because window spacebar callbacks still hold refs to entities.
+    The problem is that scene gets destroyed before the window does when application closes.
+    This results in an seg fault.
+    */
+
+    //state->window->keyboard.space.on_release.push_back([all_callbacks]
+    //{
+    //    for (auto& callback : all_callbacks) {
+    //        callback();
+    //    }
+    //});
 }

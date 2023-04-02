@@ -3,12 +3,14 @@
 #include "apis/apis.h"
 
 
+/* WIP */
+
 namespace kl {
     class audio
     {
     public:
         audio();
-        virtual ~audio();
+        ~audio();
 
         audio(const audio&) = delete;
         audio(const audio&&) = delete;

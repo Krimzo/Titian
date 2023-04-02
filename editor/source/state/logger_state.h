@@ -24,7 +24,7 @@ public:
     size_t max_size = 100;
 
     logger_state();
-    virtual ~logger_state();
+    ~logger_state();
 
     logger_state(const logger_state&) = delete;
     logger_state(const logger_state&&) = delete;

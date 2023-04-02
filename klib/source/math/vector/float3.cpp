@@ -1,5 +1,7 @@
 #include "math/vector/float3.h"
 
+#include "math/math.h"
+
 
 // Construct
 kl::float3::float3()
@@ -21,12 +23,6 @@ kl::float3::float3(float x, const float2& vec)
     : x(x), y(vec.x), z(vec.y)
 {}
 
-#ifdef KL_USING_PHYSX
-kl::float3::float3(const PxVec3& vec)
-    : float3(*(float3*) &vec)
-{}
-#endif
-
 // Get
 kl::float3::operator float* () const
 {
@@ -36,18 +32,11 @@ kl::float3::operator float* () const
 kl::float3::operator kl::color() const
 {
     return {
-        (byte) min(max((int) (x * math::to_byte_color), 0), 255),
-        (byte) min(max((int) (y * math::to_byte_color), 0), 255),
-        (byte) min(max((int) (z * math::to_byte_color), 0), 255),
+        (byte) min(max((int) (x * to_byte_color), 0), 255),
+        (byte) min(max((int) (y * to_byte_color), 0), 255),
+        (byte) min(max((int) (z * to_byte_color), 0), 255),
     };
 }
-
-#ifdef KL_USING_PHYSX
-kl::float3::operator physx::PxVec3() const
-{
-    return *(PxVec3*) this;
-}
-#endif
 
 kl::float2 kl::float3::xy() const
 {
@@ -112,14 +101,50 @@ void kl::float3::operator*=(const float value)
     z *= value;
 }
 
-float kl::float3::operator*(const float3& other) const
+kl::float3 kl::float3::operator*(const float3& other) const
 {
-    return (x * other.x + y * other.y + z * other.z);
+    return { x * other.x, y * other.y, z * other.z };
+}
+
+void kl::float3::operator*=(const float3& other)
+{
+    x *= other.x;
+    y *= other.y;
+    z *= other.z;
+}
+
+kl::float3 kl::float3::operator/(const float value) const
+{
+    return { x / value, y / value, z / value };
+}
+
+void kl::float3::operator/=(const float value)
+{
+    x /= value;
+    y /= value;
+    z /= value;
+}
+
+kl::float3 kl::float3::operator/(const float3& other) const
+{
+    return { x / other.x, y / other.y, z / other.z };
+}
+
+void kl::float3::operator/=(const float3& other)
+{
+    x /= other.x;
+    y /= other.y;
+    z /= other.z;
+}
+
+kl::float3 kl::float3::operator-() const
+{
+    return *this * -1.0f;
 }
 
 float kl::float3::length() const
 {
-    return sqrt(*this * *this);
+    return sqrt(dot(*this, *this));
 }
 
 // Format

@@ -14,26 +14,28 @@ kl::dll::~dll()
     unload();
 }
 
+kl::dll::operator bool() const
+{
+    return (bool) module_;
+}
+
 void kl::dll::load(const std::string& path)
 {
     unload();
-    this->path = path;
-    module = LoadLibraryA(path.c_str());
+    path_ = path;
+    module_ = LoadLibraryA(path.c_str());
 }
 
 void kl::dll::reload()
 {
     unload();
-    module = LoadLibraryA(path.c_str());
+    module_ = LoadLibraryA(path_.c_str());
 }
 
 void kl::dll::unload()
 {
-    if (module) FreeLibrary(module);
-    module = nullptr;
-}
-
-bool kl::dll::is_valid()
-{
-    return (bool) module;
+    if (module_) {
+        FreeLibrary(module_);
+        module_ = nullptr;
+    }
 }

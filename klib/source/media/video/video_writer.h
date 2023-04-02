@@ -29,7 +29,7 @@ namespace kl {
 
     public:
         video_writer(const std::string& filepath, const kl::int2& frame_size, int fps, int bit_rate, const GUID& encoding_format);
-        virtual ~video_writer();
+        ~video_writer();
 
         video_writer(const video_writer&) = delete;
         video_writer(const video_writer&&) = delete;

@@ -16,7 +16,7 @@ namespace kl {
     public:
         // Creation
         device_holder();
-        ~device_holder();
+        virtual ~device_holder();
 
         device_holder(const device_holder&) = delete;
         device_holder(const device_holder&&) = delete;

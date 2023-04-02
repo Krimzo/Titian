@@ -1,29 +1,16 @@
 #include "window/input/key.h"
 
 
-kl::key::key(const WPARAM type)
-    : type_(type)
-{}
-
-kl::key::~key()
-{}
-
-kl::key::operator bool() const
+// Window private
+void kl::key::update(const bool new_state)
 {
-    return state_;
-}
-
-void kl::key::update_state(const WPARAM type, const bool new_state)
-{
-    if (type == type_) {
-        if (!state_ && new_state) {
-            call_on_press();
-        }
-        else if (state_ && !new_state) {
-            call_on_release();
-        }
-        state_ = new_state;
+    if (!state_ && new_state) {
+        call_on_press();
     }
+    else if (state_ && !new_state) {
+        call_on_release();
+    }
+    state_ = new_state;
 }
 
 void kl::key::process() const
@@ -53,4 +40,10 @@ void kl::key::call_on_release() const
     for (auto& callback : on_release) {
         callback();
     }
+}
+
+// User access
+kl::key::operator bool() const
+{
+    return state_;
 }

@@ -19,7 +19,7 @@ namespace kl {
 
     public:
         video_reader(const std::string& filepath);
-        virtual ~video_reader();
+        ~video_reader();
 
         video_reader(const video_reader&) = delete;
         video_reader(const video_reader&&) = delete;

@@ -3,14 +3,6 @@
 #include "math/vector/float2.h"
 
 
-#ifdef KL_USING_PHYSX
-
-#include <PxPhysicsAPI.h>
-using namespace physx;
-
-#endif
-
-
 namespace kl {
     struct float3
     {
@@ -26,17 +18,9 @@ namespace kl {
         float3(const float2& vec, float z);
         float3(float x, const float2& vec);
 
-#ifdef KL_USING_PHYSX
-        float3(const PxVec3& vec);
-#endif
-
         // Get
         operator float* () const;
         operator kl::color() const;
-
-#ifdef KL_USING_PHYSX
-        operator PxVec3() const;
-#endif
 
         float2 xy() const;
 
@@ -57,8 +41,17 @@ namespace kl {
         float3 operator*(float value) const;
         void operator*=(float value);
 
-        float operator*(const float3& other) const;
+        float3 operator*(const float3& other) const;
+        void operator*=(const float3& other);
 
+        float3 operator/(float value) const;
+        void operator/=(float value);
+
+        float3 operator/(const float3& other) const;
+        void operator/=(const float3& other);
+
+        // Other
+        float3 operator-() const;
         float length() const;
     };
 }

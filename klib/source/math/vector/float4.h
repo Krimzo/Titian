@@ -24,17 +24,9 @@ namespace kl {
         float4(const float3& vec, float w);
         float4(float x, const float3& vec);
 
-#ifdef KL_USING_PHYSX
-        float4(const PxQuat& quat);
-#endif
-
         // Get
         operator float* () const;
         operator kl::color() const;
-
-#ifdef KL_USING_PHYSX
-        operator PxQuat() const;
-#endif
 
         float2 xy() const;
         float3 xyz() const;
@@ -56,8 +48,17 @@ namespace kl {
         float4 operator*(float value) const;
         void operator*=(float value);
 
-        float operator*(const float4& other) const;
+        float4 operator*(const float4& other) const;
+        void operator*=(const float4& other);
 
+        float4 operator/(float value) const;
+        void operator/=(float value);
+
+        float4 operator/(const float4& other) const;
+        void operator/=(const float4& other);
+
+        // Other
+        float4 operator-() const;
         float length() const;
     };
 }

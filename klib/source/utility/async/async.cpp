@@ -1,59 +1,57 @@
 #include "utility/async/async.h"
 
 
-class custom_iterator
+class async_iterator
 {
 public:
     using value_type = int64_t;
     using pointer = value_type*;
     using reference = value_type&;
 
-    using iterator_category = std::forward_iterator_tag;
-    using difference_type = std::ptrdiff_t;
+    using iterator_category = std::random_access_iterator_tag;
+    using difference_type = value_type;
 
 private:
-    value_type value = 0;
+    value_type value_ = {};
 
 public:
-    custom_iterator() {}
-
-    custom_iterator(value_type value) : value(value) {}
+    async_iterator() {}
+    async_iterator(value_type value)
+        : value_(value)
+    {}
 
     reference operator*()
     {
-        return value;
+        return value_;
     }
 
-    pointer operator->()
+    void operator++()
     {
-        return &value;
+        value_ += 1;
     }
 
-    custom_iterator& operator++()
+    void operator--()
     {
-        value += 1;
-        return *this;
+        value_ -= 1;
     }
 
-    custom_iterator operator++(int)
+    difference_type operator+(const async_iterator& iter) const
     {
-        custom_iterator temp = *this;
-        ++(*this);
-        return temp;
+        return (value_ + iter.value_);
     }
 
-    friend bool operator==(const custom_iterator& first, const custom_iterator& second)
+    difference_type operator-(const async_iterator& iter) const
     {
-        return first.value == second.value;
+        return (value_ - iter.value_);
     }
 
-    friend bool operator!=(const custom_iterator& first, const custom_iterator& second)
+    bool operator==(const async_iterator& second) const
     {
-        return first.value != second.value;
+        return (value_ == second.value_);
     }
 };
 
 void kl::async::loop(const int64_t start_inclusive, const int64_t end_exclusive, const std::function<void(int64_t)>& loop_body)
 {
-    std::for_each(std::execution::par, custom_iterator(start_inclusive), custom_iterator(end_exclusive), loop_body);
+    std::for_each(std::execution::par, async_iterator(start_inclusive), async_iterator(end_exclusive), loop_body);
 }

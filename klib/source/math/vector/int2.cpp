@@ -114,6 +114,12 @@ void kl::int2::operator/=(const int2& other)
     y /= other.y;
 }
 
+// Other
+kl::int2 kl::int2::operator-() const
+{
+    return *this * -1;
+}
+
 // Format
 std::ostream& kl::operator<<(std::ostream& stream, const int2& vec)
 {

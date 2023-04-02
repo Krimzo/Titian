@@ -26,7 +26,7 @@ namespace kl {
         // Creation
         gpu();
         gpu(HWND window);
-        virtual ~gpu();
+        ~gpu();
 
         gpu(const gpu&) = delete;
         gpu(const gpu&&) = delete;
@@ -45,6 +45,9 @@ namespace kl {
         // Chain
         dx::texture get_back_buffer() const;
         void swap_buffers(bool v_sync) const;
+
+        bool in_fullscreen() const;
+        void set_fullscreen(bool enabled) const;
 
         // Internal buffers
         void clear_internal_color(const float4& color = {}) const;

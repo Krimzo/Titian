@@ -13,7 +13,7 @@ namespace kl {
     public:
         // Creation
         context_holder();
-        ~context_holder();
+        virtual ~context_holder();
 
         context_holder(const context_holder&) = delete;
         context_holder(const context_holder&&) = delete;
@@ -72,16 +72,17 @@ namespace kl {
         }
 
         // Meshes
-        UINT get_mesh_vertex_count(dx::buffer mesh) const;
+        UINT get_mesh_vertex_count(dx::buffer mesh, UINT stride) const;
 
-        void bind_mesh(dx::buffer mesh, UINT slot) const;
+        void bind_mesh(dx::buffer mesh, UINT slot, UINT offset, UINT stride) const;
         void unbind_mesh(UINT slot) const;
 
         void set_draw_type(D3D_PRIMITIVE_TOPOLOGY draw_type) const;
+        void draw(UINT vertex_count, UINT start_index) const;
 
         void draw_mesh(dx::buffer mesh) const;
         void draw_mesh(dx::buffer mesh, D3D_PRIMITIVE_TOPOLOGY draw_type) const;
-        void draw_mesh(dx::buffer mesh, D3D_PRIMITIVE_TOPOLOGY draw_type, UINT vertex_count, UINT start_index) const;
+        void draw_mesh(dx::buffer mesh, D3D_PRIMITIVE_TOPOLOGY draw_type, UINT stride) const;
 
         // Views
         void clear_target_view(dx::target_view view, const float4& color = {}) const;

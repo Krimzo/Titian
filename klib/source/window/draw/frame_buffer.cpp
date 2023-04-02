@@ -8,6 +8,12 @@ kl::frame_buffer::frame_buffer(const int2& size)
 kl::frame_buffer::~frame_buffer()
 {}
 
+void kl::frame_buffer::resize(const int2& size)
+{
+    buffer1_.resize(size);
+    buffer2_.resize(size);
+}
+
 kl::int2 kl::frame_buffer::size() const
 {
     return buffer1_.size();

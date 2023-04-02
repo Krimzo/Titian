@@ -1,4 +1,4 @@
-#include "render/entity/collider.h"
+#include "render/components/collider.h"
 
 #include "utility/utility.h"
 
@@ -6,7 +6,6 @@
 #ifdef KL_USING_PHYSX
 
 kl::collider::collider(PxPhysics* physics, const PxGeometry& geometry)
-	: physics_(physics)
 {
 	material_ = physics->createMaterial(0.25f, 0.25f, 0.25f);
 	error_check(!material_, "Failed to create collider material");
@@ -39,7 +38,7 @@ kl::float4x4 kl::collider::scaling_matrix() const
 	{
 		PxBoxGeometry geometry = {};
 		shape_->getBoxGeometry(geometry);
-		return float4x4::scaling(geometry.halfExtents);
+		return float4x4::scaling((float3&) geometry.halfExtents);
 	}
 
 	case PxGeometryType::Enum::eSPHERE:
@@ -65,7 +64,7 @@ kl::float4x4 kl::collider::scaling_matrix() const
 	{
 		PxTriangleMeshGeometry geomtry = {};
 		shape_->getTriangleMeshGeometry(geomtry);
-		return float4x4::scaling(geomtry.scale.scale);
+		return float4x4::scaling((float3&) geomtry.scale.scale);
 	}
 	}
 	return {};
@@ -75,27 +74,27 @@ kl::float4x4 kl::collider::scaling_matrix() const
 void kl::collider::set_rotation(const float3& rotation)
 {
 	PxTransform transform = shape_->getLocalPose();
-	transform.q = math::to_quaternion(rotation);
+	transform.q = (PxQuat&) to_quaternion(rotation);
 	shape_->setLocalPose(transform);
 }
 
 kl::float3 kl::collider::get_rotation() const
 {
 	const PxTransform transform = shape_->getLocalPose();
-	return math::to_euler(transform.q);
+	return to_euler((float4&) transform.q);
 }
 
 void kl::collider::set_offset(const float3& position)
 {
 	PxTransform transform = shape_->getLocalPose();
-	transform.p = position;
+	transform.p = (PxVec3&) position;
 	shape_->setLocalPose(transform);
 }
 
 kl::float3 kl::collider::get_offset() const
 {
 	const PxTransform transform = shape_->getLocalPose();
-	return transform.p;
+	return (float3&) transform.p;
 }
 
 // Material

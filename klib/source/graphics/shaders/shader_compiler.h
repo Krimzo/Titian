@@ -9,7 +9,7 @@ namespace kl {
     public:
         // Creation
         shader_compiler();
-        ~shader_compiler();
+        virtual ~shader_compiler();
 
         // Compiling
         compiled_shader compile(const std::string& name, const std::string& version, const std::string& source) const;

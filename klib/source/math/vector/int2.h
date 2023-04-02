@@ -48,6 +48,9 @@ namespace kl {
 
         int2 operator/(const int2& other) const;
         void operator/=(const int2& other);
+
+        // Other
+        int2 operator-() const;
     };
 }
 

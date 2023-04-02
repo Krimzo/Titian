@@ -27,7 +27,7 @@ struct editor_state
     std::unordered_map<std::string, kl::dx::raster_state> raster_states = {};
 
     // Graphics buffers
-    std::unordered_map<std::string, kl::render_shaders> shaders = {};
+    std::unordered_map<std::string, kl::render_shaders> render_shaders = {};
 
     // Default Components
     std::unordered_map<std::string, kl::ref<kl::mesh>> default_meshes = {};
@@ -41,7 +41,7 @@ struct editor_state
     gui_state gui_state = { gpu };
 
     editor_state();
-    virtual ~editor_state();
+    ~editor_state();
 
     editor_state(editor_state&) = delete;
     editor_state(editor_state&&) = delete;

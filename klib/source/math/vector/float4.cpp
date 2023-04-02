@@ -1,5 +1,7 @@
 #include "math/vector/float4.h"
 
+#include "math/math.h"
+
 
 // Construct
 kl::float4::float4()
@@ -37,12 +39,6 @@ kl::float4::float4(float x, const float3& vec)
     : x(x), y(vec.x), z(vec.y), w(vec.z)
 {}
 
-#ifdef KL_USING_PHYSX
-kl::float4::float4(const PxQuat& quat)
-    : float4(*(float4*) &quat)
-{}
-#endif
-
 // Get
 kl::float4::operator float* () const
 {
@@ -52,19 +48,12 @@ kl::float4::operator float* () const
 kl::float4::operator kl::color() const
 {
     return {
-        (byte) min(max((int) (x * math::to_byte_color), 0), 255),
-        (byte) min(max((int) (y * math::to_byte_color), 0), 255),
-        (byte) min(max((int) (z * math::to_byte_color), 0), 255),
-        (byte) min(max((int) (w * math::to_byte_color), 0), 255),
+        (byte) min(max((int) (x * to_byte_color), 0), 255),
+        (byte) min(max((int) (y * to_byte_color), 0), 255),
+        (byte) min(max((int) (z * to_byte_color), 0), 255),
+        (byte) min(max((int) (w * to_byte_color), 0), 255),
     };
 }
-
-#ifdef KL_USING_PHYSX
-kl::float4::operator physx::PxQuat() const
-{
-    return *(PxQuat*) this;
-}
-#endif
 
 kl::float2 kl::float4::xy() const
 {
@@ -137,14 +126,53 @@ void kl::float4::operator*=(const float value)
     w *= value;
 }
 
-float kl::float4::operator*(const float4& other) const
+kl::float4 kl::float4::operator*(const float4& other) const
 {
-    return (x * other.x + y * other.y + z * other.z + w * other.w);
+    return { x * other.x, y * other.y, z * other.z, w * other.w };
+}
+
+void kl::float4::operator*=(const float4& other)
+{
+    x *= other.x;
+    y *= other.y;
+    z *= other.z;
+    w *= other.w;
+}
+
+kl::float4 kl::float4::operator/(const float value) const
+{
+    return { x / value, y / value, z / value, w / value };
+}
+
+void kl::float4::operator/=(const float value)
+{
+    x /= value;
+    y /= value;
+    z /= value;
+    w /= value;
+}
+
+kl::float4 kl::float4::operator/(const float4& other) const
+{
+    return { x / other.x, y / other.y, z / other.z, w / other.w };
+}
+
+void kl::float4::operator/=(const float4& other)
+{
+    x /= other.x;
+    y /= other.y;
+    z /= other.z;
+    w /= other.w;
+}
+
+kl::float4 kl::float4::operator-() const
+{
+    return *this * -1.0f;
 }
 
 float kl::float4::length() const
 {
-    return sqrt(*this * *this);
+    return sqrt(dot(*this, *this));
 }
 
 // Format

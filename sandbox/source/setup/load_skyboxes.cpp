@@ -11,7 +11,7 @@ void load_skyboxes(editor_state* state)
 
 kl::ref<kl::texture> parse_skybox(editor_state* state, const std::string& path)
 {
-    auto texture = kl::make<kl::texture>(state->gpu, kl::image(path), true);
-    texture->create_shader_view();
+    auto texture = kl::make<kl::texture>(state->gpu.get(), kl::image(path), true);
+    texture->create_shader_view(state->gpu.get());
     return texture;
 }

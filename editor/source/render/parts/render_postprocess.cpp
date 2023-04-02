@@ -8,7 +8,7 @@ void render_postprocess(editor_state* state)
     state->gpu->bind_raster_state(state->raster_states["postprocess"]);
     state->gpu->bind_depth_state(state->depth_states["postprocess"]);
 
-    state->gpu->bind_render_shaders(state->shaders["postprocess"]);
+    state->gpu->bind_render_shaders(state->render_shaders["postprocess"]);
 
     state->gpu->bind_shader_view_for_pixel_shader(state->render_state->picking_shader_view, 0);
 

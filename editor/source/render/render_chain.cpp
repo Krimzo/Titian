@@ -13,7 +13,7 @@ void render_chain(editor_state* state)
     if (state->scene && state->scene->camera) {
         // Pre-render
         if (state->scene->directional_light) {
-            state->gpu->set_viewport_size(kl::int2(state->scene->directional_light->get_map_resolution()));
+            state->gpu->set_viewport_size(kl::int2(state->scene->directional_light->map_resolution));
             state->gpu->unbind_target_depth_views();
             render_shadows(state);
         }
@@ -22,7 +22,7 @@ void render_chain(editor_state* state)
         state->gpu->set_viewport_size(state->render_state->target_size);
         state->gpu->bind_target_depth_views({ state->render_state->render_target_view, state->render_state->picking_target_view }, state->gpu->get_internal_depth());
         state->scene->camera->update_aspect_ratio(state->render_state->target_size);
-        state->render_state->clear_targets(background);
+        state->render_state->clear_targets(state->gpu, background);
 
         if (state->scene->camera->skybox) {
             render_skybox(state);

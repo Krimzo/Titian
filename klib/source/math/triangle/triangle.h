@@ -14,7 +14,10 @@ namespace kl {
         triangle();
         triangle(const vertex& a, const vertex& b, const vertex& c);
 
-        // Math
+        // Normal
+        float3 get_normal() const;
+
+        // Interpolation
         float4 get_constants() const;
         float3 get_weights(const float4& constants, const float2& point) const;
         float3 get_weights(const float3& position) const;

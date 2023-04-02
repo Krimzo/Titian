@@ -117,8 +117,7 @@ kl::float4 kl::float4x4::operator*(const float4& vec) const
     float4 result = {};
     for (int y = 0; y < 4; y++) {
         for (int i = 0; i < 4; i++) {
-            const float vec_val = ((const float*) &vec)[i];
-            ((float*) &result)[y] += (*this)(i, y) * vec_val;
+            result[y] += (*this)(i, y) * vec[i];
         }
     }
     return result;
@@ -153,7 +152,7 @@ kl::float4x4 kl::float4x4::translation(const float3& translation)
 
 kl::float4x4 kl::float4x4::rotation(const float3& rotation)
 {
-    const float x_rad = rotation.x * math::to_radians;
+    const float x_rad = rotation.x * to_radians;
     const float x_sin = sin(x_rad);
     const float x_cos = cos(x_rad);
 
@@ -163,7 +162,7 @@ kl::float4x4 kl::float4x4::rotation(const float3& rotation)
     x_rot[9] = x_sin;
     x_rot[10] = x_cos;
 
-    const float y_rad = rotation.y * math::to_radians;
+    const float y_rad = rotation.y * to_radians;
     const float y_sin = sin(y_rad);
     const float y_cos = cos(y_rad);
 
@@ -173,7 +172,7 @@ kl::float4x4 kl::float4x4::rotation(const float3& rotation)
     y_rot[8] = -y_sin;
     y_rot[10] = y_cos;
 
-    const float z_rad = rotation.z * math::to_radians;
+    const float z_rad = rotation.z * to_radians;
     const float z_sin = sin(z_rad);
     const float z_cos = cos(z_rad);
 
@@ -197,7 +196,7 @@ kl::float4x4 kl::float4x4::scaling(const float3& scale)
 
 kl::float4x4 kl::float4x4::perspective(float field_of_view, float aspect_ratio, float near_plane, float far_plane)
 {
-    const float tan_half = 1.0f / tan(field_of_view * 0.5f * math::to_radians);
+    const float tan_half = 1.0f / tan(field_of_view * 0.5f * to_radians);
 
     float4x4 result = {};
     result[0] = tan_half / aspect_ratio;
@@ -223,23 +222,23 @@ kl::float4x4 kl::float4x4::orthographic(float left, float right, float bottom, f
 
 kl::float4x4 kl::float4x4::look_at(const float3& position, const float3& target, const float3& up)
 {
-    const float3 f = math::normalize(target - position);
-    const float3 s = math::normalize(math::cross(up, f));
-    const float3 u = math::cross(f, s);
+    const float3 f = normalize(target - position);
+    const float3 s = normalize(cross(up, f));
+    const float3 u = cross(f, s);
 
     float4x4 result = {};
     result[0] = s.x;
     result[1] = s.y;
     result[2] = s.z;
-    result[3] = -(s * position);
+    result[3] = -dot(s, position);
     result[4] = u.x;
     result[5] = u.y;
     result[6] = u.z;
-    result[7] = -(u * position);
+    result[7] = -dot(u, position);
     result[8] = f.x;
     result[9] = f.y;
     result[10] = f.z;
-    result[11] = -(f * position);
+    result[11] = -dot(f, position);
     return result;
 }
 

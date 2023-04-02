@@ -1,7 +1,9 @@
 #pragma once
 
+#include "render/components/texture.h"
 #include "render/scene/camera.h"
 #include "graphics/graphics.h"
+#include "memory/memory.h"
 
 
 namespace kl {
@@ -12,17 +14,15 @@ namespace kl {
         static constexpr float CASCADE_SPLITS[CASCADE_COUNT + 1] = { 0.0f, 0.075f, 0.2f, 0.5f, 1.0f };
 
     private:
-        float3 direction_ = { 0, 0, 1 };
-        UINT map_resolution_ = 0;
-
-        dx::depth_view shadow_depth_views_[CASCADE_COUNT] = {};
-        dx::shader_view shadow_shader_views_[CASCADE_COUNT] = {};
+        float3 direction_ = { 0.0f, 0.0f, 1.0f };
+        ref<texture> cascades_[CASCADE_COUNT] = {};
 
     public:
+        const UINT map_resolution;
         float point_size = 1.0f;
 
-        directional_light(gpu& gpu, UINT map_resolution);
-        virtual ~directional_light();
+        directional_light(gpu* gpu, UINT map_resolution);
+        ~directional_light();
 
         directional_light(const directional_light&) = delete;
         directional_light(const directional_light&&) = delete;
@@ -32,8 +32,6 @@ namespace kl {
 
         void set_direction(const float3& direction);
         float3 get_direction() const;
-
-        UINT get_map_resolution() const;
 
         dx::depth_view get_depth_view(UINT cascade_index) const;
         dx::shader_view get_shader_view(UINT cascade_index) const;

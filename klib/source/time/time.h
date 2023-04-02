@@ -9,15 +9,12 @@
 
 
 namespace kl::time {
-    time_t now();
+    uint64_t now();
+    uint64_t cpu_frequency();
 
-    size_t cpu_frequency();
-
-    float calculate(time_t start, time_t end);
-
+    float calculate(uint64_t start, uint64_t end);
     float get_interval();
 
     void wait(float seconds);
-
     bool sleep(float seconds);
 }

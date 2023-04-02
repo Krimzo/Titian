@@ -15,7 +15,7 @@ kl::compiled_shader kl::shader_compiler::compile(const std::string& name, const 
 {
     compiled_shader compiled_shader = {};
     D3DCompile(source.c_str(), source.size(), nullptr, nullptr, nullptr, name.c_str(), version.c_str(), NULL, NULL, &compiled_shader.data, &compiled_shader.error);
-    warning_check(!compiled_shader.data, kl::format("Failed to compile ", name, ". Error: ", compiled_shader.get_error()));
+    warning_check(!compiled_shader, kl::format(name, ": ", compiled_shader.get_error()));
     return compiled_shader;
 }
 

@@ -15,19 +15,19 @@ kl::color::color(const byte r, const byte g, const byte b, const byte a)
 kl::color::operator kl::float3() const
 {
     return {
-        r * math::to_float_color,
-        g * math::to_float_color,
-        b * math::to_float_color,
+        r * to_float_color,
+        g * to_float_color,
+        b * to_float_color,
     };
 }
 
 kl::color::operator kl::float4() const
 {
     return {
-        r * math::to_float_color,
-        g * math::to_float_color,
-        b * math::to_float_color,
-        a * math::to_float_color,
+        r * to_float_color,
+        g * to_float_color,
+        b * to_float_color,
+        a * to_float_color,
     };
 }
 
@@ -45,7 +45,7 @@ bool kl::color::operator!=(const color& other) const
 // Methods
 kl::color kl::color::gray() const
 {
-    const float float_value = (r * 0.3f + g * 0.585f + b * 0.115f);
+    const float float_value = (r * 0.299f + g * 0.587f + b * 0.114f);
     const byte gray_value = min(max((int) float_value, 0), 255);
     return { gray_value, gray_value, gray_value, a };
 }
@@ -74,7 +74,7 @@ kl::color kl::color::mix(const color& color, float ratio) const
 
 kl::color kl::color::mix(const color& color) const
 {
-    return mix(color, color.a * math::to_float_color);
+    return mix(color, color.a * to_float_color);
 }
 
 // Format

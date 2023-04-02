@@ -35,8 +35,17 @@ namespace kl {
         float2 operator*(float value) const;
         void operator*=(float value);
 
-        float operator*(const float2& other) const;
+        float2 operator*(const float2& other) const;
+        void operator*=(const float2& other);
 
+        float2 operator/(float value) const;
+        void operator/=(float value);
+
+        float2 operator/(const float2& other) const;
+        void operator/=(const float2& other);
+
+        // Other
+        float2 operator-() const;
         float length() const;
     };
 }

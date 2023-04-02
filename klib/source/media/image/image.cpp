@@ -56,6 +56,18 @@ bool kl::image::in_bounds(const int2& coords) const
     return (coords.x >= 0 && coords.y >= 0 && coords.x < size_.x && coords.y < size_.y);
 }
 
+kl::color kl::image::sample(const float2& uv) const
+{
+    const int2 coords = {
+        (int) (uv.x * size_.x),
+        (int) (uv.y * size_.y),
+    };
+    if (in_bounds(coords)) {
+        return (*this)[coords];
+    }
+    return {};
+}
+
 // Iterate
 kl::pixel_storage::iterator kl::image::begin()
 {
@@ -208,7 +220,7 @@ std::string kl::image::as_ascii(const int2& frame_size) const
 // Draw
 void kl::image::draw_line(const int2& from, const int2& to, const color& color)
 {
-    const int length = max(abs(to.x - from.x), abs(to.y - from.y));
+    const int length = max(::abs(to.x - from.x), ::abs(to.y - from.y));
     const float2 increment = { (to.x - from.x) / (float) length, (to.y - from.y) / (float) length };
 
     float2 draw_point = from;
@@ -245,8 +257,8 @@ void kl::image::draw_triangle(int2 position_a, int2 position_b, int2 position_c,
         const float2 flt_pos_c = position_b;
 
         draw_line(
-            { (int) math::line_x((y < position_b.y) ? flt_pos_a : flt_pos_c, flt_pos_b, (float) y), y },
-            { (int) math::line_x(flt_pos_a, flt_pos_c, (float) y), y },
+            { (int) line_x((y < position_b.y) ? flt_pos_a : flt_pos_c, flt_pos_b, (float) y), y },
+            { (int) line_x(flt_pos_a, flt_pos_c, (float) y), y },
             color
         );
     }
@@ -366,17 +378,18 @@ bool kl::image::save_to_file(const std::string& filepath) const
 
     if (extension == ".txt") {
         std::ofstream file(filepath);
-        if (file.is_open()) {
-            for (int y = 0; y < size_.y; y++) {
-                for (int x = 0; x < size_.x; x++) {
-                    const color pixel = (*this)[y * size_.x + x];
-                    write(file, x, " ", y, " => ", (int) pixel.r, " ", (int) pixel.g, " ", (int) pixel.b);
-                }
-            }
-            file.close();
-            return true;
+        if (!file) {
+            return false;
         }
-        return false;
+
+        for (int y = 0; y < size_.y; y++) {
+            for (int x = 0; x < size_.x; x++) {
+                const color pixel = (*this)[y * size_.x + x];
+                write(file, x, " ", y, " => ", (int) pixel.r, " ", (int) pixel.g, " ", (int) pixel.b);
+            }
+        }
+        file.close();
+        return true;
     }
 
     const CLSID* format_to_use;

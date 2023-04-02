@@ -1,25 +1,23 @@
 #pragma once
 
-#include "render/entity/mesh.h"
-#include "render/entity/collider.h"
-#include "render/entity/material.h"
-#include "memory/memory.h"
+#include "render/components/mesh.h"
+#include "render/components/material.h"
+#include "render/components/collider.h"
 
 
-namespace kl {
 #ifdef KL_USING_PHYSX
 
+namespace kl {
     class entity
     {
-        PxPhysics* physics_ = nullptr;
         PxRigidActor* physics_actor_ = nullptr;
         ref<collider> collider_ = nullptr;
 
-        void regenerate_actor(const PxTransform& transform, bool dynamic);
+        void regenerate_actor(PxPhysics* physics, const PxTransform& transform, bool dynamic);
         void wake_up() const;
 
     public:
-        const uint32_t unique_index;
+        const uint64_t unique_index;
         float3 render_scale = float3(1.0f);
 
         ref<mesh> mesh = nullptr;
@@ -27,7 +25,7 @@ namespace kl {
 
         // Creation
         entity(PxPhysics* physics, bool dynamic);
-        virtual ~entity();
+        ~entity();
 
         entity(const entity&) = delete;
         entity(const entity&&) = delete;
@@ -48,7 +46,7 @@ namespace kl {
         float3 get_position() const;
 
         // Physics
-        void set_dynamic(bool enabled);
+        void set_dynamic(PxPhysics* physics, bool enabled);
         bool is_dynamic() const;
 
         void set_gravity(bool enabled);
@@ -67,9 +65,11 @@ namespace kl {
         void set_collider(ref<collider> collider);
         ref<collider> get_collider() const;
     };
+}
 
 #else
 
+namespace kl {
     class entity
     {
     public:
@@ -81,16 +81,16 @@ namespace kl {
         float3 velocity = {};
         float3 angular = {};
 
-        mesh mesh = nullptr;
-        ref<material> material = make<kl::material>();
+        ref<mesh> mesh = nullptr;
+        ref<material> material = nullptr;
 
         entity();
-        virtual ~entity();
+        ~entity();
 
         void update_physics(float delta_t);
 
         float4x4 matrix() const;
     };
+}
 
 #endif
-}

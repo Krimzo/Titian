@@ -110,6 +110,19 @@ void kl::gpu::swap_buffers(const bool v_sync) const
     chain_->Present(v_sync, NULL);
 }
 
+bool kl::gpu::in_fullscreen() const
+{
+    BOOL result = false;
+    IDXGIOutput* ignored = nullptr;
+    chain_->GetFullscreenState(&result, &ignored);
+    return (bool) result;
+}
+
+void kl::gpu::set_fullscreen(const bool enabled) const
+{
+    chain_->SetFullscreenState(enabled, nullptr);
+}
+
 // Internal buffers
 void kl::gpu::clear_internal_color(const float4& color) const
 {
@@ -200,10 +213,5 @@ kl::render_shaders kl::gpu::create_render_shaders(const std::string& shader_sour
 {
     const compiled_shader compiled_vertex_shader = compile_vertex_shader(shader_sources);
     const compiled_shader compiled_pixel_shader = compile_pixel_shader(shader_sources);
-
-    render_shaders shaders = {};
-    shaders.input_layout = create_input_layout(compiled_vertex_shader);
-    shaders.vertex_shader = device_holder::create_vertex_shader(compiled_vertex_shader);
-    shaders.pixel_shader = device_holder::create_pixel_shader(compiled_pixel_shader);
-    return shaders;
+    return device_holder::create_render_shaders(compiled_vertex_shader, compiled_pixel_shader);
 }

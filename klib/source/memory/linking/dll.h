@@ -13,12 +13,12 @@ namespace kl {
         using function = Return(__stdcall*)(Args...);
 
     private:
-        std::string path = "";
-        HMODULE module = nullptr;
+        std::string path_ = "";
+        HMODULE module_ = nullptr;
 
     public:
         dll();
-        explicit dll(const std::string& path);
+        dll(const std::string& path);
         ~dll();
 
         dll(const dll&) = delete;
@@ -27,18 +27,20 @@ namespace kl {
         void operator=(const dll&) = delete;
         void operator=(const dll&&) = delete;
 
+        operator bool() const;
+
         void load(const std::string& path);
-
         void reload();
-
         void unload();
 
-        bool is_valid();
-
         template<typename Return, typename... Args>
-        function<Return, Args...> load_function(const std::string& function_name)
+        function<Return, Args...> get_function(const std::string& function_name)
         {
-            return (function<Return, Args...>) (module ? GetProcAddress(module, function_name.c_str()) : nullptr);
+            if (!module_) {
+                return nullptr;
+            }
+            auto function_address = GetProcAddress(module_, function_name.c_str());
+            return (function<Return, Args...>) function_address;
         }
     };
 }

@@ -33,9 +33,9 @@ kl::scene::scene()
 
 kl::scene::~scene()
 {
-    meshes.clear();
-    textures.clear();
     materials.clear();
+    textures.clear();
+    meshes.clear();
 
     selected_entity = nullptr;
     while (!entities_.empty()) {
@@ -96,13 +96,13 @@ size_t kl::scene::entity_count() const
 // Set/Get
 void kl::scene::set_gravity(const float3& gravity)
 {
-    scene_->setGravity({ gravity.x, gravity.y, gravity.z });
+    scene_->setGravity((const PxVec3&) gravity);
 }
 
 kl::float3 kl::scene::get_gravity() const
 {
     const PxVec3 gravity = scene_->getGravity();
-    return { gravity.x, gravity.y, gravity.z };
+    return (const float3&) gravity;
 }
 
 void kl::scene::add(const std::string& name, ref<entity> entity)
@@ -114,22 +114,22 @@ void kl::scene::add(const std::string& name, ref<entity> entity)
 void kl::scene::remove(const std::string& name)
 {
     if (entities_.contains(name)) {
-        scene_->removeActor(*entities_[name]->get_actor());
+        scene_->removeActor(*entities_.at(name)->get_actor());
         entities_.erase(name);
     }
 }
 
 // Scene properties
-kl::ref<kl::entity> kl::scene::update_selected_entity(uint32_t index)
+kl::ref<kl::entity> kl::scene::update_selected_entity(const uint32_t index)
 {
     if (index != 0) {
         for (auto& [name, entity] : *this) {
             if (entity->unique_index == index) {
-                return (selected_entity = entity);
+                return selected_entity = entity;
             }
         }
     }
-    return (selected_entity = nullptr);
+    return selected_entity = nullptr;
 }
 
 void kl::scene::update_physics(float delta_t)
@@ -144,10 +144,10 @@ kl::ref<kl::entity> kl::scene::make_entity(bool dynamic)
     return make<entity>(physics_, dynamic);
 }
 
-// Colliders
+// Dynamic colliders
 kl::ref<kl::collider> kl::scene::make_box_collider(const float3& scale)
 {
-    return make<collider>(physics_, PxBoxGeometry(scale));
+    return make<collider>(physics_, PxBoxGeometry((PxVec3&) scale));
 }
 
 kl::ref<kl::collider> kl::scene::make_sphere_collider(float radius)
@@ -160,6 +160,7 @@ kl::ref<kl::collider> kl::scene::make_capsule_collider(float radius, float heigh
     return make<collider>(physics_, PxCapsuleGeometry(radius, height));
 }
 
+// Static colliders
 kl::ref<kl::collider> kl::scene::make_plane_collider()
 {
     return make<collider>(physics_, PxPlaneGeometry());
@@ -167,9 +168,10 @@ kl::ref<kl::collider> kl::scene::make_plane_collider()
 
 kl::ref<kl::collider> kl::scene::make_mesh_collider(const mesh& mesh, const float3& scale)
 {
-    return make<collider>(physics_, PxTriangleMeshGeometry(mesh.physics_buffer, (PxVec3) scale));
+    return make<collider>(physics_, PxTriangleMeshGeometry(mesh.physics_buffer, (PxVec3&) scale));
 }
 
+// Default collider
 kl::ref<kl::collider> kl::scene::make_default_collider(PxGeometryType::Enum type, const mesh* optional_mesh)
 {
     switch (type) {

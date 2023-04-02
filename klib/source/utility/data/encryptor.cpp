@@ -1,58 +1,55 @@
 #include "utility/data/encryptor.h"
 
 
-kl::encryptor::encryptor()
+// Private
+bool kl::encryptor::key_size_exists(const size_t size) const
 {
-    regenerate_keys();
+    for (auto& key : *this) {
+        if (key.size() == size) {
+            return true;
+        }
+    }
+    return false;
 }
 
-void kl::encryptor::regenerate_keys()
+// Public
+kl::encryptor::encryptor()
 {
-    for (auto& key : keys) {
+    for (auto& key : *this) {
         size_t key_size = 0;
-
-        do {
-            key_size = rand() % 7 + 2;
-        }
-        while ([&]
-        {
-            for (auto& key : keys) {
-                if (key.size() == key_size) {
-                    return true;
-                }
-            }
-            return false;
-        }());
+        do { key_size = (size_t) rand() % 7 + 2; }
+        while (key_size_exists(key_size));
 
         key.resize(key_size);
         for (auto& value : key) {
-            value = (uint8_t) (rand() % 256);
+            value = (byte) (rand() % 256);
         }
     }
 }
 
-void kl::encryptor::encrypt(void* data, const size_t size) const
+void kl::encryptor::encrypt(void* data, const size_t byte_size) const
 {
-    for (auto& key : keys) {
-        for (size_t i = 0; i < size; i++) {
-            ((uint8_t*) data)[i] ^= key[i % key.size()];
+    for (auto& key : *this) {
+        for (size_t i = 0; i < byte_size; i++) {
+            ((byte*) data)[i] ^= key[i % key.size()];
         }
     }
 }
 
-void kl::encryptor::decrypt(void* data, const size_t size) const
+void kl::encryptor::decrypt(void* data, const size_t byte_size) const
 {
-    encrypt(data, size);
+    encrypt(data, byte_size);
 }
 
-std::ostream& kl::operator<<(std::ostream& os, const encryptor& encryptor)
+// Format
+std::ostream& kl::operator<<(std::ostream& stream, const encryptor& encryptor)
 {
-    for (int i = 0; i < 5; i++) {
-        os << "keys[" << i << "] = { ";
-        for (size_t k = 0; k < encryptor.keys[i].size() - 1; k++) {
-            os << int(encryptor.keys[i][k]) << ", ";
+    for (int i = 0; i < encryptor_key_count; i++) {
+        stream << "keys[" << i << "] = { ";
+        for (size_t k = 0; k < (encryptor[i].size() - 1); k++) {
+            stream << (int) encryptor[i][k] << ", ";
         }
-        os << int(encryptor.keys[i].back()) << " }" << std::endl;
+        stream << (int) encryptor[i].back() << " }" << std::endl;
     }
-    return os;
+    return stream;
 }

@@ -8,7 +8,7 @@ void render_scene(editor_state* state)
     state->gpu->bind_raster_state(state->render_wireframe ? state->raster_states["wireframe"] : state->raster_states["entity"]);
     state->gpu->bind_depth_state(state->depth_states["entity"]);
 
-    state->gpu->bind_render_shaders(state->shaders["entity"]);
+    state->gpu->bind_render_shaders(state->render_shaders["entity"]);
 
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states["skybox"], 0);
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states["shadow"], 1);
@@ -29,7 +29,7 @@ void render_scene(editor_state* state)
     }
 
     entity_render_ps_cb ps_cb = {};
-    ps_cb.camera_info = { state->scene->camera->position, 0 };
+    ps_cb.camera_info = { state->scene->camera->origin, 0 };
     ps_cb.v_matrix = state->scene->camera->view_matrix();
 
     if (state->scene->ambient_light) {
@@ -39,9 +39,9 @@ void render_scene(editor_state* state)
     if (state->scene->directional_light) {
         ps_cb.directional_light = { state->scene->directional_light->get_direction(), state->scene->directional_light->point_size };
 
-        ps_cb.shadow_map_info = { kl::float2((float) state->scene->directional_light->get_map_resolution()), kl::float2(1.0f / state->scene->directional_light->get_map_resolution()) };
+        ps_cb.shadow_map_info = { kl::float2((float) state->scene->directional_light->map_resolution), kl::float2(1.0f / state->scene->directional_light->map_resolution) };
         for (int i = 0; i < kl::directional_light::CASCADE_COUNT; i++) {
-            ps_cb.cascade_distances[i] = kl::math::interpolate(state->scene->directional_light->CASCADE_SPLITS[i + 1], state->scene->camera->near_plane, state->scene->camera->far_plane);
+            ps_cb.cascade_distances[i] = kl::interpolate(state->scene->directional_light->CASCADE_SPLITS[i + 1], state->scene->camera->near_plane, state->scene->camera->far_plane);
         }
     }
 

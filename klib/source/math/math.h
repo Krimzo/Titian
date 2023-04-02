@@ -24,7 +24,16 @@
 #include "math/ray/ray.h"
 
 
-namespace kl::math {
+namespace kl {
+    // Deg trig
+    float sin_deg(float angle_in_deg);
+    float cos_deg(float angle_in_deg);
+    float tan_deg(float angle_in_deg);
+
+    float asin_deg(float value);
+    float acos_deg(float value);
+    float atan_deg(float value);
+
     // Lines
     float line_x(const float2& a, const float2& b, float y);
     float line_y(const float2& a, const float2& b, float x);
@@ -43,6 +52,7 @@ namespace kl::math {
     // Float2 operations
     float2 abs(const float2& vec);
     float2 normalize(const float2& vec);
+    float dot(const float2& first, const float2& second);
     float angle(const float2& first, const float2& second, bool full);
     float2 rotate(const float2& vec, float angle);
     float2 reflect(const float2& vec, const float2& point);
@@ -50,6 +60,7 @@ namespace kl::math {
     // Float3 operations
     float3 abs(const float3& vec);
     float3 normalize(const float3& vec);
+    float dot(const float3& first, const float3& second);
     float angle(const float3& first, const float3& second);
     float3 rotate(const float3& vec, const float3& axis, float angle);
     float3 reflect(const float3& first, float3 normal);
@@ -58,6 +69,7 @@ namespace kl::math {
     // Float4 operations
     float4 abs(const float4& vec);
     float4 normalize(const float4& vec);
+    float dot(const float4& first, const float4& second);
     float angle(const float4& first, const float4& second);
 
     // Float2x2
