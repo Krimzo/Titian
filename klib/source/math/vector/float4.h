@@ -27,6 +27,7 @@ namespace kl {
         // Get
         operator float* () const;
         operator kl::color() const;
+        operator kl::quaternion() const;
 
         float2 xy() const;
         float3 xyz() const;

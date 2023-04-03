@@ -26,6 +26,11 @@ kl::float2::operator kl::int2() const
     return { (int) x, (int) y };
 }
 
+kl::float2::operator kl::complex() const
+{
+    return *(const complex*) this;
+}
+
 float& kl::float2::operator[](int index)
 {
     return ((float*) this)[index];
@@ -114,6 +119,7 @@ void kl::float2::operator/=(const float2& other)
     y /= other.y;
 }
 
+// Other
 kl::float2 kl::float2::operator-() const
 {
     return *this * -1.0f;

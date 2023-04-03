@@ -59,24 +59,24 @@ float kl::interpolate(float value, const float lower, const float upper)
 }
 
 // Rotation
-kl::float4 kl::to_quaternion(const float3& euluer)
+kl::quaternion kl::to_quaternion(const float3& euler)
 {
-    const float cr = cos_deg(euluer.x * 0.5f);
-    const float sr = sin_deg(euluer.x * 0.5f);
-    const float cp = cos_deg(euluer.y * 0.5f);
-    const float sp = sin_deg(euluer.y * 0.5f);
-    const float cy = cos_deg(euluer.z * 0.5f);
-    const float sy = sin_deg(euluer.z * 0.5f);
+    const float cr = cos_deg(euler.x * 0.5f);
+    const float sr = sin_deg(euler.x * 0.5f);
+    const float cp = cos_deg(euler.y * 0.5f);
+    const float sp = sin_deg(euler.y * 0.5f);
+    const float cy = cos_deg(euler.z * 0.5f);
+    const float sy = sin_deg(euler.z * 0.5f);
 
     return {
+        cr * cp * cy + sr * sp * sy,
         sr * cp * cy - cr * sp * sy,
         cr * sp * cy + sr * cp * sy,
         cr * cp * sy - sr * sp * cy,
-        cr * cp * cy + sr * sp * sy,
     };
 }
 
-kl::float3 kl::to_euler(const float4& quaternion)
+kl::float3 kl::to_euler(const quaternion& quaternion)
 {
     const float       sin_p = +2.0f * (quaternion.w * quaternion.y - quaternion.z * quaternion.x) + 0.0f;
     const float sin_r_cos_p = +2.0f * (quaternion.w * quaternion.x + quaternion.y * quaternion.z) + 0.0f;
@@ -84,11 +84,48 @@ kl::float3 kl::to_euler(const float4& quaternion)
     const float sin_y_cos_p = +2.0f * (quaternion.w * quaternion.z + quaternion.x * quaternion.y) + 0.0f;
     const float cos_y_cos_p = -2.0f * (quaternion.y * quaternion.y + quaternion.z * quaternion.z) + 1.0f;
 
-    return {
-        atan2(sin_r_cos_p, cos_r_cos_p) * to_degrees,
-        ((::abs(sin_p) >= 1.0f) ? copysign(pi * 0.5f, sin_p) : asin(sin_p)) * to_degrees,
-        atan2(sin_y_cos_p, cos_y_cos_p) * to_degrees,
+    const float3 result = {
+        atan2(sin_r_cos_p, cos_r_cos_p),
+        (::abs(sin_p) >= 1.0f) ? copysign(pi * 0.5f, sin_p) : asin(sin_p),
+        atan2(sin_y_cos_p, cos_y_cos_p),
     };
+    return (result * to_degrees);
+}
+
+// Complex
+kl::complex kl::abs(const complex& num)
+{
+    return { ::abs(num.r), ::abs(num.i) };
+}
+
+kl::complex kl::normalize(const complex& num)
+{
+    return num * (1.0f / num.length());
+}
+
+kl::complex kl::inverse(const complex& num)
+{
+    const float sqr_sum = (num.r * num.r + num.i * num.i);
+    if (sqr_sum == 0.0f) {
+        return {};
+    }
+    return { num.r / sqr_sum, -num.i / sqr_sum };
+}
+
+// Quaternion
+kl::quaternion kl::abs(const quaternion& num)
+{
+    return { ::abs(num.w), ::abs(num.x), ::abs(num.y), ::abs(num.z) };
+}
+
+kl::quaternion kl::normalize(const quaternion& num)
+{
+    return num * (1.0f / num.length());
+}
+
+kl::quaternion kl::inverse(const quaternion& num)
+{
+    return { num.w, -num.x, -num.y, -num.z };
 }
 
 // Int2
@@ -161,27 +198,9 @@ float kl::angle(const float3& first, const float3& second)
 
 kl::float3 kl::rotate(const float3& vec, const float3& axis, const float angle)
 {
-    const float angle_sin = sin(angle * 0.5f * to_radians);
-    const float angle_cos = cos(angle * 0.5f * to_radians);
-    const float qx = axis.x * angle_sin;
-    const float qy = axis.y * angle_sin;
-    const float qz = axis.z * angle_sin;
-    const float x2 = qx * qx;
-    const float y2 = qy * qy;
-    const float z2 = qz * qz;
-    const float w2 = angle_cos * angle_cos;
-    const float xy = qx * qy;
-    const float xz = qx * qz;
-    const float yz = qy * qz;
-    const float xw = qx * angle_cos;
-    const float yw = qy * angle_cos;
-    const float zw = qz * angle_cos;
-
-    return {
-        vec.x * (w2 + x2 - z2 - y2) + vec.y * (-zw + xy - zw + xy) + vec.z * (yw + xz + xz + yw),
-        vec.x * (xy + zw + zw + xy) + vec.y * (y2 - z2 + w2 - x2) + vec.z * (yz + yz - xw - xw),
-        vec.x * (xz - yw + xz - yw) + vec.y * (yz + yz + xw + xw) + vec.z * (z2 - y2 - x2 + w2),
-    };
+    const quaternion quat = quaternion(axis, angle);
+    const quaternion inv_quat = inverse(quat);
+    return (quat * vec * inv_quat);
 }
 
 kl::float3 kl::reflect(const float3& first, float3 normal)

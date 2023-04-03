@@ -73,28 +73,30 @@ kl::float4x4 kl::collider::scaling_matrix() const
 // Geometry
 void kl::collider::set_rotation(const float3& rotation)
 {
+	const float4 quat = to_quaternion(rotation);
+
 	PxTransform transform = shape_->getLocalPose();
-	transform.q = (PxQuat&) to_quaternion(rotation);
+	transform.q = (const PxQuat&) quat;
 	shape_->setLocalPose(transform);
 }
 
 kl::float3 kl::collider::get_rotation() const
 {
 	const PxTransform transform = shape_->getLocalPose();
-	return to_euler((float4&) transform.q);
+	return to_euler((const float4&) transform.q);
 }
 
 void kl::collider::set_offset(const float3& position)
 {
 	PxTransform transform = shape_->getLocalPose();
-	transform.p = (PxVec3&) position;
+	transform.p = (const PxVec3&) position;
 	shape_->setLocalPose(transform);
 }
 
 kl::float3 kl::collider::get_offset() const
 {
 	const PxTransform transform = shape_->getLocalPose();
-	return (float3&) transform.p;
+	return (const float3&) transform.p;
 }
 
 // Material

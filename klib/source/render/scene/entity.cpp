@@ -53,27 +53,27 @@ void kl::entity::set_rotation(const float3& rotation)
     const float4 quat = to_quaternion(rotation);
 
     PxTransform transform = physics_actor_->getGlobalPose();
-    transform.q = (PxQuat&) quat;
+    transform.q = (const PxQuat&) quat;
     physics_actor_->setGlobalPose(transform);
 }
 
 kl::float3 kl::entity::get_rotation() const
 {
     const PxTransform transform = physics_actor_->getGlobalPose();
-    return to_euler((float4&) transform.q);
+    return to_euler((const float4&) transform.q);
 }
 
 void kl::entity::set_position(const float3& position)
 {
     PxTransform transform = physics_actor_->getGlobalPose();
-    transform.p = (PxVec3&) position;
+    transform.p = (const PxVec3&) position;
     physics_actor_->setGlobalPose(transform);
 }
 
 kl::float3 kl::entity::get_position() const
 {
     const PxTransform transform = physics_actor_->getGlobalPose();
-    return (float3&) transform.p;
+    return (const float3&) transform.p;
 }
 
 // Physics
@@ -130,7 +130,7 @@ void kl::entity::set_velocity(const float3& velocity)
 {
     if (is_dynamic()) {
         PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
-        actor->setLinearVelocity((PxVec3&) velocity);
+        actor->setLinearVelocity((const PxVec3&) velocity);
     }
 }
 
@@ -139,7 +139,7 @@ kl::float3 kl::entity::get_velocity() const
     if (is_dynamic()) {
         const PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
         const PxVec3 velocity = actor->getLinearVelocity();
-        return (float3&) velocity;
+        return (const float3&) velocity;
     }
     return {};
 }
@@ -148,7 +148,7 @@ void kl::entity::set_angular(const float3& angular)
 {
     if (is_dynamic()) {
         PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
-        actor->setAngularVelocity((PxVec3&) angular);
+        actor->setAngularVelocity((const PxVec3&) angular);
     }
 }
 
@@ -157,7 +157,7 @@ kl::float3 kl::entity::get_angular() const
     if (is_dynamic()) {
         const PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
         const PxVec3 angular = actor->getAngularVelocity();
-        return (float3&) angular;
+        return (const float3&) angular;
     }
     return {};
 }

@@ -4,6 +4,10 @@
 
 
 namespace kl {
+    struct complex;
+}
+
+namespace kl {
     struct float2
     {
         float x = 0.0f;
@@ -17,6 +21,7 @@ namespace kl {
         // Get
         operator float* () const;
         operator kl::int2() const;
+        operator kl::complex() const;
 
         float& operator[](int index);
         const float& operator[](int index) const;

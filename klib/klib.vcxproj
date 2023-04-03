@@ -33,6 +33,8 @@
     <ClCompile Include="source\graphics\shaders\render_shaders.cpp" />
     <ClCompile Include="source\graphics\shaders\shader_compiler.cpp" />
     <ClCompile Include="source\math\helper\constants.cpp" />
+    <ClCompile Include="source\math\imaginary\complex.cpp" />
+    <ClCompile Include="source\math\imaginary\quaternion.cpp" />
     <ClCompile Include="source\math\math.cpp" />
     <ClCompile Include="source\math\matrix\float2x2.cpp" />
     <ClCompile Include="source\math\matrix\float3x3.cpp" />
@@ -100,6 +102,8 @@
     <ClInclude Include="source\graphics\shaders\shader_compiler.h" />
     <ClInclude Include="source\klib.h" />
     <ClInclude Include="source\math\helper\constants.h" />
+    <ClInclude Include="source\math\imaginary\complex.h" />
+    <ClInclude Include="source\math\imaginary\quaternion.h" />
     <ClInclude Include="source\math\math.h" />
     <ClInclude Include="source\math\matrix\float2x2.h" />
     <ClInclude Include="source\math\matrix\float3x3.h" />

@@ -55,6 +55,11 @@ kl::float4::operator kl::color() const
     };
 }
 
+kl::float4::operator kl::quaternion() const
+{
+    return { w, x, y, z };
+}
+
 kl::float2 kl::float4::xy() const
 {
     return { x, y };
@@ -165,6 +170,7 @@ void kl::float4::operator/=(const float4& other)
     w /= other.w;
 }
 
+// Other
 kl::float4 kl::float4::operator-() const
 {
     return *this * -1.0f;

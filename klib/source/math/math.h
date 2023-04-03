@@ -3,6 +3,10 @@
 // Helper
 #include "math/helper/constants.h"
 
+// Imaginary
+#include "math/imaginary/complex.h"
+#include "math/imaginary/quaternion.h"
+
 // Vector
 #include "math/vector/int2.h"
 #include "math/vector/float2.h"
@@ -43,8 +47,18 @@ namespace kl {
     float interpolate(float value, float lower, float upper);
 
     // Rotation
-    float4 to_quaternion(const float3& euluer);
-    float3 to_euler(const float4& quaternion);
+    quaternion to_quaternion(const float3& euler);
+    float3 to_euler(const quaternion& quaternion);
+
+    // Complex
+    complex abs(const complex& num);
+    complex normalize(const complex& num);
+    complex inverse(const complex& num);
+
+    // Quaternion
+    quaternion abs(const quaternion& num);
+    quaternion normalize(const quaternion& num);
+    quaternion inverse(const quaternion& num);
 
     // Int2 operations
     int2 abs(const int2& vec);

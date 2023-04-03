@@ -4,6 +4,10 @@
 
 
 namespace kl {
+    struct quaternion;
+}
+
+namespace kl {
     struct float3
     {
         float x = 0.0f;
@@ -21,6 +25,7 @@ namespace kl {
         // Get
         operator float* () const;
         operator kl::color() const;
+        operator kl::quaternion() const;
 
         float2 xy() const;
 
