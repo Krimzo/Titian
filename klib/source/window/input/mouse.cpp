@@ -43,16 +43,20 @@ kl::int2 kl::mouse::position(const bool client) const
     return { client_position.x, client_position.y };
 }
 
-void kl::mouse::set_position(const int2& position, const bool client) const
+void kl::mouse::set_position(const int2& position, const bool client)
 {
+    POINT client_position = { position.x, position.y };
+    POINT screen_position = { position.x, position.y };
+
     if (client) {
-        POINT client_position = { position.x, position.y };
-        ClientToScreen(window_, &client_position);
-        SetCursorPos(client_position.x, client_position.y);
+        ClientToScreen(window_, &screen_position);
     }
     else {
-        SetCursorPos(position.x, position.y);
+        ScreenToClient(window_, &client_position);
     }
+
+    position_ = { client_position.x, client_position.y };
+    SetCursorPos(screen_position.x, screen_position.y);
 }
 
 kl::float2 kl::mouse::get_normalized_position(const bool client) const

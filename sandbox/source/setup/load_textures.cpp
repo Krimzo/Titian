@@ -14,6 +14,6 @@ void load_textures(editor_state* state)
 kl::ref<kl::texture> parse_texture(editor_state* state, const std::string& path)
 {
     auto texture = kl::make<kl::texture>(state->gpu.get(), kl::image(path));
-    texture->create_shader_view(state->gpu.get());
+    texture->create_shader_view();
     return texture;
 }

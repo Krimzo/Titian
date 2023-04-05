@@ -26,7 +26,7 @@ namespace kl {
         void set_hidden(bool enabled);
 
         int2 position(bool client = true) const;
-        void set_position(const int2& position, bool client = true) const;
+        void set_position(const int2& position, bool client = true);
 
         float2 get_normalized_position(bool client = true) const;
 

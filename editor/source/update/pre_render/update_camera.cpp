@@ -3,8 +3,6 @@
 
 void handle_camera(editor_state* state)
 {
-    if (!state->gui_state.is_viewport_focused) { return; }
-
     kl::camera& camera = *state->scene->camera;
 
     // Speed
@@ -36,22 +34,17 @@ void handle_camera(editor_state* state)
     }
 
     // Rotation
-    static bool is_hidden = false;
     if (state->window->mouse.right) {
         const kl::int2 frame_center = state->window->get_frame_center();
-        kl::int2 position = state->window->mouse.position();
-
-        if (!is_hidden) {
-            state->window->mouse.set_hidden(true);
-            is_hidden = true;
-            position = frame_center;
+        if (state->window->mouse.is_hidden()) {
+            camera.rotate(state->window->mouse.position(), frame_center);
         }
-
-        camera.rotate((kl::float2) position, (kl::float2) frame_center);
+        else {
+            state->window->mouse.set_hidden(true);
+        }
         state->window->mouse.set_position(frame_center);
     }
-    else if (is_hidden) {
+    else if (state->window->mouse.is_hidden()) {
         state->window->mouse.set_hidden(false);
-        is_hidden = false;
     }
 }

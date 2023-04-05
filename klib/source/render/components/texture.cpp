@@ -1,29 +1,30 @@
 #include "render/components/texture.h"
 
 
-kl::texture::texture()
+kl::texture::texture(kl::gpu* gpu)
+    : gpu(gpu)
 {}
 
-kl::texture::texture(gpu* gpu, const texture_data& data, const bool is_cube, const bool has_unordered_access, const bool is_target)
-    : data_buffer(data)
+kl::texture::texture(kl::gpu* gpu, const texture_data& data, const bool is_cube, const bool has_unordered_access, const bool is_target)
+    : gpu(gpu), data_buffer(data)
 {
     if (is_cube) {
-        reload_cube(gpu);
+        reload_as_cube();
     }
     else {
-        reload(gpu, has_unordered_access, is_target);
+        reload(has_unordered_access, is_target);
     }
 }
 
 kl::texture::~texture()
 {}
 
-void kl::texture::reload(gpu* gpu, const bool has_unordered_access, const bool is_target)
+void kl::texture::reload(const bool has_unordered_access, const bool is_target)
 {
     graphics_buffer = gpu->create_texture(data_buffer, has_unordered_access, is_target);
 }
 
-bool kl::texture::reload_cube(gpu* gpu)
+bool kl::texture::reload_as_cube()
 {
     if (data_buffer.width() % 4 || data_buffer.height() % 3) {
         return false;
@@ -43,22 +44,22 @@ bool kl::texture::reload_cube(gpu* gpu)
     return true;
 }
 
-void kl::texture::create_target_view(gpu* gpu, dx::target_view_descriptor* descriptor)
+void kl::texture::create_target_view(dx::target_view_descriptor* descriptor)
 {
     target_view = gpu->create_target_view(graphics_buffer, descriptor);
 }
 
-void kl::texture::create_depth_view(gpu* gpu, dx::depth_view_descriptor* descriptor)
+void kl::texture::create_depth_view(dx::depth_view_descriptor* descriptor)
 {
     depth_view = gpu->create_depth_view(graphics_buffer, descriptor);
 }
 
-void kl::texture::create_shader_view(gpu* gpu, dx::shader_view_descriptor* descriptor)
+void kl::texture::create_shader_view(dx::shader_view_descriptor* descriptor)
 {
     shader_view = gpu->create_shader_view(graphics_buffer, descriptor);
 }
 
-void kl::texture::create_access_view(gpu* gpu, dx::access_view_descriptor* descriptor)
+void kl::texture::create_access_view(dx::access_view_descriptor* descriptor)
 {
     access_view = gpu->create_access_view(graphics_buffer, descriptor);
 }

@@ -4,10 +4,10 @@
 // Vertex shader
 cbuffer VS_CB : register(b0)
 {
-    matrix  w_matrix;
-    matrix vp_matrix;
+    float4x4  w_matrix;
+    float4x4 vp_matrix;
 
-    matrix vp_light_matrices[SHADOW_CASCADE_COUNT];
+    float4x4 vp_light_matrices[SHADOW_CASCADE_COUNT];
 };
 
 struct vs_out
@@ -72,7 +72,7 @@ Texture2D  shadow_texture_1 : register(t2);
 Texture2D  shadow_texture_2 : register(t3);
 Texture2D  shadow_texture_3 : register(t4);
 
-SamplerState entity_sampler : register(s5);
+SamplerState entity_sampler : register(s2);
 Texture2D    entity_texture : register(t5);
 Texture2D    normal_texture : register(t6);
 Texture2D roughness_texture : register(t7);

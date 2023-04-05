@@ -25,12 +25,11 @@ void editor_setup(editor_state* state)
     state->window->maximize();
 
     // Render states
+    setup_raster_states(state);
     setup_depth_states(state);
     setup_sampler_states(state);
-    setup_raster_states(state);
 
-    // Render buffers
-    setup_cbuffers(state);
+    // Render shaders
     setup_shaders(state);
 
     // GUI
@@ -43,7 +42,7 @@ void editor_update(editor_state* state)
     if (state->scene) {
         update_physics(state);
 
-        if (state->scene->camera) {
+        if (state->scene->camera && state->gui_state.is_viewport_focused) {
             handle_camera(state);
         }
     }

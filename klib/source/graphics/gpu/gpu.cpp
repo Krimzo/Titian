@@ -185,33 +185,38 @@ void kl::gpu::bind_internal_views() const
 }
 
 // Shader helper
-kl::dx::vertex_shader kl::gpu::create_vertex_shader(const std::string& shader_source)
+kl::shader_holder<kl::dx::vertex_shader> kl::gpu::create_vertex_shader(const std::string& shader_source)
 {
     const compiled_shader compiled_shader = compile_vertex_shader(shader_source);
-    return device_holder::create_vertex_shader(compiled_shader);
+    return { this, device_holder::create_vertex_shader(compiled_shader) };
 }
 
-kl::dx::geometry_shader kl::gpu::create_geometry_shader(const std::string& shader_source)
+kl::shader_holder<kl::dx::geometry_shader> kl::gpu::create_geometry_shader(const std::string& shader_source)
 {
     const compiled_shader compiled_shader = compile_geometry_shader(shader_source);
-    return device_holder::create_geometry_shader(compiled_shader);
+    return { this, device_holder::create_geometry_shader(compiled_shader) };
 }
 
-kl::dx::pixel_shader kl::gpu::create_pixel_shader(const std::string& shader_source)
+kl::shader_holder<kl::dx::pixel_shader> kl::gpu::create_pixel_shader(const std::string& shader_source)
 {
     const compiled_shader compiled_shader = compile_pixel_shader(shader_source);
-    return device_holder::create_pixel_shader(compiled_shader);
+    return { this, device_holder::create_pixel_shader(compiled_shader) };
 }
 
-kl::dx::compute_shader kl::gpu::create_compute_shader(const std::string& shader_source)
+kl::shader_holder<kl::dx::compute_shader> kl::gpu::create_compute_shader(const std::string& shader_source)
 {
     const compiled_shader compiled_shader = compile_compute_shader(shader_source);
-    return device_holder::create_compute_shader(compiled_shader);
+    return { this, device_holder::create_compute_shader(compiled_shader) };
 }
 
 kl::render_shaders kl::gpu::create_render_shaders(const std::string& shader_sources)
 {
     const compiled_shader compiled_vertex_shader = compile_vertex_shader(shader_sources);
     const compiled_shader compiled_pixel_shader = compile_pixel_shader(shader_sources);
-    return device_holder::create_render_shaders(compiled_vertex_shader, compiled_pixel_shader);
+
+    render_shaders shaders = {};
+    shaders.input_layout = create_input_layout(compiled_vertex_shader);
+    shaders.vertex_shader = { this, device_holder::create_vertex_shader(compiled_vertex_shader) };
+    shaders.pixel_shader = { this, device_holder::create_pixel_shader(compiled_pixel_shader) };
+    return shaders;
 }

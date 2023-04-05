@@ -21,6 +21,7 @@
 #include <memory>
 
 // Modern-2
+#include <type_traits>
 #include <algorithm>
 #include <iomanip>
 #include <format>

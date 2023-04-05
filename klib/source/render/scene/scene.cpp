@@ -132,14 +132,14 @@ kl::ref<kl::entity> kl::scene::update_selected_entity(const uint32_t index)
     return selected_entity = nullptr;
 }
 
-void kl::scene::update_physics(float delta_t)
+void kl::scene::update_physics(const float delta_t)
 {
     scene_->simulate(delta_t);
     scene_->fetchResults(true);
 }
 
 // Entity
-kl::ref<kl::entity> kl::scene::make_entity(bool dynamic)
+kl::ref<kl::entity> kl::scene::make_entity(const bool dynamic)
 {
     return make<entity>(physics_, dynamic);
 }

@@ -121,12 +121,11 @@
     <ClCompile Include="source\render\parts\render_postprocess.cpp" />
     <ClCompile Include="source\render\parts\render_shadows.cpp" />
     <ClCompile Include="source\render\render_chain.cpp" />
-    <ClCompile Include="source\setup\buffers\setup_cbuffers.cpp" />
     <ClCompile Include="source\setup\gui\setup_gui.cpp" />
     <ClCompile Include="source\setup\states\setup_depth_states.cpp" />
     <ClCompile Include="source\setup\states\setup_raster_states.cpp" />
     <ClCompile Include="source\setup\states\setup_sampler_states.cpp" />
-    <ClCompile Include="source\setup\buffers\setup_shaders.cpp" />
+    <ClCompile Include="source\setup\shaders\setup_shaders.cpp" />
     <ClCompile Include="source\state\gui_state.cpp" />
     <ClCompile Include="source\state\render_state.cpp" />
     <ClCompile Include="source\state\logger_state.cpp" />

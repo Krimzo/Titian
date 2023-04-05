@@ -60,10 +60,10 @@ namespace kl {
         void bind_internal_views() const;
 
         // Shader helper
-        dx::vertex_shader create_vertex_shader(const std::string& shader_source);
-        dx::geometry_shader create_geometry_shader(const std::string& shader_source);
-        dx::pixel_shader create_pixel_shader(const std::string& shader_source);
-        dx::compute_shader create_compute_shader(const std::string& shader_source);
+        shader_holder<dx::vertex_shader> create_vertex_shader(const std::string& shader_source);
+        shader_holder<dx::geometry_shader> create_geometry_shader(const std::string& shader_source);
+        shader_holder<dx::pixel_shader> create_pixel_shader(const std::string& shader_source);
+        shader_holder<dx::compute_shader> create_compute_shader(const std::string& shader_source);
 
         render_shaders create_render_shaders(const std::string& shader_sources);
     };

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "graphics/shaders/compiled_shader.h"
-#include "graphics/shaders/render_shaders.h"
 #include "media/media.h"
 
 
@@ -38,8 +37,6 @@ namespace kl {
         dx::buffer create_buffer(const dx::buffer_descriptor* descriptor, const dx::subresource_descriptor* subresource_data) const;
         dx::buffer create_structured_buffer(const void* data, UINT element_count, UINT element_size, bool has_unordered_access = false, bool cpu_read = false) const;
         dx::buffer create_staging_buffer(dx::buffer buffer, UINT byte_size) const;
-
-        // Const buffers
         dx::buffer create_const_buffer(UINT byte_size) const;
 
         // Meshes
@@ -67,7 +64,5 @@ namespace kl {
         dx::geometry_shader create_geometry_shader(const compiled_shader& compiled_shader) const;
         dx::pixel_shader create_pixel_shader(const compiled_shader& compiled_shader) const;
         dx::compute_shader create_compute_shader(const compiled_shader& compiled_shader) const;
-
-        render_shaders create_render_shaders(const compiled_shader& compiled_vertex_shader, const compiled_shader& compiled_pixel_shader) const;
     };
 }

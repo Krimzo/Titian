@@ -80,9 +80,7 @@ namespace kl {
         void set_draw_type(D3D_PRIMITIVE_TOPOLOGY draw_type) const;
         void draw(UINT vertex_count, UINT start_index) const;
 
-        void draw_mesh(dx::buffer mesh) const;
-        void draw_mesh(dx::buffer mesh, D3D_PRIMITIVE_TOPOLOGY draw_type) const;
-        void draw_mesh(dx::buffer mesh, D3D_PRIMITIVE_TOPOLOGY draw_type, UINT stride) const;
+        void draw_mesh(dx::buffer mesh, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(vertex)) const;
 
         // Views
         void clear_target_view(dx::target_view view, const float4& color = {}) const;
@@ -116,7 +114,7 @@ namespace kl {
         void bind_compute_shader(dx::compute_shader shader) const;
         void unbind_compute_shader() const;
 
-        void bind_render_shaders(const render_shaders shaders) const;
+        void bind_render_shaders(const render_shaders& shaders) const;
         void unbind_render_shaders() const;
 
         void dispatch_compute_shader(UINT x, UINT y, UINT z) const;

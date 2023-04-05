@@ -1,13 +1,13 @@
 #pragma once
 
-#include "apis/apis.h"
+#include "graphics/shaders/shader_holder.h"
 
 
 namespace kl {
     struct render_shaders
     {
-        dx::vertex_shader vertex_shader = nullptr;
-        dx::pixel_shader pixel_shader = nullptr;
+        shader_holder<dx::vertex_shader> vertex_shader = nullptr;
+        shader_holder<dx::pixel_shader> pixel_shader = nullptr;
         dx::layout input_layout = nullptr;
 
         // Creation

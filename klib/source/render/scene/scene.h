@@ -92,10 +92,10 @@ namespace kl {
     class scene : public std::unordered_set<ref<entity>>
     {
     public:
-        ref<camera> camera = make<kl::camera>();
+        ref<camera> camera = nullptr;
         ref<entity> selected_entity = nullptr;
 
-        ref<ambient_light> ambient_light = make<kl::ambient_light>();
+        ref<ambient_light> ambient_light = nullptr;
         ref<directional_light> directional_light = nullptr;
 
         float3 gravity = { 0.0f, -9.81f, 0.0f };

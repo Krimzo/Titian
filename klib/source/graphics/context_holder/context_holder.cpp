@@ -208,16 +208,6 @@ void kl::context_holder::draw(const UINT vertex_count, const UINT start_index) c
     context_->Draw(vertex_count, start_index);
 }
 
-void kl::context_holder::draw_mesh(const dx::buffer mesh) const
-{
-    draw_mesh(mesh, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-}
-
-void kl::context_holder::draw_mesh(const dx::buffer mesh, const D3D_PRIMITIVE_TOPOLOGY draw_type) const
-{
-    draw_mesh(mesh, draw_type, sizeof(vertex));
-}
-
 void kl::context_holder::draw_mesh(const dx::buffer mesh, const D3D_PRIMITIVE_TOPOLOGY draw_type, const UINT stride) const
 {
     set_draw_type(draw_type);
@@ -332,7 +322,7 @@ void kl::context_holder::unbind_compute_shader() const
     bind_compute_shader(nullptr);
 }
 
-void kl::context_holder::bind_render_shaders(const render_shaders shaders) const
+void kl::context_holder::bind_render_shaders(const render_shaders& shaders) const
 {
     bind_input_layout(shaders.input_layout);
     bind_vertex_shader(shaders.vertex_shader);

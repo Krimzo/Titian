@@ -21,6 +21,6 @@ gui_state::~gui_state()
 kl::ref<kl::texture> load_texture(kl::ref<kl::gpu> gpu, const std::string& path)
 {
     auto texture = kl::make<kl::texture>(gpu.get(), kl::image(path));
-    texture->create_shader_view(gpu.get());
+    texture->create_shader_view();
     return texture;
 }

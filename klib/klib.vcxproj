@@ -32,6 +32,7 @@
     <ClCompile Include="source\graphics\shaders\compiled_shader.cpp" />
     <ClCompile Include="source\graphics\shaders\render_shaders.cpp" />
     <ClCompile Include="source\graphics\shaders\shader_compiler.cpp" />
+    <ClCompile Include="source\graphics\shaders\shader_holder.cpp" />
     <ClCompile Include="source\math\helper\constants.cpp" />
     <ClCompile Include="source\math\imaginary\complex.cpp" />
     <ClCompile Include="source\math\imaginary\quaternion.cpp" />
@@ -100,6 +101,7 @@
     <ClInclude Include="source\graphics\shaders\compiled_shader.h" />
     <ClInclude Include="source\graphics\shaders\render_shaders.h" />
     <ClInclude Include="source\graphics\shaders\shader_compiler.h" />
+    <ClInclude Include="source\graphics\shaders\shader_holder.h" />
     <ClInclude Include="source\klib.h" />
     <ClInclude Include="source\math\helper\constants.h" />
     <ClInclude Include="source\math\imaginary\complex.h" />

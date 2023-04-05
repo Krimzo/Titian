@@ -11,5 +11,5 @@ kl::render_shaders::~render_shaders()
 // Get
 kl::render_shaders::operator bool() const
 {
-    return (input_layout && vertex_shader && pixel_shader);
+    return vertex_shader && pixel_shader;
 }

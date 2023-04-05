@@ -5,14 +5,13 @@
 
 void render_scene(editor_state* state)
 {
-    state->gpu->bind_raster_state(state->render_wireframe ? state->raster_states["wireframe"] : state->raster_states["entity"]);
-    state->gpu->bind_depth_state(state->depth_states["entity"]);
+    state->gpu->bind_raster_state(state->render_wireframe ? state->raster_states.wireframe : state->raster_states.solid_cull);
+    state->gpu->bind_depth_state(state->depth_states.enabled);
+    state->gpu->bind_render_shaders(state->render_shaders.entity);
 
-    state->gpu->bind_render_shaders(state->render_shaders["entity"]);
-
-    state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states["skybox"], 0);
-    state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states["shadow"], 1);
-    state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states["entity"], 5);
+    state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states.linear, 0);
+    state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states.shadow, 1);
+    state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states.linear, 2);
 
     state->gpu->bind_shader_view_for_pixel_shader(state->scene->camera->skybox->shader_view, 0);
 
@@ -44,9 +43,6 @@ void render_scene(editor_state* state)
             ps_cb.cascade_distances[i] = kl::interpolate(state->scene->directional_light->CASCADE_SPLITS[i + 1], state->scene->camera->near_plane, state->scene->camera->far_plane);
         }
     }
-
-    state->gpu->bind_cb_for_vertex_shader(entity_render_vs_const_buffer, 0);
-    state->gpu->bind_cb_for_pixel_shader(entity_render_ps_const_buffer, 0);
 
     for (auto& [name, entity] : *state->scene) {
         if (!entity->mesh || !entity->material) { continue; }
@@ -81,8 +77,8 @@ void render_scene(editor_state* state)
         ps_cb.object_material.z = entity->material->refraction_factor;
         ps_cb.object_material.w = entity->material->refraction_index;
 
-        state->gpu->set_cb_data(entity_render_vs_const_buffer, vs_cb);
-        state->gpu->set_cb_data(entity_render_ps_const_buffer, ps_cb);
+        state->render_shaders.entity.vertex_shader.update_cbuffer(vs_cb);
+        state->render_shaders.entity.pixel_shader.update_cbuffer(ps_cb);
 
         state->gpu->draw_mesh(entity->mesh->graphics_buffer);
     }

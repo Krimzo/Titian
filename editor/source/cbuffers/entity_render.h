@@ -28,6 +28,3 @@ struct entity_render_ps_cb
     kl::float4   shadow_map_info; // (width, height, texel_width, texel_size)
     kl::float4 cascade_distances; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
 };
-
-inline kl::dx::buffer entity_render_vs_const_buffer = nullptr;
-inline kl::dx::buffer entity_render_ps_const_buffer = nullptr;

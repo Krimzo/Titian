@@ -135,7 +135,6 @@ kl::dx::buffer kl::device_holder::create_staging_buffer(dx::buffer buffer, const
     return create_buffer(&descriptor, nullptr);
 }
 
-// Const buffers
 kl::dx::buffer kl::device_holder::create_const_buffer(const UINT byte_size) const
 {
     if (warning_check(byte_size % 16, "Constant buffer size has to be a multiple of 16")) {
@@ -378,13 +377,4 @@ kl::dx::compute_shader kl::device_holder::create_compute_shader(const compiled_s
     device_->CreateComputeShader(compiled_shader.get_data(), compiled_shader.get_data_size(), nullptr, &shader);
     warning_check(!shader, "Failed to create compute shader");
     return shader;
-}
-
-kl::render_shaders kl::device_holder::create_render_shaders(const compiled_shader& compiled_vertex_shader, const compiled_shader& compiled_pixel_shader) const
-{
-    render_shaders shaders = {};
-    shaders.input_layout = create_input_layout(compiled_vertex_shader);
-    shaders.vertex_shader = create_vertex_shader(compiled_vertex_shader);
-    shaders.pixel_shader = create_pixel_shader(compiled_pixel_shader);
-    return shaders;
 }
