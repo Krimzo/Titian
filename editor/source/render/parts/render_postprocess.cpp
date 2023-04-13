@@ -16,5 +16,5 @@ void render_postprocess(editor_state* state)
     ps_cb.outline_color = state->gui_state.selection_color;
     state->render_shaders.postprocess.pixel_shader.update_cbuffer(ps_cb);
 
-    state->gpu->draw_mesh(state->render_state->screen_mesh);
+    state->gpu->draw(state->render_state->screen_mesh);
 }

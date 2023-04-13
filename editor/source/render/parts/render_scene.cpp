@@ -80,6 +80,6 @@ void render_scene(editor_state* state)
         state->render_shaders.entity.vertex_shader.update_cbuffer(vs_cb);
         state->render_shaders.entity.pixel_shader.update_cbuffer(ps_cb);
 
-        state->gpu->draw_mesh(entity->mesh->graphics_buffer);
+        state->gpu->draw(entity->mesh->graphics_buffer);
     }
 }

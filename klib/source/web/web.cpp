@@ -3,7 +3,7 @@
 #include "utility/utility.h"
 
 
-std::string kl::web::download_website(const std::string& url, const int buffer_size)
+std::string kl::download_website(const std::string& url, const int buffer_size)
 {
     const HINTERNET connection = InternetOpenA("Browser", INTERNET_OPEN_TYPE_PRECONFIG, nullptr, nullptr, 0);
     if (warning_check(!connection, "Failed to open a browser")) {

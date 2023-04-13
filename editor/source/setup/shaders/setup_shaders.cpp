@@ -14,6 +14,6 @@ void setup_shaders(editor_state* state)
 
 kl::render_shaders parse_render_shaders(editor_state* state, const std::string& name)
 {
-    const auto source = kl::files::read_string(builtin_path + "/shaders/" + name);
+    const auto source = kl::read_file_string(builtin_path + "/shaders/" + name);
     return state->gpu->create_render_shaders(source);
 }

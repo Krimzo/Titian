@@ -4,15 +4,15 @@
 
 
 // Helper
-namespace kl::files {
-    std::string get_extension(const std::string& filepath);
+namespace kl {
+    std::string get_file_extension(const std::string& filepath);
     std::vector<std::string> get_files(const std::string& path, bool recursive = false);
 
-    std::string read_string(const std::string& filepath);
-    bool write_string(const std::string& filepath, const std::string& data);
-    bool append_string(const std::string& filepath, const std::string& data, int position = -1);
+    std::string read_file_string(const std::string& filepath);
+    bool write_file_string(const std::string& filepath, const std::string& data);
+    bool append_file_string(const std::string& filepath, const std::string& data, int position = -1);
 
-    std::vector<vertex> parse_mesh(const std::string& filepath, bool flip_z);
+    std::vector<vertex> parse_obj_file(const std::string& filepath, bool flip_z = true);
 }
 
 // File

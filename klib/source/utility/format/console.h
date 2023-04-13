@@ -34,6 +34,5 @@ namespace kl::console {
     char wait_for_any(bool echo = false);
 
     void dump(const std::string& data, const int2& location = {});
-
     void progress_bar(const std::string& message, int output_y, float percentage);
 }

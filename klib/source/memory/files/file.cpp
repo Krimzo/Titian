@@ -4,12 +4,12 @@
 
 
 // Helper
-std::string kl::files::get_extension(const std::string& filepath)
+std::string kl::get_file_extension(const std::string& filepath)
 {
     return std::filesystem::path(filepath).extension().string();
 }
 
-std::vector<std::string> kl::files::get_files(const std::string& path, const bool recursive)
+std::vector<std::string> kl::get_files(const std::string& path, const bool recursive)
 {
     std::vector<std::string> files = {};
     if (!recursive) {
@@ -29,7 +29,7 @@ std::vector<std::string> kl::files::get_files(const std::string& path, const boo
     return files;
 }
 
-std::string kl::files::read_string(const std::string& filepath)
+std::string kl::read_file_string(const std::string& filepath)
 {
     std::ifstream stream(filepath);
     if (warning_check(!stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
@@ -42,7 +42,7 @@ std::string kl::files::read_string(const std::string& filepath)
     return buffer.str();
 }
 
-bool kl::files::write_string(const std::string& filepath, const std::string& data)
+bool kl::write_file_string(const std::string& filepath, const std::string& data)
 {
     std::ofstream stream(filepath);
     if (warning_check(!stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
@@ -54,7 +54,7 @@ bool kl::files::write_string(const std::string& filepath, const std::string& dat
     return true;
 }
 
-bool kl::files::append_string(const std::string& filepath, const std::string& data, const int position)
+bool kl::append_file_string(const std::string& filepath, const std::string& data, const int position)
 {
     std::fstream stream(filepath, std::ios::in | std::ios::out);
     if (warning_check(!stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
@@ -73,44 +73,69 @@ bool kl::files::append_string(const std::string& filepath, const std::string& da
     return true;
 }
 
-std::vector<kl::vertex> kl::files::parse_mesh(const std::string& filepath, const bool flip_z)
+std::vector<kl::vertex> kl::parse_obj_file(const std::string& filepath, const bool flip_z)
 {
-    std::fstream stream = {};
-    stream.open(filepath, std::ios::in);
-    if (warning_check(!stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
+    std::fstream file = {};
+    file.open(filepath, std::ios::in);
+    if (warning_check(!file.is_open(), "Failed to open file \"" + filepath + "\"")) {
         return {};
     }
 
-    std::vector<vertex> vertex_data = {};
-    std::vector<float3>    xyz_data = {};
-    std::vector<float2>     uv_data = {};
-    std::vector<float3> normal_data = {};
-
     const float z_flip = (flip_z ? -1.0f : 1.0f);
 
-    for (std::string line; std::getline(stream, line);) {
-        if (const std::vector<std::string> parts = strings::split(line, ' '); parts[0] == "v") {
-            xyz_data.emplace_back(std::stof(parts[1]), std::stof(parts[2]), std::stof(parts[3]) * z_flip);
+    std::vector<float3>   world_data = {};
+    std::vector<float2> texture_data = {};
+    std::vector<float3>  normal_data = {};
+
+    std::vector<vertex> vertex_data = {};
+
+    for (std::string line; std::getline(file, line);) {
+        const std::vector<std::string> parts = split_string(line, ' ');
+
+        if (parts.size() == 4 && parts.front() == "v") {
+            float3 result = {};
+            result.x = strtof(parts[1].c_str(), nullptr);
+            result.y = strtof(parts[2].c_str(), nullptr);
+            result.z = strtof(parts[3].c_str(), nullptr) * z_flip;
+            world_data.push_back(result);
         }
-        else if (parts[0] == "vt") {
-            uv_data.emplace_back(std::stof(parts[1]), std::stof(parts[2]));
+        
+        if (parts.size() == 3 && parts.front() == "vt") {
+            float2 result = {};
+            result.x = strtof(parts[1].c_str(), nullptr);
+            result.y = strtof(parts[2].c_str(), nullptr);
+            texture_data.push_back(result);
         }
-        else if (parts[0] == "vn") {
-            normal_data.emplace_back(std::stof(parts[1]), std::stof(parts[2]), std::stof(parts[3]) * z_flip);
+        
+        if (parts.size() == 4 && parts.front() == "vn") {
+            float3 result = {};
+            result.x = strtof(parts[1].c_str(), nullptr);
+            result.y = strtof(parts[2].c_str(), nullptr);
+            result.z = strtof(parts[3].c_str(), nullptr) * z_flip;
+            normal_data.push_back(result);
         }
-        else if (parts[0] == "f") {
+        
+        if (parts.size() == 4 && parts.front() == "f") {
             for (int i = 1; i < 4; i++) {
-                const std::vector<std::string> line_part_parts = strings::split(parts[i], '/');
-                vertex_data.emplace_back(
-                    xyz_data[std::stoull(line_part_parts[0]) - 1],
-                    uv_data[std::stoull(line_part_parts[1]) - 1],
-                    normal_data[std::stoull(line_part_parts[2]) - 1]
-                );
+                const std::vector<std::string> line_part_parts = split_string(parts[i], '/');
+                if (line_part_parts.size() != 3) { continue; }
+
+                vertex vertex = {};
+                if (uint64_t index = (strtoull(line_part_parts[0].c_str(), nullptr, 10) - 1); index >= 0 && index < world_data.size()) {
+                    vertex.world = world_data[index];
+                }
+                if (uint64_t index = (strtoull(line_part_parts[1].c_str(), nullptr, 10) - 1); index >= 0 && index < texture_data.size()) {
+                    vertex.texture = texture_data[index];
+                }
+                if (uint64_t index = (strtoull(line_part_parts[2].c_str(), nullptr, 10) - 1); index >= 0 && index < normal_data.size()) {
+                    vertex.normal = normal_data[index];
+                }
+                vertex_data.push_back(vertex);
             }
         }
     }
 
-    stream.close();
+    file.close();
     return vertex_data;
 }
 

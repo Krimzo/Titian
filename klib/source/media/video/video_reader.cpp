@@ -84,7 +84,7 @@ kl::video_reader::video_reader(const std::string& filepath)
 
     fail_check_(attributes->SetUINT32(MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, true), "Failed to enable video processing");
 
-    const std::wstring converted_path = strings::to_w_string(filepath);
+    const std::wstring converted_path = convert_string(filepath);
     fail_check_(MFCreateSourceReaderFromURL(converted_path.c_str(), attributes.Get(), &reader_), "Failed to create SourceReader");
     configure_reader(reader_);
 

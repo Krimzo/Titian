@@ -23,10 +23,10 @@ void editor_state::change_scene(kl::ref<kl::scene> scene)
     }
 
     // Default meshes
-    default_meshes["cube"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::files::parse_mesh(builtin_path + "meshes/cube.obj", true));
-    default_meshes["sphere"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::files::parse_mesh(builtin_path + "meshes/sphere.obj", true));
-    default_meshes["capsule"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::files::parse_mesh(builtin_path + "meshes/capsule.obj", true));
-    default_meshes["monke"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::files::parse_mesh(builtin_path + "meshes/monke.obj", true));
+    default_meshes["cube"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::parse_obj_file(builtin_path + "meshes/cube.obj", true));
+    default_meshes["sphere"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::parse_obj_file(builtin_path + "meshes/sphere.obj", true));
+    default_meshes["capsule"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::parse_obj_file(builtin_path + "meshes/capsule.obj", true));
+    default_meshes["monke"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::parse_obj_file(builtin_path + "meshes/monke.obj", true));
 
     // Default material
     default_materials["white"] = kl::make<kl::material>();

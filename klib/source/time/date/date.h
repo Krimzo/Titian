@@ -15,6 +15,8 @@ namespace kl {
 
         date();
     };
+}
 
+namespace kl {
     std::ostream& operator<<(std::ostream& stream, const date& obj);
 }

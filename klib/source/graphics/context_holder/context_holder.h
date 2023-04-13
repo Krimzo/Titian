@@ -44,6 +44,9 @@ namespace kl {
         void bind_sampler_state_for_compute_shader(dx::sampler_state state, UINT slot) const;
         void unbind_sampler_state_for_compute_shader(UINT slot) const;
 
+        void bind_blend_state(dx::blend_state state, const float* factor = nullptr, UINT mask = 0xFFFFFFFF) const;
+        void unbind_blend_state() const;
+
         // Resources
         void copy_resource(dx::resource destination, const dx::resource source) const;
         void read_from_resource(void* cpu_buffer, const dx::resource gpu_buffer, SIZE_T byte_size) const;
@@ -71,16 +74,26 @@ namespace kl {
             write_to_resource(buffer, &object, sizeof(T));
         }
 
-        // Meshes
-        UINT get_mesh_vertex_count(dx::buffer mesh, UINT stride) const;
+        // Vertex buffers
+        UINT get_vertex_buffer_size(dx::buffer buffer, UINT stride) const;
 
-        void bind_mesh(dx::buffer mesh, UINT slot, UINT offset, UINT stride) const;
-        void unbind_mesh(UINT slot) const;
+        void bind_vertex_buffer(dx::buffer buffer, UINT slot, UINT offset, UINT stride) const;
+        void unbind_vertex_buffer(UINT slot) const;
 
+        // Index buffers
+        UINT get_index_buffer_size(dx::buffer buffer) const;
+
+        void bind_index_buffer(dx::buffer buffer, UINT offset) const;
+        void unbind_index_buffer(UINT slot) const;
+
+        // Draw
         void set_draw_type(D3D_PRIMITIVE_TOPOLOGY draw_type) const;
-        void draw(UINT vertex_count, UINT start_index) const;
 
-        void draw_mesh(dx::buffer mesh, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(vertex)) const;
+        void draw(UINT vertex_count, UINT start_index) const;
+        void draw(dx::buffer vertex_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(vertex)) const;
+
+        void draw_indexed(UINT index_count, UINT start_index, INT base_vertex) const;
+        void draw_indexed(dx::buffer vertex_buffer, dx::buffer index_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(vertex)) const;
 
         // Views
         void clear_target_view(dx::target_view view, const float4& color = {}) const;

@@ -3,12 +3,12 @@
 #include "apis/apis.h"
 
 
-namespace kl::strings {
-    std::string to_string(const std::wstring& data);
-    std::wstring to_w_string(const std::string& data);
+namespace kl {
+    std::string convert_string(const std::wstring& data);
+    std::wstring convert_string(const std::string& data);
 
-    std::vector<std::string> split(const std::string& data, char delimiter);
-    std::vector<std::wstring> w_split(const std::wstring& data, wchar_t delimiter);
+    std::vector<std::string> split_string(const std::string& data, char delimiter);
+    std::vector<std::wstring> split_string(const std::wstring& data, wchar_t delimiter);
 }
 
 namespace kl {

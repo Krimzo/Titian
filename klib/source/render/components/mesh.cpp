@@ -24,7 +24,7 @@ kl::mesh::~mesh()
 void kl::mesh::reload()
 {
     // Graphics
-    graphics_buffer = gpu->create_mesh(data_buffer);
+    graphics_buffer = gpu->create_vertex_buffer(data_buffer);
 
     // Physics
     free_physics_buffer();
@@ -67,7 +67,7 @@ kl::mesh::~mesh()
 
 void kl::mesh::reload()
 {
-    graphics_buffer = gpu->create_mesh(data_buffer);
+    graphics_buffer = gpu->create_vertex_buffer(data_buffer);
 }
 
 #endif

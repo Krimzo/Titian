@@ -13,6 +13,6 @@ void load_meshes(editor_state* state)
 
 kl::ref<kl::mesh> load_mesh(editor_state* state, const std::string& path)
 {
-    const auto mesh_data = kl::files::parse_mesh(path, true);
+    const auto mesh_data = kl::parse_obj_file(path, true);
     return kl::make<kl::mesh>(state->gpu.get(), state->scene.get(), mesh_data);
 }

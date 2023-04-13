@@ -107,8 +107,8 @@ void load_my_theme(editor_state* state)
 
 void load_custom_font(editor_state* state)
 {
-    static const std::string font_path = state->gui_state.builtin_path + "fonts/JetBrainsMono.ttf";
-    static const int font_size = 16;
+    const std::string font_path = state->gui_state.builtin_path + "fonts/JetBrainsMono.ttf";
+    const int font_size = 16;
 
     ImGuiIO& io = ImGui::GetIO();
     io.Fonts->AddFontFromFileTTF(font_path.c_str(), font_size);

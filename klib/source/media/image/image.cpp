@@ -356,7 +356,7 @@ static constexpr CLSID png_encoder_clsid = {
 
 bool kl::image::load_from_file(const std::string& filepath)
 {
-    Gdiplus::Bitmap loaded_bitmap(strings::to_w_string(filepath).c_str());
+    Gdiplus::Bitmap loaded_bitmap(convert_string(filepath).c_str());
     if (warning_check(loaded_bitmap.GetLastStatus(), "Failed to open image file \"" + filepath + "\"")) {
         return false;
     }
@@ -374,7 +374,7 @@ bool kl::image::load_from_file(const std::string& filepath)
 
 bool kl::image::save_to_file(const std::string& filepath) const
 {
-    const std::string extension = files::get_extension(filepath);
+    const std::string extension = get_file_extension(filepath);
 
     if (extension == ".txt") {
         std::ofstream file(filepath);
@@ -419,7 +419,7 @@ bool kl::image::save_to_file(const std::string& filepath) const
 
     memcpy(bitmap_data.Scan0, pixel_storage::data(), pixel_storage::size() * sizeof(color));
     temp_bitmap.UnlockBits(&bitmap_data);
-    temp_bitmap.Save(strings::to_w_string(filepath).c_str(), format_to_use, nullptr);
+    temp_bitmap.Save(convert_string(filepath).c_str(), format_to_use, nullptr);
 
     return true;
 }

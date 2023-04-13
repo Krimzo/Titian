@@ -12,7 +12,7 @@ kl::video_writer::video_writer(const std::string& filepath, const kl::int2& fram
     frame_byte_width_(4 * width_), frame_byte_size_(frame_byte_width_* height_)
 {
     // Sink-Writer
-    const std::wstring converted_path = strings::to_w_string(filepath);
+    const std::wstring converted_path = convert_string(filepath);
     fail_check_(MFCreateSinkWriterFromURL(converted_path.c_str(), nullptr, nullptr, &sink_writer_), "Failed to create SinkWriter");
 
     // Ouput media type
@@ -88,11 +88,9 @@ bool kl::video_writer::add_frame(const image& frame)
     kl::color* out_buffer = nullptr;
 
     fail_check_(media_buffer_->Lock((BYTE**) &out_buffer, nullptr, nullptr), "Failed to lock the bytes [video_writer]");
-
     for (uint32_t y = 0; y < height_; y++) {
         memcpy(out_buffer + (height_ - 1 - y) * width_, in_buffer + y * width_, frame_byte_width_);
     }
-
     fail_check_(media_buffer_->Unlock(), "Failed to unlock bytes [video_writer]");
 
     if (!succeeded_(media_sample_->SetSampleTime(duration_100ns()))) {

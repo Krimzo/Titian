@@ -20,7 +20,7 @@ kl::dx::raster_state kl::device_holder::create_raster_state(const dx::raster_sta
     return state;
 }
 
-kl::dx::raster_state kl::device_holder::create_raster_state(bool wireframe, bool cull, bool cull_back) const
+kl::dx::raster_state kl::device_holder::create_raster_state(const bool wireframe, const bool cull, const bool cull_back) const
 {
     dx::raster_state_descriptor descriptor = {};
     descriptor.FillMode = wireframe ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
@@ -39,7 +39,7 @@ kl::dx::depth_state kl::device_holder::create_depth_state(const dx::depth_state_
     return state;
 }
 
-kl::dx::depth_state kl::device_holder::create_depth_state(bool depth, bool stencil, bool mask) const
+kl::dx::depth_state kl::device_holder::create_depth_state(const bool depth, const bool stencil, const bool mask) const
 {
     dx::depth_state_descriptor descriptor = {};
     if (depth) {
@@ -85,7 +85,7 @@ kl::dx::sampler_state kl::device_holder::create_sampler_state(const dx::sampler_
     return state;
 }
 
-kl::dx::sampler_state kl::device_holder::create_sampler_state(bool linear, bool mirror) const
+kl::dx::sampler_state kl::device_holder::create_sampler_state(const bool linear, const bool mirror) const
 {
     dx::sampler_state_descriptor descriptor = {};
     descriptor.Filter = linear ? D3D11_FILTER_MIN_MAG_MIP_LINEAR : D3D11_FILTER_MIN_MAG_MIP_POINT;
@@ -95,6 +95,28 @@ kl::dx::sampler_state kl::device_holder::create_sampler_state(bool linear, bool 
     return create_sampler_state(&descriptor);
 }
 
+kl::dx::blend_state kl::device_holder::create_blend_state(const dx::blend_state_descriptor* descriptor) const
+{
+    dx::blend_state state = nullptr;
+    const long result = device_->CreateBlendState(descriptor, &state);
+    warning_check(!state, format("Failed to create blend state. Result: 0x", std::hex, result));
+    return state;
+}
+
+kl::dx::blend_state kl::device_holder::create_blend_state(const bool transparency) const
+{
+    dx::blend_state_descriptor descriptor = {};
+    descriptor.RenderTarget[0].BlendEnable = transparency;
+    descriptor.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+    descriptor.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+    descriptor.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    descriptor.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+    descriptor.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+    descriptor.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    descriptor.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+    return create_blend_state(&descriptor);
+}
+
 // Buffers
 kl::dx::buffer kl::device_holder::create_buffer(const dx::buffer_descriptor* descriptor, const dx::subresource_descriptor* subresource_data) const
 {
@@ -102,6 +124,63 @@ kl::dx::buffer kl::device_holder::create_buffer(const dx::buffer_descriptor* des
     const long result = device_->CreateBuffer(descriptor, subresource_data, &buffer);
     warning_check(!buffer, format("Failed to create gpu buffer. Result: 0x", std::hex, result));
     return buffer;
+}
+
+kl::dx::buffer kl::device_holder::create_vertex_buffer(const void* data, const UINT byte_size) const
+{
+    dx::buffer_descriptor descriptor = {};
+    descriptor.ByteWidth = byte_size;
+    descriptor.Usage = D3D11_USAGE_IMMUTABLE;
+    descriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+    dx::subresource_descriptor subresource_data = {};
+    subresource_data.pSysMem = data;
+
+    return create_buffer(&descriptor, &subresource_data);
+}
+
+kl::dx::buffer kl::device_holder::create_vertex_buffer(const std::vector<vertex>& vertices) const
+{
+    return create_vertex_buffer(vertices.data(), (UINT) (vertices.size() * sizeof(vertex)));
+}
+
+kl::dx::buffer kl::device_holder::create_vertex_buffer(const std::string& filepath) const
+{
+    const auto data = parse_obj_file(filepath, true);
+    return create_vertex_buffer(data);
+}
+
+kl::dx::buffer kl::device_holder::create_index_buffer(const uint32_t* data, const UINT element_count) const
+{
+    dx::buffer_descriptor descriptor = {};
+    descriptor.ByteWidth = element_count * sizeof(uint32_t);
+    descriptor.Usage = D3D11_USAGE_IMMUTABLE;
+    descriptor.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+    dx::subresource_descriptor subresource_data = {};
+    subresource_data.pSysMem = data;
+
+    return create_buffer(&descriptor, &subresource_data);
+}
+
+kl::dx::buffer kl::device_holder::create_index_buffer(const std::vector<uint32_t>& indices) const
+{
+    return create_index_buffer(indices.data(), (UINT) indices.size());
+}
+
+kl::dx::buffer kl::device_holder::create_const_buffer(const UINT byte_size) const
+{
+    if (warning_check(byte_size % 16, "Constant buffer size has to be a multiple of 16")) {
+        return nullptr;
+    }
+
+    dx::buffer_descriptor descriptor = {};
+    descriptor.ByteWidth = byte_size;
+    descriptor.Usage = D3D11_USAGE_DYNAMIC;
+    descriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    descriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    return create_buffer(&descriptor, nullptr);
 }
 
 kl::dx::buffer kl::device_holder::create_structured_buffer(const void* data, const UINT element_count, const UINT element_size, const bool has_unordered_access, const bool cpu_read) const
@@ -120,55 +199,19 @@ kl::dx::buffer kl::device_holder::create_structured_buffer(const void* data, con
     return create_buffer(&descriptor, &subresource);
 }
 
-kl::dx::buffer kl::device_holder::create_staging_buffer(dx::buffer buffer, const UINT byte_size) const
+kl::dx::buffer kl::device_holder::create_staging_buffer(const dx::buffer buffer, const UINT byte_size) const
 {
     dx::buffer_descriptor descriptor = {};
     buffer->GetDesc(&descriptor);
 
-    dx::buffer_descriptor staging_descriptor = {};
-    staging_descriptor.Usage = D3D11_USAGE_STAGING;
-    staging_descriptor.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-    staging_descriptor.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-    staging_descriptor.StructureByteStride = descriptor.StructureByteStride;
-    staging_descriptor.ByteWidth = byte_size ? byte_size : descriptor.ByteWidth;
-
-    return create_buffer(&descriptor, nullptr);
-}
-
-kl::dx::buffer kl::device_holder::create_const_buffer(const UINT byte_size) const
-{
-    if (warning_check(byte_size % 16, "Constant buffer size has to be a multiple of 16")) {
-        return nullptr;
-    }
-
-    dx::buffer_descriptor descriptor = {};
-    descriptor.ByteWidth = byte_size;
-    descriptor.Usage = D3D11_USAGE_DYNAMIC;
-    descriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    descriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    descriptor.Usage = D3D11_USAGE_STAGING;
+    descriptor.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+    descriptor.ByteWidth = byte_size ? byte_size : descriptor.ByteWidth;
 
     return create_buffer(&descriptor, nullptr);
 }
 
 // Meshes
-kl::dx::buffer kl::device_holder::create_mesh(const mesh_data& vertices) const
-{
-    dx::buffer_descriptor descriptor = {};
-    descriptor.ByteWidth = (UINT) (vertices.size() * sizeof(vertex));
-    descriptor.Usage = D3D11_USAGE_DEFAULT;
-    descriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-    dx::subresource_descriptor subresource_data = {};
-    subresource_data.pSysMem = vertices.data();
-
-    return create_buffer(&descriptor, &subresource_data);
-}
-
-kl::dx::buffer kl::device_holder::create_mesh(const std::string& filepath, bool flip_z) const
-{
-    return create_mesh(files::parse_mesh(filepath, flip_z));
-}
-
 kl::dx::buffer kl::device_holder::create_plane_mesh(float size, size_t num_of_points) const
 {
     // Count fix
@@ -205,14 +248,14 @@ kl::dx::buffer kl::device_holder::create_plane_mesh(float size, size_t num_of_po
         }
     }
 
-    return create_mesh(vertices);
+    return create_vertex_buffer(vertices);
 }
 
 kl::dx::buffer kl::device_holder::create_screen_mesh() const
 {
-    return create_mesh({
-        vertex({ -1.0f, -1.0f, 0.5f }), vertex({ -1.0f,  1.0f, 0.5f }), vertex({  1.0f,  1.0f, 0.5f }),
-        vertex({  1.0f,  1.0f, 0.5f }), vertex({  1.0f, -1.0f, 0.5f }), vertex({ -1.0f, -1.0f, 0.5f }),
+    return create_vertex_buffer({
+        vertex({ -1.0f, -1.0f, 0.5f }, { 0.0f, 0.0f }), vertex({ -1.0f,  1.0f, 0.5f }, { 0.0f, 1.0f }), vertex({  1.0f,  1.0f, 0.5f }, { 1.0f, 1.0f }),
+        vertex({  1.0f,  1.0f, 0.5f }, { 1.0f, 1.0f }), vertex({  1.0f, -1.0f, 0.5f }, { 1.0f, 0.0f }), vertex({ -1.0f, -1.0f, 0.5f }, { 0.0f, 0.0f }),
     });
 }
 

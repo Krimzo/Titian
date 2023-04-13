@@ -74,10 +74,13 @@
     <ClCompile Include="source\time\time.cpp" />
     <ClCompile Include="source\time\timer\timer.cpp" />
     <ClCompile Include="source\utility\async\async.cpp" />
+    <ClCompile Include="source\utility\async\async_iterator.cpp" />
     <ClCompile Include="source\utility\data\encryptor.cpp" />
     <ClCompile Include="source\utility\data\random.cpp" />
     <ClCompile Include="source\utility\format\console.cpp" />
     <ClCompile Include="source\utility\format\strings.cpp" />
+    <ClCompile Include="source\utility\hash\hash_t.cpp" />
+    <ClCompile Include="source\utility\hash\sha256.cpp" />
     <ClCompile Include="source\utility\utility.cpp" />
     <ClCompile Include="source\web\socket\socket.cpp" />
     <ClCompile Include="source\web\web.cpp" />
@@ -144,10 +147,13 @@
     <ClInclude Include="source\time\time.h" />
     <ClInclude Include="source\time\timer\timer.h" />
     <ClInclude Include="source\utility\async\async.h" />
+    <ClInclude Include="source\utility\async\async_iterator.h" />
     <ClInclude Include="source\utility\data\encryptor.h" />
     <ClInclude Include="source\utility\data\random.h" />
     <ClInclude Include="source\utility\format\console.h" />
     <ClInclude Include="source\utility\format\strings.h" />
+    <ClInclude Include="source\utility\hash\hash_t.h" />
+    <ClInclude Include="source\utility\hash\sha256.h" />
     <ClInclude Include="source\utility\utility.h" />
     <ClInclude Include="source\web\socket\socket.h" />
     <ClInclude Include="source\web\web.h" />

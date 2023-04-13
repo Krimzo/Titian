@@ -126,7 +126,7 @@ void kl::console::set_font(const int2& size, const std::string& font_name)
     cfi.dwFontSize.Y = SHORT(size.y);
     cfi.FontFamily = FF_DONTCARE;
     cfi.FontWeight = FW_NORMAL;
-    wcscpy_s(cfi.FaceName, strings::to_w_string(font_name).c_str());
+    wcscpy_s(cfi.FaceName, convert_string(font_name).c_str());
     SetCurrentConsoleFontEx(console_handle, false, &cfi);
 }
 
@@ -166,7 +166,7 @@ char kl::console::wait_for_any(const bool echo)
 void kl::console::dump(const std::string& data, const int2& location)
 {
     static DWORD ignored = 0;
-    WriteConsoleOutputCharacterA(console_handle, data.c_str(), DWORD(data.length()), { SHORT(location.x), SHORT(location.y) }, &ignored);
+    WriteConsoleOutputCharacterA(console_handle, data.c_str(), (DWORD) data.length(), { (SHORT) location.x, (SHORT) location.y }, &ignored);
 }
 
 void kl::console::progress_bar(const std::string& message, int output_y, float percentage)

@@ -23,7 +23,7 @@ void render_shadows(editor_state* state)
             vs_cb.WVP = VP * entity->matrix();
             state->render_shaders.shadow.vertex_shader.update_cbuffer(vs_cb);
 
-            state->gpu->draw_mesh(entity->mesh->graphics_buffer);
+            state->gpu->draw(entity->mesh->graphics_buffer);
         }
     }
 }

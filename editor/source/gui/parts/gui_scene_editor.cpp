@@ -13,14 +13,15 @@ void gui_scene_editor(editor_state* state)
 
     if (ImGui::Begin("Scene Editor", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
         // Pre-display
-        state->gui_state.viewport_size = { (int) ImGui::GetWindowWidth(), (int) ImGui::GetWindowHeight() };
+        const ImVec2 content_region = ImGui::GetContentRegionAvail();
+        state->gui_state.viewport_size = { (int) content_region.x, (int) content_region.y };
         state->gui_state.is_viewport_focused = ImGui::IsWindowFocused();
 
         // Display scene buffer
         if (state->gui_state.viewport_size.x > 0 && state->gui_state.viewport_size.y > 0 && state->gui_state.viewport_size != state->render_state->target_size) {
             state->render_state = kl::make<render_state>(state->gpu, state->gui_state.viewport_size);
         }
-        ImGui::Image(state->render_state->render_shader_view.Get(), ImGui::GetWindowSize());
+        ImGui::Image(state->render_state->render_shader_view.Get(), content_region);
 
         // Handle entity picking
         const ImVec2 vieport_max = { ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + ImGui::GetWindowHeight() };

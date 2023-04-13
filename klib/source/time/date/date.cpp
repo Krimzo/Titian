@@ -1,6 +1,7 @@
 #include "time/date/date.h"
 
 
+// Date
 kl::date::date()
 {
     const time_t time = std::time(nullptr);
@@ -15,6 +16,7 @@ kl::date::date()
     second = now.tm_sec;
 }
 
+// Format
 std::ostream& kl::operator<<(std::ostream& stream, const date& obj)
 {
     stream << obj.year <<
