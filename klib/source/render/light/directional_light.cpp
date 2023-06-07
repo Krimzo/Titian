@@ -32,9 +32,6 @@ kl::directional_light::directional_light(gpu* gpu, const UINT map_resolution)
     }
 }
 
-kl::directional_light::~directional_light()
-{}
-
 void kl::directional_light::set_direction(const float3& direction)
 {
     direction_ = normalize(direction);

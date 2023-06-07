@@ -210,14 +210,6 @@ void kl::entity::wake_up() const
 
 #else
 
-// Creation
-kl::entity::entity()
-{}
-
-kl::entity::~entity()
-{}
-
-// Methods
 void kl::entity::update_physics(const float delta_t)
 {
     velocity += acceleration * delta_t;

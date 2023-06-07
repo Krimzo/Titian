@@ -11,9 +11,7 @@ namespace kl {
         dx::context context_ = nullptr;
 
     public:
-        // Creation
-        context_holder();
-        virtual ~context_holder();
+        context_holder() = default;
 
         context_holder(const context_holder&) = delete;
         context_holder(const context_holder&&) = delete;

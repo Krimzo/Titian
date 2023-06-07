@@ -23,7 +23,6 @@ namespace kl {
 
         texture(kl::gpu* gpu);
         texture(kl::gpu* gpu, const texture_data& data, bool is_cube = false, bool has_unordered_access = false, bool is_target = false);
-        ~texture();
 
         void reload(bool has_unordered_access = false, bool is_target = false);
         bool reload_as_cube();

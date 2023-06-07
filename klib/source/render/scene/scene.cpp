@@ -192,12 +192,6 @@ kl::ref<kl::collider> kl::scene::make_default_collider(PxGeometryType::Enum type
 
 #else
 
-kl::scene::scene()
-{}
-
-kl::scene::~scene()
-{}
-
 void kl::scene::update_physics(const float delta_t)
 {
     for (auto& entity : *this) {

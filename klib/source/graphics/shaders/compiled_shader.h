@@ -9,11 +9,6 @@ namespace kl {
         dx::shader_blob data = nullptr;
         dx::shader_blob error = nullptr;
 
-        // Creation
-        compiled_shader();
-        ~compiled_shader();
-
-        // Get
         operator bool() const;
 
         const void* get_data() const;

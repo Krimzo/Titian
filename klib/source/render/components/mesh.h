@@ -46,7 +46,6 @@ namespace kl {
 
         mesh(kl::gpu* gpu);
         mesh(kl::gpu* gpu, const mesh_data& data);
-        ~mesh();
 
         void reload();
     };

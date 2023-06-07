@@ -1,16 +1,16 @@
 #include "gui/gui_render.h"
 
 
-void gui_entity_transform(editor_state* state, kl::ref<kl::entity> entity);
-void   gui_entity_physics(editor_state* state, kl::ref<kl::entity> entity);
-void  gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity);
-void      gui_entity_mesh(editor_state* state, kl::ref<kl::entity> entity);
-void  gui_entity_material(editor_state* state, kl::ref<kl::entity> entity);
+void gui_entity_transform(editor_state* state, const kl::ref<kl::entity>& entity);
+void gui_entity_physics(const editor_state* state, const kl::ref<kl::entity>& entity);
+void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& entity);
+void gui_entity_mesh(editor_state* state, const kl::ref<kl::entity>& entity);
+void gui_entity_material(editor_state* state, const kl::ref<kl::entity>& entity);
 
 void gui_entity_properties(editor_state* state)
 {
     if (ImGui::Begin("Entity properties") && state->scene->selected_entity) {
-        kl::ref<kl::entity> entity = state->scene->selected_entity;
+        const kl::ref<kl::entity> entity = state->scene->selected_entity;
 
         gui_entity_transform(state, entity);
         gui_entity_mesh(state, entity);
@@ -21,24 +21,24 @@ void gui_entity_properties(editor_state* state)
     ImGui::End();
 }
 
-void gui_entity_transform(editor_state* state, kl::ref<kl::entity> entity)
+void gui_entity_transform(editor_state* state, const kl::ref<kl::entity>& entity)
 {
     ImGui::Text("Transform");
 
     ImGui::DragFloat3("Scale", entity->render_scale);
-
-    kl::float3 rotation = entity->get_rotation();
+    
+    const kl::float3 rotation = entity->get_rotation();
     if (ImGui::DragFloat3("Rotation", rotation)) {
         entity->set_rotation(rotation);
     }
 
-    kl::float3 position = entity->get_position();
+    const kl::float3 position = entity->get_position();
     if (ImGui::DragFloat3("Position", position)) {
         entity->set_position(position);
     }
 }
 
-void gui_entity_physics(editor_state* state, kl::ref<kl::entity> entity)
+void gui_entity_physics(const editor_state* state, const kl::ref<kl::entity>& entity)
 {
     ImGui::Separator();
     ImGui::Text("Physics");
@@ -62,19 +62,19 @@ void gui_entity_physics(editor_state* state, kl::ref<kl::entity> entity)
             entity->set_mass(mass);
         }
 
-        kl::float3 velocity = entity->get_velocity();
+        const kl::float3 velocity = entity->get_velocity();
         if (ImGui::DragFloat3("Velocity", velocity)) {
             entity->set_velocity(velocity);
         }
 
-        kl::float3 angular = entity->get_angular();
+        const kl::float3 angular = entity->get_angular();
         if (ImGui::DragFloat3("Angular", angular)) {
             entity->set_angular(angular);
         }
     }
 }
 
-void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
+void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& entity)
 {
     static const std::unordered_map<PxGeometryType::Enum, std::string> possible_colliders = {
         {     PxGeometryType::Enum::eINVALID, "" },
@@ -130,9 +130,7 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
     }
 
     // Specific info
-    auto collider_shape = collider->get_shape();
-    PxTransform transform = collider_shape->getLocalPose();
-
+    const auto collider_shape = collider->get_shape();
     if (collider_type == PxGeometryType::Enum::eBOX) {
         PxBoxGeometry geometry = {};
         collider_shape->getBoxGeometry(geometry);
@@ -170,18 +168,18 @@ void gui_entity_collider(editor_state* state, kl::ref<kl::entity> entity)
         }
     }
 
-    kl::float3 rotation = collider->get_rotation();
+    const kl::float3 rotation = collider->get_rotation();
     if (ImGui::DragFloat3("Offset Rotation", rotation)) {
         collider->set_rotation(rotation);
     }
 
-    kl::float3 offset = collider->get_offset();
+    const kl::float3 offset = collider->get_offset();
     if (ImGui::DragFloat3("Offset Position", offset)) {
         collider->set_offset(offset);
     }
 }
 
-void gui_entity_mesh(editor_state* state, kl::ref<kl::entity> entity)
+void gui_entity_mesh(editor_state* state, const kl::ref<kl::entity>& entity)
 {
     ImGui::Separator();
     ImGui::Text("Mesh");
@@ -227,7 +225,7 @@ void gui_entity_mesh(editor_state* state, kl::ref<kl::entity> entity)
     }
 }
 
-void gui_entity_material(editor_state* state, kl::ref<kl::entity> entity)
+void gui_entity_material(editor_state* state, const kl::ref<kl::entity>& entity)
 {
     ImGui::Separator();
     ImGui::Text("Material");

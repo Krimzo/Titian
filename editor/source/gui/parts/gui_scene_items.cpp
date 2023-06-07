@@ -1,7 +1,7 @@
 #include "gui/gui_render.h"
 
 
-void gui_scene_items(editor_state* state)
+void gui_scene_items(const editor_state* state)
 {
     if (ImGui::Begin("Scene items") && state->scene) {
         for (auto& [name, entity] : *state->scene) {

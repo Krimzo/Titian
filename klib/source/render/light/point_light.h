@@ -10,8 +10,5 @@ namespace kl {
         float3 origin = {};
         float3 color = colors::white;
         float intensity = 1.0f;
-
-        point_light();
-        ~point_light();
     };
 }

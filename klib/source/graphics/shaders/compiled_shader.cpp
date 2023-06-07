@@ -1,14 +1,6 @@
 #include "graphics/shaders/compiled_shader.h"
 
 
-// Creation
-kl::compiled_shader::compiled_shader()
-{}
-
-kl::compiled_shader::~compiled_shader()
-{}
-
-// Get
 kl::compiled_shader::operator bool() const
 {
     return (data && !error);

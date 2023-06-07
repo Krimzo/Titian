@@ -20,6 +20,9 @@ namespace kl {
         operator kl::color* ();
         operator const kl::color* () const;
 
+        int pixel_count() const;
+        uint64_t byte_size() const;
+
         color& operator[](const int2& coords);
         const color& operator[](const int2& coords) const;
 

@@ -1,13 +1,6 @@
 #include "graphics/context_holder/context_holder.h"
 
 
-// Creation
-kl::context_holder::context_holder()
-{}
-
-kl::context_holder::~context_holder()
-{}
-
 // Viewport
 void kl::context_holder::set_viewport_position(const int2& position) const
 {

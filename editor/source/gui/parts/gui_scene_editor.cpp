@@ -2,7 +2,7 @@
 
 
 kl::int2 get_window_mouse_position();
-int get_entity_index(editor_state* state, const kl::int2& pixel_coords);
+int get_entity_index(const editor_state* state, const kl::int2& pixel_coords);
 
 void handle_gizmo_operation_change(editor_state* state, int gizmo_operation, ImGuiKey switch_key);
 void render_gizmos(editor_state* state);
@@ -57,7 +57,7 @@ kl::int2 get_window_mouse_position()
     };
 }
 
-int get_entity_index(editor_state* state, const kl::int2& pixel_coords)
+int get_entity_index(const editor_state* state, const kl::int2& pixel_coords)
 {
     if (pixel_coords.x < 0 || pixel_coords.y < 0) { return 0; }
 
@@ -114,8 +114,10 @@ void render_gizmos(editor_state* state)
         switch (state->gui_state.gizmo_operation) {
         case ImGuizmo::SCALE:
             selected_snap = predefined_snaps[0];
+            break;
         case ImGuizmo::ROTATE:
             selected_snap = predefined_snaps[1];
+            break;
         case ImGuizmo::TRANSLATE:
             selected_snap = predefined_snaps[2];
         }
@@ -131,7 +133,7 @@ void render_gizmos(editor_state* state)
         selected_snap);
 
     if (ImGuizmo::IsUsing()) {
-        kl::float3 decomposed_parts[3] = {};
+        const kl::float3 decomposed_parts[3] = {};
         ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
             decomposed_parts[2], decomposed_parts[1], decomposed_parts[0]);
 

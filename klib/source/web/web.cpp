@@ -18,15 +18,11 @@ std::string kl::download_website(const std::string& url, const int buffer_size)
 
     std::string data = {};
     std::vector<byte> buffer(buffer_size);
-
     for (DWORD bytes_read = 0; InternetReadFile(address, buffer.data(), (DWORD) buffer.size(), &bytes_read) && bytes_read > 0;) {
-        for (DWORD i = 0; i < bytes_read; i++) {
-            data.push_back((char) buffer[i]);
-        }
+        data.insert(data.end(), buffer.begin(), buffer.begin() + bytes_read);
     }
 
     InternetCloseHandle(address);
     InternetCloseHandle(connection);
-
     return data;
 }

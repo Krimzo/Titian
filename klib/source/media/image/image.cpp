@@ -41,6 +41,16 @@ kl::image::operator const kl::color* () const
     return pixel_storage::data();
 }
 
+int kl::image::pixel_count() const
+{
+    return size_.x * size_.y;
+}
+
+uint64_t kl::image::byte_size() const
+{
+    return pixel_count() * sizeof(color);
+}
+
 kl::color& kl::image::operator[](const int2& coords)
 {
     return pixel_storage::at((size_t) coords.y * size_.x + coords.x);

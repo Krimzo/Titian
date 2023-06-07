@@ -3,13 +3,6 @@
 #include "utility/utility.h"
 
 
-// Creation
-kl::shader_compiler::shader_compiler()
-{}
-
-kl::shader_compiler::~shader_compiler()
-{}
-
 // Compilation
 kl::compiled_shader kl::shader_compiler::compile(const std::string& name, const std::string& version, const std::string& source) const
 {
@@ -19,7 +12,7 @@ kl::compiled_shader kl::shader_compiler::compile(const std::string& name, const 
     return compiled_shader;
 }
 
-// Predefined compiling
+// Predefined compilation
 kl::compiled_shader kl::shader_compiler::compile_vertex_shader(const std::string& source) const
 {
     return compile("v_shader", "vs_5_0", source);

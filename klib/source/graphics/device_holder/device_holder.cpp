@@ -4,13 +4,6 @@
 #include "memory/memory.h"
 
 
-// Creation
-kl::device_holder::device_holder()
-{}
-
-kl::device_holder::~device_holder()
-{}
-
 // States
 kl::dx::raster_state kl::device_holder::create_raster_state(const dx::raster_state_descriptor* descriptor) const
 {

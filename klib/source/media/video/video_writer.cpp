@@ -54,9 +54,6 @@ kl::video_writer::video_writer(const std::string& filepath, const kl::int2& fram
     fail_check_(sink_writer_->BeginWriting(), "Failed to start accepting frames");
 }
 
-kl::video_writer::~video_writer()
-{}
-
 kl::int2 kl::video_writer::frame_size() const
 {
     return { (int) width_, (int) height_ };

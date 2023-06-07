@@ -1,7 +1,7 @@
 #include "gui/gui_render.h"
 
 
-void gui_depth_display(editor_state* state)
+void gui_depth_display(const editor_state* state)
 {
     if (ImGui::Begin("Depth display", nullptr, ImGuiWindowFlags_NoScrollbar)) {
         static int light_cascade_index = 0;

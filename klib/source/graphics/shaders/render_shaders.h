@@ -10,11 +10,6 @@ namespace kl {
         shader_holder<dx::pixel_shader> pixel_shader = nullptr;
         dx::layout input_layout = nullptr;
 
-        // Creation
-        render_shaders();
-        ~render_shaders();
-
-        // Get
         operator bool() const;
     };
 }

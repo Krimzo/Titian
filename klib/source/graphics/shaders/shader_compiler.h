@@ -7,14 +7,10 @@ namespace kl {
     class shader_compiler
     {
     public:
-        // Creation
-        shader_compiler();
-        virtual ~shader_compiler();
-
-        // Compiling
+        // Compilation
         compiled_shader compile(const std::string& name, const std::string& version, const std::string& source) const;
 
-        // Predefined compiling
+        // Predefined compilation
         compiled_shader compile_vertex_shader(const std::string& source) const;
         compiled_shader compile_geometry_shader(const std::string& source) const;
         compiled_shader compile_pixel_shader(const std::string& source) const;

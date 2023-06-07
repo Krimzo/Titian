@@ -4,8 +4,13 @@
 void gui_render_info(editor_state* state)
 {
     if (ImGui::Begin("Render Info")) {
-        float frame_time = state->timer.get_interval() * 1000.0f;
-        ImGui::DragFloat("Frame time", &frame_time);
+        const float frame_time = state->timer.get_interval();
+
+        float frame_time_ms = frame_time * 1000.0f;
+        ImGui::DragFloat("Frame time [ms]", &frame_time_ms);
+
+        float frames_per_second = 1.0f / frame_time;
+        ImGui::DragFloat("Frames per second", &frames_per_second);
     }
     ImGui::End();
 }

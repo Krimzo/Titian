@@ -100,9 +100,6 @@ namespace kl {
 
         float3 gravity = { 0.0f, -9.81f, 0.0f };
 
-        scene();
-        ~scene();
-
         void update_physics(float delta_t);
     };
 }

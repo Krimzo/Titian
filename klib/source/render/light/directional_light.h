@@ -22,7 +22,6 @@ namespace kl {
         float point_size = 1.0f;
 
         directional_light(gpu* gpu, UINT map_resolution);
-        ~directional_light();
 
         directional_light(const directional_light&) = delete;
         directional_light(const directional_light&&) = delete;

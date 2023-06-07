@@ -11,10 +11,10 @@ void gui_log_view(editor_state* state)
         for (size_t i = 0; i < state->logger.size(); i++) {
             const log_info& log_info = state->logger.get(i);
 
-            ui_colored_text((kl::float4) kl::colors::orange, (i == last_log_index) ? ">" : " ");
+            ui_colored_text(kl::colors::orange, i == last_log_index ? ">" : " ");
             ImGui::SameLine();
 
-            ui_colored_text({ 0.972f, 0.223f, 0.325f, 1 }, kl::format(std::setw(3), (i + 1), "."));
+            ui_colored_text({ 0.972f, 0.223f, 0.325f, 1 }, kl::format(std::setw(3), i + 1, "."));
             ImGui::SameLine();
 
             ui_colored_text({ 0.552f, 0.823f, 0.278f, 1 }, kl::format("[", log_info.date, "]:"));

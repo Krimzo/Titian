@@ -12,7 +12,7 @@ editor_state::~editor_state()
     change_scene(nullptr);
 }
 
-void editor_state::change_scene(kl::ref<kl::scene> scene)
+void editor_state::change_scene(const kl::ref<kl::scene>& scene)
 {
     default_meshes.clear();
     default_materials.clear();

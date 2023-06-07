@@ -2,8 +2,6 @@
 
 #include "apis/apis.h"
 
-#define null nullptr
-
 
 namespace kl {
     template <typename T>

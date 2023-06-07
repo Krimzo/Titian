@@ -17,11 +17,11 @@ void gui_render(editor_state* state);
 void gui_main_menu(editor_state* state);
 
 // Left
-void gui_scene_items(editor_state* state);
-void  gui_scene_info(editor_state* state);
+void gui_scene_items(const editor_state* state);
+void  gui_scene_info(const editor_state* state);
 
 // Middle-Top
-void   gui_depth_display(editor_state* state);
+void   gui_depth_display(const editor_state* state);
 void     gui_mesh_editor(editor_state* state);
 void gui_material_editor(editor_state* state);
 void    gui_scene_editor(editor_state* state);

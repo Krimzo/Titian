@@ -20,13 +20,8 @@ int kl::get()
 bool kl::warning_check(const bool occured, const std::string& message, const bool wait)
 {
     if (occured) {
-        print(colors::orange, "Warning: ", message);
-
-        if (wait) {
-            console::wait_for_any();
-        }
-
-        print<false>(colors::console);
+        print(colors::orange, "Warning: ", message, colors::console);
+        if (wait) console::wait_for_any();
     }
     return occured;
 }
@@ -34,13 +29,8 @@ bool kl::warning_check(const bool occured, const std::string& message, const boo
 void kl::error_check(const bool occured, const std::string& message, const bool wait)
 {
     if (occured) {
-        print(colors::red, "Error: ", message);
-
-        if (wait) {
-            console::wait_for_any();
-        }
-
-        print<false>(colors::console);
+        print(colors::red, "Error: ", message, colors::console);
+        if (wait) console::wait_for_any();
         exit(1);
     }
 }

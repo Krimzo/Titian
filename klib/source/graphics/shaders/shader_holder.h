@@ -18,7 +18,6 @@ namespace kl {
         // Construct
         shader_holder(kl::gpu* gpu);
         shader_holder(kl::gpu* gpu, const S& shader);
-        ~shader_holder();
 
         // Get
         operator S() const;

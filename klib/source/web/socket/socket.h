@@ -6,39 +6,37 @@
 namespace kl {
     class socket
     {
-        sockaddr_in address_ = {};
-        size_t socket_ = {};
-
-        explicit socket(size_t socket);
+        sockaddr_in m_address = {};
+        SOCKET m_socket = {};
 
     public:
-        static const std::string self_ip;
+        static const std::string self;
 
+        // Init
         socket();
+        socket(int port);
         socket(const std::string& address, int port);
         ~socket();
 
-        socket(const socket&) = delete;
-        socket(const socket&&) = delete;
+        // Properties
+        SOCKET id() const;
 
-        void operator=(const socket&) = delete;
-        void operator=(const socket&&) = delete;
+        std::string address() const;
+        int set_address(const std::string& address);
 
-        size_t get_id() const;
-        void close() const;
-
-        std::string get_address() const;
-        void set_address(const std::string& address);
-
-        int get_port() const;
+        int port() const;
         void set_port(int port);
 
-        void listen(int queue_size);
+        // Connection
+        int listen(int queue_size);
         socket accept();
-        void connect();
+        int connect();
+        int close() const;
 
+        // Data transfer
         int send(const void* data, int byte_size) const;
         int receive(void* buff, int byte_size) const;
+        int exhaust(std::vector<byte>& output, int buffer_size = 16384) const;
 
         template <typename T>
         int send(const T& obj) const

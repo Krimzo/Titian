@@ -18,8 +18,5 @@ namespace kl {
         float reflection_factor = 0.0f;
         float refraction_factor = 0.0f;
         float refraction_index = 0.0f;
-
-        material();
-        ~material();
     };
 }

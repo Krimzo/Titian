@@ -72,5 +72,5 @@ struct editor_state
     void operator=(editor_state&) = delete;
     void operator=(editor_state&&) = delete;
 
-    void change_scene(kl::ref<kl::scene> scene);
+    void change_scene(const kl::ref<kl::scene>& scene);
 };

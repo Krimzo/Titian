@@ -16,9 +16,6 @@ kl::texture::texture(kl::gpu* gpu, const texture_data& data, const bool is_cube,
     }
 }
 
-kl::texture::~texture()
-{}
-
 void kl::texture::reload(const bool has_unordered_access, const bool is_target)
 {
     graphics_buffer = gpu->create_texture(data_buffer, has_unordered_access, is_target);

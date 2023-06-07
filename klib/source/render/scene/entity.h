@@ -84,9 +84,6 @@ namespace kl {
         ref<mesh> mesh = nullptr;
         ref<material> material = nullptr;
 
-        entity();
-        ~entity();
-
         void update_physics(float delta_t);
 
         float4x4 matrix() const;

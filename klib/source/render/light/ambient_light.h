@@ -9,8 +9,5 @@ namespace kl {
     public:
         float3 color = float3(1.0f);
         float intensity = 0.1f;
-
-        ambient_light();
-        ~ambient_light();
     };
 }

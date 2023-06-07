@@ -11,9 +11,7 @@ namespace kl {
         dx::device device_ = nullptr;
 
     public:
-        // Creation
-        device_holder();
-        virtual ~device_holder();
+        device_holder() = default;
 
         device_holder(const device_holder&) = delete;
         device_holder(const device_holder&&) = delete;

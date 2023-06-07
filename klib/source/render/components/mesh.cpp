@@ -62,9 +62,6 @@ kl::mesh::mesh(kl::gpu* gpu, const mesh_data& data)
     reload();
 }
 
-kl::mesh::~mesh()
-{}
-
 void kl::mesh::reload()
 {
     graphics_buffer = gpu->create_vertex_buffer(data_buffer);

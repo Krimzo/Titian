@@ -14,10 +14,6 @@ kl::shader_holder<S>::shader_holder(kl::gpu* gpu, const S& shader)
     : gpu(gpu), shader(shader)
 {}
 
-template<typename S>
-kl::shader_holder<S>::~shader_holder()
-{}
-
 // Get
 template<typename S>
 kl::shader_holder<S>::operator S() const

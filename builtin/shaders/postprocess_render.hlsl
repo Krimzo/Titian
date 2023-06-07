@@ -26,12 +26,12 @@ static const int outline_thickness = 1;
 
 float4 p_shader(vs_out vs_data) : SV_Target
 {
-    const float pixel_index = index_texture[vs_data.screen.xy];
+    const float pixel_index = index_texture[vs_data.screen.xy].x;
     if (pixel_index == selected_index.x) { discard; }
 
     for (int y = -outline_thickness; y <= outline_thickness; y++) {
         for (int x = -outline_thickness; x <= outline_thickness; x++) {
-            const float index = index_texture[vs_data.screen.xy + int2(x, y)];
+            const float index = index_texture[vs_data.screen.xy + int2(x, y)].x;
             if (index == selected_index.r) {
                 return outline_color;
             }

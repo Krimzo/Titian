@@ -81,7 +81,7 @@ float3 get_pixel_normal(float3 world_position, float3 interpolated_normal, float
 float get_pixel_reflectivity(float reflectivity, float2 texture_coords);
 
 vs_out compute_light_transforms(vs_out vs_data);
-float get_shadow_factor(vs_out vs_data, float camera_z, const int half_kernel_size);
+float get_shadow_factor(vs_out vs_data, const float camera_z, const int half_kernel_size);
 float get_pcf_shadow(Texture2D shadow_map, float3 light_coords, const int half_kernel_size);
 
 ps_out p_shader(vs_out vs_data)
@@ -151,13 +151,13 @@ float get_pixel_reflectivity(float reflectivity, float2 texture_coords)
     if (!object_texture_info.y) {
         return reflectivity;
     }
-
     const float roughness = roughness_texture.Sample(entity_sampler, texture_coords).r;
     return (1 - roughness);
 }
 
 vs_out compute_light_transforms(vs_out vs_data)
 {
+    [unroll]
     for (int i = 0; i < SHADOW_CASCADE_COUNT; i++) {
         vs_data.light_coords[i] /= vs_data.light_coords[i].w;
         vs_data.light_coords[i].z = min(vs_data.light_coords[i].z, 1);
@@ -165,21 +165,22 @@ vs_out compute_light_transforms(vs_out vs_data)
     return vs_data;
 }
 
-float get_shadow_factor(vs_out vs_data, float camera_z, const int half_kernel_size)
+float get_shadow_factor(vs_out vs_data, const float camera_z, const int half_kernel_size)
 {
+    float pcf_value = 0;
     if (camera_z < cascade_distances.x) {
-        return get_pcf_shadow(shadow_texture_0, vs_data.light_coords[0].xyz, half_kernel_size);
+        pcf_value = get_pcf_shadow(shadow_texture_0, vs_data.light_coords[0].xyz, half_kernel_size);
     }
-    
-    if (camera_z < cascade_distances.y) {
-        return get_pcf_shadow(shadow_texture_1, vs_data.light_coords[1].xyz, half_kernel_size);
+    else if (camera_z < cascade_distances.y) {
+        pcf_value = get_pcf_shadow(shadow_texture_1, vs_data.light_coords[1].xyz, half_kernel_size);
     }
-    
-    if (camera_z < cascade_distances.z) {
-        return get_pcf_shadow(shadow_texture_2, vs_data.light_coords[2].xyz, half_kernel_size);
+    else if (camera_z < cascade_distances.z) {
+        pcf_value = get_pcf_shadow(shadow_texture_2, vs_data.light_coords[2].xyz, half_kernel_size);
     }
-    
-    return get_pcf_shadow(shadow_texture_3, vs_data.light_coords[3].xyz, half_kernel_size);
+    else {
+        pcf_value = get_pcf_shadow(shadow_texture_3, vs_data.light_coords[3].xyz, half_kernel_size);
+    }
+    return pcf_value;
 }
 
 float get_pcf_shadow(Texture2D shadow_map, float3 light_coords, const int half_kernel_size)
@@ -189,7 +190,9 @@ float get_pcf_shadow(Texture2D shadow_map, float3 light_coords, const int half_k
     float shadow_factor = 0;
     float sample_counter = 0;
 
+    [unroll]
     for (int y = -half_kernel_size; y <= half_kernel_size; y++) {
+        [unroll]
         for (int x = -half_kernel_size; x <= half_kernel_size; x++) {
             const float2 kernel_coords = float2(x, y) + adder;
             const float2 altered_coords = light_coords.xy + kernel_coords * shadow_map_info.zw;
