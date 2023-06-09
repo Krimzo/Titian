@@ -94,24 +94,6 @@ void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& e
     PxGeometryType::Enum collider_type = (collider ? collider->get_type() : PxGeometryType::Enum::eINVALID);
     std::string collider_name = possible_colliders.at(collider_type);
 
-    // General info
-    if (collider) {
-        float restitution = collider->get_restitution();
-        if (ImGui::DragFloat("Restitution", &restitution, 0.1f, 0.0f, 1e9f)) {
-            collider->set_restitution(restitution);
-        }
-
-        float static_friction = collider->get_static_friction();
-        if (ImGui::DragFloat("Static Friction", &static_friction, 0.1f, 0.0f, 1e9f)) {
-            collider->set_static_friction(static_friction);
-        }
-
-        float dynamic_friction = collider->get_dynamic_friction();
-        if (ImGui::DragFloat("Dynamic Friction", &dynamic_friction, 0.1f, 0.0f, 1e9f)) {
-            collider->set_dynamic_friction(dynamic_friction);
-        }
-    }
-
     // Choose type
     if (ImGui::BeginCombo("Bound Collider", collider_name.c_str())) {
         for (auto& [type, name] : possible_colliders) {
@@ -129,15 +111,34 @@ void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& e
         return;
     }
 
+    // General info
+    float restitution = collider->get_restitution();
+    if (ImGui::DragFloat("Restitution", &restitution, 0.1f, 0.0f, 1e9f)) {
+        collider->set_restitution(restitution);
+    }
+
+    float static_friction = collider->get_static_friction();
+    if (ImGui::DragFloat("Static Friction", &static_friction, 0.1f, 0.0f, 1e9f)) {
+        collider->set_static_friction(static_friction);
+    }
+
+    float dynamic_friction = collider->get_dynamic_friction();
+    if (ImGui::DragFloat("Dynamic Friction", &dynamic_friction, 0.1f, 0.0f, 1e9f)) {
+        collider->set_dynamic_friction(dynamic_friction);
+    }
+
     // Specific info
+    PxBoxGeometry box_geometry = {};
+    PxTriangleMeshGeometry mesh_geometry = {};
+    int geometry_type = 0;
     const auto collider_shape = collider->get_shape();
     if (collider_type == PxGeometryType::Enum::eBOX) {
-        PxBoxGeometry geometry = {};
-        collider_shape->getBoxGeometry(geometry);
+        collider_shape->getBoxGeometry(box_geometry);
 
-        if (ImGui::DragFloat3("Size", (float*) &geometry.halfExtents, 0.5f, 0.0f, 1e9f)) {
-            collider_shape->setGeometry(geometry);
+        if (ImGui::DragFloat3("Size", (float*) &box_geometry.halfExtents, 0.5f, 0.0f, 1e9f)) {
+            collider_shape->setGeometry(box_geometry);
         }
+        geometry_type = 1;
     }
     else if (collider_type == PxGeometryType::Enum::eSPHERE) {
         PxSphereGeometry geometry = {};
@@ -160,12 +161,12 @@ void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& e
         }
     }
     else if (collider_type == PxGeometryType::Enum::eTRIANGLEMESH) {
-        PxTriangleMeshGeometry geometry = {};
-        collider_shape->getTriangleMeshGeometry(geometry);
+        collider_shape->getTriangleMeshGeometry(mesh_geometry);
 
-        if (ImGui::DragFloat3("Mesh Scale", (float*) &geometry.scale, 0.5f, 0.0f, 1e9f)) {
-            collider_shape->setGeometry(geometry);
+        if (ImGui::DragFloat3("Mesh Scale", (float*) &mesh_geometry.scale, 0.5f, 0.0f, 1e9f)) {
+            collider_shape->setGeometry(mesh_geometry);
         }
+        geometry_type = 2;
     }
 
     const kl::float3 rotation = collider->get_rotation();
@@ -176,6 +177,18 @@ void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& e
     const kl::float3 offset = collider->get_offset();
     if (ImGui::DragFloat3("Offset Position", offset)) {
         collider->set_offset(offset);
+    }
+
+    // Loading buttons
+    if (geometry_type && ImGui::Button("Load scale from transform")) {
+        if (geometry_type == 1) {
+            box_geometry.halfExtents = (PxVec3&) entity->render_scale;
+            collider_shape->setGeometry(box_geometry);
+        }
+        else {
+            mesh_geometry.scale = (PxVec3&) entity->render_scale;
+            collider_shape->setGeometry(mesh_geometry);
+        }
     }
 }
 

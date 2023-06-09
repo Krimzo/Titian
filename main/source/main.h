@@ -3,7 +3,7 @@
 
 enum class executable
 {
-    sandbox = -1,
     editor = 0,
     game = 1,
+    sandbox = 2,
 };

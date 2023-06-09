@@ -5,10 +5,9 @@
 #include "sandbox.h"
 
 
-static const executable exe_type = executable::sandbox;
-
 int main()
 {
+	const auto exe_type = executable::sandbox;
 	switch (exe_type) {
 	case executable::editor:
 		return editor_main();
