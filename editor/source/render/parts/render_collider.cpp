@@ -21,16 +21,18 @@ void render_collider(editor_state* state)
     case PxGeometryType::Enum::eBOX:
         state->gpu->draw(state->default_meshes["cube"]->graphics_buffer);
         break;
+
     case PxGeometryType::Enum::eSPHERE:
         state->gpu->draw(state->default_meshes["sphere"]->graphics_buffer);
         break;
+
     case PxGeometryType::Enum::eCAPSULE:
         state->gpu->draw(state->default_meshes["capsule"]->graphics_buffer);
         break;
 
     case PxGeometryType::Enum::ePLANE:
-
         break;
+
     case PxGeometryType::Enum::eTRIANGLEMESH:
         auto& mesh = state->scene->selected_entity->mesh;
         if (mesh) { state->gpu->draw(mesh->graphics_buffer); }

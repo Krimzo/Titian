@@ -1,16 +1,16 @@
 #include "gui/gui_render.h"
 
 
-void gui_entity_transform(editor_state* state, const kl::ref<kl::entity>& entity);
-void gui_entity_physics(const editor_state* state, const kl::ref<kl::entity>& entity);
-void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& entity);
-void gui_entity_mesh(editor_state* state, const kl::ref<kl::entity>& entity);
-void gui_entity_material(editor_state* state, const kl::ref<kl::entity>& entity);
+void gui_entity_transform(editor_state* state, kl::object<kl::entity>& entity);
+void gui_entity_physics(editor_state* state, kl::object<kl::entity>& entity);
+void gui_entity_collider(editor_state* state, kl::object<kl::entity>& entity);
+void gui_entity_mesh(editor_state* state, kl::object<kl::entity>& entity);
+void gui_entity_material(editor_state* state, kl::object<kl::entity>& entity);
 
 void gui_entity_properties(editor_state* state)
 {
     if (ImGui::Begin("Entity properties") && state->scene->selected_entity) {
-        const kl::ref<kl::entity> entity = state->scene->selected_entity;
+        kl::object<kl::entity> entity = state->scene->selected_entity;
 
         gui_entity_transform(state, entity);
         gui_entity_mesh(state, entity);
@@ -21,7 +21,7 @@ void gui_entity_properties(editor_state* state)
     ImGui::End();
 }
 
-void gui_entity_transform(editor_state* state, const kl::ref<kl::entity>& entity)
+void gui_entity_transform(editor_state* state, kl::object<kl::entity>& entity)
 {
     ImGui::Text("Transform");
 
@@ -38,7 +38,7 @@ void gui_entity_transform(editor_state* state, const kl::ref<kl::entity>& entity
     }
 }
 
-void gui_entity_physics(const editor_state* state, const kl::ref<kl::entity>& entity)
+void gui_entity_physics(editor_state* state, kl::object<kl::entity>& entity)
 {
     ImGui::Separator();
     ImGui::Text("Physics");
@@ -74,7 +74,7 @@ void gui_entity_physics(const editor_state* state, const kl::ref<kl::entity>& en
     }
 }
 
-void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& entity)
+void gui_entity_collider(editor_state* state, kl::object<kl::entity>& entity)
 {
     static const std::unordered_map<PxGeometryType::Enum, std::string> possible_colliders = {
         {     PxGeometryType::Enum::eINVALID, "" },
@@ -90,7 +90,7 @@ void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& e
     ImGui::Separator();
     ImGui::Text("Collider");
 
-    kl::ref<kl::collider> collider = entity->get_collider();
+    kl::object<kl::collider> collider = entity->get_collider();
     PxGeometryType::Enum collider_type = (collider ? collider->get_type() : PxGeometryType::Enum::eINVALID);
     std::string collider_name = possible_colliders.at(collider_type);
 
@@ -98,7 +98,7 @@ void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& e
     if (ImGui::BeginCombo("Bound Collider", collider_name.c_str())) {
         for (auto& [type, name] : possible_colliders) {
             if (ImGui::Selectable(name.c_str(), type == collider_type)) {
-                collider = state->scene->make_default_collider(type, entity->mesh.get());
+                collider = state->scene->make_default_collider(type, &entity->mesh);
                 collider_type = (collider ? collider->get_type() : PxGeometryType::Enum::eINVALID);
                 collider_name = possible_colliders.at(collider_type);
                 entity->set_collider(collider);
@@ -180,7 +180,7 @@ void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& e
     }
 
     // Loading buttons
-    if (geometry_type && ImGui::Button("Load scale from transform")) {
+    if (geometry_type && ImGui::Button("Load scale from transform", { -1.0f, 0.0f })) {
         if (geometry_type == 1) {
             box_geometry.halfExtents = (PxVec3&) entity->render_scale;
             collider_shape->setGeometry(box_geometry);
@@ -192,7 +192,7 @@ void gui_entity_collider(const editor_state* state, const kl::ref<kl::entity>& e
     }
 }
 
-void gui_entity_mesh(editor_state* state, const kl::ref<kl::entity>& entity)
+void gui_entity_mesh(editor_state* state, kl::object<kl::entity>& entity)
 {
     ImGui::Separator();
     ImGui::Text("Mesh");
@@ -238,7 +238,7 @@ void gui_entity_mesh(editor_state* state, const kl::ref<kl::entity>& entity)
     }
 }
 
-void gui_entity_material(editor_state* state, const kl::ref<kl::entity>& entity)
+void gui_entity_material(editor_state* state, kl::object<kl::entity>& entity)
 {
     ImGui::Separator();
     ImGui::Text("Material");

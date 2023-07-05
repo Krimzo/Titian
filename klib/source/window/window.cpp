@@ -25,7 +25,7 @@ kl::window::window(const int2& size, const std::string& name)
     // Creating the window
     window_style_ = WS_OVERLAPPEDWINDOW;
 
-    RECT size_buffer = { 0, 0, (LONG)size.x, (LONG) size.y };
+    RECT size_buffer = { 0, 0, (LONG) size.x, (LONG) size.y };
     AdjustWindowRect(&size_buffer, window_style_, false);
 
     const int2 new_size = {

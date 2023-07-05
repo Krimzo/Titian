@@ -6,8 +6,8 @@
 namespace kl {
     struct compiled_shader
     {
-        dx::shader_blob data = nullptr;
-        dx::shader_blob error = nullptr;
+        dx::data_blob data = nullptr;
+        dx::data_blob error = nullptr;
 
         operator bool() const;
 

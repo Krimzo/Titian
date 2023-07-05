@@ -9,28 +9,26 @@ static const kl::float3 target_position = { 0.0f, -6.5f, -25.0f };
 void setup_preview_bullets(editor_state* state, const int size)
 {
     // Materials
-    const kl::ref<kl::material> bullet_material = kl::make<kl::material>();
+    kl::object<kl::material> bullet_material = new kl::material();
     bullet_material->color = kl::color(232, 230, 227);
     bullet_material->reflection_factor = 0.15f;
     state->scene->materials["bullet"] = bullet_material;
 
-    const kl::ref<kl::material> bullet_casing_material = kl::make<kl::material>();
+    kl::object<kl::material> bullet_casing_material = new kl::material();
     bullet_casing_material->color = kl::color(210, 180, 130);
     bullet_casing_material->reflection_factor = 0.2f;
     state->scene->materials["bullet_casing"] = bullet_casing_material;
 
-    const kl::ref<kl::material> casing_primer_material = kl::make<kl::material>();
+    kl::object<kl::material> casing_primer_material = new kl::material();
     casing_primer_material->color = kl::color(232, 230, 227);
     casing_primer_material->reflection_factor = 0.1f;
     state->scene->materials["bullet_primer"] = casing_primer_material;
 
     // Bullets
     const int half_size = size / 2;
-    std::vector<std::function<void()>> all_callbacks = {};
-
     for (int i = 0; i < size; i++) {
         // Bullet
-        kl::ref<kl::entity> bullet = state->scene->make_entity(true);
+        kl::object<kl::entity> bullet = state->scene->make_entity(true);
         bullet->render_scale *= bullet_scale;
 
         kl::float3 old_position = bullet->get_position();
@@ -57,7 +55,7 @@ void setup_preview_bullets(editor_state* state, const int size)
         state->scene->add(kl::format("Bullet", i), bullet);
 
         // Bullet casing
-        kl::ref<kl::entity> bullet_casing = state->scene->make_entity(false);
+        kl::object<kl::entity> bullet_casing = state->scene->make_entity(false);
 
         bullet_casing->render_scale = bullet->render_scale;
         bullet_casing->set_rotation(bullet->get_rotation());
@@ -69,7 +67,7 @@ void setup_preview_bullets(editor_state* state, const int size)
         state->scene->add(kl::format("BulletCasing", i), bullet_casing);
 
         // Casing primer
-        kl::ref<kl::entity> casing_primer = state->scene->make_entity(false);
+        kl::object<kl::entity> casing_primer = state->scene->make_entity(false);
 
         casing_primer->render_scale = bullet_casing->render_scale;
         casing_primer->set_rotation(bullet_casing->get_rotation());
@@ -79,34 +77,5 @@ void setup_preview_bullets(editor_state* state, const int size)
         casing_primer->material = state->scene->materials["bullet_primer"];
 
         state->scene->add(kl::format("CasingPrimer", i), casing_primer);
-
-        // Callbacks
-        kl::ref<bool> bullet_fired = kl::make<bool>(false);
-        
-        all_callbacks.push_back([state, bullet, casing_primer, bullet_fired]
-        {
-            if (!*bullet_fired) {
-                const kl::float4 default_bullet_direction = { 0.0f, 1.0f, 0.0f, 1.0f };
-                auto correct_direction = (kl::float4x4::rotation(bullet->get_rotation()) * default_bullet_direction).xyz();
-        
-                bullet->set_velocity(kl::normalize(correct_direction) * fire_velocity);
-                casing_primer->mesh = state->scene->meshes["bmg_primer_fired"];
-        
-                *bullet_fired = true;
-            }
-        });
     }
-
-    /*
-    Callback bug happens because window spacebar callbacks still hold refs to entities.
-    The problem is that scene gets destroyed before the window does when application closes.
-    This results in an seg fault.
-    */
-
-    //state->window->keyboard.space.on_release.push_back([all_callbacks]
-    //{
-    //    for (auto& callback : all_callbacks) {
-    //        callback();
-    //    }
-    //});
 }

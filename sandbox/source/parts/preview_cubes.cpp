@@ -22,7 +22,7 @@ void setup_preview_cubes(editor_state* state, const int size)
             });
 
             cube->mesh = state->default_meshes["cube"];
-            cube->material = kl::make<kl::material>();
+            cube->material = new kl::material();
             cube->material->color = kl::colors::orange;
 
             cube->material->refraction_factor = (float) cube_counter / (size * size);

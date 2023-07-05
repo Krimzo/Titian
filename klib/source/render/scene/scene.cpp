@@ -49,12 +49,12 @@ kl::scene::~scene()
 }
 
 // Iterate
-std::map<std::string, kl::ref<kl::entity>>::iterator kl::scene::begin()
+std::map<std::string, kl::object<kl::entity>>::iterator kl::scene::begin()
 {
     return entities_.begin();
 }
 
-std::map<std::string, kl::ref<kl::entity>>::iterator kl::scene::end()
+std::map<std::string, kl::object<kl::entity>>::iterator kl::scene::end()
 {
     return entities_.end();
 }
@@ -70,7 +70,7 @@ PxCooking* kl::scene::get_cooking() const
     return cooking_;
 }
 
-kl::ref<kl::entity> kl::scene::get_entity(const std::string& name) const
+kl::object<kl::entity> kl::scene::get_entity(const std::string& name) const
 {
     if (entities_.contains(name)) {
         return entities_.at(name);
@@ -78,7 +78,7 @@ kl::ref<kl::entity> kl::scene::get_entity(const std::string& name) const
     return nullptr;
 }
 
-std::string kl::scene::get_name(ref<entity> entity) const
+std::string kl::scene::get_name(object<entity> entity) const
 {
     for (auto& [name, ent] : entities_) {
         if (ent == entity) {
@@ -105,7 +105,7 @@ kl::float3 kl::scene::get_gravity() const
     return (const float3&) gravity;
 }
 
-void kl::scene::add(const std::string& name, ref<entity> entity)
+void kl::scene::add(const std::string& name, object<entity> entity)
 {
     entities_[name] = entity;
     scene_->addActor(*entity->get_actor());
@@ -120,7 +120,7 @@ void kl::scene::remove(const std::string& name)
 }
 
 // Scene properties
-kl::ref<kl::entity> kl::scene::update_selected_entity(const uint32_t index)
+kl::object<kl::entity> kl::scene::update_selected_entity(const uint32_t index)
 {
     if (index != 0) {
         for (auto& [name, entity] : *this) {
@@ -139,40 +139,40 @@ void kl::scene::update_physics(const float delta_t)
 }
 
 // Entity
-kl::ref<kl::entity> kl::scene::make_entity(const bool dynamic)
+kl::object<kl::entity> kl::scene::make_entity(const bool dynamic)
 {
-    return make<entity>(physics_, dynamic);
+    return new entity(physics_, dynamic);
 }
 
 // Dynamic colliders
-kl::ref<kl::collider> kl::scene::make_box_collider(const float3& scale)
+kl::object<kl::collider> kl::scene::make_box_collider(const float3& scale)
 {
-    return make<collider>(physics_, PxBoxGeometry((PxVec3&) scale));
+    return new collider(physics_, PxBoxGeometry((PxVec3&) scale));
 }
 
-kl::ref<kl::collider> kl::scene::make_sphere_collider(float radius)
+kl::object<kl::collider> kl::scene::make_sphere_collider(float radius)
 {
-    return make<collider>(physics_, PxSphereGeometry(radius));
+    return new collider(physics_, PxSphereGeometry(radius));
 }
 
-kl::ref<kl::collider> kl::scene::make_capsule_collider(float radius, float height)
+kl::object<kl::collider> kl::scene::make_capsule_collider(float radius, float height)
 {
-    return make<collider>(physics_, PxCapsuleGeometry(radius, height));
+    return new collider(physics_, PxCapsuleGeometry(radius, height));
 }
 
 // Static colliders
-kl::ref<kl::collider> kl::scene::make_plane_collider()
+kl::object<kl::collider> kl::scene::make_plane_collider()
 {
-    return make<collider>(physics_, PxPlaneGeometry());
+    return new collider(physics_, PxPlaneGeometry());
 }
 
-kl::ref<kl::collider> kl::scene::make_mesh_collider(const mesh& mesh, const float3& scale)
+kl::object<kl::collider> kl::scene::make_mesh_collider(const mesh& mesh, const float3& scale)
 {
-    return make<collider>(physics_, PxTriangleMeshGeometry(mesh.physics_buffer, (PxVec3&) scale));
+    return new collider(physics_, PxTriangleMeshGeometry(mesh.physics_buffer, (PxVec3&) scale));
 }
 
 // Default collider
-kl::ref<kl::collider> kl::scene::make_default_collider(PxGeometryType::Enum type, const mesh* optional_mesh)
+kl::object<kl::collider> kl::scene::make_default_collider(PxGeometryType::Enum type, const mesh* optional_mesh)
 {
     switch (type) {
     case PxGeometryType::Enum::eBOX:
@@ -194,7 +194,7 @@ kl::ref<kl::collider> kl::scene::make_default_collider(PxGeometryType::Enum type
 
 void kl::scene::update_physics(const float delta_t)
 {
-    for (auto& entity : *this) {
+    for (kl::object<kl::entity> entity : *this) {
         entity->velocity += gravity * delta_t;
         entity->velocity += entity->acceleration * delta_t;
         entity->position += entity->velocity * delta_t;

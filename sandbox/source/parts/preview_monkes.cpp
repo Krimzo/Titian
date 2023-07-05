@@ -26,7 +26,7 @@ void setup_preview_monkes(editor_state* state, const int size)
         const float normalized = min(max(percentage, 0.0f), 1.0f);
 
         monke->mesh = state->default_meshes["monke"];
-        monke->material = kl::make<kl::material>();
+        monke->material = new kl::material();
         monke->material->color = kl::float4(normalized);
 
         state->scene->add(kl::format("Monke", i), monke);

@@ -21,7 +21,7 @@ public:
     kl::dx::target_view picking_target_view = nullptr;
     kl::dx::shader_view picking_shader_view = nullptr;
 
-    render_state(kl::ref<kl::gpu> gpu, const kl::int2& size);
+    render_state(kl::object<kl::gpu> gpu, const kl::int2& size);
     ~render_state();
 
     render_state(render_state&) = delete;
@@ -30,5 +30,5 @@ public:
     void operator=(render_state&) = delete;
     void operator=(render_state&&) = delete;
 
-    void clear_targets(kl::ref<kl::gpu> gpu, const kl::float4& color);
+    void clear_targets(kl::object<kl::gpu> gpu, const kl::float4& color);
 };

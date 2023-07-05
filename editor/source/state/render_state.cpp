@@ -1,7 +1,7 @@
 #include "state/render_state.h"
 
 
-render_state::render_state(kl::ref<kl::gpu> gpu, const kl::int2& size)
+render_state::render_state(kl::object<kl::gpu> gpu, const kl::int2& size)
     : target_size(size)
 {
     // Misc data
@@ -35,7 +35,7 @@ render_state::render_state(kl::ref<kl::gpu> gpu, const kl::int2& size)
 render_state::~render_state()
 {}
 
-void render_state::clear_targets(kl::ref<kl::gpu> gpu, const kl::float4& color)
+void render_state::clear_targets(kl::object<kl::gpu> gpu, const kl::float4& color)
 {
     gpu->clear_target_view(render_target_view, color);
     gpu->clear_target_view(picking_target_view, {});

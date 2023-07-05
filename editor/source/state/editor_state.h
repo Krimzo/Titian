@@ -18,8 +18,14 @@ struct editor_state
     kl::timer timer = {};
 
     // Window
-    kl::ref<kl::window> window = kl::make<kl::window, kl::int2>({ 1600, 900 }, "Titian");
-    kl::ref<kl::gpu> gpu = kl::make<kl::gpu, HWND>(*window);
+    kl::object<kl::window> window = new kl::window({ 1600, 900 }, "Titian");
+    kl::object<kl::gpu> gpu = new kl::gpu((HWND) *window,
+#ifdef NDEBUG
+        false
+#else
+        true
+#endif
+    );
 
     // Graphics states
     struct raster_states_t
@@ -53,12 +59,12 @@ struct editor_state
     } render_shaders;
 
     // Default Components
-    std::unordered_map<std::string, kl::ref<kl::mesh>> default_meshes = {};
-    std::unordered_map<std::string, kl::ref<kl::material>> default_materials = {};
+    std::unordered_map<std::string, kl::object<kl::mesh>> default_meshes = {};
+    std::unordered_map<std::string, kl::object<kl::material>> default_materials = {};
 
     // Render
-    kl::ref<render_state> render_state = kl::make<::render_state>(gpu, window->size());
-    kl::ref<kl::scene> scene = nullptr;
+    kl::object<render_state> render_state = new ::render_state(gpu, window->size());
+    kl::object<kl::scene> scene = nullptr;
 
     // GUI
     gui_state gui_state = { gpu };
@@ -72,5 +78,5 @@ struct editor_state
     void operator=(editor_state&) = delete;
     void operator=(editor_state&&) = delete;
 
-    void change_scene(const kl::ref<kl::scene>& scene);
+    void change_scene(kl::object<kl::scene> scene);
 };

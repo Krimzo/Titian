@@ -192,7 +192,7 @@ kl::dx::buffer kl::device_holder::create_structured_buffer(const void* data, con
     return create_buffer(&descriptor, &subresource);
 }
 
-kl::dx::buffer kl::device_holder::create_staging_buffer(const dx::buffer buffer, const UINT byte_size) const
+kl::dx::buffer kl::device_holder::create_staging_buffer(const dx::buffer& buffer, const UINT byte_size) const
 {
     dx::buffer_descriptor descriptor = {};
     buffer->GetDesc(&descriptor);
@@ -314,7 +314,7 @@ kl::dx::texture kl::device_holder::create_cube_texture(const image& front, const
     return create_texture(&descriptor, data);
 }
 
-kl::dx::texture kl::device_holder::create_staging_texture(dx::texture texture, const int2& size) const
+kl::dx::texture kl::device_holder::create_staging_texture(const dx::texture& texture, const int2& size) const
 {
     dx::texture_descriptor descriptor = {};
     texture->GetDesc(&descriptor);
@@ -333,7 +333,7 @@ kl::dx::texture kl::device_holder::create_staging_texture(dx::texture texture, c
 }
 
 // Views
-kl::dx::target_view kl::device_holder::create_target_view(const dx::resource resource, const dx::target_view_descriptor* descriptor) const
+kl::dx::target_view kl::device_holder::create_target_view(const dx::resource& resource, const dx::target_view_descriptor* descriptor) const
 {
     dx::target_view view = nullptr;
     const long result = device_->CreateRenderTargetView(resource.Get(), descriptor, &view);
@@ -341,7 +341,7 @@ kl::dx::target_view kl::device_holder::create_target_view(const dx::resource res
     return view;
 }
 
-kl::dx::depth_view kl::device_holder::create_depth_view(const dx::resource resource, const dx::depth_view_descriptor* descriptor) const
+kl::dx::depth_view kl::device_holder::create_depth_view(const dx::resource& resource, const dx::depth_view_descriptor* descriptor) const
 {
     dx::depth_view view = nullptr;
     const long result = device_->CreateDepthStencilView(resource.Get(), descriptor, &view);
@@ -349,7 +349,7 @@ kl::dx::depth_view kl::device_holder::create_depth_view(const dx::resource resou
     return view;
 }
 
-kl::dx::shader_view kl::device_holder::create_shader_view(const dx::resource resource, const dx::shader_view_descriptor* descriptor) const
+kl::dx::shader_view kl::device_holder::create_shader_view(const dx::resource& resource, const dx::shader_view_descriptor* descriptor) const
 {
     dx::shader_view view = nullptr;
     const long result = device_->CreateShaderResourceView(resource.Get(), descriptor, &view);
@@ -357,7 +357,7 @@ kl::dx::shader_view kl::device_holder::create_shader_view(const dx::resource res
     return view;
 }
 
-kl::dx::access_view kl::device_holder::create_access_view(const dx::resource resource, const dx::access_view_descriptor* descriptor) const
+kl::dx::access_view kl::device_holder::create_access_view(const dx::resource& resource, const dx::access_view_descriptor* descriptor) const
 {
     dx::access_view view = nullptr;
     const long result = device_->CreateUnorderedAccessView(resource.Get(), descriptor, &view);

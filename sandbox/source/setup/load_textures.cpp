@@ -1,7 +1,7 @@
 #include "sandbox.h"
 
 
-kl::ref<kl::texture> parse_texture(editor_state* state, const std::string& path);
+kl::object<kl::texture> parse_texture(editor_state* state, const std::string& path);
 
 void load_textures(editor_state* state)
 {
@@ -11,9 +11,9 @@ void load_textures(editor_state* state)
     state->scene->textures["concrete_roughness"] = parse_texture(state, resource_path + "textures/concrete_roughness.png");
 }
 
-kl::ref<kl::texture> parse_texture(editor_state* state, const std::string& path)
+kl::object<kl::texture> parse_texture(editor_state* state, const std::string& path)
 {
-    auto texture = kl::make<kl::texture>(state->gpu.get(), kl::image(path));
+    kl::object<kl::texture> texture = new kl::texture(&state->gpu, kl::image(path));
     texture->create_shader_view();
     return texture;
 }

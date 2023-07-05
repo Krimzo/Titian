@@ -10,9 +10,9 @@ namespace kl {
     public:
         float4 color = colors::white;
 
-        ref<texture> color_map = nullptr;
-        ref<texture> normal_map = nullptr;
-        ref<texture> roughness_map = nullptr;
+        object<texture> color_map = nullptr;
+        object<texture> normal_map = nullptr;
+        object<texture> roughness_map = nullptr;
 
         float texture_blend = 0.0f;
         float reflection_factor = 0.0f;

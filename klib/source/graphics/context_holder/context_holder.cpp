@@ -60,7 +60,7 @@ kl::float2 kl::context_holder::get_viewport_min_max() const
 }
 
 // States
-void kl::context_holder::bind_raster_state(const dx::raster_state state) const
+void kl::context_holder::bind_raster_state(const dx::raster_state& state) const
 {
     context_->RSSetState(state.Get());
 }
@@ -70,7 +70,7 @@ void kl::context_holder::unbind_rater_state() const
     bind_raster_state(nullptr);
 }
 
-void kl::context_holder::bind_depth_state(const dx::depth_state state, const UINT stencil_ref) const
+void kl::context_holder::bind_depth_state(const dx::depth_state& state, const UINT stencil_ref) const
 {
     context_->OMSetDepthStencilState(state.Get(), stencil_ref);
 }
@@ -80,7 +80,7 @@ void kl::context_holder::unbind_depth_state() const
     bind_depth_state(nullptr, 0x00);
 }
 
-void kl::context_holder::bind_sampler_state_for_pixel_shader(const dx::sampler_state state, const UINT slot) const
+void kl::context_holder::bind_sampler_state_for_pixel_shader(const dx::sampler_state& state, const UINT slot) const
 {
     context_->PSSetSamplers(slot, 1, state.GetAddressOf());
 }
@@ -90,7 +90,7 @@ void kl::context_holder::unbind_sampler_state_for_pixel_shader(const UINT slot) 
     bind_sampler_state_for_pixel_shader(nullptr, slot);
 }
 
-void kl::context_holder::bind_sampler_state_for_compute_shader(const dx::sampler_state state, const UINT slot) const
+void kl::context_holder::bind_sampler_state_for_compute_shader(const dx::sampler_state& state, const UINT slot) const
 {
     context_->CSSetSamplers(slot, 1, state.GetAddressOf());
 }
@@ -100,7 +100,7 @@ void kl::context_holder::unbind_sampler_state_for_compute_shader(const UINT slot
     bind_sampler_state_for_compute_shader(nullptr, slot);
 }
 
-void kl::context_holder::bind_blend_state(const dx::blend_state state, const float* factor, const UINT mask) const
+void kl::context_holder::bind_blend_state(const dx::blend_state& state, const float* factor, const UINT mask) const
 {
     context_->OMSetBlendState(state.Get(), factor, mask);
 }
@@ -111,12 +111,12 @@ void kl::context_holder::unbind_blend_state() const
 }
 
 // Resources
-void kl::context_holder::copy_resource(dx::resource destination, const dx::resource source) const
+void kl::context_holder::copy_resource(const dx::resource& destination, const dx::resource& source) const
 {
     context_->CopyResource(destination.Get(), source.Get());
 }
 
-void kl::context_holder::read_from_resource(void* cpu_buffer, const dx::resource gpu_buffer, SIZE_T byte_size) const
+void kl::context_holder::read_from_resource(void* cpu_buffer, const dx::resource& gpu_buffer, SIZE_T byte_size) const
 {
     dx::mapped_subresource_descriptor mapped_subresource = {};
     context_->Map(gpu_buffer.Get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource);
@@ -126,7 +126,7 @@ void kl::context_holder::read_from_resource(void* cpu_buffer, const dx::resource
     context_->Unmap(gpu_buffer.Get(), NULL);
 }
 
-void kl::context_holder::write_to_resource(dx::resource gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard) const
+void kl::context_holder::write_to_resource(const dx::resource& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard) const
 {
     dx::mapped_subresource_descriptor mapped_subresource = {};
     context_->Map(gpu_buffer.Get(), 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, NULL, &mapped_subresource);
@@ -137,7 +137,7 @@ void kl::context_holder::write_to_resource(dx::resource gpu_buffer, const void* 
 }
 
 // Buffers
-UINT kl::context_holder::get_buffer_size(const dx::buffer buffer) const
+UINT kl::context_holder::get_buffer_size(const dx::buffer& buffer) const
 {
     if (!buffer) {
         return 0;
@@ -149,7 +149,7 @@ UINT kl::context_holder::get_buffer_size(const dx::buffer buffer) const
 }
 
 // Const buffers
-void kl::context_holder::bind_cb_for_vertex_shader(const dx::buffer buffer, const UINT slot) const
+void kl::context_holder::bind_cb_for_vertex_shader(const dx::buffer& buffer, const UINT slot) const
 {
     context_->VSSetConstantBuffers(slot, 1, buffer.GetAddressOf());
 }
@@ -159,7 +159,7 @@ void kl::context_holder::unbind_cb_for_vertex_shader(const UINT slot) const
     bind_cb_for_vertex_shader(nullptr, slot);
 }
 
-void kl::context_holder::bind_cb_for_geometry_shader(const dx::buffer buffer, const UINT slot) const
+void kl::context_holder::bind_cb_for_geometry_shader(const dx::buffer& buffer, const UINT slot) const
 {
     context_->GSSetConstantBuffers(slot, 1, buffer.GetAddressOf());
 }
@@ -169,7 +169,7 @@ void kl::context_holder::unbind_cb_for_geometry_shader(const UINT slot) const
     bind_cb_for_geometry_shader(nullptr, slot);
 }
 
-void kl::context_holder::bind_cb_for_pixel_shader(const dx::buffer buffer, const UINT slot) const
+void kl::context_holder::bind_cb_for_pixel_shader(const dx::buffer& buffer, const UINT slot) const
 {
     context_->PSSetConstantBuffers(slot, 1, buffer.GetAddressOf());
 }
@@ -179,7 +179,7 @@ void kl::context_holder::unbind_cb_for_pixel_shader(const UINT slot) const
     bind_cb_for_pixel_shader(nullptr, slot);
 }
 
-void kl::context_holder::bind_cb_for_compute_shader(const dx::buffer buffer, const UINT slot) const
+void kl::context_holder::bind_cb_for_compute_shader(const dx::buffer& buffer, const UINT slot) const
 {
     context_->CSSetConstantBuffers(slot, 1, buffer.GetAddressOf());
 }
@@ -190,12 +190,12 @@ void kl::context_holder::unbind_cb_for_compute_shader(const UINT slot) const
 }
 
 // Vertex buffers
-UINT kl::context_holder::get_vertex_buffer_size(const dx::buffer buffer, const UINT stride) const
+UINT kl::context_holder::get_vertex_buffer_size(const dx::buffer& buffer, const UINT stride) const
 {
     return (get_buffer_size(buffer) / stride);
 }
 
-void kl::context_holder::bind_vertex_buffer(const dx::buffer buffer, const UINT slot, const UINT offset, const UINT stride) const
+void kl::context_holder::bind_vertex_buffer(const dx::buffer& buffer, const UINT slot, const UINT offset, const UINT stride) const
 {
     context_->IASetVertexBuffers(slot, 1, buffer.GetAddressOf(), &stride, &offset);
 }
@@ -206,12 +206,12 @@ void kl::context_holder::unbind_vertex_buffer(const UINT slot) const
 }
 
 // Index buffers
-UINT kl::context_holder::get_index_buffer_size(const dx::buffer buffer) const
+UINT kl::context_holder::get_index_buffer_size(const dx::buffer& buffer) const
 {
     return (get_buffer_size(buffer) / sizeof(uint32_t));
 }
 
-void kl::context_holder::bind_index_buffer(const dx::buffer buffer, const UINT offset) const
+void kl::context_holder::bind_index_buffer(const dx::buffer& buffer, const UINT offset) const
 {
     context_->IASetIndexBuffer(buffer.Get(), DXGI_FORMAT_R32_UINT, offset);
 }
@@ -232,7 +232,7 @@ void kl::context_holder::draw(const UINT vertex_count, const UINT start_index) c
     context_->Draw(vertex_count, start_index);
 }
 
-void kl::context_holder::draw(const dx::buffer vertex_buffer, const D3D_PRIMITIVE_TOPOLOGY draw_type, const UINT stride) const
+void kl::context_holder::draw(const dx::buffer& vertex_buffer, const D3D_PRIMITIVE_TOPOLOGY draw_type, const UINT stride) const
 {
     set_draw_type(draw_type);
     bind_vertex_buffer(vertex_buffer, 0, 0, stride);
@@ -246,7 +246,7 @@ void kl::context_holder::draw_indexed(const UINT index_count, const UINT start_i
     context_->DrawIndexed(index_count, start_index, base_vertex);
 }
 
-void kl::context_holder::draw_indexed(const dx::buffer vertex_buffer, const dx::buffer index_buffer, const D3D_PRIMITIVE_TOPOLOGY draw_type, const UINT stride) const
+void kl::context_holder::draw_indexed(const dx::buffer& vertex_buffer, const dx::buffer& index_buffer, const D3D_PRIMITIVE_TOPOLOGY draw_type, const UINT stride) const
 {
     set_draw_type(draw_type);
     bind_vertex_buffer(vertex_buffer, 0, 0, stride);
@@ -257,17 +257,17 @@ void kl::context_holder::draw_indexed(const dx::buffer vertex_buffer, const dx::
 }
 
 // Views
-void kl::context_holder::clear_target_view(dx::target_view view, const float4& color) const
+void kl::context_holder::clear_target_view(const dx::target_view& view, const float4& color) const
 {
     context_->ClearRenderTargetView(view.Get(), color);
 }
 
-void kl::context_holder::clear_depth_view(dx::depth_view view, const float depth, const UINT8 stencil) const
+void kl::context_holder::clear_depth_view(const dx::depth_view& view, const float depth, const UINT8 stencil) const
 {
     context_->ClearDepthStencilView(view.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
 }
 
-void kl::context_holder::bind_target_depth_views(const std::vector<dx::target_view>& target_views, dx::depth_view depth_view) const
+void kl::context_holder::bind_target_depth_views(const std::vector<dx::target_view>& target_views, const dx::depth_view& depth_view) const
 {
     std::vector<ID3D11RenderTargetView*> list_of_targets(target_views.size());
     for (size_t i = 0; i < list_of_targets.size(); i++) {
@@ -282,7 +282,7 @@ void kl::context_holder::unbind_target_depth_views() const
     context_->OMSetRenderTargets(0, nullptr, nullptr);
 }
 
-void kl::context_holder::bind_shader_view_for_pixel_shader(const dx::shader_view view, const UINT slot) const
+void kl::context_holder::bind_shader_view_for_pixel_shader(const dx::shader_view& view, const UINT slot) const
 {
     context_->PSSetShaderResources(slot, 1, view.GetAddressOf());
 }
@@ -292,7 +292,7 @@ void kl::context_holder::unbind_shader_view_for_pixel_shader(const UINT slot) co
     bind_shader_view_for_pixel_shader(nullptr, slot);
 }
 
-void kl::context_holder::bind_shader_view_for_compute_shader(const dx::shader_view view, const UINT slot) const
+void kl::context_holder::bind_shader_view_for_compute_shader(const dx::shader_view& view, const UINT slot) const
 {
     context_->CSSetShaderResources(slot, 1, view.GetAddressOf());
 }
@@ -302,7 +302,7 @@ void kl::context_holder::unbind_shader_view_for_compute_shader(const UINT slot) 
     bind_shader_view_for_compute_shader(nullptr, slot);
 }
 
-void kl::context_holder::bind_access_view_for_compute_shader(const dx::access_view view, const UINT slot, const UINT* initial_counts) const
+void kl::context_holder::bind_access_view_for_compute_shader(const dx::access_view& view, const UINT slot, const UINT* initial_counts) const
 {
     context_->CSSetUnorderedAccessViews(slot, 1, view.GetAddressOf(), initial_counts);
 }
@@ -313,7 +313,7 @@ void kl::context_holder::unbind_access_view_for_compute_shader(const UINT slot) 
 }
 
 // Shaders
-void kl::context_holder::bind_input_layout(const dx::layout input_layout) const
+void kl::context_holder::bind_input_layout(const dx::layout& input_layout) const
 {
     context_->IASetInputLayout(input_layout.Get());
 }
@@ -323,7 +323,7 @@ void kl::context_holder::unbind_input_layout() const
     bind_input_layout(nullptr);
 }
 
-void kl::context_holder::bind_vertex_shader(const dx::vertex_shader shader) const
+void kl::context_holder::bind_vertex_shader(const dx::vertex_shader& shader) const
 {
     context_->VSSetShader(shader.Get(), nullptr, 0);
 }
@@ -333,7 +333,7 @@ void kl::context_holder::unbind_vertex_shader() const
     bind_vertex_shader(nullptr);
 }
 
-void kl::context_holder::bind_geometry_shader(const dx::geometry_shader shader) const
+void kl::context_holder::bind_geometry_shader(const dx::geometry_shader& shader) const
 {
     context_->GSSetShader(shader.Get(), nullptr, 0);
 }
@@ -343,7 +343,7 @@ void kl::context_holder::unbind_geometry_shader() const
     bind_geometry_shader(nullptr);
 }
 
-void kl::context_holder::bind_pixel_shader(const dx::pixel_shader shader) const
+void kl::context_holder::bind_pixel_shader(const dx::pixel_shader& shader) const
 {
     context_->PSSetShader(shader.Get(), nullptr, 0);
 }
@@ -353,7 +353,7 @@ void kl::context_holder::unbind_pixel_shader() const
     bind_pixel_shader(nullptr);
 }
 
-void kl::context_holder::bind_compute_shader(const dx::compute_shader shader) const
+void kl::context_holder::bind_compute_shader(const dx::compute_shader& shader) const
 {
     context_->CSSetShader(shader.Get(), nullptr, 0);
 }
@@ -380,7 +380,7 @@ void kl::context_holder::dispatch_compute_shader(const UINT x, const UINT y, con
     context_->Dispatch(x, y, z);
 }
 
-void kl::context_holder::execute_compute_shader(const dx::compute_shader shader, const UINT x, const UINT y, const UINT z) const
+void kl::context_holder::execute_compute_shader(const dx::compute_shader& shader, const UINT x, const UINT y, const UINT z) const
 {
     bind_compute_shader(shader);
     dispatch_compute_shader(x, y, z);

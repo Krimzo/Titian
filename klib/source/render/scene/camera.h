@@ -24,7 +24,7 @@ namespace kl {
         float speed = 2.0f;
 
         color background = {};
-        ref<texture> skybox = nullptr;
+        object<texture> skybox = nullptr;
 
         void update_aspect_ratio(const int2& size);
 

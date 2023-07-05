@@ -44,7 +44,7 @@ namespace kl {
 
         dx::buffer create_const_buffer(UINT byte_size) const;
         dx::buffer create_structured_buffer(const void* data, UINT element_count, UINT element_size, bool has_unordered_access = false, bool cpu_read = false) const;
-        dx::buffer create_staging_buffer(dx::buffer buffer, UINT byte_size) const;
+        dx::buffer create_staging_buffer(const dx::buffer& buffer, UINT byte_size) const;
 
         // Meshes
         dx::buffer create_plane_mesh(float size, size_t num_of_points) const;
@@ -54,13 +54,13 @@ namespace kl {
         dx::texture create_texture(const dx::texture_descriptor* descriptor, const dx::subresource_descriptor* subresource_data) const;
         dx::texture create_texture(const image& image, bool has_unordered_access = false, bool is_target = false) const;
         dx::texture create_cube_texture(const image& front, const image& back, const image& left, const image& right, const image& top, const image& bottom) const;
-        dx::texture create_staging_texture(dx::texture texture, const int2& size) const;
+        dx::texture create_staging_texture(const dx::texture& texture, const int2& size) const;
 
         // Views
-        dx::target_view create_target_view(dx::resource resource, const dx::target_view_descriptor* descriptor) const;
-        dx::depth_view create_depth_view(dx::resource resource, const dx::depth_view_descriptor* descriptor) const;
-        dx::shader_view create_shader_view(dx::resource resource, const dx::shader_view_descriptor* descriptor) const;
-        dx::access_view create_access_view(dx::resource resource, const dx::access_view_descriptor* descriptor) const;
+        dx::target_view create_target_view(const dx::resource& resource, const dx::target_view_descriptor* descriptor) const;
+        dx::depth_view create_depth_view(const dx::resource& resource, const dx::depth_view_descriptor* descriptor) const;
+        dx::shader_view create_shader_view(const dx::resource& resource, const dx::shader_view_descriptor* descriptor) const;
+        dx::access_view create_access_view(const dx::resource& resource, const dx::access_view_descriptor* descriptor) const;
 
         // Shaders
         dx::layout create_input_layout(const compiled_shader& compiled_shader, const std::vector<dx::layout_descriptor>& descriptors = {}) const;

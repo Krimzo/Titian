@@ -20,7 +20,7 @@ namespace kl {
 
         uint64_t decrease_count()
         {
-            return m_count ? (*m_count -= 1) : 0;
+            return (m_count && *m_count) ? (*m_count -= 1) : 0;
         }
 
         void allocate()
@@ -34,6 +34,10 @@ namespace kl {
         {
             if (m_instance) delete m_instance;
             if (m_count) delete m_count;
+        }
+
+        void clear()
+        {
             m_instance = nullptr;
             m_count = nullptr;
         }
@@ -62,6 +66,7 @@ namespace kl {
             if (decrease_count() == 0) {
                 deallocate();
             }
+            clear();
         }
 
         // Create copy

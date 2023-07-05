@@ -13,7 +13,6 @@
 #pragma comment (lib, "d3dcompiler.lib")
 #pragma comment (lib, "d3d11.lib")
 
-// DxHelper
 using namespace Microsoft::WRL;
 
 namespace kl::dx {
@@ -41,7 +40,7 @@ namespace kl::dx {
     using access_view = ComPtr<ID3D11UnorderedAccessView>;
 
     // Shader data
-    using shader_blob = ComPtr<ID3DBlob>;
+    using data_blob = ComPtr<ID3DBlob>;
     using layout = ComPtr<ID3D11InputLayout>;
 
     // Shaders
@@ -59,6 +58,9 @@ namespace kl::dx {
     using subresource_descriptor = D3D11_SUBRESOURCE_DATA;
     using mapped_subresource_descriptor = D3D11_MAPPED_SUBRESOURCE;
 
+    // Input
+    using layout_descriptor = D3D11_INPUT_ELEMENT_DESC;
+
     // State
     using raster_state_descriptor = D3D11_RASTERIZER_DESC;
     using depth_state_descriptor = D3D11_DEPTH_STENCIL_DESC;
@@ -70,7 +72,4 @@ namespace kl::dx {
     using depth_view_descriptor = D3D11_DEPTH_STENCIL_VIEW_DESC;
     using shader_view_descriptor = D3D11_SHADER_RESOURCE_VIEW_DESC;
     using access_view_descriptor = D3D11_UNORDERED_ACCESS_VIEW_DESC;
-
-    // Shader
-    using layout_descriptor = D3D11_INPUT_ELEMENT_DESC;
 }

@@ -19,7 +19,7 @@ void gui_scene_editor(editor_state* state)
 
         // Display scene buffer
         if (state->gui_state.viewport_size.x > 0 && state->gui_state.viewport_size.y > 0 && state->gui_state.viewport_size != state->render_state->target_size) {
-            state->render_state = kl::make<render_state>(state->gpu, state->gui_state.viewport_size);
+            state->render_state = new render_state(state->gpu, state->gui_state.viewport_size);
         }
         ImGui::Image(state->render_state->render_shader_view.Get(), content_region);
 

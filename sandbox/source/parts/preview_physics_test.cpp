@@ -12,7 +12,7 @@ void setup_preview_physics_test(editor_state* state, const int size)
 
 void setup_platform(editor_state* state)
 {
-    kl::ref<kl::entity> platform = state->scene->make_entity(false);
+    kl::object<kl::entity> platform = state->scene->make_entity(false);
 
     const kl::float3 scale = { 15.0f, 0.1f, 15.0f };
 
@@ -37,7 +37,7 @@ void setup_objects(editor_state* state, const int size)
 
     for (int z = 0; z < size; z++) {
         for (int x = 0; x < size; x++) {
-            kl::ref<kl::entity> box = state->scene->make_entity(true);
+            kl::object<kl::entity> box = state->scene->make_entity(true);
 
             box->set_mass(2.5f);
             box->set_gravity(true);
@@ -49,7 +49,7 @@ void setup_objects(editor_state* state, const int size)
             box->set_position({ (half_size - x) * 2.25f, 15.0f, -25.0f + (half_size - z) * 2.25f });
 
             box->mesh = state->default_meshes["cube"];
-            box->material = kl::make<kl::material>();
+            box->material = new kl::material();
 
             box->material->color_map = state->scene->textures["dogo"];
             box->material->normal_map = state->scene->textures["concrete_normal"];

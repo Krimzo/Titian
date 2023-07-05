@@ -3,9 +3,8 @@
 #include "klib.h"
 
 
-class gui_state
+struct gui_state
 {
-public:
     bool is_viewport_focused = false;
     bool render_collider = true;
 
@@ -21,10 +20,9 @@ public:
     std::string builtin_path = "./builtin/";
     std::string explorer_path = ".";
 
-    std::unordered_map<std::string, kl::ref<kl::texture>> textures = {};
+    std::unordered_map<std::string, kl::object<kl::texture>> textures = {};
 
-    gui_state(kl::ref<kl::gpu> gpu);
-    ~gui_state();
+    gui_state(kl::object<kl::gpu> gpu);
 
     gui_state(gui_state&) = delete;
     gui_state(gui_state&&) = delete;

@@ -4,7 +4,7 @@
 editor_state::editor_state()
 {
     window->set_icon(builtin_path + "textures/titian.ico");
-    change_scene(kl::make<kl::scene>());
+    change_scene(new kl::scene());
 }
 
 editor_state::~editor_state()
@@ -12,7 +12,7 @@ editor_state::~editor_state()
     change_scene(nullptr);
 }
 
-void editor_state::change_scene(const kl::ref<kl::scene>& scene)
+void editor_state::change_scene(kl::object<kl::scene> scene)
 {
     default_meshes.clear();
     default_materials.clear();
@@ -23,12 +23,12 @@ void editor_state::change_scene(const kl::ref<kl::scene>& scene)
     }
 
     // Default meshes
-    default_meshes["cube"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::parse_obj_file(builtin_path + "meshes/cube.obj", true));
-    default_meshes["sphere"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::parse_obj_file(builtin_path + "meshes/sphere.obj", true));
-    default_meshes["capsule"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::parse_obj_file(builtin_path + "meshes/capsule.obj", true));
-    default_meshes["monke"] = kl::make<kl::mesh>(gpu.get(), scene.get(), kl::parse_obj_file(builtin_path + "meshes/monke.obj", true));
+    default_meshes["cube"] = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/cube.obj", true));
+    default_meshes["sphere"] = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/sphere.obj", true));
+    default_meshes["capsule"] = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/capsule.obj", true));
+    default_meshes["monke"] = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/monke.obj", true));
 
     // Default material
-    default_materials["white"] = kl::make<kl::material>();
+    default_materials["white"] = new kl::material();
     default_materials["white"]->color = kl::colors::white;
 }

@@ -11,7 +11,7 @@ namespace kl {
     class entity
     {
         PxRigidActor* physics_actor_ = nullptr;
-        ref<collider> collider_ = nullptr;
+        object<collider> collider_ = nullptr;
 
         void regenerate_actor(PxPhysics* physics, const PxTransform& transform, bool dynamic);
         void wake_up() const;
@@ -20,8 +20,8 @@ namespace kl {
         const uint64_t unique_index;
         float3 render_scale = float3(1.0f);
 
-        ref<mesh> mesh = nullptr;
-        ref<material> material = nullptr;
+        object<mesh> mesh = nullptr;
+        object<material> material = nullptr;
 
         // Creation
         entity(PxPhysics* physics, bool dynamic);
@@ -62,8 +62,8 @@ namespace kl {
         float3 get_angular() const;
 
         // Collision
-        void set_collider(ref<collider> collider);
-        ref<collider> get_collider() const;
+        void set_collider(object<collider> collider);
+        object<collider> get_collider() const;
     };
 }
 
@@ -81,8 +81,8 @@ namespace kl {
         float3 velocity = {};
         float3 angular = {};
 
-        ref<mesh> mesh = nullptr;
-        ref<material> material = nullptr;
+        object<mesh> mesh = nullptr;
+        object<material> material = nullptr;
 
         void update_physics(float delta_t);
 

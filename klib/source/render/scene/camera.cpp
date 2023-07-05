@@ -33,32 +33,32 @@ kl::float3 kl::camera::get_up() const
 
 void kl::camera::move_forward(const float delta_time)
 {
-    origin = origin + forward_ * (speed * delta_time);
+    origin += forward_ * (speed * delta_time);
 }
 
 void kl::camera::move_back(const float delta_time)
 {
-    origin = origin - forward_ * (speed * delta_time);
+    origin -= forward_ * (speed * delta_time);
 }
 
 void kl::camera::move_right(const float delta_time)
 {
-    origin = origin + get_right() * (speed * delta_time);
+    origin += get_right() * (speed * delta_time);
 }
 
 void kl::camera::move_left(const float delta_time)
 {
-    origin = origin - get_right() * (speed * delta_time);
+    origin -= get_right() * (speed * delta_time);
 }
 
 void kl::camera::move_up(const float delta_time)
 {
-    origin = origin + up_ * (speed * delta_time);
+    origin += up_ * (speed * delta_time);
 }
 
 void kl::camera::move_down(const float delta_time)
 {
-    origin = origin - up_ * (speed * delta_time);
+    origin -= up_ * (speed * delta_time);
 }
 
 void kl::camera::rotate(const float2& mouse_pos, const float2& frame_center, const float vertical_angle_limit)

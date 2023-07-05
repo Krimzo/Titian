@@ -12,7 +12,9 @@ namespace kl {
         render = 1,
         compute = 2,
     };
+}
 
+namespace kl {
     class gpu : public device_holder, public context_holder, public shader_compiler
     {
         dx::chain chain_ = nullptr;
@@ -24,8 +26,8 @@ namespace kl {
         const gpu_creation_type creation_type = gpu_creation_type::none;
 
         // Creation
-        gpu();
-        gpu(HWND window);
+        gpu(bool debug = false, bool single_threaded = true);
+        gpu(HWND window, bool debug = false, bool single_threaded = true);
         ~gpu();
 
         gpu(const gpu&) = delete;

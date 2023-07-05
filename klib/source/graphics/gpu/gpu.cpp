@@ -4,14 +4,22 @@
 
 
 // Creation
-kl::gpu::gpu()
+kl::gpu::gpu(const bool debug, const bool single_threaded)
     : creation_type(gpu_creation_type::compute)
 {
+    UINT creation_flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+    if (debug) {
+        creation_flags |= D3D11_CREATE_DEVICE_DEBUG;
+    }
+    if (single_threaded) {
+        creation_flags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
+    }
+
     D3D11CreateDevice(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
         nullptr,
-        NULL,
+        creation_flags,
         nullptr,
         NULL,
         D3D11_SDK_VERSION,
@@ -23,7 +31,7 @@ kl::gpu::gpu()
     error_check(!context_, "Failed to create device context");
 }
 
-kl::gpu::gpu(const HWND window)
+kl::gpu::gpu(const HWND window, const bool debug, const bool single_threaded)
     : creation_type(gpu_creation_type::render)
 {
     RECT window_client_area = {};
@@ -40,11 +48,19 @@ kl::gpu::gpu(const HWND window)
     chain_descriptor.Windowed = true;
     chain_descriptor.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
+    UINT creation_flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+    if (debug) {
+        creation_flags |= D3D11_CREATE_DEVICE_DEBUG;
+    }
+    if (single_threaded) {
+        creation_flags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
+    }
+
     D3D11CreateDeviceAndSwapChain(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
         nullptr,
-        NULL,
+        creation_flags,
         nullptr,
         NULL,
         D3D11_SDK_VERSION,
@@ -100,7 +116,7 @@ kl::dx::depth_view kl::gpu::get_internal_depth() const
 kl::dx::texture kl::gpu::get_back_buffer() const
 {
     dx::texture buffer = nullptr;
-    const long result = chain_->GetBuffer(0, __uuidof(ID3D11Texture2D), &buffer);
+    const long result = chain_->GetBuffer(0, IID_PPV_ARGS(&buffer));
     warning_check(!buffer, format("Failed to get backbuffer texture. Result: 0x", std::hex, result));
     return buffer;
 }
@@ -150,7 +166,7 @@ void kl::gpu::resize_internal(const int2& size)
     chain_->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, NULL);
 
     // Render buffer
-    auto render_texture = get_back_buffer();
+    const dx::texture render_texture = get_back_buffer();
     target_view_ = create_target_view(render_texture, nullptr);
 
     // Depth buffer
@@ -164,7 +180,7 @@ void kl::gpu::resize_internal(const int2& size)
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-    auto depth_texture = create_texture(&descriptor, nullptr);
+    const dx::texture depth_texture = create_texture(&descriptor, nullptr);
     depth_view_ = create_depth_view(depth_texture, nullptr);
 
     // Rebind
