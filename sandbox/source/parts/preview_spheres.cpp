@@ -20,6 +20,8 @@ void setup_preview_spheres(editor_state* state, const int size)
             sphere->material = new kl::material();
             sphere->material->color = kl::float4(1.0f);
             sphere->material->reflection_factor = (float) sphere_counter / (size * size);
+            sphere->material->refraction_factor = (float) (size * size - sphere_counter) / (size * size);
+            sphere->material->refraction_index = 1.0f / 1.52f;
 
             state->scene->add(kl::format("Sphere", sphere_counter), sphere);
 

@@ -18,15 +18,14 @@ void setup_preview_cubes(editor_state* state, const int size)
             cube->set_position({
                 (float) (x - half_size) + x_offset,
                 (float) (y - half_size),
-                5.0f
+                5.0f,
             });
 
             cube->mesh = state->default_meshes["cube"];
+
             cube->material = new kl::material();
             cube->material->color = kl::colors::orange;
-
-            cube->material->refraction_factor = (float) cube_counter / (size * size);
-            cube->material->refraction_index = 1.0f / 1.52f;
+            cube->material->reflection_factor = (float) cube_counter / (size * size);
 
             state->scene->add(kl::format("Cube", cube_counter), cube);
 
