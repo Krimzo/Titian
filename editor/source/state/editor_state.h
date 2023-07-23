@@ -9,15 +9,8 @@ inline const std::string builtin_path = "./builtin/";
 
 struct editor_state
 {
-    // Render features
-    bool render_wireframe = false;
-    bool v_sync = true;
-
-    // Utility
-    logger_state logger = {};
+    // System
     kl::timer timer = {};
-
-    // Window
     kl::object<kl::window> window = new kl::window({ 1600, 900 }, "Titian");
     kl::object<kl::gpu> gpu = new kl::gpu((HWND) *window,
 #ifdef NDEBUG
@@ -26,6 +19,10 @@ struct editor_state
         true
 #endif
     );
+
+    // Render features
+    bool render_wireframe = false;
+    bool v_sync = true;
 
     // Graphics states
     struct raster_states_t
@@ -51,23 +48,22 @@ struct editor_state
     // Shaders
     struct render_shaders_t
     {
-        kl::render_shaders shadow = {};
-        kl::render_shaders skybox = {};
-        kl::render_shaders entity = {};
-        kl::render_shaders collider = {};
-        kl::render_shaders postprocess = {};
+        kl::render_shaders shadow_pass = {};
+        kl::render_shaders skybox_sample = {};
+        kl::render_shaders entity_full = {};
+        kl::render_shaders object_solid = {};
+        kl::render_shaders postprocess_pass = {};
     } render_shaders;
 
-    // Default Components
+    // Scene components
+    kl::object<kl::scene> scene = nullptr;
     std::unordered_map<std::string, kl::object<kl::mesh>> default_meshes = {};
     std::unordered_map<std::string, kl::object<kl::material>> default_materials = {};
 
-    // Render
+    // Engine states
+    kl::object<logger_state> logger_state = new ::logger_state();
     kl::object<render_state> render_state = new ::render_state(gpu, window->size());
-    kl::object<kl::scene> scene = nullptr;
-
-    // GUI
-    gui_state gui_state = { gpu };
+    kl::object<gui_state> gui_state = new ::gui_state(gpu);
 
     editor_state();
     ~editor_state();

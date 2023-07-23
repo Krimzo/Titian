@@ -31,7 +31,7 @@ void render_chain(editor_state* state)
         // Selected entity
         if (state->scene->selected_entity) {
             // Collider
-            if (state->gui_state.render_collider && state->scene->selected_entity->get_collider()) {
+            if (state->gui_state->render_collider && state->scene->selected_entity->get_collider()) {
                 render_collider(state);
             }
 

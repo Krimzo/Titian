@@ -9,6 +9,9 @@ editor_state::editor_state()
 
 editor_state::~editor_state()
 {
+    gui_state = nullptr;
+    render_state = nullptr;
+    logger_state = nullptr;
     change_scene(nullptr);
 }
 

@@ -200,7 +200,7 @@ void gui_entity_mesh(editor_state* state, kl::object<kl::entity>& entity)
     // Get name
     std::string bound_mesh_name = {};
 
-    for (auto& [mesh_name, mesh] : state->default_meshes) {
+    for (const auto& [mesh_name, mesh] : state->default_meshes) {
         if (mesh == entity->mesh) {
             bound_mesh_name = mesh_name;
             break;
@@ -208,7 +208,7 @@ void gui_entity_mesh(editor_state* state, kl::object<kl::entity>& entity)
     }
 
     if (bound_mesh_name.empty()) {
-        for (auto& [mesh_name, mesh] : state->scene->meshes) {
+        for (const auto& [mesh_name, mesh] : state->scene->meshes) {
             if (mesh == entity->mesh) {
                 bound_mesh_name = mesh_name;
                 break;
@@ -222,13 +222,13 @@ void gui_entity_mesh(editor_state* state, kl::object<kl::entity>& entity)
             entity->mesh = nullptr;
         }
 
-        for (auto& [mesh_name, mesh] : state->default_meshes) {
+        for (const auto& [mesh_name, mesh] : state->default_meshes) {
             if (ImGui::Selectable(mesh_name.c_str(), mesh == entity->mesh)) {
                 entity->mesh = mesh;
             }
         }
 
-        for (auto& [mesh_name, mesh] : state->scene->meshes) {
+        for (const auto& [mesh_name, mesh] : state->scene->meshes) {
             if (ImGui::Selectable(mesh_name.c_str(), mesh == entity->mesh)) {
                 entity->mesh = mesh;
             }

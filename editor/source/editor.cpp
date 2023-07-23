@@ -42,7 +42,7 @@ void editor_update(editor_state* state)
     if (state->scene) {
         update_physics(state);
 
-        if (state->scene->camera && state->gui_state.is_viewport_focused) {
+        if (state->scene->camera && state->gui_state->is_viewport_focused) {
             handle_camera(state);
         }
     }

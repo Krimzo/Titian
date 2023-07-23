@@ -14,12 +14,12 @@ void gui_scene_editor(editor_state* state)
     if (ImGui::Begin("Scene Editor", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
         // Pre-display
         const ImVec2 content_region = ImGui::GetContentRegionAvail();
-        state->gui_state.viewport_size = { (int) content_region.x, (int) content_region.y };
-        state->gui_state.is_viewport_focused = ImGui::IsWindowFocused();
+        state->gui_state->viewport_size = { (int) content_region.x, (int) content_region.y };
+        state->gui_state->is_viewport_focused = ImGui::IsWindowFocused();
 
         // Display scene buffer
-        if (state->gui_state.viewport_size.x > 0 && state->gui_state.viewport_size.y > 0 && state->gui_state.viewport_size != state->render_state->target_size) {
-            state->render_state = new render_state(state->gpu, state->gui_state.viewport_size);
+        if (state->gui_state->viewport_size.x > 0 && state->gui_state->viewport_size.y > 0 && state->gui_state->viewport_size != state->render_state->target_size) {
+            state->render_state = new render_state(state->gpu, state->gui_state->viewport_size);
         }
         ImGui::Image(state->render_state->render_shader_view.Get(), content_region);
 
@@ -82,7 +82,7 @@ void handle_gizmo_operation_change(editor_state* state, int gizmo_operation, ImG
 
     if (ImGui::IsKeyDown(switch_key)) {
         if (!last_key_states[switch_key]) {
-            state->gui_state.gizmo_operation = (state->gui_state.gizmo_operation != gizmo_operation) ? gizmo_operation : 0;
+            state->gui_state->gizmo_operation = (state->gui_state->gizmo_operation != gizmo_operation) ? gizmo_operation : 0;
         }
         last_key_states[switch_key] = true;
     }
@@ -93,7 +93,7 @@ void handle_gizmo_operation_change(editor_state* state, int gizmo_operation, ImG
 
 void render_gizmos(editor_state* state)
 {
-    if (!state->gui_state.gizmo_operation) { return; }
+    if (!state->gui_state->gizmo_operation) { return; }
 
     const float viewport_tab_height = ImGui::GetWindowContentRegionMin().y;
     const kl::float2 viewport_position = { ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + viewport_tab_height };
@@ -111,7 +111,7 @@ void render_gizmos(editor_state* state)
             kl::float3(1.0f)
         };
 
-        switch (state->gui_state.gizmo_operation) {
+        switch (state->gui_state->gizmo_operation) {
         case ImGuizmo::SCALE:
             selected_snap = predefined_snaps[0];
             break;
@@ -128,7 +128,7 @@ void render_gizmos(editor_state* state)
     kl::float4x4 transform_matrix = kl::transpose(state->scene->selected_entity->matrix());
 
     ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
-        (ImGuizmo::OPERATION) state->gui_state.gizmo_operation, (ImGuizmo::MODE) state->gui_state.gizmo_mode,
+        (ImGuizmo::OPERATION) state->gui_state->gizmo_operation, (ImGuizmo::MODE) state->gui_state->gizmo_mode,
         transform_matrix.data, nullptr,
         selected_snap);
 

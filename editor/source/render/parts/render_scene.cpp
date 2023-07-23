@@ -7,7 +7,7 @@ void render_scene(editor_state* state)
 {
     state->gpu->bind_raster_state(state->render_wireframe ? state->raster_states.wireframe : state->raster_states.solid);
     state->gpu->bind_depth_state(state->depth_states.enabled);
-    state->gpu->bind_render_shaders(state->render_shaders.entity);
+    state->gpu->bind_render_shaders(state->render_shaders.entity_full);
 
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states.linear, 0);
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states.shadow, 1);
@@ -77,8 +77,8 @@ void render_scene(editor_state* state)
         ps_cb.object_material.z = entity->material->refraction_factor;
         ps_cb.object_material.w = entity->material->refraction_index;
 
-        state->render_shaders.entity.vertex_shader.update_cbuffer(vs_cb);
-        state->render_shaders.entity.pixel_shader.update_cbuffer(ps_cb);
+        state->render_shaders.entity_full.vertex_shader.update_cbuffer(vs_cb);
+        state->render_shaders.entity_full.pixel_shader.update_cbuffer(ps_cb);
 
         state->gpu->draw(entity->mesh->graphics_buffer);
     }

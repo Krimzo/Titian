@@ -38,14 +38,14 @@ void gui_main_menu(editor_state* state)
             if (ImGui::BeginMenu("Features")) {
                 ImGui::Checkbox("Use vSync", &state->v_sync);
                 ImGui::Checkbox("Render Wireframe", &state->render_wireframe);
-                ImGui::Checkbox("Render Colliders", &state->gui_state.render_collider);
+                ImGui::Checkbox("Render Colliders", &state->gui_state->render_collider);
 
                 ImGui::EndMenu();
             }
 
             if (ImGui::BeginMenu("Colors")) {
-                ImGui::ColorEdit3("Selection Color", state->gui_state.selection_color);
-                ImGui::ColorEdit3("Collider Color", state->gui_state.collider_color);
+                ImGui::ColorEdit3("Selection Color", state->gui_state->selection_color);
+                ImGui::ColorEdit3("Collider Color", state->gui_state->collider_color);
             }
             
             ImGui::EndMenu();

@@ -6,9 +6,6 @@ logger_state::logger_state()
     this->clear();
 }
 
-logger_state::~logger_state()
-{}
-
 size_t logger_state::last_log_index() const
 {
     return (log_counter_ > 0) ? ((log_counter_ - 1) % this->size()) : 0;

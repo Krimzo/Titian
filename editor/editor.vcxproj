@@ -95,6 +95,7 @@
     <ClInclude Include="source\cbuffers\skybox_render.h" />
     <ClInclude Include="source\gui\gui_render.h" />
     <ClInclude Include="source\editor.h" />
+    <ClInclude Include="source\gui\helper\gui_helper.h" />
     <ClInclude Include="source\render\render_chain.h" />
     <ClInclude Include="source\setup\setup_state.h" />
     <ClInclude Include="source\state\gui_state.h" />
@@ -104,6 +105,7 @@
     <ClInclude Include="source\update\update_state.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\gui\helper\gui_helper.cpp" />
     <ClCompile Include="source\gui\parts\gui_depth_display.cpp" />
     <ClCompile Include="source\gui\parts\gui_entity_properties.cpp" />
     <ClCompile Include="source\gui\parts\gui_explorer.cpp" />

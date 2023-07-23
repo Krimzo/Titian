@@ -7,7 +7,7 @@ void render_shadows(editor_state* state)
 {
     state->gpu->bind_raster_state(state->raster_states.shadow);
     state->gpu->bind_depth_state(state->depth_states.enabled);
-    state->gpu->bind_render_shaders(state->render_shaders.shadow);
+    state->gpu->bind_render_shaders(state->render_shaders.shadow_pass);
 
     for (int i = 0; i < kl::directional_light::CASCADE_COUNT; i++) {
         const kl::float4x4 VP = state->scene->directional_light->get_matrix(*state->scene->camera, i);
@@ -21,7 +21,7 @@ void render_shadows(editor_state* state)
 
             shadow_render_vs_cb vs_cb = {};
             vs_cb.WVP = VP * entity->matrix();
-            state->render_shaders.shadow.vertex_shader.update_cbuffer(vs_cb);
+            state->render_shaders.shadow_pass.vertex_shader.update_cbuffer(vs_cb);
 
             state->gpu->draw(entity->mesh->graphics_buffer);
         }

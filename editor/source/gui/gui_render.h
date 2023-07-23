@@ -1,12 +1,7 @@
 #pragma once
 
 #include "state/editor_state.h"
-
-#include <imgui_impl_win32.h>
-#include <imgui_impl_dx11.h>
-
-#include <imgui.h>
-#include <ImGuizmo.h>
+#include "gui/helper/gui_helper.h"
 
 
 // GUI

@@ -6,10 +6,10 @@ void ui_colored_text(const kl::float4& color, const std::string& message);
 void gui_log_view(editor_state* state)
 {
     if (ImGui::Begin("Log view")) {
-        const size_t last_log_index = state->logger.last_log_index();
+        const size_t last_log_index = state->logger_state->last_log_index();
 
-        for (size_t i = 0; i < state->logger.size(); i++) {
-            const log_info& log_info = state->logger.get(i);
+        for (size_t i = 0; i < state->logger_state->size(); i++) {
+            const log_info& log_info = state->logger_state->get(i);
 
             ui_colored_text(kl::colors::orange, i == last_log_index ? ">" : " ");
             ImGui::SameLine();
@@ -25,7 +25,7 @@ void gui_log_view(editor_state* state)
 
         if (ImGui::BeginPopupContextWindow()) {
             if (ImGui::MenuItem("Clear all")) {
-                state->logger.clear();
+                state->logger_state->clear();
             }
 
             ImGui::EndPopup();

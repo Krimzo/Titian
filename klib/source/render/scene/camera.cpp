@@ -16,17 +16,17 @@ void kl::camera::set_up(const float3& dir)
     up_ = normalize(dir);
 }
 
-kl::float3 kl::camera::get_forward() const
+kl::float3 kl::camera::forward() const
 {
     return forward_;
 }
 
-kl::float3 kl::camera::get_right() const
+kl::float3 kl::camera::right() const
 {
     return cross(up_, forward_);
 }
 
-kl::float3 kl::camera::get_up() const
+kl::float3 kl::camera::up() const
 {
     return up_;
 }
@@ -43,12 +43,12 @@ void kl::camera::move_back(const float delta_time)
 
 void kl::camera::move_right(const float delta_time)
 {
-    origin += get_right() * (speed * delta_time);
+    origin += right() * (speed * delta_time);
 }
 
 void kl::camera::move_left(const float delta_time)
 {
-    origin -= get_right() * (speed * delta_time);
+    origin -= right() * (speed * delta_time);
 }
 
 void kl::camera::move_up(const float delta_time)
@@ -64,7 +64,7 @@ void kl::camera::move_down(const float delta_time)
 void kl::camera::rotate(const float2& mouse_pos, const float2& frame_center, const float vertical_angle_limit)
 {
     const float2 rotation = (mouse_pos - frame_center) * sensitivity;
-    const float3 forward_vert = kl::rotate(forward_, get_right(), rotation.y);
+    const float3 forward_vert = kl::rotate(forward_, right(), rotation.y);
 
     if (::abs(angle(forward_vert, up_) - 90.0f) <= vertical_angle_limit) {
         set_forward(forward_vert);

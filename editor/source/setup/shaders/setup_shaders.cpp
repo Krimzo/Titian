@@ -5,11 +5,11 @@ kl::render_shaders parse_render_shaders(editor_state* state, const std::string& 
 
 void setup_shaders(editor_state* state)
 {
-    state->render_shaders.shadow = parse_render_shaders(state, "shadow_render.hlsl");
-    state->render_shaders.skybox = parse_render_shaders(state, "skybox_render.hlsl");
-    state->render_shaders.entity = parse_render_shaders(state, "entity_render.hlsl");
-    state->render_shaders.collider = parse_render_shaders(state, "collider_render.hlsl");
-    state->render_shaders.postprocess = parse_render_shaders(state, "postprocess_render.hlsl");
+    state->render_shaders.shadow_pass = parse_render_shaders(state, "shadow_pass.hlsl");
+    state->render_shaders.skybox_sample = parse_render_shaders(state, "skybox_sample.hlsl");
+    state->render_shaders.entity_full = parse_render_shaders(state, "entity_full.hlsl");
+    state->render_shaders.object_solid = parse_render_shaders(state, "object_solid.hlsl");
+    state->render_shaders.postprocess_pass = parse_render_shaders(state, "postprocess_pass.hlsl");
 }
 
 kl::render_shaders parse_render_shaders(editor_state* state, const std::string& name)

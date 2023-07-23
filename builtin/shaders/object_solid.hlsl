@@ -1,10 +1,10 @@
 // Vertex shader
 cbuffer VS_CB : register(b0)
 {
-	matrix WVP;
+	float4x4 WVP;
 }
 
-float4 v_shader(float3 position : KL_Position) : SV_Position
+float4 v_shader(const float3 position : KL_Position) : SV_Position
 {
 	return mul(float4(position, 1), WVP);
 }

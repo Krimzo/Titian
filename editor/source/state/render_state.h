@@ -22,7 +22,6 @@ public:
     kl::dx::shader_view picking_shader_view = nullptr;
 
     render_state(kl::object<kl::gpu> gpu, const kl::int2& size);
-    ~render_state();
 
     render_state(render_state&) = delete;
     render_state(render_state&&) = delete;

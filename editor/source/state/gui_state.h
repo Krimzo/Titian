@@ -22,6 +22,22 @@ struct gui_state
 
     std::unordered_map<std::string, kl::object<kl::texture>> textures = {};
 
+    // Mesh editor
+    struct mesh_editor
+    {
+        kl::camera camera = {};
+        kl::float3 light_direction = { 0.0f, -1.0f, 0.0f };
+        kl::object<kl::mesh> selected_mesh = {};
+        kl::object<kl::texture> render_texture = {};
+        kl::render_shaders shaders = {};
+    } mesh_editor;
+
+    // Material editor
+    struct material_editor
+    {
+        kl::object<kl::material> selected_material = {};
+    } material_editor;
+
     gui_state(kl::object<kl::gpu> gpu);
 
     gui_state(gui_state&) = delete;

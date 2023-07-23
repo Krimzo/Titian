@@ -32,9 +32,6 @@ render_state::render_state(kl::object<kl::gpu> gpu, const kl::int2& size)
     picking_staging_texture = gpu->create_staging_texture(picking_texture, { 1, 1 });
 }
 
-render_state::~render_state()
-{}
-
 void render_state::clear_targets(kl::object<kl::gpu> gpu, const kl::float4& color)
 {
     gpu->clear_target_view(render_target_view, color);

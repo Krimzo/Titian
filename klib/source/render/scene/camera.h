@@ -31,9 +31,9 @@ namespace kl {
         void set_forward(const float3& dir);
         void set_up(const float3& dir);
 
-        float3 get_forward() const;
-        float3 get_right() const;
-        float3 get_up() const;
+        float3 forward() const;
+        float3 right() const;
+        float3 up() const;
 
         void move_forward(float delta_time);
         void move_back(float delta_time);
