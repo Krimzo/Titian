@@ -1,7 +1,5 @@
 #include "render/render_chain.h"
 
-#include "cbuffers/postprocess_render.h"
-
 
 void render_postprocess(editor_state* state)
 {
@@ -11,10 +9,15 @@ void render_postprocess(editor_state* state)
 
     state->gpu->bind_shader_view_for_pixel_shader(state->render_state->picking_shader_view, 0);
 
-    postprocess_ps_cb ps_cb = {};
-    ps_cb.selected_index = kl::float4((float) state->scene->selected_entity->unique_index);
-    ps_cb.outline_color = state->gui_state->selection_color;
-    state->render_shaders.postprocess_pass.pixel_shader.update_cbuffer(ps_cb);
+    struct PS_DATA
+    {
+        kl::float4 selected_index;
+        kl::float4  outline_color;
+    } ps_data = {};
+
+    ps_data.selected_index = kl::float4((float) state->scene->selected_entity->unique_index);
+    ps_data.outline_color = state->gui_state->selection_color;
+    state->render_shaders.postprocess_pass.pixel_shader.update_cbuffer(ps_data);
 
     state->gpu->draw(state->render_state->screen_mesh);
 }

@@ -1,7 +1,5 @@
 #include "render/render_chain.h"
 
-#include "cbuffers/skybox_render.h"
-
 
 void render_skybox(editor_state* state)
 {
@@ -12,9 +10,13 @@ void render_skybox(editor_state* state)
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states.linear, 0);
     state->gpu->bind_shader_view_for_pixel_shader(state->scene->camera->skybox->shader_view, 0);
 
-    skybox_render_vs_cb vs_cb = {};
-    vs_cb.vp_matrix = state->scene->camera->matrix();
-    state->render_shaders.skybox_sample.vertex_shader.update_cbuffer(vs_cb);
+    struct VS_DATA
+    {
+        kl::float4x4 vp_matrix;
+    } vs_data = {};
+
+    vs_data.vp_matrix = state->scene->camera->matrix();
+    state->render_shaders.skybox_sample.vertex_shader.update_cbuffer(vs_data);
 
     state->gpu->draw(state->default_meshes["cube"]->graphics_buffer);
 }

@@ -1,7 +1,5 @@
 #include "render/render_chain.h"
 
-#include "cbuffers/collider_render.h"
-
 
 void render_collider(editor_state* state)
 {
@@ -9,13 +7,21 @@ void render_collider(editor_state* state)
     state->gpu->bind_depth_state(state->depth_states.disabled);
     state->gpu->bind_render_shaders(state->render_shaders.object_solid);
 
-    collider_render_vs_cb vs_cb = {};
-    vs_cb.wvp_matrix = state->scene->camera->matrix() * state->scene->selected_entity->collider_matrix();
-    state->render_shaders.object_solid.vertex_shader.update_cbuffer(vs_cb);
+    struct VS_DATA
+    {
+        kl::float4x4 wvp_matrix;
+    } vs_data = {};
 
-    collider_render_ps_cb ps_cb = {};
-    ps_cb.object_color = state->gui_state->collider_color;
-    state->render_shaders.object_solid.pixel_shader.update_cbuffer(ps_cb);
+    vs_data.wvp_matrix = state->scene->camera->matrix() * state->scene->selected_entity->collider_matrix();
+    state->render_shaders.object_solid.vertex_shader.update_cbuffer(vs_data);
+
+    struct PS_DATA
+    {
+        kl::float4 object_color; // (color.r, color.g, color.b, none)
+    } ps_data = {};
+    
+    ps_data.object_color = state->gui_state->collider_color;
+    state->render_shaders.object_solid.pixel_shader.update_cbuffer(ps_data);
 
     switch (state->scene->selected_entity->collider()->type()) {
     case PxGeometryType::Enum::eBOX:

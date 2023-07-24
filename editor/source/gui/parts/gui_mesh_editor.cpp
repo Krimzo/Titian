@@ -206,14 +206,16 @@ void render_selected_mesh(editor_state* state, const kl::object<kl::mesh>& mesh,
     struct VS_DATA
     {
         kl::float4x4 WVP;
-    } vs_data;
+    } vs_data = {};
+
     vs_data.WVP = camera.matrix();
     shaders.vertex_shader.update_cbuffer(vs_data);
 
     struct PS_DATA
     {
         kl::float4 color;
-    } ps_data;
+    } ps_data = {};
+
     ps_data.color = kl::colors::white;
     shaders.pixel_shader.update_cbuffer(ps_data);
 

@@ -88,11 +88,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="source\cbuffers\collider_render.h" />
-    <ClInclude Include="source\cbuffers\entity_render.h" />
-    <ClInclude Include="source\cbuffers\postprocess_render.h" />
-    <ClInclude Include="source\cbuffers\shadow_render.h" />
-    <ClInclude Include="source\cbuffers\skybox_render.h" />
     <ClInclude Include="source\gui\gui_render.h" />
     <ClInclude Include="source\editor.h" />
     <ClInclude Include="source\gui\helper\gui_helper.h" />

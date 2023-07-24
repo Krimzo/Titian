@@ -1,7 +1,5 @@
 #include "render/render_chain.h"
 
-#include "cbuffers/shadow_render.h"
-
 
 void render_shadows(editor_state* state)
 {
@@ -19,9 +17,13 @@ void render_shadows(editor_state* state)
         for (auto& [name, entity] : *state->scene) {
             if (!entity->mesh) { continue; }
 
-            shadow_render_vs_cb vs_cb = {};
-            vs_cb.WVP = VP * entity->matrix();
-            state->render_shaders.shadow_pass.vertex_shader.update_cbuffer(vs_cb);
+            struct VS_DATA
+            {
+                kl::float4x4 WVP;
+            } vs_data = {};
+
+            vs_data.WVP = VP * entity->matrix();
+            state->render_shaders.shadow_pass.vertex_shader.update_cbuffer(vs_data);
 
             state->gpu->draw(entity->mesh->graphics_buffer);
         }

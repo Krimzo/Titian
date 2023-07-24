@@ -87,7 +87,8 @@ float get_pcf_shadow(Texture2D shadow_map, float3 light_coords, const int half_k
 ps_out p_shader(vs_out vs_data)
 {
     // Setup
-    const float3 pixel_normal = get_pixel_normal(vs_data.world, normalize(vs_data.normal), vs_data.textur);
+    vs_data.normal = normalize(vs_data.normal);
+    const float3 pixel_normal = get_pixel_normal(vs_data.world, vs_data.normal, vs_data.textur);
     const float pixel_reflectivity = get_pixel_reflectivity(object_material.y, vs_data.textur);
     vs_data = compute_light_transforms(vs_data);
 
