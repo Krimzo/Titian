@@ -101,19 +101,26 @@ ps_out p_shader(vs_out vs_data)
     const float3 refracted_pixel_direction = refract(camera_pixel_direction, pixel_normal, object_material.w);
     const float3 refracted_sky_color = skybox_texture.Sample(skybox_sampler, refracted_pixel_direction).xyz;
 
-    // Shadow calculations
-    const float camera_z = abs(mul(float4(vs_data.world, 1), v_matrix).z);
-    const float shadow_factor = get_shadow_factor(vs_data, camera_z, 1);
-
     // Light calculations
     const float3 reflected_sun_direction = reflect(-directional_light.xyz, pixel_normal);
     const float specular_strength = dot(camera_pixel_direction, reflected_sun_direction);
 
     const float3 ambient_factor = ambient_light.xyz * ambient_light.w;
-    const float diffuse_factor = max(dot(-directional_light.xyz, pixel_normal), 0);
     const float specular_factor = pow(max(specular_strength, 0), 64) * pixel_reflectivity;
 
-    const float3 light_intensity = ambient_factor + (diffuse_factor + specular_factor) * shadow_factor;
+    const float ambient_diffuse_factor = dot(-directional_light.xyz, vs_data.normal);
+    const float directional_diffuse_factor = dot(-directional_light.xyz, pixel_normal);
+    float3 diffuse_factor = 0;
+
+    if (ambient_diffuse_factor > 0) {
+        const float camera_z = abs(mul(float4(vs_data.world, 1), v_matrix).z);
+        const float shadow_factor = get_shadow_factor(vs_data, camera_z, 1);
+        diffuse_factor = directional_diffuse_factor * max(ambient_factor, shadow_factor);
+    }
+    else {
+        diffuse_factor = directional_diffuse_factor * ambient_factor;
+    }
+    const float3 light_intensity = ambient_factor + diffuse_factor + specular_factor;
 
     // Color calculations
     const float3 texture_color = entity_texture.Sample(entity_sampler, vs_data.textur).xyz;

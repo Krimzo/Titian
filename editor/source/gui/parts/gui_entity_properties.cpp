@@ -62,14 +62,14 @@ void gui_entity_physics(editor_state* state, kl::object<kl::entity>& entity)
             entity->set_mass(mass);
         }
 
-        const kl::float3 velocity = entity->velocity();
+        kl::float3 velocity = entity->velocity();
         if (ImGui::DragFloat3("Velocity", velocity)) {
             entity->set_velocity(velocity);
         }
 
-        const kl::float3 angular = entity->angular();
+        kl::float3 angular = entity->angular() * kl::to_degrees;
         if (ImGui::DragFloat3("Angular", angular)) {
-            entity->set_angular(angular);
+            entity->set_angular(angular * kl::to_radians);
         }
     }
 }
