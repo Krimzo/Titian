@@ -7,8 +7,9 @@ void setup_shaders(editor_state* state)
 {
     state->render_shaders.shadow_pass = parse_render_shaders(state, "shadow_pass.hlsl");
     state->render_shaders.skybox_sample = parse_render_shaders(state, "skybox_sample.hlsl");
-    state->render_shaders.entity_full = parse_render_shaders(state, "entity_full.hlsl");
-    state->render_shaders.object_solid = parse_render_shaders(state, "object_solid.hlsl");
+    state->render_shaders.object_single = parse_render_shaders(state, "object_single.hlsl");
+    state->render_shaders.object_material = parse_render_shaders(state, "object_material.hlsl");
+    state->render_shaders.object_full = parse_render_shaders(state, "object_full.hlsl");
     state->render_shaders.postprocess_pass = parse_render_shaders(state, "postprocess_pass.hlsl");
 }
 

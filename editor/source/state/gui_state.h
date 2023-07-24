@@ -20,7 +20,7 @@ struct gui_state
     std::string builtin_path = "./builtin/";
     std::string explorer_path = std::filesystem::absolute(".").string();
 
-    struct textures
+    struct textures_t
     {
         kl::object<kl::texture> folder = {};
         kl::object<kl::texture> folder_empty = {};
@@ -34,7 +34,7 @@ struct gui_state
     } textures;
 
     // Mesh editor
-    struct mesh_editor
+    struct mesh_editor_t
     {
         kl::camera camera = {};
         kl::object<kl::mesh> selected_mesh = {};
@@ -43,9 +43,13 @@ struct gui_state
     } mesh_editor;
 
     // Material editor
-    struct material_editor
+    struct material_editor_t
     {
+        kl::camera camera = {};
         kl::object<kl::material> selected_material = {};
+        kl::object<kl::texture> selected_texture = {};
+        kl::object<kl::texture> render_texture = {};
+        kl::render_shaders shaders = {};
     } material_editor;
 
     gui_state(kl::object<kl::gpu> gpu);

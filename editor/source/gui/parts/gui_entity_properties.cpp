@@ -77,7 +77,7 @@ void gui_entity_physics(editor_state* state, kl::object<kl::entity>& entity)
 void gui_entity_collider(editor_state* state, kl::object<kl::entity>& entity)
 {
     static const std::unordered_map<PxGeometryType::Enum, std::string> possible_colliders = {
-        {     PxGeometryType::Enum::eINVALID, "" },
+        {     PxGeometryType::Enum::eINVALID, "/" },
 
         {     PxGeometryType::Enum::eBOX,     "box" },
         {  PxGeometryType::Enum::eSPHERE,  "sphere" },
@@ -198,7 +198,7 @@ void gui_entity_mesh(editor_state* state, kl::object<kl::entity>& entity)
     ImGui::Text("Mesh");
 
     // Get name
-    std::string bound_mesh_name = {};
+    std::string bound_mesh_name = "?";
 
     for (const auto& [mesh_name, mesh] : state->default_meshes) {
         if (mesh == entity->mesh) {
@@ -206,13 +206,10 @@ void gui_entity_mesh(editor_state* state, kl::object<kl::entity>& entity)
             break;
         }
     }
-
-    if (bound_mesh_name.empty()) {
-        for (const auto& [mesh_name, mesh] : state->scene->meshes) {
-            if (mesh == entity->mesh) {
-                bound_mesh_name = mesh_name;
-                break;
-            }
+    for (const auto& [mesh_name, mesh] : state->scene->meshes) {
+        if (mesh == entity->mesh) {
+            bound_mesh_name = mesh_name;
+            break;
         }
     }
 
@@ -244,7 +241,7 @@ void gui_entity_material(editor_state* state, kl::object<kl::entity>& entity)
     ImGui::Text("Material");
 
     // Get name
-    std::string bound_material_name = {};
+    std::string bound_material_name = "?";
 
     for (auto& [material_name, material] : state->default_materials) {
         if (material == entity->material) {
@@ -252,13 +249,10 @@ void gui_entity_material(editor_state* state, kl::object<kl::entity>& entity)
             break;
         }
     }
-
-    if (bound_material_name.empty()) {
-        for (auto& [material_name, material] : state->scene->materials) {
-            if (material == entity->material) {
-                bound_material_name = material_name;
-                break;
-            }
+    for (auto& [material_name, material] : state->scene->materials) {
+        if (material == entity->material) {
+            bound_material_name = material_name;
+            break;
         }
     }
 

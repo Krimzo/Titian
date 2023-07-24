@@ -332,6 +332,21 @@ kl::dx::texture kl::device_holder::create_staging_texture(const dx::texture& tex
     return create_texture(&staging_descriptor, nullptr);
 }
 
+kl::dx::texture kl::device_holder::create_target_texture(const kl::int2& size) const
+{
+    kl::dx::texture_descriptor descriptor = {};
+    descriptor.Usage = D3D11_USAGE_DEFAULT;
+    descriptor.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    descriptor.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    descriptor.Width = (UINT) size.x;
+    descriptor.Height = (UINT) size.y;
+    descriptor.ArraySize = 1;
+    descriptor.MipLevels = 1;
+    descriptor.SampleDesc.Count = 1;
+
+    return create_texture(&descriptor, nullptr);
+}
+
 // Views
 kl::dx::target_view kl::device_holder::create_target_view(const dx::resource& resource, const dx::target_view_descriptor* descriptor) const
 {

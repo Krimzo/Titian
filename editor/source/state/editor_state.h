@@ -50,8 +50,9 @@ struct editor_state
     {
         kl::render_shaders shadow_pass = {};
         kl::render_shaders skybox_sample = {};
-        kl::render_shaders entity_full = {};
-        kl::render_shaders object_solid = {};
+        kl::render_shaders object_single = {};
+        kl::render_shaders object_material = {};
+        kl::render_shaders object_full = {};
         kl::render_shaders postprocess_pass = {};
     } render_shaders;
 

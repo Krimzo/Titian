@@ -5,7 +5,7 @@ void render_collider(editor_state* state)
 {
     state->gpu->bind_raster_state(state->raster_states.wireframe);
     state->gpu->bind_depth_state(state->depth_states.disabled);
-    state->gpu->bind_render_shaders(state->render_shaders.object_solid);
+    state->gpu->bind_render_shaders(state->render_shaders.object_single);
 
     struct VS_DATA
     {
@@ -13,7 +13,7 @@ void render_collider(editor_state* state)
     } vs_data = {};
 
     vs_data.wvp_matrix = state->scene->camera->matrix() * state->scene->selected_entity->collider_matrix();
-    state->render_shaders.object_solid.vertex_shader.update_cbuffer(vs_data);
+    state->render_shaders.object_single.vertex_shader.update_cbuffer(vs_data);
 
     struct PS_DATA
     {
@@ -21,7 +21,7 @@ void render_collider(editor_state* state)
     } ps_data = {};
     
     ps_data.object_color = state->gui_state->collider_color;
-    state->render_shaders.object_solid.pixel_shader.update_cbuffer(ps_data);
+    state->render_shaders.object_single.pixel_shader.update_cbuffer(ps_data);
 
     switch (state->scene->selected_entity->collider()->type()) {
     case PxGeometryType::Enum::eBOX:

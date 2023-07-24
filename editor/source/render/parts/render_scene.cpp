@@ -5,7 +5,7 @@ void render_scene(editor_state* state)
 {
     state->gpu->bind_raster_state(state->render_wireframe ? state->raster_states.wireframe : state->raster_states.solid);
     state->gpu->bind_depth_state(state->depth_states.enabled);
-    state->gpu->bind_render_shaders(state->render_shaders.entity_full);
+    state->gpu->bind_render_shaders(state->render_shaders.object_full);
 
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states.linear, 0);
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states.shadow, 1);
@@ -50,7 +50,7 @@ void render_scene(editor_state* state)
         kl::float4 cascade_distances; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
     } ps_data = {};
 
-    ps_data.camera_info = { state->scene->camera->origin, 0 };
+    ps_data.camera_info = { state->scene->camera->origin, {} };
     ps_data.v_matrix = state->scene->camera->view_matrix();
 
     if (state->scene->ambient_light) {
@@ -92,15 +92,16 @@ void render_scene(editor_state* state)
         vs_data.w_matrix = entity->matrix();
 
         ps_data.object_color = entity->material->color;
-        ps_data.object_index = kl::float4((float) entity->unique_index);
+        ps_data.object_index = kl::float4 { (float) entity->unique_index };
+        ps_data.object_material = {
+            entity->material->texture_blend,
+            entity->material->reflection_factor,
+            entity->material->refraction_factor,
+            entity->material->refraction_index,
+        };
 
-        ps_data.object_material.x = entity->material->texture_blend;
-        ps_data.object_material.y = entity->material->reflection_factor;
-        ps_data.object_material.z = entity->material->refraction_factor;
-        ps_data.object_material.w = entity->material->refraction_index;
-
-        state->render_shaders.entity_full.vertex_shader.update_cbuffer(vs_data);
-        state->render_shaders.entity_full.pixel_shader.update_cbuffer(ps_data);
+        state->render_shaders.object_full.vertex_shader.update_cbuffer(vs_data);
+        state->render_shaders.object_full.pixel_shader.update_cbuffer(ps_data);
 
         state->gpu->draw(entity->mesh->graphics_buffer);
     }

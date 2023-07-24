@@ -3,7 +3,7 @@
 
 void display_meshes(editor_state* state);
 std::string find_mesh_name(editor_state* state, const kl::object<kl::mesh>& mesh);
-void update_camera(editor_state* state);
+void update_mesh_camera(editor_state* state);
 void render_selected_mesh(editor_state* state, const kl::object<kl::mesh>& mesh, const kl::int2& viewport_size);
 
 void gui_mesh_editor(editor_state* state)
@@ -33,11 +33,11 @@ void gui_mesh_editor(editor_state* state)
         const kl::object<kl::mesh> mesh = state->gui_state->mesh_editor.selected_mesh;
         if (ImGui::BeginChild("Mesh View") && mesh) {
             const kl::int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
-            update_camera(state);
+            update_mesh_camera(state);
             render_selected_mesh(state, mesh, viewport_size);
 
             kl::dx::shader_view& shader_view = state->gui_state->mesh_editor.render_texture->shader_view;
-            if (shader_view) ImGui::Image(shader_view.Get(), {(float) viewport_size.x, (float) viewport_size.y});
+            if (shader_view) ImGui::Image(shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
         }
         ImGui::EndChild();
         
@@ -64,7 +64,6 @@ void display_meshes(editor_state* state)
     }
     ImGui::Separator();
 
-    uint32_t id_counter = 0;
     for (const auto& [mesh_name, mesh] : state->scene->meshes) {
         if (ImGui::Selectable(mesh_name.c_str(), mesh == selected_mesh)) {
             selected_mesh = mesh;
@@ -102,8 +101,6 @@ void display_meshes(editor_state* state)
             ImGui::EndPopup();
             if (should_break) break;
         }
-
-        id_counter += 1;
     }
 }
 
@@ -122,7 +119,7 @@ std::string find_mesh_name(editor_state* state, const kl::object<kl::mesh>& mesh
     return { "unknown" };
 }
 
-void update_camera(editor_state* state)
+void update_mesh_camera(editor_state* state)
 {
     static kl::float2 initial_camera_info = {};
     static kl::float2 camera_info = {};
@@ -180,17 +177,7 @@ void render_selected_mesh(editor_state* state, const kl::object<kl::mesh>& mesh,
     }
 
     if (!target_view || texture_size != viewport_size) {
-        kl::dx::texture_descriptor descriptor = {};
-        descriptor.Usage = D3D11_USAGE_DEFAULT;
-        descriptor.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-        descriptor.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-        descriptor.Width = (UINT) viewport_size.x;
-        descriptor.Height = (UINT) viewport_size.y;
-        descriptor.ArraySize = 1;
-        descriptor.MipLevels = 1;
-        descriptor.SampleDesc.Count = 1;
-
-        render_texture = state->gpu->create_texture(&descriptor, nullptr);
+        render_texture = state->gpu->create_target_texture(viewport_size);
         if (!render_texture) {
             return;
         }
@@ -207,7 +194,7 @@ void render_selected_mesh(editor_state* state, const kl::object<kl::mesh>& mesh,
 
     kl::render_shaders& shaders = state->gui_state->mesh_editor.shaders;
     if (!shaders) {
-        shaders = state->render_shaders.object_solid;
+        shaders = state->render_shaders.object_single;
     }
     state->gpu->bind_render_shaders(shaders);
 

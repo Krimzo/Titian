@@ -55,6 +55,7 @@ namespace kl {
         dx::texture create_texture(const image& image, bool has_unordered_access = false, bool is_target = false) const;
         dx::texture create_cube_texture(const image& front, const image& back, const image& left, const image& right, const image& top, const image& bottom) const;
         dx::texture create_staging_texture(const dx::texture& texture, const int2& size) const;
+        dx::texture create_target_texture(const kl::int2& size) const;
 
         // Views
         dx::target_view create_target_view(const dx::resource& resource, const dx::target_view_descriptor* descriptor) const;
