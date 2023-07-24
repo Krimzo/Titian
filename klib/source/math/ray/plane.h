@@ -17,10 +17,10 @@ namespace kl {
 
         // Normal
         void set_normal(const float3& normal);
-        float3 get_normal() const;
+        float3 normal() const;
 
         // Math
-        bool is_in_front(const float3& point) const;
+        bool in_front(const float3& point) const;
     };
 }
 

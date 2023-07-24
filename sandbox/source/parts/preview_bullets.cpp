@@ -31,7 +31,7 @@ void setup_preview_bullets(editor_state* state, const int size)
         kl::object<kl::entity> bullet = state->scene->make_entity(true);
         bullet->render_scale *= bullet_scale;
 
-        kl::float3 old_position = bullet->get_position();
+        kl::float3 old_position = bullet->position();
         old_position.x = (float) (i - half_size);
         old_position.y = -6.0f;
         bullet->set_position(old_position);
@@ -44,7 +44,7 @@ void setup_preview_bullets(editor_state* state, const int size)
             return { rx, ry, 0 };
         };
 
-        const kl::float3 target_direction = kl::normalize(target_position - bullet->get_position());
+        const kl::float3 target_direction = kl::normalize(target_position - bullet->position());
         bullet->set_rotation(directional_vector_to_euler(target_direction));
 
         bullet->mesh = state->scene->meshes["bmg_bullet"];
@@ -58,8 +58,8 @@ void setup_preview_bullets(editor_state* state, const int size)
         kl::object<kl::entity> bullet_casing = state->scene->make_entity(false);
 
         bullet_casing->render_scale = bullet->render_scale;
-        bullet_casing->set_rotation(bullet->get_rotation());
-        bullet_casing->set_position(bullet->get_position());
+        bullet_casing->set_rotation(bullet->rotation());
+        bullet_casing->set_position(bullet->position());
 
         bullet_casing->mesh = state->scene->meshes["bmg_casing"];
         bullet_casing->material = state->scene->materials["bullet_casing"];
@@ -70,8 +70,8 @@ void setup_preview_bullets(editor_state* state, const int size)
         kl::object<kl::entity> casing_primer = state->scene->make_entity(false);
 
         casing_primer->render_scale = bullet_casing->render_scale;
-        casing_primer->set_rotation(bullet_casing->get_rotation());
-        casing_primer->set_position(bullet_casing->get_position());
+        casing_primer->set_rotation(bullet_casing->rotation());
+        casing_primer->set_position(bullet_casing->position());
 
         casing_primer->mesh = state->scene->meshes["bmg_primer"];
         casing_primer->material = state->scene->materials["bullet_primer"];

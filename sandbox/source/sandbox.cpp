@@ -13,7 +13,7 @@ int sandbox_main()
     // Loop
     state.timer.reset();
     while (state.window->process(false)) {
-        state.timer.update_interval();
+        state.timer.update_delta();
         editor_update(&state);
     }
     return 0;

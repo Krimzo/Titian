@@ -27,7 +27,7 @@ void kl::ray::set_direction(const float3& direction)
     direction_ = normalize(direction);
 }
 
-kl::float3 kl::ray::get_direction() const
+kl::float3 kl::ray::direction() const
 {
     return direction_;
 }
@@ -35,12 +35,12 @@ kl::float3 kl::ray::get_direction() const
 // Intersection
 bool kl::ray::intersect_plane(const plane& plane, float3* out_intersection) const
 {
-    const float denom = dot(plane.get_normal(), direction_);
+    const float denom = dot(plane.normal(), direction_);
     if (::abs(denom) <= 0.0001f) {
         return false;
     }
 
-    const float t = dot(plane.origin - origin, plane.get_normal()) / denom;
+    const float t = dot(plane.origin - origin, plane.normal()) / denom;
     if (t < 0.0f) {
         return false;
     }
@@ -119,6 +119,6 @@ bool kl::ray::intersect_sphere(const sphere& sphere, float3* out_intersection, f
 // Format
 std::ostream& kl::operator<<(std::ostream& os, const kl::ray& obj)
 {
-    os << "{" << obj.origin << ", " << obj.get_direction() << "}";
+    os << "{" << obj.origin << ", " << obj.direction() << "}";
     return os;
 }

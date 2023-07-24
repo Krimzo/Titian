@@ -29,7 +29,7 @@ namespace kl::console {
     void set_title(const std::string& text);
     void set_font(const int2& size, const std::string& font_name = "Consolas");
 
-    char get_input();
+    char read();
     void wait(char to_wait_for, bool echo = false);
     char wait_for_any(bool echo = false);
 

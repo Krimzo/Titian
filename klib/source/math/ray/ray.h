@@ -22,7 +22,7 @@ namespace kl {
 
         // Direction
         void set_direction(const float3& direction);
-        float3 get_direction() const;
+        float3 direction() const;
 
         // Intersection
         bool intersect_plane(const plane& plane, float3* out_intersection) const;

@@ -4,12 +4,12 @@
 
 
 // Helper
-std::string kl::get_file_extension(const std::string& filepath)
+std::string kl::file_extension(const std::string& filepath)
 {
     return std::filesystem::path(filepath).extension().string();
 }
 
-std::vector<std::string> kl::get_files(const std::string& path, const bool recursive)
+std::vector<std::string> kl::list_files(const std::string& path, const bool recursive)
 {
     std::vector<std::string> files = {};
     if (!recursive) {

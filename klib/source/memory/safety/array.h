@@ -8,7 +8,7 @@ namespace kl {
     class array
     {
         T* m_data = nullptr;
-        uint64_t* m_count = nullptr;
+        std::atomic<uint64_t>* m_count = nullptr;
         uint64_t m_size = 0;
 
         uint64_t increase_count()
@@ -18,7 +18,7 @@ namespace kl {
 
         uint64_t decrease_count()
         {
-            return (m_count && *m_count) ? (*m_count -= 1) : 0;
+            return m_count ? (*m_count -= 1) : 0;
         }
 
         void allocate()
@@ -28,7 +28,7 @@ namespace kl {
             if (!m_data) throw std::runtime_error("Could not allocate memory for array data.");
 
             // Counter
-            m_count = new uint64_t;
+            m_count = new std::atomic<uint64_t>;
             if (!m_count) throw std::runtime_error("Could not allocate memory for reference counter.");
             *m_count = 1;
         }
@@ -108,7 +108,7 @@ namespace kl {
 
         uint64_t count() const
         {
-            return m_count ? *m_count : 0;
+            return m_count ? m_count->load() : 0;
         }
 
         uint64_t size() const

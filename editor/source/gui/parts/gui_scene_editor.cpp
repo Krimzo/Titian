@@ -1,8 +1,8 @@
 #include "gui/gui_render.h"
 
 
-kl::int2 get_window_mouse_position();
-int get_entity_index(const editor_state* state, const kl::int2& pixel_coords);
+kl::int2 window_mouse_position();
+int find_entity_index(const editor_state* state, const kl::int2& pixel_coords);
 
 void handle_gizmo_operation_change(editor_state* state, int gizmo_operation, ImGuiKey switch_key);
 void render_gizmos(editor_state* state);
@@ -26,8 +26,8 @@ void gui_scene_editor(editor_state* state)
         // Handle entity picking
         const ImVec2 vieport_max = { ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + ImGui::GetWindowHeight() };
         if (ImGui::IsWindowFocused() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), vieport_max) && !ImGuizmo::IsOver()) {
-            const kl::int2 pixel_coords = get_window_mouse_position();
-            const int entity_index = get_entity_index(state, pixel_coords);
+            const kl::int2 pixel_coords = window_mouse_position();
+            const int entity_index = find_entity_index(state, pixel_coords);
             state->scene->update_selected_entity(entity_index);
         }
 
@@ -46,7 +46,7 @@ void gui_scene_editor(editor_state* state)
     ImGui::PopStyleVar();
 }
 
-kl::int2 get_window_mouse_position()
+kl::int2 window_mouse_position()
 {
     const float tab_size = ImGui::GetWindowContentRegionMin().y;
     const ImVec2 window_position = ImGui::GetWindowPos();
@@ -57,7 +57,7 @@ kl::int2 get_window_mouse_position()
     };
 }
 
-int get_entity_index(const editor_state* state, const kl::int2& pixel_coords)
+int find_entity_index(const editor_state* state, const kl::int2& pixel_coords)
 {
     if (pixel_coords.x < 0 || pixel_coords.y < 0) { return 0; }
 

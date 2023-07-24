@@ -35,10 +35,10 @@ void kl::mesh::reload()
     mesh_descriptor.points.data = data_buffer.data();
 
     PxDefaultMemoryOutputStream cook_buffer = {};
-    scene->get_cooking()->cookTriangleMesh(mesh_descriptor, cook_buffer);
+    scene->cooking()->cookTriangleMesh(mesh_descriptor, cook_buffer);
 
     PxDefaultMemoryInputData cooked_buffer(cook_buffer.getData(), cook_buffer.getSize());
-    physics_buffer = scene->get_physics()->createTriangleMesh(cooked_buffer);
+    physics_buffer = scene->physics()->createTriangleMesh(cooked_buffer);
     error_check(!physics_buffer, "Failed to create mesh physics buffer");
 }
 

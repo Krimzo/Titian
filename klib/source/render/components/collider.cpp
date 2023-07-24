@@ -21,19 +21,19 @@ kl::collider::~collider()
 }
 
 // Get
-PxShape* kl::collider::get_shape()
+PxShape* kl::collider::shape()
 {
 	return shape_;
 }
 
-PxGeometryType::Enum kl::collider::get_type() const
+PxGeometryType::Enum kl::collider::type() const
 {
 	return shape_->getGeometryType();
 }
 
 kl::float4x4 kl::collider::scaling_matrix() const
 {
-	switch (get_type()) {
+	switch (type()) {
 	case PxGeometryType::Enum::eBOX:
 	{
 		PxBoxGeometry geometry = {};
@@ -80,7 +80,7 @@ void kl::collider::set_rotation(const float3& rotation)
 	shape_->setLocalPose(transform);
 }
 
-kl::float3 kl::collider::get_rotation() const
+kl::float3 kl::collider::rotation() const
 {
 	const PxTransform transform = shape_->getLocalPose();
 	return to_euler((const float4&) transform.q);
@@ -93,14 +93,14 @@ void kl::collider::set_offset(const float3& position)
 	shape_->setLocalPose(transform);
 }
 
-kl::float3 kl::collider::get_offset() const
+kl::float3 kl::collider::offset() const
 {
 	const PxTransform transform = shape_->getLocalPose();
 	return (const float3&) transform.p;
 }
 
 // Material
-float kl::collider::get_static_friction() const
+float kl::collider::static_friction() const
 {
 	return material_->getStaticFriction();
 }
@@ -110,7 +110,7 @@ void kl::collider::set_static_friction(const float friction)
 	material_->setStaticFriction(friction);
 }
 
-float kl::collider::get_dynamic_friction() const
+float kl::collider::dynamic_friction() const
 {
 	return material_->getDynamicFriction();
 }
@@ -120,7 +120,7 @@ void kl::collider::set_dynamic_friction(const float friction)
 	material_->setDynamicFriction(friction);
 }
 
-float kl::collider::get_restitution() const
+float kl::collider::restitution() const
 {
 	return material_->getRestitution();
 }

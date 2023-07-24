@@ -38,7 +38,7 @@ void kl::shader_holder<S>::update_cbuffer(const void* data, UINT byte_size)
     }
 
     // Regenerate buffer if needed
-    const UINT buffer_size = cbuffer ? gpu->get_buffer_size(cbuffer) : 0;
+    const UINT buffer_size = cbuffer ? gpu->buffer_size(cbuffer) : 0;
     if (byte_size != buffer_size) {
         cbuffer = gpu->create_const_buffer(byte_size);
     }

@@ -25,11 +25,10 @@ namespace kl {
         bool is_hidden() const;
         void set_hidden(bool enabled);
 
-        int2 position(bool client = true) const;
         void set_position(const int2& position, bool client = true);
+        int2 position(bool client = true) const;
 
-        float2 get_normalized_position(bool client = true) const;
-
+        float2 normalized_position(bool client = true) const;
         int scroll() const;
     };
 }

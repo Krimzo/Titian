@@ -13,7 +13,7 @@ void kl::context_holder::set_viewport_position(const int2& position) const
     context_->RSSetViewports(1, &viewport);
 }
 
-kl::int2 kl::context_holder::get_viewport_position() const
+kl::int2 kl::context_holder::viewport_position() const
 {
     UINT number_of_vps = 1;
     D3D11_VIEWPORT viewport = {};
@@ -32,7 +32,7 @@ void kl::context_holder::set_viewport_size(const int2& size) const
     context_->RSSetViewports(1, &viewport);
 }
 
-kl::int2 kl::context_holder::get_viewport_size() const
+kl::int2 kl::context_holder::viewport_size() const
 {
     UINT number_of_vps = 1;
     D3D11_VIEWPORT viewport = {};
@@ -51,7 +51,7 @@ void kl::context_holder::set_viewport_min_max(const float2& min_max) const
     context_->RSSetViewports(1, &viewport);
 }
 
-kl::float2 kl::context_holder::get_viewport_min_max() const
+kl::float2 kl::context_holder::viewport_min_max() const
 {
     UINT number_of_vps = 1;
     D3D11_VIEWPORT viewport = {};
@@ -137,7 +137,7 @@ void kl::context_holder::write_to_resource(const dx::resource& gpu_buffer, const
 }
 
 // Buffers
-UINT kl::context_holder::get_buffer_size(const dx::buffer& buffer) const
+UINT kl::context_holder::buffer_size(const dx::buffer& buffer) const
 {
     if (!buffer) {
         return 0;
@@ -190,9 +190,9 @@ void kl::context_holder::unbind_cb_for_compute_shader(const UINT slot) const
 }
 
 // Vertex buffers
-UINT kl::context_holder::get_vertex_buffer_size(const dx::buffer& buffer, const UINT stride) const
+UINT kl::context_holder::vertex_buffer_size(const dx::buffer& buffer, const UINT stride) const
 {
-    return (get_buffer_size(buffer) / stride);
+    return (buffer_size(buffer) / stride);
 }
 
 void kl::context_holder::bind_vertex_buffer(const dx::buffer& buffer, const UINT slot, const UINT offset, const UINT stride) const
@@ -206,9 +206,9 @@ void kl::context_holder::unbind_vertex_buffer(const UINT slot) const
 }
 
 // Index buffers
-UINT kl::context_holder::get_index_buffer_size(const dx::buffer& buffer) const
+UINT kl::context_holder::index_buffer_size(const dx::buffer& buffer) const
 {
-    return (get_buffer_size(buffer) / sizeof(uint32_t));
+    return (buffer_size(buffer) / sizeof(uint32_t));
 }
 
 void kl::context_holder::bind_index_buffer(const dx::buffer& buffer, const UINT offset) const
@@ -237,7 +237,7 @@ void kl::context_holder::draw(const dx::buffer& vertex_buffer, const D3D_PRIMITI
     set_draw_type(draw_type);
     bind_vertex_buffer(vertex_buffer, 0, 0, stride);
 
-    const UINT vertex_count = get_vertex_buffer_size(vertex_buffer, stride);
+    const UINT vertex_count = vertex_buffer_size(vertex_buffer, stride);
     draw(vertex_count, 0);
 }
 
@@ -252,7 +252,7 @@ void kl::context_holder::draw_indexed(const dx::buffer& vertex_buffer, const dx:
     bind_vertex_buffer(vertex_buffer, 0, 0, stride);
     bind_index_buffer(index_buffer, 0);
 
-    const UINT index_count = get_index_buffer_size(index_buffer);
+    const UINT index_count = index_buffer_size(index_buffer);
     draw_indexed(index_count, 0, 0);
 }
 

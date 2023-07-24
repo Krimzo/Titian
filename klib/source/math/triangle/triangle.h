@@ -15,12 +15,12 @@ namespace kl {
         triangle(const vertex& a, const vertex& b, const vertex& c);
 
         // Normal
-        float3 get_normal() const;
+        float3 normal() const;
 
         // Interpolation
-        float4 get_constants() const;
-        float3 get_weights(const float4& constants, const float2& point) const;
-        float3 get_weights(const float3& position) const;
+        float4 constants() const;
+        float3 weights(const float4& constants, const float2& point) const;
+        float3 weights(const float3& position) const;
         vertex interpolate_self(const float3& weights) const;
 
         // Static

@@ -34,7 +34,7 @@ namespace kl {
         void unload();
 
         template<typename Return, typename... Args>
-        function<Return, Args...> get_function(const std::string& function_name)
+        function<Return, Args...> read_function(const std::string& function_name)
         {
             if (!module_) {
                 return nullptr;

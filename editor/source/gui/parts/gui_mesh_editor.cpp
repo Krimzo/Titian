@@ -19,18 +19,14 @@ void gui_mesh_editor(editor_state* state)
         ImGui::EndChild();
         ImGui::NextColumn();
 
-        //GUIDragDrop.getData("MeshFile") {
-        //    path: Any ->
-        //    try {
-        //        FileHelper.getNameWithoutExtension(path as String) ? .let {
-        //            editor.scene.meshes.add(Mesh(editor.scene.names.mesh, it, editor.window.context, path))
-        //        }
-        //    }
-        //    catch (ignored: Exception) {
-        //        println("Mesh \"$path\" loading error!")
-        //    }
-        //}
-        
+        std::optional mesh_file_path = GUI::drag_drop::read_data<std::string>("MeshFile");
+        if (mesh_file_path) {
+            std::filesystem::path path = mesh_file_path.value();
+            kl::mesh_data mesh_data = kl::parse_obj_file(path.string());
+            kl::object new_mesh = new kl::mesh(&state->gpu, &state->scene, mesh_data);
+            state->scene->meshes[path.filename().string()] = new_mesh;
+        }
+
         const kl::object<kl::mesh> mesh = state->gui_state->mesh_editor.selected_mesh;
         if (ImGui::BeginChild("Mesh View") && mesh) {
             const kl::int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
@@ -63,39 +59,40 @@ void display_meshes(editor_state* state)
             selected_mesh = mesh;
         }
     }
+    ImGui::Separator();
 
+    uint32_t id_counter = 0;
     for (const auto& [mesh_name, mesh] : state->scene->meshes) {
         if (ImGui::Selectable(mesh_name.c_str(), mesh == selected_mesh)) {
             selected_mesh = mesh;
         }
 
-        /*
-        
-        GUIPopup.itemPopup("EditMeshes" + counter++) {
-            if (ImGui.button("Rename")) {
-                textInput = GUITextInput(mesh.name) { name: String ->
-                    mesh.setName(name)
-                    textInput = null
-                }
-            }
+        GUI::popup::on_item(kl::format("EditMeshes", id_counter), [&]
+        {
+            //if (ImGui::Button("Rename")) {
+            //    textInput = GUITextInput(mesh.name) { name: String ->
+            //        mesh.setName(name)
+            //        textInput = null
+            //    }
+            //}
 
-            if (ImGui.button("Delete", -1f, 0f)) {
-                iter.remove()
-                mesh.eraseName()
-                if (mesh == = mc.mesh) {
-                    mc.mesh = null
-                }
+            //if (ImGui.button("Delete", -1f, 0f)) {
+            //    iter.remove()
+            //    mesh.eraseName()
+            //    if (mesh == = mc.mesh) {
+            //        mc.mesh = null
+            //    }
+            //
+            //    for (entity in scene) {
+            //        if (entity.components.mesh.mesh == = mesh) {
+            //            entity.components.mesh.mesh = null
+            //        }
+            //    }
+            //    GUIPopup.close()
+            //}
+        });
 
-                for (entity in scene) {
-                    if (entity.components.mesh.mesh == = mesh) {
-                        entity.components.mesh.mesh = null
-                    }
-                }
-                GUIPopup.close()
-            }
-        }
-        
-        */
+        id_counter += 1;
     }
 }
 
@@ -147,7 +144,6 @@ void update_camera(editor_state* state)
     const float camera_distance = camera.speed;
     camera.origin = kl::normalize(camera.origin) * camera_distance;
     camera.set_forward(-camera.origin);
-    state->gui_state->mesh_editor.light_direction = camera.forward();
 }
 
 void render_selected_mesh(editor_state* state, const kl::object<kl::mesh>& mesh, const kl::int2& viewport_size)

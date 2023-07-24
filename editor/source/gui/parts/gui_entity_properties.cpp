@@ -27,12 +27,12 @@ void gui_entity_transform(editor_state* state, kl::object<kl::entity>& entity)
 
     ImGui::DragFloat3("Scale", entity->render_scale);
     
-    const kl::float3 rotation = entity->get_rotation();
+    const kl::float3 rotation = entity->rotation();
     if (ImGui::DragFloat3("Rotation", rotation)) {
         entity->set_rotation(rotation);
     }
 
-    const kl::float3 position = entity->get_position();
+    const kl::float3 position = entity->position();
     if (ImGui::DragFloat3("Position", position)) {
         entity->set_position(position);
     }
@@ -45,9 +45,9 @@ void gui_entity_physics(editor_state* state, kl::object<kl::entity>& entity)
 
     bool dynamic = entity->is_dynamic();
     if (ImGui::Checkbox("Dynamic", &dynamic)) {
-        const auto name = state->scene->get_name(entity);
+        const auto name = state->scene->name(entity);
         state->scene->remove(name);
-        entity->set_dynamic(state->scene->get_physics(), dynamic);
+        entity->set_dynamic(state->scene->physics(), dynamic);
         state->scene->add(name, entity);
     }
 
@@ -57,17 +57,17 @@ void gui_entity_physics(editor_state* state, kl::object<kl::entity>& entity)
             entity->set_gravity(gravity);
         }
 
-        float mass = entity->get_mass();
+        float mass = entity->mass();
         if (ImGui::DragFloat("Mass", &mass, 1.0f, 0.0f, 1e9f)) {
             entity->set_mass(mass);
         }
 
-        const kl::float3 velocity = entity->get_velocity();
+        const kl::float3 velocity = entity->velocity();
         if (ImGui::DragFloat3("Velocity", velocity)) {
             entity->set_velocity(velocity);
         }
 
-        const kl::float3 angular = entity->get_angular();
+        const kl::float3 angular = entity->angular();
         if (ImGui::DragFloat3("Angular", angular)) {
             entity->set_angular(angular);
         }
@@ -90,8 +90,8 @@ void gui_entity_collider(editor_state* state, kl::object<kl::entity>& entity)
     ImGui::Separator();
     ImGui::Text("Collider");
 
-    kl::object<kl::collider> collider = entity->get_collider();
-    PxGeometryType::Enum collider_type = (collider ? collider->get_type() : PxGeometryType::Enum::eINVALID);
+    kl::object<kl::collider> collider = entity->collider();
+    PxGeometryType::Enum collider_type = (collider ? collider->type() : PxGeometryType::Enum::eINVALID);
     std::string collider_name = possible_colliders.at(collider_type);
 
     // Choose type
@@ -99,7 +99,7 @@ void gui_entity_collider(editor_state* state, kl::object<kl::entity>& entity)
         for (auto& [type, name] : possible_colliders) {
             if (ImGui::Selectable(name.c_str(), type == collider_type)) {
                 collider = state->scene->make_default_collider(type, &entity->mesh);
-                collider_type = (collider ? collider->get_type() : PxGeometryType::Enum::eINVALID);
+                collider_type = (collider ? collider->type() : PxGeometryType::Enum::eINVALID);
                 collider_name = possible_colliders.at(collider_type);
                 entity->set_collider(collider);
             }
@@ -112,17 +112,17 @@ void gui_entity_collider(editor_state* state, kl::object<kl::entity>& entity)
     }
 
     // General info
-    float restitution = collider->get_restitution();
+    float restitution = collider->restitution();
     if (ImGui::DragFloat("Restitution", &restitution, 0.1f, 0.0f, 1e9f)) {
         collider->set_restitution(restitution);
     }
 
-    float static_friction = collider->get_static_friction();
+    float static_friction = collider->static_friction();
     if (ImGui::DragFloat("Static Friction", &static_friction, 0.1f, 0.0f, 1e9f)) {
         collider->set_static_friction(static_friction);
     }
 
-    float dynamic_friction = collider->get_dynamic_friction();
+    float dynamic_friction = collider->dynamic_friction();
     if (ImGui::DragFloat("Dynamic Friction", &dynamic_friction, 0.1f, 0.0f, 1e9f)) {
         collider->set_dynamic_friction(dynamic_friction);
     }
@@ -131,7 +131,7 @@ void gui_entity_collider(editor_state* state, kl::object<kl::entity>& entity)
     PxBoxGeometry box_geometry = {};
     PxTriangleMeshGeometry mesh_geometry = {};
     int geometry_type = 0;
-    const auto collider_shape = collider->get_shape();
+    const auto collider_shape = collider->shape();
     if (collider_type == PxGeometryType::Enum::eBOX) {
         collider_shape->getBoxGeometry(box_geometry);
 
@@ -169,12 +169,12 @@ void gui_entity_collider(editor_state* state, kl::object<kl::entity>& entity)
         geometry_type = 2;
     }
 
-    const kl::float3 rotation = collider->get_rotation();
+    const kl::float3 rotation = collider->rotation();
     if (ImGui::DragFloat3("Offset Rotation", rotation)) {
         collider->set_rotation(rotation);
     }
 
-    const kl::float3 offset = collider->get_offset();
+    const kl::float3 offset = collider->offset();
     if (ImGui::DragFloat3("Offset Position", offset)) {
         collider->set_offset(offset);
     }

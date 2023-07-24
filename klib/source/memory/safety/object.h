@@ -11,7 +11,7 @@ namespace kl {
         friend class object;
 
         T* m_instance = nullptr;
-        uint64_t* m_count = nullptr;
+        std::atomic<uint64_t>* m_count = nullptr;
 
         uint64_t increase_count()
         {
@@ -20,12 +20,12 @@ namespace kl {
 
         uint64_t decrease_count()
         {
-            return (m_count && *m_count) ? (*m_count -= 1) : 0;
+            return m_count ? (*m_count -= 1) : 0;
         }
 
         void allocate()
         {
-            m_count = new uint64_t;
+            m_count = new std::atomic<uint64_t>;
             if (!m_count) throw std::runtime_error("Could not allocate memory for reference counter.");
             *m_count = 1;
         }
@@ -99,7 +99,7 @@ namespace kl {
 
         // Derived cast
         template<typename B> requires std::is_base_of_v<B, T>
-        explicit operator object<B> () const
+        operator object<B> ()
         {
             object<B> result = {};
             result.m_instance = m_instance;
@@ -116,7 +116,7 @@ namespace kl {
 
         uint64_t count() const
         {
-            return m_count ? *m_count : 0;
+            return m_count ? m_count->load() : 0;
         }
 
         // Compare

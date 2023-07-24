@@ -81,8 +81,8 @@ namespace kl {
         int2 size(bool client = true) const;
         void resize(const int2& size, bool client = true) const;
 
-        float get_aspect_ratio() const;
-        int2 get_frame_center() const;
+        float aspect_ratio() const;
+        int2 frame_center() const;
 
         void set_title(const std::string& data) const;
         bool set_icon(const std::string& filepath) const;

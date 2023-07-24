@@ -30,11 +30,11 @@ namespace kl {
         void operator=(const directional_light&&) = delete;
 
         void set_direction(const float3& direction);
-        float3 get_direction() const;
+        float3 direction() const;
 
-        dx::depth_view get_depth_view(UINT cascade_index) const;
-        dx::shader_view get_shader_view(UINT cascade_index) const;
+        dx::depth_view depth_view(UINT cascade_index) const;
+        dx::shader_view shader_view(UINT cascade_index) const;
 
-        float4x4 get_matrix(camera camera, UINT cascade_index) const;
+        float4x4 matrix(camera camera, UINT cascade_index) const;
     };
 }

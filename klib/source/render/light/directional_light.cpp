@@ -37,22 +37,22 @@ void kl::directional_light::set_direction(const float3& direction)
     direction_ = normalize(direction);
 }
 
-kl::float3 kl::directional_light::get_direction() const
+kl::float3 kl::directional_light::direction() const
 {
     return direction_;
 }
 
-kl::dx::depth_view kl::directional_light::get_depth_view(const UINT cascade_index) const
+kl::dx::depth_view kl::directional_light::depth_view(const UINT cascade_index) const
 {
     return cascades_[cascade_index]->depth_view;
 }
 
-kl::dx::shader_view kl::directional_light::get_shader_view(const UINT cascade_index) const
+kl::dx::shader_view kl::directional_light::shader_view(const UINT cascade_index) const
 {
     return cascades_[cascade_index]->shader_view;
 }
 
-kl::float4x4 kl::directional_light::get_matrix(camera camera, const UINT cascade_index) const
+kl::float4x4 kl::directional_light::matrix(camera camera, const UINT cascade_index) const
 {
     const float2 old_camera_planes = { camera.near_plane, camera.far_plane };
     camera.near_plane = interpolate(CASCADE_SPLITS[cascade_index + 0], old_camera_planes.x, old_camera_planes.y);

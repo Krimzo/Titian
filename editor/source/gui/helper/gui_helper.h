@@ -9,27 +9,38 @@
 #include <ImGuizmo.h>
 
 
-namespace GUI {
-    void set_drag_data(const char* id, const void* data, size_t data_size, const kl::dx::shader_view& texture = nullptr);
+namespace GUI::popup {
+    void on_window(const std::string& id, const std::function<void()>& callback);
+    void on_item(const std::string& id, const std::function<void()>& callback);
+    void close();
+}
+
+namespace GUI::drag_drop {
+    inline std::unordered_map<std::string, std::any> _data = {};
 
     template<typename T>
-    void set_drag_data(const char* id, const T& data, const kl::dx::shader_view& texture = nullptr)
+    void write_data(const std::string& id, const T& data, const kl::dx::shader_view& texture = nullptr)
     {
-        set_drag_data(id, &data, sizeof(T), texture);
+        if (ImGui::BeginDragDropSource()) {
+            if (texture) ImGui::Image(texture.Get(), { 50.0f, 50.0f });
+            _data[id] = { data };
+            ImGui::EndDragDropSource();
+        }
     }
 
     template<typename T>
-    bool get_drag_data(const char* id, T& out_data)
+    std::optional<T> read_data(const std::string& id)
     {
-        bool state = false;
+        std::optional<T> result = {};
         if (ImGui::BeginDragDropTarget()) {
-            const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(id);
-            if (payload->DataSize == sizeof(T)) {
-                memcpy(&out_data, payload->Data, sizeof(T));
-                state = true;
+            try {
+                const std::any data = _data[id];
+                result = std::any_cast<T>(data);
+            }
+            catch (const std::exception&) {
             }
             ImGui::EndDragDropTarget();
         }
-        return state;
+        return result;
     }
 }

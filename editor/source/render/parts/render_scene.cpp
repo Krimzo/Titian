@@ -21,8 +21,8 @@ void render_scene(editor_state* state)
     if (state->scene->directional_light) {
         ID3D11ShaderResourceView* dir_light_views[kl::directional_light::CASCADE_COUNT] = {};
         for (int i = 0; i < kl::directional_light::CASCADE_COUNT; i++) {
-            dir_light_views[i] = state->scene->directional_light->get_shader_view(i).Get();
-            vs_cb.vp_light_matrices[i] = state->scene->directional_light->get_matrix(*state->scene->camera, i);
+            dir_light_views[i] = state->scene->directional_light->shader_view(i).Get();
+            vs_cb.vp_light_matrices[i] = state->scene->directional_light->matrix(*state->scene->camera, i);
         }
         state->gpu->context()->PSSetShaderResources(1, kl::directional_light::CASCADE_COUNT, dir_light_views);
     }
@@ -36,7 +36,7 @@ void render_scene(editor_state* state)
     }
 
     if (state->scene->directional_light) {
-        ps_cb.directional_light = { state->scene->directional_light->get_direction(), state->scene->directional_light->point_size };
+        ps_cb.directional_light = { state->scene->directional_light->direction(), state->scene->directional_light->point_size };
 
         ps_cb.shadow_map_info = { kl::float2((float) state->scene->directional_light->map_resolution), kl::float2(1.0f / state->scene->directional_light->map_resolution) };
         for (int i = 0; i < kl::directional_light::CASCADE_COUNT; i++) {

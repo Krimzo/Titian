@@ -32,17 +32,6 @@ void kl::mouse::set_hidden(const bool enabled)
     hidden_ = enabled;
 }
 
-kl::int2 kl::mouse::position(const bool client) const
-{
-    if (client) {
-        return position_;
-    }
-
-    POINT client_position = { position_.x, position_.y };
-    ClientToScreen(window_, &client_position);
-    return { client_position.x, client_position.y };
-}
-
 void kl::mouse::set_position(const int2& position, const bool client)
 {
     POINT client_position = { position.x, position.y };
@@ -59,7 +48,18 @@ void kl::mouse::set_position(const int2& position, const bool client)
     SetCursorPos(screen_position.x, screen_position.y);
 }
 
-kl::float2 kl::mouse::get_normalized_position(const bool client) const
+kl::int2 kl::mouse::position(const bool client) const
+{
+    if (client) {
+        return position_;
+    }
+
+    POINT client_position = { position_.x, position_.y };
+    ClientToScreen(window_, &client_position);
+    return { client_position.x, client_position.y };
+}
+
+kl::float2 kl::mouse::normalized_position(const bool client) const
 {
     int2 frame_size = screen::size;
     if (client) {

@@ -17,7 +17,7 @@ void render_collider(editor_state* state)
     ps_cb.object_color = state->gui_state->collider_color;
     state->render_shaders.object_solid.pixel_shader.update_cbuffer(ps_cb);
 
-    switch (state->scene->selected_entity->get_collider()->get_type()) {
+    switch (state->scene->selected_entity->collider()->type()) {
     case PxGeometryType::Enum::eBOX:
         state->gpu->draw(state->default_meshes["cube"]->graphics_buffer);
         break;

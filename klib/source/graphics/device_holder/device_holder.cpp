@@ -378,7 +378,7 @@ kl::dx::layout kl::device_holder::create_input_layout(const compiled_shader& com
     const UINT descriptors_count = (!descriptors.empty()) ? ((UINT) descriptors.size()) : 3;
 
     dx::layout layout = nullptr;
-    device_->CreateInputLayout(descriptors_ptr, descriptors_count, compiled_shader.get_data(), compiled_shader.get_data_size(), &layout);
+    device_->CreateInputLayout(descriptors_ptr, descriptors_count, compiled_shader.data(), compiled_shader.data_size(), &layout);
     warning_check(!layout, "Failed to create input layout");
     return layout;
 }
@@ -386,7 +386,7 @@ kl::dx::layout kl::device_holder::create_input_layout(const compiled_shader& com
 kl::dx::vertex_shader kl::device_holder::create_vertex_shader(const compiled_shader& compiled_shader) const
 {
     dx::vertex_shader shader = nullptr;
-    device_->CreateVertexShader(compiled_shader.get_data(), compiled_shader.get_data_size(), nullptr, &shader);
+    device_->CreateVertexShader(compiled_shader.data(), compiled_shader.data_size(), nullptr, &shader);
     warning_check(!shader, "Failed to create vertex shader");
     return shader;
 }
@@ -394,7 +394,7 @@ kl::dx::vertex_shader kl::device_holder::create_vertex_shader(const compiled_sha
 kl::dx::geometry_shader kl::device_holder::create_geometry_shader(const compiled_shader& compiled_shader) const
 {
     dx::geometry_shader shader = nullptr;
-    device_->CreateGeometryShader(compiled_shader.get_data(), compiled_shader.get_data_size(), nullptr, &shader);
+    device_->CreateGeometryShader(compiled_shader.data(), compiled_shader.data_size(), nullptr, &shader);
     warning_check(!shader, "Failed to create geometry shader");
     return shader;
 }
@@ -402,7 +402,7 @@ kl::dx::geometry_shader kl::device_holder::create_geometry_shader(const compiled
 kl::dx::pixel_shader kl::device_holder::create_pixel_shader(const compiled_shader& compiled_shader) const
 {
     dx::pixel_shader shader = nullptr;
-    device_->CreatePixelShader(compiled_shader.get_data(), compiled_shader.get_data_size(), nullptr, &shader);
+    device_->CreatePixelShader(compiled_shader.data(), compiled_shader.data_size(), nullptr, &shader);
     warning_check(!shader, "Failed to create pixel shader");
     return shader;
 }
@@ -410,7 +410,7 @@ kl::dx::pixel_shader kl::device_holder::create_pixel_shader(const compiled_shade
 kl::dx::compute_shader kl::device_holder::create_compute_shader(const compiled_shader& compiled_shader) const
 {
     dx::compute_shader shader = nullptr;
-    device_->CreateComputeShader(compiled_shader.get_data(), compiled_shader.get_data_size(), nullptr, &shader);
+    device_->CreateComputeShader(compiled_shader.data(), compiled_shader.data_size(), nullptr, &shader);
     warning_check(!shader, "Failed to create compute shader");
     return shader;
 }

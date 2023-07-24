@@ -120,7 +120,7 @@ void kl::console::set_font(const int2& size, const std::string& font_name)
     SetCurrentConsoleFontEx(console_handle, false, &cfi);
 }
 
-char kl::console::get_input()
+char kl::console::read()
 {
     char input = 0;
     while (_kbhit()) {

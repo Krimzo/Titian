@@ -190,7 +190,7 @@ kl::image kl::image::flip_vertical() const
     return result;
 }
 
-kl::image kl::image::get_rectangle(int2 top_left, int2 bottom_right) const
+kl::image kl::image::rectangle(int2 top_left, int2 bottom_right) const
 {
     if (bottom_right.x < top_left.x) {
         std::swap(top_left.x, bottom_right.x);
@@ -384,7 +384,7 @@ bool kl::image::load_from_file(const std::string& filepath)
 
 bool kl::image::save_to_file(const std::string& filepath) const
 {
-    const std::string extension = get_file_extension(filepath);
+    const std::string extension = file_extension(filepath);
 
     if (extension == ".txt") {
         std::ofstream file(filepath);

@@ -22,7 +22,7 @@ static void configure_reader(ComPtr<IMFSourceReader> reader)
     fail_check_(reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, new_type.Get()), "Failed to set video type");
 }
 
-static uint64_t get_video_byte_size(ComPtr<IMFSourceReader> reader)
+static uint64_t video_byte_size(ComPtr<IMFSourceReader> reader)
 {
     PROPVARIANT variant = {};
     if (!succeeded_(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &variant))) {
@@ -35,7 +35,7 @@ static uint64_t get_video_byte_size(ComPtr<IMFSourceReader> reader)
     return byte_size;
 }
 
-static int64_t get_video_duration_100ns(ComPtr<IMFSourceReader> reader)
+static int64_t video_duration_100ns(ComPtr<IMFSourceReader> reader)
 {
     PROPVARIANT variant = {};
     if (!succeeded_(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &variant))) {
@@ -48,7 +48,7 @@ static int64_t get_video_duration_100ns(ComPtr<IMFSourceReader> reader)
     return duration;
 }
 
-static kl::int2 get_video_frame_size(ComPtr<IMFSourceReader> reader)
+static kl::int2 video_frame_size(ComPtr<IMFSourceReader> reader)
 {
     ComPtr<IMFMediaType> current_type = nullptr;
     reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, &current_type);
@@ -61,7 +61,7 @@ static kl::int2 get_video_frame_size(ComPtr<IMFSourceReader> reader)
     return frame_size;
 }
 
-static float get_video_fps(ComPtr<IMFSourceReader> reader)
+static float video_fps(ComPtr<IMFSourceReader> reader)
 {
     ComPtr<IMFMediaType> current_type = nullptr;
     reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, &current_type);
@@ -89,13 +89,13 @@ kl::video_reader::video_reader(const std::string& filepath)
     configure_reader(reader_);
 
     // Getting info
-    byte_size_ = get_video_byte_size(reader_);
-    duration_ = get_video_duration_100ns(reader_);
+    byte_size_ = video_byte_size(reader_);
+    duration_ = video_duration_100ns(reader_);
 
-    frame_size_ = get_video_frame_size(reader_);
+    frame_size_ = video_frame_size(reader_);
     frame_byte_size_ = frame_size_.x * frame_size_.y * 4;
 
-    fps_ = get_video_fps(reader_);
+    fps_ = video_fps(reader_);
     frame_count_ = int(duration_seconds() * fps_);
 }
 
@@ -130,7 +130,7 @@ float kl::video_reader::fps() const
     return fps_;
 }
 
-bool kl::video_reader::get_next_frame(image& out) const
+bool kl::video_reader::next_frame(image& out) const
 {
     // Read sample
     DWORD flags = NULL;

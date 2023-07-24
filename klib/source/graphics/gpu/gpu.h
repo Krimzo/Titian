@@ -41,11 +41,11 @@ namespace kl {
         dx::context context() const;
         dx::chain chain() const;
 
-        dx::target_view get_internal_target() const;
-        dx::depth_view get_internal_depth() const;
+        dx::target_view internal_target() const;
+        dx::depth_view internal_depth() const;
 
         // Chain
-        dx::texture get_back_buffer() const;
+        dx::texture back_buffer() const;
         void swap_buffers(bool v_sync) const;
 
         bool in_fullscreen() const;

@@ -5,8 +5,8 @@
 
 // Helper
 namespace kl {
-    std::string get_file_extension(const std::string& filepath);
-    std::vector<std::string> get_files(const std::string& path, bool recursive = false);
+    std::string file_extension(const std::string& filepath);
+    std::vector<std::string> list_files(const std::string& path, bool recursive = false);
 
     std::string read_file_string(const std::string& filepath);
     bool write_file_string(const std::string& filepath, const std::string& data);

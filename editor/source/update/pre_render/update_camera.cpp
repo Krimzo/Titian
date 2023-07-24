@@ -15,27 +15,27 @@ void handle_camera(editor_state* state)
 
     // Movement
     if (state->window->keyboard.w) {
-        camera.move_forward(state->timer.get_interval());
+        camera.move_forward(state->timer.delta());
     }
     if (state->window->keyboard.s) {
-        camera.move_back(state->timer.get_interval());
+        camera.move_back(state->timer.delta());
     }
     if (state->window->keyboard.d) {
-        camera.move_right(state->timer.get_interval());
+        camera.move_right(state->timer.delta());
     }
     if (state->window->keyboard.a) {
-        camera.move_left(state->timer.get_interval());
+        camera.move_left(state->timer.delta());
     }
     if (state->window->keyboard.e) {
-        camera.move_up(state->timer.get_interval());
+        camera.move_up(state->timer.delta());
     }
     if (state->window->keyboard.q) {
-        camera.move_down(state->timer.get_interval());
+        camera.move_down(state->timer.delta());
     }
 
     // Rotation
     if (state->window->mouse.right) {
-        const kl::int2 frame_center = state->window->get_frame_center();
+        const kl::int2 frame_center = state->window->frame_center();
         if (state->window->mouse.is_hidden()) {
             camera.rotate(state->window->mouse.position(), frame_center);
         }

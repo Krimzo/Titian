@@ -29,12 +29,12 @@ bool kl::texture::reload_as_cube()
 
     const int part_size = (data_buffer.width() / 4);
     kl::image box_sides[6] = {
-        data_buffer.get_rectangle(int2(1, 1) * part_size, int2(2, 2) * part_size),
-        data_buffer.get_rectangle(int2(3, 1) * part_size, int2(4, 2) * part_size),
-        data_buffer.get_rectangle(int2(0, 1) * part_size, int2(1, 2) * part_size),
-        data_buffer.get_rectangle(int2(2, 1) * part_size, int2(3, 2) * part_size),
-        data_buffer.get_rectangle(int2(1, 0) * part_size, int2(2, 1) * part_size),
-        data_buffer.get_rectangle(int2(1, 2) * part_size, int2(2, 3) * part_size),
+        data_buffer.rectangle(int2(1, 1) * part_size, int2(2, 2) * part_size),
+        data_buffer.rectangle(int2(3, 1) * part_size, int2(4, 2) * part_size),
+        data_buffer.rectangle(int2(0, 1) * part_size, int2(1, 2) * part_size),
+        data_buffer.rectangle(int2(2, 1) * part_size, int2(3, 2) * part_size),
+        data_buffer.rectangle(int2(1, 0) * part_size, int2(2, 1) * part_size),
+        data_buffer.rectangle(int2(1, 2) * part_size, int2(2, 3) * part_size),
     };
 
     graphics_buffer = gpu->create_cube_texture(box_sides[0], box_sides[1], box_sides[2], box_sides[3], box_sides[4], box_sides[5]);

@@ -60,17 +60,17 @@ std::map<std::string, kl::object<kl::entity>>::iterator kl::scene::end()
 }
 
 // Get
-PxPhysics* kl::scene::get_physics() const
+PxPhysics* kl::scene::physics() const
 {
     return physics_;
 }
 
-PxCooking* kl::scene::get_cooking() const
+PxCooking* kl::scene::cooking() const
 {
     return cooking_;
 }
 
-kl::object<kl::entity> kl::scene::get_entity(const std::string& name) const
+kl::object<kl::entity> kl::scene::entity(const std::string& name) const
 {
     if (entities_.contains(name)) {
         return entities_.at(name);
@@ -78,7 +78,7 @@ kl::object<kl::entity> kl::scene::get_entity(const std::string& name) const
     return nullptr;
 }
 
-std::string kl::scene::get_name(object<entity> entity) const
+std::string kl::scene::name(object<kl::entity> entity) const
 {
     for (auto& [name, ent] : entities_) {
         if (ent == entity) {
@@ -99,22 +99,22 @@ void kl::scene::set_gravity(const float3& gravity)
     scene_->setGravity((const PxVec3&) gravity);
 }
 
-kl::float3 kl::scene::get_gravity() const
+kl::float3 kl::scene::gravity() const
 {
     const PxVec3 gravity = scene_->getGravity();
     return (const float3&) gravity;
 }
 
-void kl::scene::add(const std::string& name, object<entity> entity)
+void kl::scene::add(const std::string& name, object<kl::entity> entity)
 {
     entities_[name] = entity;
-    scene_->addActor(*entity->get_actor());
+    scene_->addActor(*entity->actor());
 }
 
 void kl::scene::remove(const std::string& name)
 {
     if (entities_.contains(name)) {
-        scene_->removeActor(*entities_.at(name)->get_actor());
+        scene_->removeActor(*entities_.at(name)->actor());
         entities_.erase(name);
     }
 }
@@ -141,7 +141,7 @@ void kl::scene::update_physics(const float delta_t)
 // Entity
 kl::object<kl::entity> kl::scene::make_entity(const bool dynamic)
 {
-    return new entity(physics_, dynamic);
+    return new kl::entity(physics_, dynamic);
 }
 
 // Dynamic colliders

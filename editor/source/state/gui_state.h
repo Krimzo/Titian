@@ -18,15 +18,25 @@ struct gui_state
     kl::float4 collider_color = kl::color(90, 225, 100);
 
     std::string builtin_path = "./builtin/";
-    std::string explorer_path = ".";
+    std::string explorer_path = std::filesystem::absolute(".").string();
 
-    std::unordered_map<std::string, kl::object<kl::texture>> textures = {};
+    struct textures
+    {
+        kl::object<kl::texture> folder = {};
+        kl::object<kl::texture> folder_empty = {};
+        kl::object<kl::texture> folder_parent = {};
+        kl::object<kl::texture> file = {};
+        kl::object<kl::texture> code = {};
+        kl::object<kl::texture> script = {};
+        kl::object<kl::texture> mesh = {};
+        kl::object<kl::texture> texture = {};
+        kl::object<kl::texture> scene = {};
+    } textures;
 
     // Mesh editor
     struct mesh_editor
     {
         kl::camera camera = {};
-        kl::float3 light_direction = { 0.0f, -1.0f, 0.0f };
         kl::object<kl::mesh> selected_mesh = {};
         kl::object<kl::texture> render_texture = {};
         kl::render_shaders shaders = {};

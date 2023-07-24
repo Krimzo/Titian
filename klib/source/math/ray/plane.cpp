@@ -19,13 +19,13 @@ void kl::plane::set_normal(const float3& normal)
     normal_ = normalize(normal);
 }
 
-kl::float3 kl::plane::get_normal() const
+kl::float3 kl::plane::normal() const
 {
     return normal_;
 }
 
 // Math
-bool kl::plane::is_in_front(const float3& point) const
+bool kl::plane::in_front(const float3& point) const
 {
     const float result = dot(point - origin, normal_);
     return (result >= 0.0f);
@@ -34,6 +34,6 @@ bool kl::plane::is_in_front(const float3& point) const
 // Format
 std::ostream& kl::operator<<(std::ostream& os, const kl::plane& obj)
 {
-    os << "{" << obj.origin << ", " << obj.get_normal() << "}";
+    os << "{" << obj.origin << ", " << obj.normal() << "}";
     return os;
 }

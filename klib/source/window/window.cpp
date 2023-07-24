@@ -225,13 +225,13 @@ void kl::window::resize(const int2& size, const bool client) const
     MoveWindow(window_, position.x, position.y, new_size.x, new_size.y, false);
 }
 
-float kl::window::get_aspect_ratio() const
+float kl::window::aspect_ratio() const
 {
     const int2 win_size = size();
     return (float) win_size.x / win_size.y;
 }
 
-kl::int2 kl::window::get_frame_center() const
+kl::int2 kl::window::frame_center() const
 {
     return (size() / 2);
 }

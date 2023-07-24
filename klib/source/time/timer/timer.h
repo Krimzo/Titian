@@ -6,8 +6,8 @@
 namespace kl {
     class timer
     {
-        time_t interval_start_;
-        time_t interval_end_;
+        time_t delta_start_;
+        time_t delta_end_;
         time_t elapsed_start_;
 
     public:
@@ -15,10 +15,10 @@ namespace kl {
 
         void reset();
 
-        void update_interval();
-        float get_interval() const;
+        void update_delta();
+        float delta() const;
 
-        void update_elapsed();
-        float get_elapsed() const;
+        void reset_elapsed();
+        float elapsed() const;
     };
 }

@@ -13,7 +13,7 @@ namespace kl::time {
     uint64_t cpu_frequency();
 
     float calculate(uint64_t start, uint64_t end);
-    float get_interval();
+    float delta();
 
     void wait(float seconds);
     bool sleep(float seconds);

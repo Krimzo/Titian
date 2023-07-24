@@ -3,25 +3,25 @@
 
 kl::compiled_shader::operator bool() const
 {
-    return (data && !error);
+    return (m_data && !m_error);
 }
 
-const void* kl::compiled_shader::get_data() const
+const void* kl::compiled_shader::data() const
 {
-    return data ? (const void*) data->GetBufferPointer() : nullptr;
+    return m_data ? (const void*) m_data->GetBufferPointer() : nullptr;
 }
 
-SIZE_T kl::compiled_shader::get_data_size() const
+SIZE_T kl::compiled_shader::data_size() const
 {
-    return data ? data->GetBufferSize() : 0;
+    return m_data ? m_data->GetBufferSize() : 0;
 }
 
-std::string kl::compiled_shader::get_error() const
+std::string kl::compiled_shader::error() const
 {
-    return error ? ((const char*) error->GetBufferPointer()) : "Unknown";
+    return m_error ? ((const char*) m_error->GetBufferPointer()) : "Unknown";
 }
 
-SIZE_T kl::compiled_shader::get_error_size() const
+SIZE_T kl::compiled_shader::error_size() const
 {
-    return error ? error->GetBufferSize() : 0;
+    return m_error ? m_error->GetBufferSize() : 0;
 }

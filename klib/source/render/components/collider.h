@@ -22,26 +22,26 @@ namespace kl {
         void operator=(const collider&&) = delete;
 
         // Get
-        PxShape* get_shape();
-        PxGeometryType::Enum get_type() const;
+        PxShape* shape();
+        PxGeometryType::Enum type() const;
         float4x4 scaling_matrix() const;
 
         // Geometry
         void set_rotation(const float3& rotation);
-        float3 get_rotation() const;
+        float3 rotation() const;
 
         void set_offset(const float3& position);
-        float3 get_offset() const;
+        float3 offset() const;
 
         // Material
-        float get_static_friction() const;
         void set_static_friction(float friction);
+        float static_friction() const;
 
-        float get_dynamic_friction() const;
         void set_dynamic_friction(float friction);
+        float dynamic_friction() const;
 
-        float get_restitution() const;
         void set_restitution(float restitution);
+        float restitution() const;
     };
 }
 

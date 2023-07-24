@@ -50,7 +50,7 @@ namespace kl {
         image flip_horizontal() const;
         image flip_vertical() const;
 
-        image get_rectangle(int2 top_left, int2 bottom_right) const;
+        image rectangle(int2 top_left, int2 bottom_right) const;
         std::string as_ascii(const int2& frame_size) const;
 
         // Draw

@@ -7,6 +7,7 @@
 #include <syncstream>
 
 // Storage
+#include <any>
 #include <array>
 #include <vector>
 #include <list>

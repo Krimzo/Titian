@@ -102,18 +102,18 @@ kl::dx::chain kl::gpu::chain() const
     return chain_;
 }
 
-kl::dx::target_view kl::gpu::get_internal_target() const
+kl::dx::target_view kl::gpu::internal_target() const
 {
     return target_view_;
 }
 
-kl::dx::depth_view kl::gpu::get_internal_depth() const
+kl::dx::depth_view kl::gpu::internal_depth() const
 {
     return depth_view_;
 }
 
 // Chain
-kl::dx::texture kl::gpu::get_back_buffer() const
+kl::dx::texture kl::gpu::back_buffer() const
 {
     dx::texture buffer = nullptr;
     const long result = chain_->GetBuffer(0, IID_PPV_ARGS(&buffer));
@@ -166,7 +166,7 @@ void kl::gpu::resize_internal(const int2& size)
     chain_->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, NULL);
 
     // Render buffer
-    const dx::texture render_texture = get_back_buffer();
+    const dx::texture render_texture = this->back_buffer();
     target_view_ = create_target_view(render_texture, nullptr);
 
     // Depth buffer

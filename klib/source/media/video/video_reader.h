@@ -35,6 +35,6 @@ namespace kl {
         int frame_count() const;
 
         float fps() const;
-        bool get_next_frame(image& out) const;
+        bool next_frame(image& out) const;
     };
 }

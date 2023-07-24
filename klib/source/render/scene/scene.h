@@ -50,27 +50,27 @@ namespace kl {
         std::map<std::string, object<entity>>::iterator end();
 
         // Get
-        PxPhysics* get_physics() const;
-        PxCooking* get_cooking() const;
+        PxPhysics* physics() const;
+        PxCooking* cooking() const;
 
-        object<entity> get_entity(const std::string& name) const;
-        std::string get_name(object<entity> entity) const;
+        object<entity> entity(const std::string& name) const;
+        std::string name(object<kl::entity> entity) const;
 
         size_t entity_count() const;
 
         // Set/Get
         void set_gravity(const float3& gravity);
-        float3 get_gravity() const;
+        float3 gravity() const;
 
-        void add(const std::string& name, object<entity> entity);
+        void add(const std::string& name, object<kl::entity> entity);
         void remove(const std::string& name);
 
         // Update
-        object<entity> update_selected_entity(uint32_t index);
+        object<kl::entity> update_selected_entity(uint32_t index);
         void update_physics(float delta_t);
 
         // Entity
-        object<entity> make_entity(bool dynamic);
+        object<kl::entity> make_entity(bool dynamic);
 
         // Dynamic colliders
         object<collider> make_box_collider(const float3& scale);

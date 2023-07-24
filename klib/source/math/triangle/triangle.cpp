@@ -12,13 +12,13 @@ kl::triangle::triangle(const vertex& a, const vertex& b, const vertex& c)
 {}
 
 // Normal
-kl::float3 kl::triangle::get_normal() const
+kl::float3 kl::triangle::normal() const
 {
     return normalize(cross(b.world - a.world, c.world - a.world));
 }
 
 // Interpolation
-kl::float4 kl::triangle::get_constants() const
+kl::float4 kl::triangle::constants() const
 {
     const float calc_const = (b.world.y - c.world.y) * (a.world.x - c.world.x) + (c.world.x - b.world.x) * (a.world.y - c.world.y);
     const float rec_constant = 1.0f / calc_const;
@@ -31,7 +31,7 @@ kl::float4 kl::triangle::get_constants() const
     };
 }
 
-kl::float3 kl::triangle::get_weights(const float4& constants, const float2& point) const
+kl::float3 kl::triangle::weights(const float4& constants, const float2& point) const
 {
     const float dx = point.x - c.world.x;
     const float dy = point.y - c.world.y;
@@ -41,7 +41,7 @@ kl::float3 kl::triangle::get_weights(const float4& constants, const float2& poin
     return { w1, w2, (1.0f - w1 - w2) };
 }
 
-kl::float3 kl::triangle::get_weights(const float3& position) const
+kl::float3 kl::triangle::weights(const float3& position) const
 {
     const float3 v0 = a.world - c.world;
     const float3 v1 = b.world - c.world;

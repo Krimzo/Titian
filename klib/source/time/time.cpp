@@ -21,7 +21,7 @@ float kl::time::calculate(const uint64_t start, const uint64_t end)
     return (end - start) * rec_frequency;
 }
 
-float kl::time::get_interval()
+float kl::time::delta()
 {
     static uint64_t start_time = now();
 

@@ -45,7 +45,7 @@ void setup_objects(editor_state* state, const int size)
             box->set_collider(state->scene->make_box_collider(scale));
 
             box->render_scale = scale;
-            box->set_rotation(kl::random::get_float3(360.0f));
+            box->set_rotation(kl::random::gen_float3(360.0f));
             box->set_position({ (half_size - x) * 2.25f, 15.0f, -25.0f + (half_size - z) * 2.25f });
 
             box->mesh = state->default_meshes["cube"];
@@ -54,7 +54,7 @@ void setup_objects(editor_state* state, const int size)
             box->material->color_map = state->scene->textures["dogo"];
             box->material->normal_map = state->scene->textures["concrete_normal"];
 
-            box->material->color = (kl::float4) kl::random::get_color();
+            box->material->color = (kl::float4) kl::random::gen_color();
             box->material->texture_blend = 0.5f;
 
             state->scene->add(kl::format("Box", box_counter), box);

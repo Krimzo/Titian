@@ -21,13 +21,13 @@ namespace kl {
 
         // Viewport
         void set_viewport_position(const int2& position) const;
-        int2 get_viewport_position() const;
+        int2 viewport_position() const;
 
         void set_viewport_size(const int2& size) const;
-        int2 get_viewport_size() const;
+        int2 viewport_size() const;
 
         void set_viewport_min_max(const float2& min_max) const;
-        float2 get_viewport_min_max() const;
+        float2 viewport_min_max() const;
 
         // States
         void bind_raster_state(const dx::raster_state& state) const;
@@ -51,7 +51,7 @@ namespace kl {
         void write_to_resource(const dx::resource& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard = true) const;
 
         // Buffers
-        UINT get_buffer_size(const dx::buffer& buffer) const;
+        UINT buffer_size(const dx::buffer& buffer) const;
 
         // Const buffers
         void bind_cb_for_vertex_shader(const dx::buffer& buffer, UINT slot) const;
@@ -73,13 +73,13 @@ namespace kl {
         }
 
         // Vertex buffers
-        UINT get_vertex_buffer_size(const dx::buffer& buffer, UINT stride) const;
+        UINT vertex_buffer_size(const dx::buffer& buffer, UINT stride) const;
 
         void bind_vertex_buffer(const dx::buffer& buffer, UINT slot, UINT offset, UINT stride) const;
         void unbind_vertex_buffer(UINT slot) const;
 
         // Index buffers
-        UINT get_index_buffer_size(const dx::buffer& buffer) const;
+        UINT index_buffer_size(const dx::buffer& buffer) const;
 
         void bind_index_buffer(const dx::buffer& buffer, UINT offset) const;
         void unbind_index_buffer(UINT slot) const;
