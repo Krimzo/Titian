@@ -218,7 +218,7 @@ void gui_entity_mesh(editor_state* state, kl::object<kl::entity>& entity)
 
     // Selector
     if (ImGui::BeginCombo("Bound Mesh", bound_mesh_name.c_str())) {
-        if (ImGui::Selectable("", !entity->mesh)) {
+        if (ImGui::Selectable("/", !entity->mesh)) {
             entity->mesh = nullptr;
         }
 
@@ -264,7 +264,7 @@ void gui_entity_material(editor_state* state, kl::object<kl::entity>& entity)
 
     // Selector
     if (ImGui::BeginCombo("Bound Material", bound_material_name.c_str())) {
-        if (ImGui::Selectable("", !entity->material)) {
+        if (ImGui::Selectable("/", !entity->material)) {
             entity->material = nullptr;
         }
 

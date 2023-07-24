@@ -15,6 +15,7 @@ void handle_file_entry(editor_state* state, const std::filesystem::path& file);
 void handle_directory_entry(editor_state* state, const std::filesystem::path& directory, bool is_parent_dir);
 file_type classify_file(const std::filesystem::path& file);
 kl::dx::shader_view file_icon(editor_state* state, file_type type);
+void drag_file(const std::filesystem::path& file, file_type type, const kl::dx::shader_view& texture);
 
 void gui_explorer(editor_state* state)
 {
@@ -78,11 +79,12 @@ void handle_file_entry(editor_state* state, const std::filesystem::path& file)
 {
     const std::string path = std::filesystem::absolute(file).string();
     const ImVec2 icon_size = { (float) state->gui_state->explorer_icon_size, (float) state->gui_state->explorer_icon_size };
-    file_type file_type = classify_file(file);
+    const file_type file_type = classify_file(file);
     kl::dx::shader_view icon = file_icon(state, file_type);
     if (ImGui::ImageButton(path.c_str(), icon.Get(), icon_size, ImVec2(0, 1), ImVec2(1, 0))) {
         ShellExecuteA(0, 0, path.c_str(), 0, 0, SW_SHOW);
     }
+    drag_file(path, file_type, icon);
     ImGui::Text(file.filename().string().c_str());
 }
 
@@ -140,4 +142,26 @@ kl::dx::shader_view file_icon(editor_state* state, file_type type)
         return state->gui_state->textures.scene->shader_view;
     }
     return state->gui_state->textures.file->shader_view;
+}
+
+void drag_file(const std::filesystem::path& file, const file_type type, const kl::dx::shader_view& texture)
+{
+    const std::string path = file.string();
+    switch (type) {
+    case file_type::code:
+        GUI::drag_drop::write_data("CodeFile", path, texture);
+        break;
+    case file_type::script:
+        GUI::drag_drop::write_data("ScriptFile", path, texture);
+        break;
+    case file_type::mesh:
+        GUI::drag_drop::write_data("MeshFile", path, texture);
+        break;
+    case file_type::texture:
+        GUI::drag_drop::write_data("TextureFile", path, texture);
+        break;
+    case file_type::scene:
+        GUI::drag_drop::write_data("SceneFile", path, texture);
+        break;
+    }
 }

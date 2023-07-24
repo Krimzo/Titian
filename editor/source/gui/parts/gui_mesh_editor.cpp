@@ -17,15 +17,18 @@ void gui_mesh_editor(editor_state* state)
             display_meshes(state);
         }
         ImGui::EndChild();
-        ImGui::NextColumn();
 
         std::optional mesh_file_path = GUI::drag_drop::read_data<std::string>("MeshFile");
         if (mesh_file_path) {
-            std::filesystem::path path = mesh_file_path.value();
-            kl::mesh_data mesh_data = kl::parse_obj_file(path.string());
-            kl::object new_mesh = new kl::mesh(&state->gpu, &state->scene, mesh_data);
-            state->scene->meshes[path.filename().string()] = new_mesh;
+            const std::filesystem::path path = mesh_file_path.value();
+            const std::string mesh_name = path.filename().string();
+            if (!state->scene->meshes.contains(mesh_name)) {
+                kl::mesh_data mesh_data = kl::parse_obj_file(path.string());
+                kl::object new_mesh = new kl::mesh(&state->gpu, &state->scene, mesh_data);
+                state->scene->meshes[mesh_name] = new_mesh;
+            }
         }
+        ImGui::NextColumn();
 
         const kl::object<kl::mesh> mesh = state->gui_state->mesh_editor.selected_mesh;
         if (ImGui::BeginChild("Mesh View") && mesh) {
@@ -67,30 +70,38 @@ void display_meshes(editor_state* state)
             selected_mesh = mesh;
         }
 
-        GUI::popup::on_item(kl::format("EditMeshes", id_counter), [&]
-        {
-            //if (ImGui::Button("Rename")) {
-            //    textInput = GUITextInput(mesh.name) { name: String ->
-            //        mesh.setName(name)
-            //        textInput = null
-            //    }
-            //}
+        if (ImGui::BeginPopupContextItem(mesh_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+            bool should_break = false;
 
-            //if (ImGui.button("Delete", -1f, 0f)) {
-            //    iter.remove()
-            //    mesh.eraseName()
-            //    if (mesh == = mc.mesh) {
-            //        mc.mesh = null
-            //    }
-            //
-            //    for (entity in scene) {
-            //        if (entity.components.mesh.mesh == = mesh) {
-            //            entity.components.mesh.mesh = null
-            //        }
-            //    }
-            //    GUIPopup.close()
-            //}
-        });
+            char name_input[31] = {};
+            memcpy(name_input, mesh_name.c_str(), min(mesh_name.size(), std::size(name_input) - 1));
+
+            if (ImGui::InputText("##RenameMeshInput", name_input, std::size(name_input) - 1, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                if (!state->scene->meshes.contains(name_input)) {
+                    state->scene->meshes[name_input] = mesh;
+                    state->scene->meshes.erase(mesh_name);
+                    ImGui::CloseCurrentPopup();
+                    should_break = true;
+                }
+            }
+            
+            if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+                if (mesh == selected_mesh) {
+                    selected_mesh = nullptr;
+                }
+                for (auto& [_, entity] : *state->scene) {
+                    if (entity->mesh == mesh) {
+                        entity->mesh = nullptr;
+                    }
+                }
+                state->scene->meshes.erase(mesh_name);
+                ImGui::CloseCurrentPopup();
+                should_break = true;
+            }
+
+            ImGui::EndPopup();
+            if (should_break) break;
+        }
 
         id_counter += 1;
     }

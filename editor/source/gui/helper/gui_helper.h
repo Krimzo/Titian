@@ -22,6 +22,7 @@ namespace GUI::drag_drop {
     void write_data(const std::string& id, const T& data, const kl::dx::shader_view& texture = nullptr)
     {
         if (ImGui::BeginDragDropSource()) {
+            ImGui::SetDragDropPayload(id.c_str(), nullptr, 0);
             if (texture) ImGui::Image(texture.Get(), { 50.0f, 50.0f });
             _data[id] = { data };
             ImGui::EndDragDropSource();
@@ -33,11 +34,13 @@ namespace GUI::drag_drop {
     {
         std::optional<T> result = {};
         if (ImGui::BeginDragDropTarget()) {
-            try {
-                const std::any data = _data[id];
-                result = std::any_cast<T>(data);
-            }
-            catch (const std::exception&) {
+            if (ImGui::AcceptDragDropPayload(id.c_str())) {
+                try {
+                    const std::any data = _data[id];
+                    result = std::any_cast<T>(data);
+                }
+                catch (const std::exception&) {
+                }
             }
             ImGui::EndDragDropTarget();
         }
