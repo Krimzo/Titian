@@ -40,6 +40,12 @@ struct gui_state
         kl::object<kl::mesh> selected_mesh = {};
         kl::object<kl::texture> render_texture = {};
         kl::render_shaders shaders = {};
+
+        mesh_editor_t()
+        {
+            this->camera.origin = { 0.642787576f, 0.577350259f, 0.766044438f };
+            this->camera.speed = 3.1f;
+        }
     } mesh_editor;
 
     // Material editor
@@ -50,6 +56,12 @@ struct gui_state
         kl::object<kl::texture> selected_texture = {};
         kl::object<kl::texture> render_texture = {};
         kl::render_shaders shaders = {};
+
+        material_editor_t()
+        {
+            this->camera.origin = { 0.642787576f, 0.577350259f, 0.766044438f };
+            this->camera.speed = 3.1f;
+        }
     } material_editor;
 
     gui_state(kl::object<kl::gpu> gpu);

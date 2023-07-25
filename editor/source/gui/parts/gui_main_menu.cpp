@@ -46,6 +46,8 @@ void gui_main_menu(editor_state* state)
             if (ImGui::BeginMenu("Colors")) {
                 ImGui::ColorEdit3("Selection Color", state->gui_state->selection_color);
                 ImGui::ColorEdit3("Collider Color", state->gui_state->collider_color);
+
+                ImGui::EndMenu();
             }
             
             ImGui::EndMenu();

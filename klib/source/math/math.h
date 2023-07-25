@@ -42,9 +42,10 @@ namespace kl {
     float line_x(const float2& a, const float2& b, float y);
     float line_y(const float2& a, const float2& b, float x);
 
-    // Normalization
-    float normalize(float value, float lower, float upper);
-    float interpolate(float value, float lower, float upper);
+    // Wrap
+    float wrap(float value, float lower, float upper);
+    float unwrap(float value, float lower, float upper);
+    float clamp(float value, float lower, float upper);
 
     // Rotation
     quaternion to_quaternion(const float3& euler);

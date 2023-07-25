@@ -62,7 +62,7 @@ void render_scene(editor_state* state)
 
         ps_data.shadow_map_info = { kl::float2((float) state->scene->directional_light->map_resolution), kl::float2(1.0f / state->scene->directional_light->map_resolution) };
         for (int i = 0; i < kl::directional_light::CASCADE_COUNT; i++) {
-            ps_data.cascade_distances[i] = kl::interpolate(state->scene->directional_light->CASCADE_SPLITS[i + 1], state->scene->camera->near_plane, state->scene->camera->far_plane);
+            ps_data.cascade_distances[i] = kl::unwrap(state->scene->directional_light->CASCADE_SPLITS[i + 1], state->scene->camera->near_plane, state->scene->camera->far_plane);
         }
     }
 

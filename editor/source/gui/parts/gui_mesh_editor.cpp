@@ -30,23 +30,33 @@ void gui_mesh_editor(editor_state* state)
         }
         ImGui::NextColumn();
 
-        const kl::object<kl::mesh> mesh = state->gui_state->mesh_editor.selected_mesh;
-        if (ImGui::BeginChild("Mesh View") && mesh) {
-            const kl::int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
-            update_mesh_camera(state);
-            render_selected_mesh(state, mesh, viewport_size);
+        ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 2.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+        ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4&) state->gui_state->selection_color);
+        static bool was_focused = true;
 
-            kl::dx::shader_view& shader_view = state->gui_state->mesh_editor.render_texture->shader_view;
-            if (shader_view) ImGui::Image(shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
+        const kl::object<kl::mesh> mesh = state->gui_state->mesh_editor.selected_mesh;
+        if (ImGui::BeginChild("Mesh View", {}, was_focused)) {
+            const kl::int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
+            if (was_focused) update_mesh_camera(state);
+            if (mesh) {
+                render_selected_mesh(state, mesh, viewport_size);
+                kl::dx::shader_view& shader_view = state->gui_state->mesh_editor.render_texture->shader_view;
+                if (shader_view) ImGui::Image(shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
+            }
+            was_focused = ImGui::IsWindowFocused();
         }
         ImGui::EndChild();
+
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar(2);
         
-        if (ImGui::Begin("Mesh") && mesh) {
+        if (ImGui::Begin("Mesh Info") && mesh) {
             const std::string mesh_name = find_mesh_name(state, mesh);
             int vertex_count = (int) mesh->data_buffer.size();
 
             ImGui::BulletText(mesh_name.c_str());
-            ImGui::DragInt("Vertex count", &vertex_count, 0);
+            ImGui::DragInt("Vertex Count", &vertex_count, 0);
         }
         ImGui::End();
     }
@@ -71,6 +81,7 @@ void display_meshes(editor_state* state)
 
         if (ImGui::BeginPopupContextItem(mesh_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
             bool should_break = false;
+            ImGui::Text("Edit Mesh");
 
             char name_input[31] = {};
             memcpy(name_input, mesh_name.c_str(), min(mesh_name.size(), std::size(name_input) - 1));
@@ -121,8 +132,8 @@ std::string find_mesh_name(editor_state* state, const kl::object<kl::mesh>& mesh
 
 void update_mesh_camera(editor_state* state)
 {
-    static kl::float2 initial_camera_info = {};
-    static kl::float2 camera_info = {};
+    static kl::float2 initial_camera_info = { 40, 30 };
+    static kl::float2 camera_info = initial_camera_info;
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
         initial_camera_info = camera_info;
@@ -130,18 +141,16 @@ void update_mesh_camera(editor_state* state)
 
     kl::camera& camera = state->gui_state->mesh_editor.camera;
     
-    static bool first_run = true;
-    if (ImGui::IsMouseDown(ImGuiMouseButton_Right) || first_run) {
+    if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera.sensitivity;
         camera_info.y = initial_camera_info.y + drag_delta.y * camera.sensitivity;
-        camera_info.y = min(max(camera_info.y, -85.0f), 85.0f);
+        camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
 
         camera.origin.x = sin(camera_info.x * kl::to_radians);
         camera.origin.z = cos(camera_info.x * kl::to_radians);
         camera.origin.y = tan(camera_info.y * kl::to_radians);
     }
-    first_run = false;
 
     static int last_scroll = 0;
     const int scroll = state->window->mouse.scroll();

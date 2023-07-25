@@ -55,8 +55,8 @@ kl::dx::shader_view kl::directional_light::shader_view(const UINT cascade_index)
 kl::float4x4 kl::directional_light::matrix(camera camera, const UINT cascade_index) const
 {
     const float2 old_camera_planes = { camera.near_plane, camera.far_plane };
-    camera.near_plane = interpolate(CASCADE_SPLITS[cascade_index + 0], old_camera_planes.x, old_camera_planes.y);
-    camera.far_plane = interpolate(CASCADE_SPLITS[cascade_index + 1], old_camera_planes.x, old_camera_planes.y);
+    camera.near_plane = unwrap(CASCADE_SPLITS[cascade_index + 0], old_camera_planes.x, old_camera_planes.y);
+    camera.far_plane = unwrap(CASCADE_SPLITS[cascade_index + 1], old_camera_planes.x, old_camera_planes.y);
     const float4x4 inverse_camera_matrix = inverse(camera.matrix());
 
     // Calculate 8 corners in world-space

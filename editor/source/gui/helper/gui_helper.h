@@ -9,12 +9,6 @@
 #include <ImGuizmo.h>
 
 
-namespace GUI::popup {
-    void on_window(const std::string& id, const std::function<void()>& callback);
-    void on_item(const std::string& id, const std::function<void()>& callback);
-    void close();
-}
-
 namespace GUI::drag_drop {
     inline std::unordered_map<std::string, std::any> _data = {};
 
@@ -35,12 +29,9 @@ namespace GUI::drag_drop {
         std::optional<T> result = {};
         if (ImGui::BeginDragDropTarget()) {
             if (ImGui::AcceptDragDropPayload(id.c_str())) {
-                try {
-                    const std::any data = _data[id];
-                    result = std::any_cast<T>(data);
-                }
-                catch (const std::exception&) {
-                }
+                const std::any data = _data[id];
+                result = std::any_cast<T>(data);
+                _data.erase(id);
             }
             ImGui::EndDragDropTarget();
         }

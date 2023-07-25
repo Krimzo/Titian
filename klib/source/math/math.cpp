@@ -43,19 +43,24 @@ float kl::line_y(const float2& a, const float2& b, const float x)
     return ((b.y - a.y) * (x - a.x)) / (b.x - a.x) + a.y;
 }
 
-// Normalization
-float kl::normalize(float value, const float lower, const float upper)
+// Wrap
+float kl::wrap(float value, const float lower, const float upper)
 {
     value = (value - lower) / (upper - lower);
     value = min(max(value, 0.0f), 1.0f);
     return value;
 }
 
-float kl::interpolate(float value, const float lower, const float upper)
+float kl::unwrap(float value, const float lower, const float upper)
 {
     value = (upper - lower) * value + lower;
     value = min(max(value, lower), upper);
     return value;
+}
+
+float kl::clamp(const float value, const float lower, const float upper)
+{
+    return min(max(value, lower), upper);
 }
 
 // Rotation

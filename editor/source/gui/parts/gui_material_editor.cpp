@@ -6,8 +6,8 @@ void display_textures(editor_state* state);
 void update_material_camera(editor_state* state);
 void render_selected_material(editor_state* state, const kl::object<kl::material>& material, const kl::int2& viewport_size);
 void render_selected_texture(editor_state* state, const kl::object<kl::texture>& texture, const kl::int2& viewport_size);
-void show_material_info(editor_state* state, const kl::object<kl::material>& material);
-void show_texture_info(editor_state* state, const kl::object<kl::texture>& texture);
+void show_material_info(editor_state* state, kl::object<kl::material>& material);
+void show_texture_info(editor_state* state, kl::object<kl::texture>& texture);
 
 void gui_material_editor(editor_state* state)
 {
@@ -36,6 +36,9 @@ void gui_material_editor(editor_state* state)
                 kl::texture_data texture_data = kl::texture_data(path.string());
                 kl::object new_texture = new kl::texture(&state->gpu, texture_data);
                 state->scene->textures[texture_name] = new_texture;
+                if (new_texture) {
+                    new_texture->create_shader_view();
+                }
             }
         }
         ImGui::NextColumn();
@@ -43,20 +46,29 @@ void gui_material_editor(editor_state* state)
         kl::object<kl::material>& selected_material = state->gui_state->material_editor.selected_material;
         kl::object<kl::texture>& selected_texture = state->gui_state->material_editor.selected_texture;
         
-        if (ImGui::BeginChild("Material/Texture View")) {
-            const kl::int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
-            if (selected_material) {
-                update_material_camera(state);
-                render_selected_material(state, selected_material, viewport_size);
+        ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 2.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+        ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4&) state->gui_state->selection_color);
+        static bool was_focused = true;
 
+        const bool should_rotate_cam = was_focused && !selected_texture;
+        if (ImGui::BeginChild("Material/Texture View", {}, should_rotate_cam)) {
+            const kl::int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
+            if (should_rotate_cam) update_material_camera(state);
+            if (selected_material) {
+                render_selected_material(state, selected_material, viewport_size);
                 kl::dx::shader_view& shader_view = state->gui_state->material_editor.render_texture->shader_view;
                 if (shader_view) ImGui::Image(shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
             else if (selected_texture) {
                 render_selected_texture(state, selected_texture, viewport_size);
             }
+            was_focused = ImGui::IsWindowFocused();
         }
         ImGui::EndChild();
+
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar(2);
 
         if (selected_material) {
             show_material_info(state, selected_material);
@@ -71,6 +83,21 @@ void gui_material_editor(editor_state* state)
 void display_materials(editor_state* state)
 {
     kl::object<kl::material>& selected_material = state->gui_state->material_editor.selected_material;
+
+    if (ImGui::BeginPopupContextWindow("CreateMaterial", ImGuiPopupFlags_MouseButtonRight)) {
+        ImGui::Text("Create Material");
+
+        char name_input[31] = {};
+        if (ImGui::InputText("##CreateMaterialInput", name_input, std::size(name_input) - 1, ImGuiInputTextFlags_EnterReturnsTrue)) {
+            if (!state->scene->materials.contains(name_input)) {
+                kl::object material = new kl::material();
+                state->scene->materials[name_input] = material;
+                ImGui::CloseCurrentPopup();
+            }
+        }
+
+        ImGui::EndPopup();
+    }
 
     for (const auto& [material_name, material] : state->default_materials) {
         if (ImGui::Selectable(material_name.c_str(), material == selected_material)) {
@@ -87,6 +114,7 @@ void display_materials(editor_state* state)
 
         if (ImGui::BeginPopupContextItem(material_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
             bool should_break = false;
+            ImGui::Text("Edit Material");
 
             char name_input[31] = {};
             memcpy(name_input, material_name.c_str(), min(material_name.size(), std::size(name_input) - 1));
@@ -132,6 +160,7 @@ void display_textures(editor_state* state)
 
         if (ImGui::BeginPopupContextItem(texture_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
             bool should_break = false;
+            ImGui::Text("Edit Texture");
 
             char name_input[31] = {};
             memcpy(name_input, texture_name.c_str(), min(texture_name.size(), std::size(name_input) - 1));
@@ -173,8 +202,8 @@ void display_textures(editor_state* state)
 
 void update_material_camera(editor_state* state)
 {
-    static kl::float2 initial_camera_info = {};
-    static kl::float2 camera_info = {};
+    static kl::float2 initial_camera_info = { 40, 30 };
+    static kl::float2 camera_info = initial_camera_info;
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
         initial_camera_info = camera_info;
@@ -182,18 +211,16 @@ void update_material_camera(editor_state* state)
 
     kl::camera& camera = state->gui_state->material_editor.camera;
 
-    static bool first_run = true;
-    if (ImGui::IsMouseDown(ImGuiMouseButton_Right) || first_run) {
+    if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera.sensitivity;
         camera_info.y = initial_camera_info.y + drag_delta.y * camera.sensitivity;
-        camera_info.y = min(max(camera_info.y, -85.0f), 85.0f);
+        camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
 
         camera.origin.x = sin(camera_info.x * kl::to_radians);
         camera.origin.z = cos(camera_info.x * kl::to_radians);
         camera.origin.y = tan(camera_info.y * kl::to_radians);
     }
-    first_run = false;
 
     static int last_scroll = 0;
     const int scroll = state->window->mouse.scroll();
@@ -277,6 +304,8 @@ void render_selected_material(editor_state* state, const kl::object<kl::material
         kl::float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
     } ps_data = {};
 
+    state->gpu->bind_shader_view_for_pixel_shader(state->scene->camera->skybox->shader_view, 0);
+
     if (material->color_map) {
         state->gpu->bind_shader_view_for_pixel_shader(material->color_map->shader_view, 1);
     }
@@ -326,12 +355,80 @@ void render_selected_texture(editor_state* state, const kl::object<kl::texture>&
     ImGui::Image(texture->shader_view.Get(), { min_size, min_size }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 }
 
-void show_material_info(editor_state* state, const kl::object<kl::material>& material)
+void show_material_info(editor_state* state, kl::object<kl::material>& material)
 {
+    if (ImGui::Begin("Material Info")) {
+        ImGui::DragFloat("Texture Blend", &material->texture_blend, 0.05f, 0.0f, 1.0f);
+        ImGui::DragFloat("Reflection Factor", &material->reflection_factor, 0.05f, 0.0f, 1.0f);
+        ImGui::DragFloat("Refraction Factor", &material->refraction_factor, 0.05f, 0.0f, 1.0f);
+        ImGui::DragFloat("Refraction Index", &material->refraction_index, 0.05f, 0.0f, 1.0f);
 
+        ImGui::ColorEdit4("Base Color", material->color);
+
+        std::string names[3] = { "/", "/", "/" };
+        for (const auto& [texture_name, texture] : state->scene->textures) {
+            if (texture == material->color_map) {
+                names[0] = texture_name;
+            }
+            if (texture == material->normal_map) {
+                names[1] = texture_name;
+            }
+            if (texture == material->roughness_map) {
+                names[2] = texture_name;
+            }
+        }
+
+        if (ImGui::BeginCombo("Color Map", names[0].c_str())) {
+            if (ImGui::Selectable("/", !material->color_map)) {
+                material->color_map = nullptr;
+            }
+
+            for (auto& [texture_name, texture] : state->scene->textures) {
+                if (ImGui::Selectable(texture_name.c_str(), texture == material->color_map)) {
+                    material->color_map = texture;
+                }
+            }
+
+            ImGui::EndCombo();
+        }
+        if (ImGui::BeginCombo("Normal Map", names[1].c_str())) {
+            if (ImGui::Selectable("/", !material->normal_map)) {
+                material->normal_map = nullptr;
+            }
+
+            for (auto& [texture_name, texture] : state->scene->textures) {
+                if (ImGui::Selectable(texture_name.c_str(), texture == material->normal_map)) {
+                    material->normal_map = texture;
+                }
+            }
+
+            ImGui::EndCombo();
+        }
+        if (ImGui::BeginCombo("Roughness Map", names[2].c_str())) {
+            if (ImGui::Selectable("/", !material->roughness_map)) {
+                material->roughness_map = nullptr;
+            }
+
+            for (auto& [texture_name, texture] : state->scene->textures) {
+                if (ImGui::Selectable(texture_name.c_str(), texture == material->roughness_map)) {
+                    material->roughness_map = texture;
+                }
+            }
+
+            ImGui::EndCombo();
+        }
+    }
+    ImGui::End();
 }
 
-void show_texture_info(editor_state* state, const kl::object<kl::texture>& texture)
+void show_texture_info(editor_state* state, kl::object<kl::texture>& texture)
 {
+    if (ImGui::Begin("Texture Info")) {
+        kl::int2 size = texture->data_buffer.size();
+        ImGui::DragInt2("Size", size, 0.0f);
 
+        int pixel_count = size.x * size.y;
+        ImGui::DragInt("Pixel Count", &pixel_count, 0.0f);
+    }
+    ImGui::End();
 }
