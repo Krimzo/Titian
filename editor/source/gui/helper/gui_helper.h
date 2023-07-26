@@ -17,7 +17,7 @@ namespace GUI::drag_drop {
     {
         if (ImGui::BeginDragDropSource()) {
             ImGui::SetDragDropPayload(id.c_str(), nullptr, 0);
-            if (texture) ImGui::Image(texture.Get(), { 50.0f, 50.0f });
+            if (texture) ImGui::Image(texture.Get(), { 50.0f, 50.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
             _data[id] = { data };
             ImGui::EndDragDropSource();
         }

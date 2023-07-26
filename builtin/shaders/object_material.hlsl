@@ -33,7 +33,8 @@ cbuffer PS_CB : register(b0)
     float4     object_material; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
     float4 object_texture_info; // (has_normal_map, has_roughness_map, none, none)
     
-    float4 camera_info; // (camera.x, camera.y, camera.z, none)
+    float4 camera_info; // (camera.x, camera.y, camera.z, skybox?)
+    float4 camera_background; // (color.r, color.g, color.b, color.a)
 
     float4     ambient_light; // (color.r, color.g, color.b, intensity)
     float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
@@ -61,11 +62,11 @@ float4 p_shader(vs_out vs_data) : SV_Target
     // Reflection calculations
     const float3 camera_pixel_direction = normalize(vs_data.world - camera_info.xyz);
     const float3 reflected_pixel_direction = reflect(camera_pixel_direction, pixel_normal);
-    const float3 reflected_sky_color = skybox_texture.Sample(skybox_sampler, reflected_pixel_direction).xyz;
+    const float3 reflected_sky_color = camera_info.w ? skybox_texture.Sample(skybox_sampler, reflected_pixel_direction).xyz : camera_background.xyz;
 
     // Refraction calculations
     const float3 refracted_pixel_direction = refract(camera_pixel_direction, pixel_normal, object_material.w);
-    const float3 refracted_sky_color = skybox_texture.Sample(skybox_sampler, refracted_pixel_direction).xyz;
+    const float3 refracted_sky_color = camera_info.w ? skybox_texture.Sample(skybox_sampler, refracted_pixel_direction).xyz : camera_background.xyz;
 
     // Light calculations
     const float3 reflected_sun_direction = reflect(-directional_light.xyz, pixel_normal);

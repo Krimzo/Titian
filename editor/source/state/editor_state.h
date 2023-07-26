@@ -57,7 +57,7 @@ struct editor_state
     } render_shaders;
 
     // Scene components
-    kl::object<kl::scene> scene = nullptr;
+    kl::object<kl::scene> scene = new kl::scene();
     std::unordered_map<std::string, kl::object<kl::mesh>> default_meshes = {};
     std::unordered_map<std::string, kl::object<kl::material>> default_materials = {};
 
@@ -76,4 +76,7 @@ struct editor_state
     void operator=(editor_state&&) = delete;
 
     void change_scene(kl::object<kl::scene> scene);
+
+    void save_scene(const std::string& path);
+    void load_scene(const std::string& path);
 };

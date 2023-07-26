@@ -21,6 +21,8 @@ namespace kl {
         dx::shader_view shader_view = nullptr;
         dx::access_view access_view = nullptr;
 
+        bool is_cube = false;
+
         texture(kl::gpu* gpu);
         texture(kl::gpu* gpu, const texture_data& data, bool is_cube = false, bool has_unordered_access = false, bool is_target = false);
 

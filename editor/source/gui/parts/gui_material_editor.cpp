@@ -298,13 +298,19 @@ void render_selected_material(editor_state* state, const kl::object<kl::material
         kl::float4     object_material; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
         kl::float4 object_texture_info; // (has_normal_map, has_roughness_map, none, none)
 
-        kl::float4 camera_info; // (camera.x, camera.y, camera.z, none)
+        kl::float4 camera_info; // (camera.x, camera.y, camera.z, skybox?)
+        kl::float4 camera_background; // (color.r, color.g, color.b, color.a)
 
         kl::float4     ambient_light; // (color.r, color.g, color.b, intensity)
         kl::float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
     } ps_data = {};
 
-    state->gpu->bind_shader_view_for_pixel_shader(state->scene->camera->skybox->shader_view, 0);
+    if (kl::object<kl::texture>& skybox = state->scene->camera->skybox) {
+        state->gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
+    }
+    else {
+        state->gpu->unbind_shader_view_for_pixel_shader(0);
+    }
 
     if (material->color_map) {
         state->gpu->bind_shader_view_for_pixel_shader(material->color_map->shader_view, 1);
@@ -324,12 +330,8 @@ void render_selected_material(editor_state* state, const kl::object<kl::material
         ps_data.object_texture_info.y = 0.0f;
     }
 
-    if (state->scene->ambient_light) {
-        ps_data.ambient_light = { kl::float3 {1.0f}, 0.1f };
-    }
-    if (state->scene->directional_light) {
-        ps_data.directional_light = { kl::normalize(kl::float3 { 0.0f, -1.0f, -1.0f }), 1.0f };
-    }
+    ps_data.ambient_light = { kl::float3 {1.0f}, 0.1f };
+    ps_data.directional_light = { kl::normalize(kl::float3 { 0.0f, -1.0f, -1.0f }), 1.0f };
 
     ps_data.object_color = material->color;
     ps_data.object_material = {
@@ -338,7 +340,8 @@ void render_selected_material(editor_state* state, const kl::object<kl::material
         material->refraction_factor,
         material->refraction_index,
     };
-    ps_data.camera_info = { camera.origin, {} };
+    ps_data.camera_info = { camera.origin, (float) (bool) state->scene->camera->skybox };
+    ps_data.camera_background = (kl::float4) state->scene->camera->background;
     shaders.pixel_shader.update_cbuffer(ps_data);
 
     state->gpu->draw(state->default_meshes["cube"]->graphics_buffer);

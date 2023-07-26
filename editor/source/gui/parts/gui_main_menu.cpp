@@ -3,20 +3,39 @@
 
 void gui_main_menu(editor_state* state)
 {
+    static bool inputting_name = false;
+
+    if (inputting_name) {
+        if (ImGui::Begin("Save Scene", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+            static char name_input[31] = {};
+            ImGui::SetNextItemWidth(-1.0f);
+            ImGui::InputText("##SaveSceneNameInput", name_input, std::size(name_input));
+
+            if (ImGui::Button("Cancel")) {
+                memset(name_input, 0, std::size(name_input));
+                inputting_name = false;
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Save")) {
+                state->save_scene(kl::format(name_input, ".titian"));
+                memset(name_input, 0, std::size(name_input));
+                inputting_name = false;
+            }
+        }
+        ImGui::End();
+    }
+
     if (ImGui::BeginMainMenuBar()) {
         ImGui::Text("TITIAN");
 
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("New Project")) {
-
+            if (ImGui::MenuItem("New Scene")) {
+                state->change_scene(new kl::scene());
             }
 
-            if (ImGui::MenuItem("Save Project")) {
-
-            }
-
-            if (ImGui::MenuItem("Load Project")) {
-
+            if (ImGui::MenuItem("Save Scene")) {
+                inputting_name = true;
             }
 
             ImGui::EndMenu();

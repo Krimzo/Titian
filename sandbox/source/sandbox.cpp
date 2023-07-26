@@ -27,7 +27,6 @@ void setup_preview_scene(editor_state* state)
     load_skyboxes(state);
 
     // Camera
-    state->scene->camera = new kl::camera();
     state->scene->camera->far_plane = 75.0f;
     state->scene->camera->origin = { 0, 1, -4 };
     state->scene->camera->skybox = state->scene->textures["clouds"];

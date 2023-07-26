@@ -45,7 +45,7 @@ void gui_entity_physics(editor_state* state, kl::object<kl::entity>& entity)
 
     bool dynamic = entity->is_dynamic();
     if (ImGui::Checkbox("Dynamic", &dynamic)) {
-        const auto name = state->scene->name(entity);
+        const std::string name = state->scene->find_name(entity);
         state->scene->remove(name);
         entity->set_dynamic(state->scene->physics(), dynamic);
         state->scene->add(name, entity);

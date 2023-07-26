@@ -11,7 +11,12 @@ void render_scene(editor_state* state)
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states.shadow, 1);
     state->gpu->bind_sampler_state_for_pixel_shader(state->sampler_states.linear, 2);
 
-    state->gpu->bind_shader_view_for_pixel_shader(state->scene->camera->skybox->shader_view, 0);
+    if (kl::object<kl::texture>& skybox = state->scene->camera->skybox) {
+        state->gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
+    }
+    else {
+        state->gpu->unbind_shader_view_for_pixel_shader(0);
+    }
 
     struct VS_DATA
     {
@@ -40,7 +45,8 @@ void render_scene(editor_state* state)
         kl::float4     object_material; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
         kl::float4 object_texture_info; // (has_normal_map, has_roughness_map, none, none)
 
-        kl::float4 camera_info; // (camera.x, camera.y, camera.z, none)
+        kl::float4 camera_info; // (camera.x, camera.y, camera.z, skybox?)
+        kl::float4 camera_background; // (color.r, color.g, color.b, color.a)
         kl::float4x4  v_matrix; // View matrix
 
         kl::float4     ambient_light; // (color.r, color.g, color.b, intensity)
@@ -50,7 +56,8 @@ void render_scene(editor_state* state)
         kl::float4 cascade_distances; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
     } ps_data = {};
 
-    ps_data.camera_info = { state->scene->camera->origin, {} };
+    ps_data.camera_info = { state->scene->camera->origin, (float) (bool) state->scene->camera->skybox };
+    ps_data.camera_background = (kl::float4) state->scene->camera->background;
     ps_data.v_matrix = state->scene->camera->view_matrix();
 
     if (state->scene->ambient_light) {

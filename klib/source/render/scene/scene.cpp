@@ -70,7 +70,7 @@ PxCooking* kl::scene::cooking() const
     return cooking_;
 }
 
-kl::object<kl::entity> kl::scene::entity(const std::string& name) const
+kl::object<kl::entity> kl::scene::find_entity(const std::string& name) const
 {
     if (entities_.contains(name)) {
         return entities_.at(name);
@@ -78,7 +78,7 @@ kl::object<kl::entity> kl::scene::entity(const std::string& name) const
     return nullptr;
 }
 
-std::string kl::scene::name(object<kl::entity> entity) const
+std::string kl::scene::find_name(object<kl::entity> entity) const
 {
     for (auto& [name, ent] : entities_) {
         if (ent == entity) {

@@ -23,6 +23,12 @@ void gui_scene_editor(editor_state* state)
         }
         ImGui::Image(state->render_state->render_shader_view.Get(), content_region);
 
+        // Scene loading
+        std::optional scene_file = GUI::drag_drop::read_data<std::string>("SceneFile");
+        if (scene_file) {
+            state->load_scene(scene_file.value());
+        }
+
         // Handle entity picking
         const ImVec2 vieport_max = { ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + ImGui::GetWindowHeight() };
         if (ImGui::IsWindowFocused() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), vieport_max) && !ImGuizmo::IsOver()) {
