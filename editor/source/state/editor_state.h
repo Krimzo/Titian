@@ -76,7 +76,4 @@ struct editor_state
     void operator=(editor_state&&) = delete;
 
     void change_scene(kl::object<kl::scene> scene);
-
-    void save_scene(const std::string& path);
-    void load_scene(const std::string& path);
 };

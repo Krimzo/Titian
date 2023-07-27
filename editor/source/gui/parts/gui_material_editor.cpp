@@ -432,6 +432,18 @@ void show_texture_info(editor_state* state, kl::object<kl::texture>& texture)
 
         int pixel_count = size.x * size.y;
         ImGui::DragInt("Pixel Count", &pixel_count, 0.0f);
+
+        bool cube_map = texture->is_cube;
+        if (ImGui::Checkbox("Cube Map", &cube_map)) {
+            if (cube_map) {
+                if (texture->reload_as_cube())
+                    texture->create_shader_view();
+            }
+            else {
+                texture->reload();
+                texture->create_shader_view();
+            }
+        }
     }
     ImGui::End();
 }

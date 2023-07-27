@@ -48,6 +48,8 @@ namespace kl {
         // Iterate
         std::map<std::string, object<entity>>::iterator begin();
         std::map<std::string, object<entity>>::iterator end();
+        std::map<std::string, object<entity>>::const_iterator begin() const;
+        std::map<std::string, object<entity>>::const_iterator end() const;
 
         // Get
         PxPhysics* physics() const;

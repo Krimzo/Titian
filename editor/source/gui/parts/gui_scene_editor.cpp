@@ -1,4 +1,5 @@
 #include "gui/gui_render.h"
+#include "serialization/serializer.h"
 
 
 kl::int2 window_mouse_position();
@@ -26,7 +27,19 @@ void gui_scene_editor(editor_state* state)
         // Scene loading
         std::optional scene_file = GUI::drag_drop::read_data<std::string>("SceneFile");
         if (scene_file) {
-            state->load_scene(scene_file.value());
+            serializer serializer = { scene_file.value() };
+            std::pair load_info = serializer.read_scene(&state->gpu);
+            if (load_info.first == 0) {
+                state->change_scene(load_info.second);
+                state->logger_state->log(kl::format("Scene loaded. (", serializer.path, ") [", serializer::SERIAL_VERSION_NAME, "]"));
+            }
+            else if (load_info.first == 1) {
+                state->logger_state->log(kl::format("Failed to load scene. File read error. (", serializer.path, ")"));
+            }
+            else {
+                state->logger_state->log(kl::format("Failed to load scene. Serial versions do not match. (", serializer.path, ") [",
+                    serializer::SERIAL_VERSION_NAME, " -> ", std::hex, "0x", load_info.first, "]"));
+            }
         }
 
         // Handle entity picking

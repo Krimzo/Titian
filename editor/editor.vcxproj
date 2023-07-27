@@ -92,6 +92,7 @@
     <ClInclude Include="source\editor.h" />
     <ClInclude Include="source\gui\helper\gui_helper.h" />
     <ClInclude Include="source\render\render_chain.h" />
+    <ClInclude Include="source\serialization\serializer.h" />
     <ClInclude Include="source\setup\setup_state.h" />
     <ClInclude Include="source\state\gui_state.h" />
     <ClInclude Include="source\state\render_state.h" />
@@ -118,6 +119,7 @@
     <ClCompile Include="source\render\parts\render_postprocess.cpp" />
     <ClCompile Include="source\render\parts\render_shadows.cpp" />
     <ClCompile Include="source\render\render_chain.cpp" />
+    <ClCompile Include="source\serialization\serializer.cpp" />
     <ClCompile Include="source\setup\gui\setup_gui.cpp" />
     <ClCompile Include="source\setup\states\setup_depth_states.cpp" />
     <ClCompile Include="source\setup\states\setup_raster_states.cpp" />

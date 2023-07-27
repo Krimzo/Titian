@@ -59,6 +59,16 @@ std::map<std::string, kl::object<kl::entity>>::iterator kl::scene::end()
     return entities_.end();
 }
 
+std::map<std::string, kl::object<kl::entity>>::const_iterator kl::scene::begin() const
+{
+    return entities_.begin();
+}
+
+std::map<std::string, kl::object<kl::entity>>::const_iterator kl::scene::end() const
+{
+    return entities_.end();
+}
+
 // Get
 PxPhysics* kl::scene::physics() const
 {

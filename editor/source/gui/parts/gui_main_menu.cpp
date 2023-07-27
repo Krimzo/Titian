@@ -1,4 +1,5 @@
 #include "gui/gui_render.h"
+#include "serialization/serializer.h"
 
 
 void gui_main_menu(editor_state* state)
@@ -18,7 +19,13 @@ void gui_main_menu(editor_state* state)
 
             ImGui::SameLine();
             if (ImGui::Button("Save")) {
-                state->save_scene(kl::format(name_input, ".titian"));
+                serializer serializer = { kl::format(name_input, ".titian") };
+                if (serializer.write_scene(state->scene)) {
+                    state->logger_state->log(kl::format("Scene saved. (", serializer.path, ") [", serializer::SERIAL_VERSION_NAME, "]"));
+                }
+                else {
+                    state->logger_state->log(kl::format("Failed to save scene. File write error. (", serializer.path, ")"));
+                }
                 memset(name_input, 0, std::size(name_input));
                 inputting_name = false;
             }
