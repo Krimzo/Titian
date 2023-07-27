@@ -1,18 +1,21 @@
 #pragma once
 
-#include "klib.h"
+#include "serialization/serialization.h"
 
 
 class serializer
 {
 public:
-    static inline const uint32_t SERIAL_VERSION = 0x27072023;
-    static inline const std::string SERIAL_VERSION_NAME = kl::format(std::hex, "0x", SERIAL_VERSION);
-
     const std::string path = {};
     
     serializer(const std::string& path);
+    ~serializer();
 
     bool write_scene(const kl::object<kl::scene>& scene);
-    std::pair<uint32_t, kl::object<kl::scene>> read_scene(kl::gpu* gpu);
+
+private:
+    kl::file m_file = {};
+
+    void write_string(const std::string& data);
+    void write_collider_geometry(const kl::object<kl::scene>& scene, const PxGeometryHolder& geometry_holder);
 };

@@ -21,6 +21,13 @@ int sandbox_main()
 
 void setup_preview_scene(editor_state* state)
 {
+    // Setup default meshes/materials
+    state->scene->meshes["cube"] = state->default_mesh.cube;
+    state->scene->meshes["sphere"] = state->default_mesh.sphere;
+    state->scene->meshes["capsule"] = state->default_mesh.capsule;
+    state->scene->meshes["monke"] = state->default_mesh.monke;
+    state->scene->materials["white"] = state->default_material.white;
+
     // Load data
     load_meshes(state);
     load_textures(state);
@@ -40,6 +47,5 @@ void setup_preview_scene(editor_state* state)
     setup_preview_monkes(state, 15);
     setup_preview_spheres(state, 7);
     setup_preview_cubes(state, 15);
-    setup_preview_bullets(state, 15);
     setup_preview_physics_test(state, 9);
 }

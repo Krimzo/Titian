@@ -10,7 +10,6 @@ void setup_preview_monkes(editor_state* state, const int size)
 
     for (int i = 0; i < entity_count; i++) {
         auto monke = state->scene->make_entity(false);
-
         monke->render_scale = kl::float3(0.5f);
 
         const int x = i % size;
@@ -25,9 +24,12 @@ void setup_preview_monkes(editor_state* state, const int size)
         const float percentage = (i + 1.0f) / entity_count;
         const float normalized = min(max(percentage, 0.0f), 1.0f);
 
-        monke->mesh = state->default_meshes["monke"];
-        monke->material = new kl::material();
-        monke->material->color = kl::float4(normalized);
+        kl::object material = new kl::material();
+        material->color = kl::float4(normalized);
+        state->scene->materials[kl::format("monke_mat_", i)] = material;
+
+        monke->mesh = state->default_mesh.monke;
+        monke->material = material;
 
         state->scene->add(kl::format("Monke", i), monke);
     }

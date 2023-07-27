@@ -57,9 +57,18 @@ struct editor_state
     } render_shaders;
 
     // Scene components
+    struct default_mesh_t
+    {
+        kl::object<kl::mesh> cube = {};
+        kl::object<kl::mesh> sphere = {};
+        kl::object<kl::mesh> capsule = {};
+        kl::object<kl::mesh> monke = {};
+    } default_mesh = {};
+    struct default_material_t
+    {
+        kl::object<kl::material> white = {};
+    } default_material = {};
     kl::object<kl::scene> scene = new kl::scene();
-    std::unordered_map<std::string, kl::object<kl::mesh>> default_meshes = {};
-    std::unordered_map<std::string, kl::object<kl::material>> default_materials = {};
 
     // Engine states
     kl::object<logger_state> logger_state = new ::logger_state();

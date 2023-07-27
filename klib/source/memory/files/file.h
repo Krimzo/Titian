@@ -45,6 +45,15 @@ namespace kl {
 
         int tell() const;
 
+        // Read
+        template<typename T>
+        T read() const
+        {
+            T result = {};
+            read<T>(result);
+            return result;
+        }
+
         template <typename T>
         size_t read(T& object) const
         {
@@ -60,6 +69,7 @@ namespace kl {
             return 0;
         }
 
+        // Write
         template <typename T>
         size_t write(const T& object)
         {

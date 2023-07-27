@@ -25,15 +25,15 @@ void render_collider(editor_state* state)
 
     switch (state->scene->selected_entity->collider()->type()) {
     case PxGeometryType::Enum::eBOX:
-        state->gpu->draw(state->default_meshes["cube"]->graphics_buffer);
+        state->gpu->draw(state->default_mesh.cube->graphics_buffer);
         break;
 
     case PxGeometryType::Enum::eSPHERE:
-        state->gpu->draw(state->default_meshes["sphere"]->graphics_buffer);
+        state->gpu->draw(state->default_mesh.sphere->graphics_buffer);
         break;
 
     case PxGeometryType::Enum::eCAPSULE:
-        state->gpu->draw(state->default_meshes["capsule"]->graphics_buffer);
+        state->gpu->draw(state->default_mesh.capsule->graphics_buffer);
         break;
 
     case PxGeometryType::Enum::ePLANE:

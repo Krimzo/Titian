@@ -199,13 +199,6 @@ void gui_entity_mesh(editor_state* state, kl::object<kl::entity>& entity)
 
     // Get name
     std::string bound_mesh_name = "?";
-
-    for (const auto& [mesh_name, mesh] : state->default_meshes) {
-        if (mesh == entity->mesh) {
-            bound_mesh_name = mesh_name;
-            break;
-        }
-    }
     for (const auto& [mesh_name, mesh] : state->scene->meshes) {
         if (mesh == entity->mesh) {
             bound_mesh_name = mesh_name;
@@ -218,19 +211,11 @@ void gui_entity_mesh(editor_state* state, kl::object<kl::entity>& entity)
         if (ImGui::Selectable("/", !entity->mesh)) {
             entity->mesh = nullptr;
         }
-
-        for (const auto& [mesh_name, mesh] : state->default_meshes) {
-            if (ImGui::Selectable(mesh_name.c_str(), mesh == entity->mesh)) {
-                entity->mesh = mesh;
-            }
-        }
-
         for (const auto& [mesh_name, mesh] : state->scene->meshes) {
             if (ImGui::Selectable(mesh_name.c_str(), mesh == entity->mesh)) {
                 entity->mesh = mesh;
             }
         }
-
         ImGui::EndCombo();
     }
 }
@@ -242,13 +227,6 @@ void gui_entity_material(editor_state* state, kl::object<kl::entity>& entity)
 
     // Get name
     std::string bound_material_name = "?";
-
-    for (auto& [material_name, material] : state->default_materials) {
-        if (material == entity->material) {
-            bound_material_name = material_name;
-            break;
-        }
-    }
     for (auto& [material_name, material] : state->scene->materials) {
         if (material == entity->material) {
             bound_material_name = material_name;
@@ -261,19 +239,11 @@ void gui_entity_material(editor_state* state, kl::object<kl::entity>& entity)
         if (ImGui::Selectable("/", !entity->material)) {
             entity->material = nullptr;
         }
-
-        for (auto& [material_name, material] : state->default_materials) {
-            if (ImGui::Selectable(material_name.c_str(), material == entity->material)) {
-                entity->material = material;
-            }
-        }
-
         for (auto& [material_name, material] : state->scene->materials) {
             if (ImGui::Selectable(material_name.c_str(), material == entity->material)) {
                 entity->material = material;
             }
         }
-
         ImGui::EndCombo();
     }
 }

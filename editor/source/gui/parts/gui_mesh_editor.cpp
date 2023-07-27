@@ -67,13 +67,6 @@ void display_meshes(editor_state* state)
 {
     kl::object<kl::mesh>& selected_mesh = state->gui_state->mesh_editor.selected_mesh;
 
-    for (const auto& [mesh_name, mesh] : state->default_meshes) {
-        if (ImGui::Selectable(mesh_name.c_str(), mesh == selected_mesh)) {
-            selected_mesh = mesh;
-        }
-    }
-    ImGui::Separator();
-
     for (const auto& [mesh_name, mesh] : state->scene->meshes) {
         if (ImGui::Selectable(mesh_name.c_str(), mesh == selected_mesh)) {
             selected_mesh = mesh;
@@ -117,11 +110,6 @@ void display_meshes(editor_state* state)
 
 std::string find_mesh_name(editor_state* state, const kl::object<kl::mesh>& mesh)
 {
-    for (const auto& [mesh_name, default_mesh] : state->default_meshes) {
-        if (default_mesh == mesh) {
-            return mesh_name;
-        }
-    }
     for (const auto& [mesh_name, scene_mesh] : state->scene->meshes) {
         if (scene_mesh == mesh) {
             return mesh_name;

@@ -1,5 +1,5 @@
 #include "gui/gui_render.h"
-#include "serialization/serializer.h"
+#include "serialization/deserializer.h"
 
 
 kl::int2 window_mouse_position();
@@ -27,18 +27,18 @@ void gui_scene_editor(editor_state* state)
         // Scene loading
         std::optional scene_file = GUI::drag_drop::read_data<std::string>("SceneFile");
         if (scene_file) {
-            serializer serializer = { scene_file.value() };
-            std::pair load_info = serializer.read_scene(&state->gpu);
+            deserializer deserializer = { scene_file.value() };
+            std::pair load_info = deserializer.read_scene(state->gpu);
             if (load_info.first == 0) {
                 state->change_scene(load_info.second);
-                state->logger_state->log(kl::format("Scene loaded. (", serializer.path, ") [", serializer::SERIAL_VERSION_NAME, "]"));
+                state->logger_state->log(kl::format("Scene loaded. (", deserializer.path, ") [", serialization::VERSION_NAME, "]"));
             }
             else if (load_info.first == 1) {
-                state->logger_state->log(kl::format("Failed to load scene. File read error. (", serializer.path, ")"));
+                state->logger_state->log(kl::format("Failed to load scene. File read error. (", deserializer.path, ")"));
             }
             else {
-                state->logger_state->log(kl::format("Failed to load scene. Serial versions do not match. (", serializer.path, ") [",
-                    serializer::SERIAL_VERSION_NAME, " -> ", std::hex, "0x", load_info.first, "]"));
+                state->logger_state->log(kl::format("Failed to load scene. Serial versions do not match. (", deserializer.path, ") [",
+                    serialization::VERSION_NAME, " -> ", std::hex, "0x", load_info.first, "]"));
             }
         }
 

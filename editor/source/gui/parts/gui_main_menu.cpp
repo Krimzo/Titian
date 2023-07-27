@@ -21,7 +21,7 @@ void gui_main_menu(editor_state* state)
             if (ImGui::Button("Save")) {
                 serializer serializer = { kl::format(name_input, ".titian") };
                 if (serializer.write_scene(state->scene)) {
-                    state->logger_state->log(kl::format("Scene saved. (", serializer.path, ") [", serializer::SERIAL_VERSION_NAME, "]"));
+                    state->logger_state->log(kl::format("Scene saved. (", serializer.path, ") [", serialization::VERSION_NAME, "]"));
                 }
                 else {
                     state->logger_state->log(kl::format("Failed to save scene. File write error. (", serializer.path, ")"));

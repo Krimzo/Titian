@@ -135,7 +135,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\parts\preview_bullets.cpp" />
     <ClCompile Include="source\parts\preview_cubes.cpp" />
     <ClCompile Include="source\parts\preview_monkes.cpp" />
     <ClCompile Include="source\parts\preview_physics_test.cpp" />

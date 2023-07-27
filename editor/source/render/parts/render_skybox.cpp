@@ -18,5 +18,5 @@ void render_skybox(editor_state* state)
     vs_data.vp_matrix = state->scene->camera->matrix();
     state->render_shaders.skybox_sample.vertex_shader.update_cbuffer(vs_data);
 
-    state->gpu->draw(state->default_meshes["cube"]->graphics_buffer);
+    state->gpu->draw(state->default_mesh.cube->graphics_buffer);
 }

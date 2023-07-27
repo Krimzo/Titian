@@ -17,8 +17,11 @@ editor_state::~editor_state()
 
 void editor_state::change_scene(kl::object<kl::scene> scene)
 {
-    default_meshes.clear();
-    default_materials.clear();
+    default_mesh.cube = nullptr;
+    default_mesh.sphere = nullptr;
+    default_mesh.capsule = nullptr;
+    default_mesh.monke = nullptr;
+    default_material.white = nullptr;
 
     if (gui_state) {
         gui_state->mesh_editor.selected_mesh = nullptr;
@@ -32,12 +35,12 @@ void editor_state::change_scene(kl::object<kl::scene> scene)
     }
 
     // Default meshes
-    default_meshes["cube"] = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/cube.obj", true));
-    default_meshes["sphere"] = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/sphere.obj", true));
-    default_meshes["capsule"] = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/capsule.obj", true));
-    default_meshes["monke"] = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/monke.obj", true));
+    default_mesh.cube = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/cube.obj", true));
+    default_mesh.sphere = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/sphere.obj", true));
+    default_mesh.capsule = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/capsule.obj", true));
+    default_mesh.monke = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/monke.obj", true));
 
     // Default material
-    default_materials["white"] = new kl::material();
-    default_materials["white"]->color = kl::colors::white;
+    default_material.white = new kl::material();
+    default_material.white->color = kl::colors::white;
 }

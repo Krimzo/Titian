@@ -99,13 +99,6 @@ void display_materials(editor_state* state)
         ImGui::EndPopup();
     }
 
-    for (const auto& [material_name, material] : state->default_materials) {
-        if (ImGui::Selectable(material_name.c_str(), material == selected_material)) {
-            selected_material = material;
-        }
-    }
-    ImGui::Separator();
-
     for (const auto& [material_name, material] : state->scene->materials) {
         if (ImGui::Selectable(material_name.c_str(), material == selected_material)) {
             selected_material = material;
@@ -344,7 +337,7 @@ void render_selected_material(editor_state* state, const kl::object<kl::material
     ps_data.camera_background = (kl::float4) state->scene->camera->background;
     shaders.pixel_shader.update_cbuffer(ps_data);
 
-    state->gpu->draw(state->default_meshes["cube"]->graphics_buffer);
+    state->gpu->draw(state->default_mesh.cube->graphics_buffer);
     state->gpu->bind_internal_views();
 }
 
