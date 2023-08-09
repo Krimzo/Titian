@@ -154,6 +154,9 @@
     <ProjectReference Include="..\imgui\imgui.vcxproj">
       <Project>{737a8abd-a62f-4e28-8da3-d24a40d276bd}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\jdk\jdk.vcxproj">
+      <Project>{444451d6-7003-417d-8632-7ddd8af4381e}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\klib\klib.vcxproj">
       <Project>{5b9896b1-803a-45dd-a262-8055d73c6dd0}</Project>
     </ProjectReference>

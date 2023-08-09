@@ -3,20 +3,24 @@
 #include "editor.h"
 #include "game.h"
 #include "sandbox.h"
+#include "jdk.h"
 
 
 int main()
 {
-	const auto exe_type = executable::sandbox;
-	switch (exe_type) {
-	case executable::editor:
-		return editor_main();
+	// Prep
+	int exit_code = -1;
+	jdk::init();
 
-	case executable::game:
-		return game_main();
-
-	case executable::sandbox:
-		return sandbox_main();
+	// App
+	switch (executable::sandbox)
+	{
+	case  executable::editor: exit_code =  editor_main(); break;
+	case    executable::game: exit_code =    game_main(); break;
+	case executable::sandbox: exit_code = sandbox_main(); break;
 	}
-    return -1;
+
+	// Final
+	jdk::uninit();
+    return exit_code;
 }
