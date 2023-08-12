@@ -2,6 +2,7 @@
 
 #include "editor.h"
 
+
 // Constants
 inline const std::string resource_path = "./preview/";
 

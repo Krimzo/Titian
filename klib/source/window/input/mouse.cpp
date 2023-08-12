@@ -1,6 +1,4 @@
-#include "window/input/mouse.h"
-
-#include "window/window.h"
+#include "klib.h"
 
 
 // Window private

@@ -1,4 +1,4 @@
-#include "time/time.h"
+#include "klib.h"
 
 
 uint64_t kl::time::now()

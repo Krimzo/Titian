@@ -1,6 +1,4 @@
-#include "render/render_chain.h"
-
-#include "gui/gui_render.h"
+#include "editor.h"
 
 
 void render_chain(editor_state* state)

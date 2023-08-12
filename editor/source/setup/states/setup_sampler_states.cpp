@@ -1,4 +1,4 @@
-#include "setup/setup_state.h"
+#include "editor.h"
 
 
 void setup_sampler_states(editor_state* state)

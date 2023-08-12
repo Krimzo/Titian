@@ -1,9 +1,5 @@
 #include "editor.h"
 
-#include "setup/setup_state.h"
-#include "update/update_state.h"
-#include "render/render_chain.h"
-
 
 int editor_main()
 {

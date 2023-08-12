@@ -1,7 +1,4 @@
-#include "media/image/image.h"
-
-#include "utility/utility.h"
-#include "memory/memory.h"
+#include "klib.h"
 
 
 // Init

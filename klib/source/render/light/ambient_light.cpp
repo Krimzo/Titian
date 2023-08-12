@@ -1,4 +1,4 @@
-#include "render/light/ambient_light.h"
+#include "klib.h"
 
 
 // Placeholder

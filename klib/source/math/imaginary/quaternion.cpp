@@ -1,6 +1,4 @@
-#include "math/imaginary/quaternion.h"
-
-#include "math/math.h"
+#include "klib.h"
 
 
 // Construct

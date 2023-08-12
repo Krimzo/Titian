@@ -1,4 +1,4 @@
-#include "render/components/texture.h"
+#include "klib.h"
 
 
 kl::texture::texture(kl::gpu* gpu)

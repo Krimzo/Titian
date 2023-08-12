@@ -1,4 +1,4 @@
-#include "memory/safety/array.h"
+#include "klib.h"
 
 
 // Placeholder

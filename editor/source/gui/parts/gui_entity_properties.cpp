@@ -1,4 +1,4 @@
-#include "gui/gui_render.h"
+#include "editor.h"
 
 
 void gui_entity_transform(editor_state* state, kl::object<kl::entity>& entity);

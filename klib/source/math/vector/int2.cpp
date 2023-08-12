@@ -1,6 +1,4 @@
-#include "math/vector/int2.h"
-
-#include "math/vector/float2.h"
+#include "klib.h"
 
 
 // Construct

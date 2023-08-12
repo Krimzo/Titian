@@ -1,6 +1,4 @@
-#include "render/scene/entity.h"
-
-#include "utility/utility.h"
+#include "klib.h"
 
 
 #ifdef KL_USING_PHYSX

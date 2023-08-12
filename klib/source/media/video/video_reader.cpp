@@ -1,7 +1,4 @@
-#include "media/video/video_reader.h"
-
-#include "media/media.h"
-#include "utility/utility.h"
+#include "klib.h"
 
 using namespace kl::media_utility;
 

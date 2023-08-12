@@ -1,4 +1,4 @@
-#include "render/scene/camera.h"
+#include "klib.h"
 
 
 void kl::camera::update_aspect_ratio(const int2& size)

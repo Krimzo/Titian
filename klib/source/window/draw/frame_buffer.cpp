@@ -1,4 +1,4 @@
-#include "window/draw/frame_buffer.h"
+#include "klib.h"
 
 
 kl::frame_buffer::frame_buffer(const int2& size)

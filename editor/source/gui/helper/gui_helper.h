@@ -2,12 +2,6 @@
 
 #include "klib.h"
 
-#include <imgui_impl_win32.h>
-#include <imgui_impl_dx11.h>
-
-#include <imgui.h>
-#include <ImGuizmo.h>
-
 
 namespace GUI::drag_drop {
     inline std::unordered_map<std::string, std::any> _data = {};

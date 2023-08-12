@@ -33,6 +33,10 @@
     <ClCompile Include="source\graphics\shaders\render_shaders.cpp" />
     <ClCompile Include="source\graphics\shaders\shader_compiler.cpp" />
     <ClCompile Include="source\graphics\shaders\shader_holder.cpp" />
+    <ClCompile Include="source\klib.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="source\math\helper\constants.cpp" />
     <ClCompile Include="source\math\imaginary\complex.cpp" />
     <ClCompile Include="source\math\imaginary\quaternion.cpp" />
@@ -61,15 +65,15 @@
     <ClCompile Include="source\memory\safety\array.cpp" />
     <ClCompile Include="source\memory\safety\object.cpp" />
     <ClCompile Include="source\render\components\collider.cpp" />
-    <ClCompile Include="source\render\light\point_light.cpp" />
-    <ClCompile Include="source\render\scene\entity.cpp" />
     <ClCompile Include="source\render\components\material.cpp" />
-    <ClCompile Include="source\render\components\texture.cpp" />
     <ClCompile Include="source\render\components\mesh.cpp" />
+    <ClCompile Include="source\render\components\texture.cpp" />
     <ClCompile Include="source\render\light\ambient_light.cpp" />
     <ClCompile Include="source\render\light\directional_light.cpp" />
+    <ClCompile Include="source\render\light\point_light.cpp" />
     <ClCompile Include="source\render\render.cpp" />
     <ClCompile Include="source\render\scene\camera.cpp" />
+    <ClCompile Include="source\render\scene\entity.cpp" />
     <ClCompile Include="source\render\scene\scene.cpp" />
     <ClCompile Include="source\time\date\date.cpp" />
     <ClCompile Include="source\time\time.cpp" />
@@ -135,15 +139,15 @@
     <ClInclude Include="source\memory\safety\array.h" />
     <ClInclude Include="source\memory\safety\object.h" />
     <ClInclude Include="source\render\components\collider.h" />
-    <ClInclude Include="source\render\light\point_light.h" />
-    <ClInclude Include="source\render\scene\entity.h" />
     <ClInclude Include="source\render\components\material.h" />
     <ClInclude Include="source\render\components\mesh.h" />
     <ClInclude Include="source\render\components\texture.h" />
     <ClInclude Include="source\render\light\ambient_light.h" />
     <ClInclude Include="source\render\light\directional_light.h" />
+    <ClInclude Include="source\render\light\point_light.h" />
     <ClInclude Include="source\render\render.h" />
     <ClInclude Include="source\render\scene\camera.h" />
+    <ClInclude Include="source\render\scene\entity.h" />
     <ClInclude Include="source\render\scene\scene.h" />
     <ClInclude Include="source\time\date\date.h" />
     <ClInclude Include="source\time\time.h" />
@@ -208,6 +212,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>klib.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -231,6 +237,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>klib.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

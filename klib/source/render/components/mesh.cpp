@@ -1,7 +1,4 @@
-#include "render/components/mesh.h"
-
-#include "render/render.h"
-#include "utility/utility.h"
+#include "klib.h"
 
 
 #ifdef KL_USING_PHYSX

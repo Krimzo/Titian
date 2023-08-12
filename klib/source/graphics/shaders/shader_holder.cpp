@@ -1,6 +1,4 @@
-#include "graphics/shaders/shader_holder.h"
-
-#include "graphics/gpu/gpu.h"
+#include "klib.h"
 
 
 // Construct

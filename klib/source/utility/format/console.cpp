@@ -1,6 +1,4 @@
-#include "utility/format/console.h"
-
-#include "utility/utility.h"
+#include "klib.h"
 
 
 static const HANDLE console_handle = []

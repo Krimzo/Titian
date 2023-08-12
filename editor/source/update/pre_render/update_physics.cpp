@@ -1,4 +1,4 @@
-#include "update/update_state.h"
+#include "editor.h"
 
 
 void update_physics(editor_state* state)

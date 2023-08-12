@@ -1,4 +1,4 @@
-#include "gui/gui_render.h"
+#include "editor.h"
 
 
 void display_materials(editor_state* state);

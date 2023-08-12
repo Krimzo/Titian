@@ -1,6 +1,4 @@
-#include "web/web.h"
-
-#include "utility/utility.h"
+#include "klib.h"
 
 
 std::string kl::download_website(const std::string& url, const int buffer_size)

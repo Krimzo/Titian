@@ -1,4 +1,4 @@
-#include "gui/gui_render.h"
+#include "editor.h"
 
 
 enum class file_type

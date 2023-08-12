@@ -1,4 +1,4 @@
-#include "window/input/key.h"
+#include "klib.h"
 
 
 // Window private

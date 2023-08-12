@@ -108,6 +108,8 @@
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)editor\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>sandbox.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,6 +128,8 @@
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)editor\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>sandbox.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,7 +143,10 @@
     <ClCompile Include="source\parts\preview_monkes.cpp" />
     <ClCompile Include="source\parts\preview_physics_test.cpp" />
     <ClCompile Include="source\parts\preview_spheres.cpp" />
-    <ClCompile Include="source\sandbox.cpp" />
+    <ClCompile Include="source\sandbox.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="source\setup\load_meshes.cpp" />
     <ClCompile Include="source\setup\load_skyboxes.cpp" />
     <ClCompile Include="source\setup\load_textures.cpp" />
@@ -153,6 +160,9 @@
     </ProjectReference>
     <ProjectReference Include="..\imgui\imgui.vcxproj">
       <Project>{737a8abd-a62f-4e28-8da3-d24a40d276bd}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\jdk\jdk.vcxproj">
+      <Project>{444451d6-7003-417d-8632-7ddd8af4381e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\klib\klib.vcxproj">
       <Project>{5b9896b1-803a-45dd-a262-8055d73c6dd0}</Project>

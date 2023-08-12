@@ -1,4 +1,4 @@
-#include "gui/gui_render.h"
+#include "editor.h"
 
 
 static int light_cascade_index = 0;

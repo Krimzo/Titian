@@ -1,4 +1,4 @@
-#include "serialization/deserializer.h"
+#include "editor.h"
 
 
 deserializer::deserializer(const std::string& path)

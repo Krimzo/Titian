@@ -1,6 +1,4 @@
-#include "media/media.h"
-
-#include "utility/utility.h"
+#include "klib.h"
 
 
 // Init

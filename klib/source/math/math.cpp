@@ -1,4 +1,4 @@
-#include "math/math.h"
+#include "klib.h"
 
 
 // Deg trig

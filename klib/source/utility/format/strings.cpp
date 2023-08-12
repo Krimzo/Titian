@@ -1,6 +1,4 @@
-#include "utility/format/strings.h"
-
-#include "math/math.h"
+#include "klib.h"
 
 
 std::string kl::convert_string(const std::wstring& data)

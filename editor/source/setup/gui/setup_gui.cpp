@@ -1,8 +1,4 @@
-#include "setup/setup_state.h"
-
-#include <imgui.h>
-#include <imgui_impl_win32.h>
-#include <imgui_impl_dx11.h>
+#include "editor.h"
 
 
 void load_custom_theme(editor_state* state);
