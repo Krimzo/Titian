@@ -1,4 +1,4 @@
-#include "state/logger_state.h"
+#include "editor.h"
 
 
 logger_state::logger_state()

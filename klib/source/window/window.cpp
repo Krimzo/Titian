@@ -1,6 +1,4 @@
-#include "window/window.h"
-
-#include "utility/utility.h"
+#include "klib.h"
 
 
 // Class

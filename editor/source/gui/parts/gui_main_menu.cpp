@@ -1,5 +1,4 @@
-#include "gui/gui_render.h"
-#include "serialization/serializer.h"
+#include "editor.h"
 
 
 void gui_main_menu(editor_state* state)

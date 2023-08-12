@@ -1,6 +1,4 @@
-#include "media/image/color.h"
-
-#include "math/math.h"
+#include "klib.h"
 
 
 // Construct

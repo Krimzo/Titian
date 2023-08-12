@@ -1,4 +1,4 @@
-#include "state/gui_state.h"
+#include "editor.h"
 
 
 kl::object<kl::texture> load_texture(kl::object<kl::gpu> gpu, const std::string& path);

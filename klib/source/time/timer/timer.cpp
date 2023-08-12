@@ -1,6 +1,4 @@
-#include "time/timer/timer.h"
-
-#include "time/time.h"
+#include "klib.h"
 
 
 kl::timer::timer()

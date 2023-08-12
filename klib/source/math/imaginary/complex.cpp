@@ -1,6 +1,4 @@
-#include "math/imaginary/complex.h"
-
-#include "math/math.h"
+#include "klib.h"
 
 
 // Construct

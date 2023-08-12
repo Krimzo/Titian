@@ -1,7 +1,4 @@
-#include "graphics/device_holder/device_holder.h"
-
-#include "utility/utility.h"
-#include "memory/memory.h"
+#include "klib.h"
 
 
 // States

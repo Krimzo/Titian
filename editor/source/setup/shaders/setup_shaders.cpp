@@ -1,4 +1,4 @@
-#include "setup/setup_state.h"
+#include "editor.h"
 
 
 kl::render_shaders parse_render_shaders(editor_state* state, const std::string& name);

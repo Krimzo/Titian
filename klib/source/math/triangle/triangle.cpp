@@ -1,6 +1,4 @@
-#include "math/triangle/triangle.h"
-
-#include "math/math.h"
+#include "klib.h"
 
 
 // Construct

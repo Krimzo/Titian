@@ -1,6 +1,4 @@
-#include "math/ray/ray.h"
-
-#include "math/math.h"
+#include "klib.h"
 
 
 // Construct

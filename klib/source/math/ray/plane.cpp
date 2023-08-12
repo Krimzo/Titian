@@ -1,6 +1,4 @@
-#include "math/ray/plane.h"
-
-#include "math/math.h"
+#include "klib.h"
 
 
 // Class

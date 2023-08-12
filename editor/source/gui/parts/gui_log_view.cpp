@@ -1,4 +1,4 @@
-#include "gui/gui_render.h"
+#include "editor.h"
 
 
 void ui_colored_text(const kl::float4& color, const std::string& message);

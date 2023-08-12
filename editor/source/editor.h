@@ -1,6 +1,24 @@
 #pragma once
 
+
+// Alter state
+#include "setup/setup_state.h"
+#include "update/update_state.h"
+
+// Render
+#include "render/render_chain.h"
+#include "gui/gui_render.h"
+
+// State
 #include "state/editor_state.h"
+#include "state/logger_state.h"
+#include "state/render_state.h"
+#include "state/gui_state.h"
+
+// Serialization
+#include "serialization/serialization.h"
+#include "serialization/serializer.h"
+#include "serialization/deserializer.h"
 
 
 int editor_main();

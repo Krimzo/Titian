@@ -1,4 +1,4 @@
-#include "memory/linking/dll.h"
+#include "klib.h"
 
 
 kl::dll::dll()

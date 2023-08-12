@@ -1,5 +1,4 @@
-#include "gui/gui_render.h"
-#include "serialization/deserializer.h"
+#include "editor.h"
 
 
 kl::int2 window_mouse_position();
