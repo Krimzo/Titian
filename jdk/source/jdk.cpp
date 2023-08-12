@@ -23,11 +23,11 @@ void jdk::init()
 	for (const auto& path : class_paths) {
 		jvm_options_stream << path << ";";
 	}
-	const std::string jvm_options_data = jvm_options_stream.str();
+	std::string jvm_options_data = jvm_options_stream.str();
 
 	// Create jvm options
 	JavaVMOption jvm_options[1] = {};
-	jvm_options[0].optionString = (char*) jvm_options_data.c_str();
+	jvm_options[0].optionString = jvm_options_data.data();
 
 	// Pass jvm options
 	vm_args.options = jvm_options;
