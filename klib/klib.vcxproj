@@ -33,6 +33,7 @@
     <ClCompile Include="source\graphics\shaders\render_shaders.cpp" />
     <ClCompile Include="source\graphics\shaders\shader_compiler.cpp" />
     <ClCompile Include="source\graphics\shaders\shader_holder.cpp" />
+    <ClCompile Include="source\klib.cpp" />
     <ClCompile Include="source\math\helper\constants.cpp" />
     <ClCompile Include="source\math\imaginary\complex.cpp" />
     <ClCompile Include="source\math\imaginary\quaternion.cpp" />
