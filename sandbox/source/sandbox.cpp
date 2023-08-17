@@ -21,6 +21,26 @@ int sandbox_main()
 
 void setup_preview_scene(editor_state* state)
 {
+    // script testing
+    {
+        jclass clazz = java::load_eternal_class("sdk/math/vector/Float3");
+        if (clazz) {
+            java::method constructor = java::get_constructor(clazz);
+            java::method toString = java::get_method(clazz, "toString", java::build_class_signature("java/lang/String"));
+            if (constructor && toString) {
+                java::object instance = java::new_object(clazz, constructor);
+                if (instance) {
+                    java::object result = toString.call<jobject>(instance);
+                    jstring result_str = reinterpret_cast<jstring>((jobject) result);
+                    if (result_str) {
+                        std::string real_result = java::read_string(result_str);
+                        std::cout << real_result << std::endl;
+                    }
+                }
+            }
+        }
+    }
+
     // Setup default meshes/materials
     state->scene->meshes["cube"] = state->default_mesh.cube;
     state->scene->meshes["sphere"] = state->default_mesh.sphere;

@@ -52,6 +52,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)include\;$(SolutionDir)klib\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>java.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -70,6 +72,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)include\;$(SolutionDir)klib\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>java.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -80,10 +84,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="source\java.h" />
+    <ClInclude Include="source\java_clazz.h" />
+    <ClInclude Include="source\java_method.h" />
+    <ClInclude Include="source\java_object.h" />
+    <ClInclude Include="source\java_value.h" />
     <ClInclude Include="source\jdk.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\jdk.cpp" />
+    <ClCompile Include="source\java.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="source\java_clazz.cpp" />
+    <ClCompile Include="source\java_method.cpp" />
+    <ClCompile Include="source\java_object.cpp" />
+    <ClCompile Include="source\java_value.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\klib\klib.vcxproj">

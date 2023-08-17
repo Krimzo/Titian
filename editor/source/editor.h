@@ -1,5 +1,8 @@
 #pragma once
 
+// External
+#include "klib.h"
+#include "jdk.h"
 
 // Alter state
 #include "setup/setup_state.h"

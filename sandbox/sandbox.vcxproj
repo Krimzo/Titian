@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)editor\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)editor\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;$(SolutionDir)jdk\source\;$(SolutionDir)jdk\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -125,7 +125,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)editor\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)editor\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;$(SolutionDir)jdk\source\;$(SolutionDir)jdk\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
