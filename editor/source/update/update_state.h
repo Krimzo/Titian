@@ -5,6 +5,7 @@
 
 // Pre-Render
 void update_physics(editor_state* state);
+void update_scripts(editor_state* state);
 void  handle_camera(editor_state* state);
 
 // Post-Render

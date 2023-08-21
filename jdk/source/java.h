@@ -10,11 +10,8 @@
 
 using jvoid = void;
 using jbool = jboolean;
+using jfield = jfieldID;
 using jmethod = jmethodID;
-
-namespace java {
-    using clazz_data = std::vector<uint8_t>;
-}
 
 namespace java {
     inline const std::string BOOL = "Z";
@@ -42,27 +39,34 @@ namespace java {
 namespace java {
     inline JavaVM* jvm = nullptr;
     inline JNIEnv* jni = nullptr;
+
+    bool init(const std::string& dll_path, std::vector<std::string> args);
 }
 
 namespace java {
-    // Setup
-    bool init(const std::string& dll_path, std::vector<std::string> args);
-    
-    // Loading
-    jclass load_eternal_class(const std::string& name);
-    jclass load_eternal_class(const clazz_data& data);
-    jclass load_class(jobject loader, const clazz_data& data);
+    using class_data = std::vector<byte>;
 
-    // Methods
+    jobject new_loader();
+    class_data read_class_data(const std::string& path);
+
+    jclass load_eternal_class(const std::string& name);
+    jclass load_eternal_class(const class_data& data);
+
+    jclass load_class(jobject loader, const class_data& data);
+}
+
+namespace java {
     jmethod get_method(jclass clazz, const std::string& name, const std::string& return_type = VOID, const std::vector<std::string>& parameters = {});
     jmethod get_static_method(jclass clazz, const std::string& name, const std::string& return_type = VOID, const std::vector<std::string>& parameters = {});
     jmethod get_constructor(jclass clazz, const std::vector<std::string>& parameters = {});
+}
 
-    // Objects
+namespace java {
     jobject new_object(jclass clazz, jmethod constructor, ...);
     void delete_object(jobject object);
+}
 
-    // Strings
+namespace java {
     jstring new_string(const std::string& data);
     std::string read_string(jstring object);
 }

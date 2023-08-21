@@ -199,7 +199,7 @@ void kl::entity::generate_actor(PxPhysics* physics, const PxTransform& transform
 void kl::entity::wake_up() const
 {
     if (is_dynamic()) {
-        auto actor = (PxRigidDynamic*) physics_actor_;
+        PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
         if (actor->getScene()) {
             actor->wakeUp();
         }

@@ -64,6 +64,12 @@ struct gui_state
         }
     } material_editor;
 
+    // Render info
+    struct render_info_t
+    {
+        float last_update_time = 0.0f;
+    } render_info;
+
     gui_state(kl::object<kl::gpu> gpu);
 
     gui_state(gui_state&) = delete;

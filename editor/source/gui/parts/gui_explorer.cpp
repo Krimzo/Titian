@@ -25,16 +25,11 @@ void gui_explorer(editor_state* state)
         (entry.is_directory() ? directories : files).push_back(entry);
     }
 
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 7.0f, 7.0f });
-
     if (ImGui::Begin("Explorer", nullptr, ImGuiWindowFlags_NoScrollbar)) {
         int window_width = (int) ImGui::GetWindowContentRegionWidth();
         int column_count = window_width / state->gui_state->explorer_icon_size;
         window_width -= (column_count - 1) * (int) ImGui::GetStyle().ItemSpacing.x;
         column_count = max(window_width / state->gui_state->explorer_icon_size, 1);
-
-        ImGui::Text(state->gui_state->explorer_path.c_str());
-        ImGui::Separator();
 
         auto& style = ImGui::GetStyle();
         auto& color0 = style.Colors[ImGuiCol_Button];
@@ -44,27 +39,27 @@ void gui_explorer(editor_state* state)
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { color1.x, color1.y, color1.z, 0.25f });
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, { color2.x, color2.y, color2.z, 0.5f });
 
-        if (ImGui::BeginChild("TableHolder", {}, false, ImGuiWindowFlags_NoScrollbar)) {
-            if (ImGui::BeginTable("##ExplorerTable", column_count)) {
-                const std::filesystem::path current_path = { state->gui_state->explorer_path };
-                if (current_path.has_parent_path()) {
-                    ImGui::TableNextColumn();
-                    handle_directory_entry(state, current_path.parent_path(), true);
-                }
+        ImGui::Text(state->gui_state->explorer_path.c_str());
+        ImGui::Separator();
 
-                for (auto& dir : directories) {
-                    ImGui::TableNextColumn();
-                    handle_directory_entry(state, dir, false);
-                }
-
-                for (auto& file : files) {
-                    ImGui::TableNextColumn();
-                    handle_file_entry(state, file);
-                }
-
-                ImGui::EndTable();
+        if (ImGui::BeginTable("##ExplorerTable", column_count)) {
+            const std::filesystem::path current_path = { state->gui_state->explorer_path };
+            if (current_path.has_parent_path()) {
+                ImGui::TableNextColumn();
+                handle_directory_entry(state, current_path.parent_path(), true);
             }
-            ImGui::EndChild();
+
+            for (auto& dir : directories) {
+                ImGui::TableNextColumn();
+                handle_directory_entry(state, dir, false);
+            }
+
+            for (auto& file : files) {
+                ImGui::TableNextColumn();
+                handle_file_entry(state, file);
+            }
+
+            ImGui::EndTable();
         }
 
         ImGui::PopStyleColor(3);
@@ -75,8 +70,6 @@ void gui_explorer(editor_state* state)
         }
     }
     ImGui::End();
-
-    ImGui::PopStyleVar();
 }
 
 void handle_file_entry(editor_state* state, const std::filesystem::path& file)
@@ -116,7 +109,7 @@ file_type classify_file(const std::filesystem::path& file)
     if (extension == ".h" || extension == ".cpp") {
         return file_type::code;
     }
-    if (extension == ".dll") {
+    if (extension == ".dll" || extension == ".class") {
         return file_type::script;
     }
     if (extension == ".obj") {
