@@ -26,23 +26,15 @@ void gui_explorer(editor_state* state)
     }
 
     if (ImGui::Begin("Explorer", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-        int window_width = (int) ImGui::GetWindowContentRegionWidth();
-        int column_count = window_width / state->gui_state->explorer_icon_size;
-        window_width -= (column_count - 1) * (int) ImGui::GetStyle().ItemSpacing.x;
-        column_count = max(window_width / state->gui_state->explorer_icon_size, 1);
-
-        auto& style = ImGui::GetStyle();
-        auto& color0 = style.Colors[ImGuiCol_Button];
-        auto& color1 = style.Colors[ImGuiCol_ButtonHovered];
-        auto& color2 = style.Colors[ImGuiCol_ButtonActive];
-        ImGui::PushStyleColor(ImGuiCol_Button, { color0.x, color0.y, color0.z, 0.0f });
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { color1.x, color1.y, color1.z, 0.25f });
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { color2.x, color2.y, color2.z, 0.5f });
+        const float window_width = ImGui::GetWindowWidth() - ImGui::GetStyle().WindowPadding.x * 2.0f;
+        const float column_count = window_width / (state->gui_state->explorer_icon_size + ImGui::GetStyle().CellPadding.x * 2.0f);
 
         ImGui::Text(state->gui_state->explorer_path.c_str());
         ImGui::Separator();
 
-        if (ImGui::BeginTable("##ExplorerTable", column_count)) {
+        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2 { 0.0f, 4.0f });
+
+        if (ImGui::BeginTable("##ExplorerTable", (int) column_count)) {
             const std::filesystem::path current_path = { state->gui_state->explorer_path };
             if (current_path.has_parent_path()) {
                 ImGui::TableNextColumn();
@@ -62,7 +54,7 @@ void gui_explorer(editor_state* state)
             ImGui::EndTable();
         }
 
-        ImGui::PopStyleColor(3);
+        ImGui::PopStyleVar();
 
         if (ImGui::BeginPopupContextWindow()) {
             ImGui::SliderInt("Icon Size", &state->gui_state->explorer_icon_size, 25, 250);
@@ -75,20 +67,34 @@ void gui_explorer(editor_state* state)
 void handle_file_entry(editor_state* state, const std::filesystem::path& file)
 {
     const std::string path = std::filesystem::absolute(file).string();
-    const ImVec2 icon_size = { (float) state->gui_state->explorer_icon_size, (float) state->gui_state->explorer_icon_size };
     const file_type file_type = classify_file(file);
     kl::dx::shader_view icon = file_icon(state, file_type);
-    if (ImGui::ImageButton(path.c_str(), icon.Get(), icon_size, ImVec2(0, 1), ImVec2(1, 0))) {
-        ShellExecuteA(0, 0, path.c_str(), 0, 0, SW_SHOW);
+
+    const float padding = 5.0f;
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
+
+    const float icon_size = (float) state->gui_state->explorer_icon_size;
+    const float text_height = ImGui::CalcTextSize(path.c_str()).y;
+
+    if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
+        const ImVec2 cursor_pos = ImGui::GetCursorPos();
+        if (ImGui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+            ShellExecuteA(0, 0, path.c_str(), 0, 0, SW_SHOW);
+        }
+        drag_file(path, file_type, icon);
+
+        ImGui::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
+        ImGui::Text(file.filename().string().c_str());
     }
-    drag_file(path, file_type, icon);
-    ImGui::Text(file.filename().string().c_str());
+    ImGui::EndChild();
+
+    ImGui::PopStyleVar(2);
 }
 
 void handle_directory_entry(editor_state* state, const std::filesystem::path& directory, const bool is_parent_dir)
 {
     const std::string path = std::filesystem::absolute(directory).string();
-    const ImVec2 icon_size = { (float) state->gui_state->explorer_icon_size, (float) state->gui_state->explorer_icon_size };
     kl::dx::shader_view icon = state->gui_state->textures.folder->shader_view;
     std::error_code ignored_error = {};
     if (is_parent_dir) {
@@ -97,10 +103,26 @@ void handle_directory_entry(editor_state* state, const std::filesystem::path& di
     else if (std::filesystem::is_empty(directory, ignored_error)) {
         icon = state->gui_state->textures.folder_empty->shader_view;
     }
-    if (ImGui::ImageButton(path.c_str(), icon.Get(), icon_size, ImVec2(0, 1), ImVec2(1, 0))) {
-        state->gui_state->explorer_path = path;
+
+    const float padding = 5.0f;
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 { 0.0f, 0.0f });
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
+
+    const float icon_size = (float) state->gui_state->explorer_icon_size;
+    const float text_height = ImGui::CalcTextSize(path.c_str()).y;
+
+    if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
+        const ImVec2 cursor_pos = ImGui::GetCursorPos();
+        if (ImGui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+            state->gui_state->explorer_path = path;
+        }
+
+        ImGui::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
+        ImGui::Text(directory.filename().string().c_str());
     }
-    ImGui::Text(directory.filename().string().c_str());
+    ImGui::EndChild();
+
+    ImGui::PopStyleVar(2);
 }
 
 file_type classify_file(const std::filesystem::path& file)

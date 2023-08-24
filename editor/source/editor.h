@@ -26,6 +26,8 @@
 
 // Scripting
 #include "scripting/script.h"
+#include "scripting/script_transfer.h"
+#include "scripting/class_info.h"
 
 
 int editor_main();

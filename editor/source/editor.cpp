@@ -30,6 +30,11 @@ void editor_setup(editor_state* state)
 
     // GUI
     setup_gui(state);
+
+    // Scripting
+    script_transfer::bind_state(state);
+    script_transfer::bind_native_methods();
+    script_transfer::load_classes();
 }
 
 void editor_update(editor_state* state)

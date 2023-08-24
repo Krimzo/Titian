@@ -1,7 +1,8 @@
 #include "editor.h"
 
 
-bool centered_button(const char* label, float alignment = 0.5f);
+void start_scene(editor_state* state);
+void stop_scene(editor_state* state);
 
 void gui_control_menu(editor_state* state)
 {
@@ -14,47 +15,14 @@ void gui_control_menu(editor_state* state)
 
             // 0
             ImGui::TableSetColumnIndex(0);
-            if (state->game_running) {
-                if (ImGui::Button("Stop")) {
-                    // Change state
-                    state->game_running = false;
-
-                    // Load scene
-                    deserializer deserializer = { "temp.titian" };
-                    std::pair load_info = deserializer.read_scene(state->gpu);
-                    if (load_info.first == 0) {
-                        state->change_scene(load_info.second);
-                        state->logger_state->log(kl::format("Scene loaded. (", deserializer.path, ") [", serialization::VERSION_NAME, "]"));
-                    }
-                    else if (load_info.first == 1) {
-                        state->logger_state->log(kl::format("Failed to load scene. File read error. (", deserializer.path, ")"));
-                    }
-                    else {
-                        state->logger_state->log(kl::format("Failed to load scene. Serial versions do not match. (", deserializer.path, ") [",
-                            serialization::VERSION_NAME, " -> ", std::hex, "0x", load_info.first, "]"));
-                    }
+            if (!state->game_running) {
+                if (ImGui::Button("Start")) {
+                    start_scene(state);
                 }
             }
             else {
-                if (ImGui::Button("Start")) {
-                    // Save scene
-                    serializer serializer = { "temp.titian" };
-                    if (serializer.write_scene(state->scene)) {
-                        state->logger_state->log(kl::format("Scene saved. (", serializer.path, ") [", serialization::VERSION_NAME, "]"));
-                    }
-                    else {
-                        state->logger_state->log(kl::format("Failed to save scene. File write error. (", serializer.path, ")"));
-                    }
-
-                    // Change state
-                    state->game_running = true;
-
-                    // Reset times
-                    state->timer.reset_elapsed();
-                    state->gui_state->render_info.last_update_time = 0.0f;
-
-                    // Call script starts
-                    state->script_state->call_starts();
+                if (ImGui::Button("Stop")) {
+                    stop_scene(state);
                 }
             }
 
@@ -86,16 +54,45 @@ void gui_control_menu(editor_state* state)
     ImGui::PopStyleVar(2);
 }
 
-bool centered_button(const char* label, const float alignment)
+void start_scene(editor_state* state)
 {
-    ImGuiStyle& style = ImGui::GetStyle();
+    // Save scene
+    serializer serializer = { "temp.titian" };
+    if (serializer.write_scene(state->scene)) {
+        state->logger_state->log(kl::format("Scene saved. (", serializer.path, ") [", serialization::VERSION_NAME, "]"));
+    }
+    else {
+        state->logger_state->log(kl::format("Failed to save scene. File write error. (", serializer.path, ")"));
+    }
 
-    float size = ImGui::CalcTextSize(label).x + style.FramePadding.x * 2.0f;
-    float avail = ImGui::GetContentRegionAvail().x;
+    // Change state
+    state->game_running = true;
 
-    float off = (avail - size) * alignment;
-    if (off > 0.0f)
-        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+    // Reset times
+    state->timer.reset_elapsed();
+    state->gui_state->render_info.last_update_time = 0.0f;
 
-    return ImGui::Button(label);
+    // Call script starts
+    state->script_state->call_starts();
+}
+
+void stop_scene(editor_state* state)
+{
+    // Change state
+    state->game_running = false;
+
+    // Load scene
+    deserializer deserializer = { "temp.titian" };
+    std::pair load_info = deserializer.read_scene(state->gpu);
+    if (load_info.first == 0) {
+        state->change_scene(load_info.second);
+        state->logger_state->log(kl::format("Scene loaded. (", deserializer.path, ") [", serialization::VERSION_NAME, "]"));
+    }
+    else if (load_info.first == 1) {
+        state->logger_state->log(kl::format("Failed to load scene. File read error. (", deserializer.path, ")"));
+    }
+    else {
+        state->logger_state->log(kl::format("Failed to load scene. Serial versions do not match. (", deserializer.path, ") [",
+            serialization::VERSION_NAME, " -> ", std::hex, "0x", load_info.first, "]"));
+    }
 }

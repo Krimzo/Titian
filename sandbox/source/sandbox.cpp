@@ -21,35 +21,6 @@ int sandbox_main()
 
 void setup_preview_scene(editor_state* state)
 {
-    // script testing
-    //{
-    //    java::holder clazz = java::load_eternal_class("Haha");
-    //    if (clazz) {
-    //        // register native function
-    //        {
-    //            std::string native_method_name = "myNativeMethod";
-    //            std::string native_method_signature = java::build_method_signature(java::VOID, {});
-    //
-    //            JNINativeMethod native_method = {};
-    //            native_method.name = native_method_name.data();
-    //            native_method.signature = native_method_signature.data();
-    //            native_method.fnPtr = myNativeMethod;
-    //
-    //            java::jni->RegisterNatives(clazz.get(), &native_method, 1);
-    //        }
-    //
-    //        // instance and call
-    //        jmethod constructor = java::get_constructor(clazz.get());
-    //        jmethod method = java::get_method(clazz.get(), "myMethod", java::VOID);
-    //        if (constructor && method) {
-    //            java::holder instance = java::new_object(clazz.get(), constructor);
-    //            if (instance) {
-    //                java::jni->CallVoidMethod(instance.get(), method);
-    //            }
-    //        }
-    //    }
-    //}
-
     // Setup default meshes/materials
     state->scene->meshes["cube"] = state->default_mesh.cube;
     state->scene->meshes["sphere"] = state->default_mesh.sphere;

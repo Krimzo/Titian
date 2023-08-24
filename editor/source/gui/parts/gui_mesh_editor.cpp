@@ -32,7 +32,7 @@ void gui_mesh_editor(editor_state* state)
 
         ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 2.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-        ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4&) state->gui_state->selection_color);
+        ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4&) state->gui_state->color_special);
         static bool was_focused = true;
 
         const kl::object<kl::mesh> mesh = state->gui_state->mesh_editor.selected_mesh;

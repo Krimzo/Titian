@@ -18,8 +18,9 @@ namespace kl {
 
     public:
         const uint64_t unique_index;
-        float3 render_scale = float3(1.0f);
 
+        // Render
+        float3 render_scale = float3(1.0f);
         object<mesh> mesh = nullptr;
         object<material> material = nullptr;
 

@@ -16,7 +16,7 @@ void render_postprocess(editor_state* state)
     } ps_data = {};
 
     ps_data.selected_index = kl::float4((float) state->scene->selected_entity->unique_index);
-    ps_data.outline_color = state->gui_state->selection_color;
+    ps_data.outline_color = state->gui_state->color_special;
     state->render_shaders.postprocess_pass.pixel_shader.update_cbuffer(ps_data);
 
     state->gpu->draw(state->render_state->screen_mesh);

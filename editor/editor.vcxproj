@@ -96,7 +96,9 @@
     <ClInclude Include="source\editor.h" />
     <ClInclude Include="source\gui\helper\gui_helper.h" />
     <ClInclude Include="source\render\render_chain.h" />
+    <ClInclude Include="source\scripting\class_info.h" />
     <ClInclude Include="source\scripting\script.h" />
+    <ClInclude Include="source\scripting\script_transfer.h" />
     <ClInclude Include="source\serialization\deserializer.h" />
     <ClInclude Include="source\serialization\serialization.h" />
     <ClInclude Include="source\serialization\serializer.h" />
@@ -132,7 +134,9 @@
     <ClCompile Include="source\render\parts\render_postprocess.cpp" />
     <ClCompile Include="source\render\parts\render_shadows.cpp" />
     <ClCompile Include="source\render\render_chain.cpp" />
+    <ClCompile Include="source\scripting\class_info.cpp" />
     <ClCompile Include="source\scripting\script.cpp" />
+    <ClCompile Include="source\scripting\script_transfer.cpp" />
     <ClCompile Include="source\serialization\deserializer.cpp" />
     <ClCompile Include="source\serialization\serializer.cpp" />
     <ClCompile Include="source\setup\gui\setup_gui.cpp" />

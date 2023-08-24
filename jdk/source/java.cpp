@@ -118,7 +118,7 @@ jmethod java::get_static_method(jclass clazz, const std::string& name, const std
 
 jmethod java::get_constructor(jclass clazz, const std::vector<std::string>& parameters)
 {
-	return get_method(clazz, CONSTRUCT, VOID, parameters);
+	return get_method(clazz, signatures::CONSTRUCT, signatures::VOID, parameters);
 }
 
 // Objects

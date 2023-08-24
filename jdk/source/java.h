@@ -13,7 +13,7 @@ using jbool = jboolean;
 using jfield = jfieldID;
 using jmethod = jmethodID;
 
-namespace java {
+namespace signatures {
     inline const std::string BOOL = "Z";
     inline const std::string BYTE = "B";
 
@@ -56,8 +56,8 @@ namespace java {
 }
 
 namespace java {
-    jmethod get_method(jclass clazz, const std::string& name, const std::string& return_type = VOID, const std::vector<std::string>& parameters = {});
-    jmethod get_static_method(jclass clazz, const std::string& name, const std::string& return_type = VOID, const std::vector<std::string>& parameters = {});
+    jmethod get_method(jclass clazz, const std::string& name, const std::string& return_type = signatures::VOID, const std::vector<std::string>& parameters = {});
+    jmethod get_static_method(jclass clazz, const std::string& name, const std::string& return_type = signatures::VOID, const std::vector<std::string>& parameters = {});
     jmethod get_constructor(jclass clazz, const std::vector<std::string>& parameters = {});
 }
 

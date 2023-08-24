@@ -1,19 +1,21 @@
 package script
 
 import sdk.engine.Engine
+import sdk.engine.Engine.log
 import sdk.engine.Script
 import sdk.render.scene.Entity
 
 class SpinScript : Script() {
     override fun start() {
-        println("Spin script started!")
+        log("Spin script started!")
     }
 
     override fun update() {
-        val entity: Entity = Engine.readEntity("Monke224") ?: return
+        val entityName = "Monke224"
+        val entity: Entity = Engine.getEntity(entityName) ?: return
 
-        println(entity.renderScale)
+        log(entity.rotation)
 
-        Engine.writeEntity("monke1", entity)
+        Engine.setEntity(entityName, entity)
     }
 }

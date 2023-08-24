@@ -11,12 +11,12 @@ void script_state::update_static_info(editor_state* state)
 		return;
 	}
 
-	static jfield field_elapsed_t = java::jni->GetStaticFieldID(class_engine, "elapsedTime", java::FLOAT.c_str());
+	static jfield field_elapsed_t = java::jni->GetStaticFieldID(class_engine, "elapsedTime", signatures::FLOAT.c_str());
 	if (!field_elapsed_t) {
 		return;
 	}
 
-	static jfield field_delta_t = java::jni->GetStaticFieldID(class_engine, "deltaTime", java::FLOAT.c_str());
+	static jfield field_delta_t = java::jni->GetStaticFieldID(class_engine, "deltaTime", signatures::FLOAT.c_str());
 	if (!field_delta_t) {
 		return;
 	}
