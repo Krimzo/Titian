@@ -3,12 +3,12 @@
 
 enum class file_type
 {
-    other = 0,
-    code,
-    script,
-    mesh,
-    texture,
-    scene,
+    OTHER = 0,
+    CODE,
+    SCRIPT,
+    MESH,
+    TEXTURE,
+    SCENE,
 };
 
 void handle_file_entry(editor_state* state, const std::filesystem::path& file);
@@ -21,8 +21,13 @@ void gui_explorer(editor_state* state)
 {
     std::list<std::filesystem::path> directories = {};
     std::list<std::filesystem::path> files = {};
-    for (auto& entry : std::filesystem::directory_iterator(state->gui_state->explorer_path)) {
-        (entry.is_directory() ? directories : files).push_back(entry);
+    
+    try {
+        for (auto& entry : std::filesystem::directory_iterator(state->gui_state->explorer_path)) {
+            (entry.is_directory() ? directories : files).push_back(entry);
+        }
+    }
+    catch (std::exception ignored) {
     }
 
     if (ImGui::Begin("Explorer", nullptr, ImGuiWindowFlags_NoScrollbar)) {
@@ -106,19 +111,25 @@ void handle_directory_entry(editor_state* state, const std::filesystem::path& di
 
     const float padding = 5.0f;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 { 0.0f, 0.0f });
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2 { padding, padding });
 
     const float icon_size = (float) state->gui_state->explorer_icon_size;
     const float text_height = ImGui::CalcTextSize(path.c_str()).y;
 
-    if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
-        const ImVec2 cursor_pos = ImGui::GetCursorPos();
-        if (ImGui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
-            state->gui_state->explorer_path = path;
-        }
+    const float shadow_size = 2.0f;
+    const ImVec2 child_size = { icon_size + padding * 2, icon_size + text_height + padding * 4.0f };
 
-        ImGui::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
-        ImGui::Text(directory.filename().string().c_str());
+    if (ImGui::BeginChild(kl::format(path, "_elder").c_str(), { child_size.x + shadow_size, child_size.y + shadow_size })) {
+        if (ImGui::BeginChild(path.c_str(), child_size, true, ImGuiWindowFlags_NoScrollbar)) {
+            const ImVec2 cursor_pos = ImGui::GetCursorPos();
+            if (ImGui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+                state->gui_state->explorer_path = path;
+            }
+
+            ImGui::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
+            ImGui::Text(directory.filename().string().c_str());
+        }
+        ImGui::EndChild();
     }
     ImGui::EndChild();
 
@@ -129,35 +140,35 @@ file_type classify_file(const std::filesystem::path& file)
 {
     const std::string extension = file.extension().string();
     if (extension == ".h" || extension == ".cpp") {
-        return file_type::code;
+        return file_type::CODE;
     }
     if (extension == ".dll" || extension == ".class") {
-        return file_type::script;
+        return file_type::SCRIPT;
     }
     if (extension == ".obj") {
-        return file_type::mesh;
+        return file_type::MESH;
     }
     if (extension == ".jpg" || extension == ".png") {
-        return file_type::texture;
+        return file_type::TEXTURE;
     }
     if (extension == ".titian") {
-        return file_type::scene;
+        return file_type::SCENE;
     }
-    return file_type::other;
+    return file_type::OTHER;
 }
 
 kl::dx::shader_view file_icon(editor_state* state, file_type type)
 {
     switch (type) {
-    case file_type::code:
+    case file_type::CODE:
         return state->gui_state->textures.code->shader_view;
-    case file_type::script:
+    case file_type::SCRIPT:
         return state->gui_state->textures.script->shader_view;
-    case file_type::mesh:
+    case file_type::MESH:
         return state->gui_state->textures.mesh->shader_view;
-    case file_type::texture:
+    case file_type::TEXTURE:
         return state->gui_state->textures.texture->shader_view;
-    case file_type::scene:
+    case file_type::SCENE:
         return state->gui_state->textures.scene->shader_view;
     }
     return state->gui_state->textures.file->shader_view;
@@ -167,19 +178,19 @@ void drag_file(const std::filesystem::path& file, const file_type type, const kl
 {
     const std::string path = file.string();
     switch (type) {
-    case file_type::code:
+    case file_type::CODE:
         GUI::drag_drop::write_data("CodeFile", path, texture);
         break;
-    case file_type::script:
+    case file_type::SCRIPT:
         GUI::drag_drop::write_data("ScriptFile", path, texture);
         break;
-    case file_type::mesh:
+    case file_type::MESH:
         GUI::drag_drop::write_data("MeshFile", path, texture);
         break;
-    case file_type::texture:
+    case file_type::TEXTURE:
         GUI::drag_drop::write_data("TextureFile", path, texture);
         break;
-    case file_type::scene:
+    case file_type::SCENE:
         GUI::drag_drop::write_data("SceneFile", path, texture);
         break;
     }

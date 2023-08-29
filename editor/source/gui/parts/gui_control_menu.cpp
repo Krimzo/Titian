@@ -73,7 +73,7 @@ void start_scene(editor_state* state)
     state->gui_state->render_info.last_update_time = 0.0f;
 
     // Call script starts
-    state->script_state->call_starts();
+    state->script_state->call_starts(state);
 }
 
 void stop_scene(editor_state* state)

@@ -83,7 +83,7 @@ void gui_main_menu(editor_state* state)
         }
 
         if (ImGui::BeginMenu("About")) {
-            ImGui::Text("Titian 0.2v");
+            ImGui::Text("Titian 0.4v");
 
             ImGui::EndMenu();
         }

@@ -9,15 +9,13 @@ object Engine {
     var deltaTime: Float = 0f
         private set
 
-    // System
-    private external fun logExt(data: String)
+    // External
+    external fun logString(data: String)
+    external fun readEntity(name: String): Entity?
+    external fun writeEntity(name: String, entity: Entity)
 
-    // Entity
-    external fun getEntity(name: String): Entity?
-    external fun setEntity(name: String, entity: Entity)
-
-    // Helper
+    // Methods
     fun log(any: Any?) {
-        logExt(any.toString())
+        logString(any.toString())
     }
 }

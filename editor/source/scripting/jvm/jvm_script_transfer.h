@@ -1,7 +1,7 @@
 #pragma once
 
 #include "state/editor_state.h"
-#include "scripting/class_info.h"
+#include "scripting/jvm/jvm_class_info.h"
 
 
 namespace signatures {
@@ -19,17 +19,21 @@ namespace classes {
 	inline class_info ENTITY = {};
 }
 
+namespace helper {
+	kl::float3 read_float3(jobject object);
+}
+
 namespace script_transfer {
 	void bind_state(editor_state* state);
 	void bind_native_methods();
 	void load_classes();
 }
 
-namespace script_transfer {
+namespace script_transfer::native {
 	// System
-	void logExt(JNIEnv* env, jobject self, jstring name);
+	void logString(JNIEnv* env, jobject self, jstring name);
 
 	// Entity
-	jobject getEntity(JNIEnv* env, jobject self, jstring name);
-	void setEntity(JNIEnv* env, jobject self, jstring name, jobject entity);
+	jobject readEntity(JNIEnv* env, jobject self, jstring name);
+	void writeEntity(JNIEnv* env, jobject self, jstring name, jobject entity);
 }

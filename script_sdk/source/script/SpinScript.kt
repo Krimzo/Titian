@@ -1,21 +1,26 @@
 package script
 
 import sdk.engine.Engine
-import sdk.engine.Engine.log
 import sdk.engine.Script
-import sdk.render.scene.Entity
+import sdk.math.vector.Float3
+import kotlin.math.sin
 
 class SpinScript : Script() {
+    private var entityName = "Monke224"
+    private var originalPosition = Float3()
+
     override fun start() {
-        log("Spin script started!")
+        Engine.readEntity(entityName)?.position?.let {
+            originalPosition = it
+        }
     }
-
+    
     override fun update() {
-        val entityName = "Monke224"
-        val entity: Entity = Engine.getEntity(entityName) ?: return
+        Engine.readEntity(entityName)?.let { entity ->
+            val timedValue = sin(Engine.elapsedTime) * 5f
+            entity.position.z = originalPosition.z + timedValue
 
-        log(entity.rotation)
-
-        Engine.setEntity(entityName, entity)
+            Engine.writeEntity(entityName, entity)
+        }
     }
 }

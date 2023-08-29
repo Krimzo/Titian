@@ -1,6 +1,21 @@
 #include "editor.h"
 
 
+// Helper
+kl::float3 helper::read_float3(jobject object)
+{
+	static const jfield fields[3] = {
+		classes::FLOAT3.get_field("x"),
+		classes::FLOAT3.get_field("y"),
+		classes::FLOAT3.get_field("z"),
+	};
+	return {
+		java::jni->GetFloatField(object, fields[0]),
+		java::jni->GetFloatField(object, fields[1]),
+		java::jni->GetFloatField(object, fields[2]),
+	};
+}
+
 // Setup
 static editor_state* bound_state = nullptr;
 
@@ -13,17 +28,17 @@ void script_transfer::bind_native_methods()
 {
 	jclass engine_class = java::load_eternal_class("sdk/engine/Engine");
 	if (!engine_class) {
-		return;
+		throw std::exception("Failed to load Engine class");
 	}
 
 	std::vector<std::tuple<std::string, std::string, void*>> method_infos = {};
 
 	// System
-	method_infos.push_back({ "logExt", java::build_method_signature(signatures::VOID, { signatures::STRING }), script_transfer::logExt });
+	method_infos.push_back({ "logString", java::build_method_signature(signatures::VOID, { signatures::STRING }), script_transfer::native::logString });
 
 	// Entity
-	method_infos.push_back({ "getEntity", java::build_method_signature(signatures::ENTITY, { signatures::STRING }), script_transfer::getEntity });
-	method_infos.push_back({ "setEntity", java::build_method_signature(signatures::VOID, {  signatures::STRING, signatures::ENTITY }), script_transfer::setEntity });
+	method_infos.push_back({ "readEntity", java::build_method_signature(signatures::ENTITY, { signatures::STRING }), script_transfer::native::readEntity });
+	method_infos.push_back({ "writeEntity", java::build_method_signature(signatures::VOID, {  signatures::STRING, signatures::ENTITY }), script_transfer::native::writeEntity });
 
 	std::vector<JNINativeMethod> methods(method_infos.size());
 	for (size_t i = 0; i < method_infos.size(); i++) {
@@ -48,6 +63,9 @@ void script_transfer::load_classes()
 	classes::FLOAT3.load_class("sdk/math/vector/Float3");
 	classes::FLOAT3.load_constructor(0, {});
 	classes::FLOAT3.load_constructor(1, { signatures::FLOAT, signatures::FLOAT, signatures::FLOAT });
+	classes::FLOAT3.load_field("x", signatures::FLOAT);
+	classes::FLOAT3.load_field("y", signatures::FLOAT);
+	classes::FLOAT3.load_field("z", signatures::FLOAT);
 
 	classes::SHAPE.load_class("sdk/render/components/shape/Shape");
 	classes::SHAPE.load_field("type", signatures::INT);
@@ -78,7 +96,7 @@ void script_transfer::load_classes()
 }
 
 // System
-void script_transfer::logExt(JNIEnv* env, jobject self, jstring data)
+void script_transfer::native::logString(JNIEnv* env, jobject self, jstring data)
 {
 	log_info info = {};
 	info.message = java::read_string(data);
@@ -86,7 +104,7 @@ void script_transfer::logExt(JNIEnv* env, jobject self, jstring data)
 }
 
 // Entity
-jobject script_transfer::getEntity(JNIEnv* env, jobject self, jstring name)
+jobject script_transfer::native::readEntity(JNIEnv* env, jobject self, jstring name)
 {
 	kl::object entity = bound_state->scene->find_entity(java::read_string(name));
 	if (!entity) {
@@ -143,19 +161,69 @@ jobject script_transfer::getEntity(JNIEnv* env, jobject self, jstring name)
 	java::jni->SetObjectField(jav_entity, classes::ENTITY.get_field("angular"), object_angular);
 
 	// Collision
+	//WIP
 	kl::object collider = entity->collider();
 
 	return jav_entity;
 }
 
-void script_transfer::setEntity(JNIEnv* env, jobject self, jstring jav_name, jobject jav_entity)
+void script_transfer::native::writeEntity(JNIEnv* env, jobject self, jstring jav_name, jobject jav_entity)
 {
-	
+	// Get
+	// Render
+	jobject renderScale = java::jni->GetObjectField(jav_entity, classes::ENTITY.get_field("renderScale"));
+	jstring mesh = (jstring) java::jni->GetObjectField(jav_entity, classes::ENTITY.get_field("mesh"));
+	jstring material = (jstring) java::jni->GetObjectField(jav_entity, classes::ENTITY.get_field("material"));
 
-	//const std::string name = java::read_string(jav_name);
-	//kl::object entity = bound_state->scene->make_entity();
-	//
-	//
-	//
-	//bound_state->scene->add(name, entity);
+	// Geometry
+	jobject rotation = java::jni->GetObjectField(jav_entity, classes::ENTITY.get_field("rotation"));
+	jobject position = java::jni->GetObjectField(jav_entity, classes::ENTITY.get_field("position"));
+
+	// Physics
+	jbool dynamic = java::jni->GetBooleanField(jav_entity, classes::ENTITY.get_field("dynamic"));
+	jbool gravity = java::jni->GetBooleanField(jav_entity, classes::ENTITY.get_field("gravity"));
+	jfloat mass = java::jni->GetFloatField(jav_entity, classes::ENTITY.get_field("mass"));
+	jobject velocity = java::jni->GetObjectField(jav_entity, classes::ENTITY.get_field("velocity"));
+	jobject angular = java::jni->GetObjectField(jav_entity, classes::ENTITY.get_field("angular"));
+
+	// Collision
+	jobject collider = java::jni->GetObjectField(jav_entity, classes::ENTITY.get_field("collider"));
+
+	// Set
+	const std::string name_str = java::read_string(jav_name);
+	kl::object entity = bound_state->scene->make_entity(dynamic);
+	
+	// Render
+	entity->render_scale = helper::read_float3(renderScale);
+
+	std::string mesh_str = java::read_string(mesh);
+	if (bound_state->scene->meshes.contains(mesh_str)) {
+		entity->mesh = bound_state->scene->meshes.at(mesh_str);
+	}
+	else {
+		entity->mesh = nullptr;
+	}
+
+	std::string material_str = java::read_string(material);
+	if (bound_state->scene->materials.contains(material_str)) {
+		entity->material = bound_state->scene->materials.at(material_str);
+	}
+	else {
+		entity->material = nullptr;
+	}
+
+	// Geometry
+	entity->set_rotation(helper::read_float3(rotation));
+	entity->set_position(helper::read_float3(position));
+
+	// Physics
+	entity->set_gravity(gravity);
+	entity->set_mass(mass);
+	entity->set_velocity(helper::read_float3(velocity));
+	entity->set_angular(helper::read_float3(angular));
+
+	// Collider
+	//WIP
+	
+	bound_state->scene->add(name_str, entity);
 }

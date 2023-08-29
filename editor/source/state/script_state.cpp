@@ -28,16 +28,16 @@ void script_state::update_static_info(editor_state* state)
 	java::jni->SetStaticFloatField(class_engine, field_delta_t, delta_t);
 }
 
-void script_state::call_starts()
+void script_state::call_starts(editor_state* state)
 {
-	for (const auto& [_, script] : scripts) {
-		script->call_start();
+	for (auto& [_, script] : scripts) {
+		script->call_start(state);
 	}
 }
 
-void script_state::call_updates()
+void script_state::call_updates(editor_state* state)
 {
-	for (const auto& [_, script] : scripts) {
-		script->call_update();
+	for (auto& [_, script] : scripts) {
+		script->call_update(state);
 	}
 }

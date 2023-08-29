@@ -17,7 +17,10 @@ namespace java {
 
         ~holder()
         {
-            delete_object(m_object);
+            if (m_object) {
+                delete_object(m_object);
+                m_object = nullptr;
+            }
         }
 
         // Copy
@@ -28,13 +31,12 @@ namespace java {
         void operator=(const holder&&) = delete;
 
         // Info
-        bool set(T object)
+        void set(T object)
         {
             if (m_object) {
-                return false;
+                delete_object(m_object);
             }
             m_object = object;
-            return true;
         }
 
         T get() const

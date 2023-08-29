@@ -25,9 +25,11 @@
 #include "serialization/deserializer.h"
 
 // Scripting
-#include "scripting/script.h"
-#include "scripting/script_transfer.h"
-#include "scripting/class_info.h"
+#include "scripting/engine_script.h"
+#include "scripting/dll/dll_script.h"
+#include "scripting/jvm/jvm_script.h"
+#include "scripting/jvm/jvm_script_transfer.h"
+#include "scripting/jvm/jvm_class_info.h"
 
 
 int editor_main();

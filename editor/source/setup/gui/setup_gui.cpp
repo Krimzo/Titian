@@ -28,9 +28,9 @@ void load_custom_theme(editor_state* state)
     style.Colors[ImGuiCol_Border]       = ImVec4(0.45f, 0.45f, 0.45f, 0.50f);
     style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
 
-    style.Colors[ImGuiCol_FrameBg]        = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-    style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
-    style.Colors[ImGuiCol_FrameBgActive]  = ImVec4(0.65f, 0.65f, 0.65f, 0.39f);
+    style.Colors[ImGuiCol_FrameBg]        = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
+    style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
+    style.Colors[ImGuiCol_FrameBgActive]  = ImVec4(0.60f, 0.60f, 0.60f, 0.40f);
 
     style.Colors[ImGuiCol_TitleBg]          = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
     style.Colors[ImGuiCol_TitleBgActive]    = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);

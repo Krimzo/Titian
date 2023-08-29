@@ -180,7 +180,7 @@ void gui_entity_collider(editor_state* state, kl::object<kl::entity>& entity)
     }
 
     // Loading buttons
-    if (geometry_type && ImGui::Button("Load scale from transform", { -1.0f, 0.0f })) {
+    if (geometry_type && ImGui::Button("Load size from scale")) {
         if (geometry_type == 1) {
             box_geometry.halfExtents = (PxVec3&) entity->render_scale;
             collider_shape->setGeometry(box_geometry);

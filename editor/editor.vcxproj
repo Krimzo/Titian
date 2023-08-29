@@ -51,7 +51,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;$(SolutionDir)jdk\source\;$(SolutionDir)jdk\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)game\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;$(SolutionDir)jdk\source\;$(SolutionDir)jdk\include\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>editor.h</PrecompiledHeaderFile>
@@ -75,7 +75,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;$(SolutionDir)jdk\source\;$(SolutionDir)jdk\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)game\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;$(SolutionDir)jdk\source\;$(SolutionDir)jdk\include\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>editor.h</PrecompiledHeaderFile>
@@ -96,9 +96,11 @@
     <ClInclude Include="source\editor.h" />
     <ClInclude Include="source\gui\helper\gui_helper.h" />
     <ClInclude Include="source\render\render_chain.h" />
-    <ClInclude Include="source\scripting\class_info.h" />
-    <ClInclude Include="source\scripting\script.h" />
-    <ClInclude Include="source\scripting\script_transfer.h" />
+    <ClInclude Include="source\scripting\jvm\jvm_class_info.h" />
+    <ClInclude Include="source\scripting\dll\dll_script.h" />
+    <ClInclude Include="source\scripting\jvm\jvm_script.h" />
+    <ClInclude Include="source\scripting\jvm\jvm_script_transfer.h" />
+    <ClInclude Include="source\scripting\engine_script.h" />
     <ClInclude Include="source\serialization\deserializer.h" />
     <ClInclude Include="source\serialization\serialization.h" />
     <ClInclude Include="source\serialization\serializer.h" />
@@ -134,9 +136,11 @@
     <ClCompile Include="source\render\parts\render_postprocess.cpp" />
     <ClCompile Include="source\render\parts\render_shadows.cpp" />
     <ClCompile Include="source\render\render_chain.cpp" />
-    <ClCompile Include="source\scripting\class_info.cpp" />
-    <ClCompile Include="source\scripting\script.cpp" />
-    <ClCompile Include="source\scripting\script_transfer.cpp" />
+    <ClCompile Include="source\scripting\jvm\jvm_class_info.cpp" />
+    <ClCompile Include="source\scripting\dll\dll_script.cpp" />
+    <ClCompile Include="source\scripting\jvm\jvm_script.cpp" />
+    <ClCompile Include="source\scripting\jvm\jvm_script_transfer.cpp" />
+    <ClCompile Include="source\scripting\engine_script.cpp" />
     <ClCompile Include="source\serialization\deserializer.cpp" />
     <ClCompile Include="source\serialization\serializer.cpp" />
     <ClCompile Include="source\setup\gui\setup_gui.cpp" />
@@ -158,6 +162,9 @@
     <ClCompile Include="source\update\pre_render\update_scripts.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\game\game.vcxproj">
+      <Project>{f5d423ff-644f-4f07-b57f-a83cfd49dbf1}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\imgui\imgui.vcxproj">
       <Project>{737a8abd-a62f-4e28-8da3-d24a40d276bd}</Project>
     </ProjectReference>

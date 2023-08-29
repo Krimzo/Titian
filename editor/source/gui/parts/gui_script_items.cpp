@@ -4,6 +4,16 @@
 void gui_script_items(editor_state* state)
 {
 	if (ImGui::Begin("Scripts")) {
+		if (ImGui::BeginPopupContextWindow()) {
+			if (ImGui::Button("Reload all")) {
+				for (auto& [_, script] : state->script_state->scripts) {
+					script->reload();
+				}
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
 		const ImVec2 content_min = ImGui::GetWindowContentRegionMin();
 		const ImVec2 content_max = ImGui::GetWindowContentRegionMax();
 		const ImVec2 initial_cur_position = ImGui::GetCursorPos();
@@ -13,20 +23,41 @@ void gui_script_items(editor_state* state)
 
 		std::optional script_file = GUI::drag_drop::read_data<std::string>("ScriptFile");
 		if (script_file) {
-			const std::string script_name = std::filesystem::path(script_file.value()).stem().string();
-			java::class_data data = java::read_class_data(script_file.value());
+			const std::filesystem::path path = std::filesystem::path(script_file.value());
+			const std::string script_name = path.stem().string();
+			const std::string script_extension = path.extension().string();
 
-			jobject loader = java::new_loader();
-			jclass clazz = java::load_class(loader, data);
-
-			kl::object script = new ::script(loader, clazz);
-			if (script->valid()) {
+			kl::object<engine_script> script = nullptr;
+			if (script_extension == ".dll") {
+				script = new dll_script(path.string());
+			}
+			else {
+				script = new jvm_script(path.string());
+			}
+			
+			if (script) {
 				state->script_state->scripts[script_name] = script;
 			}
 		}
 
-		for (auto& [name, _] : state->script_state->scripts) {
+		for (auto& [name, script] : state->script_state->scripts) {
+			const ImVec4 color = (const ImVec4&) (script->is_valid() ? state->gui_state->color_alternative : state->gui_state->color_special);
+			ImGui::PushStyleColor(ImGuiCol_Text, color);
 			ImGui::Selectable(name.c_str(), false);
+			ImGui::PopStyleColor();
+
+			if (ImGui::BeginPopupContextItem()) {
+				if (ImGui::Button("Delete")) {
+					state->script_state->scripts.erase(name);
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::Button("Reload")) {
+					script->reload();
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
 		}
 	}
 	ImGui::End();
