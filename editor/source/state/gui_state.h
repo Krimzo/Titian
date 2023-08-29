@@ -14,8 +14,8 @@ struct gui_state
 
     kl::int2 viewport_size = {};
 
-    kl::float4 selection_color = kl::colors::orange;
-    kl::float4 collider_color = kl::color(90, 225, 100);
+    kl::float4 color_special = { 0.85f, 0.00f, 0.22f, 1.00f };
+    kl::float4 color_alternative = { 0.53f, 0.75f, 0.75f, 1.0f };
 
     std::string builtin_path = "./builtin/";
     std::string explorer_path = std::filesystem::absolute(".").string();
@@ -63,6 +63,12 @@ struct gui_state
             this->camera.speed = 3.1f;
         }
     } material_editor;
+
+    // Render info
+    struct render_info_t
+    {
+        float last_update_time = 0.0f;
+    } render_info;
 
     gui_state(kl::object<kl::gpu> gpu);
 

@@ -157,7 +157,7 @@ std::pair<uint32_t, kl::object<kl::scene>> deserializer::read_scene(kl::object<k
         // Direction
         camera->set_forward(m_file.read<kl::float3>());
         camera->set_up(m_file.read<kl::float3>());
-    
+        
         // Misc Info
         camera->origin = m_file.read<kl::float3>();
         camera->aspect_ratio = m_file.read<float>();

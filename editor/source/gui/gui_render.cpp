@@ -11,9 +11,11 @@ void gui_render(editor_state* state)
 
     // Top
     gui_main_menu(state);
+    gui_control_menu(state);
 
     // Left
     gui_scene_items(state);
+    gui_script_items(state);
     gui_scene_info(state);
 
     // Middle-Top

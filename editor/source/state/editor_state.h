@@ -3,6 +3,7 @@
 #include "state/logger_state.h"
 #include "state/render_state.h"
 #include "state/gui_state.h"
+#include "state/script_state.h"
 
 
 inline const std::string builtin_path = "./builtin/";
@@ -21,6 +22,7 @@ struct editor_state
     );
 
     // Render features
+    bool game_running = false;
     bool render_wireframe = false;
     bool v_sync = true;
 
@@ -74,6 +76,7 @@ struct editor_state
     kl::object<logger_state> logger_state = new ::logger_state();
     kl::object<render_state> render_state = new ::render_state(gpu, window->size());
     kl::object<gui_state> gui_state = new ::gui_state(gpu);
+    kl::object<script_state> script_state = new ::script_state();
 
     editor_state();
     ~editor_state();

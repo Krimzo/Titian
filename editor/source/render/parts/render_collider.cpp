@@ -20,7 +20,7 @@ void render_collider(editor_state* state)
         kl::float4 object_color; // (color.r, color.g, color.b, none)
     } ps_data = {};
     
-    ps_data.object_color = state->gui_state->collider_color;
+    ps_data.object_color = state->gui_state->color_alternative;
     state->render_shaders.object_single.pixel_shader.update_cbuffer(ps_data);
 
     switch (state->scene->selected_entity->collider()->type()) {

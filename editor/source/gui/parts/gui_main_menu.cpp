@@ -69,8 +69,12 @@ void gui_main_menu(editor_state* state)
             }
 
             if (ImGui::BeginMenu("Colors")) {
-                ImGui::ColorEdit3("Selection Color", state->gui_state->selection_color);
-                ImGui::ColorEdit3("Collider Color", state->gui_state->collider_color);
+                ImGui::ColorEdit3("Special", state->gui_state->color_special);
+                ImGui::ColorEdit3("Alternative", state->gui_state->color_alternative);
+
+                if (ImGui::Button("Reload")) {
+                    load_custom_theme(state);
+                }
 
                 ImGui::EndMenu();
             }
@@ -79,7 +83,7 @@ void gui_main_menu(editor_state* state)
         }
 
         if (ImGui::BeginMenu("About")) {
-            ImGui::Text("Titian 0.2v");
+            ImGui::Text("Titian 0.4v");
 
             ImGui::EndMenu();
         }

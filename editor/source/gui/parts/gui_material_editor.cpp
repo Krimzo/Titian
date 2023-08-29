@@ -48,7 +48,7 @@ void gui_material_editor(editor_state* state)
         
         ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 2.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-        ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4&) state->gui_state->selection_color);
+        ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4&) state->gui_state->color_special);
         static bool was_focused = true;
 
         const bool should_rotate_cam = was_focused && !selected_texture;
