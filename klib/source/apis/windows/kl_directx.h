@@ -6,50 +6,48 @@
 // DirectX
 #include <wrl.h>
 #include <gdiplus.h>
-#include <d3dcompiler.h>
 #include <d3d11.h>
+#include <d3dcompiler.h>
 
 #pragma comment(lib, "gdiplus.lib")
-#pragma comment (lib, "d3dcompiler.lib")
-#pragma comment (lib, "d3d11.lib")
-
-using namespace Microsoft::WRL;
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d3dcompiler.lib")
 
 namespace kl::dx {
     /* Types */
     // Device
-    using device = ComPtr<ID3D11Device>;
-    using context = ComPtr<ID3D11DeviceContext>;
-    using chain = ComPtr<IDXGISwapChain>;
+    using device = Microsoft::WRL::ComPtr<ID3D11Device>;
+    using context = Microsoft::WRL::ComPtr<ID3D11DeviceContext>;
+    using chain = Microsoft::WRL::ComPtr<IDXGISwapChain>;
 
     // Data
-    using buffer = ComPtr<ID3D11Buffer>;
-    using texture = ComPtr<ID3D11Texture2D>;
-    using resource = ComPtr<ID3D11Resource>;
+    using buffer = Microsoft::WRL::ComPtr<ID3D11Buffer>;
+    using texture = Microsoft::WRL::ComPtr<ID3D11Texture2D>;
+    using resource = Microsoft::WRL::ComPtr<ID3D11Resource>;
 
     // State
-    using raster_state = ComPtr<ID3D11RasterizerState>;
-    using depth_state = ComPtr<ID3D11DepthStencilState>;
-    using sampler_state = ComPtr<ID3D11SamplerState>;
-    using blend_state = ComPtr<ID3D11BlendState>;
+    using raster_state = Microsoft::WRL::ComPtr<ID3D11RasterizerState>;
+    using depth_state = Microsoft::WRL::ComPtr<ID3D11DepthStencilState>;
+    using sampler_state = Microsoft::WRL::ComPtr<ID3D11SamplerState>;
+    using blend_state = Microsoft::WRL::ComPtr<ID3D11BlendState>;
 
     // View
-    using target_view = ComPtr<ID3D11RenderTargetView>;
-    using depth_view = ComPtr<ID3D11DepthStencilView>;
-    using shader_view = ComPtr<ID3D11ShaderResourceView>;
-    using access_view = ComPtr<ID3D11UnorderedAccessView>;
+    using target_view = Microsoft::WRL::ComPtr<ID3D11RenderTargetView>;
+    using depth_view = Microsoft::WRL::ComPtr<ID3D11DepthStencilView>;
+    using shader_view = Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>;
+    using access_view = Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView>;
 
     // Shader data
-    using data_blob = ComPtr<ID3DBlob>;
-    using layout = ComPtr<ID3D11InputLayout>;
+    using data_blob = Microsoft::WRL::ComPtr<ID3DBlob>;
+    using layout = Microsoft::WRL::ComPtr<ID3D11InputLayout>;
 
     // Shaders
-    using vertex_shader = ComPtr<ID3D11VertexShader>;
-    using pixel_shader = ComPtr<ID3D11PixelShader>;
-    using geometry_shader = ComPtr<ID3D11GeometryShader>;
-    using hull_shader = ComPtr<ID3D11HullShader>;
-    using domain_shader = ComPtr<ID3D11DomainShader>;
-    using compute_shader = ComPtr<ID3D11ComputeShader>;
+    using vertex_shader = Microsoft::WRL::ComPtr<ID3D11VertexShader>;
+    using pixel_shader = Microsoft::WRL::ComPtr<ID3D11PixelShader>;
+    using geometry_shader = Microsoft::WRL::ComPtr<ID3D11GeometryShader>;
+    using hull_shader = Microsoft::WRL::ComPtr<ID3D11HullShader>;
+    using domain_shader = Microsoft::WRL::ComPtr<ID3D11DomainShader>;
+    using compute_shader = Microsoft::WRL::ComPtr<ID3D11ComputeShader>;
 
     /* Descriptors */
     // Data

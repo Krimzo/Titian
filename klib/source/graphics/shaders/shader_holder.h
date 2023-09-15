@@ -25,7 +25,11 @@ namespace kl {
 
         // CBuffer
         template<typename T>
-        void update_cbuffer(const T& object) { update_cbuffer(&object, sizeof(T)); }
+        void update_cbuffer(const T& object)
+        {
+            update_cbuffer(&object, sizeof(T));
+        }
+
         void update_cbuffer(const void* data, UINT byte_size);
     };
 }

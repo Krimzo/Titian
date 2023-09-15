@@ -40,7 +40,6 @@ namespace kl {
 
         float2 operator*(const float2& vec) const;
 
-        // Other
         float determinant() const;
     };
 }

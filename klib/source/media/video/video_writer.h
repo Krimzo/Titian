@@ -16,14 +16,14 @@ namespace kl {
         const uint64_t frame_duration_;
         const GUID     input_format_ = MFVideoFormat_RGB32;
 
-        ComPtr<IMFSinkWriter> sink_writer_ = nullptr;
+        Microsoft::WRL::ComPtr<IMFSinkWriter> sink_writer_ = nullptr;
         DWORD stream_index_ = 0;
 
         const int frame_byte_width_;
         const int frame_byte_size_;
 
-        ComPtr<IMFMediaBuffer> media_buffer_ = nullptr;
-        ComPtr<IMFSample> media_sample_ = nullptr;
+        Microsoft::WRL::ComPtr<IMFMediaBuffer> media_buffer_ = nullptr;
+        Microsoft::WRL::ComPtr<IMFSample> media_sample_ = nullptr;
 
         int frame_counter_ = 0;
 

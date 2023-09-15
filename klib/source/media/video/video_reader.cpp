@@ -4,22 +4,22 @@ using namespace kl::media_utility;
 
 
 // Utility
-static void configure_reader(ComPtr<IMFSourceReader> reader)
+static void configure_reader(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
 {
-    ComPtr<IMFMediaType> media_type = nullptr;
+    Microsoft::WRL::ComPtr<IMFMediaType> media_type = nullptr;
     fail_check_(reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &media_type), "Failed to get default video type");
 
     GUID major_type = {};
     fail_check_(media_type->GetGUID(MF_MT_MAJOR_TYPE, &major_type), "Failed to get major video type");
 
-    ComPtr<IMFMediaType> new_type = nullptr;
+    Microsoft::WRL::ComPtr<IMFMediaType> new_type = nullptr;
     fail_check_(MFCreateMediaType(&new_type), "Failed to create new video type");
     fail_check_(new_type->SetGUID(MF_MT_MAJOR_TYPE, major_type), "Failed to set major video type");
     fail_check_(new_type->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32), "Failed to set sub video type");
     fail_check_(reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, new_type.Get()), "Failed to set video type");
 }
 
-static uint64_t video_byte_size(ComPtr<IMFSourceReader> reader)
+static uint64_t video_byte_size(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
 {
     PROPVARIANT variant = {};
     if (!succeeded_(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &variant))) {
@@ -32,7 +32,7 @@ static uint64_t video_byte_size(ComPtr<IMFSourceReader> reader)
     return byte_size;
 }
 
-static int64_t video_duration_100ns(ComPtr<IMFSourceReader> reader)
+static int64_t video_duration_100ns(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
 {
     PROPVARIANT variant = {};
     if (!succeeded_(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &variant))) {
@@ -45,9 +45,9 @@ static int64_t video_duration_100ns(ComPtr<IMFSourceReader> reader)
     return duration;
 }
 
-static kl::int2 video_frame_size(ComPtr<IMFSourceReader> reader)
+static kl::int2 video_frame_size(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
 {
-    ComPtr<IMFMediaType> current_type = nullptr;
+    Microsoft::WRL::ComPtr<IMFMediaType> current_type = nullptr;
     reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, &current_type);
     if (!current_type) {
         return {};
@@ -58,9 +58,9 @@ static kl::int2 video_frame_size(ComPtr<IMFSourceReader> reader)
     return frame_size;
 }
 
-static float video_fps(ComPtr<IMFSourceReader> reader)
+static float video_fps(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
 {
-    ComPtr<IMFMediaType> current_type = nullptr;
+    Microsoft::WRL::ComPtr<IMFMediaType> current_type = nullptr;
     reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, &current_type);
     if (!current_type) {
         return 0.0f;
@@ -76,7 +76,7 @@ static float video_fps(ComPtr<IMFSourceReader> reader)
 kl::video_reader::video_reader(const std::string& filepath)
 {
     // Init
-    ComPtr<IMFAttributes> attributes = nullptr;
+    Microsoft::WRL::ComPtr<IMFAttributes> attributes = nullptr;
     fail_check_(MFCreateAttributes(&attributes, 1), "Failed to create attributes");
 
     fail_check_(attributes->SetUINT32(MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, true), "Failed to enable video processing");
@@ -132,14 +132,14 @@ bool kl::video_reader::next_frame(image& out) const
     // Read sample
     DWORD flags = NULL;
     LONGLONG time_stamp = 0;
-    ComPtr<IMFSample> sample = nullptr;
+    Microsoft::WRL::ComPtr<IMFSample> sample = nullptr;
 
     if (!succeeded_(reader_->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
         return false;
     }
 
     // Convert to array
-    ComPtr<IMFMediaBuffer> media_buffer = nullptr;
+    Microsoft::WRL::ComPtr<IMFMediaBuffer> media_buffer = nullptr;
     if (!succeeded_(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
         return false;
     }

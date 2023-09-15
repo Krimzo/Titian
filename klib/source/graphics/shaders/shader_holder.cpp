@@ -31,7 +31,7 @@ void kl::shader_holder<S>::update_cbuffer(const void* data, UINT byte_size)
 {
     // Fix size scaling
     const UINT size_mod = byte_size % 16;
-    if (size_mod) {
+    if (size_mod != 0) {
         byte_size += (16 - size_mod);
     }
 

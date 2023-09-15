@@ -38,6 +38,10 @@ namespace kl {
     float acos_deg(float value);
     float atan_deg(float value);
 
+    // Coords
+    float2 calc_ndc(const float2& position, const float2& size);
+    float2 calc_ndc_ar(const float2& position, const float2& size);
+
     // Lines
     float line_x(const float2& a, const float2& b, float y);
     float line_y(const float2& a, const float2& b, float x);
@@ -68,7 +72,7 @@ namespace kl {
     float2 abs(const float2& vec);
     float2 normalize(const float2& vec);
     float dot(const float2& first, const float2& second);
-    float angle(const float2& first, const float2& second, bool full);
+    float angle(float2 first, float2 second, bool full);
     float2 rotate(const float2& vec, float angle);
     float2 reflect(const float2& vec, const float2& point);
 

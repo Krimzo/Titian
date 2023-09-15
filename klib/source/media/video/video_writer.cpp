@@ -13,7 +13,7 @@ kl::video_writer::video_writer(const std::string& filepath, const kl::int2& fram
     fail_check_(MFCreateSinkWriterFromURL(converted_path.c_str(), nullptr, nullptr, &sink_writer_), "Failed to create SinkWriter");
 
     // Ouput media type
-    ComPtr<IMFMediaType> media_type_out = nullptr;
+    Microsoft::WRL::ComPtr<IMFMediaType> media_type_out = nullptr;
     fail_check_(MFCreateMediaType(&media_type_out), "Failed to create output media type");
 
     // Output media type info
@@ -27,7 +27,7 @@ kl::video_writer::video_writer(const std::string& filepath, const kl::int2& fram
     fail_check_(sink_writer_->AddStream(media_type_out.Get(), &stream_index_), "Failed to add output media type stream");
 
     // Input media type
-    ComPtr<IMFMediaType> media_type_in = nullptr;
+    Microsoft::WRL::ComPtr<IMFMediaType> media_type_in = nullptr;
     fail_check_(MFCreateMediaType(&media_type_in), "Failed to create input media type");
 
     // Input media type info

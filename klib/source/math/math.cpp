@@ -32,6 +32,23 @@ float kl::atan_deg(const float value)
     return atan(value) * to_degrees;
 }
 
+// Coords
+kl::float2 kl::calc_ndc(const float2& position, const float2& frame_size)
+{
+    const float2 result = {
+        position.x / frame_size.x,
+        (frame_size.y - position.y) / frame_size.y,
+    };
+    return result * 2.0f - float2(1.0f);
+}
+
+kl::float2 kl::calc_ndc_ar(const float2& position, const float2& size)
+{
+    float2 result = calc_ndc(position, size);
+    result.x *= (size.x / size.y);
+    return result;
+}
+
 // Lines
 float kl::line_x(const float2& a, const float2& b, const float y)
 {
@@ -155,14 +172,18 @@ float kl::dot(const float2& first, const float2& second)
     return (first.x * second.x + first.y * second.y);
 }
 
-float kl::angle(const float2& first, const float2& second, const bool full)
+float kl::angle(float2 first, float2 second, const bool full)
 {
+    first = normalize(first);
+    second = normalize(second);
+
     float result = 0.0f;
     if (full) {
         result = atan2(first.x * second.y - first.y * second.x, first.x * second.x + first.y * second.y);
+        result += pi;
     }
     else {
-        result = acos(dot(normalize(first), normalize(second)));
+        result = acos(dot(first, second));
     }
     return result * to_degrees;
 }

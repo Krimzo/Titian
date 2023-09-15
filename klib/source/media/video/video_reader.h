@@ -15,7 +15,7 @@ namespace kl {
         int frame_count_ = 0;
         float fps_ = 0.0f;
 
-        ComPtr<IMFSourceReader> reader_ = nullptr;
+        Microsoft::WRL::ComPtr<IMFSourceReader> reader_ = nullptr;
 
     public:
         video_reader(const std::string& filepath);

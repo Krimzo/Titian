@@ -83,16 +83,16 @@ void stop_scene(editor_state* state)
 
     // Load scene
     deserializer deserializer = { "temp.titian" };
-    std::pair load_info = deserializer.read_scene(state->gpu);
-    if (load_info.first == 0) {
-        state->change_scene(load_info.second);
+    const auto [first, second] = deserializer.read_scene(state->gpu);
+    if (first == 0) {
+        state->change_scene(second);
         state->logger_state->log(kl::format("Scene loaded. (", deserializer.path, ") [", serialization::VERSION_NAME, "]"));
     }
-    else if (load_info.first == 1) {
+    else if (first == 1) {
         state->logger_state->log(kl::format("Failed to load scene. File read error. (", deserializer.path, ")"));
     }
     else {
         state->logger_state->log(kl::format("Failed to load scene. Serial versions do not match. (", deserializer.path, ") [",
-            serialization::VERSION_NAME, " -> ", std::hex, "0x", load_info.first, "]"));
+            serialization::VERSION_NAME, " -> ", std::hex, "0x", first, "]"));
     }
 }
