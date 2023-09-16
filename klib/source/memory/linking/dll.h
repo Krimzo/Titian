@@ -19,7 +19,7 @@ namespace kl {
     public:
         dll();
         dll(const std::string& path);
-        ~dll();
+        virtual ~dll();
 
         dll(const dll&) = delete;
         dll(const dll&&) = delete;

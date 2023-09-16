@@ -28,7 +28,7 @@ namespace kl {
         // Creation
         gpu(bool debug = false, bool single_threaded = true);
         gpu(HWND window, bool debug = false, bool single_threaded = true);
-        ~gpu();
+        virtual ~gpu();
 
         gpu(const gpu&) = delete;
         gpu(const gpu&&) = delete;

@@ -12,7 +12,7 @@ struct editor_state
 {
     // System
     kl::timer timer = {};
-    kl::object<kl::window> window = new kl::window({ 1600, 900 }, "Titian");
+    kl::object<kl::window> window = new kl::window("Titian", { 1600, 900 });
     kl::object<kl::gpu> gpu = new kl::gpu((HWND) *window,
 #ifdef NDEBUG
         false

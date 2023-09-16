@@ -11,8 +11,8 @@ namespace kl {
         image buffer2_ = {};
 
     public:
-        explicit frame_buffer(const int2& size);
-        ~frame_buffer();
+        frame_buffer();
+        frame_buffer(const int2& size);
 
         frame_buffer(const frame_buffer&) = delete;
         frame_buffer(const frame_buffer&&) = delete;

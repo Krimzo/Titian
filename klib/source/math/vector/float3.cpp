@@ -30,9 +30,9 @@ kl::float3::operator float* () const
 kl::float3::operator kl::color() const
 {
     return {
-        (byte) min(max((int) (x * to_byte_color), 0), 255),
-        (byte) min(max((int) (y * to_byte_color), 0), 255),
-        (byte) min(max((int) (z * to_byte_color), 0), 255),
+        (byte) min(max(x * to_byte_color, 0.0f), 255.0f),
+        (byte) min(max(y * to_byte_color, 0.0f), 255.0f),
+        (byte) min(max(z * to_byte_color, 0.0f), 255.0f),
     };
 }
 

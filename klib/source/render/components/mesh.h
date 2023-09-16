@@ -28,7 +28,7 @@ namespace kl {
 
         mesh(kl::gpu* gpu, kl::scene* scene);
         mesh(kl::gpu* gpu, kl::scene* scene, const mesh_data& data);
-        ~mesh();
+        virtual ~mesh();
 
         void reload();
     };

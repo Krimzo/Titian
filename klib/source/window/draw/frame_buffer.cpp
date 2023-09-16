@@ -1,11 +1,11 @@
 #include "klib.h"
 
 
-kl::frame_buffer::frame_buffer(const int2& size)
-    : buffer1_(size), buffer2_(size)
+kl::frame_buffer::frame_buffer()
 {}
 
-kl::frame_buffer::~frame_buffer()
+kl::frame_buffer::frame_buffer(const int2& size)
+    : buffer1_(size), buffer2_(size)
 {}
 
 void kl::frame_buffer::resize(const int2& size)

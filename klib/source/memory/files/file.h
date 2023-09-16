@@ -13,6 +13,7 @@ namespace kl {
     bool append_file_string(const std::string& filepath, const std::string& data, int position = -1);
 
     std::vector<vertex> parse_obj_file(const std::string& filepath, bool flip_z = true);
+    std::optional<std::string> choose_file(bool save, const std::vector<std::string>& filters = { "All" });
 }
 
 // File
@@ -23,8 +24,8 @@ namespace kl {
 
     public:
         file();
-        file(const std::string& filepath, bool clear = true);
-        ~file();
+        file(const std::string& filepath, bool clear);
+        virtual ~file();
 
         file(const file&) = delete;
         file(const file&&) = delete;
@@ -34,7 +35,7 @@ namespace kl {
 
         operator bool() const;
 
-        bool open(const std::string& filepath, bool clear = true);
+        bool open(const std::string& filepath, bool clear);
         void close();
 
         bool seek(int position) const;

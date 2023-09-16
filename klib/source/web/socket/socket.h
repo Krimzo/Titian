@@ -16,7 +16,7 @@ namespace kl {
         socket();
         socket(int port);
         socket(const std::string& address, int port);
-        ~socket();
+        virtual ~socket();
 
         // Properties
         SOCKET id() const;

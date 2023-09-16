@@ -15,7 +15,7 @@ bool serializer::write_scene(const kl::object<kl::scene>& scene)
     // File check
     if (!m_file) return false;
 
-    // Serialsation version
+    // Serialization version
     m_file.write<uint32_t>(serialization::VERSION);
 
     // Mesh data

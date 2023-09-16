@@ -37,7 +37,7 @@ namespace kl {
 
         // Creation
         scene();
-        ~scene();
+        virtual ~scene();
 
         scene(const scene&) = delete;
         scene(const scene&&) = delete;

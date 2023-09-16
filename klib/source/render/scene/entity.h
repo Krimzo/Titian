@@ -25,7 +25,7 @@ namespace kl {
 
         // Creation
         entity(PxPhysics* physics, bool dynamic);
-        ~entity();
+        virtual ~entity();
 
         entity(const entity&) = delete;
         entity(const entity&&) = delete;

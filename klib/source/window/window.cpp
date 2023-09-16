@@ -2,7 +2,7 @@
 
 
 // Class
-kl::window::window(const int2& size, const std::string& name)
+kl::window::window(const std::string& name, const int2& size)
     : name_(name)
 {
     // Instance

@@ -137,6 +137,32 @@ std::vector<kl::vertex> kl::parse_obj_file(const std::string& filepath, const bo
     return vertex_data;
 }
 
+std::optional<std::string> kl::choose_file(const bool save, const std::vector<std::string>& filters)
+{
+    std::stringstream filter_buffer = {};
+    for (const auto& filter : filters) {
+        filter_buffer << filter << '\0';
+    }
+    const std::string filter_data = filter_buffer.str();
+
+    char file_buffer[250] = {};
+    OPENFILENAMEA dialog_info = {};
+    dialog_info.lStructSize = sizeof(dialog_info);
+    dialog_info.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+    dialog_info.lpstrFile = file_buffer;
+    dialog_info.nMaxFile = sizeof(file_buffer);
+    dialog_info.lpstrFilter = filter_data.c_str();
+    dialog_info.nFilterIndex = 1;
+
+    if (!save && GetOpenFileNameA(&dialog_info)) {
+        return { { file_buffer } };
+    }
+    if (save && GetSaveFileNameA(&dialog_info)) {
+        return { { file_buffer } };
+    }
+    return {};
+}
+
 // File
 kl::file::file()
 {}

@@ -13,7 +13,7 @@ namespace kl {
 
     public:
         collider(PxPhysics* physics, const PxGeometry& geometry);
-        ~collider();
+        virtual ~collider();
 
         collider(const collider&) = delete;
         collider(const collider&&) = delete;

@@ -42,8 +42,8 @@ namespace kl {
         mouse mouse = {};
 
         // Creation
-        window(const int2& size, const std::string& name);
-        ~window();
+        window(const std::string& name, const int2& size);
+        virtual ~window();
 
         window(const window&) = delete;
         window(const window&&) = delete;
