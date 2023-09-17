@@ -4,27 +4,26 @@
 
 
 namespace kl {
-    class frame_buffer
+    class FrameBuffer
     {
-        bool first_is_front = true;
-        image buffer1_ = {};
-        image buffer2_ = {};
+        bool m_first_is_front = true;
+        Image m_buffers[2] = {};
 
     public:
-        frame_buffer();
-        frame_buffer(const int2& size);
+        FrameBuffer();
+        FrameBuffer(const Int2& size);
 
-        frame_buffer(const frame_buffer&) = delete;
-        frame_buffer(const frame_buffer&&) = delete;
+        FrameBuffer(const FrameBuffer&) = delete;
+        FrameBuffer(const FrameBuffer&&) = delete;
 
-        void operator=(const frame_buffer&) = delete;
-        void operator=(const frame_buffer&&) = delete;
+        void operator=(const FrameBuffer&) = delete;
+        void operator=(const FrameBuffer&&) = delete;
 
-        void resize(const int2& size);
-        int2 size() const;
+        void resize(const Int2& size);
+        Int2 size() const;
 
-        image* back_buffer();
-        const image& front_buffer() const;
+        Image* back_buffer();
+        const Image* front_buffer() const;
 
         void swap();
     };

@@ -4,8 +4,9 @@
 
 
 namespace kl {
-    struct date
+    class Date
     {
+    public:
         int year = 0;
         int month = 0;
         int day = 0;
@@ -13,10 +14,10 @@ namespace kl {
         int minute = 0;
         int second = 0;
 
-        date();
+        Date();
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const date& obj);
+    std::ostream& operator<<(std::ostream& stream, const Date& obj);
 }

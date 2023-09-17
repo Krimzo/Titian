@@ -3,9 +3,9 @@
 
 // Init
 namespace kl_ignored {
-    static const int dont_care = []()
+    static const int DONT_CARE = []()
     {
-        const DWORD init_args = (COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY);
+        constexpr DWORD init_args = (COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY);
         kl::media_utility::fail_check_(CoInitializeEx(nullptr, init_args), "Failed to initialize media utility [CoInitializeEx]");
         kl::media_utility::fail_check_(MFStartup(MF_VERSION), "Failed to initialize media utility [MFStartup]");
         return 0;
@@ -13,12 +13,12 @@ namespace kl_ignored {
 }
 
 // Utility
-void kl::media_utility::fail_check_(HRESULT hr, const std::string& error_message)
+void kl::media_utility::fail_check_(const HRESULT hr, const std::string& error_message)
 {
     kl::error_check(FAILED(hr), error_message);
 }
 
-bool kl::media_utility::succeeded_(HRESULT hr)
+bool kl::media_utility::succeeded_(const HRESULT hr)
 {
     return SUCCEEDED(hr);
 }

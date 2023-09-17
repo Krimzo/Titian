@@ -4,7 +4,7 @@
 
 
 namespace kl {
-    class audio
+    class Audio
     {
     public:
 

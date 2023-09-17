@@ -4,21 +4,22 @@
 
 
 namespace kl {
-    struct vertex
+    class Vertex
     {
-        float3 world = {};
-        float2 texture = {};
-        float3 normal = {};
+    public:
+        Float3 world = {};
+        Float2 texture = {};
+        Float3 normal = {};
 
         // Construct
-        vertex();
-        vertex(const float3& world);
-        vertex(const float3& world, const float2& texture);
-        vertex(const float3& world, const float3& normal);
-        vertex(const float3& world, const float2& texture, const float3& normal);
+        Vertex();
+        Vertex(const Float3& world);
+        Vertex(const Float3& world, const Float2& texture);
+        Vertex(const Float3& world, const Float3& normal);
+        Vertex(const Float3& world, const Float2& texture, const Float3& normal);
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const vertex& obj);
+    std::ostream& operator<<(std::ostream& stream, const Vertex& obj);
 }

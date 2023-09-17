@@ -2,40 +2,40 @@
 
 
 // Window private
-void kl::key::update(const bool new_state)
+void kl::Key::update(const bool new_state)
 {
-    if (!state_ && new_state) {
+    if (!m_state && new_state) {
         call_on_press();
     }
-    else if (state_ && !new_state) {
+    else if (m_state && !new_state) {
         call_on_release();
     }
-    state_ = new_state;
+    m_state = new_state;
 }
 
-void kl::key::process() const
+void kl::Key::process() const
 {
-    if (state_) {
+    if (m_state) {
         call_on_down();
     }
 }
 
 // Callers
-void kl::key::call_on_press() const
+void kl::Key::call_on_press() const
 {
     for (auto& callback : on_press) {
         callback();
     }
 }
 
-void kl::key::call_on_down() const
+void kl::Key::call_on_down() const
 {
     for (auto& callback : on_down) {
         callback();
     }
 }
 
-void kl::key::call_on_release() const
+void kl::Key::call_on_release() const
 {
     for (auto& callback : on_release) {
         callback();
@@ -43,7 +43,7 @@ void kl::key::call_on_release() const
 }
 
 // User access
-kl::key::operator bool() const
+kl::Key::operator bool() const
 {
-    return state_;
+    return m_state;
 }

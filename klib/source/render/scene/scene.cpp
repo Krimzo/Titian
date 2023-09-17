@@ -4,91 +4,91 @@
 #ifdef KL_USING_PHYSX
 
 // Static
-PxDefaultAllocator kl::scene::allocator_ = {};
-PxDefaultErrorCallback kl::scene::error_callback_ = {};
-PxFoundation* kl::scene::foundation_ = PxCreateFoundation(PX_PHYSICS_VERSION, allocator_, error_callback_);
+physx::PxDefaultAllocator kl::Scene::m_allocator = {};
+physx::PxDefaultErrorCallback kl::Scene::m_error_callback = {};
+physx::PxFoundation* kl::Scene::m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_allocator, m_error_callback);
 
 // Creation
-kl::scene::scene()
+kl::Scene::Scene()
 {
-    physics_ = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation_, PxTolerancesScale());
-    error_check(!physics_, "Failed to create physics");
+    m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
+    error_check(!m_dispatcher, "Failed to create physics dispatcher_");
+    
+    m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, physx::PxTolerancesScale());
+    error_check(!m_physics, "Failed to create physics");
 
-    cooking_ = PxCreateCooking(PX_PHYSICS_VERSION, *foundation_, PxCookingParams(physics_->getTolerancesScale()));
-    error_check(!cooking_, "Failed to create physics cooking");
+    m_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_foundation, physx::PxCookingParams(m_physics->getTolerancesScale()));
+    error_check(!m_cooking, "Failed to create physics cooking");
 
-    dispatcher_ = PxDefaultCpuDispatcherCreate(2);
-    error_check(!dispatcher_, "Failed to create physics dispatcher_");
-
-    PxSceneDesc scene_descriptor = { physics_->getTolerancesScale() };
+    physx::PxSceneDesc scene_descriptor = { m_physics->getTolerancesScale() };
     scene_descriptor.gravity.y = -9.81f;
-    scene_descriptor.cpuDispatcher = dispatcher_;
-    scene_descriptor.filterShader = PxDefaultSimulationFilterShader;
+    scene_descriptor.cpuDispatcher = m_dispatcher;
+    scene_descriptor.filterShader = physx::PxDefaultSimulationFilterShader;
 
-    scene_ = physics_->createScene(scene_descriptor);
-    error_check(!scene_, "Failed to create physics scene");
+    m_scene = m_physics->createScene(scene_descriptor);
+    error_check(!m_scene, "Failed to create physics scene");
 }
 
-kl::scene::~scene()
+kl::Scene::~Scene()
 {
     materials.clear();
     textures.clear();
     meshes.clear();
 
     selected_entity = nullptr;
-    while (!entities_.empty()) {
-        this->remove(entities_.begin()->first);
+    while (!m_entities.empty()) {
+        this->remove(m_entities.begin()->first);
     }
 
-    scene_->release();
-    dispatcher_->release();
-    cooking_->release();
-    physics_->release();
+    m_scene->release();
+    m_dispatcher->release();
+    m_cooking->release();
+    m_physics->release();
 }
 
 // Iterate
-std::map<std::string, kl::object<kl::entity>>::iterator kl::scene::begin()
+std::map<std::string, kl::Object<kl::Entity>>::iterator kl::Scene::begin()
 {
-    return entities_.begin();
+    return m_entities.begin();
 }
 
-std::map<std::string, kl::object<kl::entity>>::iterator kl::scene::end()
+std::map<std::string, kl::Object<kl::Entity>>::iterator kl::Scene::end()
 {
-    return entities_.end();
+    return m_entities.end();
 }
 
-std::map<std::string, kl::object<kl::entity>>::const_iterator kl::scene::begin() const
+std::map<std::string, kl::Object<kl::Entity>>::const_iterator kl::Scene::begin() const
 {
-    return entities_.begin();
+    return m_entities.begin();
 }
 
-std::map<std::string, kl::object<kl::entity>>::const_iterator kl::scene::end() const
+std::map<std::string, kl::Object<kl::Entity>>::const_iterator kl::Scene::end() const
 {
-    return entities_.end();
+    return m_entities.end();
 }
 
 // Get
-PxPhysics* kl::scene::physics() const
+physx::PxPhysics* kl::Scene::physics() const
 {
-    return physics_;
+    return m_physics;
 }
 
-PxCooking* kl::scene::cooking() const
+physx::PxCooking* kl::Scene::cooking() const
 {
-    return cooking_;
+    return m_cooking;
 }
 
-kl::object<kl::entity> kl::scene::find_entity(const std::string& name) const
+kl::Object<kl::Entity> kl::Scene::find_entity(const std::string& name) const
 {
-    if (entities_.contains(name)) {
-        return entities_.at(name);
+    if (m_entities.contains(name)) {
+        return m_entities.at(name);
     }
     return nullptr;
 }
 
-std::string kl::scene::find_name(object<kl::entity> entity) const
+std::string kl::Scene::find_name(const Object<kl::Entity>& entity) const
 {
-    for (auto& [name, ent] : entities_) {
+    for (auto& [name, ent] : m_entities) {
         if (ent == entity) {
             return name;
         }
@@ -96,39 +96,39 @@ std::string kl::scene::find_name(object<kl::entity> entity) const
     return "";
 }
 
-size_t kl::scene::entity_count() const
+size_t kl::Scene::entity_count() const
 {
-    return entities_.size();
+    return m_entities.size();
 }
 
 // Set/Get
-void kl::scene::set_gravity(const float3& gravity)
+void kl::Scene::set_gravity(const Float3& gravity)
 {
-    scene_->setGravity((const PxVec3&) gravity);
+    m_scene->setGravity((const physx::PxVec3&) gravity);
 }
 
-kl::float3 kl::scene::gravity() const
+kl::Float3 kl::Scene::gravity() const
 {
-    const PxVec3 gravity = scene_->getGravity();
-    return (const float3&) gravity;
+    const physx::PxVec3 gravity = m_scene->getGravity();
+    return (const Float3&) gravity;
 }
 
-void kl::scene::add(const std::string& name, object<kl::entity> entity)
+void kl::Scene::add(const std::string& name, const Object<kl::Entity>& entity)
 {
-    entities_[name] = entity;
-    scene_->addActor(*entity->actor());
+    m_entities[name] = entity;
+    m_scene->addActor(*entity->actor());
 }
 
-void kl::scene::remove(const std::string& name)
+void kl::Scene::remove(const std::string& name)
 {
-    if (entities_.contains(name)) {
-        scene_->removeActor(*entities_.at(name)->actor());
-        entities_.erase(name);
+    if (m_entities.contains(name)) {
+        m_scene->removeActor(*m_entities.at(name)->actor());
+        m_entities.erase(name);
     }
 }
 
 // Scene properties
-kl::object<kl::entity> kl::scene::update_selected_entity(const uint32_t index)
+kl::Object<kl::Entity> kl::Scene::update_selected_entity(const uint32_t index)
 {
     if (index != 0) {
         for (auto& [name, entity] : *this) {
@@ -140,69 +140,69 @@ kl::object<kl::entity> kl::scene::update_selected_entity(const uint32_t index)
     return selected_entity = nullptr;
 }
 
-void kl::scene::update_physics(const float delta_t)
+void kl::Scene::update_physics(const float delta_t)
 {
-    scene_->simulate(delta_t);
-    scene_->fetchResults(true);
+    m_scene->simulate(delta_t);
+    m_scene->fetchResults(true);
 }
 
 // Entity
-kl::object<kl::entity> kl::scene::make_entity(const bool dynamic)
+kl::Object<kl::Entity> kl::Scene::make_entity(const bool dynamic) const
 {
-    return new kl::entity(physics_, dynamic);
+    return new kl::Entity(m_physics, dynamic);
 }
 
 // Dynamic colliders
-kl::object<kl::collider> kl::scene::make_box_collider(const float3& scale)
+kl::Object<kl::Collider> kl::Scene::make_box_collider(const Float3& scale) const
 {
-    return new collider(physics_, PxBoxGeometry((PxVec3&) scale));
+    return new Collider(m_physics, physx::PxBoxGeometry((physx::PxVec3&) scale));
 }
 
-kl::object<kl::collider> kl::scene::make_sphere_collider(float radius)
+kl::Object<kl::Collider> kl::Scene::make_sphere_collider(const float radius) const
 {
-    return new collider(physics_, PxSphereGeometry(radius));
+    return new Collider(m_physics, physx::PxSphereGeometry(radius));
 }
 
-kl::object<kl::collider> kl::scene::make_capsule_collider(float radius, float height)
+kl::Object<kl::Collider> kl::Scene::make_capsule_collider(const float radius, const float height) const
 {
-    return new collider(physics_, PxCapsuleGeometry(radius, height));
+    return new Collider(m_physics, physx::PxCapsuleGeometry(radius, height));
 }
 
 // Static colliders
-kl::object<kl::collider> kl::scene::make_plane_collider()
+kl::Object<kl::Collider> kl::Scene::make_plane_collider() const
 {
-    return new collider(physics_, PxPlaneGeometry());
+    return new Collider(m_physics, physx::PxPlaneGeometry());
 }
 
-kl::object<kl::collider> kl::scene::make_mesh_collider(const mesh& mesh, const float3& scale)
+kl::Object<kl::Collider> kl::Scene::make_mesh_collider(const Mesh& mesh, const Float3& scale) const
 {
-    return new collider(physics_, PxTriangleMeshGeometry(mesh.physics_buffer, (PxVec3&) scale));
+    return new Collider(m_physics, physx::PxTriangleMeshGeometry(mesh.physics_buffer, (physx::PxVec3&) scale));
 }
 
 // Default collider
-kl::object<kl::collider> kl::scene::make_default_collider(PxGeometryType::Enum type, const mesh* optional_mesh)
+kl::Object<kl::Collider> kl::Scene::make_default_collider(const physx::PxGeometryType::Enum type, const Mesh* optional_mesh) const
 {
     switch (type) {
-    case PxGeometryType::Enum::eBOX:
-        return make_box_collider(float3(1.0f));
-    case PxGeometryType::Enum::eSPHERE:
+    case physx::PxGeometryType::Enum::eBOX:
+        return make_box_collider(Float3 {1.0f});
+    case physx::PxGeometryType::Enum::eSPHERE:
         return make_sphere_collider(1.0f);
-    case PxGeometryType::Enum::eCAPSULE:
+    case physx::PxGeometryType::Enum::eCAPSULE:
         return make_capsule_collider(1.0f, 2.0f);
 
-    case PxGeometryType::Enum::ePLANE:
+    case physx::PxGeometryType::Enum::ePLANE:
         return make_plane_collider();
-    case PxGeometryType::Enum::eTRIANGLEMESH:
-        return make_mesh_collider(*optional_mesh, float3(1.0f));
+    case physx::PxGeometryType::Enum::eTRIANGLEMESH:
+        return make_mesh_collider(*optional_mesh, Float3 {1.0f});
     }
     return nullptr;
 }
 
 #else
 
-void kl::scene::update_physics(const float delta_t)
+void kl::Scene::update_physics(const float delta_t)
 {
-    for (kl::object<kl::entity> entity : *this) {
+    for (kl::Object<kl::Entity> entity : *this) {
         entity->velocity += gravity * delta_t;
         entity->velocity += entity->acceleration * delta_t;
         entity->position += entity->velocity * delta_t;

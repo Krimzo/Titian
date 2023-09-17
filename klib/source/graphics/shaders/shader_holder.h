@@ -4,20 +4,21 @@
 
 
 namespace kl {
-    class gpu;
+    class GPU;
 }
 
 namespace kl {
     template<typename S>
-    struct shader_holder
+    class ShaderHolder
     {
-        gpu* gpu = nullptr;
+    public:
+        GPU* gpu = nullptr;
         S shader = nullptr;
-        dx::buffer cbuffer = nullptr;
+        dx::Buffer cbuffer = nullptr;
 
         // Construct
-        shader_holder(kl::gpu* gpu);
-        shader_holder(kl::gpu* gpu, const S& shader);
+        ShaderHolder(kl::GPU* gpu);
+        ShaderHolder(kl::GPU* gpu, const S& shader);
 
         // Get
         operator S() const;

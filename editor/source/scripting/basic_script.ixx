@@ -2,19 +2,19 @@ export module basic_script;
 
 export import basic_state;
 
-export class basic_script
+export class BasicScript
 {
 public:
 	std::string path = {};
 
-	basic_script()
+	BasicScript()
 	{}
 
-	basic_script(const std::string& path)
+	BasicScript(const std::string& path)
 		: path(path)
 	{}
 
-	virtual ~basic_script()
+	virtual ~BasicScript()
 	{}
 
 	virtual bool is_valid() const = 0;

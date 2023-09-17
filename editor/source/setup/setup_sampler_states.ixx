@@ -2,9 +2,9 @@ export module setup_sampler_states;
 
 export import editor_setup;
 
-export void setup_sampler_states(editor_state* state)
+export void setup_sampler_states(EditorState* state)
 {
-    kl::dx::sampler_state_descriptor shadow_sampler_descriptor = {};
+    kl::dx::SamplerStateDescriptor shadow_sampler_descriptor = {};
     shadow_sampler_descriptor.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
     shadow_sampler_descriptor.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
     shadow_sampler_descriptor.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;

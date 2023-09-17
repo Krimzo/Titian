@@ -2,124 +2,129 @@
 
 
 // Construct
-kl::int2::int2()
+kl::Int2::Int2()
 {}
 
-kl::int2::int2(const int value)
+kl::Int2::Int2(const int value)
     : x(value), y(value)
 {}
 
-kl::int2::int2(const int x, const int y)
+kl::Int2::Int2(const int x, const int y)
     : x(x), y(y)
 {}
 
 // Get
-kl::int2::operator int* () const
+kl::Int2::operator int* ()
 {
-    return (int*) this;
+    return reinterpret_cast<int*>(this);
 }
 
-kl::int2::operator kl::float2() const
+kl::Int2::operator const int* () const
+{
+    return reinterpret_cast<const int*>(this);
+}
+
+kl::Int2::operator kl::Float2() const
 {
     return { (float) x, (float) y };
 }
 
-int& kl::int2::operator[](const int index)
+int& kl::Int2::operator[](const int index)
 {
     return ((int*) this)[index];
 }
 
-const int& kl::int2::operator[](const int index) const
+const int& kl::Int2::operator[](const int index) const
 {
-    return ((int*) this)[index];
+    return ((const int*) this)[index];
 }
 
 // Compare
-bool kl::int2::operator==(const int2& other) const
+bool kl::Int2::operator==(const Int2& other) const
 {
     return (x == other.x && y == other.y);
 }
 
-bool kl::int2::operator!=(const int2& other) const
+bool kl::Int2::operator!=(const Int2& other) const
 {
     return !(*this == other);
 }
 
 // Math
-kl::int2 kl::int2::operator+(const int2& other) const
+kl::Int2 kl::Int2::operator+(const Int2& other) const
 {
     return { x + other.x, y + other.y };
 }
 
-void kl::int2::operator+=(const int2& other)
+void kl::Int2::operator+=(const Int2& other)
 {
     x += other.x;
     y += other.y;
 }
 
-kl::int2 kl::int2::operator-(const int2& other) const
+kl::Int2 kl::Int2::operator-(const Int2& other) const
 {
     return { x - other.x, y - other.y };
 }
 
-void kl::int2::operator-=(const int2& other)
+void kl::Int2::operator-=(const Int2& other)
 {
     x -= other.x;
     y -= other.y;
 }
 
-kl::int2 kl::int2::operator*(const int value) const
+kl::Int2 kl::Int2::operator*(const int value) const
 {
     return { x * value, y * value };
 }
 
-void kl::int2::operator*=(const int value)
+void kl::Int2::operator*=(const int value)
 {
     x *= value;
     y *= value;
 }
 
-kl::int2 kl::int2::operator*(const int2& other) const
+kl::Int2 kl::Int2::operator*(const Int2& other) const
 {
     return { x * other.x, y * other.y };
 }
 
-void kl::int2::operator*=(const int2& other)
+void kl::Int2::operator*=(const Int2& other)
 {
     x *= other.x;
     y *= other.y;
 }
 
-kl::int2 kl::int2::operator/(int value) const
+kl::Int2 kl::Int2::operator/(int value) const
 {
     return { x / value, y / value };
 }
 
-void kl::int2::operator/=(int value)
+void kl::Int2::operator/=(int value)
 {
     x /= value;
     y /= value;
 }
 
-kl::int2 kl::int2::operator/(const int2& other) const
+kl::Int2 kl::Int2::operator/(const Int2& other) const
 {
     return { x / other.x, y / other.y };
 }
 
-void kl::int2::operator/=(const int2& other)
+void kl::Int2::operator/=(const Int2& other)
 {
     x /= other.x;
     y /= other.y;
 }
 
 // Other
-kl::int2 kl::int2::operator-() const
+kl::Int2 kl::Int2::operator-() const
 {
     return *this * -1;
 }
 
 // Format
-std::ostream& kl::operator<<(std::ostream& stream, const int2& vec)
+std::ostream& kl::operator<<(std::ostream& stream, const Int2& vec)
 {
     stream << "(" << vec.x << ", " << vec.y << ")";
     return stream;

@@ -2,21 +2,21 @@ export module gui_scene_info;
 
 export import gui_render;
 
-export void gui_scene_info(editor_state* state)
+export void gui_scene_info(EditorState* state)
 {
     if (ImGui::Begin("Scene Info")) {
         int entity_count = (int) state->scene->entity_count();
         ImGui::DragInt("Entity count", &entity_count);
 
-        kl::float3 gravity = state->scene->gravity();
+        kl::Float3 gravity = state->scene->gravity();
         if (ImGui::DragFloat3("Gravity", gravity)) {
             state->scene->set_gravity(gravity);
         }
 
-        if (kl::object<kl::camera>& camera = state->scene->camera) {
+        if (kl::Object<kl::Camera>& camera = state->scene->camera) {
             ImGui::DragFloat3("Camera origin", camera->origin);
 
-            const kl::float3 camera_direction = camera->forward();
+            kl::Float3 camera_direction = camera->forward();
             ImGui::DragFloat3("Camera direction", camera_direction);
             camera->set_forward(camera_direction);
 
@@ -42,7 +42,7 @@ export void gui_scene_info(editor_state* state)
 
             // Background
             if (!camera->skybox) {
-                kl::float4 background = camera->background;
+                kl::Float4 background = camera->background;
                 if (ImGui::ColorEdit4("Background", background)) {
                     camera->background = background;
                 }

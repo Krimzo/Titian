@@ -2,7 +2,7 @@ export module gui_render_info;
 
 export import gui_render;
 
-export void gui_render_info(editor_state* state)
+export void gui_render_info(EditorState* state)
 {
     if (ImGui::Begin("Render Info")) {
         static int updates_per_second = 6;

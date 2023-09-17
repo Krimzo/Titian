@@ -11,3 +11,12 @@
 // External
 #include "apis/external/kl_physx.h"
 #include "apis/external/kl_imgui.h"
+
+namespace kl {
+    inline constexpr bool IS_DEBUG =
+#ifdef _DEBUG
+        true;
+#else
+        false;
+#endif
+}

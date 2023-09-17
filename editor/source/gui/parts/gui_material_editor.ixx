@@ -2,15 +2,15 @@ export module gui_material_editor;
 
 export import gui_render;
 
-void display_materials(editor_state* state);
-void display_textures(editor_state* state);
-void update_material_camera(editor_state* state);
-void render_selected_material(editor_state* state, const kl::object<kl::material>& material, const kl::int2& viewport_size);
-void render_selected_texture(editor_state* state, const kl::object<kl::texture>& texture, const kl::int2& viewport_size);
-void show_material_info(editor_state* state, kl::object<kl::material>& material);
-void show_texture_info(editor_state* state, kl::object<kl::texture>& texture);
+void display_materials(EditorState* state);
+void display_textures(EditorState* state);
+void update_material_camera(EditorState* state);
+void render_selected_material(EditorState* state, const kl::Object<kl::Material>& material, const kl::Int2& viewport_size);
+void render_selected_texture(EditorState* state, const kl::Object<kl::Texture>& texture, const kl::Int2& viewport_size);
+void show_material_info(EditorState* state, kl::Object<kl::Material>& material);
+void show_texture_info(EditorState* state, kl::Object<kl::Texture>& texture);
 
-export void gui_material_editor(editor_state* state)
+export void gui_material_editor(EditorState* state)
 {
     if (ImGui::Begin("Material Editor")) {
         const float available_width = ImGui::GetContentRegionAvail().x;
@@ -29,13 +29,13 @@ export void gui_material_editor(editor_state* state)
         }
         ImGui::EndChild();
 
-        std::optional texture_file_path = GUI::drag_drop::read_data<std::string>("TextureFile");
+        const std::optional texture_file_path = gui::drag_drop::read_data<std::string>("TextureFile");
         if (texture_file_path) {
             const std::filesystem::path path = texture_file_path.value();
             const std::string texture_name = path.filename().string();
             if (!state->scene->textures.contains(texture_name)) {
-                kl::texture_data texture_data = kl::texture_data(path.string());
-                kl::object new_texture = new kl::texture(&state->gpu, texture_data);
+                const kl::TextureData texture_data {path.string()};
+                kl::Object new_texture = new kl::Texture(&state->gpu, texture_data);
                 state->scene->textures[texture_name] = new_texture;
                 if (new_texture) {
                     new_texture->create_shader_view();
@@ -44,8 +44,8 @@ export void gui_material_editor(editor_state* state)
         }
         ImGui::NextColumn();
 
-        kl::object<kl::material>& selected_material = state->gui_state->material_editor.selected_material;
-        kl::object<kl::texture>& selected_texture = state->gui_state->material_editor.selected_texture;
+        kl::Object<kl::Material>& selected_material = state->gui_state->material_editor.selected_material;
+        kl::Object<kl::Texture>& selected_texture = state->gui_state->material_editor.selected_texture;
         
         ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 2.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
@@ -54,11 +54,11 @@ export void gui_material_editor(editor_state* state)
 
         const bool should_rotate_cam = was_focused && !selected_texture;
         if (ImGui::BeginChild("Material/Texture View", {}, should_rotate_cam)) {
-            const kl::int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
+            const kl::Int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
             if (should_rotate_cam) update_material_camera(state);
             if (selected_material) {
                 render_selected_material(state, selected_material, viewport_size);
-                kl::dx::shader_view& shader_view = state->gui_state->material_editor.render_texture->shader_view;
+                const kl::dx::ShaderView& shader_view = state->gui_state->material_editor.render_texture->shader_view;
                 if (shader_view) ImGui::Image(shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
             else if (selected_texture) {
@@ -81,9 +81,9 @@ export void gui_material_editor(editor_state* state)
     ImGui::End();
 }
 
-void display_materials(editor_state* state)
+void display_materials(EditorState* state)
 {
-    kl::object<kl::material>& selected_material = state->gui_state->material_editor.selected_material;
+    kl::Object<kl::Material>& selected_material = state->gui_state->material_editor.selected_material;
 
     if (ImGui::BeginPopupContextWindow("CreateMaterial", ImGuiPopupFlags_MouseButtonRight)) {
         ImGui::Text("Create Material");
@@ -91,7 +91,7 @@ void display_materials(editor_state* state)
         char name_input[31] = {};
         if (ImGui::InputText("##CreateMaterialInput", name_input, std::size(name_input) - 1, ImGuiInputTextFlags_EnterReturnsTrue)) {
             if (!state->scene->materials.contains(name_input)) {
-                kl::object material = new kl::material();
+                const kl::Object material = new kl::Material();
                 state->scene->materials[name_input] = material;
                 ImGui::CloseCurrentPopup();
             }
@@ -142,9 +142,9 @@ void display_materials(editor_state* state)
     }
 }
 
-void display_textures(editor_state* state)
+void display_textures(EditorState* state)
 {
-    kl::object<kl::texture>& selected_texture = state->gui_state->material_editor.selected_texture;
+    kl::Object<kl::Texture>& selected_texture = state->gui_state->material_editor.selected_texture;
 
     for (const auto& [texture_name, texture] : state->scene->textures) {
         if (ImGui::Selectable(texture_name.c_str(), texture == selected_texture)) {
@@ -194,16 +194,16 @@ void display_textures(editor_state* state)
     }
 }
 
-void update_material_camera(editor_state* state)
+void update_material_camera(EditorState* state)
 {
-    static kl::float2 initial_camera_info = { 40, 30 };
-    static kl::float2 camera_info = initial_camera_info;
+    static kl::Float2 initial_camera_info = { 40, 30 };
+    static kl::Float2 camera_info = initial_camera_info;
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
         initial_camera_info = camera_info;
     }
 
-    kl::camera& camera = state->gui_state->material_editor.camera;
+    kl::Camera& camera = state->gui_state->material_editor.camera;
 
     if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
@@ -211,9 +211,9 @@ void update_material_camera(editor_state* state)
         camera_info.y = initial_camera_info.y + drag_delta.y * camera.sensitivity;
         camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
 
-        camera.origin.x = sin(camera_info.x * kl::to_radians);
-        camera.origin.z = cos(camera_info.x * kl::to_radians);
-        camera.origin.y = tan(camera_info.y * kl::to_radians);
+        camera.origin.x = sin(camera_info.x * kl::TO_RADIANS);
+        camera.origin.z = cos(camera_info.x * kl::TO_RADIANS);
+        camera.origin.y = tan(camera_info.y * kl::TO_RADIANS);
     }
 
     static int last_scroll = 0;
@@ -227,23 +227,23 @@ void update_material_camera(editor_state* state)
     camera.set_forward(-camera.origin);
 }
 
-void render_selected_material(editor_state* state, const kl::object<kl::material>& material, const kl::int2& viewport_size)
+void render_selected_material(EditorState* state, const kl::Object<kl::Material>& material, const kl::Int2& viewport_size)
 {
     if (!state->gui_state->material_editor.render_texture) {
-        state->gui_state->material_editor.render_texture = new kl::texture(&state->gpu);
+        state->gui_state->material_editor.render_texture = new kl::Texture(&state->gpu);
     }
 
-    kl::dx::texture& render_texture = state->gui_state->material_editor.render_texture->graphics_buffer;
-    kl::dx::target_view& target_view = state->gui_state->material_editor.render_texture->target_view;
-    kl::dx::shader_view& shader_view = state->gui_state->material_editor.render_texture->shader_view;
+    kl::dx::Texture& render_texture = state->gui_state->material_editor.render_texture->graphics_buffer;
+    kl::dx::TargetView& target_view = state->gui_state->material_editor.render_texture->target_view;
+    kl::dx::ShaderView& shader_view = state->gui_state->material_editor.render_texture->shader_view;
 
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
         return;
     }
 
-    kl::int2 texture_size = {};
+    kl::Int2 texture_size = {};
     if (render_texture) {
-        kl::dx::texture_descriptor descriptor = {};
+        kl::dx::TextureDescriptor descriptor = {};
         render_texture->GetDesc(&descriptor);
         texture_size.x = (int) descriptor.Width;
         texture_size.y = (int) descriptor.Height;
@@ -259,47 +259,49 @@ void render_selected_material(editor_state* state, const kl::object<kl::material
     }
 
     state->gpu->bind_target_depth_views({ target_view }, state->gpu->internal_depth());
-    state->gpu->clear_target_view(target_view, kl::color { 30, 30, 30 });
+    state->gpu->clear_target_view(target_view, kl::Color { 30, 30, 30 });
     state->gpu->clear_internal_depth();
     state->gpu->set_viewport_size(viewport_size);
 
     state->gpu->bind_raster_state(state->raster_states.solid);
     state->gpu->bind_depth_state(state->depth_states.enabled);
 
-    kl::render_shaders& shaders = state->gui_state->material_editor.shaders;
+    kl::RenderShaders& shaders = state->gui_state->material_editor.shaders;
     if (!shaders) {
         shaders = state->render_shaders.object_material;
     }
     state->gpu->bind_render_shaders(shaders);
 
-    kl::camera& camera = state->gui_state->material_editor.camera;
+    kl::Camera& camera = state->gui_state->material_editor.camera;
     camera.update_aspect_ratio(viewport_size);
 
-    struct VS_DATA
+    class VsData
     {
-        kl::float4x4  w_matrix;
-        kl::float4x4 vp_matrix;
+    public:
+        kl::Float4x4  w_matrix;
+        kl::Float4x4 vp_matrix;
     } vs_data = {};
 
     vs_data.w_matrix = {};
     vs_data.vp_matrix = camera.matrix();
     shaders.vertex_shader.update_cbuffer(vs_data);
 
-    struct PS_DATA
+    class PsData
     {
-        kl::float4 object_color; // (color.r, color.g, color.b, none)
+    public:
+        kl::Float4 object_color; // (color.r, color.g, color.b, none)
 
-        kl::float4     object_material; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
-        kl::float4 object_texture_info; // (has_normal_map, has_roughness_map, none, none)
+        kl::Float4     object_material; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
+        kl::Float4 object_texture_info; // (has_normal_map, has_roughness_map, none, none)
 
-        kl::float4 camera_info; // (camera.x, camera.y, camera.z, skybox?)
-        kl::float4 camera_background; // (color.r, color.g, color.b, color.a)
+        kl::Float4 camera_info; // (camera.x, camera.y, camera.z, skybox?)
+        kl::Float4 camera_background; // (color.r, color.g, color.b, color.a)
 
-        kl::float4     ambient_light; // (color.r, color.g, color.b, intensity)
-        kl::float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
+        kl::Float4     ambient_light; // (color.r, color.g, color.b, intensity)
+        kl::Float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
     } ps_data = {};
 
-    if (kl::object<kl::texture>& skybox = state->scene->camera->skybox) {
+    if (kl::Object<kl::Texture>& skybox = state->scene->camera->skybox) {
         state->gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
     }
     else {
@@ -324,8 +326,8 @@ void render_selected_material(editor_state* state, const kl::object<kl::material
         ps_data.object_texture_info.y = 0.0f;
     }
 
-    ps_data.ambient_light = { kl::float3 {1.0f}, 0.1f };
-    ps_data.directional_light = { kl::normalize(kl::float3 { 0.0f, -1.0f, -1.0f }), 1.0f };
+    ps_data.ambient_light = { kl::Float3 {1.0f}, 0.1f };
+    ps_data.directional_light = { kl::normalize(kl::Float3 { 0.0f, -1.0f, -1.0f }), 1.0f };
 
     ps_data.object_color = material->color;
     ps_data.object_material = {
@@ -335,14 +337,14 @@ void render_selected_material(editor_state* state, const kl::object<kl::material
         material->refraction_index,
     };
     ps_data.camera_info = { camera.origin, (float) (bool) state->scene->camera->skybox };
-    ps_data.camera_background = (kl::float4) state->scene->camera->background;
+    ps_data.camera_background = state->scene->camera->background;
     shaders.pixel_shader.update_cbuffer(ps_data);
 
     state->gpu->draw(state->default_mesh.cube->graphics_buffer);
     state->gpu->bind_internal_views();
 }
 
-void render_selected_texture(editor_state* state, const kl::object<kl::texture>& texture, const kl::int2& viewport_size)
+void render_selected_texture(EditorState* state, const kl::Object<kl::Texture>& texture, const kl::Int2& viewport_size)
 {
     const float min_size = (float) std::min(viewport_size.x, viewport_size.y);
     ImGui::SetCursorPos(ImVec2 {
@@ -352,7 +354,7 @@ void render_selected_texture(editor_state* state, const kl::object<kl::texture>&
     ImGui::Image(texture->shader_view.Get(), { min_size, min_size }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 }
 
-void show_material_info(editor_state* state, kl::object<kl::material>& material)
+void show_material_info(EditorState* state, kl::Object<kl::Material>& material)
 {
     if (ImGui::Begin("Material Info")) {
         ImGui::DragFloat("Texture Blend", &material->texture_blend, 0.05f, 0.0f, 1.0f);
@@ -418,10 +420,10 @@ void show_material_info(editor_state* state, kl::object<kl::material>& material)
     ImGui::End();
 }
 
-void show_texture_info(editor_state* state, kl::object<kl::texture>& texture)
+void show_texture_info(EditorState* state, kl::Object<kl::Texture>& texture)
 {
     if (ImGui::Begin("Texture Info")) {
-        kl::int2 size = texture->data_buffer.size();
+        kl::Int2 size = texture->data_buffer.size();
         ImGui::DragInt2("Size", size, 0.0f);
 
         int pixel_count = size.x * size.y;

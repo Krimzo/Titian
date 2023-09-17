@@ -2,7 +2,7 @@ export module gui_explorer;
 
 export import gui_render;
 
-enum class file_type
+enum class FileType
 {
     OTHER = 0,
     CODE,
@@ -12,13 +12,13 @@ enum class file_type
     SCENE,
 };
 
-void handle_file_entry(editor_state* state, const std::filesystem::path& file);
-void handle_directory_entry(editor_state* state, const std::filesystem::path& directory, bool is_parent_dir);
-file_type classify_file(const std::filesystem::path& file);
-kl::dx::shader_view file_icon(editor_state* state, file_type type);
-void drag_file(const std::filesystem::path& file, file_type type, const kl::dx::shader_view& texture);
+void handle_file_entry(EditorState* state, const std::filesystem::path& file);
+void handle_directory_entry(EditorState* state, const std::filesystem::path& directory, bool is_parent_dir);
+FileType classify_file(const std::filesystem::path& file);
+kl::dx::ShaderView file_icon(EditorState* state, FileType type);
+void drag_file(const std::filesystem::path& file, FileType type, const kl::dx::ShaderView& texture);
 
-export void gui_explorer(editor_state* state)
+export void gui_explorer(EditorState* state)
 {
     std::list<std::filesystem::path> directories = {};
     std::list<std::filesystem::path> files = {};
@@ -70,13 +70,13 @@ export void gui_explorer(editor_state* state)
     ImGui::End();
 }
 
-void handle_file_entry(editor_state* state, const std::filesystem::path& file)
+void handle_file_entry(EditorState* state, const std::filesystem::path& file)
 {
     const std::string path = std::filesystem::absolute(file).string();
-    const file_type file_type = classify_file(file);
-    kl::dx::shader_view icon = file_icon(state, file_type);
+    const FileType file_type = classify_file(file);
+    const kl::dx::ShaderView icon = file_icon(state, file_type);
 
-    const float padding = 5.0f;
+    constexpr float padding = 5.0f;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
@@ -86,7 +86,7 @@ void handle_file_entry(editor_state* state, const std::filesystem::path& file)
     if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
         const ImVec2 cursor_pos = ImGui::GetCursorPos();
         if (ImGui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
-            ShellExecuteA(0, 0, path.c_str(), 0, 0, 5);
+            ShellExecuteA(nullptr, nullptr, path.c_str(), nullptr, nullptr, 5);
         }
         drag_file(path, file_type, icon);
 
@@ -98,10 +98,10 @@ void handle_file_entry(editor_state* state, const std::filesystem::path& file)
     ImGui::PopStyleVar(2);
 }
 
-void handle_directory_entry(editor_state* state, const std::filesystem::path& directory, const bool is_parent_dir)
+void handle_directory_entry(EditorState* state, const std::filesystem::path& directory, const bool is_parent_dir)
 {
     const std::string path = std::filesystem::absolute(directory).string();
-    kl::dx::shader_view icon = state->gui_state->textures.folder->shader_view;
+    kl::dx::ShaderView icon = state->gui_state->textures.folder->shader_view;
     std::error_code ignored_error = {};
     if (is_parent_dir) {
         icon = state->gui_state->textures.folder_parent->shader_view;
@@ -110,14 +110,14 @@ void handle_directory_entry(editor_state* state, const std::filesystem::path& di
         icon = state->gui_state->textures.folder_empty->shader_view;
     }
 
-    const float padding = 5.0f;
+    constexpr float padding = 5.0f;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2 { 0.0f, 0.0f });
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2 { padding, padding });
 
     const float icon_size = (float) state->gui_state->explorer_icon_size;
     const float text_height = ImGui::CalcTextSize(path.c_str()).y;
 
-    const float shadow_size = 2.0f;
+    constexpr float shadow_size = 2.0f;
     const ImVec2 child_size = { icon_size + padding * 2, icon_size + text_height + padding * 4.0f };
 
     if (ImGui::BeginChild(kl::format(path, "_elder").c_str(), { child_size.x + shadow_size, child_size.y + shadow_size })) {
@@ -137,62 +137,62 @@ void handle_directory_entry(editor_state* state, const std::filesystem::path& di
     ImGui::PopStyleVar(2);
 }
 
-file_type classify_file(const std::filesystem::path& file)
+FileType classify_file(const std::filesystem::path& file)
 {
     const std::string extension = file.extension().string();
     if (extension == ".h" || extension == ".cpp") {
-        return file_type::CODE;
+        return FileType::CODE;
     }
     if (extension == ".dll" || extension == ".class") {
-        return file_type::SCRIPT;
+        return FileType::SCRIPT;
     }
     if (extension == ".obj") {
-        return file_type::MESH;
+        return FileType::MESH;
     }
     if (extension == ".jpg" || extension == ".png") {
-        return file_type::TEXTURE;
+        return FileType::TEXTURE;
     }
     if (extension == ".titian") {
-        return file_type::SCENE;
+        return FileType::SCENE;
     }
-    return file_type::OTHER;
+    return FileType::OTHER;
 }
 
-kl::dx::shader_view file_icon(editor_state* state, file_type type)
+kl::dx::ShaderView file_icon(EditorState* state, const FileType type)
 {
     switch (type) {
-    case file_type::CODE:
+    case FileType::CODE:
         return state->gui_state->textures.code->shader_view;
-    case file_type::SCRIPT:
+    case FileType::SCRIPT:
         return state->gui_state->textures.script->shader_view;
-    case file_type::MESH:
+    case FileType::MESH:
         return state->gui_state->textures.mesh->shader_view;
-    case file_type::TEXTURE:
+    case FileType::TEXTURE:
         return state->gui_state->textures.texture->shader_view;
-    case file_type::SCENE:
+    case FileType::SCENE:
         return state->gui_state->textures.scene->shader_view;
     }
     return state->gui_state->textures.file->shader_view;
 }
 
-void drag_file(const std::filesystem::path& file, const file_type type, const kl::dx::shader_view& texture)
+void drag_file(const std::filesystem::path& file, const FileType type, const kl::dx::ShaderView& texture)
 {
     const std::string path = file.string();
     switch (type) {
-    case file_type::CODE:
-        GUI::drag_drop::write_data("CodeFile", path, texture);
+    case FileType::CODE:
+        gui::drag_drop::write_data("CodeFile", path, texture);
         break;
-    case file_type::SCRIPT:
-        GUI::drag_drop::write_data("ScriptFile", path, texture);
+    case FileType::SCRIPT:
+        gui::drag_drop::write_data("ScriptFile", path, texture);
         break;
-    case file_type::MESH:
-        GUI::drag_drop::write_data("MeshFile", path, texture);
+    case FileType::MESH:
+        gui::drag_drop::write_data("MeshFile", path, texture);
         break;
-    case file_type::TEXTURE:
-        GUI::drag_drop::write_data("TextureFile", path, texture);
+    case FileType::TEXTURE:
+        gui::drag_drop::write_data("TextureFile", path, texture);
         break;
-    case file_type::SCENE:
-        GUI::drag_drop::write_data("SceneFile", path, texture);
+    case FileType::SCENE:
+        gui::drag_drop::write_data("SceneFile", path, texture);
         break;
     }
 }

@@ -7,49 +7,48 @@
 
 // Draw
 #include "window/draw/frame_buffer.h"
-#include "memory/memory.h"
 
 
 namespace kl::screen {
-    inline const int2 size = {
+    inline const Int2 SIZE = {
         GetSystemMetrics(SM_CXSCREEN),
         GetSystemMetrics(SM_CYSCREEN),
     };
 }
 
 namespace kl {
-    class window
+    class Window
     {
-        std::string name_ = {};
+        std::string m_name = {};
 
-        HINSTANCE instance_ = nullptr;
-        HWND window_ = nullptr;
-        HDC device_context_ = nullptr;
+        HINSTANCE m_instance = nullptr;
+        HWND m_window = nullptr;
+        HDC m_device_context = nullptr;
 
-        bool in_fullscreen_ = false;
-        bool resizeable_ = true;
-        LONG window_style_ = NULL;
-        LONG window_ex_style_ = NULL;
-        WINDOWPLACEMENT placement_ = {};
+        bool m_in_fullscreen = false;
+        bool m_resizeable = true;
+        LONG m_window_style = NULL;
+        LONG m_window_ex_style = NULL;
+        WINDOWPLACEMENT m_placement = {};
 
         // System
         LRESULT CALLBACK window_procedure(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param) const;
         void handle_message(const MSG& message);
 
     public:
-        std::vector<std::function<void(int2)>> on_resize = {};
-        keyboard keyboard = {};
-        mouse mouse = {};
+        std::vector<std::function<void(Int2)>> on_resize = {};
+        Keyboard keyboard = {};
+        Mouse mouse = {};
 
         // Creation
-        window(const std::string& name, const int2& size);
-        virtual ~window();
+        Window(const std::string& name, const Int2& size);
+        virtual ~Window();
 
-        window(const window&) = delete;
-        window(const window&&) = delete;
+        Window(const Window&) = delete;
+        Window(const Window&&) = delete;
 
-        void operator=(const window&) = delete;
-        void operator=(const window&&) = delete;
+        void operator=(const Window&) = delete;
+        void operator=(const Window&&) = delete;
 
         // Methods
         operator HWND() const;
@@ -69,8 +68,8 @@ namespace kl {
         bool in_fullscreen() const;
         void set_fullscreen(bool enabled);
 
-        int2 position(bool client = false) const;
-        void set_position(const int2& position) const;
+        Int2 position(bool client = false) const;
+        void set_position(const Int2& position) const;
 
         int width() const;
         void set_width(int width) const;
@@ -78,17 +77,17 @@ namespace kl {
         int height() const;
         void set_height(int height) const;
 
-        int2 size(bool client = true) const;
-        void resize(const int2& size, bool client = true) const;
+        Int2 size(bool client = true) const;
+        void resize(const Int2& size, bool client = true) const;
 
         float aspect_ratio() const;
-        int2 frame_center() const;
+        Int2 frame_center() const;
 
         void set_title(const std::string& data) const;
         bool set_icon(const std::string& filepath) const;
 
-        void draw_pixel_data(const color* data, const int2& size, const int2& position = {}) const;
-        void draw_image(const image& image, const int2& position = {}) const;
+        void draw_pixel_data(const Color* data, const Int2& size, const Int2& position = {}) const;
+        void draw_image(const Image& image, const Int2& position = {}) const;
 
         void notify() const;
     };

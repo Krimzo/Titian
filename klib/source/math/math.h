@@ -39,12 +39,12 @@ namespace kl {
     float atan_deg(float value);
 
     // Coords
-    float2 calc_ndc(const float2& position, const float2& size);
-    float2 calc_ndc_ar(const float2& position, const float2& size);
+    Float2 calc_ndc(const Float2& position, const Float2& size);
+    Float2 calc_ndc_ar(const Float2& position, const Float2& size);
 
     // Lines
-    float line_x(const float2& a, const float2& b, float y);
-    float line_y(const float2& a, const float2& b, float x);
+    float line_x(const Float2& a, const Float2& b, float y);
+    float line_y(const Float2& a, const Float2& b, float x);
 
     // Wrap
     float wrap(float value, float lower, float upper);
@@ -52,57 +52,57 @@ namespace kl {
     float clamp(float value, float lower, float upper);
 
     // Rotation
-    quaternion to_quaternion(const float3& euler);
-    float3 to_euler(const quaternion& quaternion);
+    Quaternion to_quaternion(const Float3& euler);
+    Float3 to_euler(const Quaternion& quaternion);
 
     // Complex
-    complex abs(const complex& num);
-    complex normalize(const complex& num);
-    complex inverse(const complex& num);
+    Complex abs(const Complex& num);
+    Complex normalize(const Complex& num);
+    Complex inverse(const Complex& num);
 
     // Quaternion
-    quaternion abs(const quaternion& num);
-    quaternion normalize(const quaternion& num);
-    quaternion inverse(const quaternion& num);
+    Quaternion abs(const Quaternion& num);
+    Quaternion normalize(const Quaternion& num);
+    Quaternion inverse(const Quaternion& num);
 
     // Int2 operations
-    int2 abs(const int2& vec);
+    Int2 abs(const Int2& vec);
 
     // Float2 operations
-    float2 abs(const float2& vec);
-    float2 normalize(const float2& vec);
-    float dot(const float2& first, const float2& second);
-    float angle(float2 first, float2 second, bool full);
-    float2 rotate(const float2& vec, float angle);
-    float2 reflect(const float2& vec, const float2& point);
+    Float2 abs(const Float2& vec);
+    Float2 normalize(const Float2& vec);
+    float dot(const Float2& first, const Float2& second);
+    float angle(Float2 first, Float2 second, bool full);
+    Float2 rotate(const Float2& vec, float angle);
+    Float2 reflect(const Float2& vec, const Float2& point);
 
     // Float3 operations
-    float3 abs(const float3& vec);
-    float3 normalize(const float3& vec);
-    float dot(const float3& first, const float3& second);
-    float angle(const float3& first, const float3& second);
-    float3 rotate(const float3& vec, const float3& axis, float angle);
-    float3 reflect(const float3& first, float3 normal);
-    float3 cross(const float3& first, const float3& second);
+    Float3 abs(const Float3& vec);
+    Float3 normalize(const Float3& vec);
+    float dot(const Float3& first, const Float3& second);
+    float angle(const Float3& first, const Float3& second);
+    Float3 rotate(const Float3& vec, const Float3& axis, float angle);
+    Float3 reflect(const Float3& first, Float3 normal);
+    Float3 cross(const Float3& first, const Float3& second);
 
     // Float4 operations
-    float4 abs(const float4& vec);
-    float4 normalize(const float4& vec);
-    float dot(const float4& first, const float4& second);
-    float angle(const float4& first, const float4& second);
+    Float4 abs(const Float4& vec);
+    Float4 normalize(const Float4& vec);
+    float dot(const Float4& first, const Float4& second);
+    float angle(const Float4& first, const Float4& second);
 
     // Float2x2
-    float2x2 abs(const float2x2& mat);
-    float2x2 inverse(const float2x2& mat);
-    float2x2 transpose(const float2x2& mat);
+    Float2x2 abs(const Float2x2& mat);
+    Float2x2 inverse(const Float2x2& mat);
+    Float2x2 transpose(const Float2x2& mat);
 
     // Float3x3
-    float3x3 abs(const float3x3& mat);
-    float3x3 inverse(const float3x3& mat);
-    float3x3 transpose(const float3x3& mat);
+    Float3x3 abs(const Float3x3& mat);
+    Float3x3 inverse(const Float3x3& mat);
+    Float3x3 transpose(const Float3x3& mat);
 
     // Float4x4
-    float4x4 abs(const float4x4& mat);
-    float4x4 inverse(const float4x4& mat);
-    float4x4 transpose(const float4x4& mat);
+    Float4x4 abs(const Float4x4& mat);
+    Float4x4 inverse(const Float4x4& mat);
+    Float4x4 transpose(const Float4x4& mat);
 }

@@ -2,19 +2,19 @@ export module dll_script;
 
 export import editor_state;
 
-export class dll_script : public basic_script
+export class DLLScript : public BasicScript
 {
 public:
-	kl::dll dll = {};
+	kl::DLL dll = {};
 
-	kl::dll::function<void, BasicState*> start_function = nullptr;
-	kl::dll::function<void, BasicState*> update_function = nullptr;
+	kl::DLL::Function<void, BasicState*> start_function = nullptr;
+	kl::DLL::Function<void, BasicState*> update_function = nullptr;
 
-	dll_script()
+	DLLScript()
 	{}
 
-	dll_script(const std::string& path)
-		: basic_script(path)
+	DLLScript(const std::string& path)
+		: BasicScript(path)
 	{
 		dll.load(path);
 		if (dll) {

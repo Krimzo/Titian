@@ -45,7 +45,7 @@ static int64_t video_duration_100ns(const Microsoft::WRL::ComPtr<IMFSourceReader
     return duration;
 }
 
-static kl::int2 video_frame_size(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
+static kl::Int2 video_frame_size(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
 {
     Microsoft::WRL::ComPtr<IMFMediaType> current_type = nullptr;
     reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, &current_type);
@@ -53,7 +53,7 @@ static kl::int2 video_frame_size(const Microsoft::WRL::ComPtr<IMFSourceReader>& 
         return {};
     }
 
-    kl::int2 frame_size = {};
+    kl::Int2 frame_size = {};
     MFGetAttributeSize(current_type.Get(), MF_MT_FRAME_SIZE, (UINT32*) &frame_size.x, (UINT32*) &frame_size.y);
     return frame_size;
 }
@@ -69,11 +69,11 @@ static float video_fps(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
     UINT attribute1 = 0, attribute2 = 0;
     MFGetAttributeRatio(current_type.Get(), MF_MT_FRAME_RATE, &attribute1, &attribute2);
 
-    return (float) attribute1 / attribute2;
+    return (float) attribute1 / (float) attribute2;
 }
 
 // Video reader
-kl::video_reader::video_reader(const std::string& filepath)
+kl::VideoReader::VideoReader(const std::string& filepath)
 {
     // Init
     Microsoft::WRL::ComPtr<IMFAttributes> attributes = nullptr;
@@ -82,59 +82,59 @@ kl::video_reader::video_reader(const std::string& filepath)
     fail_check_(attributes->SetUINT32(MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, true), "Failed to enable video processing");
 
     const std::wstring converted_path = convert_string(filepath);
-    fail_check_(MFCreateSourceReaderFromURL(converted_path.c_str(), attributes.Get(), &reader_), "Failed to create SourceReader");
-    configure_reader(reader_);
+    fail_check_(MFCreateSourceReaderFromURL(converted_path.c_str(), attributes.Get(), &m_reader), "Failed to create SourceReader");
+    configure_reader(m_reader);
 
     // Getting info
-    byte_size_ = video_byte_size(reader_);
-    duration_ = video_duration_100ns(reader_);
+    m_byte_size = video_byte_size(m_reader);
+    m_duration = video_duration_100ns(m_reader);
 
-    frame_size_ = video_frame_size(reader_);
-    frame_byte_size_ = frame_size_.x * frame_size_.y * 4;
+    m_frame_size = video_frame_size(m_reader);
+    m_frame_byte_size = m_frame_size.x * m_frame_size.y * 4;
 
-    fps_ = video_fps(reader_);
-    frame_count_ = int(duration_seconds() * fps_);
+    m_fps = video_fps(m_reader);
+    m_frame_count = (int) (duration_seconds() * m_fps);
 }
 
-size_t kl::video_reader::byte_size() const
+size_t kl::VideoReader::byte_size() const
 {
-    return byte_size_;
+    return m_byte_size;
 }
 
-int64_t kl::video_reader::duration_100ns() const
+int64_t kl::VideoReader::duration_100ns() const
 {
-    return duration_;
+    return m_duration;
 }
 
-float kl::video_reader::duration_seconds() const
+float kl::VideoReader::duration_seconds() const
 {
     static constexpr float diver = 1.0f / 1e7f;
-    return duration_ * diver;
+    return m_duration * diver;
 }
 
-kl::int2 kl::video_reader::frame_size() const
+kl::Int2 kl::VideoReader::frame_size() const
 {
-    return frame_size_;
+    return m_frame_size;
 }
 
-int kl::video_reader::frame_count() const
+int kl::VideoReader::frame_count() const
 {
-    return frame_count_;
+    return m_frame_count;
 }
 
-float kl::video_reader::fps() const
+float kl::VideoReader::fps() const
 {
-    return fps_;
+    return m_fps;
 }
 
-bool kl::video_reader::next_frame(image& out) const
+bool kl::VideoReader::next_frame(Image& out) const
 {
     // Read sample
     DWORD flags = NULL;
     LONGLONG time_stamp = 0;
     Microsoft::WRL::ComPtr<IMFSample> sample = nullptr;
 
-    if (!succeeded_(reader_->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
+    if (!succeeded_(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
         return false;
     }
 
@@ -149,10 +149,10 @@ bool kl::video_reader::next_frame(image& out) const
     DWORD frame_byte_size = 0;
     fail_check_(media_buffer->Lock(&frame_data, nullptr, &frame_byte_size), "Failed to lock the bytes [video_reader]");
 
-    out.resize(frame_size_);
+    out.resize(m_frame_size);
     const size_t pixel_count = (size_t) out.width() * out.height();
-    const color* frame_source = (color*) frame_data;
-    color* frame_target = out;
+    const Color* frame_source = (Color*) frame_data;
+    Color* frame_target = out;
 
     for (size_t i = 0; i < pixel_count; i++) {
         frame_target[i].r = frame_source[i].r;

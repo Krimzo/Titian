@@ -5,7 +5,7 @@
 
 
 namespace kl {
-    class material
+    class Material
     {
     public:
         float texture_blend = 0.0f;
@@ -13,10 +13,10 @@ namespace kl {
         float refraction_factor = 0.0f;
         float refraction_index = 1.0f;
 
-        float4 color = colors::white;
+        Float4 color = colors::WHITE;
 
-        object<texture> color_map = nullptr;
-        object<texture> normal_map = nullptr;
-        object<texture> roughness_map = nullptr;
+        Object<Texture> color_map = nullptr;
+        Object<Texture> normal_map = nullptr;
+        Object<Texture> roughness_map = nullptr;
     };
 }

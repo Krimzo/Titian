@@ -2,9 +2,9 @@ export module setup_shaders;
 
 export import editor_setup;
 
-kl::render_shaders parse_render_shaders(editor_state* state, const std::string& name);
+kl::RenderShaders parse_render_shaders(EditorState* state, const std::string& name);
 
-export void setup_shaders(editor_state* state)
+export void setup_shaders(EditorState* state)
 {
     state->render_shaders.shadow_pass = parse_render_shaders(state, "shadow_pass.hlsl");
     state->render_shaders.skybox_sample = parse_render_shaders(state, "skybox_sample.hlsl");
@@ -14,8 +14,8 @@ export void setup_shaders(editor_state* state)
     state->render_shaders.postprocess_pass = parse_render_shaders(state, "postprocess_pass.hlsl");
 }
 
-kl::render_shaders parse_render_shaders(editor_state* state, const std::string& name)
+kl::RenderShaders parse_render_shaders(EditorState* state, const std::string& name)
 {
-    const auto source = kl::read_file_string(builtin_path + "/shaders/" + name);
+    const auto source = kl::read_file_string(BUILTIN_PATH + "/shaders/" + name);
     return state->gpu->create_render_shaders(source);
 }

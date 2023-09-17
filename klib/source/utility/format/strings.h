@@ -27,12 +27,12 @@ namespace kl {
 
         std::stringstream stream = {};
         for (int y = 0; y < H; y++) {
-            stream << ((y == 0) ? char(218) : (y == (H - 1) ? char(192) : char(179)));
+            stream << ((y == 0) ? (char) 218 : (y == (H - 1) ? (char) 192 : (char) 179));
             for (int x = 0; x < (W - 1); x++) {
                 stream << std::setw(max_lengths[x]) << output_data[y * W + x] << " ";
             }
             stream << std::setw(max_lengths[W - 1]) << output_data[y * W + (W - 1)];
-            stream << (y == 0 ? char(191) : (y == (H - 1) ? char(217) : char(179)));
+            stream << (y == 0 ? (char) 191 : (y == (H - 1) ? (char) 217 : (char) 179));
             stream << (y != (H - 1) ? "\n" : "");
         }
         return stream.str();

@@ -7,7 +7,7 @@ std::string kl::convert_string(const std::wstring& data)
     temp.reserve(data.size());
     for (const wchar_t c : data) {
         if (c < 256) {
-            temp.push_back(char(c));
+            temp.push_back((char) c);
         }
     }
     return temp;

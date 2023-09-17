@@ -4,57 +4,60 @@
 
 
 namespace kl {
-    struct complex;
+    class Complex;
 }
 
 namespace kl {
-    struct float2
+    class Float2
     {
+    public:
         float x = 0.0f;
         float y = 0.0f;
 
         // Construct
-        float2();
-        explicit float2(float value);
-        float2(float x, float y);
+        Float2();
+        explicit Float2(float value);
+        Float2(float x, float y);
 
         // Get
-        operator float* () const;
-        operator kl::int2() const;
-        operator kl::complex() const;
+        operator float* ();
+        operator const float* () const;
+        
+        operator kl::Int2() const;
+        operator kl::Complex() const;
 
         float& operator[](int index);
         const float& operator[](int index) const;
 
         // Compare
-        bool operator==(const float2& other) const;
-        bool operator!=(const float2& other) const;
+        bool operator==(const Float2& other) const;
+        bool operator!=(const Float2& other) const;
 
         // Math
-        float2 operator+(const float2& other) const;
-        void operator+=(const float2& other);
+        Float2 operator+(const Float2& other) const;
+        void operator+=(const Float2& other);
 
-        float2 operator-(const float2& other) const;
-        void operator-=(const float2& other);
+        Float2 operator-(const Float2& other) const;
+        void operator-=(const Float2& other);
 
-        float2 operator*(float value) const;
+        Float2 operator*(float value) const;
         void operator*=(float value);
 
-        float2 operator*(const float2& other) const;
-        void operator*=(const float2& other);
+        Float2 operator*(const Float2& other) const;
+        void operator*=(const Float2& other);
 
-        float2 operator/(float value) const;
+        Float2 operator/(float value) const;
         void operator/=(float value);
 
-        float2 operator/(const float2& other) const;
-        void operator/=(const float2& other);
+        Float2 operator/(const Float2& other) const;
+        void operator/=(const Float2& other);
 
         // Other
-        float2 operator-() const;
+        Float2 operator-() const;
         float length() const;
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const float2& vec);
+    std::ostream& operator<<(std::ostream& stream, const Float2& vec);
 }

@@ -2,9 +2,9 @@ export module handle_camera;
 
 export import editor_update;
 
-export void handle_camera(editor_state* state)
+export void handle_camera(EditorState* state)
 {
-    kl::camera& camera = *state->scene->camera;
+    kl::Camera& camera = *state->scene->camera;
 
     // Speed
     if (state->window->keyboard.shift) {
@@ -36,7 +36,7 @@ export void handle_camera(editor_state* state)
 
     // Rotation
     if (state->window->mouse.right) {
-        const kl::int2 frame_center = state->window->frame_center();
+        const kl::Int2 frame_center = state->window->frame_center();
         if (state->window->mouse.is_hidden()) {
             camera.rotate(state->window->mouse.position(), frame_center);
         }

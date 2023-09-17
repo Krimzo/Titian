@@ -1,41 +1,41 @@
 #include "klib.h"
 
 
-kl::dll::dll()
+kl::DLL::DLL()
 {}
 
-kl::dll::dll(const std::string& path)
+kl::DLL::DLL(const std::string& path)
 {
     load(path);
 }
 
-kl::dll::~dll()
+kl::DLL::~DLL()
 {
     unload();
 }
 
-kl::dll::operator bool() const
+kl::DLL::operator bool() const
 {
-    return (bool) module_;
+    return (bool) m_module;
 }
 
-void kl::dll::load(const std::string& path)
+void kl::DLL::load(const std::string& path)
 {
     unload();
-    path_ = path;
-    module_ = LoadLibraryA(path.c_str());
+    m_path = path;
+    m_module = LoadLibraryA(path.c_str());
 }
 
-void kl::dll::reload()
+void kl::DLL::reload()
 {
     unload();
-    module_ = LoadLibraryA(path_.c_str());
+    m_module = LoadLibraryA(m_path.c_str());
 }
 
-void kl::dll::unload()
+void kl::DLL::unload()
 {
-    if (module_) {
-        FreeLibrary(module_);
-        module_ = nullptr;
+    if (m_module) {
+        FreeLibrary(m_module);
+        m_module = nullptr;
     }
 }

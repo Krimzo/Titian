@@ -4,28 +4,28 @@ export import gui_helper;
 export import render_chain;
 
 // Top
-export void gui_main_menu(editor_state* state);
-export void gui_control_menu(editor_state* state);
+export void gui_main_menu(EditorState* state);
+export void gui_control_menu(EditorState* state);
 
 // Left
-export void gui_scene_items(editor_state* state);
-export void gui_script_items(editor_state* state);
-export void gui_scene_info(editor_state* state);
+export void gui_scene_items(EditorState* state);
+export void gui_script_items(EditorState* state);
+export void gui_scene_info(EditorState* state);
 
 // Middle-Top
-export void gui_mesh_editor(editor_state* state);
-export void gui_material_editor(editor_state* state);
-export void gui_scene_editor(editor_state* state);
+export void gui_mesh_editor(EditorState* state);
+export void gui_material_editor(EditorState* state);
+export void gui_scene_editor(EditorState* state);
 
 // Middle-Bottom
-export void gui_log_view(editor_state* state);
-export void gui_explorer(editor_state* state);
+export void gui_log_view(EditorState* state);
+export void gui_explorer(EditorState* state);
 
 // Right
-export void gui_entity_properties(editor_state* state);
-export void gui_render_info(editor_state* state);
+export void gui_entity_properties(EditorState* state);
+export void gui_render_info(EditorState* state);
 
-export void gui_render(editor_state* state)
+export void gui_render(EditorState* state)
 {
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();

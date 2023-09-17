@@ -4,10 +4,10 @@ export import gui_render;
 export import serializer;
 export import deserializer;
 
-void start_scene(editor_state* state);
-void stop_scene(editor_state* state);
+void start_scene(EditorState* state);
+void stop_scene(EditorState* state);
 
-export void gui_control_menu(editor_state* state)
+export void gui_control_menu(EditorState* state)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
     ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, { 10.0f, 5.0f });
@@ -57,10 +57,10 @@ export void gui_control_menu(editor_state* state)
     ImGui::PopStyleVar(2);
 }
 
-void start_scene(editor_state* state)
+void start_scene(EditorState* state)
 {
     // Save scene
-    serializer serializer = { "temp.titian" };
+    Serializer serializer = { "temp.titian" };
     if (serializer.write_scene(state->scene)) {
         state->logger_state->log(kl::format("Scene saved. (", serializer.path, ") [", serialization::VERSION_NAME, "]"));
     }
@@ -79,13 +79,13 @@ void start_scene(editor_state* state)
     state->scripts_call_start(state);
 }
 
-void stop_scene(editor_state* state)
+void stop_scene(EditorState* state)
 {
     // Change state
     state->game_running = false;
 
     // Load scene
-    deserializer deserializer = { "temp.titian" };
+    Deserializer deserializer = { "temp.titian" };
     const auto [error, scene] = deserializer.read_scene(state->gpu);
     if (error == 0) {
         state->change_scene(scene);

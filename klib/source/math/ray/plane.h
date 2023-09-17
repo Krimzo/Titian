@@ -4,26 +4,25 @@
 
 
 namespace kl {
-    struct plane
+    class Plane
     {
-    private:
-        float3 normal_ = { 0.0f, 1.0f, 0.0f };
+        Float3 m_normal = { 0.0f, 1.0f, 0.0f };
 
     public:
-        float3 origin = {};
+        Float3 origin = {};
 
-        plane();
-        plane(const float3& origin, const float3& normal);
+        Plane();
+        Plane(const Float3& origin, const Float3& normal);
 
         // Normal
-        void set_normal(const float3& normal);
-        float3 normal() const;
+        void set_normal(const Float3& normal);
+        Float3 normal() const;
 
         // Math
-        bool in_front(const float3& point) const;
+        bool in_front(const Float3& point) const;
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& os, const plane& obj);
+    std::ostream& operator<<(std::ostream& os, const Plane& obj);
 }

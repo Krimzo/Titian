@@ -4,12 +4,13 @@
 
 
 namespace kl {
-    struct render_shaders
+    class RenderShaders
     {
-        shader_holder<dx::vertex_shader> vertex_shader = nullptr;
-        shader_holder<dx::pixel_shader> pixel_shader = nullptr;
-        dx::layout input_layout = nullptr;
-
+    public:
+        ShaderHolder<dx::VertexShader> vertex_shader = nullptr;
+        ShaderHolder<dx::PixelShader> pixel_shader = nullptr;
+        dx::InputLayout input_layout = nullptr;
+        
         operator bool() const;
     };
 }

@@ -2,68 +2,68 @@
 
 
 // Construct
-kl::quaternion::quaternion()
+kl::Quaternion::Quaternion()
     : w(1.0f)
 {}
 
-kl::quaternion::quaternion(const float x, const float y, const float z)
+kl::Quaternion::Quaternion(const float x, const float y, const float z)
     : x(x), y(y), z(z)
 {}
 
-kl::quaternion::quaternion(const float w, const float x, const float y, const float z)
+kl::Quaternion::Quaternion(const float w, const float x, const float y, const float z)
     : w(w), x(x), y(y), z(z)
 {}
 
-kl::quaternion::quaternion(const float3& axis, const float angle)
+kl::Quaternion::Quaternion(const Float3& axis, const float angle)
     : w(cos_deg(angle * 0.5f))
 {
-    ((float3&) x) = normalize(axis) * sin_deg(angle * 0.5f);
+    ((Float3&) x) = normalize(axis) * sin_deg(angle * 0.5f);
 }
 
 // Get
-kl::quaternion::operator float* () const
+kl::Quaternion::operator float* () const
 {
     return (float*) this;
 }
 
-kl::quaternion::operator kl::float3() const
+kl::Quaternion::operator kl::Float3() const
 {
     return { x, y, z };
 }
 
-kl::quaternion::operator kl::float4() const
+kl::Quaternion::operator kl::Float4() const
 {
     return { x, y, z, w };
 }
 
-float& kl::quaternion::operator[](const int index)
+float& kl::Quaternion::operator[](const int index)
 {
     return ((float*) this)[index];
 }
 
-const float& kl::quaternion::operator[](const int index) const
+const float& kl::Quaternion::operator[](const int index) const
 {
     return ((float*) this)[index];
 }
 
 // Compare
-bool kl::quaternion::operator==(const quaternion& other) const
+bool kl::Quaternion::operator==(const Quaternion& other) const
 {
     return (w == other.w && x == other.x && y == other.y && z == other.z);
 }
 
-bool kl::quaternion::operator!=(const quaternion& other) const
+bool kl::Quaternion::operator!=(const Quaternion& other) const
 {
     return !(*this == other);
 }
 
 // Math
-kl::quaternion kl::quaternion::operator+(const quaternion& other) const
+kl::Quaternion kl::Quaternion::operator+(const Quaternion& other) const
 {
     return { w + other.w, x + other.x, y + other.y, z + other.z };
 }
 
-void kl::quaternion::operator+=(const quaternion& other)
+void kl::Quaternion::operator+=(const Quaternion& other)
 {
     w += other.w;
     x += other.x;
@@ -71,12 +71,12 @@ void kl::quaternion::operator+=(const quaternion& other)
     z += other.z;
 }
 
-kl::quaternion kl::quaternion::operator-(const quaternion& other) const
+kl::Quaternion kl::Quaternion::operator-(const Quaternion& other) const
 {
     return { w - other.w, x - other.x, y - other.y, z - other.z };
 }
 
-void kl::quaternion::operator-=(const quaternion& other)
+void kl::Quaternion::operator-=(const Quaternion& other)
 {
     w -= other.w;
     x -= other.x;
@@ -84,12 +84,12 @@ void kl::quaternion::operator-=(const quaternion& other)
     z -= other.z;
 }
 
-kl::quaternion kl::quaternion::operator*(const float value) const
+kl::Quaternion kl::Quaternion::operator*(const float value) const
 {
     return { w * value, x * value, y * value, z * value };
 }
 
-void kl::quaternion::operator*=(const float value)
+void kl::Quaternion::operator*=(const float value)
 {
     w *= value;
     x *= value;
@@ -97,7 +97,7 @@ void kl::quaternion::operator*=(const float value)
     z *= value;
 }
 
-kl::quaternion kl::quaternion::operator*(const quaternion& other) const
+kl::Quaternion kl::Quaternion::operator*(const Quaternion& other) const
 {
     return {
         w * other.w - x * other.x - y * other.y - z * other.z,
@@ -107,24 +107,24 @@ kl::quaternion kl::quaternion::operator*(const quaternion& other) const
     };
 }
 
-void kl::quaternion::operator*=(const quaternion& other)
+void kl::Quaternion::operator*=(const Quaternion& other)
 {
     *this = *this * other;
 }
 
 // Other
-kl::quaternion kl::quaternion::operator-() const
+kl::Quaternion kl::Quaternion::operator-() const
 {
     return *this * -1.0f;
 }
 
-float kl::quaternion::length() const
+float kl::Quaternion::length() const
 {
     return sqrt(w * w + x * x + y * y + z * z);
 }
 
 // Format
-std::ostream& kl::operator<<(std::ostream& stream, const quaternion& num)
+std::ostream& kl::operator<<(std::ostream& stream, const Quaternion& num)
 {
     stream << std::setprecision(2);
     stream << "(" << num.w << " + " << num.x << "i + " << num.y << "j + " << num.z << "k)";

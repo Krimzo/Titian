@@ -2,15 +2,15 @@ export module load_meshes;
 
 export import sandbox;
 
-kl::object<kl::mesh> load_mesh(editor_state* state, const std::string& path);
+kl::Object<kl::Mesh> load_mesh(EditorState* state, const std::string& path);
 
-export void load_meshes(editor_state* state)
+export void load_meshes(EditorState* state)
 {
     // None yet
 }
 
-kl::object<kl::mesh> load_mesh(editor_state* state, const std::string& path)
+kl::Object<kl::Mesh> load_mesh(EditorState* state, const std::string& path)
 {
-    const auto mesh_data = kl::parse_obj_file(path, true);
-    return new kl::mesh(&state->gpu, &state->scene, mesh_data);
+    const kl::MeshData mesh_data = kl::parse_obj_file(path, true);
+    return new kl::Mesh(&state->gpu, &state->scene, mesh_data);
 }

@@ -6,26 +6,26 @@
 
 
 namespace kl {
-    class dll
+    class DLL
     {
     public:
         template<typename Return, typename... Args>
-        using function = Return(__stdcall*)(Args...);
+        using Function = Return(__stdcall*)(Args...);
 
     private:
-        std::string path_ = "";
-        HMODULE module_ = nullptr;
+        std::string m_path = "";
+        HMODULE m_module = nullptr;
 
     public:
-        dll();
-        dll(const std::string& path);
-        virtual ~dll();
+        DLL();
+        DLL(const std::string& path);
+        virtual ~DLL();
 
-        dll(const dll&) = delete;
-        dll(const dll&&) = delete;
+        DLL(const DLL&) = delete;
+        DLL(const DLL&&) = delete;
 
-        void operator=(const dll&) = delete;
-        void operator=(const dll&&) = delete;
+        void operator=(const DLL&) = delete;
+        void operator=(const DLL&&) = delete;
 
         operator bool() const;
 
@@ -34,13 +34,13 @@ namespace kl {
         void unload();
 
         template<typename Return, typename... Args>
-        function<Return, Args...> read_function(const std::string& function_name)
+        Function<Return, Args...> read_function(const std::string& function_name)
         {
-            if (!module_) {
+            if (!m_module) {
                 return nullptr;
             }
-            auto function_address = GetProcAddress(module_, function_name.c_str());
-            return (function<Return, Args...>) function_address;
+            auto function_address = GetProcAddress(m_module, function_name.c_str());
+            return (Function<Return, Args...>) function_address;
         }
     };
 }

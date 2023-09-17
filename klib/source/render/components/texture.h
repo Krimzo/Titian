@@ -5,33 +5,33 @@
 
 
 namespace kl {
-    using texture_data = image;
+    using TextureData = Image;
 }
 
 namespace kl {
-    class texture
+    class Texture
     {
     public:
-        gpu* gpu = nullptr;
-        texture_data data_buffer = {};
-        dx::texture graphics_buffer = nullptr;
+        GPU* gpu = nullptr;
+        TextureData data_buffer = {};
+        dx::Texture graphics_buffer = nullptr;
 
-        dx::target_view target_view = nullptr;
-        dx::depth_view   depth_view = nullptr;
-        dx::shader_view shader_view = nullptr;
-        dx::access_view access_view = nullptr;
+        dx::TargetView target_view = nullptr;
+        dx::DepthView   depth_view = nullptr;
+        dx::ShaderView shader_view = nullptr;
+        dx::AccessView access_view = nullptr;
 
         bool is_cube = false;
 
-        texture(kl::gpu* gpu);
-        texture(kl::gpu* gpu, const texture_data& data, bool is_cube = false, bool has_unordered_access = false, bool is_target = false);
+        Texture(GPU* gpu);
+        Texture(GPU* gpu, const TextureData& data, bool is_cube = false, bool has_unordered_access = false, bool is_target = false);
 
         void reload(bool has_unordered_access = false, bool is_target = false);
         bool reload_as_cube();
 
-        void create_target_view(dx::target_view_descriptor* descriptor = nullptr);
-        void  create_depth_view( dx::depth_view_descriptor* descriptor = nullptr);
-        void create_shader_view(dx::shader_view_descriptor* descriptor = nullptr);
-        void create_access_view(dx::access_view_descriptor* descriptor = nullptr);
+        void create_target_view(const dx::TargetViewDescriptor* descriptor = nullptr);
+        void  create_depth_view(const dx::DepthViewDescriptor* descriptor = nullptr);
+        void create_shader_view(const dx::ShaderViewDescriptor* descriptor = nullptr);
+        void create_access_view(const dx::AccessViewDescriptor* descriptor = nullptr);
     };
 }

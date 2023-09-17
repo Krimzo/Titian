@@ -4,7 +4,7 @@ export import gui_render;
 export import dll_script;
 export import jvm_script;
 
-export void gui_script_items(editor_state* state)
+export void gui_script_items(EditorState* state)
 {
 	if (ImGui::Begin("Scripts")) {
 		if (ImGui::BeginPopupContextWindow()) {
@@ -24,18 +24,18 @@ export void gui_script_items(editor_state* state)
 		ImGui::Dummy({ content_max.x - content_min.x, content_max.y - content_min.y });
 		ImGui::SetCursorPos(initial_cur_position);
 
-		std::optional script_file = GUI::drag_drop::read_data<std::string>("ScriptFile");
+		const std::optional script_file = gui::drag_drop::read_data<std::string>("ScriptFile");
 		if (script_file) {
-			const std::filesystem::path path = std::filesystem::path(script_file.value());
+			const std::filesystem::path path { script_file.value() };
 			const std::string script_name = path.stem().string();
 			const std::string script_extension = path.extension().string();
 
-			kl::object<basic_script> script = nullptr;
+			kl::Object<BasicScript> script = nullptr;
 			if (script_extension == ".dll") {
-				script = new dll_script(path.string());
+				script = new DLLScript(path.string());
 			}
 			else {
-				script = new jvm_script(path.string());
+				script = new JVMScript(path.string());
 			}
 			
 			if (script) {

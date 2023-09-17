@@ -4,58 +4,58 @@
 // Deg trig
 float kl::sin_deg(const float angle_in_deg)
 {
-    return sin(angle_in_deg * to_radians);
+    return sin(angle_in_deg * TO_RADIANS);
 }
 
 float kl::cos_deg(const float angle_in_deg)
 {
-    return cos(angle_in_deg * to_radians);
+    return cos(angle_in_deg * TO_RADIANS);
 }
 
 float kl::tan_deg(const float angle_in_deg)
 {
-    return tan(angle_in_deg * to_radians);
+    return tan(angle_in_deg * TO_RADIANS);
 }
 
 float kl::asin_deg(const float value)
 {
-    return asin(value) * to_degrees;
+    return asin(value) * TO_DEGREES;
 }
 
 float kl::acos_deg(const float value)
 {
-    return acos(value) * to_degrees;
+    return acos(value) * TO_DEGREES;
 }
 
 float kl::atan_deg(const float value)
 {
-    return atan(value) * to_degrees;
+    return atan(value) * TO_DEGREES;
 }
 
 // Coords
-kl::float2 kl::calc_ndc(const float2& position, const float2& frame_size)
+kl::Float2 kl::calc_ndc(const Float2& position, const Float2& frame_size)
 {
-    const float2 result = {
+    const Float2 result = {
         position.x / frame_size.x,
         (frame_size.y - position.y) / frame_size.y,
     };
-    return result * 2.0f - float2(1.0f);
+    return result * 2.0f - Float2(1.0f);
 }
 
-kl::float2 kl::calc_ndc_ar(const float2& position, const float2& size)
+kl::Float2 kl::calc_ndc_ar(const Float2& position, const Float2& size)
 {
-    float2 result = calc_ndc(position, size);
+    Float2 result = calc_ndc(position, size);
     result.x *= (size.x / size.y);
     return result;
 }
 
 // Lines
-float kl::line_x(const float2& a, const float2& b, const float y)
+float kl::line_x(const Float2& a, const Float2& b, const float y)
 {
     return ((y - a.y) * (b.x - a.x)) / (b.y - a.y) + a.x;
 }
 
-float kl::line_y(const float2& a, const float2& b, const float x)
+float kl::line_y(const Float2& a, const Float2& b, const float x)
 {
     return ((b.y - a.y) * (x - a.x)) / (b.x - a.x) + a.y;
 }
@@ -81,7 +81,7 @@ float kl::clamp(const float value, const float lower, const float upper)
 }
 
 // Rotation
-kl::quaternion kl::to_quaternion(const float3& euler)
+kl::Quaternion kl::to_quaternion(const Float3& euler)
 {
     const float cr = cos_deg(euler.x * 0.5f);
     const float sr = sin_deg(euler.x * 0.5f);
@@ -98,7 +98,7 @@ kl::quaternion kl::to_quaternion(const float3& euler)
     };
 }
 
-kl::float3 kl::to_euler(const quaternion& quaternion)
+kl::Float3 kl::to_euler(const Quaternion& quaternion)
 {
     const float       sin_p = +2.0f * (quaternion.w * quaternion.y - quaternion.z * quaternion.x) + 0.0f;
     const float sin_r_cos_p = +2.0f * (quaternion.w * quaternion.x + quaternion.y * quaternion.z) + 0.0f;
@@ -106,26 +106,26 @@ kl::float3 kl::to_euler(const quaternion& quaternion)
     const float sin_y_cos_p = +2.0f * (quaternion.w * quaternion.z + quaternion.x * quaternion.y) + 0.0f;
     const float cos_y_cos_p = -2.0f * (quaternion.y * quaternion.y + quaternion.z * quaternion.z) + 1.0f;
 
-    const float3 result = {
+    const Float3 result = {
         atan2(sin_r_cos_p, cos_r_cos_p),
-        (::abs(sin_p) >= 1.0f) ? copysign(pi * 0.5f, sin_p) : asin(sin_p),
+        (::abs(sin_p) >= 1.0f) ? copysign(PI * 0.5f, sin_p) : asin(sin_p),
         atan2(sin_y_cos_p, cos_y_cos_p),
     };
-    return (result * to_degrees);
+    return (result * TO_DEGREES);
 }
 
 // Complex
-kl::complex kl::abs(const complex& num)
+kl::Complex kl::abs(const Complex& num)
 {
     return { ::abs(num.r), ::abs(num.i) };
 }
 
-kl::complex kl::normalize(const complex& num)
+kl::Complex kl::normalize(const Complex& num)
 {
     return num * (1.0f / num.length());
 }
 
-kl::complex kl::inverse(const complex& num)
+kl::Complex kl::inverse(const Complex& num)
 {
     const float sqr_sum = (num.r * num.r + num.i * num.i);
     if (sqr_sum == 0.0f) {
@@ -135,107 +135,107 @@ kl::complex kl::inverse(const complex& num)
 }
 
 // Quaternion
-kl::quaternion kl::abs(const quaternion& num)
+kl::Quaternion kl::abs(const Quaternion& num)
 {
     return { ::abs(num.w), ::abs(num.x), ::abs(num.y), ::abs(num.z) };
 }
 
-kl::quaternion kl::normalize(const quaternion& num)
+kl::Quaternion kl::normalize(const Quaternion& num)
 {
     return num * (1.0f / num.length());
 }
 
-kl::quaternion kl::inverse(const quaternion& num)
+kl::Quaternion kl::inverse(const Quaternion& num)
 {
     return { num.w, -num.x, -num.y, -num.z };
 }
 
 // Int2
-kl::int2 kl::abs(const int2& vec)
+kl::Int2 kl::abs(const Int2& vec)
 {
     return { ::abs(vec.x), ::abs(vec.y) };
 }
 
 // Float2
-kl::float2 kl::abs(const float2& vec)
+kl::Float2 kl::abs(const Float2& vec)
 {
     return { ::abs(vec.x), ::abs(vec.y) };
 }
 
-kl::float2 kl::normalize(const float2& vec)
+kl::Float2 kl::normalize(const Float2& vec)
 {
     return (vec * (1.0f / vec.length()));
 }
 
-float kl::dot(const float2& first, const float2& second)
+float kl::dot(const Float2& first, const Float2& second)
 {
     return (first.x * second.x + first.y * second.y);
 }
 
-float kl::angle(float2 first, float2 second, const bool full)
+float kl::angle(Float2 first, Float2 second, const bool full)
 {
     first = normalize(first);
     second = normalize(second);
 
-    float result = 0.0f;
+    float result {};
     if (full) {
         result = atan2(first.x * second.y - first.y * second.x, first.x * second.x + first.y * second.y);
-        result += pi;
+        result += PI;
     }
     else {
         result = acos(dot(first, second));
     }
-    return result * to_degrees;
+    return result * TO_DEGREES;
 }
 
-kl::float2 kl::rotate(const float2& vec, const float angle)
+kl::Float2 kl::rotate(const Float2& vec, const float angle)
 {
-    const float sin_a = sin(angle * to_radians);
-    const float cos_a = cos(angle * to_radians);
+    const float sin_a = sin(angle * TO_RADIANS);
+    const float cos_a = cos(angle * TO_RADIANS);
     return { cos_a * vec.x - sin_a * vec.y, sin_a * vec.x + cos_a * vec.y };
 }
 
-kl::float2 kl::reflect(const float2& vec, const float2& point)
+kl::Float2 kl::reflect(const Float2& vec, const Float2& point)
 {
-    const float2 normalized = normalize(point);
+    const Float2 normalized = normalize(point);
     return vec - (normalized * (vec * normalized) * 2.0f);
 }
 
 // Float3
-kl::float3 kl::abs(const float3& vec)
+kl::Float3 kl::abs(const Float3& vec)
 {
     return { ::abs(vec.x), ::abs(vec.y), ::abs(vec.z) };
 }
 
-kl::float3 kl::normalize(const float3& vec)
+kl::Float3 kl::normalize(const Float3& vec)
 {
     return (vec * (1.0f / vec.length()));
 }
 
-float kl::dot(const float3& first, const float3& second)
+float kl::dot(const Float3& first, const Float3& second)
 {
     return (first.x * second.x + first.y * second.y + first.z * second.z);
 }
 
-float kl::angle(const float3& first, const float3& second)
+float kl::angle(const Float3& first, const Float3& second)
 {
-    return acos(dot(normalize(first), normalize(second))) * to_degrees;
+    return acos(dot(normalize(first), normalize(second))) * TO_DEGREES;
 }
 
-kl::float3 kl::rotate(const float3& vec, const float3& axis, const float angle)
+kl::Float3 kl::rotate(const Float3& vec, const Float3& axis, const float angle)
 {
-    const quaternion quat = quaternion(axis, angle);
-    const quaternion inv_quat = inverse(quat);
+    const Quaternion quat = Quaternion(axis, angle);
+    const Quaternion inv_quat = inverse(quat);
     return (quat * vec * inv_quat);
 }
 
-kl::float3 kl::reflect(const float3& first, float3 normal)
+kl::Float3 kl::reflect(const Float3& first, Float3 normal)
 {
     normal = normalize(normal);
     return first - (normal * (first * normal) * 2.0f);
 }
 
-kl::float3 kl::cross(const float3& first, const float3& second)
+kl::Float3 kl::cross(const Float3& first, const Float3& second)
 {
     return {
         first.y * second.z - first.z * second.y,
@@ -245,41 +245,41 @@ kl::float3 kl::cross(const float3& first, const float3& second)
 }
 
 // Float4
-kl::float4 kl::abs(const float4& vec)
+kl::Float4 kl::abs(const Float4& vec)
 {
     return { ::abs(vec.x), ::abs(vec.y), ::abs(vec.z), ::abs(vec.w) };
 }
 
-kl::float4 kl::normalize(const float4& vec)
+kl::Float4 kl::normalize(const Float4& vec)
 {
     return (vec * (1.0f / vec.length()));
 }
 
-float kl::dot(const float4& first, const float4& second)
+float kl::dot(const Float4& first, const Float4& second)
 {
     return (first.x * second.x + first.y * second.y + first.z * second.z + first.w * second.w);
 }
 
-float kl::angle(const float4& first, const float4& second)
+float kl::angle(const Float4& first, const Float4& second)
 {
-    return acos(dot(normalize(first), normalize(second))) * to_degrees;
+    return acos(dot(normalize(first), normalize(second))) * TO_DEGREES;
 }
 
 // Float2x2
-kl::float2x2 kl::abs(const float2x2& mat)
+kl::Float2x2 kl::abs(const Float2x2& mat)
 {
-    float2x2 result = {};
+    Float2x2 result = {};
     for (int i = 0; i < 4; i++) {
         result[i] = ::abs(mat[i]);
     }
     return result;
 }
 
-kl::float2x2 kl::inverse(const float2x2& mat)
+kl::Float2x2 kl::inverse(const Float2x2& mat)
 {
     const float determinant = mat.determinant();
 
-    float2x2 result = {};
+    Float2x2 result = {};
     result[0] = +mat[3];
     result[1] = -mat[1];
     result[2] = -mat[2];
@@ -287,9 +287,9 @@ kl::float2x2 kl::inverse(const float2x2& mat)
     return result * determinant;
 }
 
-kl::float2x2 kl::transpose(const float2x2& mat)
+kl::Float2x2 kl::transpose(const Float2x2& mat)
 {
-    kl::float2x2 result = {};
+    kl::Float2x2 result = {};
     for (int y = 0; y < 2; y++) {
         for (int x = 0; x < 2; x++) {
             result(x, y) = mat(y, x);
@@ -299,20 +299,20 @@ kl::float2x2 kl::transpose(const float2x2& mat)
 }
 
 // Float3x3
-kl::float3x3 kl::abs(const float3x3& mat)
+kl::Float3x3 kl::abs(const Float3x3& mat)
 {
-    float3x3 result = {};
+    Float3x3 result = {};
     for (int i = 0; i < 9; i++) {
         result[i] = ::abs(mat[i]);
     }
     return result;
 }
 
-kl::float3x3 kl::inverse(const float3x3& mat)
+kl::Float3x3 kl::inverse(const Float3x3& mat)
 {
     const float determinant = mat.determinant();
 
-    float3x3 result = {};
+    Float3x3 result = {};
     result(0, 0) = (mat(1, 1) * mat(2, 2) - mat(2, 1) * mat(1, 2)) * determinant;
     result(0, 1) = (mat(0, 2) * mat(2, 1) - mat(0, 1) * mat(2, 2)) * determinant;
     result(0, 2) = (mat(0, 1) * mat(1, 2) - mat(0, 2) * mat(1, 1)) * determinant;
@@ -325,9 +325,9 @@ kl::float3x3 kl::inverse(const float3x3& mat)
     return result;
 }
 
-kl::float3x3 kl::transpose(const float3x3& mat)
+kl::Float3x3 kl::transpose(const Float3x3& mat)
 {
-    kl::float3x3 result = {};
+    kl::Float3x3 result = {};
     for (int y = 0; y < 3; y++) {
         for (int x = 0; x < 3; x++) {
             result(x, y) = mat(y, x);
@@ -337,16 +337,16 @@ kl::float3x3 kl::transpose(const float3x3& mat)
 }
 
 // Float4x4
-kl::float4x4 kl::abs(const float4x4& mat)
+kl::Float4x4 kl::abs(const Float4x4& mat)
 {
-    float4x4 result = {};
+    Float4x4 result = {};
     for (int i = 0; i < 16; i++) {
         result[i] = ::abs(mat[i]);
     }
     return result;
 }
 
-kl::float4x4 kl::inverse(const float4x4& mat)
+kl::Float4x4 kl::inverse(const Float4x4& mat)
 {
     const float determinant = mat.determinant();
 
@@ -369,7 +369,7 @@ kl::float4x4 kl::inverse(const float4x4& mat)
     const float A0113 = mat(0, 1) * mat(1, 3) - mat(1, 1) * mat(0, 3);
     const float A0112 = mat(0, 1) * mat(1, 2) - mat(1, 1) * mat(0, 2);
 
-    float4x4 result = {};
+    Float4x4 result = {};
     result(0, 0) = +(mat(1, 1) * A2323 - mat(2, 1) * A1323 + mat(3, 1) * A1223) * determinant;
     result(1, 0) = -(mat(1, 0) * A2323 - mat(2, 0) * A1323 + mat(3, 0) * A1223) * determinant;
     result(2, 0) = +(mat(1, 0) * A2313 - mat(2, 0) * A1313 + mat(3, 0) * A1213) * determinant;
@@ -389,9 +389,9 @@ kl::float4x4 kl::inverse(const float4x4& mat)
     return result;
 }
 
-kl::float4x4 kl::transpose(const float4x4& mat)
+kl::Float4x4 kl::transpose(const Float4x4& mat)
 {
-    kl::float4x4 result = {};
+    kl::Float4x4 result = {};
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
             result(x, y) = mat(y, x);

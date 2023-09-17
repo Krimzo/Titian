@@ -2,138 +2,143 @@
 
 
 // Construct
-kl::float3::float3()
+kl::Float3::Float3()
 {}
 
-kl::float3::float3(const float value)
+kl::Float3::Float3(const float value)
     : x(value), y(value), z(value)
 {}
 
-kl::float3::float3(const float x, const float y, const float z)
+kl::Float3::Float3(const float x, const float y, const float z)
     : x(x), y(y), z(z)
 {}
 
-kl::float3::float3(const float2& vec, const float z)
+kl::Float3::Float3(const Float2& vec, const float z)
     : x(vec.x), y(vec.y), z(z)
 {}
 
-kl::float3::float3(float x, const float2& vec)
+kl::Float3::Float3(float x, const Float2& vec)
     : x(x), y(vec.x), z(vec.y)
 {}
 
 // Get
-kl::float3::operator float* () const
+kl::Float3::operator float* ()
 {
-    return (float*) this;
+    return reinterpret_cast<float*>(this);
 }
 
-kl::float3::operator kl::color() const
+kl::Float3::operator const float* () const
+{
+    return reinterpret_cast<const float*>(this);
+}
+
+kl::Float3::operator kl::Color() const
 {
     return {
-        (byte) min(max(x * to_byte_color, 0.0f), 255.0f),
-        (byte) min(max(y * to_byte_color, 0.0f), 255.0f),
-        (byte) min(max(z * to_byte_color, 0.0f), 255.0f),
+        (byte) min(max(x * TO_BYTE_COLOR, 0.0f), 255.0f),
+        (byte) min(max(y * TO_BYTE_COLOR, 0.0f), 255.0f),
+        (byte) min(max(z * TO_BYTE_COLOR, 0.0f), 255.0f),
     };
 }
 
-kl::float3::operator kl::quaternion() const
+kl::Float3::operator kl::Quaternion() const
 {
     return { x, y, z };
 }
 
-kl::float2 kl::float3::xy() const
+kl::Float2 kl::Float3::xy() const
 {
     return { x, y };
 }
 
-float& kl::float3::operator[](int index)
+float& kl::Float3::operator[](const int index)
 {
     return ((float*) this)[index];
 }
 
-const float& kl::float3::operator[](int index) const
+const float& kl::Float3::operator[](const int index) const
 {
-    return ((float*) this)[index];
+    return ((const float*) this)[index];
 }
 
 // Compare
-bool kl::float3::operator==(const float3& other) const
+bool kl::Float3::operator==(const Float3& other) const
 {
     return (x == other.x && y == other.y && z == other.z);
 }
 
-bool kl::float3::operator!=(const float3& other) const
+bool kl::Float3::operator!=(const Float3& other) const
 {
     return !(*this == other);
 }
 
 // Math
-kl::float3 kl::float3::operator+(const float3& other) const
+kl::Float3 kl::Float3::operator+(const Float3& other) const
 {
     return { x + other.x, y + other.y, z + other.z };
 }
 
-void kl::float3::operator+=(const float3& other)
+void kl::Float3::operator+=(const Float3& other)
 {
     x += other.x;
     y += other.y;
     z += other.z;
 }
 
-kl::float3 kl::float3::operator-(const float3& other) const
+kl::Float3 kl::Float3::operator-(const Float3& other) const
 {
     return { x - other.x, y - other.y, z - other.z };
 }
 
-void kl::float3::operator-=(const float3& other)
+void kl::Float3::operator-=(const Float3& other)
 {
     x -= other.x;
     y -= other.y;
     z -= other.z;
 }
 
-kl::float3 kl::float3::operator*(const float value) const
+kl::Float3 kl::Float3::operator*(const float value) const
 {
     return { x * value, y * value, z * value, };
 }
 
-void kl::float3::operator*=(const float value)
+void kl::Float3::operator*=(const float value)
 {
     x *= value;
     y *= value;
     z *= value;
 }
 
-kl::float3 kl::float3::operator*(const float3& other) const
+kl::Float3 kl::Float3::operator*(const Float3& other) const
 {
     return { x * other.x, y * other.y, z * other.z };
 }
 
-void kl::float3::operator*=(const float3& other)
+void kl::Float3::operator*=(const Float3& other)
 {
     x *= other.x;
     y *= other.y;
     z *= other.z;
 }
 
-kl::float3 kl::float3::operator/(const float value) const
+kl::Float3 kl::Float3::operator/(const float value) const
 {
     return { x / value, y / value, z / value };
 }
 
-void kl::float3::operator/=(const float value)
+void kl::Float3::operator/=(const float value)
 {
     x /= value;
     y /= value;
     z /= value;
 }
 
-kl::float3 kl::float3::operator/(const float3& other) const
+kl::Float3 kl::Float3::operator/(const Float3& other) const
 {
     return { x / other.x, y / other.y, z / other.z };
 }
 
-void kl::float3::operator/=(const float3& other)
+void kl::Float3::operator/=(const Float3& other)
 {
     x /= other.x;
     y /= other.y;
@@ -141,18 +146,18 @@ void kl::float3::operator/=(const float3& other)
 }
 
 // Other
-kl::float3 kl::float3::operator-() const
+kl::Float3 kl::Float3::operator-() const
 {
     return *this * -1.0f;
 }
 
-float kl::float3::length() const
+float kl::Float3::length() const
 {
     return sqrt(dot(*this, *this));
 }
 
 // Format
-std::ostream& kl::operator<<(std::ostream& stream, const float3& vec)
+std::ostream& kl::operator<<(std::ostream& stream, const Float3& vec)
 {
     stream << std::setprecision(2);
     stream << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")";

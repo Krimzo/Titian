@@ -2,11 +2,11 @@ export module deserializer;
 
 export import serialization;
 
-export class deserializer
+export class Deserializer
 {
-    kl::file m_file = {};
+    kl::File m_file = {};
 
-    std::string read_string()
+    std::string read_string() const
     {
         uint64_t string_size = 0;
         m_file.read<uint64_t>(string_size);
@@ -17,39 +17,39 @@ export class deserializer
         return result;
     }
 
-    PxGeometryHolder read_collider_geometry(const kl::object<kl::scene>& scene)
+    physx::PxGeometryHolder read_collider_geometry(const kl::Object<kl::Scene>& scene) const
     {
         // Type
-        const PxGeometryType::Enum type = m_file.read<PxGeometryType::Enum>();
+        const physx::PxGeometryType::Enum type = m_file.read<physx::PxGeometryType::Enum>();
 
         // Data
         switch (type) {
-        case PxGeometryType::Enum::eBOX:
+        case physx::PxGeometryType::Enum::eBOX:
         {
-            PxBoxGeometry box_geometry = {};
-            box_geometry.halfExtents = m_file.read<PxVec3>();
+            physx::PxBoxGeometry box_geometry = {};
+            box_geometry.halfExtents = m_file.read<physx::PxVec3>();
             return { box_geometry };
         }
 
-        case PxGeometryType::Enum::eSPHERE:
+        case physx::PxGeometryType::Enum::eSPHERE:
         {
-            PxSphereGeometry sphere_geometry = {};
+            physx::PxSphereGeometry sphere_geometry = {};
             sphere_geometry.radius = m_file.read<float>();
             return { sphere_geometry };
         }
 
-        case PxGeometryType::Enum::eCAPSULE:
+        case physx::PxGeometryType::Enum::eCAPSULE:
         {
-            PxCapsuleGeometry capsule_geometry = {};
+            physx::PxCapsuleGeometry capsule_geometry = {};
             capsule_geometry.radius = m_file.read<float>();
             capsule_geometry.halfHeight = m_file.read<float>();
             return { capsule_geometry };
         }
 
-        case PxGeometryType::Enum::eTRIANGLEMESH:
+        case physx::PxGeometryType::Enum::eTRIANGLEMESH:
         {
-            PxTriangleMeshGeometry triangle_mesh_geometry = {};
-            triangle_mesh_geometry.scale = m_file.read<PxMeshScale>();
+            physx::PxTriangleMeshGeometry triangle_mesh_geometry = {};
+            triangle_mesh_geometry.scale = m_file.read<physx::PxMeshScale>();
 
             const std::string collider_mesh_name = read_string();
             for (const auto& [mesh_name, mesh] : scene->meshes) {
@@ -67,16 +67,16 @@ export class deserializer
 public:
     const std::string path = {};
 
-    deserializer(const std::string& path)
-        : path(path), m_file(path, false)
+    Deserializer(const std::string& path)
+        : m_file(path, false), path(path)
     {}
 
-    virtual ~deserializer()
+    virtual ~Deserializer()
     {
         m_file.close();
     }
 
-    std::pair<uint32_t, kl::object<kl::scene>> read_scene(kl::object<kl::gpu>& gpu)
+    std::pair<uint32_t, kl::Object<kl::Scene>> read_scene(kl::Object<kl::GPU>& gpu) const
     {
         // File check
         if (!m_file) return { 1, nullptr };
@@ -86,19 +86,19 @@ public:
         if (serial_version != serialization::VERSION) {
             return { serial_version, nullptr };
         }
-        kl::object scene = new kl::scene();
+        kl::Object scene = new kl::Scene();
 
         // Mesh data
         const uint64_t mesh_count = m_file.read<uint64_t>();
         for (uint64_t i = 0; i < mesh_count; i++) {
             // Create mesh
             const std::string mesh_name = read_string();
-            kl::object<kl::mesh> mesh = new kl::mesh(&gpu, &scene);
+            kl::Object mesh = new kl::Mesh(&gpu, &scene);
 
             // Vertices
             const uint64_t vertex_count = m_file.read<uint64_t>();
             mesh->data_buffer.resize(vertex_count);
-            m_file.read<kl::vertex>(mesh->data_buffer.data(), vertex_count);
+            m_file.read<kl::Vertex>(mesh->data_buffer.data(), vertex_count);
 
             // Store mesh
             mesh->reload();
@@ -110,12 +110,12 @@ public:
         for (uint64_t i = 0; i < texture_count; i++) {
             // Create texture
             const std::string texture_name = read_string();
-            kl::object<kl::texture> texture = new kl::texture(&gpu);
+            kl::Object texture = new kl::Texture(&gpu);
 
             // Pixels
-            const kl::int2 texture_size = m_file.read<kl::int2>();
+            const kl::Int2 texture_size = m_file.read<kl::Int2>();
             texture->data_buffer.resize(texture_size);
-            m_file.read<kl::color>(texture->data_buffer, texture->data_buffer.pixel_count());
+            m_file.read<kl::Color>(texture->data_buffer, texture->data_buffer.pixel_count());
 
             // Cube?
             texture->is_cube = m_file.read<bool>();
@@ -136,7 +136,7 @@ public:
         for (uint64_t i = 0; i < material_count; i++) {
             // Create material
             const std::string material_name = read_string();
-            kl::object<kl::material> material = new kl::material();
+            kl::Object material = new kl::Material();
 
             // Blend
             material->texture_blend = m_file.read<float>();
@@ -145,7 +145,7 @@ public:
             material->refraction_index = m_file.read<float>();
 
             // Color
-            material->color = m_file.read<kl::float4>();
+            material->color = m_file.read<kl::Float4>();
 
             // Bound textures
             const std::string color_map_name = read_string();
@@ -165,10 +165,10 @@ public:
             // Create entity
             const std::string entity_name = read_string();
             const bool is_dynamic = m_file.read<bool>();
-            kl::object<kl::entity> entity = new kl::entity(scene->physics(), is_dynamic);
+            kl::Object entity = new kl::Entity(scene->physics(), is_dynamic);
 
             // Render scale
-            entity->render_scale = m_file.read<kl::float3>();
+            entity->render_scale = m_file.read<kl::Float3>();
 
             // Bound mesh/material
             const std::string mesh_name = read_string();
@@ -181,25 +181,25 @@ public:
             }
 
             // Geometry
-            entity->set_rotation(m_file.read<kl::float3>());
-            entity->set_position(m_file.read<kl::float3>());
+            entity->set_rotation(m_file.read<kl::Float3>());
+            entity->set_position(m_file.read<kl::Float3>());
 
             // Physics
             entity->set_gravity(m_file.read<bool>());
             entity->set_mass(m_file.read<float>());
-            entity->set_velocity(m_file.read<kl::float3>());
-            entity->set_angular(m_file.read<kl::float3>());
+            entity->set_velocity(m_file.read<kl::Float3>());
+            entity->set_angular(m_file.read<kl::Float3>());
 
             // Collider
             const bool has_collider = m_file.read<bool>();
             if (has_collider) {
                 // Create collider
-                const PxGeometryHolder geometry_holder = read_collider_geometry(scene);
-                kl::object<kl::collider> collider = new kl::collider(scene->physics(), geometry_holder.any());
+                const physx::PxGeometryHolder geometry_holder = read_collider_geometry(scene);
+                kl::Object collider = new kl::Collider(scene->physics(), geometry_holder.any());
 
                 // Geometry info
-                collider->set_rotation(m_file.read<kl::float3>());
-                collider->set_offset(m_file.read<kl::float3>());
+                collider->set_rotation(m_file.read<kl::Float3>());
+                collider->set_offset(m_file.read<kl::Float3>());
 
                 // Physics material
                 collider->set_static_friction(m_file.read<float>());
@@ -218,21 +218,21 @@ public:
         const bool has_camera = m_file.read<bool>();
         if (has_camera) {
             // Create camera
-            kl::object<kl::camera> camera = new kl::camera();
+            kl::Object<kl::Camera> camera = new kl::Camera();
 
             // Direction
-            camera->set_forward(m_file.read<kl::float3>());
-            camera->set_up(m_file.read<kl::float3>());
+            camera->set_forward(m_file.read<kl::Float3>());
+            camera->set_up(m_file.read<kl::Float3>());
 
             // Misc Info
-            camera->origin = m_file.read<kl::float3>();
+            camera->origin = m_file.read<kl::Float3>();
             camera->aspect_ratio = m_file.read<float>();
             camera->field_of_view = m_file.read<float>();
             camera->near_plane = m_file.read<float>();
             camera->far_plane = m_file.read<float>();
             camera->sensitivity = m_file.read<float>();
             camera->speed = m_file.read<float>();
-            camera->background = m_file.read<kl::color>();
+            camera->background = m_file.read<kl::Color>();
 
             // Skybox
             const std::string skybox_name = read_string();
@@ -250,10 +250,10 @@ public:
         const bool has_ambient_light = m_file.read<bool>();
         if (has_ambient_light) {
             // Create light
-            kl::object<kl::ambient_light> light = new kl::ambient_light();
+            kl::Object<kl::AmbientLight> light = new kl::AmbientLight();
 
             // Data
-            m_file.read<kl::ambient_light>(*light);
+            m_file.read<kl::AmbientLight>(*light);
 
             // Set light
             scene->ambient_light = light;
@@ -264,10 +264,10 @@ public:
         if (has_directional_light) {
             // Create light
             const UINT map_resolution = m_file.read<UINT>();
-            kl::object<kl::directional_light> light = new kl::directional_light(&gpu, map_resolution);
+            kl::Object<kl::DirectionalLight> light = new kl::DirectionalLight(&gpu, map_resolution);
 
             // Data
-            light->set_direction(m_file.read<kl::float3>());
+            light->set_direction(m_file.read<kl::Float3>());
             light->point_size = m_file.read<float>();
 
             // Set light

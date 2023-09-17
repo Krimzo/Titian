@@ -2,23 +2,23 @@ export module sandbox;
 
 export import editor;
 
-export inline const std::string resource_path = "./preview/";
+export inline const std::string RESOURCE_PATH = "./preview/";
 
-export void load_meshes(editor_state* state);
-export void load_textures(editor_state* state);
-export void load_skyboxes(editor_state* state);
+export void load_meshes(EditorState* state);
+export void load_textures(EditorState* state);
+export void load_skyboxes(EditorState* state);
 
-export void setup_preview_cubes(editor_state* state, int size);
-export void setup_preview_spheres(editor_state* state, int size);
-export void setup_preview_monkes(editor_state* state, int size);
-export void setup_preview_physics_test(editor_state* state, int size);
+export void setup_preview_cubes(EditorState* state, int size);
+export void setup_preview_spheres(EditorState* state, int size);
+export void setup_preview_monkes(EditorState* state, int size);
+export void setup_preview_physics_test(EditorState* state, int size);
 
-void setup_preview_scene(editor_state* state);
+void setup_preview_scene(EditorState* state);
 
 export int sandbox_main()
 {
     // Setup
-    editor_state state = {};
+    EditorState state = {};
     editor_setup(&state);
 
     // Test scene setup
@@ -33,7 +33,7 @@ export int sandbox_main()
     return 0;
 }
 
-void setup_preview_scene(editor_state* state)
+void setup_preview_scene(EditorState* state)
 {
     // Setup default meshes/materials
     state->scene->meshes["cube"] = state->default_mesh.cube;
@@ -53,8 +53,8 @@ void setup_preview_scene(editor_state* state)
     state->scene->camera->skybox = state->scene->textures["clouds"];
 
     // Light
-    state->scene->ambient_light = new kl::ambient_light();
-    state->scene->directional_light = new kl::directional_light(&state->gpu, 4096);
+    state->scene->ambient_light = new kl::AmbientLight();
+    state->scene->directional_light = new kl::DirectionalLight(&state->gpu, 4096);
     state->scene->directional_light->set_direction({ 0.26f, -0.335f, 0.9f });
 
     // Parts

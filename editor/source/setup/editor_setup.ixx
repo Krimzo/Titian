@@ -3,15 +3,15 @@ export module editor_setup;
 export import editor;
 export import jvm_script_transfer;
 
-export void setup_depth_states(editor_state* state);
-export void setup_sampler_states(editor_state* state);
-export void setup_raster_states(editor_state* state);
-export void setup_shaders(editor_state* state);
-export void setup_gui(editor_state* state);
+export void setup_depth_states(EditorState* state);
+export void setup_sampler_states(EditorState* state);
+export void setup_raster_states(EditorState* state);
+export void setup_shaders(EditorState* state);
+export void setup_gui(EditorState* state);
 
-export void load_custom_theme(editor_state* state);
+export void load_custom_theme(EditorState* state);
 
-export void editor_setup(editor_state* state)
+export void editor_setup(EditorState* state)
 {
     state->window->maximize();
 

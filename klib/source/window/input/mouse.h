@@ -5,30 +5,30 @@
 
 
 namespace kl {
-    class mouse
+    class Mouse
     {
-        HWND window_ = nullptr;
-        int2 position_ = {};
-        bool hidden_ = false;
-        int show_counter_ = 0;
-        int scroll_ = 0;
+        HWND m_window = nullptr;
+        Int2 m_position = {};
+        bool m_hidden = false;
+        int m_show_counter = 0;
+        int m_scroll = 0;
 
         void process() const;
 
     public:
-        friend class window;
+        friend class Window;
 
-        key left = {};
-        key middle = {};
-        key right = {};
+        Key left = {};
+        Key middle = {};
+        Key right = {};
 
         bool is_hidden() const;
         void set_hidden(bool enabled);
 
-        void set_position(const int2& position, bool client = true);
-        int2 position(bool client = true) const;
+        void set_position(const Int2& position, bool client = true);
+        Int2 position(bool client = true) const;
 
-        float2 normalized_position(bool client = true) const;
+        Float2 normalized_position(bool client = true) const;
         int scroll() const;
     };
 }

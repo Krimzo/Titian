@@ -7,32 +7,31 @@
 
 
 namespace kl {
-    struct ray
+    class Ray
     {
-    private:
-        float3 direction_ = { 0.0f, 0.0f, 1.0f };
+        Float3 m_direction = { 0.0f, 0.0f, 1.0f };
 
     public:
-        float3 origin = {};
+        Float3 origin = {};
 
         // Construct
-        ray();
-        ray(const float3& origin, const float3& direction);
-        ray(const float3& origin, const float4x4& inverse_matrix, const float2& ndc);
+        Ray();
+        Ray(const Float3& origin, const Float3& direction);
+        Ray(const Float3& origin, const Float4x4& inverse_matrix, const Float2& ndc);
 
         // Direction
-        void set_direction(const float3& direction);
-        float3 direction() const;
+        void set_direction(const Float3& direction);
+        Float3 direction() const;
 
         // Intersection
-        bool intersect_plane(const plane& plane, float3* out_intersection) const;
-        bool intersect_triangle(const triangle& triangle, float3* out_intersection) const;
+        bool intersect_plane(const Plane& plane, Float3* out_intersection) const;
+        bool intersect_triangle(const Triangle& triangle, Float3* out_intersection) const;
 
-        bool can_intersect_sphere(const sphere& sphere) const;
-        bool intersect_sphere(const sphere& sphere, float3* out_intersection, float* out_distance) const;
+        bool can_intersect_sphere(const Sphere& sphere) const;
+        bool intersect_sphere(const Sphere& sphere, Float3* out_intersection, float* out_distance) const;
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& os, const ray& obj);
+    std::ostream& operator<<(std::ostream& os, const Ray& obj);
 }

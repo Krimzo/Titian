@@ -2,9 +2,9 @@
 
 
 // Private
-bool kl::encryptor::key_size_exists(const size_t size) const
+bool kl::Encryptor::key_size_exists(const size_t size) const
 {
-    for (auto& key : *this) {
+    for (const auto& key : *this) {
         if (key.size() == size) {
             return true;
         }
@@ -13,7 +13,7 @@ bool kl::encryptor::key_size_exists(const size_t size) const
 }
 
 // Public
-kl::encryptor::encryptor()
+kl::Encryptor::Encryptor()
 {
     for (auto& key : *this) {
         size_t key_size = 0;
@@ -27,7 +27,7 @@ kl::encryptor::encryptor()
     }
 }
 
-void kl::encryptor::encrypt(void* data, const size_t byte_size) const
+void kl::Encryptor::encrypt(void* data, const size_t byte_size) const
 {
     for (auto& key : *this) {
         for (size_t i = 0; i < byte_size; i++) {
@@ -36,15 +36,15 @@ void kl::encryptor::encrypt(void* data, const size_t byte_size) const
     }
 }
 
-void kl::encryptor::decrypt(void* data, const size_t byte_size) const
+void kl::Encryptor::decrypt(void* data, const size_t byte_size) const
 {
     encrypt(data, byte_size);
 }
 
 // Format
-std::ostream& kl::operator<<(std::ostream& stream, const encryptor& encryptor)
+std::ostream& kl::operator<<(std::ostream& stream, const Encryptor& encryptor)
 {
-    for (int i = 0; i < encryptor_key_count; i++) {
+    for (int i = 0; i < ENCRYPTOR_KEY_COUNT; i++) {
         stream << "keys[" << i << "] = { ";
         for (size_t k = 0; k < (encryptor[i].size() - 1); k++) {
             stream << (int) encryptor[i][k] << ", ";

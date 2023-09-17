@@ -4,31 +4,31 @@
 
 
 namespace kl {
-    using mesh_data = std::vector<vertex>;
+    using MeshData = std::vector<Vertex>;
 }
 
 #ifdef KL_USING_PHYSX
 
 namespace kl {
-    class scene;
+    class Scene;
 }
 
 namespace kl {
-    class mesh
+    class Mesh
     {
         void free_physics_buffer();
 
     public:
-        gpu* gpu = nullptr;
-        scene* scene = nullptr;
+        GPU* gpu = nullptr;
+        Scene* scene = nullptr;
 
-        mesh_data data_buffer = {};
-        dx::buffer graphics_buffer = nullptr;
-        PxTriangleMesh* physics_buffer = nullptr;
+        MeshData data_buffer = {};
+        dx::Buffer graphics_buffer = nullptr;
+        physx::PxTriangleMesh* physics_buffer = nullptr;
 
-        mesh(kl::gpu* gpu, kl::scene* scene);
-        mesh(kl::gpu* gpu, kl::scene* scene, const mesh_data& data);
-        virtual ~mesh();
+        Mesh(GPU* gpu, Scene* scene);
+        Mesh(GPU* gpu, Scene* scene, const MeshData& data);
+        virtual ~Mesh();
 
         void reload();
     };
@@ -37,15 +37,15 @@ namespace kl {
 #else
 
 namespace kl {
-    class mesh
+    class Mesh
     {
     public:
-        gpu* gpu = nullptr;
-        mesh_data data_buffer = {};
-        dx::buffer graphics_buffer = nullptr;
+        GPU* gpu = nullptr;
+        MeshData data_buffer = {};
+        dx::Buffer graphics_buffer = nullptr;
 
-        mesh(kl::gpu* gpu);
-        mesh(kl::gpu* gpu, const mesh_data& data);
+        Mesh(kl::GPU* gpu);
+        Mesh(kl::GPU* gpu, const MeshData& data);
 
         void reload();
     };

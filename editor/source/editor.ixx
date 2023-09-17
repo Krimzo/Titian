@@ -2,13 +2,13 @@ export module editor;
 
 export import editor_state;
 
-export void editor_setup(editor_state* state);
-export void editor_update(editor_state* state);
+export void editor_setup(EditorState* state);
+export void editor_update(EditorState* state);
 
 export int editor_main()
 {
     // Setup
-    editor_state state = {};
+    EditorState state = {};
     editor_setup(&state);
 
     // Loop

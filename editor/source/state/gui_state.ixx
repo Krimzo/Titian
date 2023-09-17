@@ -2,8 +2,9 @@ export module gui_state;
 
 export import basic_state;
 
-export struct gui_state : public BasicState
+export class GUIState : public BasicState
 {
+public:
     bool is_viewport_focused = false;
     bool render_collider = true;
 
@@ -11,36 +12,38 @@ export struct gui_state : public BasicState
     int gizmo_mode = 1;
     int explorer_icon_size = 65;
 
-    kl::int2 viewport_size = {};
+    kl::Int2 viewport_size = {};
 
-    kl::float4 color_special = kl::color(235, 170, 15);
-    kl::float4 color_alternative = kl::color(127, 190, 190);
+    kl::Float4 color_special = kl::Color(235, 170, 15);
+    kl::Float4 color_alternative = kl::Color(127, 190, 190);
 
     std::string builtin_path = "./builtin/";
     std::string explorer_path = std::filesystem::absolute(".").string();
 
-    struct textures_t
+    class TexturesT
     {
-        kl::object<kl::texture> folder = {};
-        kl::object<kl::texture> folder_empty = {};
-        kl::object<kl::texture> folder_parent = {};
-        kl::object<kl::texture> file = {};
-        kl::object<kl::texture> code = {};
-        kl::object<kl::texture> script = {};
-        kl::object<kl::texture> mesh = {};
-        kl::object<kl::texture> texture = {};
-        kl::object<kl::texture> scene = {};
+    public:
+        kl::Object<kl::Texture> folder = {};
+        kl::Object<kl::Texture> folder_empty = {};
+        kl::Object<kl::Texture> folder_parent = {};
+        kl::Object<kl::Texture> file = {};
+        kl::Object<kl::Texture> code = {};
+        kl::Object<kl::Texture> script = {};
+        kl::Object<kl::Texture> mesh = {};
+        kl::Object<kl::Texture> texture = {};
+        kl::Object<kl::Texture> scene = {};
     } textures;
 
     // Mesh editor
-    struct mesh_editor_t
+    class MeshEditorT
     {
-        kl::camera camera = {};
-        kl::object<kl::mesh> selected_mesh = {};
-        kl::object<kl::texture> render_texture = {};
-        kl::render_shaders shaders = {};
+    public:
+        kl::Camera camera = {};
+        kl::Object<kl::Mesh> selected_mesh = {};
+        kl::Object<kl::Texture> render_texture = {};
+        kl::RenderShaders shaders = {};
 
-        mesh_editor_t()
+        MeshEditorT()
         {
             this->camera.origin = { 0.642787576f, 0.577350259f, 0.766044438f };
             this->camera.speed = 3.1f;
@@ -48,15 +51,16 @@ export struct gui_state : public BasicState
     } mesh_editor;
 
     // Material editor
-    struct material_editor_t
+    class MaterialEditorT
     {
-        kl::camera camera = {};
-        kl::object<kl::material> selected_material = {};
-        kl::object<kl::texture> selected_texture = {};
-        kl::object<kl::texture> render_texture = {};
-        kl::render_shaders shaders = {};
+    public:
+        kl::Camera camera = {};
+        kl::Object<kl::Material> selected_material = {};
+        kl::Object<kl::Texture> selected_texture = {};
+        kl::Object<kl::Texture> render_texture = {};
+        kl::RenderShaders shaders = {};
 
-        material_editor_t()
+        MaterialEditorT()
         {
             this->camera.origin = { 0.642787576f, 0.577350259f, 0.766044438f };
             this->camera.speed = 3.1f;
@@ -64,16 +68,17 @@ export struct gui_state : public BasicState
     } material_editor;
 
     // Render info
-    struct render_info_t
+    class RenderInfoT
     {
+    public:
         float last_update_time = 0.0f;
     } render_info;
 
-    gui_state(kl::object<kl::gpu> gpu)
+    GUIState(kl::Object<kl::GPU> gpu)
     {
         auto load_texture = [&](const std::string& path)
         {
-            kl::object<kl::texture> texture = new kl::texture(&gpu, kl::image(path));
+            kl::Object texture = new kl::Texture(&gpu, kl::Image(path));
             texture->create_shader_view();
             return texture;
         };
@@ -89,9 +94,9 @@ export struct gui_state : public BasicState
         textures.scene = load_texture(builtin_path + "textures/scene.png");
     }
 
-    gui_state(gui_state&) = delete;
-    gui_state(gui_state&&) = delete;
+    GUIState(GUIState&) = delete;
+    GUIState(GUIState&&) = delete;
 
-    void operator=(gui_state&) = delete;
-    void operator=(gui_state&&) = delete;
+    void operator=(GUIState&) = delete;
+    void operator=(GUIState&&) = delete;
 };

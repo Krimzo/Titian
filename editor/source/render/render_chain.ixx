@@ -2,25 +2,25 @@ export module render_chain;
 
 export import editor_update;
 
-export void render_shadows(editor_state* state);
-export void render_skybox(editor_state* state);
-export void render_scene(editor_state* state);
-export void render_collider(editor_state* state);
-export void render_postprocess(editor_state* state);
+export void render_shadows(EditorState* state);
+export void render_skybox(EditorState* state);
+export void render_scene(EditorState* state);
+export void render_collider(EditorState* state);
+export void render_postprocess(EditorState* state);
 
-export void gui_render(editor_state* state);
+export void gui_render(EditorState* state);
 
-export void render_chain(editor_state* state)
+export void render_chain(EditorState* state)
 {
     // Clear
-    const kl::color background = (state->scene && state->scene->camera) ? state->scene->camera->background : kl::color();
+    const kl::Color background = (state->scene && state->scene->camera) ? state->scene->camera->background : kl::Color();
     state->gpu->clear_internal(background);
 
     // Scene
     if (state->scene && state->scene->camera) {
         // Pre-render
         if (state->scene->directional_light) {
-            state->gpu->set_viewport_size(kl::int2(state->scene->directional_light->map_resolution));
+            state->gpu->set_viewport_size(kl::Int2 { (int) state->scene->directional_light->map_resolution });
             state->gpu->unbind_target_depth_views();
             render_shadows(state);
         }

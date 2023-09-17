@@ -2,7 +2,7 @@
 
 
 // Window private
-void kl::keyboard::update(const WPARAM type, const bool new_state)
+void kl::Keyboard::update(const WPARAM type, const bool new_state)
 {
     switch (type)
     {
@@ -212,7 +212,7 @@ void kl::keyboard::update(const WPARAM type, const bool new_state)
     }
 }
 
-void kl::keyboard::process() const
+void kl::Keyboard::process() const
 {
     q.process();
     w.process();

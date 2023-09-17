@@ -2,38 +2,38 @@
 
 
 // Construct
-kl::ray::ray()
+kl::Ray::Ray()
 {}
 
-kl::ray::ray(const float3& origin, const float3& direction)
+kl::Ray::Ray(const Float3& origin, const Float3& direction)
     : origin(origin)
 {
     set_direction(direction);
 }
 
-kl::ray::ray(const float3& origin, const float4x4& inverse_matrix, const float2& ndc)
+kl::Ray::Ray(const Float3& origin, const Float4x4& inverse_matrix, const Float2& ndc)
     : origin(origin)
 {
-    float4 pixel_direction = inverse_matrix * float4(ndc, 1.0f, 1.0f);
+    Float4 pixel_direction = inverse_matrix * Float4(ndc, 1.0f, 1.0f);
     pixel_direction *= 1.0f / pixel_direction.w;
     set_direction(pixel_direction.xyz());
 }
 
 // Direction
-void kl::ray::set_direction(const float3& direction)
+void kl::Ray::set_direction(const Float3& direction)
 {
-    direction_ = normalize(direction);
+    m_direction = normalize(direction);
 }
 
-kl::float3 kl::ray::direction() const
+kl::Float3 kl::Ray::direction() const
 {
-    return direction_;
+    return m_direction;
 }
 
 // Intersection
-bool kl::ray::intersect_plane(const plane& plane, float3* out_intersection) const
+bool kl::Ray::intersect_plane(const Plane& plane, Float3* out_intersection) const
 {
-    const float denom = dot(plane.normal(), direction_);
+    const float denom = dot(plane.normal(), m_direction);
     if (::abs(denom) <= 0.0001f) {
         return false;
     }
@@ -44,26 +44,26 @@ bool kl::ray::intersect_plane(const plane& plane, float3* out_intersection) cons
     }
 
     if (out_intersection) {
-        *out_intersection = origin + direction_ * t;
+        *out_intersection = origin + m_direction * t;
     }
     return true;
 }
 
-bool kl::ray::intersect_triangle(const triangle& triangle, float3* out_intersection) const
+bool kl::Ray::intersect_triangle(const Triangle& triangle, Float3* out_intersection) const
 {
-    const float3 edge1 = triangle.b.world - triangle.a.world;
-    const float3 edge2 = triangle.c.world - triangle.a.world;
+    const Float3 edge1 = triangle.b.world - triangle.a.world;
+    const Float3 edge2 = triangle.c.world - triangle.a.world;
 
-    const float3 h = cross(direction_, edge2);
-    const float3 s = origin - triangle.a.world;
+    const Float3 h = cross(m_direction, edge2);
+    const Float3 s = origin - triangle.a.world;
     const float f = 1.0f / dot(edge1, h);
     const float u = dot(s, h) * f;
     if (u < 0.0f || u > 1.0f) {
         return false;
     }
 
-    const float3 q = cross(s, edge1);
-    const float v = dot(direction_, q) * f;
+    const Float3 q = cross(s, edge1);
+    const float v = dot(m_direction, q) * f;
     if (v < 0.0f || (u + v) > 1.0f) {
         return false;
     }
@@ -74,23 +74,23 @@ bool kl::ray::intersect_triangle(const triangle& triangle, float3* out_intersect
     }
 
     if (out_intersection) {
-        *out_intersection = origin + direction_ * t;
+        *out_intersection = origin + m_direction * t;
     }
     return true;
 }
 
-bool kl::ray::can_intersect_sphere(const sphere& sphere) const
+bool kl::Ray::can_intersect_sphere(const Sphere& sphere) const
 {
-    const float ray_distance = dot((sphere.origin - origin), direction_);
-    const float3 ray_point = origin + direction_ * ray_distance;
+    const float ray_distance = dot((sphere.origin - origin), m_direction);
+    const Float3 ray_point = origin + m_direction * ray_distance;
     const float sphere_ray_distance = (sphere.origin - ray_point).length();
     return !(sphere_ray_distance > sphere.radius);
 }
 
-bool kl::ray::intersect_sphere(const sphere& sphere, float3* out_intersection, float* out_distance) const
+bool kl::Ray::intersect_sphere(const Sphere& sphere, Float3* out_intersection, float* out_distance) const
 {
-    const float3 center_ray = sphere.origin - origin;
-    const float cd_dot = dot(center_ray, direction_);
+    const Float3 center_ray = sphere.origin - origin;
+    const float cd_dot = dot(center_ray, m_direction);
     if (cd_dot < 0.0f) {
         return false;
     }
@@ -106,7 +106,7 @@ bool kl::ray::intersect_sphere(const sphere& sphere, float3* out_intersection, f
     const float dis1 = cd_dot + thc;
 
     if (out_intersection) {
-        *out_intersection = origin + direction_ * ((dis0 < 0.0f) ? dis1 : dis0);
+        *out_intersection = origin + m_direction * ((dis0 < 0.0f) ? dis1 : dis0);
     }
     if (out_distance) {
         *out_distance = (dis0 < 0.0f) ? dis1 : dis0;
@@ -115,7 +115,7 @@ bool kl::ray::intersect_sphere(const sphere& sphere, float3* out_intersection, f
 }
 
 // Format
-std::ostream& kl::operator<<(std::ostream& os, const kl::ray& obj)
+std::ostream& kl::operator<<(std::ostream& os, const kl::Ray& obj)
 {
     os << "{" << obj.origin << ", " << obj.direction() << "}";
     return os;

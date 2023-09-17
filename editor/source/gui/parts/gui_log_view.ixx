@@ -2,15 +2,15 @@ export module gui_log_view;
 
 export import gui_render;
 
-void ui_colored_text(const kl::float4& color, const std::string& message);
+void ui_colored_text(const kl::Float4& color, const std::string& message);
 
-export void gui_log_view(editor_state* state)
+export void gui_log_view(EditorState* state)
 {
     if (ImGui::Begin("Log view")) {
         const size_t last_log_index = state->logger_state->last_log_index();
 
         for (size_t i = 0; i < state->logger_state->size(); i++) {
-            const log_info& log_info = state->logger_state->get(i);
+            const LogInfo& log_info = state->logger_state->get(i);
 
             ui_colored_text(state->gui_state->color_special, i == last_log_index ? ">" : " ");
             ImGui::SameLine();
@@ -35,7 +35,7 @@ export void gui_log_view(editor_state* state)
     ImGui::End();
 }
 
-void ui_colored_text(const kl::float4& color, const std::string& message)
+void ui_colored_text(const kl::Float4& color, const std::string& message)
 {
     ImGui::TextColored(*(ImVec4*) &color, message.c_str());
 }

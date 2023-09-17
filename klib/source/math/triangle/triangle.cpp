@@ -2,21 +2,21 @@
 
 
 // Construct
-kl::triangle::triangle()
+kl::Triangle::Triangle()
 {}
 
-kl::triangle::triangle(const vertex& a, const vertex& b, const vertex& c)
+kl::Triangle::Triangle(const Vertex& a, const Vertex& b, const Vertex& c)
     : a(a), b(b), c(c)
 {}
 
 // Normal
-kl::float3 kl::triangle::normal() const
+kl::Float3 kl::Triangle::normal() const
 {
     return normalize(cross(b.world - a.world, c.world - a.world));
 }
 
 // Interpolation
-kl::float4 kl::triangle::constants() const
+kl::Float4 kl::Triangle::constants() const
 {
     const float calc_const = (b.world.y - c.world.y) * (a.world.x - c.world.x) + (c.world.x - b.world.x) * (a.world.y - c.world.y);
     const float rec_constant = 1.0f / calc_const;
@@ -29,7 +29,7 @@ kl::float4 kl::triangle::constants() const
     };
 }
 
-kl::float3 kl::triangle::weights(const float4& constants, const float2& point) const
+kl::Float3 kl::Triangle::weights(const Float4& constants, const Float2& point) const
 {
     const float dx = point.x - c.world.x;
     const float dy = point.y - c.world.y;
@@ -39,11 +39,11 @@ kl::float3 kl::triangle::weights(const float4& constants, const float2& point) c
     return { w1, w2, (1.0f - w1 - w2) };
 }
 
-kl::float3 kl::triangle::weights(const float3& position) const
+kl::Float3 kl::Triangle::weights(const Float3& position) const
 {
-    const float3 v0 = a.world - c.world;
-    const float3 v1 = b.world - c.world;
-    const float3 v2 = position - c.world;
+    const Float3 v0 = a.world - c.world;
+    const Float3 v1 = b.world - c.world;
+    const Float3 v2 = position - c.world;
 
     const float d00 = dot(v0, v0);
     const float d01 = dot(v0, v1);
@@ -58,7 +58,7 @@ kl::float3 kl::triangle::weights(const float3& position) const
     return { w1, w2, (1.0f - w1 - w2) };
 }
 
-kl::vertex kl::triangle::interpolate_self(const float3& weights) const
+kl::Vertex kl::Triangle::interpolate_self(const Float3& weights) const
 {
     return {
         {
@@ -79,18 +79,18 @@ kl::vertex kl::triangle::interpolate_self(const float3& weights) const
 }
 
 // Static
-bool kl::triangle::is_in_triangle(const float3& weights)
+bool kl::Triangle::is_in_triangle(const Float3& weights)
 {
     return !(weights.x < 0.0f || weights.y < 0.0f || weights.z < 0.0f);
 }
 
-float kl::triangle::interpolate(const float3& weights, const float3& values)
+float kl::Triangle::interpolate(const Float3& weights, const Float3& values)
 {
     return dot(weights, values);
 }
 
 // Format
-std::ostream& kl::operator<<(std::ostream& os, const kl::triangle& obj)
+std::ostream& kl::operator<<(std::ostream& os, const kl::Triangle& obj)
 {
     os << "{" << obj.a << ", " << obj.b << ", " << obj.c << "}";
     return os;

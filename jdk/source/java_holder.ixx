@@ -2,50 +2,45 @@ export module java_holder;
 
 export import java;
 
-export namespace java {
-    template<typename T>
-    class holder
+export template<typename T>
+class JavaHolder
+{
+    T m_object = nullptr;
+
+public:
+    // Construct
+    JavaHolder(T object)
+        : m_object(object)
+    {}
+
+    virtual ~JavaHolder()
     {
-        T m_object = nullptr;
+        this->set(nullptr);
+    }
 
-    public:
-        // Construct
-        holder(T object)
-            : m_object(object)
-        {}
+    // Copy
+    JavaHolder(const JavaHolder&) = delete;
+    JavaHolder(const JavaHolder&&) = delete;
 
-        virtual ~holder()
-        {
-            if (m_object) {
-                delete_object(m_object);
-                m_object = nullptr;
-            }
+    void operator=(const JavaHolder&) = delete;
+    void operator=(const JavaHolder&&) = delete;
+
+    // Info
+    void set(T object)
+    {
+        if (m_object) {
+            java::delete_object(m_object);
         }
+        m_object = object;
+    }
 
-        // Copy
-        holder(const holder&) = delete;
-        holder(const holder&&) = delete;
+    T get() const
+    {
+        return m_object;
+    }
 
-        void operator=(const holder&) = delete;
-        void operator=(const holder&&) = delete;
-
-        // Info
-        void set(T object)
-        {
-            if (m_object) {
-                delete_object(m_object);
-            }
-            m_object = object;
-        }
-
-        T get() const
-        {
-            return m_object;
-        }
-
-        operator bool() const
-        {
-            return (bool) m_object;
-        }
-    };
-}
+    operator bool() const
+    {
+        return (bool) m_object;
+    }
+};

@@ -4,11 +4,11 @@
 
 
 namespace kl {
-    class point_light
+    class PointLight
     {
     public:
-        float3 origin = {};
-        float3 color = colors::white;
+        Float3 origin = {};
+        Float3 color = colors::WHITE;
         float intensity = 1.0f;
     };
 }

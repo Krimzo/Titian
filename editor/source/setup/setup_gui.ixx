@@ -2,9 +2,9 @@ export module setup_gui;
 
 export import editor_setup;
 
-void load_custom_font(const editor_state* state);
+void load_custom_font(const EditorState* state);
 
-export void setup_gui(editor_state* state)
+export void setup_gui(EditorState* state)
 {
     ImGui::CreateContext();
     ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -17,7 +17,7 @@ export void setup_gui(editor_state* state)
     ImGui_ImplDX11_Init(state->gpu->device().Get(), state->gpu->context().Get());
 }
 
-void load_custom_theme(editor_state* state)
+void load_custom_theme(EditorState* state)
 {
     ImGuiStyle& style = ImGui::GetStyle();
 
@@ -115,7 +115,7 @@ void load_custom_theme(editor_state* state)
     style.TabRounding = 4;
 }
 
-void load_custom_font(const editor_state* state)
+void load_custom_font(const EditorState* state)
 {
     const std::string font_path = state->gui_state->builtin_path + "fonts/Roboto.ttf";
     constexpr int font_size = 16;

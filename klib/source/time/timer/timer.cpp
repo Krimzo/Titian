@@ -1,37 +1,37 @@
 #include "klib.h"
 
 
-kl::timer::timer()
+kl::Timer::Timer()
 {
     const time_t now = time::now();
-    delta_start_ = now;
-    delta_end_ = now;
-    elapsed_start_ = now;
+    m_delta_start = now;
+    m_delta_end = now;
+    m_elapsed_start = now;
 }
 
-void kl::timer::reset()
+void kl::Timer::reset()
 {
     update_delta();
     reset_elapsed();
 }
 
-void kl::timer::update_delta()
+void kl::Timer::update_delta()
 {
-    delta_start_ = delta_end_;
-    delta_end_ = time::now();
+    m_delta_start = m_delta_end;
+    m_delta_end = time::now();
 }
 
-float kl::timer::delta() const
+float kl::Timer::delta() const
 {
-    return time::calculate(delta_start_, delta_end_);
+    return time::calculate(m_delta_start, m_delta_end);
 }
 
-void kl::timer::reset_elapsed()
+void kl::Timer::reset_elapsed()
 {
-    elapsed_start_ = time::now();
+    m_elapsed_start = time::now();
 }
 
-float kl::timer::elapsed() const
+float kl::Timer::elapsed() const
 {
-    return time::calculate(elapsed_start_, time::now());
+    return time::calculate(m_elapsed_start, time::now());
 }

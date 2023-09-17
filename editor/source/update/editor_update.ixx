@@ -2,15 +2,15 @@ export module editor_update;
 
 export import editor;
 
-export void update_physics(editor_state* state);
-export void update_scripts(editor_state* state);
-export void handle_camera(editor_state* state);
-export void finalize_frame(editor_state* state);
+export void update_physics(EditorState* state);
+export void update_scripts(EditorState* state);
+export void handle_camera(EditorState* state);
+export void finalize_frame(EditorState* state);
 
-export void handle_resizes(editor_state* state);
-export void render_chain(editor_state* state);
+export void handle_resizes(EditorState* state);
+export void render_chain(EditorState* state);
 
-export void editor_update(editor_state* state)
+export void editor_update(EditorState* state)
 {
     // Pre-Render
     if (state->scene) {

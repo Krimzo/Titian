@@ -4,7 +4,7 @@
 
 
 namespace kl {
-    class socket
+    class Socket
     {
         sockaddr_in m_address = {};
         SOCKET m_socket = {};
@@ -13,10 +13,10 @@ namespace kl {
         static const std::string self;
 
         // Init
-        socket();
-        socket(int port);
-        socket(const std::string& address, int port);
-        virtual ~socket();
+        Socket();
+        Socket(int port);
+        Socket(const std::string& address, int port);
+        virtual ~Socket();
 
         // Properties
         SOCKET id() const;
@@ -29,7 +29,7 @@ namespace kl {
 
         // Connection
         int listen(int queue_size);
-        socket accept();
+        Socket accept();
         int connect();
         int close() const;
 

@@ -5,20 +5,20 @@
 
 namespace kl {
     template<typename T>
-    class object
+    class Object
     {
         template<typename>
-        friend class object;
+        friend class Object;
 
         T* m_instance = nullptr;
         std::atomic<uint64_t>* m_count = nullptr;
 
-        uint64_t increase_count()
+        uint64_t increase_count() const
         {
             return m_count ? (*m_count += 1) : 0;
         }
 
-        uint64_t decrease_count()
+        uint64_t decrease_count() const
         {
             return m_count ? (*m_count -= 1) : 0;
         }
@@ -30,7 +30,7 @@ namespace kl {
             *m_count = 1;
         }
 
-        void deallocate()
+        void deallocate() const
         {
             if (m_instance) delete m_instance;
             if (m_count) delete m_count;
@@ -44,10 +44,10 @@ namespace kl {
 
     public:
         // Create
-        object()
+        Object()
         {}
 
-        object(T* instance)
+        Object(T* instance)
             : m_instance(instance)
         {
             if (m_instance) {
@@ -56,7 +56,7 @@ namespace kl {
         }
 
         // Destroy
-        virtual ~object()
+        virtual ~Object()
         {
             this->free();
         }
@@ -70,18 +70,18 @@ namespace kl {
         }
 
         // Create copy
-        object(const object& other)
+        Object(const Object& other)
             : m_instance(other.m_instance), m_count(other.m_count)
         {
             increase_count();
         }
 
-        object(const object&& other) noexcept
-            : object(other)
+        Object(const Object&& other) noexcept
+            : Object(other)
         {}
 
         // Copy
-        object& operator=(const object& other)
+        Object& operator=(const Object& other)
         {
             if (other.m_instance != m_instance) {
                 this->free();
@@ -92,16 +92,16 @@ namespace kl {
             return *this;
         }
 
-        object& operator=(const object&& other) noexcept
+        Object& operator=(Object&& other) noexcept
         {
             return (*this = other);
         }
 
         // Derived cast
         template<typename B> requires std::is_base_of_v<B, T>
-        operator object<B> ()
+        operator Object<B> ()
         {
-            object<B> result = {};
+            Object<B> result = {};
             result.m_instance = m_instance;
             result.m_count = m_count;
             increase_count();
@@ -121,7 +121,7 @@ namespace kl {
 
         // Compare
         template<typename O>
-        bool operator==(const object<O>& other) const
+        bool operator==(const Object<O>& other) const
         {
             const void* first = m_instance;
             const void* second = other.m_instance;
@@ -129,7 +129,7 @@ namespace kl {
         }
 
         template<typename O>
-        bool operator!=(const object<O>& other) const
+        bool operator!=(const Object<O>& other) const
         {
             return !(*this == other);
         }
@@ -170,7 +170,7 @@ namespace kl {
 
 namespace kl {
     template<typename T>
-    std::ostream& operator<<(std::ostream& stream, const object<T>& object)
+    std::ostream& operator<<(std::ostream& stream, const Object<T>& object)
     {
         // Address
         stream << "(0x" << std::hex << &object << std::dec;

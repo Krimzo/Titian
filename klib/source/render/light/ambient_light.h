@@ -4,10 +4,10 @@
 
 
 namespace kl {
-    class ambient_light
+    class AmbientLight
     {
     public:
-        float3 color = float3(1.0f);
+        Float3 color = Float3(1.0f);
         float intensity = 0.1f;
     };
 }

@@ -2,12 +2,12 @@ export module gui_mesh_editor;
 
 export import gui_render;
 
-void display_meshes(editor_state* state);
-std::string find_mesh_name(editor_state* state, const kl::object<kl::mesh>& mesh);
-void update_mesh_camera(editor_state* state);
-void render_selected_mesh(editor_state* state, const kl::object<kl::mesh>& mesh, const kl::int2& viewport_size);
+void display_meshes(EditorState* state);
+std::string find_mesh_name(EditorState* state, const kl::Object<kl::Mesh>& mesh);
+void update_mesh_camera(EditorState* state);
+void render_selected_mesh(EditorState* state, const kl::Object<kl::Mesh>& mesh, const kl::Int2& viewport_size);
 
-export void gui_mesh_editor(editor_state* state)
+export void gui_mesh_editor(EditorState* state)
 {
     if (ImGui::Begin("Mesh Editor")) {
         const float available_width = ImGui::GetContentRegionAvail().x;
@@ -19,13 +19,13 @@ export void gui_mesh_editor(editor_state* state)
         }
         ImGui::EndChild();
 
-        std::optional mesh_file_path = GUI::drag_drop::read_data<std::string>("MeshFile");
+        const std::optional mesh_file_path = gui::drag_drop::read_data<std::string>("MeshFile");
         if (mesh_file_path) {
             const std::filesystem::path path = mesh_file_path.value();
             const std::string mesh_name = path.filename().string();
             if (!state->scene->meshes.contains(mesh_name)) {
-                kl::mesh_data mesh_data = kl::parse_obj_file(path.string());
-                kl::object new_mesh = new kl::mesh(&state->gpu, &state->scene, mesh_data);
+                const kl::MeshData mesh_data = kl::parse_obj_file(path.string());
+                const kl::Object new_mesh = new kl::Mesh(&state->gpu, &state->scene, mesh_data);
                 state->scene->meshes[mesh_name] = new_mesh;
             }
         }
@@ -36,13 +36,13 @@ export void gui_mesh_editor(editor_state* state)
         ImGui::PushStyleColor(ImGuiCol_Border, (ImVec4&) state->gui_state->color_special);
         static bool was_focused = true;
 
-        const kl::object<kl::mesh> mesh = state->gui_state->mesh_editor.selected_mesh;
+        const kl::Object mesh = state->gui_state->mesh_editor.selected_mesh;
         if (ImGui::BeginChild("Mesh View", {}, was_focused)) {
-            const kl::int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
+            const kl::Int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
             if (was_focused) update_mesh_camera(state);
             if (mesh) {
                 render_selected_mesh(state, mesh, viewport_size);
-                kl::dx::shader_view& shader_view = state->gui_state->mesh_editor.render_texture->shader_view;
+                const kl::dx::ShaderView& shader_view = state->gui_state->mesh_editor.render_texture->shader_view;
                 if (shader_view) ImGui::Image(shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
             was_focused = ImGui::IsWindowFocused();
@@ -64,9 +64,9 @@ export void gui_mesh_editor(editor_state* state)
     ImGui::End();
 }
 
-void display_meshes(editor_state* state)
+void display_meshes(EditorState* state)
 {
-    kl::object<kl::mesh>& selected_mesh = state->gui_state->mesh_editor.selected_mesh;
+    kl::Object<kl::Mesh>& selected_mesh = state->gui_state->mesh_editor.selected_mesh;
 
     for (const auto& [mesh_name, mesh] : state->scene->meshes) {
         if (ImGui::Selectable(mesh_name.c_str(), mesh == selected_mesh)) {
@@ -109,7 +109,7 @@ void display_meshes(editor_state* state)
     }
 }
 
-std::string find_mesh_name(editor_state* state, const kl::object<kl::mesh>& mesh)
+std::string find_mesh_name(EditorState* state, const kl::Object<kl::Mesh>& mesh)
 {
     for (const auto& [mesh_name, scene_mesh] : state->scene->meshes) {
         if (scene_mesh == mesh) {
@@ -119,16 +119,16 @@ std::string find_mesh_name(editor_state* state, const kl::object<kl::mesh>& mesh
     return { "unknown" };
 }
 
-void update_mesh_camera(editor_state* state)
+void update_mesh_camera(EditorState* state)
 {
-    static kl::float2 initial_camera_info = { 40, 30 };
-    static kl::float2 camera_info = initial_camera_info;
+    static kl::Float2 initial_camera_info = { 40, 30 };
+    static kl::Float2 camera_info = initial_camera_info;
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
         initial_camera_info = camera_info;
     }
 
-    kl::camera& camera = state->gui_state->mesh_editor.camera;
+    kl::Camera& camera = state->gui_state->mesh_editor.camera;
     
     if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
@@ -136,9 +136,9 @@ void update_mesh_camera(editor_state* state)
         camera_info.y = initial_camera_info.y + drag_delta.y * camera.sensitivity;
         camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
 
-        camera.origin.x = sin(camera_info.x * kl::to_radians);
-        camera.origin.z = cos(camera_info.x * kl::to_radians);
-        camera.origin.y = tan(camera_info.y * kl::to_radians);
+        camera.origin.x = sin(camera_info.x * kl::TO_RADIANS);
+        camera.origin.z = cos(camera_info.x * kl::TO_RADIANS);
+        camera.origin.y = tan(camera_info.y * kl::TO_RADIANS);
     }
 
     static int last_scroll = 0;
@@ -152,23 +152,23 @@ void update_mesh_camera(editor_state* state)
     camera.set_forward(-camera.origin);
 }
 
-void render_selected_mesh(editor_state* state, const kl::object<kl::mesh>& mesh, const kl::int2& viewport_size)
+void render_selected_mesh(EditorState* state, const kl::Object<kl::Mesh>& mesh, const kl::Int2& viewport_size)
 {
     if (!state->gui_state->mesh_editor.render_texture) {
-        state->gui_state->mesh_editor.render_texture = new kl::texture(&state->gpu);
+        state->gui_state->mesh_editor.render_texture = new kl::Texture(&state->gpu);
     }
 
-    kl::dx::texture& render_texture = state->gui_state->mesh_editor.render_texture->graphics_buffer;
-    kl::dx::target_view& target_view = state->gui_state->mesh_editor.render_texture->target_view;
-    kl::dx::shader_view& shader_view = state->gui_state->mesh_editor.render_texture->shader_view;
+    kl::dx::Texture& render_texture = state->gui_state->mesh_editor.render_texture->graphics_buffer;
+    kl::dx::TargetView& target_view = state->gui_state->mesh_editor.render_texture->target_view;
+    kl::dx::ShaderView& shader_view = state->gui_state->mesh_editor.render_texture->shader_view;
 
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
         return;
     }
 
-    kl::int2 texture_size = {};
+    kl::Int2 texture_size = {};
     if (render_texture) {
-        kl::dx::texture_descriptor descriptor = {};
+        kl::dx::TextureDescriptor descriptor = {};
         render_texture->GetDesc(&descriptor);
         texture_size.x = (int) descriptor.Width;
         texture_size.y = (int) descriptor.Height;
@@ -184,35 +184,37 @@ void render_selected_mesh(editor_state* state, const kl::object<kl::mesh>& mesh,
     }
 
     state->gpu->bind_target_depth_views({ target_view }, nullptr);
-    state->gpu->clear_target_view(target_view, kl::color { 30, 30, 30 });
+    state->gpu->clear_target_view(target_view, kl::Color { 30, 30, 30 });
     state->gpu->set_viewport_size(viewport_size);
 
     state->gpu->bind_raster_state(state->raster_states.wireframe);
     state->gpu->bind_depth_state(state->depth_states.disabled);
 
-    kl::render_shaders& shaders = state->gui_state->mesh_editor.shaders;
+    kl::RenderShaders& shaders = state->gui_state->mesh_editor.shaders;
     if (!shaders) {
         shaders = state->render_shaders.object_single;
     }
     state->gpu->bind_render_shaders(shaders);
 
-    kl::camera& camera = state->gui_state->mesh_editor.camera;
+    kl::Camera& camera = state->gui_state->mesh_editor.camera;
     camera.update_aspect_ratio(viewport_size);
 
-    struct VS_DATA
+    class MeshEditorVS
     {
-        kl::float4x4 WVP;
+    public:
+        kl::Float4x4 WVP;
     } vs_data = {};
 
     vs_data.WVP = camera.matrix();
     shaders.vertex_shader.update_cbuffer(vs_data);
 
-    struct PS_DATA
+    class MeshEditorPS
     {
-        kl::float4 color;
+    public:
+        kl::Float4 color;
     } ps_data = {};
 
-    ps_data.color = kl::colors::white;
+    ps_data.color = kl::colors::WHITE;
     shaders.pixel_shader.update_cbuffer(ps_data);
 
     state->gpu->draw(mesh->graphics_buffer);

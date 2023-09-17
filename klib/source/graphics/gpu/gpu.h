@@ -6,67 +6,66 @@
 
 
 namespace kl {
-    enum class gpu_creation_type
+    enum class GpuCreationType
     {
-        none = 0,
-        render = 1,
-        compute = 2,
+        NONE = 0,
+        RENDER,
+        COMPUTE,
     };
 }
 
 namespace kl {
-    class gpu : public device_holder, public context_holder, public shader_compiler
+    class GPU : public DeviceHolder, public ContextHolder, public ShaderCompiler
     {
-        dx::chain chain_ = nullptr;
-
-        dx::target_view target_view_ = nullptr;
-        dx::depth_view depth_view_ = nullptr;
+        dx::Chain m_chain = nullptr;
+        dx::TargetView m_target_view = nullptr;
+        dx::DepthView m_depth_view = nullptr;
 
     public:
-        const gpu_creation_type creation_type = gpu_creation_type::none;
+        const GpuCreationType creation_type = GpuCreationType::NONE;
 
         // Creation
-        gpu(bool debug = false, bool single_threaded = true);
-        gpu(HWND window, bool debug = false, bool single_threaded = true);
-        virtual ~gpu();
+        GPU(bool debug = false, bool single_threaded = true);
+        GPU(HWND window, bool debug = false, bool single_threaded = true);
+        virtual ~GPU();
 
-        gpu(const gpu&) = delete;
-        gpu(const gpu&&) = delete;
+        GPU(const GPU&) = delete;
+        GPU(const GPU&&) = delete;
 
-        void operator=(const gpu&) = delete;
-        void operator=(const gpu&&) = delete;
+        void operator=(const GPU&) = delete;
+        void operator=(const GPU&&) = delete;
 
         // Get
-        dx::device device() const;
-        dx::context context() const;
-        dx::chain chain() const;
+        dx::Device device() const;
+        dx::Context context() const;
+        dx::Chain chain() const;
 
-        dx::target_view internal_target() const;
-        dx::depth_view internal_depth() const;
+        dx::TargetView internal_target() const;
+        dx::DepthView internal_depth() const;
 
         // Chain
-        dx::texture back_buffer() const;
+        dx::Texture back_buffer() const;
         void swap_buffers(bool v_sync) const;
 
         bool in_fullscreen() const;
         void set_fullscreen(bool enabled) const;
 
         // Internal buffers
-        void clear_internal_color(const float4& color = {}) const;
+        void clear_internal_color(const Float4& color = {}) const;
         void clear_internal_depth(float depth = 1.0f, UINT8 stencil = 0xFF) const;
-        void clear_internal(const float4& color = {}) const;
+        void clear_internal(const Float4& color = {}) const;
 
-        void resize_internal(const int2& size);
+        void resize_internal(const Int2& size);
         void resize_to_window(HWND window);
 
         void bind_internal_views() const;
 
         // Shader helper
-        shader_holder<dx::vertex_shader> create_vertex_shader(const std::string& shader_source);
-        shader_holder<dx::geometry_shader> create_geometry_shader(const std::string& shader_source);
-        shader_holder<dx::pixel_shader> create_pixel_shader(const std::string& shader_source);
-        shader_holder<dx::compute_shader> create_compute_shader(const std::string& shader_source);
+        ShaderHolder<dx::VertexShader> create_vertex_shader(const std::string& shader_source);
+        ShaderHolder<dx::GeometryShader> create_geometry_shader(const std::string& shader_source);
+        ShaderHolder<dx::PixelShader> create_pixel_shader(const std::string& shader_source);
+        ShaderHolder<dx::ComputeShader> create_compute_shader(const std::string& shader_source);
 
-        render_shaders create_render_shaders(const std::string& shader_sources);
+        RenderShaders create_render_shaders(const std::string& shader_sources);
     };
 }

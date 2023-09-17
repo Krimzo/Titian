@@ -7,87 +7,90 @@ export import gui_state;
 export import basic_script;
 export import jdk;
 
-export inline const std::string builtin_path = "./builtin/";
+export inline const std::string BUILTIN_PATH = "./builtin/";
 
-export struct editor_state : public BasicState
+export class EditorState : public BasicState
 {
+public:
     // System
-    kl::timer timer = {};
-    kl::object<kl::window> window = new kl::window("Titian", { 1600, 900 });
-    kl::object<kl::gpu> gpu = new kl::gpu((HWND) *window,
-#ifdef NDEBUG
-        false
-#else
-        true
-#endif
-    );
-
+    kl::Timer timer = {};
+    kl::Object<kl::Window> window = new kl::Window("Titian", { 1600, 900 });
+    kl::Object<kl::GPU> gpu = new kl::GPU((HWND) *window, kl::IS_DEBUG);
+    
     // Render features
     bool game_running = false;
     bool render_wireframe = false;
     bool v_sync = true;
 
     // Graphics states
-    struct raster_states_t
+    class RasterStatesT
     {
-        kl::dx::raster_state wireframe = nullptr;
-        kl::dx::raster_state solid_cull = nullptr;
-        kl::dx::raster_state solid = nullptr;
-        kl::dx::raster_state shadow = nullptr;
+    public:
+        kl::dx::RasterState wireframe = nullptr;
+        kl::dx::RasterState solid_cull = nullptr;
+        kl::dx::RasterState solid = nullptr;
+        kl::dx::RasterState shadow = nullptr;
     } raster_states = {};
 
-    struct depth_states_t
+    class DepthStatesT
     {
-        kl::dx::depth_state disabled = nullptr;
-        kl::dx::depth_state enabled = nullptr;
+    public:
+        kl::dx::DepthState disabled = nullptr;
+        kl::dx::DepthState enabled = nullptr;
     } depth_states = {};
 
-    struct sampler_states_t
+    class SamplerStatesT
     {
-        kl::dx::sampler_state linear = nullptr;
-        kl::dx::sampler_state shadow = nullptr;
+    public:
+        kl::dx::SamplerState linear = nullptr;
+        kl::dx::SamplerState shadow = nullptr;
     } sampler_states = {};
 
     // Shaders
-    struct render_shaders_t
+    class RenderShadersT
     {
-        kl::render_shaders shadow_pass = {};
-        kl::render_shaders skybox_sample = {};
-        kl::render_shaders object_single = {};
-        kl::render_shaders object_material = {};
-        kl::render_shaders object_full = {};
-        kl::render_shaders postprocess_pass = {};
+    public:
+        kl::RenderShaders shadow_pass = {};
+        kl::RenderShaders skybox_sample = {};
+        kl::RenderShaders object_single = {};
+        kl::RenderShaders object_material = {};
+        kl::RenderShaders object_full = {};
+        kl::RenderShaders postprocess_pass = {};
     } render_shaders;
 
     // Scene components
-    struct default_mesh_t
+    class DefaultMeshT
     {
-        kl::object<kl::mesh> cube = {};
-        kl::object<kl::mesh> sphere = {};
-        kl::object<kl::mesh> capsule = {};
-        kl::object<kl::mesh> monke = {};
+    public:
+        kl::Object<kl::Mesh> cube = {};
+        kl::Object<kl::Mesh> sphere = {};
+        kl::Object<kl::Mesh> capsule = {};
+        kl::Object<kl::Mesh> monke = {};
     } default_mesh = {};
-    struct default_material_t
+    
+    class DefaultMaterialT
     {
-        kl::object<kl::material> white = {};
+    public:
+        kl::Object<kl::Material> white = {};
     } default_material = {};
-    kl::object<kl::scene> scene = new kl::scene();
+    
+    kl::Object<kl::Scene> scene = new kl::Scene();
 
     // Scripts
-    std::map<std::string, kl::object<basic_script>> scripts = {};
+    std::map<std::string, kl::Object<BasicScript>> scripts = {};
 
     // Engine states
-    kl::object<logger_state> logger_state = new ::logger_state();
-    kl::object<render_state> render_state = new ::render_state(gpu, window->size());
-    kl::object<gui_state> gui_state = new ::gui_state(gpu);
+    kl::Object<LoggerState> logger_state = new ::LoggerState();
+    kl::Object<RenderState> render_state = new ::RenderState(gpu, window->size());
+    kl::Object<GUIState> gui_state = new ::GUIState(gpu);
 
-    editor_state()
+    EditorState()
     {
-        window->set_icon(builtin_path + "textures/titian.ico");
-        change_scene(new kl::scene());
+        window->set_icon(BUILTIN_PATH + "textures/titian.ico");
+        change_scene(new kl::Scene());
     }
 
-    virtual ~editor_state()
+    virtual ~EditorState() override
     {
         gui_state = nullptr;
         render_state = nullptr;
@@ -95,13 +98,13 @@ export struct editor_state : public BasicState
         change_scene(nullptr);
     }
 
-    editor_state(editor_state&) = delete;
-    editor_state(editor_state&&) = delete;
+    EditorState(EditorState&) = delete;
+    EditorState(EditorState&&) = delete;
 
-    void operator=(editor_state&) = delete;
-    void operator=(editor_state&&) = delete;
+    void operator=(EditorState&) = delete;
+    void operator=(EditorState&&) = delete;
 
-    void change_scene(kl::object<kl::scene> scene)
+    void change_scene(kl::Object<kl::Scene> scene)
     {
         default_mesh.cube = nullptr;
         default_mesh.sphere = nullptr;
@@ -121,17 +124,17 @@ export struct editor_state : public BasicState
         }
 
         // Default meshes
-        default_mesh.cube = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/cube.obj", true));
-        default_mesh.sphere = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/sphere.obj", true));
-        default_mesh.capsule = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/capsule.obj", true));
-        default_mesh.monke = new kl::mesh(&gpu, &scene, kl::parse_obj_file(builtin_path + "meshes/monke.obj", true));
+        default_mesh.cube = new kl::Mesh(&gpu, &scene, kl::parse_obj_file(BUILTIN_PATH + "meshes/cube.obj", true));
+        default_mesh.sphere = new kl::Mesh(&gpu, &scene, kl::parse_obj_file(BUILTIN_PATH + "meshes/sphere.obj", true));
+        default_mesh.capsule = new kl::Mesh(&gpu, &scene, kl::parse_obj_file(BUILTIN_PATH + "meshes/capsule.obj", true));
+        default_mesh.monke = new kl::Mesh(&gpu, &scene, kl::parse_obj_file(BUILTIN_PATH + "meshes/monke.obj", true));
 
         // Default material
-        default_material.white = new kl::material();
-        default_material.white->color = kl::colors::white;
+        default_material.white = new kl::Material();
+        default_material.white->color = kl::colors::WHITE;
     }
 
-    void scripts_update_static_info(editor_state* state)
+    void scripts_update_static_info(const EditorState* state)
     {
         static jclass class_engine = java::load_eternal_class("Lsdk/engine/Engine;");
         if (!class_engine) {
@@ -155,14 +158,14 @@ export struct editor_state : public BasicState
         java::jni->SetStaticFloatField(class_engine, field_delta_t, delta_t);
     }
 
-    void scripts_call_start(editor_state* state)
+    void scripts_call_start(EditorState* state)
     {
         for (auto& [_, script] : scripts) {
             script->call_start(state);
         }
     }
 
-    void scripts_call_update(editor_state* state)
+    void scripts_call_update(EditorState* state)
     {
         for (auto& [_, script] : scripts) {
             script->call_update(state);

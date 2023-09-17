@@ -1,27 +1,27 @@
 #include "klib.h"
 
 
-kl::compiled_shader::operator bool() const
+kl::CompiledShader::operator bool() const
 {
-    return (m_data && !m_error);
+    return (data && !error);
 }
 
-const void* kl::compiled_shader::data() const
+const void* kl::CompiledShader::data_val() const
 {
-    return m_data ? (const void*) m_data->GetBufferPointer() : nullptr;
+    return data ? (const void*) data->GetBufferPointer() : nullptr;
 }
 
-SIZE_T kl::compiled_shader::data_size() const
+SIZE_T kl::CompiledShader::data_size() const
 {
-    return m_data ? m_data->GetBufferSize() : 0;
+    return data ? data->GetBufferSize() : 0;
 }
 
-std::string kl::compiled_shader::error() const
+std::string kl::CompiledShader::error_val() const
 {
-    return m_error ? ((const char*) m_error->GetBufferPointer()) : "Unknown";
+    return error ? static_cast<const char*>(error->GetBufferPointer()) : "Unknown";
 }
 
-SIZE_T kl::compiled_shader::error_size() const
+SIZE_T kl::CompiledShader::error_size() const
 {
-    return m_error ? m_error->GetBufferSize() : 0;
+    return error ? error->GetBufferSize() : 0;
 }

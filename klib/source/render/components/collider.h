@@ -6,32 +6,32 @@
 #ifdef KL_USING_PHYSX
 
 namespace kl {
-    class collider
+    class Collider
     {
-        PxMaterial* material_ = nullptr;
-        PxShape* shape_ = nullptr;
+        physx::PxMaterial* m_material = nullptr;
+        physx::PxShape* m_shape = nullptr;
 
     public:
-        collider(PxPhysics* physics, const PxGeometry& geometry);
-        virtual ~collider();
+        Collider(physx::PxPhysics* physics, const physx::PxGeometry& geometry);
+        virtual ~Collider();
 
-        collider(const collider&) = delete;
-        collider(const collider&&) = delete;
+        Collider(const Collider&) = delete;
+        Collider(const Collider&&) = delete;
 
-        void operator=(const collider&) = delete;
-        void operator=(const collider&&) = delete;
+        void operator=(const Collider&) = delete;
+        void operator=(const Collider&&) = delete;
 
         // Get
-        PxShape* shape();
-        PxGeometryType::Enum type() const;
-        float4x4 scaling_matrix() const;
+        physx::PxShape* shape() const;
+        physx::PxGeometryType::Enum type() const;
+        Float4x4 scaling_matrix() const;
 
         // Geometry
-        void set_rotation(const float3& rotation);
-        float3 rotation() const;
+        void set_rotation(const Float3& rotation);
+        Float3 rotation() const;
 
-        void set_offset(const float3& position);
-        float3 offset() const;
+        void set_offset(const Float3& position);
+        Float3 offset() const;
 
         // Material
         void set_static_friction(float friction);

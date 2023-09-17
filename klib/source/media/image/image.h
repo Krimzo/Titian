@@ -4,34 +4,36 @@
 
 
 namespace kl {
-    using pixel_storage = std::vector<color>;
+    using PixelStorage = std::vector<Color>;
+}
 
-    class image : private pixel_storage
+namespace kl {
+    class Image : private PixelStorage
     {
-        int2 size_ = {};
+        Int2 m_size = {};
 
     public:
         // Construct
-        image();
-        image(const int2& size);
-        image(const std::string& filepath);
+        Image();
+        Image(const Int2& size);
+        Image(const std::string& filepath);
 
         // Get
-        operator kl::color* ();
-        operator const kl::color* () const;
+        operator kl::Color* ();
+        operator const kl::Color* () const;
 
         int pixel_count() const;
         uint64_t byte_size() const;
 
-        color& operator[](const int2& coords);
-        const color& operator[](const int2& coords) const;
+        Color& operator[](const Int2& coords);
+        const Color& operator[](const Int2& coords) const;
 
-        bool in_bounds(const int2& coords) const;
-        color sample(const float2& uv) const;
+        bool in_bounds(const Int2& coords) const;
+        Color sample(const Float2& uv) const;
 
         // Iterate
-        pixel_storage::iterator begin();
-        pixel_storage::iterator end();
+        PixelStorage::iterator begin();
+        PixelStorage::iterator end();
 
         // Size
         int width() const;
@@ -40,26 +42,26 @@ namespace kl {
         int height() const;
         void set_height(int height, bool scale = false);
 
-        int2 size() const;
-        void resize(const int2& new_size);
-        void resize_scaled(const int2& new_size);
+        Int2 size() const;
+        void resize(const Int2& new_size);
+        void resize_scaled(const Int2& new_size);
 
         // Alter
-        void fill(const color& color);
+        void fill(const Color& color);
 
-        image flip_horizontal() const;
-        image flip_vertical() const;
+        Image flip_horizontal() const;
+        Image flip_vertical() const;
 
-        image rectangle(int2 top_left, int2 bottom_right) const;
-        std::string as_ascii(const int2& frame_size) const;
+        Image rectangle(Int2 top_left, Int2 bottom_right) const;
+        std::string as_ascii(const Int2& frame_size) const;
 
         // Draw
-        void draw_line(const int2& from, const int2& to, const color& color);
-        void draw_triangle(int2 position_a, int2 position_b, int2 position_c, const color& color, bool fill = false);
-        void draw_rectangle(int2 top_left, int2 bottom_right, const color& color, bool fill = false);
-        void draw_circle(const int2& center, float radius, const color& color, bool fill = false);
-        void draw_circle(const int2& center, const int2& outer_position, const color& color, bool fill = false);
-        void draw_image(const int2& top_left, const image& image, bool mix_alpha = true);
+        void draw_line(const Int2& from, const Int2& to, const Color& color);
+        void draw_triangle(Int2 position_a, Int2 position_b, Int2 position_c, const Color& color, bool fill = false);
+        void draw_rectangle(Int2 top_left, Int2 bottom_right, const Color& color, bool fill = false);
+        void draw_circle(const Int2& center, float radius, const Color& color, bool fill = false);
+        void draw_circle(const Int2& center, const Int2& outer_position, const Color& color, bool fill = false);
+        void draw_image(const Int2& top_left, const Image& image, bool mix_alpha = true);
 
         // Files
         bool load_from_file(const std::string& filepath);
@@ -68,5 +70,5 @@ namespace kl {
 }
 
 namespace kl {
-    image take_screenshot();
+    Image take_screenshot();
 }

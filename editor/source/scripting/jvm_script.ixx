@@ -2,21 +2,21 @@ export module jvm_script;
 
 export import editor_state;
 
-export class jvm_script : public basic_script
+export class JVMScript : public BasicScript
 {
 public:
-	java::holder<jobject> loader { nullptr };
-	java::holder<jclass> clazz { nullptr };
-	java::holder<jobject> instance { nullptr };
+	JavaHolder<jobject> loader { nullptr };
+	JavaHolder<jclass> clazz { nullptr };
+	JavaHolder<jobject> instance { nullptr };
 
 	jmethod start_method = {};
 	jmethod update_method = {};
 
-	jvm_script()
+	JVMScript()
 	{}
 
-	jvm_script(const std::string& path)
-		: basic_script(path)
+	JVMScript(const std::string& path)
+		: BasicScript(path)
 	{
 		this->reload();
 	}

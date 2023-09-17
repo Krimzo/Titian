@@ -4,51 +4,52 @@
 
 
 namespace kl {
-    struct quaternion
+    class Quaternion
     {
+    public:
         float w = 0.0f;
         float x = 0.0f;
         float y = 0.0f;
         float z = 0.0f;
 
         // Construct
-        quaternion();
-        quaternion(float x, float y, float z);
-        quaternion(float w, float x, float y, float z);
+        Quaternion();
+        Quaternion(float x, float y, float z);
+        Quaternion(float w, float x, float y, float z);
 
-        explicit quaternion(const float3& axis, float angle);
+        explicit Quaternion(const Float3& axis, float angle);
 
         // Get
         operator float* () const;
-        operator kl::float3() const;
-        operator kl::float4() const;
+        operator kl::Float3() const;
+        operator kl::Float4() const;
 
         float& operator[](int index);
         const float& operator[](int index) const;
 
         // Compare
-        bool operator==(const quaternion& other) const;
-        bool operator!=(const quaternion& other) const;
+        bool operator==(const Quaternion& other) const;
+        bool operator!=(const Quaternion& other) const;
 
         // Math
-        quaternion operator+(const quaternion& other) const;
-        void operator+=(const quaternion& other);
+        Quaternion operator+(const Quaternion& other) const;
+        void operator+=(const Quaternion& other);
 
-        quaternion operator-(const quaternion& other) const;
-        void operator-=(const quaternion& other);
+        Quaternion operator-(const Quaternion& other) const;
+        void operator-=(const Quaternion& other);
 
-        quaternion operator*(float value) const;
+        Quaternion operator*(float value) const;
         void operator*=(float value);
 
-        quaternion operator*(const quaternion& other) const;
-        void operator*=(const quaternion& other);
+        Quaternion operator*(const Quaternion& other) const;
+        void operator*=(const Quaternion& other);
 
         // Other
-        quaternion operator-() const;
+        Quaternion operator-() const;
         float length() const;
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const quaternion& num);
+    std::ostream& operator<<(std::ostream& stream, const Quaternion& num);
 }

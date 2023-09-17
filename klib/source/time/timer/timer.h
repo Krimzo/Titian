@@ -4,14 +4,14 @@
 
 
 namespace kl {
-    class timer
+    class Timer
     {
-        time_t delta_start_;
-        time_t delta_end_;
-        time_t elapsed_start_;
+        time_t m_delta_start;
+        time_t m_delta_end;
+        time_t m_elapsed_start;
 
     public:
-        timer();
+        Timer();
 
         void reset();
 

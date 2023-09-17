@@ -4,16 +4,17 @@
 
 
 namespace kl {
-    struct sphere
+    class Sphere
     {
-        float3 origin = {};
+    public:
+        Float3 origin = {};
         float radius = 0.0f;
 
-        sphere();
-        sphere(const float3& origin, float radius);
+        Sphere();
+        Sphere(const Float3& origin, float radius);
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& os, const sphere& obj);
+    std::ostream& operator<<(std::ostream& os, const Sphere& obj);
 }

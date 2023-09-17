@@ -3,13 +3,13 @@ export module gui_scene_editor;
 export import gui_render;
 export import deserializer;
 
-kl::int2 window_mouse_position();
-int find_entity_index(const editor_state* state, const kl::int2& pixel_coords);
+kl::Int2 window_mouse_position();
+int find_entity_index(const EditorState* state, const kl::Int2& pixel_coords);
 
-void handle_gizmo_operation_change(editor_state* state, int gizmo_operation, ImGuiKey switch_key);
-void render_gizmos(editor_state* state);
+void handle_gizmo_operation_change(EditorState* state, int gizmo_operation, ImGuiKey switch_key);
+void render_gizmos(EditorState* state);
 
-void gui_scene_editor(editor_state* state)
+void gui_scene_editor(EditorState* state)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 
@@ -21,32 +21,32 @@ void gui_scene_editor(editor_state* state)
 
         // Display scene buffer
         if (state->gui_state->viewport_size.x > 0 && state->gui_state->viewport_size.y > 0 && state->gui_state->viewport_size != state->render_state->target_size) {
-            state->render_state = new render_state(state->gpu, state->gui_state->viewport_size);
+            state->render_state = new RenderState(state->gpu, state->gui_state->viewport_size);
         }
         ImGui::Image(state->render_state->render_shader_view.Get(), content_region);
 
         // Scene loading
-        std::optional scene_file = GUI::drag_drop::read_data<std::string>("SceneFile");
+        const std::optional scene_file = gui::drag_drop::read_data<std::string>("SceneFile");
         if (scene_file) {
-            deserializer deserializer = { scene_file.value() };
-            std::pair load_info = deserializer.read_scene(state->gpu);
-            if (load_info.first == 0) {
-                state->change_scene(load_info.second);
+            const Deserializer deserializer = { scene_file.value() };
+            const auto [error, scene] = deserializer.read_scene(state->gpu);
+            if (error == 0) {
+                state->change_scene(scene);
                 state->logger_state->log(kl::format("Scene loaded. (", deserializer.path, ") [", serialization::VERSION_NAME, "]"));
             }
-            else if (load_info.first == 1) {
+            else if (error == 1) {
                 state->logger_state->log(kl::format("Failed to load scene. File read error. (", deserializer.path, ")"));
             }
             else {
                 state->logger_state->log(kl::format("Failed to load scene. Serial versions do not match. (", deserializer.path, ") [",
-                    serialization::VERSION_NAME, " -> ", std::hex, "0x", load_info.first, "]"));
+                    serialization::VERSION_NAME, " -> ", std::hex, "0x", error, "]"));
             }
         }
 
         // Handle entity picking
-        const ImVec2 vieport_max = { ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + ImGui::GetWindowHeight() };
-        if (ImGui::IsWindowFocused() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), vieport_max) && !ImGuizmo::IsOver()) {
-            const kl::int2 pixel_coords = window_mouse_position();
+        const ImVec2 viewport_max = { ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + ImGui::GetWindowHeight() };
+        if (ImGui::IsWindowFocused() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), viewport_max) && !ImGuizmo::IsOver()) {
+            const kl::Int2 pixel_coords = window_mouse_position();
             const int entity_index = find_entity_index(state, pixel_coords);
             state->scene->update_selected_entity(entity_index);
         }
@@ -66,7 +66,7 @@ void gui_scene_editor(editor_state* state)
     ImGui::PopStyleVar();
 }
 
-kl::int2 window_mouse_position()
+kl::Int2 window_mouse_position()
 {
     const float tab_size = ImGui::GetWindowContentRegionMin().y;
     const ImVec2 window_position = ImGui::GetWindowPos();
@@ -77,7 +77,7 @@ kl::int2 window_mouse_position()
     };
 }
 
-int find_entity_index(const editor_state* state, const kl::int2& pixel_coords)
+int find_entity_index(const EditorState* state, const kl::Int2& pixel_coords)
 {
     if (pixel_coords.x < 0 || pixel_coords.y < 0) { return 0; }
 
@@ -96,7 +96,7 @@ int find_entity_index(const editor_state* state, const kl::int2& pixel_coords)
     return (int) result;
 }
 
-void handle_gizmo_operation_change(editor_state* state, int gizmo_operation, ImGuiKey switch_key)
+void handle_gizmo_operation_change(EditorState* state, const int gizmo_operation, const ImGuiKey switch_key)
 {
     static std::map<ImGuiKey, bool> last_key_states = {};
 
@@ -111,24 +111,24 @@ void handle_gizmo_operation_change(editor_state* state, int gizmo_operation, ImG
     }
 }
 
-void render_gizmos(editor_state* state)
+void render_gizmos(EditorState* state)
 {
     if (!state->gui_state->gizmo_operation) { return; }
 
     const float viewport_tab_height = ImGui::GetWindowContentRegionMin().y;
-    const kl::float2 viewport_position = { ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + viewport_tab_height };
-    const kl::float2 viewport_size = { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() };
+    const kl::Float2 viewport_position = { ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + viewport_tab_height };
+    const kl::Float2 viewport_size = { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() };
 
     ImGuizmo::Enable(true);
     ImGuizmo::SetDrawlist();
     ImGuizmo::SetRect(viewport_position.x, viewport_position.y, viewport_size.x, viewport_size.y);
 
-    kl::float3 selected_snap = {};
+    kl::Float3 selected_snap = {};
     if (state->window->keyboard.shift) {
-        static const kl::float3 predefined_snaps[3] = {
-            kl::float3(0.1f),
-            kl::float3(30.0f),
-            kl::float3(1.0f)
+        static const kl::Float3 predefined_snaps[3] = {
+            kl::Float3(0.1f),
+            kl::Float3(30.0f),
+            kl::Float3(1.0f)
         };
 
         switch (state->gui_state->gizmo_operation) {
@@ -143,9 +143,9 @@ void render_gizmos(editor_state* state)
         }
     }
 
-    const kl::float4x4 view_matrix = kl::transpose(state->scene->camera->view_matrix());
-    const kl::float4x4 projection_matrix = kl::transpose(state->scene->camera->projection_matrix());
-    kl::float4x4 transform_matrix = kl::transpose(state->scene->selected_entity->matrix());
+    const kl::Float4x4 view_matrix = kl::transpose(state->scene->camera->view_matrix());
+    const kl::Float4x4 projection_matrix = kl::transpose(state->scene->camera->projection_matrix());
+    kl::Float4x4 transform_matrix = kl::transpose(state->scene->selected_entity->matrix());
 
     ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
         (ImGuizmo::OPERATION) state->gui_state->gizmo_operation, (ImGuizmo::MODE) state->gui_state->gizmo_mode,
@@ -153,7 +153,7 @@ void render_gizmos(editor_state* state)
         selected_snap);
 
     if (ImGuizmo::IsUsing()) {
-        const kl::float3 decomposed_parts[3] = {};
+        kl::Float3 decomposed_parts[3] = {};
         ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
             decomposed_parts[2], decomposed_parts[1], decomposed_parts[0]);
 

@@ -11,96 +11,96 @@
 #ifdef KL_USING_PHYSX
 
 namespace kl {
-    class scene
+    class Scene
     {
-        static PxDefaultAllocator allocator_;
-        static PxDefaultErrorCallback error_callback_;
-        static PxFoundation* foundation_;
+        static physx::PxDefaultAllocator m_allocator;
+        static physx::PxDefaultErrorCallback m_error_callback;
+        static physx::PxFoundation* m_foundation;
 
-        PxPhysics* physics_ = nullptr;
-        PxCooking* cooking_ = nullptr;
-        PxDefaultCpuDispatcher* dispatcher_ = nullptr;
-        PxScene* scene_ = nullptr;
+        physx::PxDefaultCpuDispatcher* m_dispatcher = nullptr;
+        physx::PxPhysics* m_physics = nullptr;
+        physx::PxCooking* m_cooking = nullptr;
+        physx::PxScene* m_scene = nullptr;
 
-        std::map<std::string, object<entity>> entities_ = {};
+        std::map<std::string, Object<Entity>> m_entities = {};
 
     public:
-        std::map<std::string, object<mesh>> meshes = {};
-        std::map<std::string, object<texture>> textures = {};
-        std::map<std::string, object<material>> materials = {};
+        std::map<std::string, Object<Mesh>> meshes = {};
+        std::map<std::string, Object<Texture>> textures = {};
+        std::map<std::string, Object<Material>> materials = {};
 
-        object<camera> camera = new kl::camera();
-        object<entity> selected_entity = nullptr;
+        Object<Camera> camera = new Camera();
+        Object<Entity> selected_entity = nullptr;
 
-        object<ambient_light> ambient_light = new kl::ambient_light();
-        object<directional_light> directional_light = nullptr;
+        Object<AmbientLight> ambient_light = new AmbientLight();
+        Object<DirectionalLight> directional_light = nullptr;
 
         // Creation
-        scene();
-        virtual ~scene();
+        Scene();
+        virtual ~Scene();
 
-        scene(const scene&) = delete;
-        scene(const scene&&) = delete;
+        Scene(const Scene&) = delete;
+        Scene(const Scene&&) = delete;
 
-        void operator=(const scene&) = delete;
-        void operator=(const scene&&) = delete;
+        void operator=(const Scene&) = delete;
+        void operator=(const Scene&&) = delete;
 
         // Iterate
-        std::map<std::string, object<entity>>::iterator begin();
-        std::map<std::string, object<entity>>::iterator end();
-        std::map<std::string, object<entity>>::const_iterator begin() const;
-        std::map<std::string, object<entity>>::const_iterator end() const;
+        std::map<std::string, Object<Entity>>::iterator begin();
+        std::map<std::string, Object<Entity>>::iterator end();
+        std::map<std::string, Object<Entity>>::const_iterator begin() const;
+        std::map<std::string, Object<Entity>>::const_iterator end() const;
 
         // Get
-        PxPhysics* physics() const;
-        PxCooking* cooking() const;
+        physx::PxPhysics* physics() const;
+        physx::PxCooking* cooking() const;
 
-        object<entity> find_entity(const std::string& name) const;
-        std::string find_name(object<kl::entity> entity) const;
+        Object<Entity> find_entity(const std::string& name) const;
+        std::string find_name(const Object<kl::Entity>& entity) const;
 
         size_t entity_count() const;
 
         // Set/Get
-        void set_gravity(const float3& gravity);
-        float3 gravity() const;
+        void set_gravity(const Float3& gravity);
+        Float3 gravity() const;
 
-        void add(const std::string& name, object<kl::entity> entity);
+        void add(const std::string& name, const Object<kl::Entity>& entity);
         void remove(const std::string& name);
 
         // Update
-        object<kl::entity> update_selected_entity(uint32_t index);
+        Object<kl::Entity> update_selected_entity(uint32_t index);
         void update_physics(float delta_t);
 
         // Entity
-        object<kl::entity> make_entity(bool dynamic);
+        Object<kl::Entity> make_entity(bool dynamic) const;
 
         // Dynamic colliders
-        object<collider> make_box_collider(const float3& scale);
-        object<collider> make_sphere_collider(float radius);
-        object<collider> make_capsule_collider(float radius, float height);
+        Object<Collider> make_box_collider(const Float3& scale) const;
+        Object<Collider> make_sphere_collider(float radius) const;
+        Object<Collider> make_capsule_collider(float radius, float height) const;
 
         // Static colliders
-        object<collider> make_plane_collider();
-        object<collider> make_mesh_collider(const mesh& mesh, const float3& scale);
+        Object<Collider> make_plane_collider() const;
+        Object<Collider> make_mesh_collider(const Mesh& mesh, const Float3& scale) const;
 
         // Default collider
-        object<collider> make_default_collider(PxGeometryType::Enum type, const mesh* optional_mesh);
+        Object<Collider> make_default_collider(physx::PxGeometryType::Enum type, const Mesh* optional_mesh) const;
     };
 }
 
 #else
 
 namespace kl {
-    class scene : public std::vector<object<entity>>
+    class Scene : public std::vector<Object<Entity>>
     {
     public:
-        object<camera> camera = nullptr;
-        object<entity> selected_entity = nullptr;
+        Object<Camera> camera = nullptr;
+        Object<Entity> selected_entity = nullptr;
 
-        object<ambient_light> ambient_light = nullptr;
-        object<directional_light> directional_light = nullptr;
+        Object<AmbientLight> ambient_light = nullptr;
+        Object<DirectionalLight> directional_light = nullptr;
 
-        float3 gravity = { 0.0f, -9.81f, 0.0f };
+        Float3 gravity = { 0.0f, -9.81f, 0.0f };
 
         void update_physics(float delta_t);
     };

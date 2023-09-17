@@ -2,11 +2,11 @@
 
 
 // Class
-kl::window::window(const std::string& name, const int2& size)
-    : name_(name)
+kl::Window::Window(const std::string& name, const Int2& size)
+    : m_name(name)
 {
     // Instance
-    instance_ = GetModuleHandleA(nullptr);
+    m_instance = GetModuleHandleA(nullptr);
 
     // Registering window class
     WNDCLASSEXA window_class = {};
@@ -14,66 +14,66 @@ kl::window::window(const std::string& name, const int2& size)
     window_class.style = CS_OWNDC;
     window_class.lpfnWndProc = [](const HWND window_handle, const UINT message, const WPARAM w_param, const LPARAM l_param)
     {
-        return ((window*) GetWindowLongPtrA(window_handle, GWLP_USERDATA))->window_procedure(window_handle, message, w_param, l_param);
+        return ((Window*) GetWindowLongPtrA(window_handle, GWLP_USERDATA))->window_procedure(window_handle, message, w_param, l_param);
     };
-    window_class.hInstance = instance_;
+    window_class.hInstance = m_instance;
     window_class.lpszClassName = name.c_str();
     error_check(!RegisterClassExA(&window_class), "Failed to register window class");
 
     // Creating the window
-    window_style_ = WS_OVERLAPPEDWINDOW;
+    m_window_style = WS_OVERLAPPEDWINDOW;
 
     RECT size_buffer = { 0, 0, (LONG) size.x, (LONG) size.y };
-    AdjustWindowRect(&size_buffer, window_style_, false);
+    AdjustWindowRect(&size_buffer, m_window_style, false);
 
-    const int2 new_size = {
+    const Int2 new_size = {
         size_buffer.right - size_buffer.left,
         size_buffer.bottom - size_buffer.top,
     };
-    const int2 new_position = {
-        screen::size.x / 2 - new_size.x / 2,
-        screen::size.y / 2 - new_size.y / 2,
+    const Int2 new_position = {
+        screen::SIZE.x / 2 - new_size.x / 2,
+        screen::SIZE.y / 2 - new_size.y / 2,
     };
 
-    window_ = CreateWindowExA(NULL, name.c_str(), name.c_str(), window_style_, new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, instance_, nullptr);
-    error_check(!window_, "Failed to create window");
+    m_window = CreateWindowExA(NULL, name.c_str(), name.c_str(), m_window_style, new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, m_instance, nullptr);
+    error_check(!m_window, "Failed to create window");
 
     // Getting data
-    device_context_ = GetDC(window_);
-    window_style_ = GetWindowLongA(window_, GWL_STYLE);
+    m_device_context = GetDC(m_window);
+    m_window_style = GetWindowLongA(m_window, GWL_STYLE);
 
     // Setting data
-    SetWindowLongPtrA(window_, GWLP_USERDATA, (LONG_PTR) this);
-    ShowWindow(window_, SW_SHOW);
+    SetWindowLongPtrA(m_window, GWLP_USERDATA, (LONG_PTR) this);
+    ShowWindow(m_window, SW_SHOW);
     SetCursor(LoadCursorA(nullptr, (LPCSTR) IDC_ARROW));
-    mouse.window_ = window_;
+    mouse.m_window = m_window;
 }
 
-kl::window::~window()
+kl::Window::~Window()
 {
     // Clearing DC
-    ReleaseDC(window_, device_context_);
-    DeleteDC(device_context_);
+    ReleaseDC(m_window, m_device_context);
+    DeleteDC(m_device_context);
 
     // Clearing window
-    DestroyWindow(window_);
-    UnregisterClassA(name_.c_str(), instance_);
+    DestroyWindow(m_window);
+    UnregisterClassA(m_name.c_str(), m_instance);
 }
 
-kl::window::operator HWND() const
+kl::Window::operator HWND() const
 {
-    return window_;
+    return m_window;
 }
 
-bool kl::window::process(const bool wait)
+bool kl::Window::process(const bool wait)
 {
     MSG message = {};
     if (wait) {
-        GetMessageA(&message, window_, 0, 0);
+        GetMessageA(&message, m_window, 0, 0);
         handle_message(message);
     }
     else {
-        while (PeekMessageA(&message, window_, 0, 0, PM_REMOVE)) {
+        while (PeekMessageA(&message, m_window, 0, 0, PM_REMOVE)) {
             handle_message(message);
         }
     }
@@ -84,173 +84,173 @@ bool kl::window::process(const bool wait)
     return is_open();
 }
 
-bool kl::window::is_open() const
+bool kl::Window::is_open() const
 {
-    return IsWindow(window_);
+    return IsWindow(m_window);
 }
 
-void kl::window::close() const
+void kl::Window::close() const
 {
-    PostMessageA(window_, WM_CLOSE, NULL, NULL);
+    PostMessageA(m_window, WM_CLOSE, NULL, NULL);
 }
 
-bool kl::window::is_resizeable() const
+bool kl::Window::is_resizeable() const
 {
-    if (!in_fullscreen_) {
-        return resizeable_;
+    if (!m_in_fullscreen) {
+        return m_resizeable;
     }
     return false;
 }
 
-void kl::window::set_resizeable(const bool enabled)
+void kl::Window::set_resizeable(const bool enabled)
 {
-    if (in_fullscreen_) { return; }
+    if (m_in_fullscreen) { return; }
 
-    if (!resizeable_ && enabled) {
-        SetWindowLongA(window_, GWL_STYLE, GetWindowLongA(window_, GWL_STYLE) | WS_SIZEBOX | WS_MAXIMIZEBOX);
-        window_style_ = GetWindowLongA(window_, GWL_STYLE);
+    if (!m_resizeable && enabled) {
+        SetWindowLongA(m_window, GWL_STYLE, GetWindowLongA(m_window, GWL_STYLE) | WS_SIZEBOX | WS_MAXIMIZEBOX);
+        m_window_style = GetWindowLongA(m_window, GWL_STYLE);
     }
-    else if (resizeable_ && !enabled) {
-        SetWindowLongA(window_, GWL_STYLE, GetWindowLongA(window_, GWL_STYLE) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX);
-        window_style_ = GetWindowLongA(window_, GWL_STYLE);
-    }
-
-    resizeable_ = enabled;
-}
-
-void kl::window::maximize() const
-{
-    ShowWindow(window_, SW_MAXIMIZE);
-}
-
-void kl::window::minimize() const
-{
-    ShowWindow(window_, SW_MINIMIZE);
-}
-
-void kl::window::restore() const
-{
-    ShowWindow(window_, SW_RESTORE);
-}
-
-bool kl::window::in_fullscreen() const
-{
-    return in_fullscreen_;
-}
-
-void kl::window::set_fullscreen(const bool enabled)
-{
-    if (!in_fullscreen_) {
-        window_style_ = GetWindowLong(window_, GWL_STYLE);
-        window_ex_style_ = GetWindowLong(window_, GWL_EXSTYLE);
+    else if (m_resizeable && !enabled) {
+        SetWindowLongA(m_window, GWL_STYLE, GetWindowLongA(m_window, GWL_STYLE) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX);
+        m_window_style = GetWindowLongA(m_window, GWL_STYLE);
     }
 
-    if (in_fullscreen_ = enabled) {
-        SetWindowLong(window_, GWL_STYLE, window_style_ & ~(WS_CAPTION | WS_THICKFRAME));
-        SetWindowLong(window_, GWL_EXSTYLE, window_ex_style_ & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
+    m_resizeable = enabled;
+}
+
+void kl::Window::maximize() const
+{
+    ShowWindow(m_window, SW_MAXIMIZE);
+}
+
+void kl::Window::minimize() const
+{
+    ShowWindow(m_window, SW_MINIMIZE);
+}
+
+void kl::Window::restore() const
+{
+    ShowWindow(m_window, SW_RESTORE);
+}
+
+bool kl::Window::in_fullscreen() const
+{
+    return m_in_fullscreen;
+}
+
+void kl::Window::set_fullscreen(const bool enabled)
+{
+    if (!m_in_fullscreen) {
+        m_window_style = GetWindowLong(m_window, GWL_STYLE);
+        m_window_ex_style = GetWindowLong(m_window, GWL_EXSTYLE);
+    }
+
+    if (m_in_fullscreen = enabled) {
+        SetWindowLong(m_window, GWL_STYLE, m_window_style & ~(WS_CAPTION | WS_THICKFRAME));
+        SetWindowLong(m_window, GWL_EXSTYLE, m_window_ex_style & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
     }
     else {
-        SetWindowLong(window_, GWL_STYLE, window_style_);
-        SetWindowLong(window_, GWL_EXSTYLE, window_ex_style_);
+        SetWindowLong(m_window, GWL_STYLE, m_window_style);
+        SetWindowLong(m_window, GWL_EXSTYLE, m_window_ex_style);
     }
 }
 
-kl::int2 kl::window::position(const bool client) const
+kl::Int2 kl::Window::position(const bool client) const
 {
     RECT rect = {};
     if (client) {
-        GetClientRect(window_, &rect);
+        GetClientRect(m_window, &rect);
     }
     else {
-        GetWindowRect(window_, &rect);
+        GetWindowRect(m_window, &rect);
     }
     return { rect.left, rect.top };
 }
 
-void kl::window::set_position(const int2& position) const
+void kl::Window::set_position(const Int2& position) const
 {
-    if (!in_fullscreen_) {
-        const int2 size = this->size(false);
-        MoveWindow(window_, position.x, position.y, int(size.x), int(size.y), false);
+    if (!m_in_fullscreen) {
+        const Int2 size = this->size(false);
+        MoveWindow(m_window, position.x, position.y, size.x, size.y, false);
     }
 }
 
-int kl::window::width() const
+int kl::Window::width() const
 {
     return size().x;
 }
 
-void kl::window::set_width(int width) const
+void kl::Window::set_width(int width) const
 {
     resize({ width, height() });
 }
 
-int kl::window::height() const
+int kl::Window::height() const
 {
     return size().y;
 }
 
-void kl::window::set_height(int height) const
+void kl::Window::set_height(int height) const
 {
     resize({ width(), height });
 }
 
-kl::int2 kl::window::size(const bool client) const
+kl::Int2 kl::Window::size(const bool client) const
 {
     RECT rect = {};
     if (client) {
-        GetClientRect(window_, &rect);
+        GetClientRect(m_window, &rect);
     }
     else {
-        GetWindowRect(window_, &rect);
+        GetWindowRect(m_window, &rect);
     }
     return { rect.right - rect.left, rect.bottom - rect.top };
 }
 
-void kl::window::resize(const int2& size, const bool client) const
+void kl::Window::resize(const Int2& size, const bool client) const
 {
-    if (in_fullscreen_) { return; }
+    if (m_in_fullscreen) { return; }
 
-    const int2 position = this->position();
-    int2 new_size = size;
+    const Int2 position = this->position();
+    Int2 new_size = size;
 
     if (client) {
         RECT rect = { (LONG) position.x, (LONG) position.y, (LONG) (position.x + size.x), (LONG) (position.y + size.y) };
-        AdjustWindowRect(&rect, window_style_, false);
+        AdjustWindowRect(&rect, m_window_style, false);
         new_size = { rect.right - rect.left, rect.bottom - rect.top };
     }
 
-    MoveWindow(window_, position.x, position.y, new_size.x, new_size.y, false);
+    MoveWindow(m_window, position.x, position.y, new_size.x, new_size.y, false);
 }
 
-float kl::window::aspect_ratio() const
+float kl::Window::aspect_ratio() const
 {
-    const int2 win_size = size();
-    return (float) win_size.x / win_size.y;
+    const Int2 win_size = size();
+    return (float) win_size.x / (float) win_size.y;
 }
 
-kl::int2 kl::window::frame_center() const
+kl::Int2 kl::Window::frame_center() const
 {
     return (size() / 2);
 }
 
-void kl::window::set_title(const std::string& data) const
+void kl::Window::set_title(const std::string& data) const
 {
-    SetWindowTextA(window_, data.c_str());
+    SetWindowTextA(m_window, data.c_str());
 }
 
-bool kl::window::set_icon(const std::string& filepath) const
+bool kl::Window::set_icon(const std::string& filepath) const
 {
     HICON loaded_icon = ExtractIconA(nullptr, filepath.c_str(), NULL);
     if (!loaded_icon) {
         return false;
     }
-    SendMessageA(window_, WM_SETICON, ICON_BIG, (LPARAM) loaded_icon);
-    SendMessageA(window_, WM_SETICON, ICON_SMALL, (LPARAM) loaded_icon);
+    SendMessageA(m_window, WM_SETICON, ICON_BIG, (LPARAM) loaded_icon);
+    SendMessageA(m_window, WM_SETICON, ICON_SMALL, (LPARAM) loaded_icon);
     return true;
 }
 
-void kl::window::draw_pixel_data(const color* data, const int2& size, const int2& position) const
+void kl::Window::draw_pixel_data(const Color* data, const Int2& size, const Int2& position) const
 {
     BITMAPINFO bitmap_info = {};
     bitmap_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -260,18 +260,18 @@ void kl::window::draw_pixel_data(const color* data, const int2& size, const int2
     bitmap_info.bmiHeader.biWidth = (LONG) size.x;
     bitmap_info.bmiHeader.biHeight = (LONG) -size.y;
 
-    StretchDIBits(device_context_, position.x, position.y, size.x, size.y, 0, 0, size.x, size.y, data, &bitmap_info, DIB_RGB_COLORS, SRCCOPY);
+    StretchDIBits(m_device_context, position.x, position.y, size.x, size.y, 0, 0, size.x, size.y, data, &bitmap_info, DIB_RGB_COLORS, SRCCOPY);
 }
 
-void kl::window::draw_image(const image& image, const int2& position) const
+void kl::Window::draw_image(const Image& image, const Int2& position) const
 {
     draw_pixel_data(image, image.size(), position);
 }
 
-void kl::window::notify() const
+void kl::Window::notify() const
 {
-    PostMessageA(window_, WM_NULL, NULL, NULL);
-    PostMessageA(window_, WM_NULL, NULL, NULL);
+    PostMessageA(m_window, WM_NULL, NULL, NULL);
+    PostMessageA(m_window, WM_NULL, NULL, NULL);
 }
 
 // System
@@ -279,11 +279,11 @@ void kl::window::notify() const
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
 
-LRESULT CALLBACK kl::window::window_procedure(const HWND window_handle, const UINT message, const WPARAM w_param, const LPARAM l_param) const
+LRESULT CALLBACK kl::Window::window_procedure(const HWND window_handle, const UINT message, const WPARAM w_param, const LPARAM l_param) const
 {
     // On-Resize
     if (message == WM_SIZE) {
-        const int2 new_size = { LOWORD(l_param), HIWORD(l_param) };
+        const Int2 new_size = { LOWORD(l_param), HIWORD(l_param) };
         for (auto& callback : on_resize) {
             callback(new_size);
         }
@@ -292,7 +292,7 @@ LRESULT CALLBACK kl::window::window_procedure(const HWND window_handle, const UI
     return DefWindowProcA(window_handle, message, w_param, l_param);
 }
 
-void kl::window::handle_message(const MSG& message)
+void kl::Window::handle_message(const MSG& message)
 {
 #ifdef KL_USING_IMGUI
     TranslateMessage(&message);
@@ -344,10 +344,10 @@ void kl::window::handle_message(const MSG& message)
 
         // Mouse
     case WM_MOUSEMOVE:
-        mouse.position_ = { GET_X_LPARAM(message.lParam), GET_Y_LPARAM(message.lParam) };
+        mouse.m_position = { GET_X_LPARAM(message.lParam), GET_Y_LPARAM(message.lParam) };
         break;
     case WM_MOUSEWHEEL:
-        mouse.scroll_ += GET_WHEEL_DELTA_WPARAM(message.wParam) / 120;
+        mouse.m_scroll += GET_WHEEL_DELTA_WPARAM(message.wParam) / 120;
         break;
 
     default:

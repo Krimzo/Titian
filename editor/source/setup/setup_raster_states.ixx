@@ -2,9 +2,9 @@ export module setup_raster_states;
 
 export import editor_setup;
 
-export void setup_raster_states(editor_state* state)
+export void setup_raster_states(EditorState* state)
 {
-    kl::dx::raster_state_descriptor shadow_raster_descriptor = {};
+    kl::dx::RasterStateDescriptor shadow_raster_descriptor = {};
     shadow_raster_descriptor.FillMode = D3D11_FILL_SOLID;
     shadow_raster_descriptor.CullMode = D3D11_CULL_BACK;
     shadow_raster_descriptor.FrontCounterClockwise = true;

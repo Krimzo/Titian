@@ -4,7 +4,7 @@ export import gui_render;
 export import serializer;
 export import editor_setup;
 
-export void gui_main_menu(editor_state* state)
+export void gui_main_menu(EditorState* state)
 {
     static bool inputting_name = false;
 
@@ -21,7 +21,7 @@ export void gui_main_menu(editor_state* state)
 
             ImGui::SameLine();
             if (ImGui::Button("Save")) {
-                serializer serializer = { kl::format(name_input, ".titian") };
+                Serializer serializer = { kl::format(name_input, ".titian") };
                 if (serializer.write_scene(state->scene)) {
                     state->logger_state->log(kl::format("Scene saved. (", serializer.path, ") [", serialization::VERSION_NAME, "]"));
                 }
@@ -40,7 +40,7 @@ export void gui_main_menu(editor_state* state)
 
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("New Scene")) {
-                state->change_scene(new kl::scene());
+                state->change_scene(new kl::Scene());
             }
 
             if (ImGui::MenuItem("Save Scene")) {
