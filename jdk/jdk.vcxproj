@@ -52,7 +52,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)include\;$(SolutionDir)klib\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>java.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -73,7 +73,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)include\;$(SolutionDir)klib\source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>java.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -86,20 +86,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="source\java.h" />
-    <ClInclude Include="source\holder.h" />
-    <ClInclude Include="source\jdk.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\java.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="source\java_holder.ixx" />
+    <ClCompile Include="source\java.ixx" />
+    <ClCompile Include="source\jdk.ixx" />
+    <ClCompile Include="source\class_info.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\klib\klib.vcxproj">
       <Project>{5b9896b1-803a-45dd-a262-8055d73c6dd0}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\classfile_constants.h" />
+    <ClInclude Include="include\jawt.h" />
+    <ClInclude Include="include\jdwpTransport.h" />
+    <ClInclude Include="include\jni.h" />
+    <ClInclude Include="include\jvmti.h" />
+    <ClInclude Include="include\jvmticmlr.h" />
+    <ClInclude Include="include\win32\bridge\AccessBridgeCallbacks.h" />
+    <ClInclude Include="include\win32\bridge\AccessBridgeCalls.h" />
+    <ClInclude Include="include\win32\bridge\AccessBridgePackages.h" />
+    <ClInclude Include="include\win32\jawt_md.h" />
+    <ClInclude Include="include\win32\jni_md.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -108,7 +108,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)editor\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;$(SolutionDir)jdk\source\;$(SolutionDir)jdk\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>sandbox.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -128,7 +128,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)editor\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;$(SolutionDir)jdk\source\;$(SolutionDir)jdk\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>sandbox.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -139,20 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\parts\preview_cubes.cpp" />
-    <ClCompile Include="source\parts\preview_monkes.cpp" />
-    <ClCompile Include="source\parts\preview_physics_test.cpp" />
-    <ClCompile Include="source\parts\preview_spheres.cpp" />
-    <ClCompile Include="source\sandbox.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="source\setup\load_meshes.cpp" />
-    <ClCompile Include="source\setup\load_skyboxes.cpp" />
-    <ClCompile Include="source\setup\load_textures.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="source\sandbox.h" />
+    <ClCompile Include="source\parts\preview_cubes.ixx" />
+    <ClCompile Include="source\parts\preview_monkes.ixx" />
+    <ClCompile Include="source\parts\preview_physics_test.ixx" />
+    <ClCompile Include="source\parts\preview_spheres.ixx" />
+    <ClCompile Include="source\sandbox.ixx" />
+    <ClCompile Include="source\setup\load_meshes.ixx" />
+    <ClCompile Include="source\setup\load_skyboxes.ixx" />
+    <ClCompile Include="source\setup\load_textures.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\editor\editor.vcxproj">

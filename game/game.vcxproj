@@ -149,10 +149,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\game.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="source\game.h" />
+    <ClCompile Include="source\game.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

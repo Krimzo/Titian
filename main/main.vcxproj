@@ -86,7 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\main.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\editor\editor.vcxproj">
@@ -110,9 +110,6 @@
     <ProjectReference Include="..\sandbox\sandbox.vcxproj">
       <Project>{0ee87b2b-4cd6-4b72-a8c2-15693b04da77}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="source\main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -53,7 +53,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)game\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;$(SolutionDir)jdk\source\;$(SolutionDir)jdk\include\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>editor.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -77,7 +77,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(SolutionDir)game\source\;$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\;$(SolutionDir)jdk\source\;$(SolutionDir)jdk\include\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>editor.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -92,58 +92,295 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="source\gui\gui_render.h" />
-    <ClInclude Include="source\editor.h" />
-    <ClInclude Include="source\gui\helper\gui_helper.h" />
-    <ClInclude Include="source\render\render_chain.h" />
-    <ClInclude Include="source\scripting\jvm\jvm_class_info.h" />
-    <ClInclude Include="source\scripting\dll\dll_script.h" />
-    <ClInclude Include="source\scripting\jvm\jvm_script.h" />
-    <ClInclude Include="source\scripting\jvm\jvm_script_transfer.h" />
-    <ClInclude Include="source\scripting\engine_script.h" />
-    <ClInclude Include="source\serialization\deserializer.h" />
-    <ClInclude Include="source\serialization\serialization.h" />
-    <ClInclude Include="source\serialization\serializer.h" />
-    <ClInclude Include="source\setup\editor_setup.h" />
-    <ClInclude Include="source\state\gui_state.h" />
-    <ClInclude Include="source\state\render_state.h" />
-    <ClInclude Include="source\state\logger_state.h" />
-    <ClInclude Include="source\state\editor_state.h" />
-    <ClInclude Include="source\state\script_state.h" />
-    <ClInclude Include="source\update\editor_update.h" />
+    <ClCompile Include="source\gui\gui_render.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\gui\helper\gui_helper.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\render\render_chain.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\scripting\dll_script.ixx">
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>x64\Release\</BrowseInformationFile>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>x64\Release\</ModuleDependenciesFile>
+      <ModuleOutputFile>x64\Release\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <Optimization>MaxSpeed</Optimization>
+      <ObjectFileName>x64\Release\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>H:\Coding\C++\Titian\x64\Release\editor.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>editor.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>x64\Release\editor.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>x64\Release\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <TrackerLogDirectory>x64\Release\editor.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>x64\Release\</XMLDocumentationFileName>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_UNICODE;UNICODE;;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
+      <LibCompiled>true</LibCompiled>
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\scripting\basic_script.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\scripting\jvm_script.ixx">
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>x64\Release\</BrowseInformationFile>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>x64\Release\</ModuleDependenciesFile>
+      <ModuleOutputFile>x64\Release\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <Optimization>MaxSpeed</Optimization>
+      <ObjectFileName>x64\Release\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>H:\Coding\C++\Titian\x64\Release\editor.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>editor.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>x64\Release\editor.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>x64\Release\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <TrackerLogDirectory>x64\Release\editor.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>x64\Release\</XMLDocumentationFileName>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_UNICODE;UNICODE;;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
+      <LibCompiled>true</LibCompiled>
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\scripting\jvm_script_transfer.ixx">
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>x64\Release\</BrowseInformationFile>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>x64\Release\</ModuleDependenciesFile>
+      <ModuleOutputFile>x64\Release\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <Optimization>MaxSpeed</Optimization>
+      <ObjectFileName>x64\Release\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>H:\Coding\C++\Titian\x64\Release\editor.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>editor.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>x64\Release\editor.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>x64\Release\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <TrackerLogDirectory>x64\Release\editor.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>x64\Release\</XMLDocumentationFileName>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <BuildStlModules>false</BuildStlModules>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_UNICODE;UNICODE;;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
+      <LibCompiled>true</LibCompiled>
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\serialization\deserializer.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\serialization\serialization.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\serialization\serializer.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\setup\editor_setup.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\state\gui_state.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\state\render_state.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\state\logger_state.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="source\state\editor_state.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\gui\helper\gui_helper.cpp" />
-    <ClCompile Include="source\gui\parts\gui_control_menu.cpp" />
-    <ClCompile Include="source\gui\parts\gui_depth_display.cpp" />
-    <ClCompile Include="source\gui\parts\gui_entity_properties.cpp" />
-    <ClCompile Include="source\gui\parts\gui_explorer.cpp" />
-    <ClCompile Include="source\gui\parts\gui_log_view.cpp" />
-    <ClCompile Include="source\gui\parts\gui_main_menu.cpp" />
-    <ClCompile Include="source\gui\parts\gui_material_editor.cpp" />
-    <ClCompile Include="source\gui\parts\gui_mesh_editor.cpp" />
-    <ClCompile Include="source\gui\parts\gui_render_info.cpp" />
-    <ClCompile Include="source\gui\parts\gui_scene_items.cpp" />
-    <ClCompile Include="source\gui\parts\gui_scene_editor.cpp" />
-    <ClCompile Include="source\gui\parts\gui_scene_info.cpp" />
-    <ClCompile Include="source\gui\gui_render.cpp" />
-    <ClCompile Include="source\editor.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="source\gui\parts\gui_script_items.cpp" />
-    <ClCompile Include="source\render\parts\render_collider.cpp" />
-    <ClCompile Include="source\render\parts\render_postprocess.cpp" />
-    <ClCompile Include="source\render\parts\render_shadows.cpp" />
-    <ClCompile Include="source\render\render_chain.cpp" />
-    <ClCompile Include="source\scripting\jvm\jvm_class_info.cpp" />
-    <ClCompile Include="source\scripting\dll\dll_script.cpp" />
-    <ClCompile Include="source\scripting\jvm\jvm_script.cpp" />
-    <ClCompile Include="source\scripting\jvm\jvm_script_transfer.cpp" />
-    <ClCompile Include="source\scripting\engine_script.cpp" />
-    <ClCompile Include="source\serialization\deserializer.cpp" />
-    <ClCompile Include="source\serialization\serializer.cpp" />
-    <ClCompile Include="source\setup\setup_depth_states.cpp">
+    <ClCompile Include="source\editor.ixx" />
+    <ClCompile Include="source\gui\parts\gui_control_menu.ixx" />
+    <ClCompile Include="source\gui\parts\gui_entity_properties.ixx" />
+    <ClCompile Include="source\gui\parts\gui_explorer.ixx" />
+    <ClCompile Include="source\gui\parts\gui_log_view.ixx" />
+    <ClCompile Include="source\gui\parts\gui_main_menu.ixx" />
+    <ClCompile Include="source\gui\parts\gui_material_editor.ixx" />
+    <ClCompile Include="source\gui\parts\gui_mesh_editor.ixx" />
+    <ClCompile Include="source\gui\parts\gui_render_info.ixx" />
+    <ClCompile Include="source\gui\parts\gui_scene_items.ixx" />
+    <ClCompile Include="source\gui\parts\gui_scene_editor.ixx" />
+    <ClCompile Include="source\gui\parts\gui_scene_info.ixx" />
+    <ClCompile Include="source\gui\parts\gui_script_items.ixx" />
+    <ClCompile Include="source\render\parts\render_collider.ixx" />
+    <ClCompile Include="source\render\parts\render_postprocess.ixx" />
+    <ClCompile Include="source\render\parts\render_shadows.ixx" />
+    <ClCompile Include="source\setup\setup_depth_states.ixx">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -219,8 +456,10 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\setup\setup_gui.cpp">
+    <ClCompile Include="source\setup\setup_gui.ixx">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -296,8 +535,10 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\setup\setup_raster_states.cpp">
+    <ClCompile Include="source\setup\setup_raster_states.ixx">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -373,8 +614,10 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\setup\setup_sampler_states.cpp">
+    <ClCompile Include="source\setup\setup_sampler_states.ixx">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -450,8 +693,10 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\setup\setup_shaders.cpp">
+    <ClCompile Include="source\setup\setup_shaders.ixx">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -527,14 +772,13 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\state\gui_state.cpp" />
-    <ClCompile Include="source\state\render_state.cpp" />
-    <ClCompile Include="source\state\logger_state.cpp" />
-    <ClCompile Include="source\state\editor_state.cpp" />
-    <ClCompile Include="source\state\script_state.cpp" />
-    <ClCompile Include="source\render\handle_resizes.cpp" />
-    <ClCompile Include="source\update\finalize_frame.cpp">
+    <ClCompile Include="source\render\handle_resizes.ixx" />
+    <ClCompile Include="source\state\basic_state.ixx" />
+    <ClCompile Include="source\update\editor_update.ixx" />
+    <ClCompile Include="source\update\finalize_frame.ixx">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -610,10 +854,12 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\render\parts\render_scene.cpp" />
-    <ClCompile Include="source\render\parts\render_skybox.cpp" />
-    <ClCompile Include="source\update\update_camera.cpp">
+    <ClCompile Include="source\render\parts\render_scene.ixx" />
+    <ClCompile Include="source\render\parts\render_skybox.ixx" />
+    <ClCompile Include="source\update\handle_camera.ixx">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -689,8 +935,10 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\update\update_physics.cpp">
+    <ClCompile Include="source\update\update_physics.ixx">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -766,8 +1014,10 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\update\update_scripts.cpp">
+    <ClCompile Include="source\update\update_scripts.ixx">
       <AssemblerOutput>NoListing</AssemblerOutput>
       <AssemblerListingLocation>x64\Release\</AssemblerListingLocation>
       <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
@@ -843,6 +1093,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>H:\Coding\C++\Titian\editor\source\;H:\Coding\C++\Titian\game\source\;H:\Coding\C++\Titian\klib\source\;H:\Coding\C++\Titian\imgui\source\;H:\Coding\C++\Titian\physx\source\;H:\Coding\C++\Titian\jdk\source\;H:\Coding\C++\Titian\jdk\include\</AdditionalIncludeDirectories>
       <LibCompiled>true</LibCompiled>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
