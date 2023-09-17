@@ -5,8 +5,8 @@
 #include "jdk.h"
 
 // Alter state
-#include "setup/setup_state.h"
-#include "update/update_state.h"
+#include "setup\editor_setup.h"
+#include "update\editor_update.h"
 
 // Render
 #include "render/render_chain.h"

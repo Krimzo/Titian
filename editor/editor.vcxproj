@@ -104,13 +104,13 @@
     <ClInclude Include="source\serialization\deserializer.h" />
     <ClInclude Include="source\serialization\serialization.h" />
     <ClInclude Include="source\serialization\serializer.h" />
-    <ClInclude Include="source\setup\setup_state.h" />
+    <ClInclude Include="source\setup\editor_setup.h" />
     <ClInclude Include="source\state\gui_state.h" />
     <ClInclude Include="source\state\render_state.h" />
     <ClInclude Include="source\state\logger_state.h" />
     <ClInclude Include="source\state\editor_state.h" />
     <ClInclude Include="source\state\script_state.h" />
-    <ClInclude Include="source\update\update_state.h" />
+    <ClInclude Include="source\update\editor_update.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\gui\helper\gui_helper.cpp" />
