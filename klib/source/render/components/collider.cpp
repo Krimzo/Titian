@@ -6,10 +6,10 @@
 kl::Collider::Collider(physx::PxPhysics* physics, const physx::PxGeometry& geometry)
 {
 	m_material = physics->createMaterial(0.25f, 0.25f, 0.25f);
-	error_check(!m_material, "Failed to create collider material");
+	assert(m_material, "Failed to create collider material");
 
 	m_shape = physics->createShape(geometry, *m_material);
-	error_check(!m_shape, "Failed to create collider shape");
+	assert(m_shape, "Failed to create collider shape");
 }
 
 kl::Collider::~Collider()

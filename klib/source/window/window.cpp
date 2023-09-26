@@ -18,7 +18,7 @@ kl::Window::Window(const std::string& name, const Int2& size)
     };
     window_class.hInstance = m_instance;
     window_class.lpszClassName = name.c_str();
-    error_check(!RegisterClassExA(&window_class), "Failed to register window class");
+    assert(RegisterClassExA(&window_class), "Failed to register window class");
 
     // Creating the window
     m_window_style = WS_OVERLAPPEDWINDOW;
@@ -36,7 +36,7 @@ kl::Window::Window(const std::string& name, const Int2& size)
     };
 
     m_window = CreateWindowExA(NULL, name.c_str(), name.c_str(), m_window_style, new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, m_instance, nullptr);
-    error_check(!m_window, "Failed to create window");
+    assert(m_window, "Failed to create window");
 
     // Getting data
     m_device_context = GetDC(m_window);

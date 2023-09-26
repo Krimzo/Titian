@@ -1,28 +1,26 @@
 #include "klib.h"
 
-using namespace kl::media_utility;
-
 
 // Utility
 static void configure_reader(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
 {
     Microsoft::WRL::ComPtr<IMFMediaType> media_type = nullptr;
-    fail_check_(reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &media_type), "Failed to get default video type");
+    reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &media_type) >> kl::hr_checker;
 
     GUID major_type = {};
-    fail_check_(media_type->GetGUID(MF_MT_MAJOR_TYPE, &major_type), "Failed to get major video type");
+    media_type->GetGUID(MF_MT_MAJOR_TYPE, &major_type) >> kl::hr_checker;
 
     Microsoft::WRL::ComPtr<IMFMediaType> new_type = nullptr;
-    fail_check_(MFCreateMediaType(&new_type), "Failed to create new video type");
-    fail_check_(new_type->SetGUID(MF_MT_MAJOR_TYPE, major_type), "Failed to set major video type");
-    fail_check_(new_type->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32), "Failed to set sub video type");
-    fail_check_(reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, new_type.Get()), "Failed to set video type");
+    MFCreateMediaType(&new_type) >> kl::hr_checker;
+    new_type->SetGUID(MF_MT_MAJOR_TYPE, major_type) >> kl::hr_checker;
+    new_type->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32) >> kl::hr_checker;
+    reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, new_type.Get()) >> kl::hr_checker;
 }
 
 static uint64_t video_byte_size(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
 {
     PROPVARIANT variant = {};
-    if (!succeeded_(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &variant))) {
+    if (FAILED(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &variant))) {
         return 0;
     }
 
@@ -35,7 +33,7 @@ static uint64_t video_byte_size(const Microsoft::WRL::ComPtr<IMFSourceReader>& r
 static int64_t video_duration_100ns(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
 {
     PROPVARIANT variant = {};
-    if (!succeeded_(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &variant))) {
+    if (FAILED(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &variant))) {
         return 0;
     }
 
@@ -77,12 +75,12 @@ kl::VideoReader::VideoReader(const std::string& filepath)
 {
     // Init
     Microsoft::WRL::ComPtr<IMFAttributes> attributes = nullptr;
-    fail_check_(MFCreateAttributes(&attributes, 1), "Failed to create attributes");
+    MFCreateAttributes(&attributes, 1) >> hr_checker;
 
-    fail_check_(attributes->SetUINT32(MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, true), "Failed to enable video processing");
+    attributes->SetUINT32(MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, true) >> hr_checker;
 
     const std::wstring converted_path = convert_string(filepath);
-    fail_check_(MFCreateSourceReaderFromURL(converted_path.c_str(), attributes.Get(), &m_reader), "Failed to create SourceReader");
+    MFCreateSourceReaderFromURL(converted_path.c_str(), attributes.Get(), &m_reader) >> hr_checker;
     configure_reader(m_reader);
 
     // Getting info
@@ -134,20 +132,20 @@ bool kl::VideoReader::next_frame(Image& out) const
     LONGLONG time_stamp = 0;
     Microsoft::WRL::ComPtr<IMFSample> sample = nullptr;
 
-    if (!succeeded_(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
+    if (FAILED(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
         return false;
     }
 
     // Convert to array
     Microsoft::WRL::ComPtr<IMFMediaBuffer> media_buffer = nullptr;
-    if (!succeeded_(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
+    if (FAILED(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
         return false;
     }
 
     // Copy data
     BYTE* frame_data = nullptr;
     DWORD frame_byte_size = 0;
-    fail_check_(media_buffer->Lock(&frame_data, nullptr, &frame_byte_size), "Failed to lock the bytes [video_reader]");
+    media_buffer->Lock(&frame_data, nullptr, &frame_byte_size) >> hr_checker;
 
     out.resize(m_frame_size);
     const size_t pixel_count = (size_t) out.width() * out.height();
@@ -161,6 +159,6 @@ bool kl::VideoReader::next_frame(Image& out) const
     }
 
     // Cleanup
-    fail_check_(media_buffer->Unlock(), "Failed to unlock bytes [video_reader]");
+    media_buffer->Unlock() >> hr_checker;
     return true;
 }

@@ -15,21 +15,21 @@ int kl::get()
     return std::cin.get();
 }
 
-bool kl::warning_check(const bool occured, const std::string& message, const bool wait)
+bool kl::verify(const bool value, const std::string_view& message, const bool wait)
 {
-    if (occured) {
-        print(colors::ORANGE, "Warning: ", message, colors::CONSOLE);
-        if (wait) console::wait_for_any();
+    if (!value) {
+        print(colors::ORANGE, "Failed to verify: ", message, colors::CONSOLE);
+        if (wait) kl::get();
     }
-    return occured;
+    return value;
 }
 
-void kl::error_check(const bool occured, const std::string& message, const bool wait)
+void kl::assert(const bool value, const std::string_view& message, const bool wait)
 {
-    if (occured) {
-        print(colors::RED, "Error: ", message, colors::CONSOLE);
-        if (wait) console::wait_for_any();
-        exit(1);
+    if (!value) {
+        print(colors::RED, "Assertion failed: ", message, colors::CONSOLE);
+        if (wait) kl::get();
+        std::terminate();
     }
 }
 

@@ -12,13 +12,13 @@ physx::PxFoundation* kl::Scene::m_foundation = PxCreateFoundation(PX_PHYSICS_VER
 kl::Scene::Scene()
 {
     m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
-    error_check(!m_dispatcher, "Failed to create physics dispatcher_");
+    assert(m_dispatcher, "Failed to create physics dispatcher_");
     
     m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, physx::PxTolerancesScale());
-    error_check(!m_physics, "Failed to create physics");
+    assert(m_physics, "Failed to create physics");
 
     m_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_foundation, physx::PxCookingParams(m_physics->getTolerancesScale()));
-    error_check(!m_cooking, "Failed to create physics cooking");
+    assert(m_cooking, "Failed to create physics cooking");
 
     physx::PxSceneDesc scene_descriptor = { m_physics->getTolerancesScale() };
     scene_descriptor.gravity.y = -9.81f;
@@ -26,7 +26,7 @@ kl::Scene::Scene()
     scene_descriptor.filterShader = physx::PxDefaultSimulationFilterShader;
 
     m_scene = m_physics->createScene(scene_descriptor);
-    error_check(!m_scene, "Failed to create physics scene");
+    assert(m_scene, "Failed to create physics scene");
 }
 
 kl::Scene::~Scene()

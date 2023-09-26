@@ -20,6 +20,7 @@
 #include <filesystem>
 #include <functional>
 #include <memory>
+#include <source_location>
 
 // Modern-2
 #include <type_traits>

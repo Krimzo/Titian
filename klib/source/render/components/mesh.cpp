@@ -36,7 +36,7 @@ void kl::Mesh::reload()
 
     physx::PxDefaultMemoryInputData cooked_buffer(cook_buffer.getData(), cook_buffer.getSize());
     physics_buffer = scene->physics()->createTriangleMesh(cooked_buffer);
-    error_check(!physics_buffer, "Failed to create mesh physics buffer");
+    assert(physics_buffer, "Failed to create mesh physics buffer");
 }
 
 void kl::Mesh::free_physics_buffer()

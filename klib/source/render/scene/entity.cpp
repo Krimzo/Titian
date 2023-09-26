@@ -187,7 +187,7 @@ void kl::Entity::generate_actor(physx::PxPhysics* physics, const physx::PxTransf
     }
 
     m_physics_actor = dynamic ? (physx::PxRigidActor*) physics->createRigidDynamic(transform) : physics->createRigidStatic(transform);
-    error_check(!m_physics_actor, "Failed to create physics actor");
+    assert(m_physics_actor, "Failed to create physics actor");
 
     if (dynamic) {
         set_mass(1.0f);

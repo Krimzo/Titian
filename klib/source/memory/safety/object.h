@@ -25,7 +25,7 @@ namespace kl {
 
         void allocate()
         {
-            m_count = new std::atomic<uint64_t>;
+            m_count = new std::atomic<uint64_t>();
             if (!m_count) throw std::runtime_error("Could not allocate memory for reference counter.");
             *m_count = 1;
         }

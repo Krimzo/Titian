@@ -7,7 +7,7 @@ namespace kl_ignore {
     {
         ULONG_PTR token = NULL;
         const Gdiplus::GdiplusStartupInput startup_input = {};
-        kl::error_check(GdiplusStartup(&token, &startup_input, nullptr), "Failed to init GDIPlus");
+        kl::assert(!GdiplusStartup(&token, &startup_input, nullptr), "Failed to init GDIPlus");
         return 0;
     }();
 }
@@ -364,14 +364,14 @@ static constexpr CLSID png_encoder_clsid = {
 bool kl::Image::load_from_file(const std::string& filepath)
 {
     Gdiplus::Bitmap loaded_bitmap(convert_string(filepath).c_str());
-    if (warning_check(loaded_bitmap.GetLastStatus(), "Failed to open image file \"" + filepath + "\"")) {
+    if (!verify(!loaded_bitmap.GetLastStatus(), "Failed to open image file \"" + filepath + "\"")) {
         return false;
     }
     resize({ (int) loaded_bitmap.GetWidth(), (int) loaded_bitmap.GetHeight() });
 
     Gdiplus::BitmapData bitmap_data = {};
     loaded_bitmap.LockBits(nullptr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bitmap_data);
-    if (warning_check(!bitmap_data.Scan0, "Failed to load image data from file \"" + filepath + "\"")) {
+    if (!verify(bitmap_data.Scan0, "Failed to load image data from file \"" + filepath + "\"")) {
         return false;
     }
     memcpy(PixelStorage::data(), bitmap_data.Scan0, PixelStorage::size() * sizeof(Color));
@@ -414,13 +414,13 @@ bool kl::Image::save_to_file(const std::string& filepath) const
     }
 
     Gdiplus::Bitmap temp_bitmap(m_size.x, m_size.y, PixelFormat32bppARGB);
-    if (warning_check(temp_bitmap.GetLastStatus(), "Failed to create bitmap")) {
+    if (!verify(!temp_bitmap.GetLastStatus(), "Failed to create bitmap")) {
         return false;
     }
 
     Gdiplus::BitmapData bitmap_data = {};
     temp_bitmap.LockBits(nullptr, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bitmap_data);
-    if (warning_check(!bitmap_data.Scan0, "Failed to lock bitmap bits")) {
+    if (!verify(bitmap_data.Scan0, "Failed to lock bitmap bits")) {
         return false;
     }
 

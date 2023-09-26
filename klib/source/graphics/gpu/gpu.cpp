@@ -25,8 +25,8 @@ kl::GPU::GPU(const bool debug, const bool single_threaded)
         nullptr,
         &m_context
     );
-    error_check(!m_device, "Failed to create device");
-    error_check(!m_context, "Failed to create device context");
+    assert(m_device, "Failed to create device");
+    assert(m_context, "Failed to create device context");
 }
 
 kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
@@ -68,9 +68,9 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
         nullptr,
         &m_context
     );
-    error_check(!m_device, "Failed to create device");
-    error_check(!m_context, "Failed to create device context");
-    error_check(!m_chain, "Failed to create swapchain");
+    assert(m_device, "Failed to create device");
+    assert(m_context, "Failed to create device context");
+    assert(m_chain, "Failed to create swapchain");
 
     bind_raster_state(create_raster_state(false, false));
     set_viewport_min_max({ 0.0f, 1.0f });
@@ -115,7 +115,7 @@ kl::dx::Texture kl::GPU::back_buffer() const
 {
     dx::Texture buffer = nullptr;
     const long result = m_chain->GetBuffer(0, IID_PPV_ARGS(&buffer));
-    warning_check(!buffer, format("Failed to get backbuffer texture. Result: 0x", std::hex, result));
+    verify(buffer, format("Failed to get backbuffer texture. Result: 0x", std::hex, result));
     return buffer;
 }
 

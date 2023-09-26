@@ -35,7 +35,7 @@ namespace kl {
 
         operator bool() const;
 
-        bool open(const std::string& filepath, bool clear);
+        void open(const std::string& filepath, bool clear);
         void close();
 
         bool seek(int position) const;

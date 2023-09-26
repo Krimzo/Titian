@@ -11,7 +11,7 @@ export using jbool = jboolean;
 export using jfield = jfieldID;
 export using jmethod = jmethodID;
 
-export namespace signatures {
+export namespace java {
     inline const std::string BOOL = "Z";
     inline const std::string BYTE = "B";
 
@@ -55,7 +55,7 @@ export namespace java {
     inline JavaVM* jvm = nullptr;
     inline JNIEnv* jni = nullptr;
 
-    bool init(const std::string& dll_path, std::vector<std::string> args)
+    jint init(const std::string& dll_path, std::vector<std::string> args)
     {
         if (!LoadLibraryA(dll_path.c_str())) {
             return false;
@@ -71,26 +71,26 @@ export namespace java {
         jvm_args.nOptions = (jint) options.size();
         jvm_args.options = options.data();
 
-        return !JNI_CreateJavaVM(&jvm, (void**) &jni, &jvm_args);
+        return JNI_CreateJavaVM(&jvm, (void**) &jni, &jvm_args);
     }
 }
 
 export namespace java {
-    jmethod get_method(jclass clazz, const std::string& name, const std::string& return_type = signatures::VOID, const std::vector<std::string>& parameters = {})
+    jmethod get_method(jclass clazz, const std::string& name, const std::string& return_type = VOID, const std::vector<std::string>& parameters = {})
     {
         const std::string signature = build_method_signature(return_type, parameters);
         return jni->GetMethodID(clazz, name.c_str(), signature.c_str());
     }
 
-    jmethod get_static_method(jclass clazz, const std::string& name, const std::string& return_type = signatures::VOID, const std::vector<std::string>& parameters = {})
+    jmethod get_constructor(jclass clazz, const std::vector<std::string>& parameters = {})
+    {
+        return get_method(clazz, CONSTRUCTOR, VOID, parameters);
+    }
+
+    jmethod get_static_method(jclass clazz, const std::string& name, const std::string& return_type = VOID, const std::vector<std::string>& parameters = {})
     {
         const std::string signature = build_method_signature(return_type, parameters);
         return jni->GetStaticMethodID(clazz, name.c_str(), signature.c_str());
-    }
-
-    jmethod get_constructor(jclass clazz, const std::vector<std::string>& parameters = {})
-    {
-        return get_method(clazz, signatures::CONSTRUCTOR, signatures::VOID, parameters);
     }
 }
 

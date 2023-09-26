@@ -2,12 +2,12 @@
 
 #include "math/math.h"
 
+#undef assert
 
 namespace kl {
     int get();
-
-    bool warning_check(bool occured, const std::string& message, bool wait = false);
-    void error_check(bool occured, const std::string& message, bool wait = true);
+    bool verify(bool value, const std::string_view& message, bool wait = false);
+    void assert(bool value, const std::string_view& message, bool wait = true);
 }
 
 namespace kl::console {

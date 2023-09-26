@@ -7,7 +7,7 @@ namespace kl_ignored {
     {
         WSADATA wsa_data = {};
         const int result = WSAStartup(MAKEWORD(2, 2), &wsa_data);
-        kl::error_check(result, "Failed to initialize WSA");
+        kl::assert(result == 0, "Failed to initialize WSA");
         return result;
     }();
 }
@@ -21,7 +21,7 @@ kl::Socket::Socket()
     m_socket = ::socket(AF_INET, SOCK_STREAM, NULL);
     m_address.sin_family = AF_INET;
     m_address.sin_addr.s_addr = INADDR_ANY;
-    warning_check(m_socket == INVALID_SOCKET, "Failed to create socket");
+    verify(m_socket != INVALID_SOCKET, "Failed to create socket");
 }
 
 kl::Socket::Socket(const int port)
@@ -56,7 +56,7 @@ std::string kl::Socket::address() const
 int kl::Socket::set_address(const std::string& address)
 {
     const int result = inet_pton(AF_INET, address.c_str(), &m_address.sin_addr);
-    warning_check(result != 1, format("Could not convert address ", address));
+    verify(result == 1, format("Could not convert address ", address));
     return result;
 }
 
@@ -74,12 +74,12 @@ void kl::Socket::set_port(const int port)
 int kl::Socket::listen(const int queue_size)
 {
     const int bind_result = bind(m_socket, (sockaddr*) &m_address, sizeof(m_address));
-    if (warning_check(bind_result, "Could not bind socket")) {
+    if (!verify(bind_result == 0, "Could not bind socket")) {
         return bind_result;
     }
 
     const int listen_result = ::listen(m_socket, queue_size);
-    warning_check(listen_result, "Could not listen on socket");
+    verify(listen_result == 0, "Could not listen on socket");
     return listen_result;
 }
 
@@ -87,7 +87,7 @@ kl::Socket kl::Socket::accept()
 {
     int address_length = sizeof(m_address);
     const SOCKET accepted = ::accept(m_socket, (sockaddr*) &m_address, &address_length);
-    warning_check(accepted == INVALID_SOCKET, "Could not accept socket");
+    verify(accepted != INVALID_SOCKET, "Could not accept socket");
 
     Socket result = {};
     result.m_socket = accepted;
@@ -97,7 +97,7 @@ kl::Socket kl::Socket::accept()
 int kl::Socket::connect()
 {
     const int result = ::connect(m_socket, (sockaddr*) &m_address, sizeof(m_address));
-    warning_check(result, "Could not connect to socket");
+    verify(result == 0, "Could not connect to socket");
     return result;
 }
 
