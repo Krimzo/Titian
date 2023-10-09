@@ -2,12 +2,15 @@ export module gui_layer;
 
 export import application_layer;
 export import render_layer;
+export import gui_section;
 
 export namespace titian {
 	class GUILayer : public Layer
 	{
 	public:
 		kl::Object<ApplicationLayer> app_layer = nullptr;
+
+		std::vector<kl::Object<GUISection>> sections = {};
 
 		kl::Float4 special_color = kl::Color(235, 170, 15);
 		kl::Float4 alternate_color = kl::Color(125, 190, 190);
@@ -35,9 +38,20 @@ export namespace titian {
 
 		bool update() override
 		{
-			kl::GPU* gpu = &app_layer->gpu;
+			ImGui_ImplDX11_NewFrame();
+			ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
+			ImGuizmo::BeginFrame();
+			ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 
-			gpu->swap_buffers(true);
+			for (auto& section : sections) {
+				section->render_gui();
+			}
+
+			ImGui::Render();
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+			app_layer->gpu->swap_buffers(true);
 			return true;
 		}
 

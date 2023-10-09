@@ -167,7 +167,7 @@ std::optional<std::string> kl::choose_file(const bool save, const std::vector<st
 kl::File::File()
 {}
 
-kl::File::File(const std::string& filepath, const bool clear)
+kl::File::File(const std::string_view& filepath, const bool clear)
 {
     open(filepath, clear);
 }
@@ -182,11 +182,11 @@ kl::File::operator bool() const
     return (bool) m_file;
 }
 
-void kl::File::open(const std::string& filepath, bool clear)
+void kl::File::open(const std::string_view& filepath, bool clear)
 {
     close();
-    const bool result = (bool) fopen_s(&m_file, filepath.c_str(), clear ? "wb+" : "ab+");
-    verify(result, "Failed to open file \"" + filepath + "\"");
+    const bool result = (bool) fopen_s(&m_file, filepath.data(), clear ? "wb+" : "ab+");
+    verify(result, kl::format("Failed to open file \"", filepath, "\""));
 }
 
 void kl::File::close()

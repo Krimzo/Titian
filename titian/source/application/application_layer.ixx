@@ -1,14 +1,19 @@
 export module application_layer;
 
 export import layer;
+export import log_info;
 
 export namespace titian {
 	class ApplicationLayer : public Layer
 	{
 	public:
+		// System
 		kl::Object<kl::Window> window = nullptr;
 		kl::Object<kl::GPU> gpu = nullptr;
 		kl::Object<kl::Timer> timer = nullptr;
+
+		// Logging
+		std::vector<LogInfo> logs = {};
 
 		ApplicationLayer(const std::string_view& name)
 		{
@@ -31,6 +36,11 @@ export namespace titian {
 		{
 			timer->update_delta();
 			return window->process(false);
+		}
+
+		void log(const LogInfo& info)
+		{
+			logs.push_back(info);
 		}
 	};
 }

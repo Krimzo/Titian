@@ -13,12 +13,14 @@ export namespace titian {
 	public:
 		TitianGame()
 		{
+            // Init layers
             kl::Object app_layer = new ApplicationLayer("Titian");
             kl::Object game_layer = new GameLayer();
             kl::Object scripting_layer = new ScriptingLayer();
             kl::Object render_layer = new RenderLayer(app_layer);
             kl::Object gui_layer = new GUILayer(app_layer);
 
+            // Push layers
             push_layer(app_layer);
             push_layer(game_layer);
             push_layer(scripting_layer);

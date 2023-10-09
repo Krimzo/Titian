@@ -8,9 +8,9 @@ export namespace titian {
 }
 
 export namespace titian {
-    bool serialize(const Serializable* serializable, const char* path)
+    bool serialize(const Serializable* serializable, const std::string_view& path)
     {
-        kl::File file = { path, true };
+        kl::File file = { path, true};
         if (!file) {
             return false;
         }
@@ -19,9 +19,9 @@ export namespace titian {
         return true;
     }
 
-    bool deserialize(Serializable* serializable, const char* path)
+    bool deserialize(Serializable* serializable, const std::string_view& path)
     {
-        kl::File file = { path, false };
+        kl::File file = { path, false};
         if (!file) {
             return false;
         }

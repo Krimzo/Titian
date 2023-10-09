@@ -99,13 +99,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\application\application_layer.ixx" />
-    <ClCompile Include="source\application\logging_layer.ixx" />
+    <ClCompile Include="source\application\log_info.ixx" />
     <ClCompile Include="source\components\collider.ixx" />
     <ClCompile Include="source\components\material.ixx" />
     <ClCompile Include="source\components\mesh.ixx" />
     <ClCompile Include="source\components\texture.ixx" />
     <ClCompile Include="source\components\unique.ixx" />
     <ClCompile Include="source\editor\editor_layer.ixx" />
+    <ClCompile Include="source\gui\gui_section.ixx" />
+    <ClCompile Include="source\gui\sections\section_main_menu.ixx" />
+    <ClCompile Include="source\gui\utility\gui_helper.ixx" />
     <ClCompile Include="source\light\ambient_light.ixx" />
     <ClCompile Include="source\light\directional_light.ixx" />
     <ClCompile Include="source\light\light.ixx" />

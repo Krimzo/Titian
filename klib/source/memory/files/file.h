@@ -24,7 +24,7 @@ namespace kl {
 
     public:
         File();
-        File(const std::string& filepath, bool clear);
+        File(const std::string_view& filepath, bool clear);
         virtual ~File();
 
         File(const File&) = delete;
@@ -35,7 +35,7 @@ namespace kl {
 
         operator bool() const;
 
-        void open(const std::string& filepath, bool clear);
+        void open(const std::string_view& filepath, bool clear);
         void close();
 
         bool seek(int position) const;
