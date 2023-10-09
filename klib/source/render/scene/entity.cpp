@@ -36,8 +36,7 @@ kl::Float4x4 kl::Entity::collider_matrix() const
         return {};
     }
 
-    kl::Float4x4 result = {};
-    result = Float4x4::translation(position());
+    kl::Float4x4 result = Float4x4::translation(position());
     result *= Float4x4::rotation(rotation());
     result *= Float4x4::translation(m_collider->offset());
     result *= Float4x4::rotation(m_collider->rotation());
@@ -175,7 +174,6 @@ void kl::Entity::set_collider(const Object<kl::Collider>& collider)
 
 kl::Object<kl::Collider> kl::Entity::collider() const
 {
-    return m_collider;
 }
 
 // Private

@@ -9,7 +9,8 @@ export namespace titian {
 		kl::Float3 position = {};
 		kl::Float3 color{ 1.0f };
 
-		PointLight()
+		PointLight(physx::PxPhysics* physics, const bool dynamic)
+			: Light(physics, dynamic)
 		{}
 
 		~PointLight() override

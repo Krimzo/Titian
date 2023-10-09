@@ -6,7 +6,8 @@ export namespace titian {
 	class Light : public Entity
 	{
 	public:
-		Light()
+		Light(physx::PxPhysics* physics, const bool dynamic)
+			: Entity(physics, dynamic)
 		{}
 
 		~Light() override

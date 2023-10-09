@@ -49,7 +49,7 @@ public:
         change_scene(new kl::Scene());
     }
 
-    virtual ~EditorState() override
+    ~EditorState() override
     {
         gui_state = nullptr;
         render_state = nullptr;

@@ -10,7 +10,7 @@ public:
 	BasicScript()
 	{}
 
-	BasicScript(const std::string& path)
+	BasicScript(const std::string_view& path)
 		: path(path)
 	{}
 
@@ -18,8 +18,10 @@ public:
 	{}
 
 	virtual bool is_valid() const = 0;
+
 	virtual void reload() = 0;
 
 	virtual void call_start(BasicState* state) = 0;
+
 	virtual void call_update(BasicState* state) = 0;
 };

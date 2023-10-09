@@ -13,9 +13,9 @@ export namespace titian {
         kl::RenderShaders object_full = {};
         kl::RenderShaders postprocess_pass = {};
         
-        ShaderStates(kl::GPU* gpu)
+        ShaderStates(kl::Object<kl::GPU>& gpu)
         {
-            auto parse_render_shaders = [&](const std::string& name)
+            const auto parse_render_shaders = [&](const std::string& name)
             {
                 const std::string source = kl::read_file_string("builtin/shaders/" + name);
                 return gpu->create_render_shaders(source);

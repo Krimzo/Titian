@@ -5,12 +5,13 @@ export import game_layer;
 export namespace titian {
     class EditorLayer : public Layer
     {
-        kl::Object<GameLayer> m_game_layer = nullptr;
-
     public:
-        EditorLayer(const kl::Object<GameLayer>& game_layer)
-            : m_game_layer(game_layer)
-        {}
+        kl::Object<GameLayer> game_layer = nullptr;
+
+        EditorLayer(kl::Object<GameLayer>& game_layer)
+        {
+            this->game_layer = game_layer;
+        }
 
         ~EditorLayer() override
         {}

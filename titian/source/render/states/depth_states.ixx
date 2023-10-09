@@ -9,7 +9,7 @@ export namespace titian {
         kl::dx::DepthState disabled = nullptr;
         kl::dx::DepthState enabled = nullptr;
         
-        DepthStates(const kl::GPU* gpu)
+        DepthStates(kl::Object<kl::GPU>& gpu)
         {
             disabled = gpu->create_depth_state(false);
             enabled = gpu->create_depth_state(true);

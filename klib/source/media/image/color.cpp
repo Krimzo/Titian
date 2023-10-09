@@ -32,7 +32,7 @@ kl::Color::operator kl::Float4() const
 // Comapre
 bool kl::Color::operator==(const Color& other) const
 {
-    return (r == other.r && g == other.g && b == other.b && a == other.a);
+    return r == other.r && g == other.g && b == other.b && a == other.a;
 }
 
 bool kl::Color::operator!=(const Color& other) const
@@ -43,7 +43,7 @@ bool kl::Color::operator!=(const Color& other) const
 // Methods
 kl::Color kl::Color::gray() const
 {
-    const float float_value = (r * 0.299f + g * 0.587f + b * 0.114f);
+    const float float_value = r * 0.299f + g * 0.587f + b * 0.114f;
     const byte gray_value = min(max((int) float_value, 0), 255);
     return { gray_value, gray_value, gray_value, a };
 }
@@ -64,9 +64,9 @@ kl::Color kl::Color::mix(const Color& color, float ratio) const
 {
     ratio = min(max(ratio, 0.0f), 1.0f);
     return {
-        (byte) ((r * (1.0f - ratio)) + (color.r * ratio)),
-        (byte) ((g * (1.0f - ratio)) + (color.g * ratio)),
-        (byte) ((b * (1.0f - ratio)) + (color.b * ratio)),
+        (byte) (r * (1.0f - ratio) + color.r * ratio),
+        (byte) (g * (1.0f - ratio) + color.g * ratio),
+        (byte) (b * (1.0f - ratio) + color.b * ratio),
     };
 }
 

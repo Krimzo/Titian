@@ -8,7 +8,8 @@ export namespace titian {
 	public:
 		kl::Float3 color{ 0.1f };
 
-		AmbientLight()
+		AmbientLight(physx::PxPhysics* physics, const bool dynamic)
+			: Light(physics, dynamic)
 		{}
 
 		~AmbientLight() override

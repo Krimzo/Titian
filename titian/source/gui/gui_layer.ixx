@@ -7,11 +7,18 @@ export namespace titian {
 	class GUILayer : public Layer
 	{
 	public:
-		const std::string builtin_path = "./builtin/";
-		kl::Float4 special_color = {};
+		kl::Object<ApplicationLayer> app_layer = nullptr;
+
+		kl::Float4 special_color = kl::Color(235, 170, 15);
+		kl::Float4 alternate_color = kl::Color(125, 190, 190);
 		
-		GUILayer(const kl::Object<ApplicationLayer>& app_layer, const kl::Object<RenderLayer>& render_layer)
+		GUILayer(kl::Object<ApplicationLayer>& app_layer)
 		{
+			this->app_layer = app_layer;
+
+			kl::Window* window = &app_layer->window;
+			kl::GPU* gpu = &app_layer->gpu;
+
 			ImGui::CreateContext();
 			ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
@@ -19,8 +26,8 @@ export namespace titian {
 			load_custom_theme();
 			load_custom_font();
 
-			ImGui_ImplWin32_Init(app_layer->window());
-			ImGui_ImplDX11_Init(render_layer->device().Get(), render_layer->context().Get());
+			ImGui_ImplWin32_Init(static_cast<HWND>(*window));
+			ImGui_ImplDX11_Init(gpu->device().Get(), gpu->context().Get());
 		}
 
 		~GUILayer() override
@@ -28,6 +35,9 @@ export namespace titian {
 
 		bool update() override
 		{
+			kl::GPU* gpu = &app_layer->gpu;
+
+			gpu->swap_buffers(true);
 			return true;
 		}
 
@@ -132,11 +142,8 @@ export namespace titian {
 
 		void load_custom_font() const
 		{
-		    const std::string font_path = builtin_path + "fonts/Roboto.ttf";
-		    constexpr int font_size = 16;
-
 		    const ImGuiIO& io = ImGui::GetIO();
-		    io.Fonts->AddFontFromFileTTF(font_path.c_str(), font_size);
+		    io.Fonts->AddFontFromFileTTF("builtin/fonts/Roboto.ttf", 16);
 		}
 	};
 }

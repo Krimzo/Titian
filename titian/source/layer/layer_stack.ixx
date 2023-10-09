@@ -14,7 +14,7 @@ export namespace titian {
 		virtual ~LayerStack()
 		{}
 
-		virtual bool process_layers() final
+		bool process_layers()
 		{
 			for (auto& layer : m_layers) {
 				const bool state = layer->update();

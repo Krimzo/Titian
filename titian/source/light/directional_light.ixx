@@ -10,7 +10,8 @@ export namespace titian {
 	public:
 		kl::Float3 color{ 1.0f };
 
-		DirectionalLight()
+		DirectionalLight(physx::PxPhysics* physics, const bool dynamic)
+			: Light(physics, dynamic)
 		{}
 
 		~DirectionalLight() override
