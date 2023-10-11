@@ -28,20 +28,22 @@ export namespace titian {
 		~Texture() override
 		{}
 
-		void serialize(kl::File* file) const override
+		void serialize(Serializer* serializer) const override
 		{
-			Unique::serialize(file);
-			file->write(data_buffer.size());
+			Unique::serialize(serializer);
+
 			const kl::Color* data = data_buffer;
-			file->write(data, data_buffer.pixel_count());
+			serializer->write_object(data_buffer.size());
+			serializer->write_array(data, data_buffer.pixel_count());
 		}
 
-		void deserialize(const kl::File* file) override
+		void deserialize(const Serializer* serializer) override
 		{
-			Unique::deserialize(file);
-			data_buffer.resize(file->read<kl::Int2>());
+			Unique::deserialize(serializer);
+
 			kl::Color* data = data_buffer;
-			file->read(data, data_buffer.pixel_count());
+			data_buffer.resize(serializer->read_object<kl::Int2>());
+			serializer->read_array(data, data_buffer.pixel_count());
 		}
 
 		void load_as_2D(bool has_unordered_access, bool is_target)

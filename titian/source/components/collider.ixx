@@ -24,14 +24,14 @@ export namespace titian {
             m_material->release();
         }
 
-        void serialize(kl::File* file) const override
+        void serialize(Serializer* serializer) const override
         {
-            Unique::serialize(file);
+            Unique::serialize(serializer);
         }
 
-        void deserialize(const kl::File* file) override
+        void deserialize(const Serializer* serializer) override
         {
-            Unique::deserialize(file);
+            Unique::deserialize(serializer);
         }
 
         // Get

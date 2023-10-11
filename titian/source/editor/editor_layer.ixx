@@ -8,9 +8,7 @@ export namespace titian {
     public:
         kl::Object<GameLayer> game_layer = nullptr;
 
-        bool v_sync = true;
-        bool render_wireframe = false;
-        bool render_colliders = true;
+        kl::Object<Entity> selected_entity = nullptr;
 
         EditorLayer(kl::Object<GameLayer>& game_layer)
         {

@@ -10,23 +10,21 @@ export namespace titian {
 export namespace titian {
     bool serialize(const Serializable* serializable, const std::string_view& path)
     {
-        kl::File file = { path, true};
-        if (!file) {
+        Serializer serializer = { path, true };
+        if (!serializer) {
             return false;
         }
-        serializable->serialize(&file);
-        file.close();
+        serializable->serialize(&serializer);
         return true;
     }
 
     bool deserialize(Serializable* serializable, const std::string_view& path)
     {
-        kl::File file = { path, false};
-        if (!file) {
+        Serializer serializer = { path, false };
+        if (!serializer) {
             return false;
         }
-        serializable->deserialize(&file);
-        file.close();
+        serializable->deserialize(&serializer);
         return true;
     }
 }

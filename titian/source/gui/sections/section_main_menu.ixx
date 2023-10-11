@@ -1,7 +1,7 @@
 export module section_main_menu;
 
 export import gui_section;
-export import application_layer;
+export import render_layer;
 export import editor_layer;
 export import serialization;
 
@@ -9,13 +9,13 @@ export namespace titian {
 	class GUISectionMainMenu : public GUISection
 	{
     public:
-        kl::Object<ApplicationLayer> app_layer = nullptr;
-        kl::Object<EditorLayer> editor_layer = nullptr;
+        kl::Object<RenderLayer> render_layer = nullptr;
+        kl::Object<GameLayer> game_layer = nullptr;
 
-        GUISectionMainMenu(kl::Object<ApplicationLayer>& app_layer, kl::Object<EditorLayer>& editor_layer)
+        GUISectionMainMenu(kl::Object<RenderLayer>& render_layer, kl::Object<GameLayer>& game_layer)
 		{
-            this->app_layer = app_layer;
-            this->editor_layer = editor_layer;
+            this->render_layer = render_layer;
+            this->game_layer = game_layer;
         }
 
 		~GUISectionMainMenu() override
@@ -23,6 +23,8 @@ export namespace titian {
 
 		void render_gui() override
 		{
+            kl::Object<ApplicationLayer>& app_layer = render_layer->app_layer;
+
             if (m_inputting_name) {
                 if (ImGui::Begin("Save Scene", nullptr, ImGuiWindowFlags_NoScrollbar)) {
                     static char name_input[31] = {};
@@ -37,7 +39,7 @@ export namespace titian {
                     ImGui::SameLine();
                     if (ImGui::Button("Save")) {
                         const std::string save_path = kl::format(name_input, ".titian");
-                        const bool serial_result = serialize(&editor_layer->game_layer->scene, save_path);
+                        const bool serial_result = serialize(&game_layer->scene, save_path);
 
                         if (serial_result) {
                             app_layer->log(kl::format("Scene saved. (", save_path, ") [", SERIAL_VERSION_FORMAT, "]"));
@@ -57,7 +59,7 @@ export namespace titian {
 
                 if (ImGui::BeginMenu("File")) {
                     if (ImGui::MenuItem("New Scene")) {
-                        editor_layer->game_layer->scene = new Scene();
+                        game_layer->scene = new Scene(render_layer->app_layer->gpu);
                     }
 
                     if (ImGui::MenuItem("Save Scene")) {
@@ -81,9 +83,9 @@ export namespace titian {
 
                 if (ImGui::BeginMenu("View")) {
                     if (ImGui::BeginMenu("Features")) {
-                        ImGui::Checkbox("Use vSync", &editor_layer->v_sync);
-                        ImGui::Checkbox("Render Wireframe", &editor_layer->render_wireframe);
-                        ImGui::Checkbox("Render Colliders", &editor_layer->render_colliders);
+                        ImGui::Checkbox("Use vSync", &render_layer->v_sync);
+                        ImGui::Checkbox("Render Wireframe", &render_layer->render_wireframe);
+                        ImGui::Checkbox("Render Colliders", &render_layer->render_colliders);
 
                         ImGui::EndMenu();
                     }

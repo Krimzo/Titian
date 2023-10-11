@@ -21,16 +21,18 @@ export namespace titian {
         ~Unique() override
         {}
         
-        void serialize(kl::File* file) const override
+        void serialize(Serializer* serializer) const override
         {
-            Serializable::serialize(file);
-            file->write(m_id);
+            Serializable::serialize(serializer);
+
+            serializer->write_object(m_id);
         }
         
-        void deserialize(const kl::File* file) override
+        void deserialize(const Serializer* serializer) override
         {
-            Serializable::deserialize(file);
-            file->read(m_id);
+            Serializable::deserialize(serializer);
+
+            serializer->read_object(m_id);
         }
 
         IDType id() const

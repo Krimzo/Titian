@@ -1,6 +1,6 @@
 export module material;
 
-export import texture;
+export import unique;
 
 export namespace titian {
 	class Material : public Unique
@@ -13,9 +13,9 @@ export namespace titian {
 
 		kl::Float4 color = kl::colors::WHITE;
 
-		kl::Object<Texture> color_map = nullptr;
-		kl::Object<Texture> normal_map = nullptr;
-		kl::Object<Texture> roughness_map = nullptr;
+		std::string color_map = "/";
+		std::string normal_map = "/";
+		std::string roughness_map = "/";
 
 		Material()
 		{}
@@ -23,24 +23,34 @@ export namespace titian {
 		~Material() override
 		{}
 
-		void serialize(kl::File* file) const override
+		void serialize(Serializer* serializer) const override
 		{
-			Unique::serialize(file);
-			file->write(texture_blend);
-			file->write(reflection_factor);
-			file->write(refraction_factor);
-			file->write(refraction_index);
-			file->write(color);
+			Unique::serialize(serializer);
+
+			serializer->write_object(texture_blend);
+			serializer->write_object(reflection_factor);
+			serializer->write_object(refraction_factor);
+			serializer->write_object(refraction_index);
+			serializer->write_object(color);
+
+			serializer->write_string(color_map);
+			serializer->write_string(normal_map);
+			serializer->write_string(roughness_map);
 		}
 
-		void deserialize(const kl::File* file) override
+		void deserialize(const Serializer* serializer) override
 		{
-			Unique::deserialize(file);
-			file->read(texture_blend);
-			file->read(reflection_factor);
-			file->read(refraction_factor);
-			file->read(refraction_index);
-			file->read(color);
+			Unique::deserialize(serializer);
+
+			serializer->read_object(texture_blend);
+			serializer->read_object(reflection_factor);
+			serializer->read_object(refraction_factor);
+			serializer->read_object(refraction_index);
+			serializer->read_object(color);
+
+			serializer->read_string(color_map);
+			serializer->read_string(normal_map);
+			serializer->read_string(roughness_map);
 		}
 	};
 }

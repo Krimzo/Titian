@@ -17,18 +17,20 @@ export namespace titian {
 		~DirectionalLight() override
 		{}
 
-		void serialize(kl::File* file) const override
+		void serialize(Serializer* serializer) const override
 		{
-			Light::serialize(file);
-			file->write(m_direction);
-			file->write(color);
+			Light::serialize(serializer);
+
+			serializer->write_object(m_direction);
+			serializer->write_object(color);
 		}
 
-		void deserialize(const kl::File* file) override
+		void deserialize(const Serializer* serializer) override
 		{
-			Light::deserialize(file);
-			file->read(m_direction);
-			file->read(color);
+			Light::deserialize(serializer);
+
+			serializer->read_object(m_direction);
+			serializer->read_object(color);
 		}
 
 		kl::Float3 light_at_point(const kl::Float3& point) const override

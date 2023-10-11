@@ -174,6 +174,7 @@ void kl::Entity::set_collider(const Object<kl::Collider>& collider)
 
 kl::Object<kl::Collider> kl::Entity::collider() const
 {
+    return m_collider;
 }
 
 // Private

@@ -1,10 +1,8 @@
 export module render_layer;
 
 export import application_layer;
-export import raster_states;
-export import depth_states;
-export import sampler_states;
-export import shader_states;
+export import render_states;
+export import render_pass;
 
 export namespace titian {
 	class RenderLayer : public Layer
@@ -12,19 +10,18 @@ export namespace titian {
 	public:
 		kl::Object<ApplicationLayer> app_layer = nullptr;
 
-		kl::Object<RasterStates> raster_states = nullptr;
-		kl::Object<DepthStates> depth_states = nullptr;
-		kl::Object<SamplerStates> sampler_states = nullptr;
-		kl::Object<ShaderStates> shader_states = nullptr;
+		kl::Object<RenderStates> states = nullptr;
+		std::vector<kl::Object<RenderPass>> passes = {};
+
+		kl::Float4 background = kl::Color(30, 30, 30);
+		bool render_wireframe = false;
+		bool render_colliders = true;
+		bool v_sync = true;
 
 		RenderLayer(kl::Object<ApplicationLayer>& app_layer)
 		{
 			this->app_layer = app_layer;
-
-			raster_states = new RasterStates(app_layer->gpu);
-			depth_states = new DepthStates(app_layer->gpu);
-			sampler_states = new SamplerStates(app_layer->gpu);
-			shader_states = new ShaderStates(app_layer->gpu);
+			states = new RenderStates(app_layer->gpu);
 		}
 
 		~RenderLayer() override
@@ -34,8 +31,16 @@ export namespace titian {
 		{
 			kl::GPU* gpu = &app_layer->gpu;
 
-			gpu->clear_internal(kl::Color(30, 30, 30));
+			gpu->clear_internal(background);
+			for (auto& pass : passes) {
+				pass->process();
+			}
 			return true;
+		}
+
+		void present() const
+		{
+			app_layer->gpu->swap_buffers(v_sync);
 		}
 	};
 }

@@ -1,5 +1,6 @@
 export module scripting_layer;
 
+export import game_layer;
 export import layer;
 export import jdk;
 
@@ -7,8 +8,13 @@ export namespace titian {
 	class ScriptingLayer : public Layer
 	{
 	public:
-		ScriptingLayer()
+		kl::Object<GameLayer> game_layer = nullptr;
+
+		ScriptingLayer(kl::Object<GameLayer>& game_layer)
 		{
+			// Bind
+			this->game_layer = game_layer;
+
 			// JVM paths
 			const std::vector<std::string> jvm_args = {
 				"-Djava.class.path=.",

@@ -15,16 +15,18 @@ export namespace titian {
 		~AmbientLight() override
 		{}
 
-		void serialize(kl::File* file) const override
+		void serialize(Serializer* serializer) const override
 		{
-			Light::serialize(file);
-			file->write(color);
+			Light::serialize(serializer);
+
+			serializer->write_object(color);
 		}
 
-		void deserialize(const kl::File* file) override
+		void deserialize(const Serializer* serializer) override
 		{
-			Light::deserialize(file);
-			file->read(color);
+			Light::deserialize(serializer);
+
+			serializer->read_object(color);
 		}
 
 		kl::Float3 light_at_point(const kl::Float3& point) const override

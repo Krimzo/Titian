@@ -31,7 +31,7 @@ namespace kl {
 
         // States
         void bind_raster_state(const dx::RasterState& state) const;
-        void unbind_rater_state() const;
+        void unbind_raster_state() const;
 
         void bind_depth_state(const dx::DepthState& state, UINT stencil_ref = 0xFF) const;
         void unbind_depth_state() const;

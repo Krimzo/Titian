@@ -1,6 +1,6 @@
 ﻿export module serializable;
 
-export import klib;
+export import serializer;
 
 export namespace titian {
     class Serializable
@@ -19,10 +19,10 @@ export namespace titian {
             return m_was_deserialized;
         }
         
-        virtual void serialize(kl::File* file) const
+        virtual void serialize(Serializer* serializer) const
         {}
         
-        virtual void deserialize(const kl::File* file)
+        virtual void deserialize(const Serializer* serializer)
         {
             m_was_deserialized = true;
         }

@@ -1,16 +1,14 @@
 ﻿export module entity;
 
 export import collider;
-export import mesh;
-export import material;
 
 export namespace titian {
     class Entity : public Unique
     {
     public:
         kl::Float3 scale{ 1.0f };
-        kl::Object<Mesh> mesh = nullptr;
-        kl::Object<Material> material = nullptr;
+        std::string mesh = "/";
+        std::string material = "/";
 
         // Creation
         Entity(physx::PxPhysics* physics, const bool dynamic)
@@ -27,30 +25,38 @@ export namespace titian {
             m_physics_actor->release();
         }
 
-        void serialize(kl::File* file) const override
+        void serialize(Serializer* serializer) const override
         {
-            Unique::serialize(file);
-            file->write(scale);
-            file->write(rotation());
-            file->write(position());
-            file->write(is_dynamic());
-            file->write(has_gravity());
-            file->write(mass());
-            file->write(velocity());
-            file->write(angular());
+            Unique::serialize(serializer);
+
+            serializer->write_object(scale);
+            serializer->write_object(rotation());
+            serializer->write_object(position());
+            serializer->write_object(is_dynamic());
+            serializer->write_object(has_gravity());
+            serializer->write_object(mass());
+            serializer->write_object(velocity());
+            serializer->write_object(angular());
+
+            serializer->write_string(mesh);
+            serializer->write_string(material);
         }
 
-        void deserialize(const kl::File* file) override
+        void deserialize(const Serializer* serializer) override
         {
-            Unique::deserialize(file);
-            file->read(scale);
-            set_rotation(file->read<kl::Float3>());
-            set_position(file->read<kl::Float3>());
-            set_dynamic(file->read<bool>());
-            set_gravity(file->read<bool>());
-            set_mass(file->read<float>());
-            set_velocity(file->read<kl::Float3>());
-            set_angular(file->read<kl::Float3>());
+            Unique::deserialize(serializer);
+
+            serializer->read_object(scale);
+            set_rotation(serializer->read_object<kl::Float3>());
+            set_position(serializer->read_object<kl::Float3>());
+            set_dynamic(serializer->read_object<bool>());
+            set_gravity(serializer->read_object<bool>());
+            set_mass(serializer->read_object<float>());
+            set_velocity(serializer->read_object<kl::Float3>());
+            set_angular(serializer->read_object<kl::Float3>());
+
+            serializer->read_string(mesh);
+            serializer->read_string(material);
         }
 
         // Get

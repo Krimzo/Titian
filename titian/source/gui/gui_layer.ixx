@@ -1,6 +1,6 @@
 export module gui_layer;
 
-export import application_layer;
+export import render_layer;
 export import render_layer;
 export import gui_section;
 
@@ -8,19 +8,19 @@ export namespace titian {
 	class GUILayer : public Layer
 	{
 	public:
-		kl::Object<ApplicationLayer> app_layer = nullptr;
+		kl::Object<RenderLayer> render_layer = nullptr;
 
 		std::vector<kl::Object<GUISection>> sections = {};
 
 		kl::Float4 special_color = kl::Color(235, 170, 15);
 		kl::Float4 alternate_color = kl::Color(125, 190, 190);
 		
-		GUILayer(kl::Object<ApplicationLayer>& app_layer)
+		GUILayer(kl::Object<RenderLayer>& render_layer)
 		{
-			this->app_layer = app_layer;
+			this->render_layer = render_layer;
 
-			kl::Window* window = &app_layer->window;
-			kl::GPU* gpu = &app_layer->gpu;
+			kl::Window* window = &render_layer->app_layer->window;
+			kl::GPU* gpu = &render_layer->app_layer->gpu;
 
 			ImGui::CreateContext();
 			ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -51,7 +51,7 @@ export namespace titian {
 			ImGui::Render();
 			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-			app_layer->gpu->swap_buffers(true);
+			render_layer->present();
 			return true;
 		}
 

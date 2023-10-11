@@ -16,7 +16,7 @@ export namespace titian {
         float speed = 2.0f;
 
         kl::Color background = {};
-        kl::Object<Texture> skybox = nullptr;
+        std::string skybox = "/";
 
         Camera(physx::PxPhysics* physics, const bool dynamic)
             : Entity(physics, dynamic)
@@ -25,32 +25,38 @@ export namespace titian {
         ~Camera() override
         {}
 
-        void serialize(kl::File* file) const override
+        void serialize(Serializer* serializer) const override
         {
-            Entity::serialize(file);
-            file->write(m_forward);
-            file->write(m_up);
-            file->write(aspect_ratio);
-            file->write(field_of_view);
-            file->write(near_plane);
-            file->write(far_plane);
-            file->write(sensitivity);
-            file->write(speed);
-            file->write(background);
+            Entity::serialize(serializer);
+
+            serializer->write_object(m_forward);
+            serializer->write_object(m_up);
+            serializer->write_object(aspect_ratio);
+            serializer->write_object(field_of_view);
+            serializer->write_object(near_plane);
+            serializer->write_object(far_plane);
+            serializer->write_object(sensitivity);
+            serializer->write_object(speed);
+            serializer->write_object(background);
+
+            serializer->write_string(skybox);
         }
 
-        void deserialize(const kl::File* file) override
+        void deserialize(const Serializer* serializer) override
         {
-            Entity::deserialize(file);
-            file->read(m_forward);
-            file->read(m_up);
-            file->read(aspect_ratio);
-            file->read(field_of_view);
-            file->read(near_plane);
-            file->read(far_plane);
-            file->read(sensitivity);
-            file->read(speed);
-            file->read(background);
+            Entity::deserialize(serializer);
+
+            serializer->read_object(m_forward);
+            serializer->read_object(m_up);
+            serializer->read_object(aspect_ratio);
+            serializer->read_object(field_of_view);
+            serializer->read_object(near_plane);
+            serializer->read_object(far_plane);
+            serializer->read_object(sensitivity);
+            serializer->read_object(speed);
+            serializer->read_object(background);
+
+            serializer->read_string(skybox);
         }
 
         void update_aspect_ratio(const kl::Int2& size)

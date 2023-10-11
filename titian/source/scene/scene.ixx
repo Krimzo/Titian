@@ -1,7 +1,14 @@
 ﻿export module scene;
 
-export import entity;
+export import mesh;
+export import texture;
+export import material;
+
+export import default_meshes;
+export import default_materials;
+
 export import camera;
+export import entity;
 
 static constexpr uint32_t PX_VERSION = 0x4010200;
 
@@ -13,10 +20,12 @@ export namespace titian {
         std::map<std::string, kl::Object<Texture>> textures = {};
         std::map<std::string, kl::Object<Material>> materials = {};
 
-        kl::Object<Camera> camera = nullptr;
-        kl::Object<Entity> selected_entity = nullptr;
+        kl::Object<DefaultMeshes> default_meshes = nullptr;
+        kl::Object<DefaultMaterials> default_materials = nullptr;
 
-        Scene()
+        kl::Object<Camera> camera = nullptr;
+
+        Scene(kl::Object<kl::GPU>& gpu)
         {
             m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
             kl::assert(m_dispatcher, "Failed to create physics dispatcher");
@@ -34,6 +43,15 @@ export namespace titian {
 
             m_scene = m_physics->createScene(scene_descriptor);
             kl::assert(m_scene, "Failed to create physics scene");
+
+            default_meshes = new DefaultMeshes(&gpu, m_physics, m_cooking);
+            kl::assert(default_meshes, "Failed to init default meshes");
+            
+            default_materials = new DefaultMaterials();
+            kl::assert(default_materials, "Failed to init default materials");
+
+            camera = new Camera(m_physics, true);
+            kl::assert(camera, "Failed to init default scene camera");
         }
 
         ~Scene() override
@@ -42,7 +60,6 @@ export namespace titian {
             textures.clear();
             meshes.clear();
 
-            selected_entity = nullptr;
             while (!m_entities.empty()) {
                 this->remove(m_entities.begin()->first);
             }
@@ -53,14 +70,14 @@ export namespace titian {
             m_physics->release();
         }
 
-        void serialize(kl::File* file) const override
+        void serialize(Serializer* serializer) const override
         {
-            Unique::serialize(file);
+            Unique::serialize(serializer);
         }
         
-        void deserialize(const kl::File* file) override
+        void deserialize(const Serializer* serializer) override
         {
-            Unique::deserialize(file);
+            Unique::deserialize(serializer);
         }
 
         // Iterate
@@ -146,20 +163,6 @@ export namespace titian {
         }
 
         // Update
-        kl::Object<Entity> update_selected_entity(const uint32_t id)
-        {
-            if (id != 0) {
-                for (const auto& [_, entity] : m_entities) {
-                    if (entity->id() == id) {
-                        selected_entity = entity;
-                        return entity;
-                    }
-                }
-            }
-            selected_entity = nullptr;
-            return nullptr;
-        }
-
         void update_physics(const float delta_t)
         {
             m_scene->simulate(delta_t);

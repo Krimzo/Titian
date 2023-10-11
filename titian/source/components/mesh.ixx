@@ -35,18 +35,20 @@ export namespace titian {
             free_physics_buffer();
         }
 
-        void serialize(kl::File* file) const override
+        void serialize(Serializer* serializer) const override
         {
-            Unique::serialize(file);
-            file->write(data_buffer.size());
-            file->write(data_buffer.data(), data_buffer.size());
+            Unique::serialize(serializer);
+
+            serializer->write_object(data_buffer.size());
+            serializer->write_array(data_buffer.data(), data_buffer.size());
         }
         
-        void deserialize(const kl::File* file) override
+        void deserialize(const Serializer* serializer) override
         {
-            Unique::deserialize(file);
-            data_buffer.resize(file->read<size_t>());
-            file->read(data_buffer.data(), data_buffer.size());
+            Unique::deserialize(serializer);
+
+            data_buffer.resize(serializer->read_object<size_t>());
+            serializer->read_array(data_buffer.data(), data_buffer.size());
         }
 
         void reload()

@@ -32,4 +32,9 @@ export namespace titian {
         }
         return result;
     }
+
+    void gui_colored_text(const kl::Float4& color, const std::string_view& message)
+    {
+        ImGui::TextColored(reinterpret_cast<const ImVec4&>(color), message.data());
+    }
 }
