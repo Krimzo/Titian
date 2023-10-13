@@ -1,3 +1,3 @@
 export module physx;
 
-// Placeholder
+export import "PxPhysicsAPI.h";

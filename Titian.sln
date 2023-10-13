@@ -9,13 +9,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "physx", "physx\physx.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "imgui\imgui.vcxproj", "{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sandbox", "sandbox\sandbox.vcxproj", "{0EE87B2B-4CD6-4B72-A8C2-15693B04DA77}"
-	ProjectSection(ProjectDependencies) = postProject
-		{444451D6-7003-417D-8632-7DDD8AF4381E} = {444451D6-7003-417D-8632-7DDD8AF4381E}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jdk", "jdk\jdk.vcxproj", "{444451D6-7003-417D-8632-7DDD8AF4381E}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "titian", "titian\titian.vcxproj", "{0E354A3A-110E-4BAD-8E77-BF1A524D31B5}"
 EndProject
 Global
@@ -36,14 +29,6 @@ Global
 		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Debug|x64.Build.0 = Debug|x64
 		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Release|x64.ActiveCfg = Release|x64
 		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Release|x64.Build.0 = Release|x64
-		{0EE87B2B-4CD6-4B72-A8C2-15693B04DA77}.Debug|x64.ActiveCfg = Debug|x64
-		{0EE87B2B-4CD6-4B72-A8C2-15693B04DA77}.Debug|x64.Build.0 = Debug|x64
-		{0EE87B2B-4CD6-4B72-A8C2-15693B04DA77}.Release|x64.ActiveCfg = Release|x64
-		{0EE87B2B-4CD6-4B72-A8C2-15693B04DA77}.Release|x64.Build.0 = Release|x64
-		{444451D6-7003-417D-8632-7DDD8AF4381E}.Debug|x64.ActiveCfg = Debug|x64
-		{444451D6-7003-417D-8632-7DDD8AF4381E}.Debug|x64.Build.0 = Debug|x64
-		{444451D6-7003-417D-8632-7DDD8AF4381E}.Release|x64.ActiveCfg = Release|x64
-		{444451D6-7003-417D-8632-7DDD8AF4381E}.Release|x64.Build.0 = Release|x64
 		{0E354A3A-110E-4BAD-8E77-BF1A524D31B5}.Debug|x64.ActiveCfg = Debug|x64
 		{0E354A3A-110E-4BAD-8E77-BF1A524D31B5}.Debug|x64.Build.0 = Debug|x64
 		{0E354A3A-110E-4BAD-8E77-BF1A524D31B5}.Release|x64.ActiveCfg = Release|x64
