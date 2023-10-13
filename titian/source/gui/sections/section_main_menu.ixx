@@ -23,7 +23,7 @@ export namespace titian {
 
 		void render_gui() override
 		{
-            kl::Object<ApplicationLayer>& app_layer = render_layer->app_layer;
+            kl::Object<ApplicationLayer>& app_layer = render_layer->game_layer->app_layer;
 
             if (m_inputting_name) {
                 if (ImGui::Begin("Save Scene", nullptr, ImGuiWindowFlags_NoScrollbar)) {
@@ -59,7 +59,7 @@ export namespace titian {
 
                 if (ImGui::BeginMenu("File")) {
                     if (ImGui::MenuItem("New Scene")) {
-                        game_layer->scene = new Scene(render_layer->app_layer->gpu);
+                        game_layer->scene = new Scene(app_layer->gpu);
                     }
 
                     if (ImGui::MenuItem("Save Scene")) {

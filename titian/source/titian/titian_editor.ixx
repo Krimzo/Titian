@@ -27,7 +27,7 @@ export namespace titian {
             kl::Object game_layer = new GameLayer(app_layer);
             kl::Object editor_layer = new EditorLayer(game_layer);
             kl::Object scripting_layer = new ScriptingLayer(game_layer);
-            kl::Object render_layer = new RenderLayer(app_layer);
+            kl::Object render_layer = new RenderLayer(game_layer);
             kl::Object gui_layer = new GUILayer(render_layer);
 
             // Init editor sections
@@ -35,7 +35,7 @@ export namespace titian {
             gui_layer->sections.emplace_back(new GUISectionLogView(app_layer, gui_layer));
             gui_layer->sections.emplace_back(new GUISectionSceneItems(editor_layer));
             gui_layer->sections.emplace_back(new GUISectionSceneInfo(editor_layer));
-            gui_layer->sections.emplace_back(new GUISectionViewport());
+            gui_layer->sections.emplace_back(new GUISectionViewport(render_layer));
 
             // Init render passes
             render_layer->passes.emplace_back(new SkyboxPass(game_layer, render_layer->states));

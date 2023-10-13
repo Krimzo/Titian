@@ -4,6 +4,15 @@ export import klib;
 
 export int main()
 {
+    /*
+    kl::Object<Texture> sky = new Texture(app_layer->gpu);
+    sky->data_buffer = kl::Image("../sandbox/preview/skyboxes/clouds.png");
+    sky->load_as_cube();
+    sky->create_shader_view(nullptr);
+    game_layer->scene->textures["sky"] = sky;
+    game_layer->scene->camera->skybox = "sky";
+    */
+
     kl::print("Sandbox started!");
     return 0;
 }

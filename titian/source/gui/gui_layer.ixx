@@ -1,7 +1,6 @@
 export module gui_layer;
 
 export import render_layer;
-export import render_layer;
 export import gui_section;
 
 export namespace titian {
@@ -19,8 +18,8 @@ export namespace titian {
 		{
 			this->render_layer = render_layer;
 
-			kl::Window* window = &render_layer->app_layer->window;
-			kl::GPU* gpu = &render_layer->app_layer->gpu;
+			kl::Window* window = &render_layer->game_layer->app_layer->window;
+			kl::GPU* gpu = &render_layer->game_layer->app_layer->gpu;
 
 			ImGui::CreateContext();
 			ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -38,10 +37,11 @@ export namespace titian {
 
 		bool update() override
 		{
-			ImGui_ImplDX11_NewFrame();
 			ImGui_ImplWin32_NewFrame();
+			ImGui_ImplDX11_NewFrame();
 			ImGui::NewFrame();
 			ImGuizmo::BeginFrame();
+
 			ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 
 			for (auto& section : sections) {

@@ -9,7 +9,7 @@ export namespace titian {
 		using Data = kl::Image;
 
 	private:
-		kl::GPU* m_gpu = nullptr;
+		kl::Object<kl::GPU> m_gpu = nullptr;
 		bool m_is_cube = false;
 
 	public:
@@ -21,7 +21,7 @@ export namespace titian {
 		kl::dx::ShaderView shader_view = nullptr;
 		kl::dx::AccessView access_view = nullptr;
 
-		Texture(kl::GPU* gpu)
+		Texture(kl::Object<kl::GPU>& gpu)
 			: m_gpu(gpu)
 		{}
 

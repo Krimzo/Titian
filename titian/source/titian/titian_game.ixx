@@ -17,7 +17,7 @@ export namespace titian {
             kl::Object app_layer = new ApplicationLayer("Titian");
             kl::Object game_layer = new GameLayer(app_layer);
             kl::Object scripting_layer = new ScriptingLayer(game_layer);
-            kl::Object render_layer = new RenderLayer(app_layer);
+            kl::Object render_layer = new RenderLayer(game_layer);
             kl::Object gui_layer = new GUILayer(render_layer);
 
             // Push layers
