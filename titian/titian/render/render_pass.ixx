@@ -17,7 +17,7 @@ export namespace titian {
 		virtual ~RenderPass()
 		{}
 
-		virtual void process() final
+		void process()
 		{
 			if (!is_renderable()) {
 				return;
@@ -35,18 +35,20 @@ export namespace titian {
 		virtual void render_self(StatePackage& package) = 0;
 
 	private:
-		inline void bind_states(const StatePackage& package)
+		void bind_states(const StatePackage& package)
 		{
-			kl::GPU* gpu = &game_layer->app_layer->gpu;
+			const kl::GPU* gpu = &game_layer->app_layer->gpu;
+			
 			gpu->bind_raster_state(package.raster_state);
 			gpu->bind_depth_state(package.depth_state);
 			gpu->bind_render_shaders(package.shader_state);
 			gpu->bind_blend_state(package.blend_state);
 		}
 
-		inline void unbind_states()
+		void unbind_states()
 		{
-			kl::GPU* gpu = &game_layer->app_layer->gpu;
+			const kl::GPU* gpu = &game_layer->app_layer->gpu;
+			
 			gpu->unbind_raster_state();
 			gpu->unbind_depth_state();
 			gpu->unbind_render_shaders();

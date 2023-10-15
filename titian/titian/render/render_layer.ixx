@@ -1,6 +1,6 @@
 export module render_layer;
 
-export import application_layer;
+export import game_layer;
 export import render_states;
 export import render_pass;
 
@@ -51,20 +51,24 @@ export namespace titian {
 			kl::GPU* gpu = &game_layer->app_layer->gpu;
 			Scene* scene = &game_layer->scene;
 
+			Camera* camera = scene->get_dynamic<Camera>(scene->camera);
+			if (!camera) { return true; }
+
 			// Clear targets
 			gpu->clear_internal(background);
-			gpu->clear_target_view(render_texture->target_view, scene->camera->background);
+			gpu->clear_target_view(render_texture->target_view, camera->background);
 			gpu->clear_target_view(picking_texture->target_view, {});
 			gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
 
-			// Prepare pass
+			// Process passes
 			const kl::Int2 render_size = get_render_texture_size();
-			gpu->bind_target_depth_views({ render_texture->target_view, picking_texture->target_view }, depth_texture->depth_view);
-			gpu->set_viewport_size(render_size);
-			scene->camera->update_aspect_ratio(render_size);
-
-			// Render passes
 			for (auto& pass : passes) {
+				// Prepare pass
+				gpu->bind_target_depth_views({ render_texture->target_view, picking_texture->target_view }, depth_texture->depth_view);
+				gpu->set_viewport_size(render_size);
+				camera->update_aspect_ratio(render_size);
+
+				// Render pass
 				pass->process();
 			}
 
@@ -72,7 +76,6 @@ export namespace titian {
 			const kl::Int2 window_size = game_layer->app_layer->window->size();
 			gpu->bind_internal_views();
 			gpu->set_viewport_size(window_size);
-
 			return true;
 		}
 

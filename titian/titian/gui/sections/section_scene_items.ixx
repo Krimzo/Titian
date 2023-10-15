@@ -22,9 +22,9 @@ export namespace titian {
 			Scene& scene = *editor_layer->game_layer->scene;
 
 			if (ImGui::Begin("Scene items")) {
-				for (auto& [name, entity] : scene) {
-					if (ImGui::Selectable(name.c_str(), entity == editor_layer->selected_entity)) {
-						editor_layer->selected_entity = entity;
+				for (auto& [name, _] : scene) {
+					if (ImGui::Selectable(name.c_str(), name == editor_layer->selected_entity)) {
+						editor_layer->selected_entity = name;
 					}
 				}
 			}

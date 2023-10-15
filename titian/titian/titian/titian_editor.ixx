@@ -13,8 +13,14 @@ export import section_log_view;
 export import section_scene_items;
 export import section_scene_info;
 export import section_viewport;
+export import section_explorer;
+export import section_control_menu;
 
+export import shadow_pass;
 export import skybox_pass;
+export import lit_pass;
+export import collider_pass;
+export import postprocess_pass;
 
 export namespace titian {
     class TitianEditor : public LayerStack
@@ -30,14 +36,20 @@ export namespace titian {
         TitianEditor()
         {
             // Init editor sections
-            gui_layer->sections.emplace_back(new GUISectionMainMenu(render_layer, game_layer));
+            gui_layer->sections.emplace_back(new GUISectionMainMenu(render_layer));
             gui_layer->sections.emplace_back(new GUISectionLogView(app_layer, gui_layer));
             gui_layer->sections.emplace_back(new GUISectionSceneItems(editor_layer));
             gui_layer->sections.emplace_back(new GUISectionSceneInfo(editor_layer));
-            gui_layer->sections.emplace_back(new GUISectionViewport(render_layer));
+            gui_layer->sections.emplace_back(new GUISectionViewport(editor_layer, render_layer));
+            gui_layer->sections.emplace_back(new GUISectionExplorer(app_layer));
+            gui_layer->sections.emplace_back(new GUISectionControlMenu(editor_layer));
 
             // Init render passes
-            render_layer->passes.emplace_back(new SkyboxPass(game_layer, render_layer->states));
+            render_layer->passes.emplace_back(new ShadowPass(game_layer, render_layer));
+            render_layer->passes.emplace_back(new SkyboxPass(game_layer, render_layer));
+            render_layer->passes.emplace_back(new LitPass(game_layer, render_layer));
+            render_layer->passes.emplace_back(new ColliderPass(game_layer, editor_layer, gui_layer));
+            render_layer->passes.emplace_back(new PostprocessPass(game_layer, editor_layer, gui_layer));
 
             // Push layers
             push_layer(app_layer);

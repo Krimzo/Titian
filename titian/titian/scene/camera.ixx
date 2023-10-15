@@ -140,7 +140,7 @@ export namespace titian {
             return kl::Float4x4::perspective(field_of_view, aspect_ratio, near_plane, far_plane);
         }
 
-        kl::Float4x4 matrix() const
+        kl::Float4x4 camera_matrix() const
         {
             return projection_matrix() * view_matrix();
         }

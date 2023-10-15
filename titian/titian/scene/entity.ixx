@@ -65,7 +65,7 @@ export namespace titian {
             return m_physics_actor;
         }
 
-        kl::Float4x4 matrix() const
+        kl::Float4x4 model_matrix() const
         {
             return kl::Float4x4::translation(position()) * kl::Float4x4::rotation(rotation()) * kl::Float4x4::scaling(scale);
         }

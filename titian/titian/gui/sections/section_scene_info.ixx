@@ -20,7 +20,7 @@ export namespace titian {
 		void render_gui() override
 		{
             if (ImGui::Begin("Scene Info")) {
-                kl::Object<Scene>& scene = editor_layer->game_layer->scene;
+                Scene* scene = &editor_layer->game_layer->scene;
 
                 int entity_count = (int) scene->entity_count();
                 ImGui::DragInt("Entity count", &entity_count);
@@ -30,7 +30,8 @@ export namespace titian {
                     scene->set_gravity(gravity);
                 }
 
-                if (kl::Object<Camera>& camera = scene->camera) {
+                Camera* camera = scene->get_dynamic<Camera>(scene->camera);
+                if (camera) {
                     kl::Float3 camera_position = camera->position();
                     ImGui::DragFloat3("Camera position", camera_position);
                     camera->set_position(camera_position);

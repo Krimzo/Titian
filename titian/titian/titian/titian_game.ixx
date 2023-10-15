@@ -7,7 +7,9 @@ export import scripting_layer;
 export import render_layer;
 export import gui_layer;
 
+export import shadow_pass;
 export import skybox_pass;
+export import lit_pass;
 
 export namespace titian {
 	class TitianGame : public LayerStack
@@ -22,7 +24,9 @@ export namespace titian {
 		TitianGame()
 		{
             // Init render passes
-            render_layer->passes.emplace_back(new SkyboxPass(game_layer, render_layer->states));
+            render_layer->passes.emplace_back(new ShadowPass(game_layer, render_layer));
+            render_layer->passes.emplace_back(new SkyboxPass(game_layer, render_layer));
+			render_layer->passes.emplace_back(new LitPass(game_layer, render_layer));
 
             // Push layers
             push_layer(app_layer);

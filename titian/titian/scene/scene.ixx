@@ -23,7 +23,9 @@ export namespace titian {
         kl::Object<DefaultMeshes> default_meshes = nullptr;
         kl::Object<DefaultMaterials> default_materials = nullptr;
 
-        kl::Object<Camera> camera = nullptr;
+        std::string camera = "/";
+        std::string ambient_light = "/";
+        std::string directional_light = "/";
 
         Scene(kl::Object<kl::GPU>& gpu)
         {
@@ -49,9 +51,6 @@ export namespace titian {
             
             default_materials = new DefaultMaterials();
             kl::assert(default_materials, "Failed to init default materials");
-
-            camera = new Camera(m_physics, true);
-            kl::assert(camera, "Failed to init default scene camera");
         }
 
         ~Scene() override
@@ -112,27 +111,56 @@ export namespace titian {
             return m_cooking;
         }
 
-        kl::Object<Entity> find_entity(const std::string& name) const
+        kl::Object<Entity> get_entity(const std::string& id) const
         {
-            if (!m_entities.contains(name)) {
-                return nullptr;
+            if (m_entities.contains(id)) {
+                return m_entities.at(id);
             }
-            return m_entities.at(name);
+            return nullptr;
         }
 
-        std::string find_name(const kl::Object<Entity>& entity) const
+        kl::Object<Material> get_material(const std::string& id) const
         {
-            for (auto& [name, ent] : m_entities) {
-                if (ent == entity) {
-                    return name;
-                }
+            if (materials.contains(id)) {
+                return materials.at(id);
             }
-            return {};
+            return nullptr;
+        }
+
+        kl::Object<Texture> get_texture(const std::string& id) const
+        {
+            if (textures.contains(id)) {
+                return textures.at(id);
+            }
+            return nullptr;
+        }
+
+        kl::Object<Mesh> get_mesh(const std::string& id) const
+        {
+            if (meshes.contains(id)) {
+                return meshes.at(id);
+            }
+            return nullptr;
         }
 
         size_t entity_count() const
         {
             return m_entities.size();
+        }
+
+        // Dynamic
+        template<typename T>
+        T* get_dynamic(const std::string& id)
+        {
+            kl::Object<Entity> entity = get_entity(id);
+            return dynamic_cast<T*>(&entity);
+        }
+
+        template<typename T>
+        const T* get_dynamic(const std::string& id) const
+        {
+            const kl::Object<Entity> entity = get_entity(id);
+            return dynamic_cast<const T*>(&entity);
         }
 
         // Set/Get

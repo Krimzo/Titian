@@ -4,8 +4,8 @@ export import klib;
 
 export namespace titian {
 	class LogInfo
-	{
-	public:
+    {
+    public:
         std::string date = kl::format(kl::Date());
         std::string message = {};
 

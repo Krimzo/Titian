@@ -97,7 +97,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="sandbox\pieces\piece_prepare.ixx" />
     <ClCompile Include="sandbox\pieces\piece_skybox.ixx" />
+    <ClCompile Include="sandbox\pieces\piece_cubes.ixx" />
+    <ClCompile Include="sandbox\pieces\piece_monkes.ixx" />
+    <ClCompile Include="sandbox\pieces\piece_spheres.ixx" />
+    <ClCompile Include="sandbox\pieces\piece_physics_test.ixx" />
     <ClCompile Include="sandbox\sandbox_piece.ixx" />
     <ClCompile Include="sandbox\sandbox_entry.ixx" />
     <ClCompile Include="source\main.ixx" />
@@ -112,6 +117,8 @@
     <ClCompile Include="titian\editor\game_layer.ixx" />
     <ClCompile Include="titian\gui\gui_layer.ixx" />
     <ClCompile Include="titian\gui\gui_section.ixx" />
+    <ClCompile Include="titian\gui\sections\section_control_menu.ixx" />
+    <ClCompile Include="titian\gui\sections\section_explorer.ixx" />
     <ClCompile Include="titian\gui\sections\section_log_view.ixx" />
     <ClCompile Include="titian\gui\sections\section_main_menu.ixx" />
     <ClCompile Include="titian\gui\sections\section_scene_info.ixx" />
@@ -124,6 +131,10 @@
     <ClCompile Include="titian\light\directional_light.ixx" />
     <ClCompile Include="titian\light\light.ixx" />
     <ClCompile Include="titian\light\point_light.ixx" />
+    <ClCompile Include="titian\render\pass\lit_pass.ixx" />
+    <ClCompile Include="titian\render\pass\collider_pass.ixx" />
+    <ClCompile Include="titian\render\pass\postprocess_pass.ixx" />
+    <ClCompile Include="titian\render\pass\shadow_pass.ixx" />
     <ClCompile Include="titian\render\pass\skybox_pass.ixx" />
     <ClCompile Include="titian\render\render_layer.ixx" />
     <ClCompile Include="titian\render\render_pass.ixx" />

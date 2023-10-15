@@ -1,0 +1,61 @@
+export module piece_cubes;
+
+export import sandbox_piece;
+
+export namespace titian {
+    class SandboxPieceCubes : public SandboxPiece
+    {
+    public:
+        int size = 0;
+        float x_offset = 16.0f;
+
+        SandboxPieceCubes(TitianEditor* editor, const int size)
+            : SandboxPiece(editor)
+        {
+            this->size = size;
+        }
+
+        ~SandboxPieceCubes() override
+        {}
+
+        void setup_self() override
+        {
+            Scene* scene = &editor->game_layer->scene;
+
+            const int half_size = size / 2;
+            int cube_counter = 0;
+
+            for (int y = 0; y < size; y++) {
+                for (int x = 0; x < size; x++) {
+                    const std::string mesh_id = "cube";
+                    const std::string material_id = kl::format("cube_mat_", cube_counter);
+                    const std::string entity_id = kl::format("Cube", cube_counter);
+                    
+                    // Mesh
+                    scene->meshes[mesh_id] = scene->default_meshes->cube;
+
+                    // Material
+                    kl::Object material = new Material();
+                    material->color = kl::colors::ORANGE;
+                    material->reflection_factor = cube_counter / static_cast<float>(size * size);
+                    scene->materials[material_id] = material;
+
+                    // Entity
+                    kl::Object cube = scene->make_entity(false);
+                    cube->scale = kl::Float3{ 0.45f };
+                    cube->set_position({
+                        (float) (x - half_size) + x_offset,
+                        (float) (y - half_size),
+                        5.0f,
+                    });
+
+                    cube->mesh = mesh_id;
+                    cube->material = material_id;
+
+                    scene->add(entity_id, cube);
+                    cube_counter += 1;
+                }
+            }
+        }
+    };
+}

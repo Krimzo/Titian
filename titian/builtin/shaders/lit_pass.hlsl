@@ -4,19 +4,17 @@
 // Vertex shader
 cbuffer VS_CB : register(b0)
 {
-    float4x4  w_matrix;
+    float4x4 w_matrix;
     float4x4 vp_matrix;
-
     float4x4 vp_light_matrices[SHADOW_CASCADE_COUNT];
 };
 
 struct vs_out
 {
     float4 screen : SV_Position;
-    float3  world :    VS_World;
-    float2 textur :  VS_Texture;
-    float3 normal :   VS_Normal;
-    
+    float3 world : VS_World;
+    float2 textur : VS_Texture;
+    float3 normal : VS_Normal;
     float4 light_coords[SHADOW_CASCADE_COUNT] : VS_Light;
 };
 
@@ -34,7 +32,6 @@ vs_out v_shader(float3 position : KL_Position, float2 textur : KL_Texture, float
         data.light_coords[i].xy *= float2(0.5f, -0.5f);
         data.light_coords[i].xy += float2(0.5f, 0.5f) * data.light_coords[i].w;
     }
-
     return data;
 }
 
@@ -44,38 +41,38 @@ cbuffer PS_CB : register(b0)
     float4 object_color; // (color.r, color.g, color.b, none)
     float4 object_index; // (index, index, index, index)
 
-    float4     object_material; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
+    float4 object_material; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
     float4 object_texture_info; // (has_normal_map, has_roughness_map, none, none)
     
     float4 camera_info; // (camera.x, camera.y, camera.z, skybox?)
     float4 camera_background; // (color.r, color.g, color.b, color.a)
-    float4x4    v_matrix; // View matrix
+    float4x4 v_matrix; // View matrix
 
-    float4     ambient_light; // (color.r, color.g, color.b, intensity)
+    float4 ambient_light; // (color.r, color.g, color.b, intensity)
     float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
 
-    float4   shadow_map_info; // (width, height, texel_width, texel_size)
+    float4 shadow_map_info; // (width, height, texel_width, texel_size)
     float4 cascade_distances; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
 };
 
 struct ps_out
 {
     float4 color : SV_Target0;
-    float  index : SV_Target1;
+    float index : SV_Target1;
 };
 
 SamplerState skybox_sampler : register(s0);
-TextureCube  skybox_texture : register(t0);
+TextureCube skybox_texture : register(t0);
 
 SamplerState shadow_sampler : register(s1);
-Texture2D  shadow_texture_0 : register(t1);
-Texture2D  shadow_texture_1 : register(t2);
-Texture2D  shadow_texture_2 : register(t3);
-Texture2D  shadow_texture_3 : register(t4);
+Texture2D shadow_texture_0 : register(t1);
+Texture2D shadow_texture_1 : register(t2);
+Texture2D shadow_texture_2 : register(t3);
+Texture2D shadow_texture_3 : register(t4);
 
 SamplerState entity_sampler : register(s2);
-Texture2D    entity_texture : register(t5);
-Texture2D    normal_texture : register(t6);
+Texture2D entity_texture : register(t5);
+Texture2D normal_texture : register(t6);
 Texture2D roughness_texture : register(t7);
 
 float3 get_pixel_normal(float3 world_position, float3 interpolated_normal, float2 texture_coords);
@@ -97,7 +94,7 @@ ps_out p_shader(vs_out vs_data)
     const float3 camera_pixel_direction = normalize(vs_data.world - camera_info.xyz);
     const float3 reflected_pixel_direction = reflect(camera_pixel_direction, pixel_normal);
     const float3 reflected_sky_color = camera_info.w ? skybox_texture.Sample(skybox_sampler, reflected_pixel_direction).xyz : camera_background.xyz;
-
+    
     // Refraction calculations
     const float3 refracted_pixel_direction = refract(camera_pixel_direction, pixel_normal, object_material.w);
     const float3 refracted_sky_color = camera_info.w ? skybox_texture.Sample(skybox_sampler, refracted_pixel_direction).xyz : camera_background.xyz;

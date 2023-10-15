@@ -6,19 +6,6 @@ export class GUIState : public BasicState
 {
 public:
     bool is_viewport_focused = false;
-    bool render_collider = true;
-
-    int gizmo_operation = 0;
-    int gizmo_mode = 1;
-    int explorer_icon_size = 65;
-
-    kl::Int2 viewport_size = {};
-
-    kl::Float4 color_special = kl::Color(235, 170, 15);
-    kl::Float4 color_alternative = kl::Color(127, 190, 190);
-
-    std::string builtin_path = "./builtin/";
-    std::string explorer_path = std::filesystem::absolute(".").string();
 
     class TexturesT
     {
