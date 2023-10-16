@@ -78,9 +78,6 @@ export namespace titian {
                 gpu->draw(game_layer->scene->default_meshes->capsule->graphics_buffer);
                 break;
 
-            case physx::PxGeometryType::Enum::ePLANE:
-                break;
-
             case physx::PxGeometryType::Enum::eTRIANGLEMESH:
                 Mesh* mesh = &scene->get_mesh(entity->mesh_name);
                 if (mesh) {

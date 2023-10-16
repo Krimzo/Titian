@@ -106,6 +106,8 @@ export namespace titian {
             write_map(textures);
             write_map(materials);
             write_map(scripts);
+
+            Collider::BOUND_MESHES = &meshes;
             write_map(m_entities);
         }
         
@@ -156,6 +158,7 @@ export namespace titian {
                 }
             }
             
+            Collider::BOUND_MESHES = &meshes;
             /* ENTITIES */ {
                 const uint64_t size = serializer->read_object<uint64_t>();
                 for (uint64_t i = 0; i < size; i++) {
@@ -334,11 +337,6 @@ export namespace titian {
         }
 
         // Static colliders
-        kl::Object<Collider> make_plane_collider() const
-        {
-            return new Collider(m_physics, physx::PxPlaneGeometry());
-        }
-
         kl::Object<Collider> make_mesh_collider(const Mesh& mesh, const kl::Float3& scale) const
         {
             return new Collider(m_physics, physx::PxTriangleMeshGeometry(mesh.physics_buffer, (physx::PxVec3&) scale));
@@ -355,8 +353,6 @@ export namespace titian {
             case physx::PxGeometryType::Enum::eCAPSULE:
                 return make_capsule_collider(1.0f, 2.0f);
 
-            case physx::PxGeometryType::Enum::ePLANE:
-                return make_plane_collider();
             case physx::PxGeometryType::Enum::eTRIANGLEMESH:
                 return make_mesh_collider(*optional_mesh, kl::Float3{ 1.0f });
             }

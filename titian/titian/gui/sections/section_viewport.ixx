@@ -49,11 +49,16 @@ export namespace titian {
                     const kl::Int2 pixel_coords = window_mouse_position();
                     const uint32_t entity_id = read_entity_id(pixel_coords);
 
-                    uint32_t counter = 0;
-                    for (auto& [name, entity] : *render_layer->game_layer->scene) {
-                        if (++counter == entity_id) {
-                            editor_layer->selected_entity = name;
-                            break;
+                    if (entity_id == 0) {
+                        editor_layer->selected_entity = "/";
+                    }
+                    else {
+                        uint32_t counter = 0;
+                        for (auto& [name, entity] : *render_layer->game_layer->scene) {
+                            if (++counter == entity_id) {
+                                editor_layer->selected_entity = name;
+                                break;
+                            }
                         }
                     }
                 }

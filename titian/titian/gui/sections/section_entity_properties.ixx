@@ -23,15 +23,15 @@ export namespace titian {
         void render_gui() override
         {
             Scene* scene = &editor_layer->game_layer->scene;
-            Entity* entity = &scene->get_entity(editor_layer->selected_entity);
+            kl::Object<Entity> entity = scene->get_entity(editor_layer->selected_entity);
 
             if (ImGui::Begin("Entity properties") && entity) {
-                display_entity_info(scene, entity);
-                edit_entity_transform(scene, entity);
-                edit_entity_mesh(scene, entity);
-                edit_entity_material(scene, entity);
+                display_entity_info(scene, &entity);
+                edit_entity_transform(scene, &entity);
+                edit_entity_mesh(scene, &entity);
+                edit_entity_material(scene, &entity);
                 edit_entity_physics(scene, entity);
-                edit_entity_collider(scene, entity);
+                edit_entity_collider(scene, &entity);
             }
             ImGui::End();
         }
@@ -112,7 +112,7 @@ export namespace titian {
             }
         }
 
-        void edit_entity_physics(Scene* scene, Entity* entity)
+        void edit_entity_physics(Scene* scene, kl::Object<Entity>& entity)
         {
             ImGui::Separator();
             ImGui::Text("Physics");
@@ -157,7 +157,6 @@ export namespace titian {
                 {  physx::PxGeometryType::Enum::eSPHERE,  "sphere" },
                 { physx::PxGeometryType::Enum::eCAPSULE, "capsule" },
 
-                {        physx::PxGeometryType::Enum::ePLANE, "plane" },
                 { physx::PxGeometryType::Enum::eTRIANGLEMESH,  "mesh" },
             };
 
@@ -165,7 +164,7 @@ export namespace titian {
             ImGui::Text("Collider");
 
             kl::Object collider = entity->collider();
-            physx::PxGeometryType::Enum collider_type = (collider ? collider->type() : physx::PxGeometryType::Enum::eINVALID);
+            physx::PxGeometryType::Enum collider_type = collider ? collider->type() : physx::PxGeometryType::Enum::eINVALID;
             std::string collider_name = possible_colliders.at(collider_type);
 
             // Choose type
@@ -203,14 +202,14 @@ export namespace titian {
             }
 
             // Specific info
+            int geometry_type = 0;
             physx::PxBoxGeometry box_geometry = {};
             physx::PxTriangleMeshGeometry mesh_geometry = {};
-            int geometry_type = 0;
-            const auto collider_shape = collider->shape();
+            physx::PxShape* collider_shape = collider->shape();
             if (collider_type == physx::PxGeometryType::Enum::eBOX) {
                 collider_shape->getBoxGeometry(box_geometry);
 
-                if (ImGui::DragFloat3("Size", (float*) &box_geometry.halfExtents, 0.5f, 0.0f, 1e9f)) {
+                if (ImGui::DragFloat3("Size", reinterpret_cast<float*>(&box_geometry.halfExtents), 0.5f, 0.0f, 1e9f)) {
                     collider_shape->setGeometry(box_geometry);
                 }
                 geometry_type = 1;
@@ -230,7 +229,6 @@ export namespace titian {
                 if (ImGui::DragFloat("Radius", &geometry.radius, 0.5f, 0.0f, 1e9f)) {
                     collider_shape->setGeometry(geometry);
                 }
-
                 if (ImGui::DragFloat("Height", &geometry.halfHeight, 0.5f, 0.0f, 1e9f)) {
                     collider_shape->setGeometry(geometry);
                 }
@@ -238,7 +236,7 @@ export namespace titian {
             else if (collider_type == physx::PxGeometryType::Enum::eTRIANGLEMESH) {
                 collider_shape->getTriangleMeshGeometry(mesh_geometry);
 
-                if (ImGui::DragFloat3("Mesh Scale", (float*) &mesh_geometry.scale, 0.5f, 0.0f, 1e9f)) {
+                if (ImGui::DragFloat3("Mesh Scale", reinterpret_cast<float*>(&mesh_geometry.scale), 0.5f, 0.0f, 1e9f)) {
                     collider_shape->setGeometry(mesh_geometry);
                 }
                 geometry_type = 2;
@@ -255,13 +253,13 @@ export namespace titian {
             }
 
             // Loading buttons
-            if (geometry_type && ImGui::Button("Load size from scale")) {
+            if (geometry_type != 0 && ImGui::Button("Load size from scale")) {
                 if (geometry_type == 1) {
-                    box_geometry.halfExtents = (physx::PxVec3&) entity->scale;
+                    box_geometry.halfExtents = reinterpret_cast<physx::PxVec3&>(entity->scale);
                     collider_shape->setGeometry(box_geometry);
                 }
                 else {
-                    mesh_geometry.scale = (physx::PxVec3&) entity->scale;
+                    mesh_geometry.scale = reinterpret_cast<physx::PxVec3&>(entity->scale);
                     collider_shape->setGeometry(mesh_geometry);
                 }
             }
