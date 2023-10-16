@@ -8,12 +8,9 @@ export namespace titian {
     public:
         kl::Object<GameLayer> game_layer = nullptr;
         
-        bool game_running = false;
         bool is_viewport_focused = false;
-        
         int gizmo_mode = 1;
         int gizmo_operation = 0;
-        
         std::string selected_entity = "/";
 
         EditorLayer(kl::Object<GameLayer>& game_layer)
@@ -26,7 +23,7 @@ export namespace titian {
 
         bool update() override
         {
-            Camera* camera = game_layer->scene->get_dynamic<Camera>(game_layer->scene->camera);
+            Camera* camera = game_layer->scene->get_dynamic<Camera>(game_layer->scene->main_camera_name);
             if (!camera) { return true; }
 
             kl::Window* window = &game_layer->app_layer->window;

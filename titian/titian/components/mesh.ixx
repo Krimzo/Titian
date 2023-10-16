@@ -1,27 +1,13 @@
 ﻿export module mesh;
 
-export import unique;
+export import serializable;
 
 export namespace titian {
-    class Mesh : public Unique
+    class Mesh : public Serializable
     {
     public:
         using Data = std::vector<kl::Vertex>;
 
-    private:
-        kl::GPU* m_gpu = nullptr;
-        physx::PxPhysics* m_physics = nullptr;
-        physx::PxCooking* m_cooking = nullptr;
-
-        void free_physics_buffer()
-        {
-            if (physics_buffer) {
-                physics_buffer->release();
-                physics_buffer = nullptr;
-            }
-        }
-
-    public:
         Data data_buffer = {};
         kl::dx::Buffer graphics_buffer = nullptr;
         physx::PxTriangleMesh* physics_buffer = nullptr;
@@ -37,18 +23,22 @@ export namespace titian {
 
         void serialize(Serializer* serializer) const override
         {
-            Unique::serialize(serializer);
+            const uint64_t size = data_buffer.size();
+            serializer->write_object<uint64_t>(size);
 
-            serializer->write_object(data_buffer.size());
-            serializer->write_array(data_buffer.data(), data_buffer.size());
+            const Data::value_type* data = data_buffer.data();
+            serializer->write_array<Data::value_type>(data, size);
         }
         
         void deserialize(const Serializer* serializer) override
         {
-            Unique::deserialize(serializer);
+            const uint64_t size = serializer->read_object<uint64_t>();
+            data_buffer.resize(size);
+            
+            Data::value_type* data = data_buffer.data();
+            serializer->read_array<Data::value_type>(data, size);
 
-            data_buffer.resize(serializer->read_object<size_t>());
-            serializer->read_array(data_buffer.data(), data_buffer.size());
+            this->reload();
         }
 
         void reload()
@@ -70,6 +60,19 @@ export namespace titian {
             physx::PxDefaultMemoryInputData cooked_buffer(cook_buffer.getData(), cook_buffer.getSize());
             physics_buffer = m_physics->createTriangleMesh(cooked_buffer);
             kl::assert(physics_buffer, "Failed to create mesh physics buffer");
+        }
+
+    private:
+        kl::GPU* m_gpu = nullptr;
+        physx::PxPhysics* m_physics = nullptr;
+        physx::PxCooking* m_cooking = nullptr;
+
+        void free_physics_buffer()
+        {
+            if (physics_buffer) {
+                physics_buffer->release();
+                physics_buffer = nullptr;
+            }
         }
     };
 }

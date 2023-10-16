@@ -1,49 +1,74 @@
 export module dll_script;
 
-export import editor_state;
+export import script;
 
-export class DLLScript : public BasicScript
-{
-public:
-	kl::DLL dll = {};
-
-	kl::DLL::Function<void, BasicState*> start_function = nullptr;
-	kl::DLL::Function<void, BasicState*> update_function = nullptr;
-
-	DLLScript()
-	{}
-
-	DLLScript(const std::string& path)
-		: BasicScript(path)
+export namespace titian {
+	class DLLScript : public Script
 	{
-		dll.load(path);
-		if (dll) {
-			start_function = dll.read_function<void, BasicState*>("script_start");
-			update_function = dll.read_function<void, BasicState*>("script_update");
+	public:
+		void* scene = nullptr;
+
+		std::string path = {};
+		kl::DLL dll = {};
+
+		kl::DLL::Function<void, void*> start_function = nullptr;
+		kl::DLL::Function<void, void*> update_function = nullptr;
+
+		DLLScript(void* scene)
+			: Script(Type::DLL), scene(scene)
+		{}
+
+		DLLScript(void* scene, const std::string& path)
+			: Script(Type::DLL), scene(scene)
+		{
+			dll.load(path);
+			this->reload();
 		}
-	}
 
-	bool is_valid() const override
-	{
-		return (dll && start_function && update_function);
-	}
+		~DLLScript() override
+		{}
 
-	void reload() override
-	{
-		dll.reload();
-	}
+		void serialize(Serializer* serializer) const override
+		{
+			Script::serialize(serializer);
 
-	void call_start(BasicState* state) override
-	{
-		if (dll && start_function) {
-			start_function(state);
+			serializer->write_string(path);
 		}
-	}
 
-	void call_update(BasicState* state) override
-	{
-		if (dll && update_function) {
-			update_function(state);
+		void deserialize(const Serializer* serializer) override
+		{
+			Script::deserialize(serializer);
+
+			serializer->read_string(path);
+			this->reload();
 		}
-	}
-};
+
+		bool is_valid() const override
+		{
+			return dll && start_function && update_function;
+		}
+
+		void reload() override
+		{
+			dll.reload();
+			if (dll) {
+				start_function = dll.read_function<void, void*>("script_start");
+				update_function = dll.read_function<void, void*>("script_update");
+			}
+		}
+
+		void call_start() override
+		{
+			if (start_function) {
+				start_function(scene);
+			}
+		}
+
+		void call_update() override
+		{
+			if (update_function) {
+				update_function(scene);
+			}
+		}
+	};
+}

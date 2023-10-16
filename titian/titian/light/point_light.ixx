@@ -10,7 +10,7 @@ export namespace titian {
 		kl::Float3 color{ 1.0f };
 
 		PointLight(physx::PxPhysics* physics, const bool dynamic)
-			: Light(physics, dynamic)
+			: Light(Type::POINT_LIGHT, physics, dynamic)
 		{}
 
 		~PointLight() override
@@ -20,16 +20,16 @@ export namespace titian {
 		{
 			Light::serialize(serializer);
 
-			serializer->write_object(position);
-			serializer->write_object(color);
+			serializer->write_object<kl::Float3>(position);
+			serializer->write_object<kl::Float3>(color);
 		}
 
 		void deserialize(const Serializer* serializer) override
 		{
 			Light::deserialize(serializer);
 
-			serializer->read_object(position);
-			serializer->read_object(color);
+			serializer->read_object<kl::Float3>(position);
+			serializer->read_object<kl::Float3>(color);
 		}
 
 		kl::Float3 light_at_point(const kl::Float3& point) const override

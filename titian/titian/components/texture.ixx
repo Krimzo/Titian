@@ -1,9 +1,9 @@
 export module texture;
 
-export import unique;
+export import serializable;
 
 export namespace titian {
-	class Texture : public Unique
+	class Texture : public Serializable
 	{
 	public:
 		using Data = kl::Image;
@@ -25,20 +25,31 @@ export namespace titian {
 
 		void serialize(Serializer* serializer) const override
 		{
-			Unique::serialize(serializer);
+			const kl::Int2 size = data_buffer.size();
+			serializer->write_object<kl::Int2>(size);
 
-			const kl::Color* data = data_buffer;
-			serializer->write_object(data_buffer.size());
-			serializer->write_array(data, data_buffer.pixel_count());
+			const kl::Color* data = static_cast<const kl::Color*>(data_buffer);
+			serializer->write_array<kl::Color>(data, size.x * size.y);
+
+			serializer->write_object<bool>(m_is_cube);
 		}
 
 		void deserialize(const Serializer* serializer) override
 		{
-			Unique::deserialize(serializer);
+			const kl::Int2 size = serializer->read_object<kl::Int2>();
+			data_buffer.resize(size);
 
-			kl::Color* data = data_buffer;
-			data_buffer.resize(serializer->read_object<kl::Int2>());
-			serializer->read_array(data, data_buffer.pixel_count());
+			kl::Color* data = static_cast<kl::Color*>(data_buffer);
+			serializer->read_array<kl::Color>(data, size.x * size.y);
+
+			serializer->read_object<bool>(m_is_cube);
+			if (m_is_cube) {
+				load_as_cube();
+			}
+			else {
+				load_as_2D(false, false);
+			}
+			create_shader_view(nullptr);
 		}
 
 		void load_as_2D(bool has_unordered_access, bool is_target)

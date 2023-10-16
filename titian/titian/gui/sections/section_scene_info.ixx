@@ -30,7 +30,7 @@ export namespace titian {
                     scene->set_gravity(gravity);
                 }
 
-                Camera* camera = scene->get_dynamic<Camera>(scene->camera);
+                Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
                 if (camera) {
                     kl::Float3 camera_position = camera->position();
                     ImGui::DragFloat3("Camera position", camera_position);
@@ -41,20 +41,20 @@ export namespace titian {
                     camera->set_forward(camera_direction);
 
                     // Skybox
-                    if (ImGui::BeginCombo("Bound Skybox", camera->skybox.c_str())) {
-                        if (ImGui::Selectable("/", camera->skybox == "/")) {
-                            camera->skybox = "/";
+                    if (ImGui::BeginCombo("Bound Skybox", camera->skybox_name.c_str())) {
+                        if (ImGui::Selectable("/", camera->skybox_name == "/")) {
+                            camera->skybox_name = "/";
                         }
                         for (auto& [texture_name, _] : scene->textures) {
-                            if (ImGui::Selectable(texture_name.c_str(), texture_name == camera->skybox)) {
-                                camera->skybox = texture_name;
+                            if (ImGui::Selectable(texture_name.c_str(), texture_name == camera->skybox_name)) {
+                                camera->skybox_name = texture_name;
                             }
                         }
                         ImGui::EndCombo();
                     }
 
                     // Background
-                    if (!scene->textures.contains(camera->skybox)) {
+                    if (!scene->textures.contains(camera->skybox_name)) {
                         kl::Float4 background = camera->background;
                         if (ImGui::ColorEdit4("Background", background)) {
                             camera->background = background;

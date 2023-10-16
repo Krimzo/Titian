@@ -47,7 +47,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
@@ -60,6 +60,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)physx\lib\debug</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -68,7 +69,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
@@ -83,6 +84,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)physx\lib\release</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -112,17 +114,19 @@
     <ClCompile Include="titian\components\material.ixx" />
     <ClCompile Include="titian\components\mesh.ixx" />
     <ClCompile Include="titian\components\texture.ixx" />
-    <ClCompile Include="titian\components\unique.ixx" />
     <ClCompile Include="titian\editor\editor_layer.ixx" />
     <ClCompile Include="titian\editor\game_layer.ixx" />
     <ClCompile Include="titian\gui\gui_layer.ixx" />
     <ClCompile Include="titian\gui\gui_section.ixx" />
+    <ClCompile Include="titian\gui\sections\section_scene_scripts.ixx" />
+    <ClCompile Include="titian\gui\sections\section_render_info.ixx" />
+    <ClCompile Include="titian\gui\sections\section_entity_properties.ixx" />
     <ClCompile Include="titian\gui\sections\section_control_menu.ixx" />
     <ClCompile Include="titian\gui\sections\section_explorer.ixx" />
     <ClCompile Include="titian\gui\sections\section_log_view.ixx" />
     <ClCompile Include="titian\gui\sections\section_main_menu.ixx" />
     <ClCompile Include="titian\gui\sections\section_scene_info.ixx" />
-    <ClCompile Include="titian\gui\sections\section_scene_items.ixx" />
+    <ClCompile Include="titian\gui\sections\section_scene_entities.ixx" />
     <ClCompile Include="titian\gui\sections\section_viewport.ixx" />
     <ClCompile Include="titian\gui\utility\gui_helper.ixx" />
     <ClCompile Include="titian\layer\layer.ixx" />
@@ -150,7 +154,9 @@
     <ClCompile Include="titian\scene\default_meshes.ixx" />
     <ClCompile Include="titian\scene\entity.ixx" />
     <ClCompile Include="titian\scene\scene.ixx" />
-    <ClCompile Include="titian\scripting\scripting_layer.ixx" />
+    <ClCompile Include="titian\scripting\script.ixx" />
+    <ClCompile Include="titian\scripting\dll_script.ixx" />
+    <ClCompile Include="titian\scripting\visual_script.ixx" />
     <ClCompile Include="titian\serialization\serializable.ixx" />
     <ClCompile Include="titian\serialization\serialization.ixx" />
     <ClCompile Include="titian\serialization\serializer.ixx" />

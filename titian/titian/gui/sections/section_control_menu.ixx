@@ -28,7 +28,7 @@ export namespace titian {
 
                     // 0
                     ImGui::TableSetColumnIndex(0);
-                    if (!editor_layer->game_running) {
+                    if (!editor_layer->game_layer->game_running) {
                         if (ImGui::Button("Start")) {
                             start_scene();
                         }
@@ -68,29 +68,37 @@ export namespace titian {
         }
 
     private:
+        std::string m_temp_path = "temp.titian";
+
         void start_scene()
         {
+            GameLayer* game_layer = &editor_layer->game_layer;
+
             // Save scene
-            Serializer serializer = { "temp.titian", true };
-            editor_layer->game_layer->scene->serialize(&serializer);
+            Serializer serializer = { m_temp_path, true };
+            game_layer->scene->serialize(&serializer);
 
             // Change state
-            editor_layer->game_running = true;
-            editor_layer->game_layer->app_layer->timer->reset_elapsed();
+            game_layer->game_running = true;
+            game_layer->app_layer->timer->reset_elapsed();
 
             // Call script starts
-            //state->scripts_call_start(state);
+            for (auto& [_, script] : game_layer->scene->scripts) {
+                script->call_start();
+            }
         }
 
         void stop_scene()
         {
+            GameLayer* game_layer = &editor_layer->game_layer;
+
             // Change state
-            editor_layer->game_running = false;
+            game_layer->game_running = false;
+            game_layer->scene = new Scene(game_layer->app_layer->gpu);
 
             // Load scene
-            const Serializer serializer = { "temp.titian", false };
-            editor_layer->game_layer->scene = new Scene(editor_layer->game_layer->app_layer->gpu);
-            editor_layer->game_layer->scene->deserialize(&serializer);
+            const Serializer serializer = { m_temp_path, false };
+            game_layer->scene->deserialize(&serializer);
         }
     };
 }

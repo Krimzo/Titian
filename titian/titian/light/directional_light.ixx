@@ -17,7 +17,7 @@ export namespace titian {
 		kl::Float3 color{ 1.0f };
 
 		DirectionalLight(physx::PxPhysics* physics, const bool dynamic, kl::Object<kl::GPU>& gpu, const uint32_t map_resolution)
-			: Light(physics, dynamic), map_resolution(map_resolution)
+			: Light(Type::DIRECTIONAL_LIGHT, physics, dynamic), map_resolution(map_resolution)
 		{
             kl::dx::TextureDescriptor shadow_map_descriptor = {};
             shadow_map_descriptor.Width = map_resolution;
@@ -53,20 +53,24 @@ export namespace titian {
 		{
 			Light::serialize(serializer);
 
-			serializer->write_object(m_direction);
-            serializer->write_object(map_resolution);
-            serializer->write_object(point_size);
-			serializer->write_object(color);
+            serializer->write_object<uint32_t>(map_resolution);
+
+            serializer->write_object<float>(point_size);
+
+			serializer->write_object<kl::Float3>(m_direction);
+			serializer->write_object<kl::Float3>(color);
 		}
 
 		void deserialize(const Serializer* serializer) override
 		{
 			Light::deserialize(serializer);
 
-			serializer->read_object(m_direction);
-            serializer->read_object(map_resolution);
-            serializer->read_object(point_size);
-			serializer->read_object(color);
+            serializer->read_object<uint32_t>(map_resolution);
+
+            serializer->read_object<float>(point_size);
+
+            serializer->read_object<kl::Float3>(m_direction);
+            serializer->read_object<kl::Float3>(color);
 		}
 
 		kl::Float3 light_at_point(const kl::Float3& point) const override

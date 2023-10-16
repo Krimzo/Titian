@@ -27,15 +27,15 @@ export namespace titian {
     private:
         void setup_platform(Scene* scene)
         {
-            const std::string mesh_id = "cube";
-            const std::string material_id = "white";
-            const std::string entity_id = "PhysicsTestPlatform";
+            const std::string mesh_name = "cube";
+            const std::string material_name = "white";
+            const std::string entity_name = "PhysicsTestPlatform";
             
             // Mesh
-            scene->meshes[mesh_id] = scene->default_meshes->cube;
+            scene->meshes[mesh_name] = scene->default_meshes->cube;
 
             // Material
-            scene->materials[material_id] = scene->default_materials->white;
+            scene->materials[material_name] = scene->default_materials->white;
 
             // Entity
             kl::Object platform = scene->make_entity(false);
@@ -47,10 +47,10 @@ export namespace titian {
             platform->set_position({ 0.0f, -7.0f, -25.0f });
             platform->set_collider(scene->make_box_collider(scale));
 
-            platform->mesh = mesh_id;
-            platform->material = material_id;
+            platform->mesh_name = mesh_name;
+            platform->material_name = material_name;
 
-            scene->add(entity_id, platform);
+            scene->add(entity_name, platform);
         }
 
         void setup_objects(Scene* scene)
@@ -79,20 +79,20 @@ export namespace titian {
 
             for (int z = 0; z < size; z++) {
                 for (int x = 0; x < size; x++) {
-                    const std::string mesh_id = "cube";
-                    const std::string material_id = kl::format("box_mat_", box_counter);
-                    const std::string entity_id = kl::format("Box", box_counter);
+                    const std::string mesh_name = "cube";
+                    const std::string material_name = kl::format("box_mat_", box_counter);
+                    const std::string entity_name = kl::format("Box", box_counter);
                     
                     // Mesh
-                    scene->meshes[mesh_id] = scene->default_meshes->cube;
+                    scene->meshes[mesh_name] = scene->default_meshes->cube;
 
                     // Material
                     kl::Object material = new Material();
                     material->texture_blend = 0.5f;
                     material->color = kl::random::gen_color();
-                    material->color_map = color_map;
-                    material->normal_map = normal_map;
-                    scene->materials[material_id] = material;
+                    material->color_map_name = color_map;
+                    material->normal_map_name = normal_map;
+                    scene->materials[material_name] = material;
 
                     // Entity
                     kl::Object box = scene->make_entity(true);
@@ -104,10 +104,10 @@ export namespace titian {
                     box->set_mass(2.5f);
                     box->set_gravity(true);
 
-                    box->mesh = mesh_id;
-                    box->material = material_id;
+                    box->mesh_name = mesh_name;
+                    box->material_name = material_name;
 
-                    scene->add(entity_id, box);
+                    scene->add(entity_name, box);
                     box_counter += 1;
                 }
             }

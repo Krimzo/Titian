@@ -44,7 +44,7 @@ export namespace titian {
             kl::GPU* gpu = &game_layer->app_layer->gpu;
             Scene* scene = &game_layer->scene;
 
-            Camera* camera = scene->get_dynamic<Camera>(scene->camera);
+            Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
             if (!camera) { return; }
 
             Entity* entity = scene->get_dynamic<Entity>(editor_layer->selected_entity);
@@ -82,7 +82,7 @@ export namespace titian {
                 break;
 
             case physx::PxGeometryType::Enum::eTRIANGLEMESH:
-                Mesh* mesh = &scene->get_mesh(entity->mesh);
+                Mesh* mesh = &scene->get_mesh(entity->mesh_name);
                 if (mesh) {
                     gpu->draw(mesh->graphics_buffer);
                 }

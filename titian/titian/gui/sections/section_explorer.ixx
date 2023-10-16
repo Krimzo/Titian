@@ -254,19 +254,19 @@ export namespace titian {
             const std::string path = file.string();
             switch (type) {
             case FileType::CODE:
-                gui_set_drag_drop("CodeFile", path, texture);
+                gui_set_drag_drop<std::string>("CodeFile", path, texture);
                 break;
             case FileType::SCRIPT:
-                gui_set_drag_drop("ScriptFile", path, texture);
+                gui_set_drag_drop<std::string>("ScriptFile", path, texture);
                 break;
             case FileType::MESH:
-                gui_set_drag_drop("MeshFile", path, texture);
+                gui_set_drag_drop<std::string>("MeshFile", path, texture);
                 break;
             case FileType::TEXTURE:
-                gui_set_drag_drop("TextureFile", path, texture);
+                gui_set_drag_drop<std::string>("TextureFile", path, texture);
                 break;
             case FileType::SCENE:
-                gui_set_drag_drop("SceneFile", path, texture);
+                gui_set_drag_drop<std::string>("SceneFile", path, texture);
                 break;
             }
         }

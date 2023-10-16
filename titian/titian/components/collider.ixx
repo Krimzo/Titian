@@ -1,13 +1,10 @@
 export module collider;
 
-export import unique;
+export import serializable;
 
 export namespace titian {
-    class Collider : public Unique
+    class Collider : public Serializable
     {
-        physx::PxMaterial* m_material = nullptr;
-        physx::PxShape* m_shape = nullptr;
-
     public:
         Collider(physx::PxPhysics* physics, const physx::PxGeometry& geometry)
         {
@@ -26,12 +23,12 @@ export namespace titian {
 
         void serialize(Serializer* serializer) const override
         {
-            Unique::serialize(serializer);
+
         }
 
         void deserialize(const Serializer* serializer) override
         {
-            Unique::deserialize(serializer);
+
         }
 
         // Get
@@ -142,5 +139,9 @@ export namespace titian {
         {
             return m_material->getRestitution();
         }
+
+    private:
+        physx::PxMaterial* m_material = nullptr;
+        physx::PxShape* m_shape = nullptr;
     };
 }

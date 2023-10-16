@@ -51,14 +51,16 @@ export namespace titian {
 		// String
 		void write_string(const std::string& data)
 		{
-			m_file.write<uint64_t>(data.size());
-			m_file.write<char>(data.data(), data.size());
+			const uint64_t size = data.size();
+			m_file.write<uint64_t>(size);
+			m_file.write<char>(data.data(), size);
 		}
 
 		void read_string(std::string& data) const
 		{
-			data.resize(m_file.read<uint64_t>());
-			m_file.read<char>(data.data(), data.size());
+			const uint64_t size = m_file.read<uint64_t>();
+			data.resize(size);
+			m_file.read<char>(data.data(), size);
 		}
 
 		std::string read_string() const

@@ -185,8 +185,8 @@ kl::File::operator bool() const
 void kl::File::open(const std::string_view& filepath, bool clear)
 {
     close();
-    const bool result = (bool) fopen_s(&m_file, filepath.data(), clear ? "wb+" : "ab+");
-    verify(result, kl::format("Failed to open file \"", filepath, "\""));
+    errno_t error = fopen_s(&m_file, filepath.data(), clear ? "wb+" : "ab+");
+    verify(error == NULL, kl::format("Failed to open file \"", filepath, "\""));
 }
 
 void kl::File::close()

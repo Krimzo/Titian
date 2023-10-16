@@ -46,6 +46,14 @@ export namespace titian {
             Entity* entity = &scene->get_entity(editor_layer->selected_entity);
             if (!entity) { return; }
 
+            uint32_t counter_id = 0;
+            for (auto& [_, ent] : *editor_layer->game_layer->scene) {
+                counter_id += 1;
+                if (&ent == entity) {
+                    break;
+                }
+            }
+
             gpu->bind_target_depth_views({ gui_layer->render_layer->render_texture->target_view }, gui_layer->render_layer->depth_texture->depth_view);
             gpu->bind_shader_view_for_pixel_shader(gui_layer->render_layer->picking_texture->shader_view, 0);
 
@@ -55,7 +63,7 @@ export namespace titian {
                 kl::Float4 selected_index;
                 kl::Float4  outline_color;
             } ps_data = {};
-            ps_data.selected_index = kl::Float4{ (float) entity->id() };
+            ps_data.selected_index = kl::Float4{ static_cast<float>(counter_id) };
             ps_data.outline_color = gui_layer->special_color;
 
             package.shader_state.pixel_shader.update_cbuffer(ps_data);

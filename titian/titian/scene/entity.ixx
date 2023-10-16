@@ -3,16 +3,25 @@
 export import collider;
 
 export namespace titian {
-    class Entity : public Unique
+    class Entity : public Serializable
     {
     public:
+        enum class Type
+        {
+            BASIC,
+            CAMERA,
+            AMBIENT_LIGHT,
+            POINT_LIGHT,
+            DIRECTIONAL_LIGHT,
+        } const type = {};
+
         kl::Float3 scale{ 1.0f };
-        std::string mesh = "/";
-        std::string material = "/";
+        std::string mesh_name = "/";
+        std::string material_name = "/";
 
         // Creation
-        Entity(physx::PxPhysics* physics, const bool dynamic)
-            : m_physics(physics)
+        Entity(const Type type, physx::PxPhysics* physics, const bool dynamic)
+            : type(type), m_physics(physics)
         {
             physx::PxTransform transform = {};
             transform.q = physx::PxQuat(physx::PxIdentity);
@@ -25,38 +34,46 @@ export namespace titian {
             m_physics_actor->release();
         }
 
+        Entity(const Entity&) = delete;
+        Entity(const Entity&&) = delete;
+
+        void operator=(const Entity&) = delete;
+        void operator=(const Entity&&) = delete;
+
         void serialize(Serializer* serializer) const override
         {
-            Unique::serialize(serializer);
+            serializer->write_object<Type>(type);
 
-            serializer->write_object(scale);
-            serializer->write_object(rotation());
-            serializer->write_object(position());
-            serializer->write_object(is_dynamic());
-            serializer->write_object(has_gravity());
-            serializer->write_object(mass());
-            serializer->write_object(velocity());
-            serializer->write_object(angular());
+            serializer->write_object<bool>(is_dynamic());
+            serializer->write_object<bool>(has_gravity());
 
-            serializer->write_string(mesh);
-            serializer->write_string(material);
+            serializer->write_object<float>(mass());
+
+            serializer->write_object<kl::Float3>(scale);
+            serializer->write_object<kl::Float3>(rotation());
+            serializer->write_object<kl::Float3>(position());
+            serializer->write_object<kl::Float3>(velocity());
+            serializer->write_object<kl::Float3>(angular());
+
+            serializer->write_string(mesh_name);
+            serializer->write_string(material_name);
         }
 
         void deserialize(const Serializer* serializer) override
         {
-            Unique::deserialize(serializer);
-
-            serializer->read_object(scale);
-            set_rotation(serializer->read_object<kl::Float3>());
-            set_position(serializer->read_object<kl::Float3>());
             set_dynamic(serializer->read_object<bool>());
             set_gravity(serializer->read_object<bool>());
+
             set_mass(serializer->read_object<float>());
+
+            serializer->read_object<kl::Float3>(scale);
+            set_rotation(serializer->read_object<kl::Float3>());
+            set_position(serializer->read_object<kl::Float3>());
             set_velocity(serializer->read_object<kl::Float3>());
             set_angular(serializer->read_object<kl::Float3>());
 
-            serializer->read_string(mesh);
-            serializer->read_string(material);
+            serializer->read_string(mesh_name);
+            serializer->read_string(material_name);
         }
 
         // Get
@@ -120,7 +137,7 @@ export namespace titian {
                 return;
             }
             const physx::PxTransform old_transform = m_physics_actor->getGlobalPose();
-            const kl::Object<Collider> old_collider = m_collider;
+            kl::Object<Collider> old_collider = m_collider;
             set_collider(nullptr);
             generate_actor(old_transform, enabled);
             set_collider(old_collider);
@@ -207,10 +224,10 @@ export namespace titian {
             if (m_collider) {
                 m_physics_actor->detachShape(*m_collider->shape());
             }
-            m_collider = collider;
-            if (m_collider) {
-                m_physics_actor->attachShape(*m_collider->shape());
+            if (collider) {
+                m_physics_actor->attachShape(*collider->shape());
             }
+            m_collider = collider;
         }
 
         kl::Object<Collider> collider() const
@@ -223,13 +240,14 @@ export namespace titian {
         physx::PxRigidActor* m_physics_actor = nullptr;
         kl::Object<Collider> m_collider = nullptr;
 
-        void generate_actor(const physx::PxTransform& transform, bool dynamic)
+        void generate_actor(const physx::PxTransform& transform, const bool dynamic)
         {
             if (m_physics_actor) {
                 m_physics_actor->release();
                 m_physics_actor = nullptr;
             }
-            m_physics_actor = dynamic ? m_physics->createRigidDynamic(transform) : (physx::PxRigidActor*) m_physics->createRigidStatic(transform);
+
+            m_physics_actor = dynamic ? (physx::PxRigidActor*) m_physics->createRigidDynamic(transform) : (physx::PxRigidActor*) m_physics->createRigidStatic(transform);
             kl::assert(m_physics_actor, "Failed to create physics actor");
 
             if (dynamic) {

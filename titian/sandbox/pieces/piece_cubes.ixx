@@ -27,18 +27,18 @@ export namespace titian {
 
             for (int y = 0; y < size; y++) {
                 for (int x = 0; x < size; x++) {
-                    const std::string mesh_id = "cube";
-                    const std::string material_id = kl::format("cube_mat_", cube_counter);
-                    const std::string entity_id = kl::format("Cube", cube_counter);
+                    const std::string mesh_name = "cube";
+                    const std::string material_name = kl::format("cube_mat_", cube_counter);
+                    const std::string entity_name = kl::format("Cube", cube_counter);
                     
                     // Mesh
-                    scene->meshes[mesh_id] = scene->default_meshes->cube;
+                    scene->meshes[mesh_name] = scene->default_meshes->cube;
 
                     // Material
                     kl::Object material = new Material();
                     material->color = kl::colors::ORANGE;
                     material->reflection_factor = cube_counter / static_cast<float>(size * size);
-                    scene->materials[material_id] = material;
+                    scene->materials[material_name] = material;
 
                     // Entity
                     kl::Object cube = scene->make_entity(false);
@@ -49,10 +49,10 @@ export namespace titian {
                         5.0f,
                     });
 
-                    cube->mesh = mesh_id;
-                    cube->material = material_id;
+                    cube->mesh_name = mesh_name;
+                    cube->material_name = material_name;
 
-                    scene->add(entity_id, cube);
+                    scene->add(entity_name, cube);
                     cube_counter += 1;
                 }
             }

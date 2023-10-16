@@ -2,7 +2,7 @@ export module gui_helper;
 
 export import klib;
 
-static std::unordered_map<std::string, std::any> DATA = {};
+std::unordered_map<std::string, std::any> DATA = {};
 
 export namespace titian {
     template<typename T>
@@ -13,7 +13,7 @@ export namespace titian {
             if (texture) {
                 ImGui::Image(texture.Get(), { 50.0f, 50.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
             }
-            DATA[id] = { data };
+            DATA[id] = std::any{ data };
             ImGui::EndDragDropSource();
         }
     }

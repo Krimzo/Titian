@@ -51,14 +51,13 @@ export namespace titian {
 			kl::GPU* gpu = &game_layer->app_layer->gpu;
 			Scene* scene = &game_layer->scene;
 
-			Camera* camera = scene->get_dynamic<Camera>(scene->camera);
-			if (!camera) { return true; }
-
 			// Clear targets
+			Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
 			gpu->clear_internal(background);
-			gpu->clear_target_view(render_texture->target_view, camera->background);
+			gpu->clear_target_view(render_texture->target_view, camera ? (kl::Float4) camera->background : background);
 			gpu->clear_target_view(picking_texture->target_view, {});
 			gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
+			if (!camera) { return true; }
 
 			// Process passes
 			const kl::Int2 render_size = get_render_texture_size();

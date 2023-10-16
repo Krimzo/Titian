@@ -24,7 +24,7 @@ export namespace titian {
         bool is_renderable() const override
         {
             const Scene* scene = &game_layer->scene;
-            const DirectionalLight* dir_light = scene->get_dynamic<DirectionalLight>(scene->directional_light);
+            const DirectionalLight* dir_light = scene->get_dynamic<DirectionalLight>(scene->main_directional_light_name);
             return static_cast<bool>(dir_light);
         }
 
@@ -44,10 +44,10 @@ export namespace titian {
             kl::GPU* gpu = &game_layer->app_layer->gpu;
             Scene* scene = &game_layer->scene;
             
-            Camera* camera = scene->get_dynamic<Camera>(scene->camera);
+            Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
             if (!camera) { return; }
             
-            DirectionalLight* dir_light = scene->get_dynamic<DirectionalLight>(scene->directional_light);
+            DirectionalLight* dir_light = scene->get_dynamic<DirectionalLight>(scene->main_directional_light_name);
             if (!dir_light) { return; }
             
             gpu->set_viewport_size(kl::Int2{ (int) dir_light->map_resolution });
@@ -59,7 +59,7 @@ export namespace titian {
                 gpu->clear_depth_view(shadow_map, 1.0f, 0xFF);
                 
                 for (auto& [_, entity] : *scene) {
-                    Mesh* mesh = &scene->get_mesh(entity->mesh);
+                    Mesh* mesh = &scene->get_mesh(entity->mesh_name);
                     if (!mesh) { continue; }
                 
                     struct VSData

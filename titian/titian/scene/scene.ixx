@@ -3,31 +3,39 @@
 export import mesh;
 export import texture;
 export import material;
+export import script;
 
 export import default_meshes;
 export import default_materials;
 
-export import camera;
-export import entity;
+export import dll_script;
+export import visual_script;
 
-static constexpr uint32_t PX_VERSION = 0x4010200;
+export import camera;
+export import ambient_light;
+export import point_light;
+export import directional_light;
+
+constexpr uint32_t PX_VERSION = 0x4010200;
 
 export namespace titian {
-    class Scene : public Unique
+    class Scene : public Serializable
     {
     public:
         std::map<std::string, kl::Object<Mesh>> meshes = {};
         std::map<std::string, kl::Object<Texture>> textures = {};
         std::map<std::string, kl::Object<Material>> materials = {};
+        std::map<std::string, kl::Object<Script>> scripts = {};
 
         kl::Object<DefaultMeshes> default_meshes = nullptr;
         kl::Object<DefaultMaterials> default_materials = nullptr;
 
-        std::string camera = "/";
-        std::string ambient_light = "/";
-        std::string directional_light = "/";
+        std::string main_camera_name = "/";
+        std::string main_ambient_light_name = "/";
+        std::string main_directional_light_name = "/";
 
         Scene(kl::Object<kl::GPU>& gpu)
+            : m_gpu(gpu)
         {
             m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
             kl::assert(m_dispatcher, "Failed to create physics dispatcher");
@@ -55,9 +63,13 @@ export namespace titian {
 
         ~Scene() override
         {
-            materials.clear();
-            textures.clear();
+            default_meshes.free();
+            default_materials.free();
+
             meshes.clear();
+            textures.clear();
+            materials.clear();
+            scripts.clear();
 
             while (!m_entities.empty()) {
                 this->remove(m_entities.begin()->first);
@@ -69,14 +81,110 @@ export namespace titian {
             m_physics->release();
         }
 
+        Scene(const Scene&) = delete;
+        Scene(const Scene&&) = delete;
+
+        void operator=(const Scene&) = delete;
+        void operator=(const Scene&&) = delete;
+
         void serialize(Serializer* serializer) const override
         {
-            Unique::serialize(serializer);
+            serializer->write_string(main_camera_name);
+            serializer->write_string(main_ambient_light_name);
+            serializer->write_string(main_directional_light_name);
+
+            auto write_map = [&]<typename T>(const std::map<std::string, kl::Object<T>>& data)
+            {
+                serializer->write_object<uint64_t>(data.size());
+                for (auto& [name, object] : data) {
+                    serializer->write_string(name);
+                    object->serialize(serializer);
+                }
+            };
+            
+            write_map(meshes);
+            write_map(textures);
+            write_map(materials);
+            write_map(scripts);
+            write_map(m_entities);
         }
         
         void deserialize(const Serializer* serializer) override
         {
-            Unique::deserialize(serializer);
+            serializer->read_string(main_camera_name);
+            serializer->read_string(main_ambient_light_name);
+            serializer->read_string(main_directional_light_name);
+
+            auto read_map = [&]<typename T>(std::map<std::string, T>& data, const std::function<T()>& provider)
+            {
+                const uint64_t size = serializer->read_object<uint64_t>();
+                for (uint64_t i = 0; i < size; i++) {
+                    const std::string name = serializer->read_string();
+                    kl::Object object = provider();
+                    object->deserialize(serializer);
+                    data[name] = object;
+                }
+            };
+            
+            std::function mesh_provider = [&] { return kl::Object{ new Mesh(&m_gpu, m_physics, m_cooking) }; };
+            read_map(meshes, mesh_provider);
+            
+            std::function texture_provider = [&] { return kl::Object{ new Texture(m_gpu) }; };
+            read_map(textures, texture_provider);
+
+            std::function material_provider = [&] { return kl::Object{ new Material() }; };
+            read_map(materials, material_provider);
+
+            /* SCRIPTS */ {
+                const uint64_t size = serializer->read_object<uint64_t>();
+                for (uint64_t i = 0; i < size; i++) {
+                    const std::string name = serializer->read_string();
+                    const Script::Type type = serializer->read_object<Script::Type>();
+
+                    kl::Object<Script> object = nullptr;
+                    switch (type) {
+                    case Script::Type::DLL:
+                        object = new DLLScript(this);
+                        break;
+                    case Script::Type::VISUAL:
+                        object = new VisualScript(this);
+                        break;
+                    }
+            
+                    object->deserialize(serializer);
+                    scripts[name] = object;
+                }
+            }
+            
+            /* ENTITIES */ {
+                const uint64_t size = serializer->read_object<uint64_t>();
+                for (uint64_t i = 0; i < size; i++) {
+                    const std::string name = serializer->read_string();
+                    const Entity::Type type = serializer->read_object<Entity::Type>();
+
+                    kl::Object<Entity> object = nullptr;
+                    switch (type) {
+                    case Entity::Type::BASIC:
+                        object = new Entity(Entity::Type::BASIC, m_physics, false);
+                        break;
+                    case Entity::Type::CAMERA:
+                        object = new Camera(m_physics, false);
+                        break;
+                    case Entity::Type::AMBIENT_LIGHT:
+                        object = new AmbientLight(m_physics, false);
+                        break;
+                    case Entity::Type::POINT_LIGHT:
+                        object = new PointLight(m_physics, false);
+                        break;
+                    case Entity::Type::DIRECTIONAL_LIGHT:
+                        object = new DirectionalLight(m_physics, false, m_gpu, 4096);
+                        break;
+                    }
+            
+                    object->deserialize(serializer);
+                    this->add(name, object);
+                }
+            }
         }
 
         // Iterate
@@ -183,11 +291,10 @@ export namespace titian {
 
         void remove(const std::string& name)
         {
-            if (!m_entities.contains(name)) {
-                return;
+            if (m_entities.contains(name)) {
+                m_scene->removeActor(*m_entities.at(name)->actor());
+                m_entities.erase(name);
             }
-            m_scene->removeActor(*m_entities.at(name)->actor());
-            m_entities.erase(name);
         }
 
         // Update
@@ -197,10 +304,17 @@ export namespace titian {
             m_scene->fetchResults(true);
         }
 
+        void update_scripts()
+        {
+            for (auto& [_, script] : scripts) {
+                script->call_update();
+            }
+        }
+
         // Entity
         kl::Object<Entity> make_entity(const bool dynamic) const
         {
-            return new Entity(m_physics, dynamic);
+            return new Entity(Entity::Type::BASIC, m_physics, dynamic);
         }
 
         // Dynamic colliders
@@ -259,6 +373,7 @@ export namespace titian {
         physx::PxCooking* m_cooking = nullptr;
         physx::PxScene* m_scene = nullptr;
 
+        kl::Object<kl::GPU> m_gpu = nullptr;
         std::map<std::string, kl::Object<Entity>> m_entities = {};
     };
 }

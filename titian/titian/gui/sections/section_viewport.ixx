@@ -38,20 +38,20 @@ export namespace titian {
                 // Scene loading
                 const std::optional scene_file = gui_get_drag_drop<std::string>("SceneFile");
                 if (scene_file) {
-                    kl::Object<Scene> scene = new Scene(render_layer->game_layer->app_layer->gpu);
+                    render_layer->game_layer->scene = new Scene(render_layer->game_layer->app_layer->gpu);
                     const Serializer serializer = { scene_file.value(), false };
-                    scene->deserialize(&serializer);
-                    render_layer->game_layer->scene = scene;
+                    render_layer->game_layer->scene->deserialize(&serializer);
                 }
 
                 // Handle entity picking
                 const ImVec2 viewport_max = { ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + ImGui::GetWindowHeight() };
                 if (ImGui::IsWindowFocused() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), viewport_max) && !ImGuizmo::IsOver()) {
                     const kl::Int2 pixel_coords = window_mouse_position();
-                    const Unique::IDType entity_id = static_cast<Unique::IDType>(read_entity_id(pixel_coords));
+                    const uint32_t entity_id = read_entity_id(pixel_coords);
 
+                    uint32_t counter = 0;
                     for (auto& [name, entity] : *render_layer->game_layer->scene) {
-                        if (entity->id() == entity_id) {
+                        if (++counter == entity_id) {
                             editor_layer->selected_entity = name;
                             break;
                         }
@@ -85,7 +85,7 @@ export namespace titian {
             };
         }
 
-        int read_entity_id(const kl::Int2& pixel_coords)
+        uint32_t read_entity_id(const kl::Int2& pixel_coords)
         {
             if (pixel_coords.x < 0 || pixel_coords.y < 0) { return 0; }
             const kl::GPU* gpu = &render_layer->game_layer->app_layer->gpu;
@@ -103,7 +103,7 @@ export namespace titian {
             float result = 0.0f;
             gpu->read_from_resource(&result, render_layer->staging_texture->graphics_buffer.Get(), sizeof(float));
             
-            return static_cast<int>(result);
+            return static_cast<uint32_t>(result);
         }
 
         void handle_gizmo_operation_change(const int operation, const ImGuiKey switch_key)
@@ -128,7 +128,7 @@ export namespace titian {
             kl::Window* window = &editor_layer->game_layer->app_layer->window;
             Scene* scene = &editor_layer->game_layer->scene;
 
-            Camera* camera = scene->get_dynamic<Camera>(scene->camera);
+            Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
             if (!camera) { return; }
 
             const float viewport_tab_height = ImGui::GetWindowContentRegionMin().y;

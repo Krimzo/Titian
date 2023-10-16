@@ -27,12 +27,12 @@ export namespace titian {
 
             for (int y = 0; y < size; y++) {
                 for (int x = 0; x < size; x++) {
-                    const std::string mesh_id = "sphere";
-                    const std::string material_id = kl::format("sphere_mat_", sphere_counter);
-                    const std::string entity_id = kl::format("Sphere", sphere_counter);
+                    const std::string mesh_name = "sphere";
+                    const std::string material_name = kl::format("sphere_mat_", sphere_counter);
+                    const std::string entity_name = kl::format("Sphere", sphere_counter);
                     
                     // Mesh
-                    scene->meshes[mesh_id] = scene->default_meshes->sphere;
+                    scene->meshes[mesh_name] = scene->default_meshes->sphere;
 
                     // Material
                     kl::Object material = new Material();
@@ -40,16 +40,16 @@ export namespace titian {
                     material->reflection_factor = (float) sphere_counter / (size * size);
                     material->refraction_factor = (float) (size * size - sphere_counter) / (size * size);
                     material->refraction_index = 1.0f / 1.52f;
-                    scene->materials[material_id] = material;
+                    scene->materials[material_name] = material;
 
                     // Entity
                     kl::Object sphere = scene->make_entity(false);
                     sphere->set_position({ (x - half_size) * 2.25f + x_offset, (y - half_size) * 2.25f, 5.0f });
 
-                    sphere->mesh = mesh_id;
-                    sphere->material = material_id;
+                    sphere->mesh_name = mesh_name;
+                    sphere->material_name = material_name;
 
-                    scene->add(entity_id, sphere);
+                    scene->add(entity_name, sphere);
                     sphere_counter += 1;
                 }
             }

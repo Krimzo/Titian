@@ -1,28 +1,28 @@
-export module section_scene_items;
+export module section_scene_entities;
 
 export import gui_section;
 export import editor_layer;
 
 export namespace titian {
-	class GUISectionSceneItems : public GUISection
+	class GUISectionSceneEntities : public GUISection
 	{
 	public:
 		kl::Object<EditorLayer> editor_layer = nullptr;
 
-		GUISectionSceneItems(kl::Object<EditorLayer>& editor_layer)
+		GUISectionSceneEntities(kl::Object<EditorLayer>& editor_layer)
 		{
 			this->editor_layer = editor_layer;
 		}
 
-		~GUISectionSceneItems() override
+		~GUISectionSceneEntities() override
 		{}
 
 		void render_gui() override
 		{
-			Scene& scene = *editor_layer->game_layer->scene;
+			Scene* scene = &editor_layer->game_layer->scene;
 
-			if (ImGui::Begin("Scene items")) {
-				for (auto& [name, _] : scene) {
+			if (ImGui::Begin("Scene Entities")) {
+				for (auto& [name, _] : *scene) {
 					if (ImGui::Selectable(name.c_str(), name == editor_layer->selected_entity)) {
 						editor_layer->selected_entity = name;
 					}

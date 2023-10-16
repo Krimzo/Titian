@@ -45,14 +45,14 @@ export namespace titian {
             kl::GPU* gpu = &game_layer->app_layer->gpu;
             Scene* scene = &game_layer->scene;
 
-            Camera* camera = scene->get_dynamic<Camera>(scene->camera);
+            Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
             if (!camera) { return; }
 
             gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);
             gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->shadow, 1);
             gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 2);
 
-            if (Texture* skybox = &scene->get_texture(camera->skybox)) {
+            if (Texture* skybox = &scene->get_texture(camera->skybox_name)) {
                 gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
             }
             else {
@@ -85,16 +85,16 @@ export namespace titian {
                 kl::Float4 shadow_map_info; // (width, height, texel_width, texel_size)
                 kl::Float4 cascade_distances; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
             } ps_data = {};
-            ps_data.camera_info = { camera->position(), static_cast<float>(scene->textures.contains(camera->skybox)) };
+            ps_data.camera_info = { camera->position(), static_cast<float>(scene->textures.contains(camera->skybox_name)) };
             ps_data.camera_background = camera->background;
             ps_data.v_matrix = camera->view_matrix();
 
-            AmbientLight* ambient_light = scene->get_dynamic<AmbientLight>(scene->ambient_light);
+            AmbientLight* ambient_light = scene->get_dynamic<AmbientLight>(scene->main_ambient_light_name);
             if (ambient_light) {
                 ps_data.ambient_light = { ambient_light->color, ambient_light->intensity };
             }
             
-            DirectionalLight* directional_light = scene->get_dynamic<DirectionalLight>(scene->directional_light);
+            DirectionalLight* directional_light = scene->get_dynamic<DirectionalLight>(scene->main_directional_light_name);
             if (directional_light) {
                 ID3D11ShaderResourceView* dir_light_views[DirectionalLight::CASCADE_COUNT] = {};
                 for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
@@ -111,17 +111,18 @@ export namespace titian {
                 }
             }
         
+            uint32_t id_counter = 0;
             for (const auto& [name, entity] : *scene) {
-                const Mesh* mesh = &scene->get_mesh(entity->mesh);
-                const Material* material = &scene->get_material(entity->material);
+                const Mesh* mesh = &scene->get_mesh(entity->mesh_name);
+                const Material* material = &scene->get_material(entity->material_name);
                 if (!mesh || !material) { continue; }
 
-                const Texture* color_map = &scene->get_texture(material->color_map);
+                const Texture* color_map = &scene->get_texture(material->color_map_name);
                 if (color_map) {
                     gpu->bind_shader_view_for_pixel_shader(color_map->shader_view, 5);
                 }
         
-                const Texture* normal_map = &scene->get_texture(material->normal_map);
+                const Texture* normal_map = &scene->get_texture(material->normal_map_name);
                 if (normal_map) {
                     gpu->bind_shader_view_for_pixel_shader(normal_map->shader_view, 6);
                     ps_data.object_texture_info.x = 1.0f;
@@ -130,7 +131,7 @@ export namespace titian {
                     ps_data.object_texture_info.x = 0.0f;
                 }
         
-                const Texture* roughness_map = &scene->get_texture(material->roughness_map);
+                const Texture* roughness_map = &scene->get_texture(material->roughness_map_name);
                 if (roughness_map) {
                     gpu->bind_shader_view_for_pixel_shader(roughness_map->shader_view, 7);
                     ps_data.object_texture_info.y = 1.0f;
@@ -142,7 +143,7 @@ export namespace titian {
                 vs_data.w_matrix = entity->model_matrix();
         
                 ps_data.object_color = material->color;
-                ps_data.object_index = kl::Float4 { (float) entity->id() };
+                ps_data.object_index = kl::Float4 { static_cast<float>(++id_counter) };
                 ps_data.object_material = {
                     material->texture_blend,
                     material->reflection_factor,

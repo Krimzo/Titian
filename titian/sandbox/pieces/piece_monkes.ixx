@@ -29,12 +29,12 @@ export namespace titian {
                 const int x = i % size;
                 const int y = i / size;
 
-                const std::string mesh_id = "monke";
-                const std::string material_id = kl::format("monke_mat_", i);
-                const std::string entity_id = kl::format("Monke", i);
+                const std::string mesh_name = "monke";
+                const std::string material_name = kl::format("monke_mat_", i);
+                const std::string entity_name = kl::format("Monke", i);
 
                 // Mesh
-                scene->meshes[mesh_id] = editor->game_layer->scene->default_meshes->monke;
+                scene->meshes[mesh_name] = editor->game_layer->scene->default_meshes->monke;
 
                 // Material
                 const float percentage = (i + 1.0f) / entity_count;
@@ -42,7 +42,7 @@ export namespace titian {
 
                 kl::Object material = new Material();
                 material->color = kl::Float4{ normalized };
-                scene->materials[material_id] = material;
+                scene->materials[material_name] = material;
 
                 // Entity
                 kl::Object monke = scene->make_entity(false);
@@ -53,10 +53,10 @@ export namespace titian {
                     5.0f
                 });
 
-                monke->mesh = mesh_id;
-                monke->material = material_id;
+                monke->mesh_name = mesh_name;
+                monke->material_name = material_name;
 
-                scene->add(entity_id, monke);
+                scene->add(entity_name, monke);
             }
         }
     };

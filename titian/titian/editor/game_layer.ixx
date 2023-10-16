@@ -9,6 +9,7 @@ export namespace titian {
 	public:
 		kl::Object<ApplicationLayer> app_layer = nullptr;
 
+		bool game_running = false;
 		kl::Object<Scene> scene = nullptr;
 
 		GameLayer(kl::Object<ApplicationLayer>& app_layer)
@@ -22,6 +23,11 @@ export namespace titian {
 
 		bool update() override
 		{
+			if (game_running) {
+				float delta_time = app_layer->timer->delta();
+				scene->update_physics(delta_time);
+				scene->update_scripts();
+			}
 			return true;
 		}
 	};
