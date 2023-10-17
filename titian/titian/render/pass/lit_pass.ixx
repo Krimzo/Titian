@@ -113,6 +113,7 @@ export namespace titian {
         
             uint32_t id_counter = 0;
             for (const auto& [name, entity] : *scene) {
+                id_counter += 1;
                 const Mesh* mesh = &scene->get_mesh(entity->mesh_name);
                 const Material* material = &scene->get_material(entity->material_name);
                 if (!mesh || !material) { continue; }
@@ -143,7 +144,7 @@ export namespace titian {
                 vs_data.w_matrix = entity->model_matrix();
         
                 ps_data.object_color = material->color;
-                ps_data.object_index = kl::Float4 { static_cast<float>(++id_counter) };
+                ps_data.object_index = kl::Float4 { static_cast<float>(id_counter) };
                 ps_data.object_material = {
                     material->texture_blend,
                     material->reflection_factor,

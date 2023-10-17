@@ -29,12 +29,12 @@ export namespace titian {
                     // 0
                     ImGui::TableSetColumnIndex(0);
                     if (!editor_layer->game_layer->game_running) {
-                        if (ImGui::Button("Start")) {
+                        if (ImGui::Button("Start Game")) {
                             start_scene();
                         }
                     }
                     else {
-                        if (ImGui::Button("Stop")) {
+                        if (ImGui::Button("Stop Game")) {
                             stop_scene();
                         }
                     }

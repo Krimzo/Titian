@@ -29,6 +29,10 @@ export namespace titian {
             kl::Window* window = &game_layer->app_layer->window;
             const float delta_time = game_layer->app_layer->timer->delta();
 
+            if (!is_viewport_focused) {
+                return true;
+            }
+
             // Speed
             if (window->keyboard.shift) {
                 camera->speed = 5.0f;

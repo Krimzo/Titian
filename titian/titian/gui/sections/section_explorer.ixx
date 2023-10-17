@@ -39,8 +39,7 @@ export namespace titian {
 		GUISectionExplorer(kl::Object<ApplicationLayer>& app_layer)
 		{
             this->app_layer = app_layer;
-
-            kl::Object<kl::GPU> gpu = app_layer->gpu;
+            kl::GPU* gpu = &app_layer->gpu;
 
             code_file_texture = new Texture(gpu);
             script_file_texture = new Texture(gpu);

@@ -73,6 +73,9 @@ export namespace titian {
                     render_gizmos(entity);
                 }
             }
+            else {
+                editor_layer->is_viewport_focused = false;
+            }
             ImGui::End();
 
             ImGui::PopStyleVar();

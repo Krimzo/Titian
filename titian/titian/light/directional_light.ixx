@@ -39,7 +39,7 @@ export namespace titian {
             shadow_shader_view_descriptor.Texture2D.MipLevels = 1;
 
             for (auto& cascade : m_cascades) {
-                cascade = new Texture(gpu);
+                cascade = new Texture(&gpu);
                 cascade->graphics_buffer = gpu->create_texture(&shadow_map_descriptor, nullptr);
                 cascade->create_depth_view(&shadow_depth_view_descriptor);
                 cascade->create_shader_view(&shadow_shader_view_descriptor);

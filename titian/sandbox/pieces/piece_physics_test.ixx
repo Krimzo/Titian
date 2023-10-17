@@ -62,8 +62,9 @@ export namespace titian {
             const std::string color_map = "dogo";
             const std::string normal_map = "concrete_normal";
 
-            kl::Object color_map_tex = new Texture(editor->app_layer->gpu);
-            kl::Object normal_map_tex = new Texture(editor->app_layer->gpu);
+            kl::GPU* gpu = &editor->app_layer->gpu;
+            kl::Object color_map_tex = new Texture(gpu);
+            kl::Object normal_map_tex = new Texture(gpu);
 
             color_map_tex->data_buffer = kl::Image("preview/textures/dogo.png");
             normal_map_tex->data_buffer = kl::Image("preview/textures/concrete_normal.png");

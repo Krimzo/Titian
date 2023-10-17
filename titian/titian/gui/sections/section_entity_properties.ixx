@@ -41,17 +41,9 @@ export namespace titian {
         {
             ImGui::Text("Info");
 
-            std::string ent_name = "/";
-            for (const auto& [name, ent] : *scene) {
-                if (&ent == entity) {
-                    ent_name = name;
-                    break;
-                }
-            }
-
             ImGui::Text("Name: ");
             ImGui::SameLine();
-            ImGui::TextColored(reinterpret_cast<const ImVec4&>(gui_layer->special_color), ent_name.c_str());
+            ImGui::TextColored(reinterpret_cast<const ImVec4&>(gui_layer->special_color), editor_layer->selected_entity.c_str());
         }
 
         void edit_entity_transform(Scene* scene, Entity* entity)

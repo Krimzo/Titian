@@ -31,10 +31,10 @@ export namespace titian {
 
 			// Textures
 			states = new RenderStates(game_layer->app_layer->gpu);
-			render_texture = new Texture(game_layer->app_layer->gpu);
-			picking_texture = new Texture(game_layer->app_layer->gpu);
-			staging_texture = new Texture(game_layer->app_layer->gpu);
-			depth_texture = new Texture(game_layer->app_layer->gpu);
+			render_texture = new Texture(&game_layer->app_layer->gpu);
+			picking_texture = new Texture(&game_layer->app_layer->gpu);
+			staging_texture = new Texture(&game_layer->app_layer->gpu);
+			depth_texture = new Texture(&game_layer->app_layer->gpu);
 
 			// Meshes
 			screen_mesh = game_layer->app_layer->gpu->create_screen_mesh();
@@ -143,13 +143,10 @@ export namespace titian {
 	private:
 		kl::Int2 get_render_texture_size() const
 		{
-			if (!render_texture->graphics_buffer) {
-				return {};
+			if (render_texture) {
+				return render_texture->size();
 			}
-
-			kl::dx::TextureDescriptor descriptor = {};
-			render_texture->graphics_buffer->GetDesc(&descriptor);
-			return { (int) descriptor.Width, (int) descriptor.Height };
+			return {};
 		}
 	};
 }

@@ -24,7 +24,7 @@ export namespace titian {
 
 		void render_gui() override
 		{
-            if (ImGui::Begin("Log view")) {
+            if (ImGui::Begin("Log View")) {
                 auto& logs = app_layer->logs;
 
                 int starting_index = (int) logs.size() - max_display_count;

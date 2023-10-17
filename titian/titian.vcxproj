@@ -118,6 +118,8 @@
     <ClCompile Include="titian\editor\game_layer.ixx" />
     <ClCompile Include="titian\gui\gui_layer.ixx" />
     <ClCompile Include="titian\gui\gui_section.ixx" />
+    <ClCompile Include="titian\gui\sections\section_material_editor.ixx" />
+    <ClCompile Include="titian\gui\sections\section_mesh_editor.ixx" />
     <ClCompile Include="titian\gui\sections\section_scene_scripts.ixx" />
     <ClCompile Include="titian\gui\sections\section_render_info.ixx" />
     <ClCompile Include="titian\gui\sections\section_entity_properties.ixx" />

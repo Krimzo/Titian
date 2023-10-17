@@ -15,7 +15,7 @@ export namespace titian {
 
 		void setup_self() override
 		{
-			kl::Object<kl::GPU>& gpu = editor->app_layer->gpu;
+			kl::GPU* gpu = &editor->app_layer->gpu;
 			Scene* scene = &editor->game_layer->scene;
 
 			kl::Object<Texture> sky = new Texture(gpu);

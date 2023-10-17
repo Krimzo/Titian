@@ -131,7 +131,7 @@ export namespace titian {
             std::function mesh_provider = [&] { return kl::Object{ new Mesh(&m_gpu, m_physics, m_cooking) }; };
             read_map(meshes, mesh_provider);
             
-            std::function texture_provider = [&] { return kl::Object{ new Texture(m_gpu) }; };
+            std::function texture_provider = [&] { return kl::Object{ new Texture(&m_gpu) }; };
             read_map(textures, texture_provider);
 
             std::function material_provider = [&] { return kl::Object{ new Material() }; };

@@ -16,7 +16,7 @@ export namespace titian {
 		kl::dx::ShaderView shader_view = nullptr;
 		kl::dx::AccessView access_view = nullptr;
 
-		Texture(kl::Object<kl::GPU>& gpu)
+		Texture(kl::GPU* gpu)
 			: m_gpu(gpu)
 		{}
 
@@ -99,8 +99,27 @@ export namespace titian {
 			access_view = m_gpu->create_access_view(graphics_buffer, descriptor);
 		}
 
+		bool is_cube() const
+		{
+			return m_is_cube;
+		}
+
+		kl::Int2 size() const
+		{
+			if (!graphics_buffer) {
+				return {};
+			}
+
+			kl::dx::TextureDescriptor descriptor = {};
+			graphics_buffer->GetDesc(&descriptor);
+			return {
+				static_cast<int>(descriptor.Width),
+				static_cast<int>(descriptor.Height),
+			};
+		}
+
 	private:
-		kl::Object<kl::GPU> m_gpu = nullptr;
+		kl::GPU* m_gpu = nullptr;
 		bool m_is_cube = false;
 	};
 }

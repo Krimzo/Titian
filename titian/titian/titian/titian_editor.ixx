@@ -8,13 +8,15 @@ export import render_layer;
 export import gui_layer;
 
 export import section_main_menu;
-export import section_log_view;
 export import section_scene_entities;
 export import section_scene_scripts;
 export import section_scene_info;
+export import section_material_editor;
+export import section_mesh_editor;
 export import section_viewport;
-export import section_explorer;
 export import section_control_menu;
+export import section_log_view;
+export import section_explorer;
 export import section_entity_properties;
 export import section_render_info;
 
@@ -38,13 +40,15 @@ export namespace titian {
         {
             // Init editor sections
             gui_layer->sections.emplace_back(new GUISectionMainMenu(render_layer));
-            gui_layer->sections.emplace_back(new GUISectionLogView(app_layer, gui_layer));
             gui_layer->sections.emplace_back(new GUISectionSceneEntities(editor_layer));
             gui_layer->sections.emplace_back(new GUISectionSceneScripts(editor_layer, gui_layer));
             gui_layer->sections.emplace_back(new GUISectionSceneInfo(editor_layer));
+            gui_layer->sections.emplace_back(new GUISectionMaterialEditor(editor_layer, gui_layer));
+            gui_layer->sections.emplace_back(new GUISectionMeshEditor(editor_layer, gui_layer));
             gui_layer->sections.emplace_back(new GUISectionViewport(editor_layer, render_layer));
-            gui_layer->sections.emplace_back(new GUISectionExplorer(app_layer));
             gui_layer->sections.emplace_back(new GUISectionControlMenu(editor_layer));
+            gui_layer->sections.emplace_back(new GUISectionLogView(app_layer, gui_layer));
+            gui_layer->sections.emplace_back(new GUISectionExplorer(app_layer));
             gui_layer->sections.emplace_back(new GUISectionEntityProperties(editor_layer, gui_layer));
             gui_layer->sections.emplace_back(new GUISectionRenderInfo(game_layer));
 
