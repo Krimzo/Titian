@@ -6,8 +6,6 @@ export namespace titian {
 	class DLLScript : public Script
 	{
 	public:
-		void* scene = nullptr;
-
 		std::string path = {};
 		kl::DLL dll = {};
 
@@ -15,13 +13,13 @@ export namespace titian {
 		kl::DLL::Function<void, void*> update_function = nullptr;
 
 		DLLScript(void* scene)
-			: Script(Type::DLL), scene(scene)
+			: Script(Type::DLL, scene)
 		{}
 
 		DLLScript(void* scene, const std::string& path)
-			: Script(Type::DLL), scene(scene)
+			: DLLScript(scene)
 		{
-			dll.load(path);
+			this->path = path;
 			this->reload();
 		}
 
@@ -50,7 +48,7 @@ export namespace titian {
 
 		void reload() override
 		{
-			dll.reload();
+			dll.load(path);
 			if (dll) {
 				start_function = dll.read_function<void, void*>("script_start");
 				update_function = dll.read_function<void, void*>("script_update");

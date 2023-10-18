@@ -222,18 +222,10 @@ export namespace titian {
             return m_cooking;
         }
 
-        kl::Object<Entity> get_entity(const std::string& id) const
+        kl::Object<Mesh> get_mesh(const std::string& id) const
         {
-            if (m_entities.contains(id)) {
-                return m_entities.at(id);
-            }
-            return nullptr;
-        }
-
-        kl::Object<Material> get_material(const std::string& id) const
-        {
-            if (materials.contains(id)) {
-                return materials.at(id);
+            if (meshes.contains(id)) {
+                return meshes.at(id);
             }
             return nullptr;
         }
@@ -246,10 +238,26 @@ export namespace titian {
             return nullptr;
         }
 
-        kl::Object<Mesh> get_mesh(const std::string& id) const
+        kl::Object<Material> get_material(const std::string& id) const
         {
-            if (meshes.contains(id)) {
-                return meshes.at(id);
+            if (materials.contains(id)) {
+                return materials.at(id);
+            }
+            return nullptr;
+        }
+
+        kl::Object<Script> get_script(const std::string& id) const
+        {
+            if (scripts.contains(id)) {
+                return scripts.at(id);
+            }
+            return nullptr;
+        }
+
+        kl::Object<Entity> get_entity(const std::string& id) const
+        {
+            if (m_entities.contains(id)) {
+                return m_entities.at(id);
             }
             return nullptr;
         }

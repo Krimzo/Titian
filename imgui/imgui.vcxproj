@@ -26,6 +26,7 @@
     <ClCompile Include="source\imgui_node_editor_api.cpp" />
     <ClCompile Include="source\imgui_tables.cpp" />
     <ClCompile Include="source\imgui_widgets.cpp" />
+    <ClCompile Include="source\imnodes.cpp" />
     <ClCompile Include="source\ImSequencer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +45,8 @@
     <ClInclude Include="source\imgui_internal.h" />
     <ClInclude Include="source\imgui_node_editor.h" />
     <ClInclude Include="source\imgui_node_editor_internal.h" />
+    <ClInclude Include="source\imnodes.h" />
+    <ClInclude Include="source\imnodes_internal.h" />
     <ClInclude Include="source\ImSequencer.h" />
     <ClInclude Include="source\imstb_rectpack.h" />
     <ClInclude Include="source\imstb_textedit.h" />
@@ -92,7 +95,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX;IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -110,7 +113,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX;IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>

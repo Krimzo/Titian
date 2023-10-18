@@ -34,7 +34,7 @@ export namespace titian {
 
             StatePackage package = {};
             package.raster_state = render_states->raster_states->wireframe;
-            package.depth_state = render_states->depth_states->disabled;
+            package.depth_state = render_states->depth_states->enabled;
             package.shader_state = render_states->shader_states->unlit_pass;
             return package;
         }

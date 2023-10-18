@@ -27,6 +27,8 @@ export namespace titian {
 				gpu->set_viewport_size(new_size);
 			});
 			window->maximize();
+
+			window->set_icon("builtin/textures/editor_icon.ico");
 		}
 
 		~ApplicationLayer() override

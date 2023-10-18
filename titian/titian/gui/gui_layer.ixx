@@ -22,6 +22,7 @@ export namespace titian {
 			kl::GPU* gpu = &render_layer->game_layer->app_layer->gpu;
 
 			ImGui::CreateContext();
+			ImNodes::CreateContext();
 			ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 			ImGui::StyleColorsDark();
