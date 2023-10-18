@@ -12,7 +12,28 @@
 #include "media/video/video_writer.h"
 
 
-namespace kl::media_utility {
-    void fail_check_(HRESULT hr, const std::string& error_message);
-    bool succeeded_(HRESULT hr);
+namespace kl {
+    class HRChecker {};
+
+    class HRPackage {
+    public:
+        const HRESULT result = {};
+        const std::source_location location = {};
+
+        HRPackage(const HRESULT result, std::source_location location = std::source_location::current())
+            : result(result), location(location)
+        {}
+    };
+
+    inline void operator>>(const HRPackage& package, const HRChecker& _)
+    {
+        if (FAILED(package.result)) {
+            const std::string message = std::format("{}:{}:{}: HRESULT failed with error code: {}",
+                package.location.file_name(), package.location.line(), package.location.column(),
+                package.result);
+            throw std::runtime_error(message);
+        }
+    }
+
+    inline const HRChecker hr_checker = {};
 }

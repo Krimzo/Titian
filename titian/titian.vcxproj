@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{0e354a3a-110e-4bad-8e77-bf1a524d31b5}</ProjectGuid>
+    <RootNamespace>titian</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX;IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)physx\lib\debug</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX;IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)physx\lib\release</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\imgui\imgui.vcxproj">
+      <Project>{737a8abd-a62f-4e28-8da3-d24a40d276bd}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\klib\klib.vcxproj">
+      <Project>{5b9896b1-803a-45dd-a262-8055d73c6dd0}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\physx\physx.vcxproj">
+      <Project>{a885895c-a34e-4be4-9fc9-bf25c60edcba}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="sandbox\pieces\piece_prepare.ixx" />
+    <ClCompile Include="sandbox\pieces\piece_skybox.ixx" />
+    <ClCompile Include="sandbox\pieces\piece_cubes.ixx" />
+    <ClCompile Include="sandbox\pieces\piece_monkes.ixx" />
+    <ClCompile Include="sandbox\pieces\piece_spheres.ixx" />
+    <ClCompile Include="sandbox\pieces\piece_physics_test.ixx" />
+    <ClCompile Include="sandbox\sandbox_piece.ixx" />
+    <ClCompile Include="sandbox\sandbox_entry.ixx" />
+    <ClCompile Include="source\main.ixx" />
+    <ClCompile Include="titian\application\application_layer.ixx" />
+    <ClCompile Include="titian\application\log_info.ixx" />
+    <ClCompile Include="titian\components\collider.ixx" />
+    <ClCompile Include="titian\components\material.ixx" />
+    <ClCompile Include="titian\components\mesh.ixx" />
+    <ClCompile Include="titian\components\texture.ixx" />
+    <ClCompile Include="titian\editor\editor_layer.ixx" />
+    <ClCompile Include="titian\editor\game_layer.ixx" />
+    <ClCompile Include="titian\gui\gui_layer.ixx" />
+    <ClCompile Include="titian\gui\gui_section.ixx" />
+    <ClCompile Include="titian\gui\sections\section_material_editor.ixx" />
+    <ClCompile Include="titian\gui\sections\section_mesh_editor.ixx" />
+    <ClCompile Include="titian\gui\sections\section_scene_scripts.ixx" />
+    <ClCompile Include="titian\gui\sections\section_render_info.ixx" />
+    <ClCompile Include="titian\gui\sections\section_entity_properties.ixx" />
+    <ClCompile Include="titian\gui\sections\section_control_menu.ixx" />
+    <ClCompile Include="titian\gui\sections\section_explorer.ixx" />
+    <ClCompile Include="titian\gui\sections\section_log_view.ixx" />
+    <ClCompile Include="titian\gui\sections\section_main_menu.ixx" />
+    <ClCompile Include="titian\gui\sections\section_scene_info.ixx" />
+    <ClCompile Include="titian\gui\sections\section_scene_entities.ixx" />
+    <ClCompile Include="titian\gui\sections\section_script_editor.ixx" />
+    <ClCompile Include="titian\gui\sections\section_viewport.ixx" />
+    <ClCompile Include="titian\gui\utility\gui_helper.ixx" />
+    <ClCompile Include="titian\layer\layer.ixx" />
+    <ClCompile Include="titian\layer\layer_stack.ixx" />
+    <ClCompile Include="titian\light\ambient_light.ixx" />
+    <ClCompile Include="titian\light\directional_light.ixx" />
+    <ClCompile Include="titian\light\light.ixx" />
+    <ClCompile Include="titian\light\point_light.ixx" />
+    <ClCompile Include="titian\render\pass\lit_pass.ixx" />
+    <ClCompile Include="titian\render\pass\collider_pass.ixx" />
+    <ClCompile Include="titian\render\pass\postprocess_pass.ixx" />
+    <ClCompile Include="titian\render\pass\shadow_pass.ixx" />
+    <ClCompile Include="titian\render\pass\skybox_pass.ixx" />
+    <ClCompile Include="titian\render\render_layer.ixx" />
+    <ClCompile Include="titian\render\render_pass.ixx" />
+    <ClCompile Include="titian\render\render_states.ixx" />
+    <ClCompile Include="titian\render\states\blend_states.ixx" />
+    <ClCompile Include="titian\render\states\depth_states.ixx" />
+    <ClCompile Include="titian\render\states\raster_states.ixx" />
+    <ClCompile Include="titian\render\states\sampler_states.ixx" />
+    <ClCompile Include="titian\render\states\shader_states.ixx" />
+    <ClCompile Include="titian\render\state_package.ixx" />
+    <ClCompile Include="titian\scene\camera.ixx" />
+    <ClCompile Include="titian\scene\default_materials.ixx" />
+    <ClCompile Include="titian\scene\default_meshes.ixx" />
+    <ClCompile Include="titian\scene\entity.ixx" />
+    <ClCompile Include="titian\scene\scene.ixx" />
+    <ClCompile Include="titian\scripting\script.ixx" />
+    <ClCompile Include="titian\scripting\dll_script.ixx" />
+    <ClCompile Include="titian\scripting\visual\visual_script_parts.ixx" />
+    <ClCompile Include="titian\scripting\visual\visual_script_types.ixx" />
+    <ClCompile Include="titian\scripting\visual_script.ixx" />
+    <ClCompile Include="titian\serialization\serializable.ixx" />
+    <ClCompile Include="titian\serialization\serialization.ixx" />
+    <ClCompile Include="titian\serialization\serializer.ixx" />
+    <ClCompile Include="titian\titian\titian_editor.ixx" />
+    <ClCompile Include="titian\titian\titian_game.ixx" />
+    <ClCompile Include="titian\titian_entry.ixx" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

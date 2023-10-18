@@ -4,17 +4,18 @@
 
 
 namespace kl {
-    struct compiled_shader
+    class CompiledShader
     {
-        dx::data_blob m_data = nullptr;
-        dx::data_blob m_error = nullptr;
-
+    public:
+        dx::DataBlob data = nullptr;
+        dx::DataBlob error = nullptr;
+        
         operator bool() const;
 
-        const void* data() const;
+        const void* data_val() const;
         SIZE_T data_size() const;
 
-        std::string error() const;
+        std::string error_val() const;
         SIZE_T error_size() const;
     };
 }

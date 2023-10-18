@@ -4,47 +4,48 @@
 
 
 namespace kl {
-    struct complex
+    class Complex
     {
+    public:
         float r = 0.0f;
         float i = 0.0f;
 
         // Construct
-        complex();
-        complex(float r, float i);
+        Complex();
+        Complex(float r, float i);
 
-        explicit complex(float angle);
+        explicit Complex(float angle);
 
         // Get
         operator float* () const;
-        operator kl::float2() const;
+        operator kl::Float2() const;
 
         float& operator[](int index);
         const float& operator[](int index) const;
 
         // Compare
-        bool operator==(const complex& other) const;
-        bool operator!=(const complex& other) const;
+        bool operator==(const Complex& other) const;
+        bool operator!=(const Complex& other) const;
 
         // Math
-        complex operator+(const complex& other) const;
-        void operator+=(const complex& other);
+        Complex operator+(const Complex& other) const;
+        void operator+=(const Complex& other);
 
-        complex operator-(const complex& other) const;
-        void operator-=(const complex& other);
+        Complex operator-(const Complex& other) const;
+        void operator-=(const Complex& other);
 
-        complex operator*(float value) const;
+        Complex operator*(float value) const;
         void operator*=(float value);
 
-        complex operator*(const complex& other) const;
-        void operator*=(const complex& other);
+        Complex operator*(const Complex& other) const;
+        void operator*=(const Complex& other);
 
         // Other
-        complex operator-() const;
+        Complex operator-() const;
         float length() const;
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const complex& num);
+    std::ostream& operator<<(std::ostream& stream, const Complex& num);
 }

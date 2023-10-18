@@ -4,63 +4,66 @@
 
 
 namespace kl {
-    struct quaternion;
+    class Quaternion;
 }
 
 namespace kl {
-    struct float3
+    class Float3
     {
+    public:
         float x = 0.0f;
         float y = 0.0f;
         float z = 0.0f;
 
         // Construct
-        float3();
-        explicit float3(float value);
-        float3(float x, float y, float z);
+        Float3();
+        explicit Float3(float value);
+        Float3(float x, float y, float z);
 
-        float3(const float2& vec, float z);
-        float3(float x, const float2& vec);
+        Float3(const Float2& vec, float z);
+        Float3(float x, const Float2& vec);
 
         // Get
-        operator float* () const;
-        operator kl::color() const;
-        operator kl::quaternion() const;
+        operator float* ();
+        operator const float* () const;
+        
+        operator kl::Color() const;
+        operator kl::Quaternion() const;
 
-        float2 xy() const;
+        Float2 xy() const;
 
         float& operator[](int index);
         const float& operator[](int index) const;
 
         // Compare
-        bool operator==(const float3& other) const;
-        bool operator!=(const float3& other) const;
+        bool operator==(const Float3& other) const;
+        bool operator!=(const Float3& other) const;
 
         // Math
-        float3 operator+(const float3& other) const;
-        void operator+=(const float3& other);
+        Float3 operator+(const Float3& other) const;
+        void operator+=(const Float3& other);
 
-        float3 operator-(const float3& other) const;
-        void operator-=(const float3& other);
+        Float3 operator-(const Float3& other) const;
+        void operator-=(const Float3& other);
 
-        float3 operator*(float value) const;
+        Float3 operator*(float value) const;
         void operator*=(float value);
 
-        float3 operator*(const float3& other) const;
-        void operator*=(const float3& other);
+        Float3 operator*(const Float3& other) const;
+        void operator*=(const Float3& other);
 
-        float3 operator/(float value) const;
+        Float3 operator/(float value) const;
         void operator/=(float value);
 
-        float3 operator/(const float3& other) const;
-        void operator/=(const float3& other);
+        Float3 operator/(const Float3& other) const;
+        void operator/=(const Float3& other);
 
         // Other
-        float3 operator-() const;
+        Float3 operator-() const;
         float length() const;
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const float3& vec);
+    std::ostream& operator<<(std::ostream& stream, const Float3& vec);
 }

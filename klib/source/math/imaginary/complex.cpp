@@ -2,84 +2,84 @@
 
 
 // Construct
-kl::complex::complex()
+kl::Complex::Complex()
 {}
 
-kl::complex::complex(const float r, const float i)
+kl::Complex::Complex(const float r, const float i)
     : r(r), i(i)
 {}
 
-kl::complex::complex(const float angle)
+kl::Complex::Complex(const float angle)
     : r(cos_deg(angle)), i(sin_deg(angle))
 {}
 
 // Get
-kl::complex::operator float* () const
+kl::Complex::operator float* () const
 {
     return (float*) this;
 }
 
-kl::complex::operator kl::float2() const
+kl::Complex::operator kl::Float2() const
 {
-    return *(const float2*) this;
+    return *(const Float2*) this;
 }
 
-float& kl::complex::operator[](int index)
+float& kl::Complex::operator[](int index)
 {
     return ((float*) this)[index];
 }
 
-const float& kl::complex::operator[](int index) const
+const float& kl::Complex::operator[](int index) const
 {
     return ((float*) this)[index];
 }
 
 // Compare
-bool kl::complex::operator==(const complex& other) const
+bool kl::Complex::operator==(const Complex& other) const
 {
     return (r == other.r && i == other.i);
 }
 
-bool kl::complex::operator!=(const complex& other) const
+bool kl::Complex::operator!=(const Complex& other) const
 {
     return !(*this == other);
 }
 
 // Math
-kl::complex kl::complex::operator+(const complex& other) const
+kl::Complex kl::Complex::operator+(const Complex& other) const
 {
     return { r + other.r, i + other.i };
 }
 
-void kl::complex::operator+=(const complex& other)
+void kl::Complex::operator+=(const Complex& other)
 {
     r += other.r;
     i += other.i;
 }
 
-kl::complex kl::complex::operator-(const complex& other) const
+kl::Complex kl::Complex::operator-(const Complex& other) const
 {
     return { r - other.r, i - other.i };
 }
 
-void kl::complex::operator-=(const complex& other)
+void kl::Complex::operator-=(const Complex& other)
 {
     r -= other.r;
     i -= other.i;
 }
 
-kl::complex kl::complex::operator*(const float value) const
+kl::Complex kl::Complex::operator*(const float value) const
 {
     return { r * value, i * value };
 }
 
-void kl::complex::operator*=(const float value)
+void kl::Complex::operator*=(const float value)
 {
     r *= value;
     i *= value;
 }
 
-kl::complex kl::complex::operator*(const complex& other) const
+kl::Complex kl::Complex::operator*(const Complex& other) const
 {
     return {
         r * other.r - i * other.i,
@@ -87,24 +87,24 @@ kl::complex kl::complex::operator*(const complex& other) const
     };
 }
 
-void kl::complex::operator*=(const complex& other)
+void kl::Complex::operator*=(const Complex& other)
 {
     *this = *this * other;
 }
 
 // Other
-kl::complex kl::complex::operator-() const
+kl::Complex kl::Complex::operator-() const
 {
     return *this * -1.0f;
 }
 
-float kl::complex::length() const
+float kl::Complex::length() const
 {
     return sqrt(r * r + i * i);
 }
 
 // Format
-std::ostream& kl::operator<<(std::ostream& stream, const complex& num)
+std::ostream& kl::operator<<(std::ostream& stream, const Complex& num)
 {
     stream << std::setprecision(2);
     stream << "(" << num.r << " + " << num.i << "i)";

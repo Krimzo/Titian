@@ -2,8 +2,8 @@
 
 
 // Creation
-kl::gpu::gpu(const bool debug, const bool single_threaded)
-    : creation_type(gpu_creation_type::compute)
+kl::GPU::GPU(const bool debug, const bool single_threaded)
+    : creation_type(GpuCreationType::COMPUTE)
 {
     UINT creation_flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
     if (debug) {
@@ -21,16 +21,16 @@ kl::gpu::gpu(const bool debug, const bool single_threaded)
         nullptr,
         NULL,
         D3D11_SDK_VERSION,
-        &device_,
+        &m_device,
         nullptr,
-        &context_
+        &m_context
     );
-    error_check(!device_, "Failed to create device");
-    error_check(!context_, "Failed to create device context");
+    assert(m_device, "Failed to create device");
+    assert(m_context, "Failed to create device context");
 }
 
-kl::gpu::gpu(const HWND window, const bool debug, const bool single_threaded)
-    : creation_type(gpu_creation_type::render)
+kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
+    : creation_type(GpuCreationType::RENDER)
 {
     RECT window_client_area = {};
     GetClientRect(window, &window_client_area);
@@ -63,112 +63,112 @@ kl::gpu::gpu(const HWND window, const bool debug, const bool single_threaded)
         NULL,
         D3D11_SDK_VERSION,
         &chain_descriptor,
-        &chain_,
-        &device_,
+        &m_chain,
+        &m_device,
         nullptr,
-        &context_
+        &m_context
     );
-    error_check(!device_, "Failed to create device");
-    error_check(!context_, "Failed to create device context");
-    error_check(!chain_, "Failed to create swapchain");
+    assert(m_device, "Failed to create device");
+    assert(m_context, "Failed to create device context");
+    assert(m_chain, "Failed to create swapchain");
 
     bind_raster_state(create_raster_state(false, false));
     set_viewport_min_max({ 0.0f, 1.0f });
     resize_to_window(window);
 }
 
-kl::gpu::~gpu()
+kl::GPU::~GPU()
 {
-    if (chain_) {
-        chain_->SetFullscreenState(false, nullptr);
+    if (m_chain) {
+        m_chain->SetFullscreenState(false, nullptr);
     }
 }
 
 // Get
-kl::dx::device kl::gpu::device() const
+kl::dx::Device kl::GPU::device() const
 {
-    return device_;
+    return m_device;
 }
 
-kl::dx::context kl::gpu::context() const
+kl::dx::Context kl::GPU::context() const
 {
-    return context_;
+    return m_context;
 }
 
-kl::dx::chain kl::gpu::chain() const
+kl::dx::Chain kl::GPU::chain() const
 {
-    return chain_;
+    return m_chain;
 }
 
-kl::dx::target_view kl::gpu::internal_target() const
+kl::dx::TargetView kl::GPU::internal_target() const
 {
-    return target_view_;
+    return m_target_view;
 }
 
-kl::dx::depth_view kl::gpu::internal_depth() const
+kl::dx::DepthView kl::GPU::internal_depth() const
 {
-    return depth_view_;
+    return m_depth_view;
 }
 
 // Chain
-kl::dx::texture kl::gpu::back_buffer() const
+kl::dx::Texture kl::GPU::back_buffer() const
 {
-    dx::texture buffer = nullptr;
-    const long result = chain_->GetBuffer(0, IID_PPV_ARGS(&buffer));
-    warning_check(!buffer, format("Failed to get backbuffer texture. Result: 0x", std::hex, result));
+    dx::Texture buffer = nullptr;
+    const long result = m_chain->GetBuffer(0, IID_PPV_ARGS(&buffer));
+    verify(buffer, format("Failed to get backbuffer texture. Result: 0x", std::hex, result));
     return buffer;
 }
 
-void kl::gpu::swap_buffers(const bool v_sync) const
+void kl::GPU::swap_buffers(const bool v_sync) const
 {
-    chain_->Present(v_sync, NULL);
+    m_chain->Present(v_sync, NULL);
 }
 
-bool kl::gpu::in_fullscreen() const
+bool kl::GPU::in_fullscreen() const
 {
     BOOL result = false;
     IDXGIOutput* ignored = nullptr;
-    chain_->GetFullscreenState(&result, &ignored);
+    m_chain->GetFullscreenState(&result, &ignored);
     return (bool) result;
 }
 
-void kl::gpu::set_fullscreen(const bool enabled) const
+void kl::GPU::set_fullscreen(const bool enabled) const
 {
-    chain_->SetFullscreenState(enabled, nullptr);
+    m_chain->SetFullscreenState(enabled, nullptr);
 }
 
 // Internal buffers
-void kl::gpu::clear_internal_color(const float4& color) const
+void kl::GPU::clear_internal_color(const Float4& color) const
 {
-    context_->ClearRenderTargetView(target_view_.Get(), color);
+    m_context->ClearRenderTargetView(m_target_view.Get(), color);
 }
 
-void kl::gpu::clear_internal_depth(const float depth, const UINT8 stencil) const
+void kl::GPU::clear_internal_depth(const float depth, const UINT8 stencil) const
 {
-    static const UINT clear_type = (D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL);
-    context_->ClearDepthStencilView(depth_view_.Get(), clear_type, depth, stencil);
+    static constexpr UINT clear_type = (D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL);
+    m_context->ClearDepthStencilView(m_depth_view.Get(), clear_type, depth, stencil);
 }
 
-void kl::gpu::clear_internal(const float4& color) const
+void kl::GPU::clear_internal(const Float4& color) const
 {
     clear_internal_color(color);
     clear_internal_depth();
 }
 
-void kl::gpu::resize_internal(const int2& size)
+void kl::GPU::resize_internal(const Int2& size)
 {
     // Cleanup
     unbind_target_depth_views();
-    target_view_ = nullptr;
-    depth_view_ = nullptr;
-    chain_->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, NULL);
+    m_target_view = nullptr;
+    m_depth_view = nullptr;
+    m_chain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, NULL);
 
     // Render buffer
-    const dx::texture render_texture = this->back_buffer();
-    target_view_ = create_target_view(render_texture, nullptr);
+    const dx::Texture render_texture = this->back_buffer();
+    m_target_view = create_target_view(render_texture, nullptr);
 
     // Depth buffer
-    dx::texture_descriptor descriptor = {};
+    dx::TextureDescriptor descriptor = {};
     descriptor.Width = size.x;
     descriptor.Height = size.y;
     descriptor.MipLevels = 1;
@@ -178,14 +178,14 @@ void kl::gpu::resize_internal(const int2& size)
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-    const dx::texture depth_texture = create_texture(&descriptor, nullptr);
-    depth_view_ = create_depth_view(depth_texture, nullptr);
+    const dx::Texture depth_texture = create_texture(&descriptor, nullptr);
+    m_depth_view = create_depth_view(depth_texture, nullptr);
 
     // Rebind
     bind_internal_views();
 }
 
-void kl::gpu::resize_to_window(HWND window)
+void kl::GPU::resize_to_window(const HWND window)
 {
     RECT window_client_area = {};
     GetClientRect(window, &window_client_area);
@@ -193,44 +193,44 @@ void kl::gpu::resize_to_window(HWND window)
     set_viewport_size({ window_client_area.right, window_client_area.bottom });
 }
 
-void kl::gpu::bind_internal_views() const
+void kl::GPU::bind_internal_views() const
 {
-    bind_target_depth_views({ target_view_ }, depth_view_);
+    bind_target_depth_views({ m_target_view }, m_depth_view);
 }
 
 // Shader helper
-kl::shader_holder<kl::dx::vertex_shader> kl::gpu::create_vertex_shader(const std::string& shader_source)
+kl::ShaderHolder<kl::dx::VertexShader> kl::GPU::create_vertex_shader(const std::string& shader_source)
 {
-    const compiled_shader compiled_shader = compile_vertex_shader(shader_source);
-    return { this, device_holder::create_vertex_shader(compiled_shader) };
+    const CompiledShader compiled_shader = compile_vertex_shader(shader_source);
+    return { this, DeviceHolder::create_vertex_shader(compiled_shader) };
 }
 
-kl::shader_holder<kl::dx::geometry_shader> kl::gpu::create_geometry_shader(const std::string& shader_source)
+kl::ShaderHolder<kl::dx::GeometryShader> kl::GPU::create_geometry_shader(const std::string& shader_source)
 {
-    const compiled_shader compiled_shader = compile_geometry_shader(shader_source);
-    return { this, device_holder::create_geometry_shader(compiled_shader) };
+    const CompiledShader compiled_shader = compile_geometry_shader(shader_source);
+    return { this, DeviceHolder::create_geometry_shader(compiled_shader) };
 }
 
-kl::shader_holder<kl::dx::pixel_shader> kl::gpu::create_pixel_shader(const std::string& shader_source)
+kl::ShaderHolder<kl::dx::PixelShader> kl::GPU::create_pixel_shader(const std::string& shader_source)
 {
-    const compiled_shader compiled_shader = compile_pixel_shader(shader_source);
-    return { this, device_holder::create_pixel_shader(compiled_shader) };
+    const CompiledShader compiled_shader = compile_pixel_shader(shader_source);
+    return { this, DeviceHolder::create_pixel_shader(compiled_shader) };
 }
 
-kl::shader_holder<kl::dx::compute_shader> kl::gpu::create_compute_shader(const std::string& shader_source)
+kl::ShaderHolder<kl::dx::ComputeShader> kl::GPU::create_compute_shader(const std::string& shader_source)
 {
-    const compiled_shader compiled_shader = compile_compute_shader(shader_source);
-    return { this, device_holder::create_compute_shader(compiled_shader) };
+    const CompiledShader compiled_shader = compile_compute_shader(shader_source);
+    return { this, DeviceHolder::create_compute_shader(compiled_shader) };
 }
 
-kl::render_shaders kl::gpu::create_render_shaders(const std::string& shader_sources)
+kl::RenderShaders kl::GPU::create_render_shaders(const std::string& shader_sources)
 {
-    const compiled_shader compiled_vertex_shader = compile_vertex_shader(shader_sources);
-    const compiled_shader compiled_pixel_shader = compile_pixel_shader(shader_sources);
+    const CompiledShader compiled_vertex_shader = compile_vertex_shader(shader_sources);
+    const CompiledShader compiled_pixel_shader = compile_pixel_shader(shader_sources);
 
-    render_shaders shaders = {};
+    RenderShaders shaders = {};
     shaders.input_layout = create_input_layout(compiled_vertex_shader);
-    shaders.vertex_shader = { this, device_holder::create_vertex_shader(compiled_vertex_shader) };
-    shaders.pixel_shader = { this, device_holder::create_pixel_shader(compiled_pixel_shader) };
+    shaders.vertex_shader = { this, DeviceHolder::create_vertex_shader(compiled_vertex_shader) };
+    shaders.pixel_shader = { this, DeviceHolder::create_pixel_shader(compiled_pixel_shader) };
     return shaders;
 }

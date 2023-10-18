@@ -7,34 +7,34 @@
 
 
 namespace kl {
-    class directional_light
+    class DirectionalLight
     {
     public:
         static constexpr UINT CASCADE_COUNT = 4;
         static constexpr float CASCADE_SPLITS[CASCADE_COUNT + 1] = { 0.0f, 0.075f, 0.2f, 0.5f, 1.0f };
 
     private:
-        float3 direction_ = { 0.0f, 0.0f, 1.0f };
-        object<texture> cascades_[CASCADE_COUNT] = {};
+        Float3 m_direction = { 0.0f, 0.0f, 1.0f };
+        Object<Texture> m_cascades[CASCADE_COUNT] = {};
 
     public:
         const UINT map_resolution;
         float point_size = 1.0f;
 
-        directional_light(gpu* gpu, UINT map_resolution);
+        DirectionalLight(GPU* gpu, UINT map_resolution);
 
-        directional_light(const directional_light&) = delete;
-        directional_light(const directional_light&&) = delete;
+        DirectionalLight(const DirectionalLight&) = delete;
+        DirectionalLight(const DirectionalLight&&) = delete;
 
-        void operator=(const directional_light&) = delete;
-        void operator=(const directional_light&&) = delete;
+        void operator=(const DirectionalLight&) = delete;
+        void operator=(const DirectionalLight&&) = delete;
 
-        void set_direction(const float3& direction);
-        float3 direction() const;
+        void set_direction(const Float3& direction);
+        Float3 direction() const;
 
-        dx::depth_view depth_view(UINT cascade_index) const;
-        dx::shader_view shader_view(UINT cascade_index) const;
+        dx::DepthView depth_view(UINT cascade_index) const;
+        dx::ShaderView shader_view(UINT cascade_index) const;
 
-        float4x4 matrix(camera camera, UINT cascade_index) const;
+        Float4x4 matrix(Camera camera, UINT cascade_index) const;
     };
 }

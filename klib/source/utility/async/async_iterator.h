@@ -4,7 +4,7 @@
 
 
 namespace kl {
-    class async_iterator
+    class AsyncIterator
     {
     public:
         using value_type = int64_t;
@@ -15,19 +15,19 @@ namespace kl {
         using difference_type = value_type;
 
     private:
-        value_type value_ = {};
+        value_type m_value = {};
 
     public:
-        async_iterator();
-        async_iterator(value_type value);
+        AsyncIterator();
+        AsyncIterator(value_type value);
 
         void operator++();
         void operator--();
 
-        difference_type operator+(const async_iterator& iter) const;
-        difference_type operator-(const async_iterator& iter) const;
+        difference_type operator+(const AsyncIterator& iter) const;
+        difference_type operator-(const AsyncIterator& iter) const;
 
         reference operator*();
-        bool operator==(const async_iterator& second) const;
+        bool operator==(const AsyncIterator& second) const;
     };
 }

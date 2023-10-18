@@ -8,45 +8,45 @@
 #ifdef KL_USING_PHYSX
 
 namespace kl {
-    class entity
+    class Entity
     {
-        PxRigidActor* physics_actor_ = nullptr;
-        object<collider> collider_ = nullptr;
+        physx::PxRigidActor* m_physics_actor = nullptr;
+        Object<Collider> m_collider = nullptr;
 
-        void generate_actor(PxPhysics* physics, const PxTransform& transform, bool dynamic);
+        void generate_actor(physx::PxPhysics* physics, const physx::PxTransform& transform, bool dynamic);
         void wake_up() const;
 
     public:
         const uint64_t unique_index;
-        float3 render_scale = float3(1.0f);
+        Float3 render_scale { 1.0f };
 
-        object<mesh> mesh = nullptr;
-        object<material> material = nullptr;
+        Object<Mesh> mesh = nullptr;
+        Object<Material> material = nullptr;
 
         // Creation
-        entity(PxPhysics* physics, bool dynamic);
-        virtual ~entity();
+        Entity(physx::PxPhysics* physics, bool dynamic);
+        virtual ~Entity();
 
-        entity(const entity&) = delete;
-        entity(const entity&&) = delete;
+        Entity(const Entity&) = delete;
+        Entity(const Entity&&) = delete;
 
-        void operator=(const entity&) = delete;
-        void operator=(const entity&&) = delete;
+        void operator=(const Entity&) = delete;
+        void operator=(const Entity&&) = delete;
 
         // Get
-        PxRigidActor* actor() const;
-        float4x4 matrix() const;
-        float4x4 collider_matrix() const;
+        physx::PxRigidActor* actor() const;
+        Float4x4 matrix() const;
+        Float4x4 collider_matrix() const;
 
         // Geometry
-        void set_rotation(const float3& rotation);
-        float3 rotation() const;
+        void set_rotation(const Float3& rotation);
+        Float3 rotation() const;
 
-        void set_position(const float3& position);
-        float3 position() const;
+        void set_position(const Float3& position);
+        Float3 position() const;
 
         // Physics
-        void set_dynamic(PxPhysics* physics, bool enabled);
+        void set_dynamic(physx::PxPhysics* physics, bool enabled);
         bool is_dynamic() const;
 
         void set_gravity(bool enabled);
@@ -55,38 +55,38 @@ namespace kl {
         void set_mass(float mass);
         float mass() const;
 
-        void set_velocity(const float3& velocity);
-        float3 velocity() const;
+        void set_velocity(const Float3& velocity);
+        Float3 velocity() const;
 
-        void set_angular(const float3& angular);
-        float3 angular() const;
+        void set_angular(const Float3& angular);
+        Float3 angular() const;
 
         // Collision
-        void set_collider(object<collider> collider);
-        object<collider> collider() const;
+        void set_collider(const Object<Collider>& collider);
+        Object<Collider> collider() const;
     };
 }
 
 #else
 
 namespace kl {
-    class entity
+    class Entity
     {
     public:
-        float3 scale = float3(1.0f);
-        float3 rotation = {};
-        float3 position = {};
+        Float3 scale { 1.0f };
+        Float3 rotation = {};
+        Float3 position = {};
 
-        float3 acceleration = {};
-        float3 velocity = {};
-        float3 angular = {};
+        Float3 acceleration = {};
+        Float3 velocity = {};
+        Float3 angular = {};
 
-        object<mesh> mesh = nullptr;
-        object<material> material = nullptr;
+        Object<Mesh> mesh = nullptr;
+        Object<Material> material = nullptr;
 
         void update_physics(float delta_t);
 
-        float4x4 matrix() const;
+        Float4x4 matrix() const;
     };
 }
 

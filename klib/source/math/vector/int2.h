@@ -5,55 +5,58 @@
 
 
 namespace kl {
-    struct float2;
+    class Float2;
 }
 
 namespace kl {
-    struct int2
+    class Int2
     {
+    public:
         int x = 0;
         int y = 0;
 
         // Construct
-        int2();
-        explicit int2(int value);
-        int2(int x, int y);
+        Int2();
+        explicit Int2(int value);
+        Int2(int x, int y);
 
         // Get
-        operator int* () const;
-        operator kl::float2() const;
+        operator int* ();
+        operator const int* () const;
+        
+        operator kl::Float2() const;
 
         int& operator[](int index);
         const int& operator[](int index) const;
 
         // Compare
-        bool operator==(const int2& other) const;
-        bool operator!=(const int2& other) const;
+        bool operator==(const Int2& other) const;
+        bool operator!=(const Int2& other) const;
 
         // Math
-        int2 operator+(const int2& other) const;
-        void operator+=(const int2& other);
+        Int2 operator+(const Int2& other) const;
+        void operator+=(const Int2& other);
 
-        int2 operator-(const int2& other) const;
-        void operator-=(const int2& other);
+        Int2 operator-(const Int2& other) const;
+        void operator-=(const Int2& other);
 
-        int2 operator*(int value) const;
+        Int2 operator*(int value) const;
         void operator*=(int value);
 
-        int2 operator*(const int2& other) const;
-        void operator*=(const int2& other);
+        Int2 operator*(const Int2& other) const;
+        void operator*=(const Int2& other);
 
-        int2 operator/(int value) const;
+        Int2 operator/(int value) const;
         void operator/=(int value);
 
-        int2 operator/(const int2& other) const;
-        void operator/=(const int2& other);
+        Int2 operator/(const Int2& other) const;
+        void operator/=(const Int2& other);
 
         // Other
-        int2 operator-() const;
+        Int2 operator-() const;
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const int2& vec);
+    std::ostream& operator<<(std::ostream& stream, const Int2& vec);
 }

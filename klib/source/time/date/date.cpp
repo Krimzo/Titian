@@ -2,7 +2,7 @@
 
 
 // Date
-kl::date::date()
+kl::Date::Date()
 {
     const time_t time = std::time(nullptr);
     std::tm now = {};
@@ -17,7 +17,7 @@ kl::date::date()
 }
 
 // Format
-std::ostream& kl::operator<<(std::ostream& stream, const date& obj)
+std::ostream& kl::operator<<(std::ostream& stream, const Date& obj)
 {
     stream << obj.year <<
         '.' << obj.month <<

@@ -6,13 +6,13 @@
 
 
 namespace kl {
-    class camera
+    class Camera
     {
-        float3 forward_ = { 0.0f, 0.0f, 1.0f };
-        float3 up_ = { 0.0f, 1.0f, 0.0f };
+        Float3 m_forward = { 0.0f, 0.0f, 1.0f };
+        Float3 m_up = { 0.0f, 1.0f, 0.0f };
 
     public:
-        float3 origin = {};
+        Float3 origin = {};
 
         float aspect_ratio = 1.7778f;
         float field_of_view = 75.0f;
@@ -23,17 +23,17 @@ namespace kl {
         float sensitivity = 0.1f;
         float speed = 2.0f;
 
-        color background = {};
-        object<texture> skybox = nullptr;
+        Color background = {};
+        Object<Texture> skybox = nullptr;
 
-        void update_aspect_ratio(const int2& size);
+        void update_aspect_ratio(const Int2& size);
 
-        void set_forward(const float3& dir);
-        void set_up(const float3& dir);
+        void set_forward(const Float3& dir);
+        void set_up(const Float3& dir);
 
-        float3 forward() const;
-        float3 right() const;
-        float3 up() const;
+        Float3 forward() const;
+        Float3 right() const;
+        Float3 up() const;
 
         void move_forward(float delta_time);
         void move_back(float delta_time);
@@ -42,10 +42,10 @@ namespace kl {
         void move_up(float delta_time);
         void move_down(float delta_time);
 
-        void rotate(const float2& mouse_pos, const float2& frame_center, float vertical_angle_limit = 85.0f);
+        void rotate(const Float2& mouse_pos, const Float2& frame_center, float vertical_angle_limit = 85.0f);
 
-        float4x4 view_matrix() const;
-        float4x4 projection_matrix() const;
-        float4x4 matrix() const;
+        Float4x4 view_matrix() const;
+        Float4x4 projection_matrix() const;
+        Float4x4 matrix() const;
     };
 }

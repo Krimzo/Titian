@@ -4,50 +4,50 @@
 
 
 namespace kl {
-    class video_writer
+    class VideoWriter
     {
-        const uint32_t width_;
-        const uint32_t height_;
-        const uint32_t fps_;
-        const uint32_t bit_rate_;
-        const GUID     encoding_format_;
+        const uint32_t m_width;
+        const uint32_t m_height;
+        const uint32_t m_fps;
+        const uint32_t m_bit_rate;
+        const GUID     m_encoding_format;
 
-        const uint32_t pixel_count_;
-        const uint64_t frame_duration_;
-        const GUID     input_format_ = MFVideoFormat_RGB32;
+        const uint32_t m_pixel_count;
+        const uint64_t m_frame_duration;
+        const GUID     m_input_format = MFVideoFormat_RGB32;
 
-        Microsoft::WRL::ComPtr<IMFSinkWriter> sink_writer_ = nullptr;
-        DWORD stream_index_ = 0;
+        Microsoft::WRL::ComPtr<IMFSinkWriter> m_sink_writer = nullptr;
+        DWORD m_stream_index = 0;
 
-        const int frame_byte_width_;
-        const int frame_byte_size_;
+        const int m_frame_byte_width;
+        const int m_frame_byte_size;
 
-        Microsoft::WRL::ComPtr<IMFMediaBuffer> media_buffer_ = nullptr;
-        Microsoft::WRL::ComPtr<IMFSample> media_sample_ = nullptr;
+        Microsoft::WRL::ComPtr<IMFMediaBuffer> m_media_buffer = nullptr;
+        Microsoft::WRL::ComPtr<IMFSample> m_media_sample = nullptr;
 
-        int frame_counter_ = 0;
+        int m_frame_counter = 0;
 
     public:
-        video_writer(const std::string& filepath, const kl::int2& frame_size, int fps, int bit_rate, const GUID& encoding_format);
+        VideoWriter(const std::string& filepath, const kl::Int2& frame_size, int fps, int bit_rate, const GUID& encoding_format);
 
-        video_writer(const video_writer&) = delete;
-        video_writer(const video_writer&&) = delete;
+        VideoWriter(const VideoWriter&) = delete;
+        VideoWriter(const VideoWriter&&) = delete;
 
-        void operator=(const video_writer&) = delete;
-        void operator=(const video_writer&&) = delete;
+        void operator=(const VideoWriter&) = delete;
+        void operator=(const VideoWriter&&) = delete;
 
-        int2 frame_size() const;
+        Int2 frame_size() const;
         int fps() const;
 
         int bit_rate() const;
         GUID format() const;
 
-        bool add_frame(const image& frame);
+        bool add_frame(const Image& frame);
         int frame_count() const;
 
         uint64_t duration_100ns() const;
         float duration_seconds() const;
 
-        bool finalize();
+        bool finalize() const;
     };
 }

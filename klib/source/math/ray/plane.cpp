@@ -2,35 +2,35 @@
 
 
 // Class
-kl::plane::plane()
+kl::Plane::Plane()
 {}
 
-kl::plane::plane(const float3& origin, const float3& normal)
+kl::Plane::Plane(const Float3& origin, const Float3& normal)
     : origin(origin)
 {
     set_normal(normal);
 }
 
 // Normal
-void kl::plane::set_normal(const float3& normal)
+void kl::Plane::set_normal(const Float3& normal)
 {
-    normal_ = normalize(normal);
+    m_normal = normalize(normal);
 }
 
-kl::float3 kl::plane::normal() const
+kl::Float3 kl::Plane::normal() const
 {
-    return normal_;
+    return m_normal;
 }
 
 // Math
-bool kl::plane::in_front(const float3& point) const
+bool kl::Plane::in_front(const Float3& point) const
 {
-    const float result = dot(point - origin, normal_);
+    const float result = dot(point - origin, m_normal);
     return (result >= 0.0f);
 }
 
 // Format
-std::ostream& kl::operator<<(std::ostream& os, const kl::plane& obj)
+std::ostream& kl::operator<<(std::ostream& os, const kl::Plane& obj)
 {
     os << "{" << obj.origin << ", " << obj.normal() << "}";
     return os;

@@ -1,35 +1,37 @@
 #include "klib.h"
 
 
-kl::frame_buffer::frame_buffer()
+kl::FrameBuffer::FrameBuffer()
 {}
 
-kl::frame_buffer::frame_buffer(const int2& size)
-    : buffer1_(size), buffer2_(size)
-{}
-
-void kl::frame_buffer::resize(const int2& size)
+kl::FrameBuffer::FrameBuffer(const Int2& size)
 {
-    buffer1_.resize(size);
-    buffer2_.resize(size);
+    this->resize(size);
 }
 
-kl::int2 kl::frame_buffer::size() const
+void kl::FrameBuffer::resize(const Int2& size)
 {
-    return buffer1_.size();
+    for (auto& buffer : m_buffers) {
+        buffer.resize(size);
+    }
 }
 
-kl::image* kl::frame_buffer::back_buffer()
+kl::Int2 kl::FrameBuffer::size() const
 {
-    return !first_is_front ? &buffer1_ : &buffer2_;
+    return m_buffers[0].size();
 }
 
-const kl::image& kl::frame_buffer::front_buffer() const
+kl::Image* kl::FrameBuffer::back_buffer()
 {
-    return first_is_front ? buffer1_ : buffer2_;
+    return !m_first_is_front ? m_buffers : m_buffers + 1;
 }
 
-void kl::frame_buffer::swap()
+const kl::Image* kl::FrameBuffer::front_buffer() const
 {
-    first_is_front = !first_is_front;
+    return m_first_is_front ? m_buffers : m_buffers + 1;
+}
+
+void kl::FrameBuffer::swap()
+{
+    m_first_is_front = !m_first_is_front;
 }

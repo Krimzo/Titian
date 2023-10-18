@@ -4,84 +4,84 @@
 
 
 namespace kl {
-    class keyboard
+    class Keyboard
     {
         void update(WPARAM type, bool new_state);
         void process() const;
 
     public:
-        friend class window;
+        friend class Window;
 
-        key q = {};
-        key w = {};
-        key e = {};
-        key r = {};
-        key t = {};
-        key z = {};
-        key u = {};
-        key i = {};
-        key o = {};
-        key p = {};
-        key a = {};
-        key s = {};
-        key d = {};
-        key f = {};
-        key g = {};
-        key h = {};
-        key j = {};
-        key k = {};
-        key l = {};
-        key y = {};
-        key x = {};
-        key c = {};
-        key v = {};
-        key b = {};
-        key n = {};
-        key m = {};
+        Key q = {};
+        Key w = {};
+        Key e = {};
+        Key r = {};
+        Key t = {};
+        Key z = {};
+        Key u = {};
+        Key i = {};
+        Key o = {};
+        Key p = {};
+        Key a = {};
+        Key s = {};
+        Key d = {};
+        Key f = {};
+        Key g = {};
+        Key h = {};
+        Key j = {};
+        Key k = {};
+        Key l = {};
+        Key y = {};
+        Key x = {};
+        Key c = {};
+        Key v = {};
+        Key b = {};
+        Key n = {};
+        Key m = {};
 
-        key num0 = {};
-        key num1 = {};
-        key num2 = {};
-        key num3 = {};
-        key num4 = {};
-        key num5 = {};
-        key num6 = {};
-        key num7 = {};
-        key num8 = {};
-        key num9 = {};
+        Key num0 = {};
+        Key num1 = {};
+        Key num2 = {};
+        Key num3 = {};
+        Key num4 = {};
+        Key num5 = {};
+        Key num6 = {};
+        Key num7 = {};
+        Key num8 = {};
+        Key num9 = {};
 
-        key period = {};
-        key comma = {};
-        key plus = {};
-        key minus = {};
+        Key period = {};
+        Key comma = {};
+        Key plus = {};
+        Key minus = {};
 
-        key esc = {};
-        key tab = {};
-        key caps = {};
-        key shift = {};
-        key ctrl = {};
-        key alt = {};
-        key space = {};
-        key enter = {};
-        key insert = {};
-        key delet = {};
+        Key esc = {};
+        Key tab = {};
+        Key caps = {};
+        Key shift = {};
+        Key ctrl = {};
+        Key alt = {};
+        Key space = {};
+        Key enter = {};
+        Key insert = {};
+        Key delet = {};
 
-        key up = {};
-        key left = {};
-        key down = {};
-        key right = {};
+        Key up = {};
+        Key left = {};
+        Key down = {};
+        Key right = {};
 
-        key f1 = {};
-        key f2 = {};
-        key f3 = {};
-        key f4 = {};
-        key f5 = {};
-        key f6 = {};
-        key f7 = {};
-        key f8 = {};
-        key f9 = {};
-        key f10 = {};
-        key f11 = {};
-        key f12 = {};
+        Key f1 = {};
+        Key f2 = {};
+        Key f3 = {};
+        Key f4 = {};
+        Key f5 = {};
+        Key f6 = {};
+        Key f7 = {};
+        Key f8 = {};
+        Key f9 = {};
+        Key f10 = {};
+        Key f11 = {};
+        Key f12 = {};
     };
 }

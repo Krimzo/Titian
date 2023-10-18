@@ -12,30 +12,30 @@ namespace kl {
     bool write_file_string(const std::string& filepath, const std::string& data);
     bool append_file_string(const std::string& filepath, const std::string& data, int position = -1);
 
-    std::vector<vertex> parse_obj_file(const std::string& filepath, bool flip_z = true);
+    std::vector<Vertex> parse_obj_file(const std::string& filepath, bool flip_z = true);
     std::optional<std::string> choose_file(bool save, const std::vector<std::string>& filters = { "All" });
 }
 
 // File
 namespace kl {
-    class file
+    class File
     {
-        FILE* file_ = nullptr;
+        FILE* m_file = nullptr;
 
     public:
-        file();
-        file(const std::string& filepath, bool clear);
-        virtual ~file();
+        File();
+        File(const std::string_view& filepath, bool clear);
+        virtual ~File();
 
-        file(const file&) = delete;
-        file(const file&&) = delete;
+        File(const File&) = delete;
+        File(const File&&) = delete;
 
-        void operator=(const file&) = delete;
-        void operator=(const file&&) = delete;
+        void operator=(const File&) = delete;
+        void operator=(const File&&) = delete;
 
         operator bool() const;
 
-        bool open(const std::string& filepath, bool clear);
+        void open(const std::string_view& filepath, bool clear);
         void close();
 
         bool seek(int position) const;
@@ -64,8 +64,8 @@ namespace kl {
         template <typename T>
         size_t read(T* buffer, const size_t count) const
         {
-            if (file_) {
-                return fread(buffer, sizeof(T), count, file_);
+            if (m_file) {
+                return fread(buffer, sizeof(T), count, m_file);
             }
             return 0;
         }
@@ -80,8 +80,8 @@ namespace kl {
         template <typename T>
         size_t write(const T* buffer, const size_t count)
         {
-            if (file_) {
-                return fwrite(buffer, sizeof(T), count, file_);
+            if (m_file) {
+                return fwrite(buffer, sizeof(T), count, m_file);
             }
             return 0;
         }

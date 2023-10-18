@@ -2,100 +2,105 @@
 
 
 // Construct
-kl::float4::float4()
+kl::Float4::Float4()
 {}
 
-kl::float4::float4(const float value)
+kl::Float4::Float4(const float value)
     : x(value), y(value), z(value), w(value)
 {}
 
-kl::float4::float4(const float x, const float y, const float z, const float w)
+kl::Float4::Float4(const float x, const float y, const float z, const float w)
     : x(x), y(y), z(z), w(w)
 {}
 
-kl::float4::float4(const float2& vec, const float z, const float w)
+kl::Float4::Float4(const Float2& vec, const float z, const float w)
     : x(vec.x), y(vec.y), z(z), w(w)
 {}
 
-kl::float4::float4(const float x, const float2& vec, const float w)
+kl::Float4::Float4(const float x, const Float2& vec, const float w)
     : x(x), y(vec.x), z(vec.y), w(w)
 {}
 
-kl::float4::float4(const float x, const float y, const float2& vec)
+kl::Float4::Float4(const float x, const float y, const Float2& vec)
     : x(x), y(y), z(vec.x), w(vec.y)
 {}
 
-kl::float4::float4(const float2& vec1, const float2& vec2)
+kl::Float4::Float4(const Float2& vec1, const Float2& vec2)
     : x(vec1.x), y(vec1.y), z(vec2.x), w(vec2.y)
 {}
 
-kl::float4::float4(const float3& vec, float w)
+kl::Float4::Float4(const Float3& vec, const float w)
     : x(vec.x), y(vec.y), z(vec.z), w(w)
 {}
 
-kl::float4::float4(float x, const float3& vec)
+kl::Float4::Float4(const float x, const Float3& vec)
     : x(x), y(vec.x), z(vec.y), w(vec.z)
 {}
 
 // Get
-kl::float4::operator float* () const
+kl::Float4::operator float* ()
 {
-    return (float*) this;
+    return reinterpret_cast<float*>(this);
 }
 
-kl::float4::operator kl::color() const
+kl::Float4::operator const float* () const
+{
+    return reinterpret_cast<const float*>(this);
+}
+
+kl::Float4::operator kl::Color() const
 {
     return {
-        (byte) min(max(x * to_byte_color, 0.0f), 255.0f),
-        (byte) min(max(y * to_byte_color, 0.0f), 255.0f),
-        (byte) min(max(z * to_byte_color, 0.0f), 255.0f),
-        (byte) min(max(w * to_byte_color, 0.0f), 255.0f),
+        (byte) min(max(x * TO_BYTE_COLOR, 0.0f), 255.0f),
+        (byte) min(max(y * TO_BYTE_COLOR, 0.0f), 255.0f),
+        (byte) min(max(z * TO_BYTE_COLOR, 0.0f), 255.0f),
+        (byte) min(max(w * TO_BYTE_COLOR, 0.0f), 255.0f),
     };
 }
 
-kl::float4::operator kl::quaternion() const
+kl::Float4::operator kl::Quaternion() const
 {
     return { w, x, y, z };
 }
 
-kl::float2 kl::float4::xy() const
+kl::Float2 kl::Float4::xy() const
 {
     return { x, y };
 }
 
-kl::float3 kl::float4::xyz() const
+kl::Float3 kl::Float4::xyz() const
 {
     return { x, y, z };
 }
 
-float& kl::float4::operator[](int index)
+float& kl::Float4::operator[](const int index)
 {
     return ((float*) this)[index];
 }
 
-const float& kl::float4::operator[](int index) const
+const float& kl::Float4::operator[](const int index) const
 {
-    return ((float*) this)[index];
+    return ((const float*) this)[index];
 }
 
 // Compare
-bool kl::float4::operator==(const float4& other) const
+bool kl::Float4::operator==(const Float4& other) const
 {
     return (x == other.x && y == other.y && z == other.z && w == other.w);
 }
 
-bool kl::float4::operator!=(const float4& other) const
+bool kl::Float4::operator!=(const Float4& other) const
 {
     return !(*this == other);
 }
 
 // Math
-kl::float4 kl::float4::operator+(const float4& other) const
+kl::Float4 kl::Float4::operator+(const Float4& other) const
 {
     return { x + other.x, y + other.y, z + other.z, w + other.w };
 }
 
-void kl::float4::operator+=(const float4& other)
+void kl::Float4::operator+=(const Float4& other)
 {
     x += other.x;
     y += other.y;
@@ -103,12 +108,12 @@ void kl::float4::operator+=(const float4& other)
     w += other.w;
 }
 
-kl::float4 kl::float4::operator-(const float4& other) const
+kl::Float4 kl::Float4::operator-(const Float4& other) const
 {
     return { x - other.x, y - other.y, z - other.z, w - other.w };
 }
 
-void kl::float4::operator-=(const float4& other)
+void kl::Float4::operator-=(const Float4& other)
 {
     x -= other.x;
     y -= other.y;
@@ -116,12 +121,12 @@ void kl::float4::operator-=(const float4& other)
     w -= other.w;
 }
 
-kl::float4 kl::float4::operator*(const float value) const
+kl::Float4 kl::Float4::operator*(const float value) const
 {
     return { x * value, y * value, z * value, w * value };
 }
 
-void kl::float4::operator*=(const float value)
+void kl::Float4::operator*=(const float value)
 {
     x *= value;
     y *= value;
@@ -129,12 +134,12 @@ void kl::float4::operator*=(const float value)
     w *= value;
 }
 
-kl::float4 kl::float4::operator*(const float4& other) const
+kl::Float4 kl::Float4::operator*(const Float4& other) const
 {
     return { x * other.x, y * other.y, z * other.z, w * other.w };
 }
 
-void kl::float4::operator*=(const float4& other)
+void kl::Float4::operator*=(const Float4& other)
 {
     x *= other.x;
     y *= other.y;
@@ -142,12 +147,12 @@ void kl::float4::operator*=(const float4& other)
     w *= other.w;
 }
 
-kl::float4 kl::float4::operator/(const float value) const
+kl::Float4 kl::Float4::operator/(const float value) const
 {
     return { x / value, y / value, z / value, w / value };
 }
 
-void kl::float4::operator/=(const float value)
+void kl::Float4::operator/=(const float value)
 {
     x /= value;
     y /= value;
@@ -155,12 +160,12 @@ void kl::float4::operator/=(const float value)
     w /= value;
 }
 
-kl::float4 kl::float4::operator/(const float4& other) const
+kl::Float4 kl::Float4::operator/(const Float4& other) const
 {
     return { x / other.x, y / other.y, z / other.z, w / other.w };
 }
 
-void kl::float4::operator/=(const float4& other)
+void kl::Float4::operator/=(const Float4& other)
 {
     x /= other.x;
     y /= other.y;
@@ -169,18 +174,18 @@ void kl::float4::operator/=(const float4& other)
 }
 
 // Other
-kl::float4 kl::float4::operator-() const
+kl::Float4 kl::Float4::operator-() const
 {
     return *this * -1.0f;
 }
 
-float kl::float4::length() const
+float kl::Float4::length() const
 {
     return sqrt(dot(*this, *this));
 }
 
 // Format
-std::ostream& kl::operator<<(std::ostream& stream, const float4& vec)
+std::ostream& kl::operator<<(std::ostream& stream, const Float4& vec)
 {
     stream << std::setprecision(2);
     stream << "(" << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w << ")";

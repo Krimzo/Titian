@@ -30,7 +30,7 @@ std::vector<std::string> kl::list_files(const std::string& path, const bool recu
 std::string kl::read_file_string(const std::string& filepath)
 {
     std::ifstream stream(filepath);
-    if (warning_check(!stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
+    if (!verify(stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
         return {};
     }
 
@@ -43,7 +43,7 @@ std::string kl::read_file_string(const std::string& filepath)
 bool kl::write_file_string(const std::string& filepath, const std::string& data)
 {
     std::ofstream stream(filepath);
-    if (warning_check(!stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
+    if (!verify(stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
         return false;
     }
 
@@ -55,7 +55,7 @@ bool kl::write_file_string(const std::string& filepath, const std::string& data)
 bool kl::append_file_string(const std::string& filepath, const std::string& data, const int position)
 {
     std::fstream stream(filepath, std::ios::in | std::ios::out);
-    if (warning_check(!stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
+    if (!verify(stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
         return false;
     }
 
@@ -71,27 +71,27 @@ bool kl::append_file_string(const std::string& filepath, const std::string& data
     return true;
 }
 
-std::vector<kl::vertex> kl::parse_obj_file(const std::string& filepath, const bool flip_z)
+std::vector<kl::Vertex> kl::parse_obj_file(const std::string& filepath, const bool flip_z)
 {
     std::fstream file = {};
     file.open(filepath, std::ios::in);
-    if (warning_check(!file.is_open(), "Failed to open file \"" + filepath + "\"")) {
+    if (!verify(file.is_open(), "Failed to open file \"" + filepath + "\"")) {
         return {};
     }
 
     const float z_flip = (flip_z ? -1.0f : 1.0f);
 
-    std::vector<float3>   world_data = {};
-    std::vector<float2> texture_data = {};
-    std::vector<float3>  normal_data = {};
+    std::vector<Float3>   world_data = {};
+    std::vector<Float2> texture_data = {};
+    std::vector<Float3>  normal_data = {};
 
-    std::vector<vertex> vertex_data = {};
+    std::vector<Vertex> vertex_data = {};
 
     for (std::string line; std::getline(file, line);) {
         const std::vector<std::string> parts = split_string(line, ' ');
 
         if (parts.size() == 4 && parts.front() == "v") {
-            float3 result = {};
+            Float3 result = {};
             result.x = strtof(parts[1].c_str(), nullptr);
             result.y = strtof(parts[2].c_str(), nullptr);
             result.z = strtof(parts[3].c_str(), nullptr) * z_flip;
@@ -99,14 +99,14 @@ std::vector<kl::vertex> kl::parse_obj_file(const std::string& filepath, const bo
         }
         
         if (parts.size() == 3 && parts.front() == "vt") {
-            float2 result = {};
+            Float2 result = {};
             result.x = strtof(parts[1].c_str(), nullptr);
             result.y = strtof(parts[2].c_str(), nullptr);
             texture_data.push_back(result);
         }
         
         if (parts.size() == 4 && parts.front() == "vn") {
-            float3 result = {};
+            Float3 result = {};
             result.x = strtof(parts[1].c_str(), nullptr);
             result.y = strtof(parts[2].c_str(), nullptr);
             result.z = strtof(parts[3].c_str(), nullptr) * z_flip;
@@ -118,14 +118,14 @@ std::vector<kl::vertex> kl::parse_obj_file(const std::string& filepath, const bo
                 const std::vector<std::string> line_part_parts = split_string(parts[i], '/');
                 if (line_part_parts.size() != 3) { continue; }
 
-                vertex vertex = {};
-                if (uint64_t index = (strtoull(line_part_parts[0].c_str(), nullptr, 10) - 1); index >= 0 && index < world_data.size()) {
+                Vertex vertex = {};
+                if (uint64_t index = strtoull(line_part_parts[0].c_str(), nullptr, 10) - 1; index >= 0 && index < world_data.size()) {
                     vertex.world = world_data[index];
                 }
-                if (uint64_t index = (strtoull(line_part_parts[1].c_str(), nullptr, 10) - 1); index >= 0 && index < texture_data.size()) {
+                if (uint64_t index = strtoull(line_part_parts[1].c_str(), nullptr, 10) - 1; index >= 0 && index < texture_data.size()) {
                     vertex.texture = texture_data[index];
                 }
-                if (uint64_t index = (strtoull(line_part_parts[2].c_str(), nullptr, 10) - 1); index >= 0 && index < normal_data.size()) {
+                if (uint64_t index = strtoull(line_part_parts[2].c_str(), nullptr, 10) - 1; index >= 0 && index < normal_data.size()) {
                     vertex.normal = normal_data[index];
                 }
                 vertex_data.push_back(vertex);
@@ -164,68 +164,68 @@ std::optional<std::string> kl::choose_file(const bool save, const std::vector<st
 }
 
 // File
-kl::file::file()
+kl::File::File()
 {}
 
-kl::file::file(const std::string& filepath, const bool clear)
+kl::File::File(const std::string_view& filepath, const bool clear)
 {
     open(filepath, clear);
 }
 
-kl::file::~file()
+kl::File::~File()
 {
     close();
 }
 
-kl::file::operator bool() const
+kl::File::operator bool() const
 {
-    return (bool) file_;
+    return (bool) m_file;
 }
 
-bool kl::file::open(const std::string& filepath, bool clear)
+void kl::File::open(const std::string_view& filepath, bool clear)
 {
     close();
-    const bool result = (bool) fopen_s(&file_, filepath.c_str(), clear ? "wb+" : "ab+");
-    return !warning_check(result, "Failed to open file \"" + filepath + "\"");
+    errno_t error = fopen_s(&m_file, filepath.data(), clear ? "wb+" : "ab+");
+    verify(error == NULL, kl::format("Failed to open file \"", filepath, "\""));
 }
 
-void kl::file::close()
+void kl::File::close()
 {
-    if (file_) {
-        fclose(file_);
-        file_ = nullptr;
+    if (m_file) {
+        fclose(m_file);
+        m_file = nullptr;
     }
 }
 
-bool kl::file::seek(const int position) const
+bool kl::File::seek(const int position) const
 {
-    if (!file_) {
+    if (!m_file) {
         return false;
     }
     if (position < 0) {
-        return !fseek(file_, position + 1, SEEK_END);
+        return !fseek(m_file, position + 1, SEEK_END);
     }
-    return !fseek(file_, position, SEEK_SET);
+    return !fseek(m_file, position, SEEK_SET);
 }
 
-bool kl::file::move(const int delta) const
+bool kl::File::move(const int delta) const
 {
-    if (!file_) { return false; }
-    return !fseek(file_, delta, SEEK_CUR);
+    if (!m_file) { return false; }
+    return !fseek(m_file, delta, SEEK_CUR);
 }
 
-bool kl::file::rewind() const
+bool kl::File::rewind() const
 {
     return seek(0);
 }
 
-bool kl::file::unwind() const
+bool kl::File::unwind() const
 {
     return seek(-1);
 }
 
-int kl::file::tell() const
+int kl::File::tell() const
 {
-    if (!file_) { return -1; }
-    return (int) ftell(file_);
+    if (!m_file) { return -1; }
+    return (int) ftell(m_file);
 }

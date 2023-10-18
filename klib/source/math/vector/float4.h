@@ -4,66 +4,69 @@
 
 
 namespace kl {
-    struct float4
+    class Float4
     {
+    public:
         float x = 0.0f;
         float y = 0.0f;
         float z = 0.0f;
         float w = 0.0f;
 
         // Construct
-        float4();
-        explicit float4(float value);
-        float4(float x, float y, float z, float w);
+        Float4();
+        explicit Float4(float value);
+        Float4(float x, float y, float z, float w);
 
-        float4(const float2& vec, float z, float w);
-        float4(float x, const float2& vec, float w);
-        float4(float x, float y, const float2& vec);
-        float4(const float2& vec1, const float2& vec2);
+        Float4(const Float2& vec, float z, float w);
+        Float4(float x, const Float2& vec, float w);
+        Float4(float x, float y, const Float2& vec);
+        Float4(const Float2& vec1, const Float2& vec2);
 
-        float4(const float3& vec, float w);
-        float4(float x, const float3& vec);
+        Float4(const Float3& vec, float w);
+        Float4(float x, const Float3& vec);
 
         // Get
-        operator float* () const;
-        operator kl::color() const;
-        operator kl::quaternion() const;
+        operator float* ();
+        operator const float* () const;
 
-        float2 xy() const;
-        float3 xyz() const;
+        operator kl::Color() const;
+        operator kl::Quaternion() const;
+
+        Float2 xy() const;
+        Float3 xyz() const;
 
         float& operator[](int index);
         const float& operator[](int index) const;
 
         // Compare
-        bool operator==(const float4& other) const;
-        bool operator!=(const float4& other) const;
+        bool operator==(const Float4& other) const;
+        bool operator!=(const Float4& other) const;
 
         // Math
-        float4 operator+(const float4& other) const;
-        void operator+=(const float4& other);
+        Float4 operator+(const Float4& other) const;
+        void operator+=(const Float4& other);
 
-        float4 operator-(const float4& other) const;
-        void operator-=(const float4& other);
+        Float4 operator-(const Float4& other) const;
+        void operator-=(const Float4& other);
 
-        float4 operator*(float value) const;
+        Float4 operator*(float value) const;
         void operator*=(float value);
 
-        float4 operator*(const float4& other) const;
-        void operator*=(const float4& other);
+        Float4 operator*(const Float4& other) const;
+        void operator*=(const Float4& other);
 
-        float4 operator/(float value) const;
+        Float4 operator/(float value) const;
         void operator/=(float value);
 
-        float4 operator/(const float4& other) const;
-        void operator/=(const float4& other);
+        Float4 operator/(const Float4& other) const;
+        void operator/=(const Float4& other);
 
         // Other
-        float4 operator-() const;
+        Float4 operator-() const;
         float length() const;
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const float4& vec);
+    std::ostream& operator<<(std::ostream& stream, const Float4& vec);
 }

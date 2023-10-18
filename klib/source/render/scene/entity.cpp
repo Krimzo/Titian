@@ -3,192 +3,190 @@
 
 #ifdef KL_USING_PHYSX
 
-static uint64_t unique_index_counter = 0;
+static uint64_t UNIQUE_INDEX_COUNTER = 0;
 
-kl::entity::entity(PxPhysics* physics, bool dynamic)
-    : unique_index(++unique_index_counter)
+kl::Entity::Entity(physx::PxPhysics* physics, const bool dynamic)
+    : unique_index(++UNIQUE_INDEX_COUNTER)
 {
-    PxTransform transform = {};
-    transform.q = PxQuat(PxIdentity);
-    transform.p = PxVec3(PxZero);
+    physx::PxTransform transform = {};
+    transform.q = physx::PxQuat(physx::PxIdentity);
+    transform.p = physx::PxVec3(physx::PxZero);
     generate_actor(physics, transform, dynamic);
 }
 
-kl::entity::~entity()
+kl::Entity::~Entity()
 {
-    physics_actor_->release();
+    m_physics_actor->release();
 }
 
 // Get
-PxRigidActor* kl::entity::actor() const
+physx::PxRigidActor* kl::Entity::actor() const
 {
-    return physics_actor_;
+    return m_physics_actor;
 }
 
-kl::float4x4 kl::entity::matrix() const
+kl::Float4x4 kl::Entity::matrix() const
 {
-    return float4x4::translation(position()) * float4x4::rotation(rotation()) * float4x4::scaling(render_scale);
+    return Float4x4::translation(position()) * Float4x4::rotation(rotation()) * Float4x4::scaling(render_scale);
 }
 
-kl::float4x4 kl::entity::collider_matrix() const
+kl::Float4x4 kl::Entity::collider_matrix() const
 {
-    if (!collider_) {
+    if (!m_collider) {
         return {};
     }
 
-    kl::float4x4 result = {};
-    result = float4x4::translation(position());
-    result *= float4x4::rotation(rotation());
-    result *= float4x4::translation(collider_->offset());
-    result *= float4x4::rotation(collider_->rotation());
-    result *= collider_->scaling_matrix();
+    kl::Float4x4 result = Float4x4::translation(position());
+    result *= Float4x4::rotation(rotation());
+    result *= Float4x4::translation(m_collider->offset());
+    result *= Float4x4::rotation(m_collider->rotation());
+    result *= m_collider->scaling_matrix();
     return result;
 }
 
 // Geometry
-void kl::entity::set_rotation(const float3& rotation)
+void kl::Entity::set_rotation(const Float3& rotation)
 {
-    const float4 quat = to_quaternion(rotation);
-
-    PxTransform transform = physics_actor_->getGlobalPose();
-    transform.q = (const PxQuat&) quat;
-    physics_actor_->setGlobalPose(transform);
+    const Float4 quat = to_quaternion(rotation);
+    physx::PxTransform transform = m_physics_actor->getGlobalPose();
+    transform.q = (const physx::PxQuat&) quat;
+    m_physics_actor->setGlobalPose(transform);
 }
 
-kl::float3 kl::entity::rotation() const
+kl::Float3 kl::Entity::rotation() const
 {
-    const PxTransform transform = physics_actor_->getGlobalPose();
-    return to_euler((const float4&) transform.q);
+    const physx::PxTransform transform = m_physics_actor->getGlobalPose();
+    return to_euler((const Float4&) transform.q);
 }
 
-void kl::entity::set_position(const float3& position)
+void kl::Entity::set_position(const Float3& position)
 {
-    PxTransform transform = physics_actor_->getGlobalPose();
-    transform.p = (const PxVec3&) position;
-    physics_actor_->setGlobalPose(transform);
+    physx::PxTransform transform = m_physics_actor->getGlobalPose();
+    transform.p = (const physx::PxVec3&) position;
+    m_physics_actor->setGlobalPose(transform);
 }
 
-kl::float3 kl::entity::position() const
+kl::Float3 kl::Entity::position() const
 {
-    const PxTransform transform = physics_actor_->getGlobalPose();
-    return (const float3&) transform.p;
+    const physx::PxTransform transform = m_physics_actor->getGlobalPose();
+    return (const Float3&) transform.p;
 }
 
 // Physics
-void kl::entity::set_dynamic(PxPhysics* physics, const bool enabled)
+void kl::Entity::set_dynamic(physx::PxPhysics* physics, const bool enabled)
 {
     const bool old_dynamic = is_dynamic();
     if ((old_dynamic && enabled) || (!old_dynamic && !enabled)) {
         return;
     }
 
-    PxTransform old_transform = physics_actor_->getGlobalPose();
-    object<kl::collider> old_collider = collider_;
+    const physx::PxTransform old_transform = m_physics_actor->getGlobalPose();
+    const Object<Collider> old_collider = m_collider;
 
     set_collider(nullptr);
     generate_actor(physics, old_transform, enabled);
     set_collider(old_collider);
 }
 
-bool kl::entity::is_dynamic() const
+bool kl::Entity::is_dynamic() const
 {
-    return (physics_actor_->getType() == PxActorType::Enum::eRIGID_DYNAMIC);
+    return m_physics_actor->getType() == physx::PxActorType::Enum::eRIGID_DYNAMIC;
 }
 
-void kl::entity::set_gravity(const bool enabled)
+void kl::Entity::set_gravity(const bool enabled)
 {
-    physics_actor_->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !enabled);
+    m_physics_actor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !enabled);
     if (enabled) { wake_up(); }
 }
 
-bool kl::entity::has_gravity() const
+bool kl::Entity::has_gravity() const
 {
-    const PxActorFlags flags = physics_actor_->getActorFlags();
-    return !flags.isSet(PxActorFlag::eDISABLE_GRAVITY);
+    const physx::PxActorFlags flags = m_physics_actor->getActorFlags();
+    return !flags.isSet(physx::PxActorFlag::eDISABLE_GRAVITY);
 }
 
-void kl::entity::set_mass(float mass)
+void kl::Entity::set_mass(const float mass)
 {
     if (is_dynamic()) {
-        PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
+        physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*) m_physics_actor;
         actor->setMass(mass);
     }
 }
 
-float kl::entity::mass() const
+float kl::Entity::mass() const
 {
     if (is_dynamic()) {
-        const PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
+        const physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*) m_physics_actor;
         return actor->getMass();
     }
     return 0.0f;
 }
 
-void kl::entity::set_velocity(const float3& velocity)
+void kl::Entity::set_velocity(const Float3& velocity)
 {
     if (is_dynamic()) {
-        PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
-        actor->setLinearVelocity((const PxVec3&) velocity);
+        physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*) m_physics_actor;
+        actor->setLinearVelocity((const physx::PxVec3&) velocity);
     }
 }
 
-kl::float3 kl::entity::velocity() const
+kl::Float3 kl::Entity::velocity() const
 {
     if (is_dynamic()) {
-        const PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
-        const PxVec3 velocity = actor->getLinearVelocity();
-        return (const float3&) velocity;
+        const physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*) m_physics_actor;
+        const physx::PxVec3 velocity = actor->getLinearVelocity();
+        return (const Float3&) velocity;
     }
     return {};
 }
 
-void kl::entity::set_angular(const float3& angular)
+void kl::Entity::set_angular(const Float3& angular)
 {
     if (is_dynamic()) {
-        PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
-        actor->setAngularVelocity((const PxVec3&) angular);
+        physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*) m_physics_actor;
+        actor->setAngularVelocity((const physx::PxVec3&) angular);
     }
 }
 
-kl::float3 kl::entity::angular() const
+kl::Float3 kl::Entity::angular() const
 {
     if (is_dynamic()) {
-        const PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
-        const PxVec3 angular = actor->getAngularVelocity();
-        return (const float3&) angular;
+        const physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*) m_physics_actor;
+        const physx::PxVec3 angular = actor->getAngularVelocity();
+        return (const Float3&) angular;
     }
     return {};
 }
 
 // Collision
-void kl::entity::set_collider(object<kl::collider> collider)
+void kl::Entity::set_collider(const Object<kl::Collider>& collider)
 {
-    if (collider_) {
-        physics_actor_->detachShape(*collider_->shape());
+    if (m_collider) {
+        m_physics_actor->detachShape(*m_collider->shape());
     }
 
-    collider_ = collider;
+    m_collider = collider;
 
-    if (collider_) {
-        physics_actor_->attachShape(*collider_->shape());
+    if (m_collider) {
+        m_physics_actor->attachShape(*m_collider->shape());
     }
 }
 
-kl::object<kl::collider> kl::entity::collider() const
+kl::Object<kl::Collider> kl::Entity::collider() const
 {
-    return collider_;
+    return m_collider;
 }
 
 // Private
-void kl::entity::generate_actor(PxPhysics* physics, const PxTransform& transform, const bool dynamic)
+void kl::Entity::generate_actor(physx::PxPhysics* physics, const physx::PxTransform& transform, const bool dynamic)
 {
-    if (physics_actor_) {
-        physics_actor_->release();
-        physics_actor_ = nullptr;
+    if (m_physics_actor) {
+        m_physics_actor->release();
+        m_physics_actor = nullptr;
     }
 
-    physics_actor_ = dynamic ? (PxRigidActor*) physics->createRigidDynamic(transform) : physics->createRigidStatic(transform);
-    error_check(!physics_actor_, "Failed to create physics actor");
+    m_physics_actor = dynamic ? (physx::PxRigidActor*) physics->createRigidDynamic(transform) : physics->createRigidStatic(transform);
+    assert(m_physics_actor, "Failed to create physics actor");
 
     if (dynamic) {
         set_mass(1.0f);
@@ -196,10 +194,10 @@ void kl::entity::generate_actor(PxPhysics* physics, const PxTransform& transform
     }
 }
 
-void kl::entity::wake_up() const
+void kl::Entity::wake_up() const
 {
     if (is_dynamic()) {
-        PxRigidDynamic* actor = (PxRigidDynamic*) physics_actor_;
+        physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*) m_physics_actor;
         if (actor->getScene()) {
             actor->wakeUp();
         }
@@ -208,16 +206,16 @@ void kl::entity::wake_up() const
 
 #else
 
-void kl::entity::update_physics(const float delta_t)
+void kl::Entity::update_physics(const float delta_t)
 {
     velocity += acceleration * delta_t;
     position += velocity * delta_t;
     rotation += angular * delta_t;
 }
 
-kl::float4x4 kl::entity::matrix() const
+kl::Float4x4 kl::Entity::matrix() const
 {
-    return float4x4::translation(position) * float4x4::rotation(rotation) * float4x4::scaling(scale);
+    return Float4x4::translation(position) * Float4x4::rotation(rotation) * Float4x4::scaling(scale);
 }
 
 #endif

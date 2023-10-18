@@ -4,9 +4,9 @@
 
 
 namespace kl {
-    class key
+    class Key
     {
-        bool state_ = false;
+        bool m_state = false;
 
         void update(bool new_state);
         void process() const;
@@ -16,9 +16,9 @@ namespace kl {
         void call_on_release() const;
 
     public:
-        friend class window;
-        friend class keyboard;
-        friend class mouse;
+        friend class Window;
+        friend class Keyboard;
+        friend class Mouse;
 
         std::vector<std::function<void()>> on_press = {};
         std::vector<std::function<void()>> on_down = {};

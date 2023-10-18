@@ -1,39 +1,39 @@
 #include "klib.h"
 
 
-kl::async_iterator::async_iterator()
+kl::AsyncIterator::AsyncIterator()
 {}
 
-kl::async_iterator::async_iterator(value_type value)
-    : value_(value)
+kl::AsyncIterator::AsyncIterator(value_type value)
+    : m_value(value)
 {}
 
-void kl::async_iterator::operator++()
+void kl::AsyncIterator::operator++()
 {
-    value_ += 1;
+    m_value += 1;
 }
 
-void kl::async_iterator::operator--()
+void kl::AsyncIterator::operator--()
 {
-    value_ -= 1;
+    m_value -= 1;
 }
 
-kl::async_iterator::difference_type kl::async_iterator::operator+(const async_iterator& iter) const
+kl::AsyncIterator::difference_type kl::AsyncIterator::operator+(const AsyncIterator& iter) const
 {
-    return (value_ + iter.value_);
+    return (m_value + iter.m_value);
 }
 
-kl::async_iterator::difference_type kl::async_iterator::operator-(const async_iterator& iter) const
+kl::AsyncIterator::difference_type kl::AsyncIterator::operator-(const AsyncIterator& iter) const
 {
-    return (value_ - iter.value_);
+    return (m_value - iter.m_value);
 }
 
-kl::async_iterator::reference kl::async_iterator::operator*()
+kl::AsyncIterator::reference kl::AsyncIterator::operator*()
 {
-    return value_;
+    return m_value;
 }
 
-bool kl::async_iterator::operator==(const async_iterator& second) const
+bool kl::AsyncIterator::operator==(const AsyncIterator& second) const
 {
-    return (value_ == second.value_);
+    return (m_value == second.m_value);
 }

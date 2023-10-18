@@ -11,34 +11,52 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\crude_json.cpp" />
     <ClCompile Include="source\GraphEditor.cpp" />
     <ClCompile Include="source\ImCurveEdit.cpp" />
     <ClCompile Include="source\ImGradient.cpp" />
     <ClCompile Include="source\imgui.cpp" />
     <ClCompile Include="source\ImGuizmo.cpp" />
+    <ClCompile Include="source\imgui_canvas.cpp" />
     <ClCompile Include="source\imgui_demo.cpp" />
     <ClCompile Include="source\imgui_draw.cpp" />
     <ClCompile Include="source\imgui_impl_dx11.cpp" />
     <ClCompile Include="source\imgui_impl_win32.cpp" />
+    <ClCompile Include="source\imgui_node_editor.cpp" />
+    <ClCompile Include="source\imgui_node_editor_api.cpp" />
     <ClCompile Include="source\imgui_tables.cpp" />
     <ClCompile Include="source\imgui_widgets.cpp" />
+    <ClCompile Include="source\imnodes.cpp" />
     <ClCompile Include="source\ImSequencer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\crude_json.h" />
     <ClInclude Include="source\GraphEditor.h" />
     <ClInclude Include="source\imconfig.h" />
     <ClInclude Include="source\ImCurveEdit.h" />
     <ClInclude Include="source\ImGradient.h" />
     <ClInclude Include="source\imgui.h" />
     <ClInclude Include="source\ImGuizmo.h" />
+    <ClInclude Include="source\imgui_bezier_math.h" />
+    <ClInclude Include="source\imgui_canvas.h" />
+    <ClInclude Include="source\imgui_extra_math.h" />
     <ClInclude Include="source\imgui_impl_dx11.h" />
     <ClInclude Include="source\imgui_impl_win32.h" />
     <ClInclude Include="source\imgui_internal.h" />
+    <ClInclude Include="source\imgui_node_editor.h" />
+    <ClInclude Include="source\imgui_node_editor_internal.h" />
+    <ClInclude Include="source\imnodes.h" />
+    <ClInclude Include="source\imnodes_internal.h" />
     <ClInclude Include="source\ImSequencer.h" />
     <ClInclude Include="source\imstb_rectpack.h" />
     <ClInclude Include="source\imstb_textedit.h" />
     <ClInclude Include="source\imstb_truetype.h" />
     <ClInclude Include="source\ImZoomSlider.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\imgui_bezier_math.inl" />
+    <None Include="source\imgui_extra_math.inl" />
+    <None Include="source\imgui_node_editor_internal.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -77,11 +95,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX;IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -95,11 +113,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX;IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>

@@ -3,129 +3,128 @@
 
 #ifdef KL_USING_PHYSX
 
-kl::collider::collider(PxPhysics* physics, const PxGeometry& geometry)
+kl::Collider::Collider(physx::PxPhysics* physics, const physx::PxGeometry& geometry)
 {
-	material_ = physics->createMaterial(0.25f, 0.25f, 0.25f);
-	error_check(!material_, "Failed to create collider material");
+	m_material = physics->createMaterial(0.25f, 0.25f, 0.25f);
+	assert(m_material, "Failed to create collider material");
 
-	shape_ = physics->createShape(geometry, *material_);
-	error_check(!shape_, "Failed to create collider shape");
+	m_shape = physics->createShape(geometry, *m_material);
+	assert(m_shape, "Failed to create collider shape");
 }
 
-kl::collider::~collider()
+kl::Collider::~Collider()
 {
-	shape_->release();
-	material_->release();
+	m_shape->release();
+	m_material->release();
 }
 
 // Get
-PxShape* kl::collider::shape()
+physx::PxShape* kl::Collider::shape() const
 {
-	return shape_;
+	return m_shape;
 }
 
-PxGeometryType::Enum kl::collider::type() const
+physx::PxGeometryType::Enum kl::Collider::type() const
 {
-	return shape_->getGeometryType();
+	return m_shape->getGeometryType();
 }
 
-kl::float4x4 kl::collider::scaling_matrix() const
+kl::Float4x4 kl::Collider::scaling_matrix() const
 {
 	switch (type()) {
-	case PxGeometryType::Enum::eBOX:
+	case physx::PxGeometryType::Enum::eBOX:
 	{
-		PxBoxGeometry geometry = {};
-		shape_->getBoxGeometry(geometry);
-		return float4x4::scaling((float3&) geometry.halfExtents);
+		physx::PxBoxGeometry geometry = {};
+		m_shape->getBoxGeometry(geometry);
+		return Float4x4::scaling((Float3&) geometry.halfExtents);
 	}
 
-	case PxGeometryType::Enum::eSPHERE:
+	case physx::PxGeometryType::Enum::eSPHERE:
 	{
-		PxSphereGeometry geometry = {};
-		shape_->getSphereGeometry(geometry);
-		return float4x4::scaling(float3(geometry.radius));
+		physx::PxSphereGeometry geometry = {};
+		m_shape->getSphereGeometry(geometry);
+		return Float4x4::scaling(Float3(geometry.radius));
 	}
 
-	case PxGeometryType::Enum::eCAPSULE:
+	case physx::PxGeometryType::Enum::eCAPSULE:
 	{
-		PxCapsuleGeometry geometry = {};
-		shape_->getCapsuleGeometry(geometry);
-		return float4x4::scaling(float3(geometry.halfHeight * 0.5f, float2(geometry.radius)));
+		physx::PxCapsuleGeometry geometry = {};
+		m_shape->getCapsuleGeometry(geometry);
+		return Float4x4::scaling(Float3(geometry.halfHeight * 0.5f, Float2(geometry.radius)));
 	}
 
-	case PxGeometryType::Enum::ePLANE:
+	case physx::PxGeometryType::Enum::ePLANE:
 	{
 		return {};
 	}
 
-	case PxGeometryType::Enum::eTRIANGLEMESH:
+	case physx::PxGeometryType::Enum::eTRIANGLEMESH:
 	{
-		PxTriangleMeshGeometry geomtry = {};
-		shape_->getTriangleMeshGeometry(geomtry);
-		return float4x4::scaling((float3&) geomtry.scale.scale);
+		physx::PxTriangleMeshGeometry geometry = {};
+		m_shape->getTriangleMeshGeometry(geometry);
+		return Float4x4::scaling((Float3&) geometry.scale.scale);
 	}
 	}
 	return {};
 }
 
 // Geometry
-void kl::collider::set_rotation(const float3& rotation)
+void kl::Collider::set_rotation(const Float3& rotation)
 {
-	const float4 quat = to_quaternion(rotation);
-
-	PxTransform transform = shape_->getLocalPose();
-	transform.q = (const PxQuat&) quat;
-	shape_->setLocalPose(transform);
+	const Float4 quat = to_quaternion(rotation);
+	physx::PxTransform transform = m_shape->getLocalPose();
+	transform.q = (const physx::PxQuat&) quat;
+	m_shape->setLocalPose(transform);
 }
 
-kl::float3 kl::collider::rotation() const
+kl::Float3 kl::Collider::rotation() const
 {
-	const PxTransform transform = shape_->getLocalPose();
-	return to_euler((const float4&) transform.q);
+	const physx::PxTransform transform = m_shape->getLocalPose();
+	return to_euler((const Float4&) transform.q);
 }
 
-void kl::collider::set_offset(const float3& position)
+void kl::Collider::set_offset(const Float3& position)
 {
-	PxTransform transform = shape_->getLocalPose();
-	transform.p = (const PxVec3&) position;
-	shape_->setLocalPose(transform);
+	physx::PxTransform transform = m_shape->getLocalPose();
+	transform.p = (const physx::PxVec3&) position;
+	m_shape->setLocalPose(transform);
 }
 
-kl::float3 kl::collider::offset() const
+kl::Float3 kl::Collider::offset() const
 {
-	const PxTransform transform = shape_->getLocalPose();
-	return (const float3&) transform.p;
+	const physx::PxTransform transform = m_shape->getLocalPose();
+	return (const Float3&) transform.p;
 }
 
 // Material
-float kl::collider::static_friction() const
+void kl::Collider::set_static_friction(const float friction)
 {
-	return material_->getStaticFriction();
+	m_material->setStaticFriction(friction);
 }
 
-void kl::collider::set_static_friction(const float friction)
+float kl::Collider::static_friction() const
 {
-	material_->setStaticFriction(friction);
+	return m_material->getStaticFriction();
 }
 
-float kl::collider::dynamic_friction() const
+void kl::Collider::set_dynamic_friction(const float friction)
 {
-	return material_->getDynamicFriction();
+	m_material->setDynamicFriction(friction);
 }
 
-void kl::collider::set_dynamic_friction(const float friction)
+float kl::Collider::dynamic_friction() const
 {
-	material_->setDynamicFriction(friction);
+	return m_material->getDynamicFriction();
 }
 
-float kl::collider::restitution() const
+void kl::Collider::set_restitution(const float restitution)
 {
-	return material_->getRestitution();
+	m_material->setRestitution(restitution);
 }
 
-void kl::collider::set_restitution(const float restitution)
+float kl::Collider::restitution() const
 {
-	material_->setRestitution(restitution);
+	return m_material->getRestitution();
 }
 
 #endif

@@ -3,31 +3,31 @@
 
 // Construct
 template<typename S>
-kl::shader_holder<S>::shader_holder(kl::gpu* gpu)
+kl::ShaderHolder<S>::ShaderHolder(kl::GPU* gpu)
     : gpu(gpu)
 {}
 
 template<typename S>
-kl::shader_holder<S>::shader_holder(kl::gpu* gpu, const S& shader)
+kl::ShaderHolder<S>::ShaderHolder(kl::GPU* gpu, const S& shader)
     : gpu(gpu), shader(shader)
 {}
 
 // Get
 template<typename S>
-kl::shader_holder<S>::operator S() const
+kl::ShaderHolder<S>::operator S() const
 {
     return shader;
 }
 
 template<typename S>
-kl::shader_holder<S>::operator bool() const
+kl::ShaderHolder<S>::operator bool() const
 {
     return (bool) shader;
 }
 
 // CBuffer
 template<typename S>
-void kl::shader_holder<S>::update_cbuffer(const void* data, UINT byte_size)
+void kl::ShaderHolder<S>::update_cbuffer(const void* data, UINT byte_size)
 {
     // Fix size scaling
     const UINT size_mod = byte_size % 16;
@@ -45,22 +45,22 @@ void kl::shader_holder<S>::update_cbuffer(const void* data, UINT byte_size)
     gpu->write_to_resource(cbuffer, data, byte_size);
 
     // Rebind cbuffer
-    if constexpr (std::is_same<S, dx::vertex_shader>::value) {
+    if constexpr (std::is_same<S, dx::VertexShader>::value) {
         gpu->bind_cb_for_vertex_shader(cbuffer, 0);
     }
-    else if constexpr (std::is_same<S, dx::geometry_shader>::value) {
+    else if constexpr (std::is_same<S, dx::GeometryShader>::value) {
         gpu->bind_cb_for_geometry_shader(cbuffer, 0);
     }
-    else if constexpr (std::is_same<S, dx::pixel_shader>::value) {
+    else if constexpr (std::is_same<S, dx::PixelShader>::value) {
         gpu->bind_cb_for_pixel_shader(cbuffer, 0);
     }
-    else if constexpr (std::is_same<S, dx::compute_shader>::value) {
+    else if constexpr (std::is_same<S, dx::ComputeShader>::value) {
         gpu->bind_cb_for_compute_shader(cbuffer, 0);
     }
 }
 
 // Allowed types
-template struct kl::shader_holder<kl::dx::vertex_shader>;
-template struct kl::shader_holder<kl::dx::geometry_shader>;
-template struct kl::shader_holder<kl::dx::pixel_shader>;
-template struct kl::shader_holder<kl::dx::compute_shader>;
+template class kl::ShaderHolder<kl::dx::VertexShader>;
+template class kl::ShaderHolder<kl::dx::GeometryShader>;
+template class kl::ShaderHolder<kl::dx::PixelShader>;
+template class kl::ShaderHolder<kl::dx::ComputeShader>;

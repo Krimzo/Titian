@@ -5,18 +5,18 @@
 
 namespace kl {
     template<typename T>
-    class array
+    class Array
     {
         T* m_data = nullptr;
         std::atomic<uint64_t>* m_count = nullptr;
         uint64_t m_size = 0;
 
-        uint64_t increase_count()
+        uint64_t increase_count() const
         {
             return m_count ? (*m_count += 1) : 0;
         }
 
-        uint64_t decrease_count()
+        uint64_t decrease_count() const
         {
             return m_count ? (*m_count -= 1) : 0;
         }
@@ -33,7 +33,7 @@ namespace kl {
             *m_count = 1;
         }
 
-        void deallocate()
+        void deallocate() const
         {
             if (m_data) delete[] m_data;
             if (m_count) delete m_count;
@@ -48,17 +48,17 @@ namespace kl {
 
     public:
         // Create
-        array()
+        Array()
         {}
 
-        array(const uint64_t size)
+        Array(const uint64_t size)
             : m_size(size)
         {
             allocate();
         }
 
         // Destroy
-        virtual ~array()
+        virtual ~Array()
         {
             this->free();
         }
@@ -72,18 +72,18 @@ namespace kl {
         }
 
         // Create copy
-        array(const array<T>& other)
+        Array(const Array<T>& other)
             : m_data(other.m_data), m_count(other.m_count), m_size(other.m_size)
         {
             increase_count();
         }
 
-        array(const array<T>&& other) noexcept
-            : array<T>(other)
+        Array(const Array<T>&& other) noexcept
+            : Array<T>(other)
         {}
 
         // Copy
-        array<T>& operator=(const array<T>& other)
+        Array<T>& operator=(const Array<T>& other)
         {
             if (other.m_data != m_data) {
                 this->free();
@@ -95,7 +95,7 @@ namespace kl {
             return *this;
         }
 
-        array<T>& operator=(const array<T>&& other) noexcept
+        Array<T>& operator=(Array<T>&& other) noexcept
         {
             return (*this = other);
         }
@@ -148,12 +148,12 @@ namespace kl {
         }
 
         // Compare
-        bool operator==(const array<T>& other) const
+        bool operator==(const Array<T>& other) const
         {
             return (m_data == other.m_data);
         }
 
-        bool operator!=(const array<T>& other) const
+        bool operator!=(const Array<T>& other) const
         {
             return !(*this == other);
         }
@@ -204,7 +204,7 @@ namespace kl {
 
 namespace kl {
     template<typename T>
-    std::ostream& operator<<(std::ostream& stream, const array<T>& array)
+    std::ostream& operator<<(std::ostream& stream, const Array<T>& array)
     {
         // Address
         stream << "(0x" << std::hex << &array << std::dec;

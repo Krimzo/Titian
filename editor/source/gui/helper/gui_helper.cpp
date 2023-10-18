@@ -1,4 +1,0 @@
-#include "editor.h"
-
-
-// Placeholder

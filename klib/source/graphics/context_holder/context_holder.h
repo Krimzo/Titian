@@ -5,130 +5,130 @@
 
 
 namespace kl {
-    class context_holder
+    class ContextHolder
     {
     protected:
-        dx::context context_ = nullptr;
+        dx::Context m_context = nullptr;
 
     public:
-        context_holder() = default;
+        ContextHolder();
 
-        context_holder(const context_holder&) = delete;
-        context_holder(const context_holder&&) = delete;
+        ContextHolder(const ContextHolder&) = delete;
+        ContextHolder(const ContextHolder&&) = delete;
 
-        void operator=(const context_holder&) = delete;
-        void operator=(const context_holder&&) = delete;
+        void operator=(const ContextHolder&) = delete;
+        void operator=(const ContextHolder&&) = delete;
 
         // Viewport
-        void set_viewport_position(const int2& position) const;
-        int2 viewport_position() const;
+        void set_viewport_position(const Int2& position) const;
+        Int2 viewport_position() const;
 
-        void set_viewport_size(const int2& size) const;
-        int2 viewport_size() const;
+        void set_viewport_size(const Int2& size) const;
+        Int2 viewport_size() const;
 
-        void set_viewport_min_max(const float2& min_max) const;
-        float2 viewport_min_max() const;
+        void set_viewport_min_max(const Float2& min_max) const;
+        Float2 viewport_min_max() const;
 
         // States
-        void bind_raster_state(const dx::raster_state& state) const;
-        void unbind_rater_state() const;
+        void bind_raster_state(const dx::RasterState& state) const;
+        void unbind_raster_state() const;
 
-        void bind_depth_state(const dx::depth_state& state, UINT stencil_ref = 0xFF) const;
+        void bind_depth_state(const dx::DepthState& state, UINT stencil_ref = 0xFF) const;
         void unbind_depth_state() const;
 
-        void bind_sampler_state_for_pixel_shader(const dx::sampler_state& state, UINT slot) const;
+        void bind_sampler_state_for_pixel_shader(const dx::SamplerState& state, UINT slot) const;
         void unbind_sampler_state_for_pixel_shader(UINT slot) const;
 
-        void bind_sampler_state_for_compute_shader(const dx::sampler_state& state, UINT slot) const;
+        void bind_sampler_state_for_compute_shader(const dx::SamplerState& state, UINT slot) const;
         void unbind_sampler_state_for_compute_shader(UINT slot) const;
 
-        void bind_blend_state(const dx::blend_state& state, const float* factor = nullptr, UINT mask = 0xFFFFFFFF) const;
+        void bind_blend_state(const dx::BlendState& state, const float* factor = nullptr, UINT mask = 0xFFFFFFFF) const;
         void unbind_blend_state() const;
 
         // Resources
-        void copy_resource(const dx::resource& destination, const dx::resource& source) const;
-        void read_from_resource(void* cpu_buffer, const dx::resource& gpu_buffer, SIZE_T byte_size) const;
-        void write_to_resource(const dx::resource& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard = true) const;
+        void copy_resource(const dx::Resource& destination, const dx::Resource& source) const;
+        void read_from_resource(void* cpu_buffer, const dx::Resource& gpu_buffer, SIZE_T byte_size) const;
+        void write_to_resource(const dx::Resource& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard = true) const;
 
         // Buffers
-        UINT buffer_size(const dx::buffer& buffer) const;
+        UINT buffer_size(const dx::Buffer& buffer) const;
 
         // Const buffers
-        void bind_cb_for_vertex_shader(const dx::buffer& buffer, UINT slot) const;
+        void bind_cb_for_vertex_shader(const dx::Buffer& buffer, UINT slot) const;
         void unbind_cb_for_vertex_shader(UINT slot) const;
 
-        void bind_cb_for_geometry_shader(const dx::buffer& buffer, UINT slot) const;
+        void bind_cb_for_geometry_shader(const dx::Buffer& buffer, UINT slot) const;
         void unbind_cb_for_geometry_shader(UINT slot) const;
 
-        void bind_cb_for_pixel_shader(const dx::buffer& buffer, UINT slot) const;
+        void bind_cb_for_pixel_shader(const dx::Buffer& buffer, UINT slot) const;
         void unbind_cb_for_pixel_shader(UINT slot) const;
 
-        void bind_cb_for_compute_shader(const dx::buffer& buffer, UINT slot) const;
+        void bind_cb_for_compute_shader(const dx::Buffer& buffer, UINT slot) const;
         void unbind_cb_for_compute_shader(UINT slot) const;
 
         template<typename T>
-        void set_cb_data(const dx::buffer& buffer, const T& object) const
+        void set_cb_data(const dx::Buffer& buffer, const T& object) const
         {
             write_to_resource(buffer, &object, sizeof(T));
         }
 
         // Vertex buffers
-        UINT vertex_buffer_size(const dx::buffer& buffer, UINT stride) const;
+        UINT vertex_buffer_size(const dx::Buffer& buffer, UINT stride) const;
 
-        void bind_vertex_buffer(const dx::buffer& buffer, UINT slot, UINT offset, UINT stride) const;
+        void bind_vertex_buffer(const dx::Buffer& buffer, UINT slot, UINT offset, UINT stride) const;
         void unbind_vertex_buffer(UINT slot) const;
 
         // Index buffers
-        UINT index_buffer_size(const dx::buffer& buffer) const;
+        UINT index_buffer_size(const dx::Buffer& buffer) const;
 
-        void bind_index_buffer(const dx::buffer& buffer, UINT offset) const;
+        void bind_index_buffer(const dx::Buffer& buffer, UINT offset) const;
         void unbind_index_buffer(UINT slot) const;
 
         // Draw
         void set_draw_type(D3D_PRIMITIVE_TOPOLOGY draw_type) const;
 
         void draw(UINT vertex_count, UINT start_index) const;
-        void draw(const dx::buffer& vertex_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(vertex)) const;
+        void draw(const dx::Buffer& vertex_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(Vertex)) const;
 
         void draw_indexed(UINT index_count, UINT start_index, INT base_vertex) const;
-        void draw_indexed(const dx::buffer& vertex_buffer, const dx::buffer& index_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(vertex)) const;
+        void draw_indexed(const dx::Buffer& vertex_buffer, const dx::Buffer& index_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(Vertex)) const;
 
         // Views
-        void clear_target_view(const dx::target_view& view, const float4& color = {}) const;
-        void clear_depth_view(const dx::depth_view& view, float depth = 1.0f, UINT8 stencil = 0xFF) const;
+        void clear_target_view(const dx::TargetView& view, const Float4& color = {}) const;
+        void clear_depth_view(const dx::DepthView& view, float depth = 1.0f, UINT8 stencil = 0xFF) const;
 
-        void bind_target_depth_views(const std::vector<dx::target_view>& target_views, const dx::depth_view& depth_view) const;
+        void bind_target_depth_views(const std::vector<dx::TargetView>& target_views, const dx::DepthView& depth_view) const;
         void unbind_target_depth_views() const;
 
-        void bind_shader_view_for_pixel_shader(const dx::shader_view& view, UINT slot) const;
+        void bind_shader_view_for_pixel_shader(const dx::ShaderView& view, UINT slot) const;
         void unbind_shader_view_for_pixel_shader(UINT slot) const;
 
-        void bind_shader_view_for_compute_shader(const dx::shader_view& view, UINT slot) const;
+        void bind_shader_view_for_compute_shader(const dx::ShaderView& view, UINT slot) const;
         void unbind_shader_view_for_compute_shader(UINT slot) const;
 
-        void bind_access_view_for_compute_shader(const dx::access_view& view, UINT slot, const UINT* initial_counts = nullptr) const;
+        void bind_access_view_for_compute_shader(const dx::AccessView& view, UINT slot, const UINT* initial_counts = nullptr) const;
         void unbind_access_view_for_compute_shader(UINT slot) const;
 
         // Shaders
-        void bind_input_layout(const dx::layout& input_layout) const;
+        void bind_input_layout(const dx::InputLayout& input_layout) const;
         void unbind_input_layout() const;
 
-        void bind_vertex_shader(const dx::vertex_shader& shader) const;
+        void bind_vertex_shader(const dx::VertexShader& shader) const;
         void unbind_vertex_shader() const;
 
-        void bind_geometry_shader(const dx::geometry_shader& shader) const;
+        void bind_geometry_shader(const dx::GeometryShader& shader) const;
         void unbind_geometry_shader() const;
 
-        void bind_pixel_shader(const dx::pixel_shader& shader) const;
+        void bind_pixel_shader(const dx::PixelShader& shader) const;
         void unbind_pixel_shader() const;
 
-        void bind_compute_shader(const dx::compute_shader& shader) const;
+        void bind_compute_shader(const dx::ComputeShader& shader) const;
         void unbind_compute_shader() const;
 
-        void bind_render_shaders(const render_shaders& shaders) const;
+        void bind_render_shaders(const RenderShaders& shaders) const;
         void unbind_render_shaders() const;
 
         void dispatch_compute_shader(UINT x, UINT y, UINT z) const;
-        void execute_compute_shader(const dx::compute_shader& shader, UINT x, UINT y, UINT z) const;
+        void execute_compute_shader(const dx::ComputeShader& shader, UINT x, UINT y, UINT z) const;
     };
 }
