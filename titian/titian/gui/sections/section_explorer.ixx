@@ -216,7 +216,7 @@ export namespace titian {
             if (extension == ".h" || extension == ".cpp") {
                 return FileType::CODE;
             }
-            if (extension == ".dll" || extension == ".class") {
+            if (extension == ".dll" || extension == ".chai") {
                 return FileType::SCRIPT;
             }
             if (extension == ".obj") {

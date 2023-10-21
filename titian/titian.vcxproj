@@ -49,7 +49,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX;IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -71,7 +71,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_ALL_CXX23_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;PX_PHYSX_STATIC_LIB;KL_USING_IMGUI;KL_USING_PHYSX;IMGUI_DEFINE_MATH_OPERATORS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)klib\source\;$(SolutionDir)imgui\source\;$(SolutionDir)physx\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -99,6 +99,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="external\chaiscript\chaiscript.ixx" />
+    <ClCompile Include="external\memorymodule\MemoryModule.c" />
+    <ClCompile Include="external\memorymodule\memorymodule.ixx" />
     <ClCompile Include="sandbox\pieces\piece_prepare.ixx" />
     <ClCompile Include="sandbox\pieces\piece_skybox.ixx" />
     <ClCompile Include="sandbox\pieces\piece_cubes.ixx" />
@@ -157,17 +160,69 @@
     <ClCompile Include="titian\scene\default_meshes.ixx" />
     <ClCompile Include="titian\scene\entity.ixx" />
     <ClCompile Include="titian\scene\scene.ixx" />
+    <ClCompile Include="titian\scripting\interpreted_script.ixx" />
+    <ClCompile Include="titian\scripting\interpreted_scripting\interpreted_script_parts.ixx" />
     <ClCompile Include="titian\scripting\script.ixx" />
-    <ClCompile Include="titian\scripting\dll_script.ixx" />
-    <ClCompile Include="titian\scripting\visual\visual_script_parts.ixx" />
-    <ClCompile Include="titian\scripting\visual\visual_script_types.ixx" />
-    <ClCompile Include="titian\scripting\visual_script.ixx" />
+    <ClCompile Include="titian\scripting\native_script.ixx" />
+    <ClCompile Include="titian\scripting\node_scripting\node_script_parts.ixx" />
+    <ClCompile Include="titian\scripting\node_scripting\node_script_types.ixx" />
+    <ClCompile Include="titian\scripting\node_script.ixx" />
     <ClCompile Include="titian\serialization\serializable.ixx" />
     <ClCompile Include="titian\serialization\serialization.ixx" />
     <ClCompile Include="titian\serialization\serializer.ixx" />
     <ClCompile Include="titian\titian\titian_editor.ixx" />
     <ClCompile Include="titian\titian\titian_game.ixx" />
     <ClCompile Include="titian\titian_entry.ixx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="external\chaiscript\chaiscript.hpp" />
+    <ClInclude Include="external\chaiscript\chaiscript_basic.hpp" />
+    <ClInclude Include="external\chaiscript\chaiscript_defines.hpp" />
+    <ClInclude Include="external\chaiscript\chaiscript_stdlib.hpp" />
+    <ClInclude Include="external\chaiscript\chaiscript_threading.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\any.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\bad_boxed_cast.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\bind_first.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\bootstrap.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\bootstrap_stl.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\boxed_cast.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\boxed_cast_helper.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\boxed_number.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\boxed_value.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\callable_traits.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\dispatchkit.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\dynamic_object.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\dynamic_object_detail.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\exception_specification.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\function_call.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\function_call_detail.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\handle_return.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\operators.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\proxy_constructors.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\proxy_functions.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\proxy_functions_detail.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\register_function.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\short_alloc.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\type_conversions.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\type_info.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_algebraic.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_common.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_engine.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_eval.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_optimizer.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_parser.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_posix.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_prelude.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_prelude_docs.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_tracer.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_unknown.hpp" />
+    <ClInclude Include="external\chaiscript\language\chaiscript_windows.hpp" />
+    <ClInclude Include="external\chaiscript\utility\fnv1a.hpp" />
+    <ClInclude Include="external\chaiscript\utility\json.hpp" />
+    <ClInclude Include="external\chaiscript\utility\json_wrap.hpp" />
+    <ClInclude Include="external\chaiscript\utility\static_string.hpp" />
+    <ClInclude Include="external\chaiscript\utility\utility.hpp" />
+    <ClInclude Include="external\memorymodule\MemoryModule.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

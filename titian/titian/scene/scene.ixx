@@ -8,8 +8,9 @@ export import script;
 export import default_meshes;
 export import default_materials;
 
-export import dll_script;
-export import visual_script;
+export import native_script;
+export import interpreted_script;
+export import node_script;
 
 export import camera;
 export import ambient_light;
@@ -145,11 +146,14 @@ export namespace titian {
 
                     kl::Object<Script> object = nullptr;
                     switch (type) {
-                    case Script::Type::DLL:
-                        object = new DLLScript(this);
+                    case Script::Type::NATIVE:
+                        object = new NativeScript(this);
                         break;
-                    case Script::Type::VISUAL:
-                        object = new VisualScript(this);
+                    case Script::Type::INTERPRETED:
+                        object = new InterpretedScript(this);
+                        break;
+                    case Script::Type::NODE:
+                        object = new NodeScript(this);
                         break;
                     }
             

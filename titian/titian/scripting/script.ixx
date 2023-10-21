@@ -8,8 +8,9 @@ export namespace titian {
 	public:
 		enum class Type
 		{
-			DLL,
-			VISUAL,
+			NATIVE,
+			INTERPRETED,
+			NODE,
 		} const type = {};
 
 		void* scene = nullptr;
@@ -20,6 +21,12 @@ export namespace titian {
 
 		~Script() override
 		{}
+
+		Script(const Script&) = delete;
+		Script(const Script&&) = delete;
+
+		void operator=(const Script&) = delete;
+		void operator=(const Script&&) = delete;
 
 		void serialize(Serializer* serializer) const override
 		{

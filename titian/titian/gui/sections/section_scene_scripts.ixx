@@ -4,7 +4,10 @@ export import gui_section;
 export import editor_layer;
 export import gui_layer;
 export import gui_helper;
-export import dll_script;
+
+export import native_script;
+export import interpreted_script;
+export import node_script;
 
 export namespace titian {
 	class GUISectionSceneScripts : public GUISection
@@ -51,7 +54,14 @@ export namespace titian {
 					const std::string script_extension = path.extension().string();
 
 					if (script_extension == ".dll") {
-						scene->scripts[script_name] = new DLLScript(scene, path.string());
+						kl::Object new_script = new NativeScript(scene);
+						new_script->data = kl::read_file(path.string());
+						scene->scripts[script_name] = new_script;
+					}
+					else if (script_extension == ".chai") {
+						kl::Object new_script = new InterpretedScript(scene);
+						new_script->source = kl::read_file_string(path.string());
+						scene->scripts[script_name] = new_script;
 					}
 				}
 

@@ -8,6 +8,8 @@ namespace kl {
     std::string file_extension(const std::string& filepath);
     std::vector<std::string> list_files(const std::string& path, bool recursive = false);
 
+    std::vector<byte> read_file(const std::string_view& filepath);
+
     std::string read_file_string(const std::string& filepath);
     bool write_file_string(const std::string& filepath, const std::string& data);
     bool append_file_string(const std::string& filepath, const std::string& data, int position = -1);

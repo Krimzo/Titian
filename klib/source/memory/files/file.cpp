@@ -27,6 +27,22 @@ std::vector<std::string> kl::list_files(const std::string& path, const bool recu
     return files;
 }
 
+std::vector<byte> kl::read_file(const std::string_view& filepath)
+{
+    kl::File file = { filepath, false };
+    if (!file) {
+        return {};
+    }
+
+    file.unwind();
+    const int file_size = file.tell();
+    file.rewind();
+
+    std::vector<byte> result(file_size);
+    file.read(result.data(), file_size);
+    return result;
+}
+
 std::string kl::read_file_string(const std::string& filepath)
 {
     std::ifstream stream(filepath);
