@@ -28,6 +28,7 @@
     <ClCompile Include="source\imgui_widgets.cpp" />
     <ClCompile Include="source\imnodes.cpp" />
     <ClCompile Include="source\ImSequencer.cpp" />
+    <ClCompile Include="source\TextEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\crude_json.h" />
@@ -43,6 +44,7 @@
     <ClInclude Include="source\imgui_impl_dx11.h" />
     <ClInclude Include="source\imgui_impl_win32.h" />
     <ClInclude Include="source\imgui_internal.h" />
+    <ClInclude Include="source\imgui_memory_editor.h" />
     <ClInclude Include="source\imgui_node_editor.h" />
     <ClInclude Include="source\imgui_node_editor_internal.h" />
     <ClInclude Include="source\imnodes.h" />
@@ -52,6 +54,7 @@
     <ClInclude Include="source\imstb_textedit.h" />
     <ClInclude Include="source\imstb_truetype.h" />
     <ClInclude Include="source\ImZoomSlider.h" />
+    <ClInclude Include="source\TextEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="source\imgui_bezier_math.inl" />

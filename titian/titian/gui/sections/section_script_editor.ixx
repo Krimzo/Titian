@@ -2,6 +2,7 @@ export module section_script_editor;
 
 export import gui_section;
 export import editor_layer;
+export import gui_layer;
 
 export import native_script;
 export import interpreted_script;
@@ -12,13 +13,21 @@ export namespace titian {
 	{
 	public:
 		kl::Object<EditorLayer> editor_layer = nullptr;
+		kl::Object<GUILayer> gui_layer = nullptr;
 
 		std::string selected_script = "/";
 
-		GUISectionScriptEditor(kl::Object<EditorLayer>& editor_layer)
+		GUISectionScriptEditor(kl::Object<EditorLayer>& editor_layer, kl::Object<GUILayer>& gui_layer)
 		{
 			this->editor_layer = editor_layer;
+			this->gui_layer = gui_layer;
+			
+			// Text editor
+			m_text_editor.SetTabSize(4);
+			m_text_editor.SetShowWhitespaces(false);
+			m_text_editor.SetColorizerEnable(true);
 
+			// Node editor
 			auto& style = ImNodes::GetStyle();
 			style.Colors[ImNodesCol_TitleBar] = ImColor(255, 255, 255, 255);
 			style.Colors[ImNodesCol_TitleBarHovered] = style.Colors[ImNodesCol_TitleBar];
@@ -108,7 +117,9 @@ export namespace titian {
 		}
 
 	private:
-		bool should_open_node_popup = false;
+		MemoryEditor m_memory_editor = {};
+		TextEditor m_text_editor = {};
+		bool m_should_open_node_popup = false;
 
 		void display_scripts(Scene* scene)
 		{
@@ -168,11 +179,20 @@ export namespace titian {
 		}
 
 		void edit_native_script(NativeScript* script)
-		{}
+		{
+			std::vector<byte>& data = script->data;
+			m_memory_editor.DrawContents(data.data(), data.size());
+		}
 
 		void edit_interpreted_script(InterpretedScript* script)
 		{
+			ImGui::PushFont(gui_layer->jetbrains_font);
 
+			m_text_editor.SetText(script->source);
+			m_text_editor.Render(selected_script.c_str());
+			script->source = m_text_editor.GetText();
+
+			ImGui::PopFont();
 		}
 
 		void edit_node_script(NodeScript* script)
@@ -181,15 +201,15 @@ export namespace titian {
 
 			// Add nodes
 			if (ImNodes::IsEditorHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-				should_open_node_popup = true;
+				m_should_open_node_popup = true;
 			}
 			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-				should_open_node_popup = false;
+				m_should_open_node_popup = false;
 			}
 
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 5.0f, 5.0f });
 
-			if (should_open_node_popup) {
+			if (m_should_open_node_popup) {
 				ImGui::OpenPopup("add node");
 			}
 			if (ImGui::BeginPopup("add node")) {

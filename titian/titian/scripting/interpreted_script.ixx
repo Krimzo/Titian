@@ -37,7 +37,9 @@ export namespace titian {
 		}
 
 		void reload() override
-		{}
+		{
+
+		}
 
 		void call_start() override
 		{

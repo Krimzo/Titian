@@ -9,6 +9,8 @@
 #include <imgui_impl_dx11.h>
 
 #include <ImGuizmo.h>
+#include <imgui_memory_editor.h>
+#include <TextEditor.h>
 #include <imnodes.h>
 #include <imgui_node_editor.h>
 

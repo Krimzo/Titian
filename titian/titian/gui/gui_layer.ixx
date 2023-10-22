@@ -13,6 +13,9 @@ export namespace titian {
 
 		kl::Float4 special_color = kl::Color(235, 170, 15);
 		kl::Float4 alternate_color = kl::Color(125, 190, 190);
+
+		ImFont* roboto_font = nullptr;
+		ImFont* jetbrains_font = nullptr;
 		
 		GUILayer(kl::Object<RenderLayer>& render_layer)
 		{
@@ -27,7 +30,7 @@ export namespace titian {
 
 			ImGui::StyleColorsDark();
 			load_custom_theme();
-			load_custom_font();
+			load_custom_fonts();
 
 			ImGui_ImplWin32_Init(static_cast<HWND>(*window));
 			ImGui_ImplDX11_Init(gpu->device().Get(), gpu->context().Get());
@@ -155,10 +158,17 @@ export namespace titian {
 		    style.TabRounding = 4;
 		}
 
-		void load_custom_font() const
+		void load_custom_fonts()
 		{
-		    const ImGuiIO& io = ImGui::GetIO();
-		    io.Fonts->AddFontFromFileTTF("builtin/fonts/Roboto.ttf", 16);
+		    ImFontAtlas* atlas = ImGui::GetIO().Fonts;
+
+			roboto_font = atlas->AddFontFromFileTTF("builtin/fonts/Roboto.ttf", 16);
+			jetbrains_font = atlas->AddFontFromFileTTF("builtin/fonts/JetBrains.ttf", 20);
+
+			kl::assert(roboto_font, "Failed to load ROBOTO font");
+			kl::assert(jetbrains_font, "Failed to load JETBRAINS font");
+
+			atlas->Build();
 		}
 	};
 }

@@ -2,7 +2,7 @@ export module node_script_parts;
 
 export import serializable;
 
-static std::atomic<int> id_counter = {};
+std::atomic<int> id_counter = {};
 
 export namespace titian {
     class UniqueObject
