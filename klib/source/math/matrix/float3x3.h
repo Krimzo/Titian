@@ -45,9 +45,9 @@ namespace kl {
         float determinant() const;
 
         // Static
-        static Float3x3 translation(const Float2& val);
-        static Float3x3 rotation(float rotation);
         static Float3x3 scaling(const Float2& vec);
+        static Float3x3 rotation(float rotation);
+        static Float3x3 translation(const Float2& val);
     };
 }
 

@@ -131,11 +131,11 @@ float kl::Float3x3::determinant() const
 }
 
 // Static
-kl::Float3x3 kl::Float3x3::translation(const Float2& val)
+kl::Float3x3 kl::Float3x3::scaling(const Float2& vec)
 {
     Float3x3 result = {};
-    result[2] = val.x;
-    result[5] = val.y;
+    result[0] = vec.x;
+    result[4] = vec.y;
     return result;
 }
 
@@ -152,11 +152,11 @@ kl::Float3x3 kl::Float3x3::rotation(float rotation)
     return result;
 }
 
-kl::Float3x3 kl::Float3x3::scaling(const Float2& vec)
+kl::Float3x3 kl::Float3x3::translation(const Float2& val)
 {
     Float3x3 result = {};
-    result[0] = vec.x;
-    result[4] = vec.y;
+    result[2] = val.x;
+    result[5] = val.y;
     return result;
 }
 

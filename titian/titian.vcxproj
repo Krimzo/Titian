@@ -112,6 +112,7 @@
     <ClCompile Include="sandbox\sandbox_entry.ixx" />
     <ClCompile Include="source\main.ixx" />
     <ClCompile Include="titian\application\application_layer.ixx" />
+    <ClCompile Include="titian\application\logger.ixx" />
     <ClCompile Include="titian\application\log_info.ixx" />
     <ClCompile Include="titian\components\collider.ixx" />
     <ClCompile Include="titian\components\material.ixx" />

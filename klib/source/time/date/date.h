@@ -13,6 +13,7 @@ namespace kl {
         int hour = 0;
         int minute = 0;
         int second = 0;
+        int milisecond = 0;
 
         Date();
     };

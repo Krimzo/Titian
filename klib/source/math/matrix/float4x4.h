@@ -46,14 +46,14 @@ namespace kl {
         float determinant() const;
 
         // Static
-        static Float4x4 translation(const Float3& translation);
-        static Float4x4 rotation(const Float3& rotation);
         static Float4x4 scaling(const Float3& scale);
+        static Float4x4 rotation(const Float3& rotation);
+        static Float4x4 translation(const Float3& translation);
+
+        static Float4x4 look_at(const Float3& position, const Float3& target, const Float3& up);
 
         static Float4x4 perspective(float field_of_view, float aspect_ratio, float near_plane, float far_plane);
         static Float4x4 orthographic(float left, float right, float bottom, float top, float near_plane, float far_plane);
-
-        static Float4x4 look_at(const Float3& position, const Float3& target, const Float3& up);
     };
 }
 

@@ -74,6 +74,11 @@ export namespace titian {
         {
             GameLayer* game_layer = &editor_layer->game_layer;
 
+            // Reload all scripts
+            for (auto& [_, script] : game_layer->scene->scripts) {
+                script->reload();
+            }
+
             // Save scene
             Serializer serializer = { m_temp_path, true };
             game_layer->scene->serialize(&serializer);

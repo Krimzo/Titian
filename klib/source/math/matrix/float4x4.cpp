@@ -139,12 +139,12 @@ float kl::Float4x4::determinant() const
 }
 
 // Static
-kl::Float4x4 kl::Float4x4::translation(const Float3& translation)
+kl::Float4x4 kl::Float4x4::scaling(const Float3& scale)
 {
     Float4x4 result = {};
-    result[3] = translation.x;
-    result[7] = translation.y;
-    result[11] = translation.z;
+    result[0] = scale.x;
+    result[5] = scale.y;
+    result[10] = scale.z;
     return result;
 }
 
@@ -183,12 +183,34 @@ kl::Float4x4 kl::Float4x4::rotation(const Float3& rotation)
     return z_rot * y_rot * x_rot;
 }
 
-kl::Float4x4 kl::Float4x4::scaling(const Float3& scale)
+kl::Float4x4 kl::Float4x4::translation(const Float3& translation)
 {
     Float4x4 result = {};
-    result[0] = scale.x;
-    result[5] = scale.y;
-    result[10] = scale.z;
+    result[3] = translation.x;
+    result[7] = translation.y;
+    result[11] = translation.z;
+    return result;
+}
+
+kl::Float4x4 kl::Float4x4::look_at(const Float3& position, const Float3& target, const Float3& up)
+{
+    const Float3 f = normalize(target - position);
+    const Float3 s = normalize(cross(up, f));
+    const Float3 u = cross(f, s);
+
+    Float4x4 result = {};
+    result[0] = s.x;
+    result[1] = s.y;
+    result[2] = s.z;
+    result[3] = -dot(s, position);
+    result[4] = u.x;
+    result[5] = u.y;
+    result[6] = u.z;
+    result[7] = -dot(u, position);
+    result[8] = f.x;
+    result[9] = f.y;
+    result[10] = f.z;
+    result[11] = -dot(f, position);
     return result;
 }
 
@@ -215,28 +237,6 @@ kl::Float4x4 kl::Float4x4::orthographic(float left, float right, float bottom, f
     result[3] = -(right + left) / (right - left);
     result[7] = -(top + bottom) / (top - bottom);
     result[11] = -(far_plane + near_plane) / (far_plane - near_plane);
-    return result;
-}
-
-kl::Float4x4 kl::Float4x4::look_at(const Float3& position, const Float3& target, const Float3& up)
-{
-    const Float3 f = normalize(target - position);
-    const Float3 s = normalize(cross(up, f));
-    const Float3 u = cross(f, s);
-
-    Float4x4 result = {};
-    result[0] = s.x;
-    result[1] = s.y;
-    result[2] = s.z;
-    result[3] = -dot(s, position);
-    result[4] = u.x;
-    result[5] = u.y;
-    result[6] = u.z;
-    result[7] = -dot(u, position);
-    result[8] = f.x;
-    result[9] = f.y;
-    result[10] = f.z;
-    result[11] = -dot(f, position);
     return result;
 }
 

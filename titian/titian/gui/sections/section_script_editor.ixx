@@ -27,6 +27,45 @@ export namespace titian {
 			m_text_editor.SetShowWhitespaces(false);
 			m_text_editor.SetColorizerEnable(true);
 
+			TextEditor::LanguageDefinition language_definition = m_text_editor.GetLanguageDefinition();
+			language_definition.mName = "Chaiscript";
+			language_definition.mAutoIndentation = true;
+			language_definition.mCaseSensitive = true;
+			language_definition.mCommentStart = "/*";
+			language_definition.mCommentEnd = "*/";
+			language_definition.mSingleLineComment = "/";
+			language_definition.mKeywords = INTERPRETED_SCRIPT_KEYWORDS;
+			language_definition.mIdentifiers.clear();
+			for (const auto& [name, info] : INTERPRETED_SCRIPT_IDENTIFIERS) {
+				TextEditor::Identifier identifier = {};
+				identifier.mDeclaration = info;
+				language_definition.mIdentifiers[name] = identifier;
+			}
+			m_text_editor.SetLanguageDefinition(language_definition);
+
+			TextEditor::Palette color_pallete = m_text_editor.GetDarkPalette();
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Keyword)] = ImColor(240, 155, 120);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Number)] = ImColor(200, 95, 95);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::String)] = ImColor(211, 158, 104);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::CharLiteral)] = ImColor(204, 170, 135);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Punctuation)] = ImColor(225, 225, 225);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Preprocessor)] = ImColor(224, 179, 215);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Identifier)] = ImColor(210, 210, 210);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::KnownIdentifier)] = ImColor(105, 210, 190);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::PreprocIdentifier)] = ImColor(210, 178, 203);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Comment)] = ImColor(128, 128, 128);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::MultiLineComment)] = ImColor(116, 116, 116);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Background)] = ImColor(25, 25, 25);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Cursor)] = ImColor(220, 220, 220);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Selection)] = ImColor(70, 70, 70);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::ErrorMarker)] = ImColor(196, 57, 57);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Breakpoint)] = ImColor(222, 73, 73);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::LineNumber)] = ImColor(210, 210, 210);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::CurrentLineFill)] = ImColor(51, 51, 51, 10);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::CurrentLineFillInactive)] = ImColor(51, 51, 51, 20);
+			color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::CurrentLineEdge)] = ImColor(89, 89, 89);
+			m_text_editor.SetPalette(color_pallete);
+
 			// Node editor
 			auto& style = ImNodes::GetStyle();
 			style.Colors[ImNodesCol_TitleBar] = ImColor(255, 255, 255, 255);
