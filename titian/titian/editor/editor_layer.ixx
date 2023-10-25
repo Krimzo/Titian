@@ -1,6 +1,7 @@
 export module editor_layer;
 
 export import game_layer;
+export import camera;
 
 export namespace titian {
     class EditorLayer : public Layer

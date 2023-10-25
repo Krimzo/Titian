@@ -13,14 +13,14 @@ export namespace titian {
 		~Light() override
 		{}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer* serializer, const void* helper_data) const override
 		{
-			Entity::serialize(serializer);
+			Entity::serialize(serializer, helper_data);
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer* serializer, const void* helper_data) override
 		{
-			Entity::deserialize(serializer);
+			Entity::deserialize(serializer, helper_data);
 		}
 
 		virtual kl::Float3 light_at_point(const kl::Float3& point) const = 0;

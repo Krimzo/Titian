@@ -23,7 +23,7 @@ export namespace titian {
 		~Texture() override
 		{}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer* serializer, const void* helper_data) const override
 		{
 			const kl::Int2 size = data_buffer.size();
 			serializer->write_object<kl::Int2>(size);
@@ -34,7 +34,7 @@ export namespace titian {
 			serializer->write_object<bool>(m_is_cube);
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer* serializer, const void* helper_data) override
 		{
 			const kl::Int2 size = serializer->read_object<kl::Int2>();
 			data_buffer.resize(size);
@@ -52,7 +52,7 @@ export namespace titian {
 			create_shader_view(nullptr);
 		}
 
-		void load_as_2D(bool has_unordered_access, bool is_target)
+		void load_as_2D(bool has_unordered_access = false, bool is_target = false)
 		{
 			graphics_buffer = m_gpu->create_texture(data_buffer, has_unordered_access, is_target);
 			m_is_cube = false;
@@ -79,22 +79,22 @@ export namespace titian {
 			return true;
 		}
 
-		void create_target_view(const kl::dx::TargetViewDescriptor* descriptor)
+		void create_target_view(const kl::dx::TargetViewDescriptor* descriptor = nullptr)
 		{
 			target_view = m_gpu->create_target_view(graphics_buffer, descriptor);
 		}
 
-		void  create_depth_view(const kl::dx::DepthViewDescriptor* descriptor)
+		void  create_depth_view(const kl::dx::DepthViewDescriptor* descriptor = nullptr)
 		{
 			depth_view = m_gpu->create_depth_view(graphics_buffer, descriptor);
 		}
 
-		void create_shader_view(const kl::dx::ShaderViewDescriptor* descriptor)
+		void create_shader_view(const kl::dx::ShaderViewDescriptor* descriptor = nullptr)
 		{
 			shader_view = m_gpu->create_shader_view(graphics_buffer, descriptor);
 		}
 
-		void create_access_view(const kl::dx::AccessViewDescriptor* descriptor)
+		void create_access_view(const kl::dx::AccessViewDescriptor* descriptor = nullptr)
 		{
 			access_view = m_gpu->create_access_view(graphics_buffer, descriptor);
 		}
@@ -104,7 +104,7 @@ export namespace titian {
 			return m_is_cube;
 		}
 
-		kl::Int2 size() const
+		kl::Int2 graphics_buffer_size() const
 		{
 			if (!graphics_buffer) {
 				return {};

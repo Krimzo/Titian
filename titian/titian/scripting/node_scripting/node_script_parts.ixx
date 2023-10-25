@@ -1,6 +1,7 @@
 export module node_script_parts;
 
-export import serializable;
+export import scene;
+export import logger;
 
 std::atomic<int> id_counter = {};
 

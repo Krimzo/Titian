@@ -40,7 +40,7 @@ export namespace titian {
         void operator=(const Entity&) = delete;
         void operator=(const Entity&&) = delete;
 
-        void serialize(Serializer* serializer) const override
+        void serialize(Serializer* serializer, const void* helper_data) const override
         {
             serializer->write_object<Type>(type);
 
@@ -61,11 +61,11 @@ export namespace titian {
             const bool has_collider = static_cast<bool>(m_collider);
             serializer->write_object<bool>(has_collider);
             if (has_collider) {
-                m_collider->serialize(serializer);
+                m_collider->serialize(serializer, helper_data);
             }
         }
 
-        void deserialize(const Serializer* serializer) override
+        void deserialize(const Serializer* serializer, const void* helper_data) override
         {
             set_dynamic(serializer->read_object<bool>());
             set_gravity(serializer->read_object<bool>());
@@ -84,7 +84,7 @@ export namespace titian {
             const bool has_collider = serializer->read_object<bool>();
             if (has_collider) {
                 kl::Object new_collider = new Collider(m_physics);
-                new_collider->deserialize(serializer);
+                new_collider->deserialize(serializer, helper_data);
                 this->set_collider(new_collider);
             }
         }

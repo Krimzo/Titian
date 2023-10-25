@@ -111,7 +111,7 @@
     <ClCompile Include="sandbox\sandbox_piece.ixx" />
     <ClCompile Include="sandbox\sandbox_entry.ixx" />
     <ClCompile Include="source\main.ixx" />
-    <ClCompile Include="titian\application\application_layer.ixx" />
+    <ClCompile Include="titian\application\app_layer.ixx" />
     <ClCompile Include="titian\application\logger.ixx" />
     <ClCompile Include="titian\application\log_info.ixx" />
     <ClCompile Include="titian\components\collider.ixx" />
@@ -161,6 +161,7 @@
     <ClCompile Include="titian\scene\default_meshes.ixx" />
     <ClCompile Include="titian\scene\entity.ixx" />
     <ClCompile Include="titian\scene\scene.ixx" />
+    <ClCompile Include="titian\scene\scene_impl.ixx" />
     <ClCompile Include="titian\scripting\interpreted_script.ixx" />
     <ClCompile Include="titian\scripting\interpreted_scripting\interpreted_script_parts.ixx" />
     <ClCompile Include="titian\scripting\script.ixx" />

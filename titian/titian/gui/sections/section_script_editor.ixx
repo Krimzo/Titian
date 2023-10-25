@@ -3,6 +3,7 @@ export module section_script_editor;
 export import gui_section;
 export import editor_layer;
 export import gui_layer;
+export import gui_helper;
 
 export import native_script;
 export import interpreted_script;
@@ -101,7 +102,7 @@ export namespace titian {
 							for (int i = 0; scene->scripts.contains(possible_name); i++) {
 								possible_name = kl::format("new_script", i);
 							}
-							scene->scripts[possible_name] = new NativeScript(scene);
+							scene->scripts[possible_name] = new NativeScript();
 							ImGui::CloseCurrentPopup();
 						}
 						if (ImGui::Button("New INTERPRETED Script")) {
@@ -109,7 +110,7 @@ export namespace titian {
 							for (int i = 0; scene->scripts.contains(possible_name); i++) {
 								possible_name = kl::format("new_script", i);
 							}
-							scene->scripts[possible_name] = new InterpretedScript(scene);
+							scene->scripts[possible_name] = new InterpretedScript();
 							ImGui::CloseCurrentPopup();
 						}
 						if (ImGui::Button("New NODE Script")) {
@@ -117,7 +118,7 @@ export namespace titian {
 							for (int i = 0; scene->scripts.contains(possible_name); i++) {
 								possible_name = kl::format("new_script", i);
 							}
-							scene->scripts[possible_name] = new NodeScript(scene);
+							scene->scripts[possible_name] = new NodeScript();
 							ImGui::CloseCurrentPopup();
 						}
 						ImGui::EndPopup();
@@ -126,6 +127,21 @@ export namespace titian {
 					display_scripts(scene);
 				}
 				ImGui::EndChild();
+
+				const std::optional script_path = gui_get_drag_drop<std::string>("ScriptFile");
+				if (script_path) {
+					const std::filesystem::path path{ script_path.value() };
+					const std::string extension = path.extension().string();
+					if (extension == ".chai") {
+						kl::Object new_script = new InterpretedScript();
+						new_script->path = path.string();
+						new_script->reload();
+						scene->scripts[path.stem().string()] = new_script;
+					}
+					else if (extension == ".dll") {
+
+					}
+				}
 
 				ImGui::NextColumn();
 
@@ -178,6 +194,10 @@ export namespace titian {
 
 				if (ImGui::Selectable(script_name.c_str(), script_name == this->selected_script)) {
 					this->selected_script = script_name;
+
+					if (const InterpretedScript* inter_script = dynamic_cast<const InterpretedScript*>(&script)) {
+						m_text_editor.SetText(inter_script->source);
+					}
 				}
 
 				if (ImGui::BeginPopupContextItem(script_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
@@ -227,7 +247,7 @@ export namespace titian {
 		{
 			ImGui::PushFont(gui_layer->jetbrains_font);
 
-			m_text_editor.SetText(script->source);
+			//m_text_editor.SetText(script->source);
 			m_text_editor.Render(selected_script.c_str());
 			script->source = m_text_editor.GetText();
 

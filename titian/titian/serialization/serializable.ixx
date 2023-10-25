@@ -12,7 +12,7 @@ export namespace titian {
         virtual ~Serializable()
         {}
         
-        virtual void serialize(Serializer* serializer) const = 0;
-        virtual void deserialize(const Serializer * serializer) = 0;
+        virtual void serialize(Serializer* serializer, const void* helper_data) const = 0;
+        virtual void deserialize(const Serializer * serializer, const void* helper_data) = 0;
     };
 }

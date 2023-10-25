@@ -25,9 +25,9 @@ export namespace titian {
         ~Camera() override
         {}
 
-        void serialize(Serializer* serializer) const override
+        void serialize(Serializer* serializer, const void* helper_data) const override
         {
-            Entity::serialize(serializer);
+            Entity::serialize(serializer, helper_data);
 
             serializer->write_object<float>(aspect_ratio);
             serializer->write_object<float>(field_of_view);
@@ -44,9 +44,9 @@ export namespace titian {
             serializer->write_string(skybox_name);
         }
 
-        void deserialize(const Serializer* serializer) override
+        void deserialize(const Serializer* serializer, const void* helper_data) override
         {
-            Entity::deserialize(serializer);
+            Entity::deserialize(serializer, helper_data);
 
             serializer->read_object<float>(aspect_ratio);
             serializer->read_object<float>(field_of_view);

@@ -1,6 +1,5 @@
 export module node_script;
 
-export import script;
 export import node_script_types;
 
 export namespace titian {
@@ -10,8 +9,8 @@ export namespace titian {
 		std::vector<kl::Object<FlowNode>> nodes = {};
 		std::vector<kl::Object<FlowLink>> links = {};
 
-		NodeScript(void* scene)
-			: Script(Type::NODE, scene)
+		NodeScript()
+			: Script(Type::NODE)
 		{
 			// Start
 			kl::Object start_node = new FlowNode();
@@ -39,14 +38,14 @@ export namespace titian {
 		~NodeScript() override
 		{}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer* serializer, const void* helper_data) const override
 		{
-			Script::serialize(serializer);
+			Script::serialize(serializer, helper_data);
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer* serializer, const void* helper_data) override
 		{
-			Script::deserialize(serializer);
+			Script::deserialize(serializer, helper_data);
 		}
 
 		bool is_valid() const override

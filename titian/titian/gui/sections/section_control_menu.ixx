@@ -68,42 +68,41 @@ export namespace titian {
         }
 
     private:
-        std::string m_temp_path = "temp.titian";
+        const std::string m_temp_path = "temp.titian";
 
         void start_scene()
         {
             GameLayer* game_layer = &editor_layer->game_layer;
 
-            // Reload all scripts
-            for (auto& [_, script] : game_layer->scene->scripts) {
-                script->reload();
+            // Cache scene
+            if (Serializer serializer = { m_temp_path, true }) {
+                game_layer->scene->serialize(&serializer, nullptr);
+                Logger::log("Scene cached.");
+            }
+            else {
+                Logger::log("Failed to cache the scene.");
             }
 
-            // Save scene
-            Serializer serializer = { m_temp_path, true };
-            game_layer->scene->serialize(&serializer);
-
-            // Change state
-            game_layer->game_running = true;
-            game_layer->app_layer->timer->reset_elapsed();
-
-            // Call script starts
-            for (auto& [_, script] : game_layer->scene->scripts) {
-                script->call_start();
-            }
+            // Start game
+            game_layer->start_game();
         }
 
         void stop_scene()
         {
             GameLayer* game_layer = &editor_layer->game_layer;
 
-            // Change state
-            game_layer->game_running = false;
-            game_layer->scene = new Scene(game_layer->app_layer->gpu);
+            // Stop game
+            game_layer->stop_game();
+            game_layer->reset_scene();
 
-            // Load scene
-            const Serializer serializer = { m_temp_path, false };
-            game_layer->scene->deserialize(&serializer);
+            // Load cached scene
+            if (const Serializer serializer = { m_temp_path, false }) {
+                game_layer->scene->deserialize(&serializer, nullptr);
+                Logger::log("Cached scene loaded.");
+            }
+            else {
+                Logger::log("Failed to load the cached scene.");
+            }
         }
     };
 }

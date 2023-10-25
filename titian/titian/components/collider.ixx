@@ -6,8 +6,6 @@ export namespace titian {
     class Collider : public Serializable
     {
     public:
-        static const std::map<std::string, kl::Object<Mesh>>* BOUND_MESHES;
-
         Collider(physx::PxPhysics* physics)
             : m_physics(physics)
         {
@@ -33,8 +31,10 @@ export namespace titian {
             }
         }
 
-        void serialize(Serializer* serializer) const override
+        void serialize(Serializer* serializer, const void* helper_data) const override
         {
+            auto helper_meshes = static_cast<const std::map<std::string, kl::Object<Mesh>>*>(helper_data);
+
             const physx::PxGeometryType::Enum type = this->type();
             serializer->write_object<physx::PxGeometryType::Enum>(type);
 
@@ -63,7 +63,7 @@ export namespace titian {
                     m_shape->getTriangleMeshGeometry(geometry);
                     serializer->write_object<kl::Float3>(reinterpret_cast<kl::Float3&>(geometry.scale.scale));
                     bool was_found = false;
-                    for (const auto& [name, mesh] : *BOUND_MESHES) {
+                    for (const auto& [name, mesh] : *helper_meshes) {
                         if (mesh->physics_buffer == geometry.triangleMesh) {
                             serializer->write_string(name);
                             was_found = true;
@@ -83,8 +83,10 @@ export namespace titian {
             serializer->write_object<float>(restitution());
         }
 
-        void deserialize(const Serializer* serializer) override
+        void deserialize(const Serializer* serializer, const void* helper_data) override
         {
+            auto helper_meshes = static_cast<const std::map<std::string, kl::Object<Mesh>>*>(helper_data);
+
             const physx::PxGeometryType::Enum type = serializer->read_object<physx::PxGeometryType::Enum>();
 
             switch (type) {
@@ -110,7 +112,7 @@ export namespace titian {
                 case physx::PxGeometryType::Enum::eTRIANGLEMESH: {
                     physx::PxTriangleMeshGeometry geometry = {};
                     serializer->read_object<kl::Float3>(reinterpret_cast<kl::Float3&>(geometry.scale.scale));
-                    geometry.triangleMesh = (*BOUND_MESHES).at(serializer->read_string())->physics_buffer;
+                    geometry.triangleMesh = (*helper_meshes).at(serializer->read_string())->physics_buffer;
                     this->set_geometry(geometry);
                     break;
                 }
@@ -237,5 +239,3 @@ export namespace titian {
         physx::PxShape* m_shape = nullptr;
     };
 }
-
-const std::map<std::string, kl::Object<titian::Mesh>>* titian::Collider::BOUND_MESHES = nullptr;

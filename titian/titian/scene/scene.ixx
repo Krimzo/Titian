@@ -4,20 +4,14 @@ export import mesh;
 export import texture;
 export import material;
 export import script;
+export import entity;
 
 export import default_meshes;
 export import default_materials;
 
-export import native_script;
-export import interpreted_script;
-export import node_script;
-
-export import camera;
-export import ambient_light;
-export import point_light;
-export import directional_light;
-
-constexpr uint32_t PX_VERSION = 0x4010200;
+export namespace titian {
+    constexpr uint32_t PX_VERSION = 0x4010200;
+}
 
 export namespace titian {
     class Scene : public Serializable
@@ -88,111 +82,29 @@ export namespace titian {
         void operator=(const Scene&) = delete;
         void operator=(const Scene&&) = delete;
 
-        void serialize(Serializer* serializer) const override
+        void serialize(Serializer* serializer, const void* helper_data) const override
         {
             serializer->write_string(main_camera_name);
             serializer->write_string(main_ambient_light_name);
             serializer->write_string(main_directional_light_name);
 
-            auto write_map = [&]<typename T>(const std::map<std::string, kl::Object<T>>& data)
+            auto write_map = [&]<typename T>(const std::map<std::string, kl::Object<T>>& data, const void* helper_data)
             {
                 serializer->write_object<uint64_t>(data.size());
                 for (auto& [name, object] : data) {
                     serializer->write_string(name);
-                    object->serialize(serializer);
+                    object->serialize(serializer, helper_data);
                 }
             };
             
-            write_map(meshes);
-            write_map(textures);
-            write_map(materials);
-            write_map(scripts);
-
-            Collider::BOUND_MESHES = &meshes;
-            write_map(m_entities);
+            write_map(meshes, nullptr);
+            write_map(textures, nullptr);
+            write_map(materials, nullptr);
+            write_map(scripts, nullptr);
+            write_map(m_entities, &meshes);
         }
         
-        void deserialize(const Serializer* serializer) override
-        {
-            serializer->read_string(main_camera_name);
-            serializer->read_string(main_ambient_light_name);
-            serializer->read_string(main_directional_light_name);
-
-            auto read_map = [&]<typename T>(std::map<std::string, T>& data, const std::function<T()>& provider)
-            {
-                const uint64_t size = serializer->read_object<uint64_t>();
-                for (uint64_t i = 0; i < size; i++) {
-                    const std::string name = serializer->read_string();
-                    kl::Object object = provider();
-                    object->deserialize(serializer);
-                    data[name] = object;
-                }
-            };
-            
-            std::function mesh_provider = [&] { return kl::Object{ new Mesh(&m_gpu, m_physics, m_cooking) }; };
-            read_map(meshes, mesh_provider);
-            
-            std::function texture_provider = [&] { return kl::Object{ new Texture(&m_gpu) }; };
-            read_map(textures, texture_provider);
-
-            std::function material_provider = [&] { return kl::Object{ new Material() }; };
-            read_map(materials, material_provider);
-
-            /* SCRIPTS */ {
-                const uint64_t size = serializer->read_object<uint64_t>();
-                for (uint64_t i = 0; i < size; i++) {
-                    const std::string name = serializer->read_string();
-                    const Script::Type type = serializer->read_object<Script::Type>();
-
-                    kl::Object<Script> object = nullptr;
-                    switch (type) {
-                    case Script::Type::NATIVE:
-                        object = new NativeScript(this);
-                        break;
-                    case Script::Type::INTERPRETED:
-                        object = new InterpretedScript(this);
-                        break;
-                    case Script::Type::NODE:
-                        object = new NodeScript(this);
-                        break;
-                    }
-            
-                    object->deserialize(serializer);
-                    scripts[name] = object;
-                }
-            }
-            
-            Collider::BOUND_MESHES = &meshes;
-            /* ENTITIES */ {
-                const uint64_t size = serializer->read_object<uint64_t>();
-                for (uint64_t i = 0; i < size; i++) {
-                    const std::string name = serializer->read_string();
-                    const Entity::Type type = serializer->read_object<Entity::Type>();
-
-                    kl::Object<Entity> object = nullptr;
-                    switch (type) {
-                    case Entity::Type::BASIC:
-                        object = new Entity(Entity::Type::BASIC, m_physics, false);
-                        break;
-                    case Entity::Type::CAMERA:
-                        object = new Camera(m_physics, false);
-                        break;
-                    case Entity::Type::AMBIENT_LIGHT:
-                        object = new AmbientLight(m_physics, false);
-                        break;
-                    case Entity::Type::POINT_LIGHT:
-                        object = new PointLight(m_physics, false);
-                        break;
-                    case Entity::Type::DIRECTIONAL_LIGHT:
-                        object = new DirectionalLight(m_physics, false, m_gpu, 4096);
-                        break;
-                    }
-            
-                    object->deserialize(serializer);
-                    this->add(name, object);
-                }
-            }
-        }
+        void deserialize(const Serializer* serializer, const void* helper_data) override;
 
         // Iterate
         std::map<std::string, kl::Object<Entity>>::iterator begin()
@@ -275,27 +187,27 @@ export namespace titian {
         template<typename T>
         T* get_dynamic(const std::string& id)
         {
-            kl::Object<Entity> entity = get_entity(id);
-            return dynamic_cast<T*>(&entity);
+            Entity* entity = &get_entity(id);
+            return dynamic_cast<T*>(entity);
         }
 
         template<typename T>
         const T* get_dynamic(const std::string& id) const
         {
-            const kl::Object<Entity> entity = get_entity(id);
-            return dynamic_cast<const T*>(&entity);
+            const Entity* entity = &get_entity(id);
+            return dynamic_cast<const T*>(entity);
         }
 
         // Set/Get
         void set_gravity(const kl::Float3& gravity)
         {
-            m_scene->setGravity((const physx::PxVec3&) gravity);
+            m_scene->setGravity(reinterpret_cast<const physx::PxVec3&>(gravity));
         }
 
         kl::Float3 gravity() const
         {
             const physx::PxVec3 gravity = m_scene->getGravity();
-            return (const kl::Float3&) gravity;
+            return reinterpret_cast<const kl::Float3&>(gravity);
         }
 
         void add(const std::string& name, const kl::Object<Entity>& entity)
@@ -371,6 +283,59 @@ export namespace titian {
             return nullptr;
         }
 
+        // Script helpers
+        Mesh* helper_get_mesh(const std::string& id)
+        {
+            if (meshes.contains(id)) {
+                return &meshes.at(id);
+            }
+            return nullptr;
+        }
+
+        Texture* helper_get_texture(const std::string& id)
+        {
+            if (textures.contains(id)) {
+                return &textures.at(id);
+            }
+            return nullptr;
+        }
+
+        Material* helper_get_material(const std::string& id)
+        {
+            if (materials.contains(id)) {
+                return &materials.at(id);
+            }
+            return nullptr;
+        }
+
+        Entity* helper_get_entity(const std::string& id)
+        {
+            if (m_entities.contains(id)) {
+                return &m_entities.at(id);
+            }
+            return nullptr;
+        }
+
+        int helper_mesh_count() const
+        {
+            return static_cast<int>(meshes.size());
+        }
+
+        int helper_texture_count() const
+        {
+            return static_cast<int>(textures.size());
+        }
+
+        int helper_material_count() const
+        {
+            return static_cast<int>(materials.size());
+        }
+
+        int helper_entity_count() const
+        {
+            return static_cast<int>(m_entities.size());
+        }
+
     private:
         static physx::PxDefaultAllocator m_allocator;
         static physx::PxDefaultErrorCallback m_error_callback;
@@ -385,7 +350,3 @@ export namespace titian {
         std::map<std::string, kl::Object<Entity>> m_entities = {};
     };
 }
-
-physx::PxDefaultAllocator titian::Scene::m_allocator = {};
-physx::PxDefaultErrorCallback titian::Scene::m_error_callback = {};
-physx::PxFoundation* titian::Scene::m_foundation = PxCreateFoundation(PX_VERSION, m_allocator, m_error_callback);

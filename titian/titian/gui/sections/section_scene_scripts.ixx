@@ -54,12 +54,12 @@ export namespace titian {
 					const std::string script_extension = path.extension().string();
 
 					if (script_extension == ".dll") {
-						kl::Object new_script = new NativeScript(scene);
+						kl::Object new_script = new NativeScript();
 						new_script->data = kl::read_file(path.string());
 						scene->scripts[script_name] = new_script;
 					}
 					else if (script_extension == ".chai") {
-						kl::Object new_script = new InterpretedScript(scene);
+						kl::Object new_script = new InterpretedScript();
 						new_script->source = kl::read_file_string(path.string());
 						scene->scripts[script_name] = new_script;
 					}

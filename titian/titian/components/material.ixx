@@ -23,7 +23,7 @@ export namespace titian {
 		~Material() override
 		{}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer* serializer, const void* helper_data) const override
 		{
 			serializer->write_object<float>(texture_blend);
 			serializer->write_object<float>(reflection_factor);
@@ -37,7 +37,7 @@ export namespace titian {
 			serializer->write_string(roughness_map_name);
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer* serializer, const void* helper_data) override
 		{
 			serializer->read_object<float>(texture_blend);
 			serializer->read_object<float>(reflection_factor);

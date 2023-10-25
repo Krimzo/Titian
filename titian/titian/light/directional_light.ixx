@@ -49,9 +49,9 @@ export namespace titian {
 		~DirectionalLight() override
 		{}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer* serializer, const void* helper_data) const override
 		{
-			Light::serialize(serializer);
+			Light::serialize(serializer, helper_data);
 
             serializer->write_object<uint32_t>(map_resolution);
 
@@ -61,9 +61,9 @@ export namespace titian {
 			serializer->write_object<kl::Float3>(color);
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer* serializer, const void* helper_data) override
 		{
-			Light::deserialize(serializer);
+			Light::deserialize(serializer, helper_data);
 
             serializer->read_object<uint32_t>(map_resolution);
 

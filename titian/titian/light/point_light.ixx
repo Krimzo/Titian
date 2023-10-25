@@ -16,17 +16,17 @@ export namespace titian {
 		~PointLight() override
 		{}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer* serializer, const void* helper_data) const override
 		{
-			Light::serialize(serializer);
+			Light::serialize(serializer, helper_data);
 
 			serializer->write_object<kl::Float3>(position);
 			serializer->write_object<kl::Float3>(color);
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer* serializer, const void* helper_data) override
 		{
-			Light::deserialize(serializer);
+			Light::deserialize(serializer, helper_data);
 
 			serializer->read_object<kl::Float3>(position);
 			serializer->read_object<kl::Float3>(color);

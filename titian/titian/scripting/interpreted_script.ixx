@@ -1,36 +1,37 @@
 export module interpreted_script;
 
-export import script;
 export import interpreted_script_parts;
-export import logger;
 
 export namespace titian {
 	class InterpretedScript : public Script
 	{
 	public:
 		std::string source = {};
+		std::string path = {};
 
-		InterpretedScript(void* scene)
-			: Script(Type::INTERPRETED, scene)
+		InterpretedScript()
+			: Script(Type::INTERPRETED)
 		{
-			this->source = "def on_start {\n\t\n}\n\ndef on_update {\n\t\n}\n";
+			this->source = "def on_start(scene) {\n\t\n}\n\ndef on_update(scene) {\n\t\n}\n";
 		}
 
 		~InterpretedScript() override
 		{}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer* serializer, const void* helper_data) const override
 		{
-			Script::serialize(serializer);
+			Script::serialize(serializer, helper_data);
 
 			serializer->write_string(source);
+			serializer->write_string(path);
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer* serializer, const void* helper_data) override
 		{
-			Script::deserialize(serializer);
+			Script::deserialize(serializer, helper_data);
 
 			serializer->read_string(source);
+			serializer->read_string(path);
 			this->reload();
 		}
 
@@ -45,12 +46,15 @@ export namespace titian {
 			m_update_function = {};
 			m_engine = new chaiscript::ChaiScript();
 
+			if (!path.empty()) {
+				source = kl::read_file_string(path);
+			}
+
 			try {
 				m_engine->add(INTERPRETED_SCRIPT_MODULE);
-				m_engine->eval(INTERPRETED_SCRIPT_PREDEFINED_SOURCE);
 				m_engine->eval(this->source);
-				m_start_function = m_engine->eval<std::function<void()>>("on_start");
-				m_update_function = m_engine->eval<std::function<void()>>("on_update");
+				m_start_function = m_engine->eval<std::function<void(Scene*)>>("on_start");
+				m_update_function = m_engine->eval<std::function<void(Scene*)>>("on_update");
 			}
 			catch (std::exception& e) {
 				Logger::log(e.what());
@@ -59,9 +63,10 @@ export namespace titian {
 
 		void call_start() override
 		{
-			if (m_start_function) {
+			Scene* scene = &GameLayer::BOUND_SELF->scene;
+			if (m_start_function && scene) {
 				try {
-					m_start_function();
+					m_start_function(scene);
 				}
 				catch (std::exception& e) {
 					Logger::log(e.what());
@@ -71,9 +76,10 @@ export namespace titian {
 
 		void call_update() override
 		{
-			if (m_update_function) {
+			Scene* scene = &GameLayer::BOUND_SELF->scene;
+			if (m_update_function && scene) {
 				try {
-					m_update_function();
+					m_update_function(scene);
 				}
 				catch (std::exception& e) {
 					Logger::log(e.what());
@@ -83,7 +89,7 @@ export namespace titian {
 
 	private:
 		kl::Object<chaiscript::ChaiScript> m_engine = nullptr;
-		std::function<void()> m_start_function = {};
-		std::function<void()> m_update_function = {};
+		std::function<void(Scene*)> m_start_function = {};
+		std::function<void(Scene*)> m_update_function = {};
 	};
 }

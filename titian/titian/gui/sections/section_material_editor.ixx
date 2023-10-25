@@ -289,12 +289,12 @@ export namespace titian {
                 return;
             }
 
-            if (render_texture->size() != viewport_size) {
+            if (render_texture->graphics_buffer_size() != viewport_size) {
                 render_texture->graphics_buffer = gpu->create_target_texture(viewport_size);
                 render_texture->create_target_view(nullptr);
                 render_texture->create_shader_view(nullptr);
             }
-            if (depth_texture->size() != viewport_size) {
+            if (depth_texture->graphics_buffer_size() != viewport_size) {
                 kl::dx::TextureDescriptor descriptor = {};
                 descriptor.Width = viewport_size.x;
                 descriptor.Height = viewport_size.y;

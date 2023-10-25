@@ -1,10 +1,10 @@
-export module application_layer;
+export module app_layer;
 
 export import layer;
 export import logger;
 
 export namespace titian {
-	class ApplicationLayer : public Layer
+	class AppLayer : public Layer
 	{
 	public:
 		// System
@@ -12,7 +12,7 @@ export namespace titian {
 		kl::Object<kl::GPU> gpu = nullptr;
 		kl::Object<kl::Timer> timer = nullptr;
 
-		ApplicationLayer(const std::string_view& name)
+		AppLayer(const std::string_view& name)
 		{
 			window = new kl::Window(name.data(), {1920, 1080});
 			gpu = new kl::GPU(*window, kl::IS_DEBUG, true);
@@ -20,15 +20,17 @@ export namespace titian {
 
 			window->on_resize.emplace_back([&](const kl::Int2 new_size)
 			{
-				gpu->resize_internal(new_size);
-				gpu->set_viewport_size(new_size);
+				if (new_size.x > 0 && new_size.y > 0) {
+					gpu->resize_internal(new_size);
+					gpu->set_viewport_size(new_size);
+				}
 			});
 			window->maximize();
 
 			window->set_icon("builtin/textures/editor_icon.ico");
 		}
 
-		~ApplicationLayer() override
+		~AppLayer() override
 		{}
 
 		bool update() override

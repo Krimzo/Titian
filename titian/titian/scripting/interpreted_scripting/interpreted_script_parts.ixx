@@ -1,18 +1,10 @@
 export module interpreted_script_parts;
 
+export import game_layer;
 export import chaiscript;
-export import logger;
-export import entity;
 
 export namespace titian {
 	const chaiscript::ModulePtr INTERPRETED_SCRIPT_MODULE = chaiscript::ModulePtr(new chaiscript::Module());
-
-	const std::string INTERPRETED_SCRIPT_PREDEFINED_SOURCE =
-	R"(
-		global print = fun(object) {
-			return log(object.to_string());
-		}
-	)";
 
 	const std::unordered_set<std::string> INTERPRETED_SCRIPT_KEYWORDS
 	{
@@ -528,6 +520,49 @@ int load_types = [&]
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Color"] = "Four component byte[0, 255] color.";
 
+	// Mesh
+	chaiscript::utility::add_class<Mesh>(*INTERPRETED_SCRIPT_MODULE, "Mesh",
+	{},
+	{
+		{ chaiscript::fun(&Mesh::data_buffer), "data_buffer" },
+
+		{ chaiscript::fun(&Mesh::reload), "reload" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["Mesh"] = "Object that contains triangle data.";
+
+	// Texture
+	chaiscript::utility::add_class<Texture>(*INTERPRETED_SCRIPT_MODULE, "Texture",
+	{},
+	{
+		{ chaiscript::fun(&Texture::data_buffer), "data_buffer" },
+
+		{ chaiscript::fun(&Texture::load_as_2D), "load_as_2D" },
+		{ chaiscript::fun(&Texture::load_as_cube), "load_as_cube" },
+
+		{ chaiscript::fun(&Texture::create_target_view), "create_target_view" },
+		{ chaiscript::fun(&Texture::create_depth_view), "create_depth_view" },
+		{ chaiscript::fun(&Texture::create_shader_view), "create_shader_view" },
+		{ chaiscript::fun(&Texture::create_access_view), "create_access_view" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["Texture"] = "Object that contains pixel data.";
+	
+	// Material
+	chaiscript::utility::add_class<Material>(*INTERPRETED_SCRIPT_MODULE, "Material",
+	{},
+	{
+		{ chaiscript::fun(&Material::texture_blend), "texture_blend" },
+		{ chaiscript::fun(&Material::reflection_factor), "reflection_factor" },
+		{ chaiscript::fun(&Material::refraction_factor), "refraction_factor" },
+		{ chaiscript::fun(&Material::refraction_index), "refraction_index" },
+
+		{ chaiscript::fun(&Material::color), "color" },
+
+		{ chaiscript::fun(&Material::color_map_name), "color_map_name" },
+		{ chaiscript::fun(&Material::normal_map_name), "normal_map_name" },
+		{ chaiscript::fun(&Material::roughness_map_name), "roughness_map_name" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["Material"] = "Object that defines the look of the entity.";
+
 	// Entity
 	chaiscript::utility::add_class<Entity>(*INTERPRETED_SCRIPT_MODULE, "Entity",
 	{},
@@ -561,6 +596,29 @@ int load_types = [&]
 		{ chaiscript::fun(&Entity::angular), "angular" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Entity"] = "Base entity that's a part of a scene.";
+
+	// Scene
+	chaiscript::utility::add_class<Scene>(*INTERPRETED_SCRIPT_MODULE, "Scene",
+	{},
+	{
+		{ chaiscript::fun(&Scene::main_camera_name), "main_camera_name" },
+		{ chaiscript::fun(&Scene::main_ambient_light_name), "main_ambient_light_name" },
+		{ chaiscript::fun(&Scene::main_directional_light_name), "main_directional_light_name" },
+
+		{ chaiscript::fun(&Scene::set_gravity), "set_gravity" },
+		{ chaiscript::fun(&Scene::gravity), "gravity" },
+
+		{ chaiscript::fun(&Scene::helper_get_mesh), "get_mesh" },
+		{ chaiscript::fun(&Scene::helper_get_texture), "get_texture" },
+		{ chaiscript::fun(&Scene::helper_get_material), "get_material" },
+		{ chaiscript::fun(&Scene::helper_get_entity), "get_entity" },
+
+		{ chaiscript::fun(&Scene::helper_mesh_count), "mesh_count" },
+		{ chaiscript::fun(&Scene::helper_texture_count), "texture_count" },
+		{ chaiscript::fun(&Scene::helper_material_count), "material_count" },
+		{ chaiscript::fun(&Scene::helper_entity_count), "entity_count" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["Scene"] = "Collection of meshes, textures, materials, scripts and entities.";
 
 	return 0;
 }();
@@ -620,14 +678,32 @@ int load_functions = [&]
 {
 	using namespace titian;
 
+	// Var info
+	INTERPRETED_SCRIPT_MODULE->eval("global is_valid = fun(object) { return !is_var_null(object); }");
+	INTERPRETED_SCRIPT_MODULE->eval("global get_type = fun(object) { return type_name(object); }");
+	INTERPRETED_SCRIPT_IDENTIFIERS["is_valid"] = "Returns true if the given object is NOT null, false otherwise.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_type"] = "Returns the type name (string) of the given object.";
+
+	// Casting
+	INTERPRETED_SCRIPT_IDENTIFIERS["to_string"] = "Converts the given object to a string.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["to_float"] = "Converts the given object to a float.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["to_int"] = "Converts the given object to an int.";
+
 	// Calls
 	INTERPRETED_SCRIPT_IDENTIFIERS["on_start"] = "Called once at the start of the game.";
 	INTERPRETED_SCRIPT_IDENTIFIERS["on_update"] = "Called every frame of the game.";
 
 	// Logging
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&Logger::log), "log");
+	INTERPRETED_SCRIPT_MODULE->eval("global print = fun(object) { return log(to_string(object)); }");
 	INTERPRETED_SCRIPT_IDENTIFIERS["log"] = "Outputs the given string to the log window.";
-	INTERPRETED_SCRIPT_IDENTIFIERS["print"] = "Logs the given object if that object contains method to_string.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["print"] = "Converts the given object to a string and logs it.";
+
+	// Time
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->elapsed(); }), "get_elapsed_t");
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->delta(); }), "get_delta_t");
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_elapsed_t"] = "Returns the elapsed time since the game start.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_delta_t"] = "Returns the time since the last frame.";
 
 	// Float3x3
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::translation), "Float3x3_translation");
@@ -705,9 +781,6 @@ int load_functions = [&]
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::abs), "abs");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::inverse), "inverse");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::transpose), "transpose");
-
-	// Scene
-
 
 	return 0;
 }();

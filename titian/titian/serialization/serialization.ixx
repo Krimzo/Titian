@@ -8,23 +8,23 @@ export namespace titian {
 }
 
 export namespace titian {
-    bool serialize(const Serializable* serializable, const std::string_view& path)
+    bool serialize(const std::string_view& path, const Serializable* serializable, const void* helper_data)
     {
         Serializer serializer = { path, true };
         if (!serializer) {
             return false;
         }
-        serializable->serialize(&serializer);
+        serializable->serialize(&serializer, helper_data);
         return true;
     }
 
-    bool deserialize(Serializable* serializable, const std::string_view& path)
+    bool deserialize(const std::string_view& path, Serializable* serializable, const void* helper_data)
     {
         Serializer serializer = { path, false };
         if (!serializer) {
             return false;
         }
-        serializable->deserialize(&serializer);
+        serializable->deserialize(&serializer, helper_data);
         return true;
     }
 }

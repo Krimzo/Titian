@@ -40,7 +40,7 @@ export namespace titian {
                 if (scene_file) {
                     render_layer->game_layer->scene = new Scene(render_layer->game_layer->app_layer->gpu);
                     const Serializer serializer = { scene_file.value(), false };
-                    render_layer->game_layer->scene->deserialize(&serializer);
+                    render_layer->game_layer->scene->deserialize(&serializer, nullptr);
                 }
 
                 // Handle entity picking

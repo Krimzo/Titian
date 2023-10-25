@@ -187,7 +187,7 @@ export namespace titian {
                 return;
             }
 
-            const kl::Int2 texture_size = render_texture->size();
+            const kl::Int2 texture_size = render_texture->graphics_buffer_size();
             if (texture_size != viewport_size) {
                 render_texture->graphics_buffer = gpu->create_target_texture(viewport_size);
                 render_texture->create_target_view(nullptr);

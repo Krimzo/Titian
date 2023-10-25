@@ -3,6 +3,7 @@ export module render_layer;
 export import game_layer;
 export import render_states;
 export import render_pass;
+export import camera;
 
 export namespace titian {
 	class RenderLayer : public Layer
@@ -144,7 +145,7 @@ export namespace titian {
 		kl::Int2 get_render_texture_size() const
 		{
 			if (render_texture) {
-				return render_texture->size();
+				return render_texture->graphics_buffer_size();
 			}
 			return {};
 		}

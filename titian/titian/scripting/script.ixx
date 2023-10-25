@@ -13,10 +13,8 @@ export namespace titian {
 			NODE,
 		} const type = {};
 
-		void* scene = nullptr;
-
-		Script(const Type type, void* scene)
-			: type(type), scene(scene)
+		Script(const Type type)
+			: type(type)
 		{}
 
 		~Script() override
@@ -28,12 +26,12 @@ export namespace titian {
 		void operator=(const Script&) = delete;
 		void operator=(const Script&&) = delete;
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer* serializer, const void* helper_data) const override
 		{
 			serializer->write_object<Type>(type);
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer* serializer, const void* helper_data) override
 		{}
 
 		virtual bool is_valid() const = 0;

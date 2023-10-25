@@ -1,6 +1,6 @@
 export module native_script;
 
-export import script;
+export import game_layer;
 export import memorymodule;
 
 export namespace titian {
@@ -11,30 +11,33 @@ export namespace titian {
 		using Function = Return(__stdcall*)(Args...);
 
 		std::vector<byte> data = {};
+		std::string path = {};
 
-		NativeScript(void* scene)
-			: Script(Type::NATIVE, scene)
+		NativeScript()
+			: Script(Type::NATIVE)
 		{}
 
 		~NativeScript() override
 		{}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer* serializer, const void* helper_data) const override
 		{
-			Script::serialize(serializer);
+			Script::serialize(serializer, helper_data);
 
 			const uint64_t size = data.size();
 			serializer->write_object<uint64_t>(size);
 			serializer->write_array<byte>(data.data(), size);
+			serializer->write_string(path);
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer* serializer, const void* helper_data) override
 		{
-			Script::deserialize(serializer);
+			Script::deserialize(serializer, helper_data);
 
 			const uint64_t size = serializer->read_object<uint64_t>();
 			data.resize(size);
 			serializer->read_array(data.data(), size);
+			serializer->read_string(path);
 			this->reload();
 		}
 
@@ -46,29 +49,36 @@ export namespace titian {
 		void reload() override
 		{
 			this->unload();
+
+			if (!path.empty()) {
+				data = kl::read_file(path);
+			}
+
 			m_memory_module = MemoryLoadLibrary(data.data(), data.size());
-			m_start_function = read_function<void, void*>("script_start");
-			m_update_function = read_function<void, void*>("script_update");
+			m_start_function = read_function<void, Scene*>("on_start");
+			m_update_function = read_function<void, Scene*>("on_update");
 		}
 
 		void call_start() override
 		{
-			if (m_start_function) {
+			Scene* scene = &GameLayer::BOUND_SELF->scene;
+			if (m_start_function && scene) {
 				m_start_function(scene);
 			}
 		}
 
 		void call_update() override
 		{
-			if (m_update_function) {
+			Scene* scene = &GameLayer::BOUND_SELF->scene;
+			if (m_update_function && scene) {
 				m_update_function(scene);
 			}
 		}
 
 	private:
 		void* m_memory_module = nullptr;
-		Function<void, void*> m_start_function = nullptr;
-		Function<void, void*> m_update_function = nullptr;
+		Function<void, Scene*> m_start_function = nullptr;
+		Function<void, Scene*> m_update_function = nullptr;
 
 		void unload()
 		{

@@ -21,7 +21,7 @@ export namespace titian {
             free_physics_buffer();
         }
 
-        void serialize(Serializer* serializer) const override
+        void serialize(Serializer* serializer, const void* helper_data) const override
         {
             const uint64_t size = data_buffer.size();
             serializer->write_object<uint64_t>(size);
@@ -30,7 +30,7 @@ export namespace titian {
             serializer->write_array<Data::value_type>(data, size);
         }
         
-        void deserialize(const Serializer* serializer) override
+        void deserialize(const Serializer* serializer, const void* helper_data) override
         {
             const uint64_t size = serializer->read_object<uint64_t>();
             data_buffer.resize(size);

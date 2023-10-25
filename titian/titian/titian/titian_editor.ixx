@@ -1,7 +1,7 @@
 export module titian_editor;
 
 export import layer_stack;
-export import application_layer;
+export import app_layer;
 export import game_layer;
 export import editor_layer;
 export import render_layer;
@@ -31,7 +31,7 @@ export namespace titian {
     class TitianEditor : public LayerStack
     {
     public:
-        kl::Object<ApplicationLayer> app_layer = new ApplicationLayer("Titian");
+        kl::Object<AppLayer> app_layer = new AppLayer("Titian Editor");
         kl::Object<GameLayer> game_layer = new GameLayer(app_layer);
         kl::Object<EditorLayer> editor_layer = new EditorLayer(game_layer);
         kl::Object<RenderLayer> render_layer = new RenderLayer(game_layer);
@@ -39,6 +39,9 @@ export namespace titian {
 
         TitianEditor()
         {
+            // Binds
+            game_layer->bind_self();
+
             // Init editor sections
             gui_layer->sections.emplace_back(new GUISectionMainMenu(render_layer));
             gui_layer->sections.emplace_back(new GUISectionSceneEntities(editor_layer));
