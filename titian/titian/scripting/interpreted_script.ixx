@@ -46,7 +46,7 @@ export namespace titian {
 			m_update_function = {};
 			m_engine = new chaiscript::ChaiScript();
 
-			if (!path.empty()) {
+			if (std::filesystem::exists(path)) {
 				source = kl::read_file_string(path);
 			}
 

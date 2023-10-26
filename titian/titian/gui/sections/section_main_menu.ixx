@@ -26,18 +26,9 @@ export namespace titian {
 
             if (m_inputting_name) {
                 if (ImGui::Begin("Save Scene", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-                    static char name_input[31] = {};
                     ImGui::SetNextItemWidth(-1.0f);
-                    ImGui::InputText("##SaveSceneNameInput", name_input, std::size(name_input));
-
-                    if (ImGui::Button("Cancel")) {
-                        memset(name_input, 0, std::size(name_input));
-                        m_inputting_name = false;
-                    }
-
-                    ImGui::SameLine();
-                    if (ImGui::Button("Save")) {
-                        const std::string save_path = kl::format(name_input, ".titian");
+                    if (std::optional scene_name = gui_input_waited("##SaveSceneNameInput", {})) {
+                        const std::string save_path = kl::format(scene_name.value(), ".titian");
                         const bool serial_result = serialize(save_path, &scene, nullptr);
 
                         if (serial_result) {
@@ -46,7 +37,9 @@ export namespace titian {
                         else {
                             Logger::log(kl::format("Failed to save scene. File write error. (", save_path, ")"));
                         }
-                        memset(name_input, 0, std::size(name_input));
+                        m_inputting_name = false;
+                    }
+                    if (ImGui::Button("Cancel")) {
                         m_inputting_name = false;
                     }
                 }

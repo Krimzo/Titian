@@ -43,7 +43,7 @@ export namespace titian {
 
             ImGui::Text("Name: ");
             ImGui::SameLine();
-            ImGui::TextColored(reinterpret_cast<const ImVec4&>(gui_layer->special_color), editor_layer->selected_entity.c_str());
+            gui_colored_text(editor_layer->selected_entity, gui_layer->special_color);
         }
 
         void edit_entity_transform(Scene* scene, Entity* entity)

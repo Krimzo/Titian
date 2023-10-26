@@ -25,9 +25,12 @@ export namespace titian {
 					gpu->set_viewport_size(new_size);
 				}
 			});
+			window->set_icon("builtin/textures/editor_icon.ico");
 			window->maximize();
 
-			window->set_icon("builtin/textures/editor_icon.ico");
+			if (!kl::IS_DEBUG) {
+				kl::console::set_enabled(false);
+			}
 		}
 
 		~AppLayer() override

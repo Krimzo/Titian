@@ -10,8 +10,11 @@ export namespace titian {
         kl::Object<GameLayer> game_layer = nullptr;
         
         bool is_viewport_focused = false;
+        bool is_over_viewport = false;
+
         int gizmo_mode = 1;
         int gizmo_operation = 0;
+
         std::string selected_entity = "/";
 
         EditorLayer(kl::Object<GameLayer>& game_layer)
@@ -30,7 +33,7 @@ export namespace titian {
             kl::Window* window = &game_layer->app_layer->window;
             const float delta_time = game_layer->app_layer->timer->delta();
 
-            if (!is_viewport_focused) {
+            if (!is_viewport_focused || !is_over_viewport) {
                 return true;
             }
 

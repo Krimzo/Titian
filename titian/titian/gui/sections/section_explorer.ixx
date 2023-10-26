@@ -3,7 +3,6 @@ export module section_explorer;
 export import gui_section;
 export import app_layer;
 export import texture;
-export import gui_helper;
 
 export namespace titian {
 	class GUISectionExplorer : public GUISection
@@ -104,8 +103,10 @@ export namespace titian {
 
             if (ImGui::Begin("Explorer", nullptr, ImGuiWindowFlags_NoScrollbar)) {
                 const float window_width = ImGui::GetWindowWidth() - ImGui::GetStyle().WindowPadding.x * 2.0f;
-                int column_count = (int) (window_width / (icon_size + ImGui::GetStyle().CellPadding.x * 2.0f));
-                if (column_count < 1) column_count = 1;
+                int column_count = static_cast<int>(window_width / (icon_size + ImGui::GetStyle().CellPadding.x * 2.0f));
+                if (column_count < 1) {
+                    column_count = 1;
+                }
 
                 ImGui::Text(path.c_str());
                 ImGui::Separator();
@@ -153,7 +154,7 @@ export namespace titian {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
-            const float icon_size = (float) this->icon_size;
+            const float icon_size = static_cast<float>(this->icon_size);
             const float text_height = ImGui::CalcTextSize(path.c_str()).y;
 
             if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
@@ -169,6 +170,35 @@ export namespace titian {
             ImGui::EndChild();
 
             ImGui::PopStyleVar(2);
+
+            if (ImGui::BeginPopupContextItem()) {
+                std::error_code error = {};
+                if (std::optional new_name = gui_input_waited("##RenameFileInput", file.filename().string())) {
+                    std::filesystem::path new_file = file;
+                    new_file.replace_filename(new_name.value());
+
+                    std::filesystem::rename(file, new_file, error);
+                    if (error) {
+                        Logger::log(kl::format("Failed to rename file ", file, " to ", new_file));
+                    }
+                    else {
+                        Logger::log(kl::format("Renamed file ", file, " to ", new_file));
+                    }
+                }
+                ImGui::Text(kl::format(std::setprecision(2), std::filesystem::file_size(file, error) / 1048576.0f, " mb").c_str());
+
+                if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+                    std::filesystem::remove(file, error);
+                    if (error) {
+                        Logger::log(kl::format("Failed to delete file ", file));
+                    }
+                    else {
+                        Logger::log(kl::format("Deleted file ", file));
+                    }
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::EndPopup();
+            }
         }
 
         void handle_directory_entry(const std::filesystem::path& directory, const bool is_parent_dir)
@@ -187,7 +217,7 @@ export namespace titian {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
-            const float icon_size = (float) this->icon_size;
+            const float icon_size = static_cast<float>(this->icon_size);
             const float text_height = ImGui::CalcTextSize(path.c_str()).y;
 
             constexpr float shadow_size = 2.0f;

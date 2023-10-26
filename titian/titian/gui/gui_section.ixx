@@ -1,6 +1,6 @@
 export module gui_section;
 
-export import klib;
+export import gui_helper;
 
 export namespace titian {
 	class GUISection

@@ -3,7 +3,6 @@ export module section_mesh_editor;
 export import gui_section;
 export import editor_layer;
 export import gui_layer;
-export import gui_helper;
 
 export namespace titian {
     class GUISectionMeshEditor : public GUISection
@@ -100,7 +99,12 @@ export namespace titian {
     private:
         void display_meshes(Scene* scene)
         {
+            const std::string filter = gui_input_continuous("Search###MeshEditor");
             for (const auto& [mesh_name, mesh] : scene->meshes) {
+                if (!filter.empty() && !mesh_name.contains(filter)) {
+                    continue;
+                }
+
                 if (ImGui::Selectable(mesh_name.c_str(), mesh_name == this->selected_mesh)) {
                     this->selected_mesh = mesh_name;
                 }
@@ -109,21 +113,17 @@ export namespace titian {
                     bool should_break = false;
                     ImGui::Text("Edit Mesh");
 
-                    char name_input[32] = {};
-                    memcpy(name_input, mesh_name.c_str(), std::min(mesh_name.size(), std::size(name_input) - 1));
-
-                    if (ImGui::InputText("##RenameMeshInput", name_input, std::size(name_input) - 1, ImGuiInputTextFlags_EnterReturnsTrue)) {
-                        const std::string new_name = name_input;
-                        if (!scene->meshes.contains(new_name)) {
+                    if (std::optional name = gui_input_waited("##RenameMeshInput", mesh_name)) {
+                        if (!scene->meshes.contains(name.value())) {
                             for (auto& [_, entity] : *scene) {
                                 if (entity->mesh_name == mesh_name) {
-                                    entity->mesh_name = new_name;
+                                    entity->mesh_name = name.value();
                                 }
                             }
                             if (this->selected_mesh == mesh_name) {
-                                this->selected_mesh = new_name;
+                                this->selected_mesh = name.value();
                             }
-                            scene->meshes[new_name] = mesh;
+                            scene->meshes[name.value()] = mesh;
                             scene->meshes.erase(mesh_name);
                             should_break = true;
                             ImGui::CloseCurrentPopup();
@@ -237,7 +237,7 @@ export namespace titian {
 
                 ImGui::Text("Name: ");
                 ImGui::SameLine();
-                ImGui::TextColored(reinterpret_cast<const ImVec4&>(gui_layer->special_color), selected_mesh.c_str());
+                gui_colored_text(selected_mesh, gui_layer->special_color);
 
                 int vertex_count = static_cast<int>(mesh->data_buffer.size());
                 ImGui::DragInt("Vertex Count", &vertex_count, 0);

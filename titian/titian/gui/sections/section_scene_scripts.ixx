@@ -3,7 +3,6 @@ export module section_scene_scripts;
 export import gui_section;
 export import editor_layer;
 export import gui_layer;
-export import gui_helper;
 
 export import native_script;
 export import interpreted_script;
@@ -65,7 +64,12 @@ export namespace titian {
 					}
 				}
 
+				const std::string filter = gui_input_continuous("Search###SceneScripts");
 				for (auto& [name, script] : scene->scripts) {
+					if (!filter.empty() && !name.contains(filter)) {
+						continue;
+					}
+
 					const ImVec4 color = (const ImVec4&) (script->is_valid() ? gui_layer->alternate_color : gui_layer->special_color);
 					ImGui::PushStyleColor(ImGuiCol_Text, color);
 					ImGui::Selectable(name.c_str(), false);

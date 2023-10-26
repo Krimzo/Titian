@@ -50,7 +50,7 @@ export namespace titian {
 		{
 			this->unload();
 
-			if (!path.empty()) {
+			if (std::filesystem::exists(path)) {
 				data = kl::read_file(path);
 			}
 

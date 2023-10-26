@@ -3,7 +3,6 @@ export module section_log_view;
 export import gui_section;
 export import app_layer;
 export import gui_layer;
-export import gui_helper;
 
 export namespace titian {
 	class GUISectionLogView : public GUISection
@@ -34,13 +33,13 @@ export namespace titian {
 
                 uint32_t log_counter = 1;
                 for (const auto& log_info : Logger::logs) {
-                    gui_colored_text(gui_layer->alternate_color, kl::format(std::setfill('0'), std::setw(3), log_counter, "."));
+                    gui_colored_text(kl::format(std::setfill('0'), std::setw(3), log_counter, "."), gui_layer->alternate_color);
                     ImGui::SameLine();
 
-                    gui_colored_text({ 0.85f, 0.75f, 0.75f, 1.0f }, kl::format("[", log_info.date, "]:"));
+                    gui_colored_text(kl::format("[", log_info.date, "]:") , { 0.85f, 0.75f, 0.75f, 1.0f });
                     ImGui::SameLine();
 
-                    gui_colored_text({ 0.95f, 0.95f, 0.90f, 1.0f }, log_info.message);
+                    gui_colored_text(log_info.message, { 0.95f, 0.95f, 0.90f, 1.0f });
                     log_counter += 1;
                 }
 

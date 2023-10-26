@@ -3,7 +3,6 @@ export module section_script_editor;
 export import gui_section;
 export import editor_layer;
 export import gui_layer;
-export import gui_helper;
 
 export import native_script;
 export import interpreted_script;
@@ -178,7 +177,12 @@ export namespace titian {
 
 		void display_scripts(Scene* scene)
 		{
+			const std::string filter = gui_input_continuous("Search###ScriptEditor");
 			for (const auto& [script_name, script] : scene->scripts) {
+				if (!filter.empty() && !script_name.contains(filter)) {
+					continue;
+				}
+
 				if (dynamic_cast<const NativeScript*>(&script)) {
 					ImGui::Button("NATIVE");
 					ImGui::SameLine();
@@ -204,16 +208,12 @@ export namespace titian {
 					bool should_break = false;
 					ImGui::Text("Edit Script");
 
-					char name_input[32] = {};
-					memcpy(name_input, script_name.c_str(), std::min(script_name.size(), std::size(name_input) - 1));
-
-					if (ImGui::InputText("##RenameScriptInput", name_input, std::size(name_input) - 1, ImGuiInputTextFlags_EnterReturnsTrue)) {
-						const std::string new_name = name_input;
-						if (!scene->scripts.contains(new_name)) {
+					if (std::optional name = gui_input_waited("##RenameScriptInput", script_name)) {
+						if (!scene->scripts.contains(name.value())) {
 							if (this->selected_script == script_name) {
-								this->selected_script = new_name;
+								this->selected_script = name.value();
 							}
-							scene->scripts[new_name] = script;
+							scene->scripts[name.value()] = script;
 							scene->scripts.erase(script_name);
 							should_break = true;
 							ImGui::CloseCurrentPopup();
@@ -273,16 +273,9 @@ export namespace titian {
 			}
 			if (ImGui::BeginPopup("add node")) {
 				const ImVec2 mouse_position = ImGui::GetMousePosOnOpeningCurrentPopup();
-
-				std::string search_buffer = {};
-				search_buffer.resize(50);
-				ImGui::InputText("Search", search_buffer.data(), search_buffer.size());
-
-				const size_t search_buffer_size = search_buffer.find_first_of('\0');
-				const std::string searched_info = search_buffer.substr(0, search_buffer_size);
-
+				const std::string filter = gui_input_continuous("Search###NodeScript");
 				for (const auto& [node_name, node_function] : NODE_TYPES) {
-					if (searched_info.size() > 0 && !node_name.contains(searched_info)) {
+					if (!filter.empty() && !node_name.contains(filter)) {
 						continue;
 					}
 					if (ImGui::MenuItem(node_name.c_str())) {
@@ -301,7 +294,7 @@ export namespace titian {
 				ImNodes::BeginNode(node->id);
 
 				ImNodes::BeginNodeTitleBar();
-				ImGui::TextColored(ImColor(30, 30, 30, 255), node->title.c_str());
+				gui_colored_text(node->title, kl::Color(30, 30, 30));
 				ImNodes::EndNodeTitleBar();
 
 				for (auto& pin : node->pins) {

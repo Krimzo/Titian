@@ -4,7 +4,6 @@ export import gui_section;
 export import editor_layer;
 export import render_layer;
 export import serializer;
-export import gui_helper;
 
 export namespace titian {
 	class GUISectionViewport : public GUISection
@@ -32,6 +31,10 @@ export namespace titian {
                 render_layer->resize({ (int) content_region.x, (int) content_region.y });
                 editor_layer->is_viewport_focused = ImGui::IsWindowFocused();
 
+                const ImVec2 win_content_min = ImGui::GetWindowPos() + ImGui::GetWindowContentRegionMin();
+                const ImVec2 win_content_max = win_content_min + content_region;
+                editor_layer->is_over_viewport = ImGui::IsMouseHoveringRect(win_content_min, win_content_max);
+
                 // Display rendered texture
                 ImGui::Image(render_layer->render_texture->shader_view.Get(), content_region);
                 
@@ -44,7 +47,7 @@ export namespace titian {
                 }
 
                 // Handle entity picking
-                const ImVec2 viewport_max = { ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y + ImGui::GetWindowHeight() };
+                const ImVec2 viewport_max = ImGui::GetWindowPos() + ImGui::GetWindowSize();
                 if (ImGui::IsWindowFocused() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), viewport_max) && !ImGuizmo::IsOver()) {
                     const kl::Int2 pixel_coords = window_mouse_position();
                     const uint32_t entity_id = read_entity_id(pixel_coords);
@@ -88,8 +91,8 @@ export namespace titian {
             const ImVec2 window_position = ImGui::GetWindowPos();
             const ImVec2 mouse_position = ImGui::GetMousePos();
             return {
-                (int) (mouse_position.x - window_position.x - 0.0f),
-                (int) (mouse_position.y - window_position.y - tab_size),
+                static_cast<int>(mouse_position.x - window_position.x - 0.0f),
+                static_cast<int>(mouse_position.y - window_position.y - tab_size),
             };
         }
 
@@ -152,7 +155,7 @@ export namespace titian {
                 static kl::Float3 predefined_snaps[3] = {
                     kl::Float3(0.1f),
                     kl::Float3(30.0f),
-                    kl::Float3(1.0f)
+                    kl::Float3(1.0f),
                 };
 
                 switch (editor_layer->gizmo_operation) {

@@ -3,7 +3,6 @@ export module section_material_editor;
 export import gui_section;
 export import editor_layer;
 export import gui_layer;
-export import gui_helper;
 
 export namespace titian {
     class GUISectionMaterialEditor : public GUISection
@@ -123,18 +122,22 @@ export namespace titian {
             if (ImGui::BeginPopupContextWindow("CreateMaterial", ImGuiPopupFlags_MouseButtonRight)) {
                 ImGui::Text("Create Material");
 
-                char name_input[32] = {};
-                if (ImGui::InputText("##CreateMaterialInput", name_input, std::size(name_input) - 1, ImGuiInputTextFlags_EnterReturnsTrue)) {
-                    if (!scene->materials.contains(name_input)) {
+                if (std::optional name = gui_input_waited("##CreateMaterialInput", {})) {
+                    if (!scene->materials.contains(name.value())) {
                         kl::Object material = new Material();
-                        scene->materials[name_input] = material;
+                        scene->materials[name.value()] = material;
                         ImGui::CloseCurrentPopup();
                     }
                 }
                 ImGui::EndPopup();
             }
 
+            const std::string filter = gui_input_continuous("Search###MeterialEditor");
             for (const auto& [material_name, material] : scene->materials) {
+                if (!filter.empty() && !material_name.contains(filter)) {
+                    continue;
+                }
+
                 if (ImGui::Selectable(material_name.c_str(), material_name == this->selected_material)) {
                     this->selected_material = material_name;
                     this->selected_texture = "/";
@@ -144,21 +147,17 @@ export namespace titian {
                     bool should_break = false;
                     ImGui::Text("Edit Material");
 
-                    char name_input[32] = {};
-                    memcpy(name_input, material_name.c_str(), std::min(material_name.size(), std::size(name_input) - 1));
-
-                    if (ImGui::InputText("##RenameMaterialInput", name_input, std::size(name_input) - 1, ImGuiInputTextFlags_EnterReturnsTrue)) {
-                        const std::string new_name = name_input;
-                        if (!scene->materials.contains(new_name)) {
+                    if (std::optional name = gui_input_waited("##RenameMaterialInput", material_name)) {
+                        if (!scene->materials.contains(name.value())) {
                             for (auto& [_, entity] : *scene) {
                                 if (entity->material_name == material_name) {
-                                    entity->material_name = new_name;
+                                    entity->material_name = name.value();
                                 }
                             }
                             if (this->selected_material == material_name) {
-                                this->selected_material = new_name;
+                                this->selected_material = name.value();
                             }
-                            scene->materials[new_name] = material;
+                            scene->materials[name.value()] = material;
                             scene->materials.erase(material_name);
                             should_break = true;
                             ImGui::CloseCurrentPopup();
@@ -189,7 +188,12 @@ export namespace titian {
 
         void display_textures(Scene* scene)
         {
+            const std::string filter = gui_input_continuous("Search###TextureEditor");
             for (const auto& [texture_name, texture] : scene->textures) {
+                if (!filter.empty() && !texture_name.contains(filter)) {
+                    continue;
+                }
+
                 if (ImGui::Selectable(texture_name.c_str(), texture_name == this->selected_texture)) {
                     this->selected_texture = texture_name;
                     this->selected_material = "/";
@@ -199,27 +203,23 @@ export namespace titian {
                     bool should_break = false;
                     ImGui::Text("Edit Texture");
 
-                    char name_input[31] = {};
-                    memcpy(name_input, texture_name.c_str(), std::min(texture_name.size(), std::size(name_input) - 1));
-
-                    if (ImGui::InputText("##RenameTextureInput", name_input, std::size(name_input) - 1, ImGuiInputTextFlags_EnterReturnsTrue)) {
-                        const std::string new_name = name_input;
-                        if (!scene->textures.contains(name_input)) {
+                    if (std::optional name = gui_input_waited("##RenameTextureInput", texture_name)) {
+                        if (!scene->textures.contains(name.value())) {
                             for (auto& [_, material] : scene->materials) {
                                 if (material->color_map_name == texture_name) {
-                                    material->color_map_name = new_name;
+                                    material->color_map_name = name.value();
                                 }
                                 if (material->normal_map_name == texture_name) {
-                                    material->normal_map_name = new_name;
+                                    material->normal_map_name = name.value();
                                 }
                                 if (material->roughness_map_name == texture_name) {
-                                    material->roughness_map_name = new_name;
+                                    material->roughness_map_name = name.value();
                                 }
                             }
                             if (this->selected_texture == texture_name) {
-                                this->selected_texture = new_name;
+                                this->selected_texture = name.value();
                             }
-                            scene->textures[name_input] = texture;
+                            scene->textures[name.value()] = texture;
                             scene->textures.erase(texture_name);
                             should_break = true;
                             ImGui::CloseCurrentPopup();
@@ -427,7 +427,7 @@ export namespace titian {
 
                 ImGui::Text("Name: ");
                 ImGui::SameLine();
-                ImGui::TextColored(reinterpret_cast<const ImVec4&>(gui_layer->special_color), selected_material.c_str());
+                gui_colored_text(selected_material, gui_layer->special_color);
 
                 ImGui::DragFloat("Texture Blend", &material->texture_blend, 0.05f, 0.0f, 1.0f);
                 ImGui::DragFloat("Reflection Factor", &material->reflection_factor, 0.05f, 0.0f, 1.0f);
@@ -482,7 +482,7 @@ export namespace titian {
 
                 ImGui::Text("Name: ");
                 ImGui::SameLine();
-                ImGui::TextColored(reinterpret_cast<const ImVec4&>(gui_layer->special_color), selected_texture.c_str());
+                gui_colored_text(selected_texture, gui_layer->special_color);
 
                 kl::Int2 size = texture->data_buffer.size();
                 ImGui::DragInt2("Size", size, 0.0f);
