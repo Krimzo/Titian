@@ -22,8 +22,8 @@ namespace kl {
         Key middle = {};
         Key right = {};
 
-        bool is_hidden() const;
         void set_hidden(bool enabled);
+        bool is_hidden() const;
 
         void set_position(const Int2& position, bool client = true);
         Int2 position(bool client = true) const;

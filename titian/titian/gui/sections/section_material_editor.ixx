@@ -348,7 +348,7 @@ export namespace titian {
                 kl::Float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
             } ps_data = {};
 
-            Camera* scene_camera = scene->get_dynamic<Camera>(scene->main_camera_name);
+            Camera* scene_camera = scene->get_casted<Camera>(scene->main_camera_name);
             if (!scene_camera) {
                 return;
             }

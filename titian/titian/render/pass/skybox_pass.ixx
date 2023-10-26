@@ -21,7 +21,7 @@ export namespace titian {
         bool is_renderable() const override
         {
             const Scene* scene = &game_layer->scene;
-            const Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
+            const Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
             return static_cast<bool>(camera);
         }
 
@@ -43,7 +43,7 @@ export namespace titian {
             kl::GPU* gpu = &game_layer->app_layer->gpu;
             Scene* scene = &game_layer->scene;
 
-            Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
+            Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
             if (!camera) { return; }
 
             Texture* skybox = &scene->get_texture(camera->skybox_name);

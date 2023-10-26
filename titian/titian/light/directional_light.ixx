@@ -11,13 +11,11 @@ export namespace titian {
 		static constexpr uint32_t CASCADE_COUNT = 4;
 		static constexpr float CASCADE_SPLITS[CASCADE_COUNT + 1] = { 0.0f, 0.075f, 0.2f, 0.5f, 1.0f };
 
-        uint32_t map_resolution = 0;
         float point_size = 1.0f;
-
 		kl::Float3 color{ 1.0f };
 
 		DirectionalLight(physx::PxPhysics* physics, const bool dynamic, kl::Object<kl::GPU>& gpu, const uint32_t map_resolution)
-			: Light(Type::DIRECTIONAL_LIGHT, physics, dynamic), map_resolution(map_resolution)
+			: Light(Type::DIRECTIONAL_LIGHT, physics, dynamic), m_map_resolution(map_resolution)
 		{
             kl::dx::TextureDescriptor shadow_map_descriptor = {};
             shadow_map_descriptor.Width = map_resolution;
@@ -53,11 +51,10 @@ export namespace titian {
 		{
 			Light::serialize(serializer, helper_data);
 
-            serializer->write_object<uint32_t>(map_resolution);
+            serializer->write_object<uint32_t>(m_map_resolution);
+            serializer->write_object<kl::Float3>(m_direction);
 
             serializer->write_object<float>(point_size);
-
-			serializer->write_object<kl::Float3>(m_direction);
 			serializer->write_object<kl::Float3>(color);
 		}
 
@@ -65,11 +62,10 @@ export namespace titian {
 		{
 			Light::deserialize(serializer, helper_data);
 
-            serializer->read_object<uint32_t>(map_resolution);
+            serializer->read_object<uint32_t>(m_map_resolution);
+            serializer->read_object<kl::Float3>(m_direction);
 
             serializer->read_object<float>(point_size);
-
-            serializer->read_object<kl::Float3>(m_direction);
             serializer->read_object<kl::Float3>(color);
 		}
 
@@ -77,6 +73,11 @@ export namespace titian {
 		{
 			return color; // Change later
 		}
+
+        uint32_t map_resolution() const
+        {
+            return m_map_resolution;
+        }
 
 		void set_direction(const kl::Float3& direction)
 		{
@@ -183,7 +184,8 @@ export namespace titian {
 		}
 
 	private:
-		kl::Float3 m_direction = { 0.0f, -1.0f, 0.0f };
+        uint32_t m_map_resolution = 0;
+        kl::Float3 m_direction = { 0.0f, -1.0f, 0.0f };
 		kl::Object<Texture> m_cascades[CASCADE_COUNT] = {};
 	};
 }

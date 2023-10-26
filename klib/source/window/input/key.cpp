@@ -47,3 +47,8 @@ kl::Key::operator bool() const
 {
     return m_state;
 }
+
+bool kl::Key::is_down() const
+{
+    return m_state;
+}

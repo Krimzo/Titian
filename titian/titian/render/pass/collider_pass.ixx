@@ -44,10 +44,10 @@ export namespace titian {
             kl::GPU* gpu = &game_layer->app_layer->gpu;
             Scene* scene = &game_layer->scene;
 
-            Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
+            Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
             if (!camera) { return; }
 
-            Entity* entity = scene->get_dynamic<Entity>(editor_layer->selected_entity);
+            Entity* entity = scene->get_casted<Entity>(editor_layer->selected_entity);
             if (!entity) { return; }
 
             struct VSData

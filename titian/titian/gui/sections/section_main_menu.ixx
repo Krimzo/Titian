@@ -22,7 +22,7 @@ export namespace titian {
 		void render_gui() override
 		{
             AppLayer* app_layer = &render_layer->game_layer->app_layer;
-            Scene* scene = &render_layer->game_layer->scene;
+            kl::Object<Scene>& scene = render_layer->game_layer->scene;
 
             if (m_inputting_name) {
                 if (ImGui::Begin("Save Scene", nullptr, ImGuiWindowFlags_NoScrollbar)) {
@@ -38,7 +38,7 @@ export namespace titian {
                     ImGui::SameLine();
                     if (ImGui::Button("Save")) {
                         const std::string save_path = kl::format(name_input, ".titian");
-                        const bool serial_result = serialize(save_path, scene, nullptr);
+                        const bool serial_result = serialize(save_path, &scene, nullptr);
 
                         if (serial_result) {
                             Logger::log(kl::format("Scene saved. (", save_path, ") [", SERIAL_VERSION_FORMAT, "]"));

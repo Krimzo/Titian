@@ -185,14 +185,14 @@ export namespace titian {
 
         // Dynamic
         template<typename T>
-        T* get_dynamic(const std::string& id)
+        T* get_casted(const std::string& id)
         {
             Entity* entity = &get_entity(id);
             return dynamic_cast<T*>(entity);
         }
 
         template<typename T>
-        const T* get_dynamic(const std::string& id) const
+        const T* get_casted(const std::string& id) const
         {
             const Entity* entity = &get_entity(id);
             return dynamic_cast<const T*>(entity);
@@ -284,6 +284,26 @@ export namespace titian {
         }
 
         // Script helpers
+        int helper_mesh_count() const
+        {
+            return static_cast<int>(meshes.size());
+        }
+
+        int helper_texture_count() const
+        {
+            return static_cast<int>(textures.size());
+        }
+
+        int helper_material_count() const
+        {
+            return static_cast<int>(materials.size());
+        }
+
+        int helper_entity_count() const
+        {
+            return static_cast<int>(m_entities.size());
+        }
+
         Mesh* helper_get_mesh(const std::string& id)
         {
             if (meshes.contains(id)) {
@@ -314,26 +334,6 @@ export namespace titian {
                 return &m_entities.at(id);
             }
             return nullptr;
-        }
-
-        int helper_mesh_count() const
-        {
-            return static_cast<int>(meshes.size());
-        }
-
-        int helper_texture_count() const
-        {
-            return static_cast<int>(textures.size());
-        }
-
-        int helper_material_count() const
-        {
-            return static_cast<int>(materials.size());
-        }
-
-        int helper_entity_count() const
-        {
-            return static_cast<int>(m_entities.size());
         }
 
     private:

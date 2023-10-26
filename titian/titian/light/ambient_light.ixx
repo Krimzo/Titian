@@ -7,7 +7,7 @@ export namespace titian {
 	{
 	public:
 		kl::Float3 color = kl::colors::WHITE;
-		float intensity = 1.0f;
+		float intensity = 0.1f;
 
 		AmbientLight(physx::PxPhysics* physics, const bool dynamic)
 			: Light(Type::AMBIENT_LIGHT, physics, dynamic)
@@ -21,7 +21,6 @@ export namespace titian {
 			Light::serialize(serializer, helper_data);
 
 			serializer->write_object<float>(intensity);
-
 			serializer->write_object<kl::Float3>(color);
 		}
 
@@ -30,7 +29,6 @@ export namespace titian {
 			Light::deserialize(serializer, helper_data);
 
 			serializer->read_object<float>(intensity);
-
 			serializer->read_object<kl::Float3>(color);
 		}
 

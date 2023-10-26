@@ -10,11 +10,6 @@ void kl::Mouse::process() const
 }
 
 // User access
-bool kl::Mouse::is_hidden() const
-{
-    return m_hidden;
-}
-
 void kl::Mouse::set_hidden(const bool enabled)
 {
     if (!m_hidden && enabled) {
@@ -28,6 +23,11 @@ void kl::Mouse::set_hidden(const bool enabled)
         }
     }
     m_hidden = enabled;
+}
+
+bool kl::Mouse::is_hidden() const
+{
+    return m_hidden;
 }
 
 void kl::Mouse::set_position(const Int2& position, const bool client)

@@ -30,7 +30,7 @@ export namespace titian {
                     scene->set_gravity(gravity);
                 }
 
-                Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
+                Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
                 if (camera) {
                     kl::Float3 camera_position = camera->position();
                     ImGui::DragFloat3("Camera position", camera_position);

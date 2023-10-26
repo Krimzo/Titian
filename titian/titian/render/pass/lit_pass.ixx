@@ -45,7 +45,7 @@ export namespace titian {
             kl::GPU* gpu = &game_layer->app_layer->gpu;
             Scene* scene = &game_layer->scene;
 
-            Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
+            Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
             if (!camera) { return; }
 
             gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);
@@ -89,12 +89,12 @@ export namespace titian {
             ps_data.camera_background = camera->background;
             ps_data.v_matrix = camera->view_matrix();
 
-            AmbientLight* ambient_light = scene->get_dynamic<AmbientLight>(scene->main_ambient_light_name);
+            AmbientLight* ambient_light = scene->get_casted<AmbientLight>(scene->main_ambient_light_name);
             if (ambient_light) {
                 ps_data.ambient_light = { ambient_light->color, ambient_light->intensity };
             }
             
-            DirectionalLight* directional_light = scene->get_dynamic<DirectionalLight>(scene->main_directional_light_name);
+            DirectionalLight* directional_light = scene->get_casted<DirectionalLight>(scene->main_directional_light_name);
             if (directional_light) {
                 ID3D11ShaderResourceView* dir_light_views[DirectionalLight::CASCADE_COUNT] = {};
                 for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
@@ -105,7 +105,7 @@ export namespace titian {
                 gpu->context()->PSSetShaderResources(1, DirectionalLight::CASCADE_COUNT, dir_light_views);
                 
                 ps_data.directional_light = { directional_light->direction(), directional_light->point_size };  
-                ps_data.shadow_map_info = { kl::Float2((float) directional_light->map_resolution), kl::Float2(1.0f / directional_light->map_resolution) };
+                ps_data.shadow_map_info = { kl::Float2((float) directional_light->map_resolution()), kl::Float2(1.0f / directional_light->map_resolution()) };
                 for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
                     ps_data.cascade_distances[i] = kl::unwrap(directional_light->CASCADE_SPLITS[i + 1], camera->near_plane, camera->far_plane);
                 }

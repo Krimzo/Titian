@@ -24,7 +24,7 @@ export namespace titian {
 
         bool update() override
         {
-            Camera* camera = game_layer->scene->get_dynamic<Camera>(game_layer->scene->main_camera_name);
+            Camera* camera = game_layer->scene->get_casted<Camera>(game_layer->scene->main_camera_name);
             if (!camera) { return true; }
 
             kl::Window* window = &game_layer->app_layer->window;

@@ -3,6 +3,11 @@ export module interpreted_script_parts;
 export import game_layer;
 export import chaiscript;
 
+export import camera;
+export import ambient_light;
+export import point_light;
+export import directional_light;
+
 export namespace titian {
 	const chaiscript::ModulePtr INTERPRETED_SCRIPT_MODULE = chaiscript::ModulePtr(new chaiscript::Module());
 
@@ -597,6 +602,92 @@ int load_types = [&]
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Entity"] = "Base entity that's a part of a scene.";
 
+	// Camera
+	chaiscript::utility::add_class<Camera>(*INTERPRETED_SCRIPT_MODULE, "Camera",
+	{},
+	{
+		{ chaiscript::fun(&Camera::aspect_ratio), "aspect_ratio" },
+		{ chaiscript::fun(&Camera::field_of_view), "field_of_view" },
+		{ chaiscript::fun(&Camera::near_plane), "near_plane" },
+		{ chaiscript::fun(&Camera::far_plane), "far_plane" },
+		{ chaiscript::fun(&Camera::sensitivity), "sensitivity" },
+		{ chaiscript::fun(&Camera::speed), "speed" },
+		{ chaiscript::fun(&Camera::background), "background" },
+		{ chaiscript::fun(&Camera::skybox_name), "skybox_name" },
+
+		{ chaiscript::fun(&Camera::update_aspect_ratio), "update_aspect_ratio" },
+
+		{ chaiscript::fun(&Camera::set_forward), "set_forward" },
+		{ chaiscript::fun(&Camera::forward), "forward" },
+
+		{ chaiscript::fun(&Camera::set_up), "set_up" },
+		{ chaiscript::fun(&Camera::up), "up" },
+
+		{ chaiscript::fun(&Camera::right), "right" },
+
+		{ chaiscript::fun(&Camera::move_forward), "move_forward" },
+		{ chaiscript::fun(&Camera::move_back), "move_back" },
+		{ chaiscript::fun(&Camera::move_right), "move_right" },
+		{ chaiscript::fun(&Camera::move_left), "move_left" },
+		{ chaiscript::fun(&Camera::move_up), "move_up" },
+		{ chaiscript::fun(&Camera::move_down), "move_down" },
+
+		{ chaiscript::fun(&Camera::rotate), "rotate" },
+
+		{ chaiscript::fun(&Camera::view_matrix), "view_matrix" },
+		{ chaiscript::fun(&Camera::projection_matrix), "projection_matrix" },
+		{ chaiscript::fun(&Camera::camera_matrix), "camera_matrix" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["Camera"] = "Entity that has a view of the scene.";
+
+	// Light
+	chaiscript::utility::add_class<Light>(*INTERPRETED_SCRIPT_MODULE, "Light",
+	{},
+	{
+		{ chaiscript::fun(&Light::light_at_point), "light_at_point" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["Light"] = "Base class of every light class.";
+
+	// Ambient light
+	chaiscript::utility::add_class<AmbientLight>(*INTERPRETED_SCRIPT_MODULE, "AmbientLight",
+	{},
+	{
+		{ chaiscript::fun(&AmbientLight::color), "color" },
+		{ chaiscript::fun(&AmbientLight::intensity), "intensity" },
+
+		{ chaiscript::fun(&AmbientLight::light_at_point), "light_at_point" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["AmbientLight"] = "Non directional light at shines at all points.";
+
+	// Point light
+	chaiscript::utility::add_class<PointLight>(*INTERPRETED_SCRIPT_MODULE, "PointLight",
+	{},
+	{
+		{ chaiscript::fun(&PointLight::position), "position" },
+		{ chaiscript::fun(&PointLight::color), "color" },
+
+		{ chaiscript::fun(&PointLight::light_at_point), "light_at_point" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["PointLight"] = "Light that shines in all directions.";
+
+	// Directional light
+	chaiscript::utility::add_class<DirectionalLight>(*INTERPRETED_SCRIPT_MODULE, "DirectionalLight",
+	{},
+	{
+		{ chaiscript::fun(&DirectionalLight::point_size), "point_size" },
+		{ chaiscript::fun(&DirectionalLight::color), "color" },
+
+		{ chaiscript::fun(&DirectionalLight::light_at_point), "light_at_point" },
+
+		{ chaiscript::fun(&DirectionalLight::map_resolution), "map_resolution" },
+
+		{ chaiscript::fun(&DirectionalLight::set_direction), "set_direction" },
+		{ chaiscript::fun(&DirectionalLight::direction), "direction" },
+
+		{ chaiscript::fun(&DirectionalLight::light_matrix), "light_matrix" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["DirectionalLight"] = "Light that shines in a single direction and is infinitely far away.";
+
 	// Scene
 	chaiscript::utility::add_class<Scene>(*INTERPRETED_SCRIPT_MODULE, "Scene",
 	{},
@@ -608,17 +699,128 @@ int load_types = [&]
 		{ chaiscript::fun(&Scene::set_gravity), "set_gravity" },
 		{ chaiscript::fun(&Scene::gravity), "gravity" },
 
+		{ chaiscript::fun(&Scene::helper_mesh_count), "mesh_count" },
+		{ chaiscript::fun(&Scene::helper_texture_count), "texture_count" },
+		{ chaiscript::fun(&Scene::helper_material_count), "material_count" },
+		{ chaiscript::fun(&Scene::helper_entity_count), "entity_count" },
+
 		{ chaiscript::fun(&Scene::helper_get_mesh), "get_mesh" },
 		{ chaiscript::fun(&Scene::helper_get_texture), "get_texture" },
 		{ chaiscript::fun(&Scene::helper_get_material), "get_material" },
 		{ chaiscript::fun(&Scene::helper_get_entity), "get_entity" },
 
-		{ chaiscript::fun(&Scene::helper_mesh_count), "mesh_count" },
-		{ chaiscript::fun(&Scene::helper_texture_count), "texture_count" },
-		{ chaiscript::fun(&Scene::helper_material_count), "material_count" },
-		{ chaiscript::fun(&Scene::helper_entity_count), "entity_count" },
+		{ chaiscript::fun<Camera*>(&Scene::get_casted<Camera>), "get_camera" },
+		{ chaiscript::fun<Light*>(&Scene::get_casted<Light>), "get_light" },
+		{ chaiscript::fun<AmbientLight*>(&Scene::get_casted<AmbientLight>), "get_ambient_light" },
+		{ chaiscript::fun<PointLight*>(&Scene::get_casted<PointLight>), "get_point_light" },
+		{ chaiscript::fun<DirectionalLight*>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Scene"] = "Collection of meshes, textures, materials, scripts and entities.";
+
+	// Key
+	chaiscript::utility::add_class<kl::Key>(*INTERPRETED_SCRIPT_MODULE, "Key",
+	{},
+	{
+		{ chaiscript::fun(&kl::Key::is_down), "is_down" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["Key"] = "Class representing a single keyboard or a mouse button.";
+
+	// Keyboard
+	chaiscript::utility::add_class<kl::Keyboard>(*INTERPRETED_SCRIPT_MODULE, "Keyboard",
+	{},
+	{
+		{ chaiscript::fun(&kl::Keyboard::q), "q" },
+		{ chaiscript::fun(&kl::Keyboard::w), "w" },
+		{ chaiscript::fun(&kl::Keyboard::e), "e" },
+		{ chaiscript::fun(&kl::Keyboard::r), "r" },
+		{ chaiscript::fun(&kl::Keyboard::t), "t" },
+		{ chaiscript::fun(&kl::Keyboard::z), "z" },
+		{ chaiscript::fun(&kl::Keyboard::u), "u" },
+		{ chaiscript::fun(&kl::Keyboard::i), "i" },
+		{ chaiscript::fun(&kl::Keyboard::o), "o" },
+		{ chaiscript::fun(&kl::Keyboard::p), "p" },
+		{ chaiscript::fun(&kl::Keyboard::a), "a" },
+		{ chaiscript::fun(&kl::Keyboard::s), "s" },
+		{ chaiscript::fun(&kl::Keyboard::d), "d" },
+		{ chaiscript::fun(&kl::Keyboard::f), "f" },
+		{ chaiscript::fun(&kl::Keyboard::g), "g" },
+		{ chaiscript::fun(&kl::Keyboard::h), "h" },
+		{ chaiscript::fun(&kl::Keyboard::j), "j" },
+		{ chaiscript::fun(&kl::Keyboard::k), "k" },
+		{ chaiscript::fun(&kl::Keyboard::l), "l" },
+		{ chaiscript::fun(&kl::Keyboard::y), "y" },
+		{ chaiscript::fun(&kl::Keyboard::x), "x" },
+		{ chaiscript::fun(&kl::Keyboard::c), "c" },
+		{ chaiscript::fun(&kl::Keyboard::v), "v" },
+		{ chaiscript::fun(&kl::Keyboard::b), "b" },
+		{ chaiscript::fun(&kl::Keyboard::n), "n" },
+		{ chaiscript::fun(&kl::Keyboard::m), "m" },
+
+		{ chaiscript::fun(&kl::Keyboard::num0), "num0" },
+		{ chaiscript::fun(&kl::Keyboard::num1), "num1" },
+		{ chaiscript::fun(&kl::Keyboard::num2), "num2" },
+		{ chaiscript::fun(&kl::Keyboard::num3), "num3" },
+		{ chaiscript::fun(&kl::Keyboard::num4), "num4" },
+		{ chaiscript::fun(&kl::Keyboard::num5), "num5" },
+		{ chaiscript::fun(&kl::Keyboard::num6), "num6" },
+		{ chaiscript::fun(&kl::Keyboard::num7), "num7" },
+		{ chaiscript::fun(&kl::Keyboard::num8), "num8" },
+		{ chaiscript::fun(&kl::Keyboard::num9), "num9" },
+
+		{ chaiscript::fun(&kl::Keyboard::period), "period" },
+		{ chaiscript::fun(&kl::Keyboard::comma), "comma" },
+		{ chaiscript::fun(&kl::Keyboard::plus), "plus" },
+		{ chaiscript::fun(&kl::Keyboard::minus), "minus" },
+
+		{ chaiscript::fun(&kl::Keyboard::esc), "esc" },
+		{ chaiscript::fun(&kl::Keyboard::tab), "tab" },
+		{ chaiscript::fun(&kl::Keyboard::caps), "caps" },
+		{ chaiscript::fun(&kl::Keyboard::shift), "shift" },
+		{ chaiscript::fun(&kl::Keyboard::ctrl), "ctrl" },
+		{ chaiscript::fun(&kl::Keyboard::alt), "alt" },
+		{ chaiscript::fun(&kl::Keyboard::space), "space" },
+		{ chaiscript::fun(&kl::Keyboard::enter), "enter" },
+		{ chaiscript::fun(&kl::Keyboard::insert), "insert" },
+		{ chaiscript::fun(&kl::Keyboard::delet), "delete" },
+
+		{ chaiscript::fun(&kl::Keyboard::up), "up" },
+		{ chaiscript::fun(&kl::Keyboard::left), "left" },
+		{ chaiscript::fun(&kl::Keyboard::down), "down" },
+		{ chaiscript::fun(&kl::Keyboard::right), "right" },
+
+		{ chaiscript::fun(&kl::Keyboard::f1), "f1" },
+		{ chaiscript::fun(&kl::Keyboard::f2), "f2" },
+		{ chaiscript::fun(&kl::Keyboard::f3), "f3" },
+		{ chaiscript::fun(&kl::Keyboard::f4), "f4" },
+		{ chaiscript::fun(&kl::Keyboard::f5), "f5" },
+		{ chaiscript::fun(&kl::Keyboard::f6), "f6" },
+		{ chaiscript::fun(&kl::Keyboard::f7), "f7" },
+		{ chaiscript::fun(&kl::Keyboard::f8), "f8" },
+		{ chaiscript::fun(&kl::Keyboard::f9), "f9" },
+		{ chaiscript::fun(&kl::Keyboard::f10), "f10" },
+		{ chaiscript::fun(&kl::Keyboard::f11), "f11" },
+		{ chaiscript::fun(&kl::Keyboard::f12), "f12" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["Keyboard"] = "Class representing a physical keyboard.";
+
+	// Mouse
+	chaiscript::utility::add_class<kl::Mouse>(*INTERPRETED_SCRIPT_MODULE, "Mouse",
+	{},
+	{
+		{ chaiscript::fun(&kl::Mouse::left), "left" },
+		{ chaiscript::fun(&kl::Mouse::middle), "middle" },
+		{ chaiscript::fun(&kl::Mouse::right), "right" },
+
+		{ chaiscript::fun(&kl::Mouse::set_hidden), "set_hiden" },
+		{ chaiscript::fun(&kl::Mouse::is_hidden), "is_hidden" },
+
+		{ chaiscript::fun(&kl::Mouse::set_position), "set_position" },
+		{ chaiscript::fun(&kl::Mouse::position), "position" },
+
+		{ chaiscript::fun(&kl::Mouse::normalized_position), "normalized_position" },
+		{ chaiscript::fun(&kl::Mouse::scroll), "scroll" },
+	});
+	INTERPRETED_SCRIPT_IDENTIFIERS["Mouse"] = "Class representing a physical mouse.";
 
 	return 0;
 }();
@@ -704,6 +906,12 @@ int load_functions = [&]
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->delta(); }), "get_delta_t");
 	INTERPRETED_SCRIPT_IDENTIFIERS["get_elapsed_t"] = "Returns the elapsed time since the game start.";
 	INTERPRETED_SCRIPT_IDENTIFIERS["get_delta_t"] = "Returns the time since the last frame.";
+
+	// Input
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Keyboard* { return &GameLayer::BOUND_SELF->app_layer->window->keyboard; }), "get_keyboard");
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Mouse* { return &GameLayer::BOUND_SELF->app_layer->window->mouse; }), "get_mouse");
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_keyboard"] = "Returns a reference to the window keyboard.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_mouse"] = "Returns a reference to the window mouse.";
 
 	// Float3x3
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::translation), "Float3x3_translation");

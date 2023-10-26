@@ -136,7 +136,7 @@ export namespace titian {
             kl::Window* window = &editor_layer->game_layer->app_layer->window;
             Scene* scene = &editor_layer->game_layer->scene;
 
-            Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
+            Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
             if (!camera) { return; }
 
             const float viewport_tab_height = ImGui::GetWindowContentRegionMin().y;

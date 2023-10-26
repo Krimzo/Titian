@@ -25,5 +25,7 @@ namespace kl {
         std::vector<std::function<void()>> on_release = {};
 
         operator bool() const;
+
+        bool is_down() const;
     };
 }

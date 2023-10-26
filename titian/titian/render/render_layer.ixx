@@ -53,7 +53,7 @@ export namespace titian {
 			Scene* scene = &game_layer->scene;
 
 			// Clear targets
-			Camera* camera = scene->get_dynamic<Camera>(scene->main_camera_name);
+			Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
 			gpu->clear_internal(background);
 			gpu->clear_target_view(render_texture->target_view, camera ? (kl::Float4) camera->background : background);
 			gpu->clear_target_view(picking_texture->target_view, {});
