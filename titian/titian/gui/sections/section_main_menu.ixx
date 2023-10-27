@@ -9,9 +9,9 @@ export namespace titian {
 	class GUISectionMainMenu : public GUISection
 	{
     public:
-        kl::Object<RenderLayer> render_layer = nullptr;
+        RenderLayer* render_layer = nullptr;
 
-        GUISectionMainMenu(kl::Object<RenderLayer>& render_layer)
+        GUISectionMainMenu(RenderLayer* render_layer)
 		{
             this->render_layer = render_layer;
         }
@@ -21,7 +21,7 @@ export namespace titian {
 
 		void render_gui() override
 		{
-            AppLayer* app_layer = &render_layer->game_layer->app_layer;
+            AppLayer* app_layer = render_layer->game_layer->app_layer;
             kl::Object<Scene>& scene = render_layer->game_layer->scene;
 
             if (m_inputting_name) {
@@ -51,7 +51,7 @@ export namespace titian {
 
                 if (ImGui::BeginMenu("File")) {
                     if (ImGui::MenuItem("New Scene")) {
-                        scene = new Scene(app_layer->gpu);
+                        scene = new Scene(&app_layer->gpu);
                     }
 
                     if (ImGui::MenuItem("Save Scene")) {

@@ -9,7 +9,7 @@ export namespace titian {
         kl::dx::SamplerState linear = nullptr;
         kl::dx::SamplerState shadow = nullptr;
         
-        SamplerStates(kl::Object<kl::GPU>& gpu)
+        SamplerStates(kl::GPU* gpu)
         {
             kl::dx::SamplerStateDescriptor shadow_sampler_descriptor = {};
             shadow_sampler_descriptor.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;

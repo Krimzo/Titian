@@ -102,6 +102,8 @@
     <ClCompile Include="external\chaiscript\chaiscript.ixx" />
     <ClCompile Include="external\memorymodule\MemoryModule.c" />
     <ClCompile Include="external\memorymodule\memorymodule.ixx" />
+    <ClCompile Include="packaging\packager.ixx" />
+    <ClCompile Include="packaging\packaging_entry.ixx" />
     <ClCompile Include="sandbox\pieces\piece_prepare.ixx" />
     <ClCompile Include="sandbox\pieces\piece_skybox.ixx" />
     <ClCompile Include="sandbox\pieces\piece_cubes.ixx" />
@@ -142,6 +144,7 @@
     <ClCompile Include="titian\light\directional_light.ixx" />
     <ClCompile Include="titian\light\light.ixx" />
     <ClCompile Include="titian\light\point_light.ixx" />
+    <ClCompile Include="titian\render\pass\display_pass.ixx" />
     <ClCompile Include="titian\render\pass\lit_pass.ixx" />
     <ClCompile Include="titian\render\pass\collider_pass.ixx" />
     <ClCompile Include="titian\render\pass\postprocess_pass.ixx" />

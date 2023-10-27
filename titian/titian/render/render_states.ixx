@@ -16,7 +16,7 @@ export namespace titian {
 		kl::Object<ShaderStates> shader_states = nullptr;
 		kl::Object<BlendStates> blend_states = nullptr;
 
-		RenderStates(kl::Object<kl::GPU>& gpu)
+		RenderStates(kl::GPU* gpu)
 		{
 			raster_states = new RasterStates(gpu);
 			depth_states = new DepthStates(gpu);

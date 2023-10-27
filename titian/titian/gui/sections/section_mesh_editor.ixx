@@ -8,8 +8,8 @@ export namespace titian {
     class GUISectionMeshEditor : public GUISection
     {
     public:
-        kl::Object<EditorLayer> editor_layer = nullptr;
-        kl::Object<GUILayer> gui_layer = nullptr;
+        EditorLayer* editor_layer = nullptr;
+        GUILayer* gui_layer = nullptr;
 
         kl::Object<Camera> camera = nullptr;
         kl::Object<Texture> render_texture = nullptr;
@@ -22,7 +22,7 @@ export namespace titian {
 
         std::string selected_mesh = "/";
 
-        GUISectionMeshEditor(kl::Object<EditorLayer>& editor_layer, kl::Object<GUILayer>& gui_layer)
+        GUISectionMeshEditor(EditorLayer* editor_layer, GUILayer* gui_layer)
         {
             this->editor_layer = editor_layer;
             this->gui_layer = gui_layer;

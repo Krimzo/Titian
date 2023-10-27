@@ -11,7 +11,7 @@ export namespace titian {
         kl::dx::RasterState solid = nullptr;
         kl::dx::RasterState shadow = nullptr;
 
-        RasterStates(kl::Object<kl::GPU>& gpu)
+        RasterStates(kl::GPU* gpu)
         {
             kl::dx::RasterStateDescriptor shadow_raster_descriptor = {};
             shadow_raster_descriptor.FillMode = D3D11_FILL_SOLID;

@@ -9,7 +9,7 @@ export namespace titian {
 		kl::dx::BlendState disabled = nullptr;
 		kl::dx::BlendState enabled = nullptr;
 
-		BlendStates(kl::Object<kl::GPU>& gpu)
+		BlendStates(kl::GPU* gpu)
 		{
 			disabled = gpu->create_blend_state(false);
 			enabled = gpu->create_blend_state(true);

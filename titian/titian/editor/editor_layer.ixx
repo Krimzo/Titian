@@ -7,7 +7,7 @@ export namespace titian {
     class EditorLayer : public Layer
     {
     public:
-        kl::Object<GameLayer> game_layer = nullptr;
+        GameLayer* game_layer = nullptr;
         
         bool is_viewport_focused = false;
         bool is_over_viewport = false;
@@ -17,7 +17,7 @@ export namespace titian {
 
         std::string selected_entity = "/";
 
-        EditorLayer(kl::Object<GameLayer>& game_layer)
+        EditorLayer(GameLayer* game_layer)
         {
             this->game_layer = game_layer;
         }

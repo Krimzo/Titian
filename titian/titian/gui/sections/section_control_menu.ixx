@@ -7,9 +7,9 @@ export namespace titian {
     class GUISectionControlMenu : public GUISection
     {
     public:
-        kl::Object<EditorLayer> editor_layer = nullptr;
+        EditorLayer* editor_layer = nullptr;
         
-        GUISectionControlMenu(kl::Object<EditorLayer>& editor_layer)
+        GUISectionControlMenu(EditorLayer* editor_layer)
         {
             this->editor_layer = editor_layer;
         }
@@ -72,7 +72,7 @@ export namespace titian {
 
         void start_scene()
         {
-            GameLayer* game_layer = &editor_layer->game_layer;
+            GameLayer* game_layer = editor_layer->game_layer;
 
             // Cache scene
             if (Serializer serializer = { m_temp_path, true }) {
@@ -89,7 +89,7 @@ export namespace titian {
 
         void stop_scene()
         {
-            GameLayer* game_layer = &editor_layer->game_layer;
+            GameLayer* game_layer = editor_layer->game_layer;
 
             // Stop game
             game_layer->stop_game();

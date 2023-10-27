@@ -9,7 +9,7 @@ export namespace titian {
 	class RenderLayer : public Layer
 	{
 	public:
-		kl::Object<GameLayer> game_layer = nullptr;
+		GameLayer* game_layer = nullptr;
 
 		std::vector<kl::Object<RenderPass>> passes = {};
 		kl::Object<RenderStates> states = nullptr;
@@ -26,12 +26,12 @@ export namespace titian {
 		bool render_colliders = true;
 		bool v_sync = true;
 
-		RenderLayer(kl::Object<GameLayer>& game_layer)
+		RenderLayer(GameLayer* game_layer)
 		{
 			this->game_layer = game_layer;
 
 			// Textures
-			states = new RenderStates(game_layer->app_layer->gpu);
+			states = new RenderStates(&game_layer->app_layer->gpu);
 			render_texture = new Texture(&game_layer->app_layer->gpu);
 			picking_texture = new Texture(&game_layer->app_layer->gpu);
 			staging_texture = new Texture(&game_layer->app_layer->gpu);
@@ -89,7 +89,7 @@ export namespace titian {
 		{
 			kl::GPU* gpu = &game_layer->app_layer->gpu;
 
-			// Negative/0 check
+			// Negative or 0 check
 			if (new_size.x <= 0 || new_size.y <= 0) {
 				return;
 			}

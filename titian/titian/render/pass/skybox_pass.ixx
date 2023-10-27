@@ -7,9 +7,9 @@ export namespace titian {
     class SkyboxPass : public RenderPass
     {
     public:
-        kl::Object<RenderLayer> render_layer = nullptr;
+        RenderLayer* render_layer = nullptr;
 
-        SkyboxPass(kl::Object<GameLayer>& game_layer, kl::Object<RenderLayer>& render_layer)
+        SkyboxPass(GameLayer* game_layer, RenderLayer* render_layer)
             : RenderPass(game_layer)
         {
             this->render_layer = render_layer;

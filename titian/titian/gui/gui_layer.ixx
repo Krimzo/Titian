@@ -7,7 +7,7 @@ export namespace titian {
 	class GUILayer : public Layer
 	{
 	public:
-		kl::Object<RenderLayer> render_layer = nullptr;
+		RenderLayer* render_layer = nullptr;
 
 		std::vector<kl::Object<GUISection>> sections = {};
 
@@ -17,7 +17,7 @@ export namespace titian {
 		ImFont* roboto_font = nullptr;
 		ImFont* jetbrains_font = nullptr;
 		
-		GUILayer(kl::Object<RenderLayer>& render_layer)
+		GUILayer(RenderLayer* render_layer)
 		{
 			this->render_layer = render_layer;
 

@@ -18,7 +18,7 @@ export namespace titian {
             SCENE,
         };
 
-        kl::Object<AppLayer> app_layer = nullptr;
+        AppLayer* app_layer = nullptr;
 
         std::string path = std::filesystem::absolute(".").string();
 
@@ -35,7 +35,7 @@ export namespace titian {
 
         int icon_size = 65;
 
-		GUISectionExplorer(kl::Object<AppLayer>& app_layer)
+		GUISectionExplorer(AppLayer* app_layer)
 		{
             this->app_layer = app_layer;
             kl::GPU* gpu = &app_layer->gpu;

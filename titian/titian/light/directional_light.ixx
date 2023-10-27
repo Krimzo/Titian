@@ -14,7 +14,7 @@ export namespace titian {
         float point_size = 1.0f;
 		kl::Float3 color{ 1.0f };
 
-		DirectionalLight(physx::PxPhysics* physics, const bool dynamic, kl::Object<kl::GPU>& gpu, const uint32_t map_resolution)
+		DirectionalLight(physx::PxPhysics* physics, const bool dynamic, kl::GPU* gpu, const uint32_t map_resolution)
 			: Light(Type::DIRECTIONAL_LIGHT, physics, dynamic), m_map_resolution(map_resolution)
 		{
             kl::dx::TextureDescriptor shadow_map_descriptor = {};
@@ -37,7 +37,7 @@ export namespace titian {
             shadow_shader_view_descriptor.Texture2D.MipLevels = 1;
 
             for (auto& cascade : m_cascades) {
-                cascade = new Texture(&gpu);
+                cascade = new Texture(gpu);
                 cascade->graphics_buffer = gpu->create_texture(&shadow_map_descriptor, nullptr);
                 cascade->create_depth_view(&shadow_depth_view_descriptor);
                 cascade->create_shader_view(&shadow_shader_view_descriptor);

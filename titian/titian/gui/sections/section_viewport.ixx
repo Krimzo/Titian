@@ -9,10 +9,10 @@ export namespace titian {
 	class GUISectionViewport : public GUISection
 	{
 	public:
-        kl::Object<EditorLayer> editor_layer = nullptr;
-        kl::Object<RenderLayer> render_layer = nullptr;
+        EditorLayer* editor_layer = nullptr;
+        RenderLayer* render_layer = nullptr;
 
-		GUISectionViewport(kl::Object<EditorLayer>& editor_layer, kl::Object<RenderLayer>& render_layer)
+		GUISectionViewport(EditorLayer* editor_layer, RenderLayer* render_layer)
 		{
 		    this->editor_layer = editor_layer;
             this->render_layer = render_layer;
@@ -41,7 +41,7 @@ export namespace titian {
                 // Scene loading
                 const std::optional scene_file = gui_get_drag_drop<std::string>("SceneFile");
                 if (scene_file) {
-                    render_layer->game_layer->scene = new Scene(render_layer->game_layer->app_layer->gpu);
+                    render_layer->game_layer->scene = new Scene(&render_layer->game_layer->app_layer->gpu);
                     const Serializer serializer = { scene_file.value(), false };
                     render_layer->game_layer->scene->deserialize(&serializer, nullptr);
                 }
@@ -72,7 +72,7 @@ export namespace titian {
                     handle_gizmo_operation_change(ImGuizmo::OPERATION::ROTATE, ImGuiKey_2);
                     handle_gizmo_operation_change(ImGuizmo::OPERATION::TRANSLATE, ImGuiKey_3);
                 }
-                if (kl::Object entity = render_layer->game_layer->scene->get_entity(editor_layer->selected_entity)) {
+                if (Entity* entity = &render_layer->game_layer->scene->get_entity(editor_layer->selected_entity)) {
                     render_gizmos(entity);
                 }
             }
@@ -132,7 +132,7 @@ export namespace titian {
             }
         }
 
-        void render_gizmos(kl::Object<Entity>& entity)
+        void render_gizmos(Entity* entity)
         {
             if (editor_layer->gizmo_operation == 0) { return; }
 

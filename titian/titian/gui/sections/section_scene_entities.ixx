@@ -7,9 +7,9 @@ export namespace titian {
 	class GUISectionSceneEntities : public GUISection
 	{
 	public:
-		kl::Object<EditorLayer> editor_layer = nullptr;
+		EditorLayer* editor_layer = nullptr;
 
-		GUISectionSceneEntities(kl::Object<EditorLayer>& editor_layer)
+		GUISectionSceneEntities(EditorLayer* editor_layer)
 		{
 			this->editor_layer = editor_layer;
 		}

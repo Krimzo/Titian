@@ -12,8 +12,9 @@ export namespace titian {
         kl::RenderShaders unlit_pass = {};
         kl::RenderShaders lit_pass = {};
         kl::RenderShaders postprocess_pass = {};
-        
-        ShaderStates(kl::Object<kl::GPU>& gpu)
+        kl::RenderShaders display_pass = {};
+
+        ShaderStates(kl::GPU* gpu)
         {
             const auto parse_render_shaders = [&](const std::string& name)
             {
@@ -27,6 +28,7 @@ export namespace titian {
             unlit_pass = parse_render_shaders("unlit_pass.hlsl");
             lit_pass = parse_render_shaders("lit_pass.hlsl");
             postprocess_pass = parse_render_shaders("postprocess_pass.hlsl");
+            display_pass = parse_render_shaders("display_pass.hlsl");
 
             kl::assert(shadow_pass, "Failed to init SHADOW_PASS render shaders.");
             kl::assert(skybox_pass, "Failed to init SKYBOX_PASS render shaders.");
@@ -34,6 +36,7 @@ export namespace titian {
             kl::assert(unlit_pass, "Failed to init UNLIT_PASS render shaders.");
             kl::assert(lit_pass, "Failed to init LIT_PASS render shaders.");
             kl::assert(postprocess_pass, "Failed to init POSTPROCESS_PASS render shaders.");
+            kl::assert(display_pass, "Failed to init DISPLAY_PASS render shaders.");
         }
     };
 }

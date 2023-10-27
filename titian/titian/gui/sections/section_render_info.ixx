@@ -7,13 +7,13 @@ export namespace titian {
     class GUISectionRenderInfo : public GUISection
     {
     public:
-        kl::Object<GameLayer> game_layer = nullptr;
+        GameLayer* game_layer = nullptr;
 
         int updates_per_second = 6;
         float frame_time_ms = 0.0f;
         int frames_per_second = 0;
 
-        GUISectionRenderInfo(kl::Object<GameLayer>& game_layer)
+        GUISectionRenderInfo(GameLayer* game_layer)
         {
             this->game_layer = game_layer;
         }

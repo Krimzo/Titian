@@ -7,9 +7,9 @@ export namespace titian {
 	class RenderPass
 	{
 	public:
-		kl::Object<GameLayer> game_layer = nullptr;
+		GameLayer* game_layer = nullptr;
 
-		RenderPass(kl::Object<GameLayer>& game_layer)
+		RenderPass(GameLayer* game_layer)
 		{
 			this->game_layer = game_layer;
 		}

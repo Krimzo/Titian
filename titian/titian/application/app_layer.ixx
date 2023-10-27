@@ -34,7 +34,9 @@ export namespace titian {
 		}
 
 		~AppLayer() override
-		{}
+		{
+			kl::console::set_enabled(true);
+		}
 
 		bool update() override
 		{

@@ -43,6 +43,16 @@ std::vector<byte> kl::read_file(const std::string_view& filepath)
     return result;
 }
 
+bool kl::write_file(const std::string_view& filepath, const std::vector<byte>& data)
+{
+    kl::File file = { filepath, true };
+    if (!file) {
+        return false;
+    }
+    file.write<byte>(data.data(), data.size());
+    return true;
+}
+
 std::string kl::read_file_string(const std::string& filepath)
 {
     std::ifstream stream(filepath);

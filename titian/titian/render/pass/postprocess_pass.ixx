@@ -8,10 +8,10 @@ export namespace titian {
     class PostprocessPass : public RenderPass
     {
     public:
-        kl::Object<EditorLayer> editor_layer = nullptr;
-        kl::Object<GUILayer> gui_layer = nullptr;
+        EditorLayer* editor_layer = nullptr;
+        GUILayer* gui_layer = nullptr;
 
-        PostprocessPass(kl::Object<GameLayer>& game_layer, kl::Object<EditorLayer>& editor_layer, kl::Object<GUILayer>& gui_layer)
+        PostprocessPass(GameLayer* game_layer, EditorLayer* editor_layer, GUILayer* gui_layer)
             : RenderPass(game_layer)
         {
             this->editor_layer = editor_layer;

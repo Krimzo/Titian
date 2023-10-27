@@ -9,15 +9,15 @@ export namespace titian {
 	public:
 		static GameLayer* BOUND_SELF;
 
-		kl::Object<AppLayer> app_layer = nullptr;
+		AppLayer* app_layer = nullptr;
 
 		bool game_running = false;
 		kl::Object<Scene> scene = nullptr;
 
-		GameLayer(kl::Object<AppLayer>& app_layer)
+		GameLayer(AppLayer* app_layer)
 		{
 			this->app_layer = app_layer;
-			scene = new Scene(app_layer->gpu);
+			scene = new Scene(&app_layer->gpu);
 		}
 
 		~GameLayer() override
@@ -40,7 +40,7 @@ export namespace titian {
 
 		void reset_scene()
 		{
-			scene = new Scene(app_layer->gpu);
+			scene = new Scene(&app_layer->gpu);
 		}
 
 		void start_game()

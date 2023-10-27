@@ -12,6 +12,9 @@ export int sandbox_entry()
     using namespace titian;
     TitianEditor editor = {};
 
+    // Unpackage
+    open_package(PACKAGED_PREVIEW_FILE);
+
     // Collect pieces
     std::vector<kl::Object<SandboxPiece>> pieces = {
         new SandboxPiecePrepare(&editor),
@@ -28,6 +31,6 @@ export int sandbox_entry()
     }
 
     // Loop
-    while (editor.process_layers()) {}
+    while (editor.process_layers());
     return 0;
 }

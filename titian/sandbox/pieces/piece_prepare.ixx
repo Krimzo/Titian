@@ -15,7 +15,7 @@ export namespace titian {
         void setup_self() override
         {
             Scene* scene = &editor->game_layer->scene;
-            kl::Object<kl::GPU>& gpu = editor->app_layer->gpu;
+            kl::GPU* gpu = &editor->app_layer->gpu;
 
             // Camera
             kl::Object camera = new Camera(scene->physics(), false);

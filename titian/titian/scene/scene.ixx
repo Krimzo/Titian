@@ -29,7 +29,7 @@ export namespace titian {
         std::string main_ambient_light_name = "/";
         std::string main_directional_light_name = "/";
 
-        Scene(kl::Object<kl::GPU>& gpu)
+        Scene(kl::GPU* gpu)
             : m_gpu(gpu)
         {
             m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
@@ -49,7 +49,7 @@ export namespace titian {
             m_scene = m_physics->createScene(scene_descriptor);
             kl::assert(m_scene, "Failed to create physics scene");
 
-            default_meshes = new DefaultMeshes(&gpu, m_physics, m_cooking);
+            default_meshes = new DefaultMeshes(gpu, m_physics, m_cooking);
             kl::assert(default_meshes, "Failed to init default meshes");
             
             default_materials = new DefaultMaterials();
@@ -346,7 +346,7 @@ export namespace titian {
         physx::PxCooking* m_cooking = nullptr;
         physx::PxScene* m_scene = nullptr;
 
-        kl::Object<kl::GPU> m_gpu = nullptr;
+        kl::GPU* m_gpu = nullptr;
         std::map<std::string, kl::Object<Entity>> m_entities = {};
     };
 }

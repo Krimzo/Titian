@@ -12,10 +12,10 @@ export namespace titian {
 	class GUISectionSceneScripts : public GUISection
 	{
 	public:
-		kl::Object<EditorLayer> editor_layer = nullptr;
-		kl::Object<GUILayer> gui_layer = nullptr;
+		EditorLayer* editor_layer = nullptr;
+		GUILayer* gui_layer = nullptr;
 
-		GUISectionSceneScripts(kl::Object<EditorLayer>& editor_layer, kl::Object<GUILayer>& gui_layer)
+		GUISectionSceneScripts(EditorLayer* editor_layer, GUILayer* gui_layer)
 		{
 			this->editor_layer = editor_layer;
 			this->gui_layer = gui_layer;

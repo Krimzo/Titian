@@ -9,6 +9,7 @@ namespace kl {
     std::vector<std::string> list_files(const std::string& path, bool recursive = false);
 
     std::vector<byte> read_file(const std::string_view& filepath);
+    bool write_file(const std::string_view& filepath, const std::vector<byte>& data);
 
     std::string read_file_string(const std::string& filepath);
     bool write_file_string(const std::string& filepath, const std::string& data);

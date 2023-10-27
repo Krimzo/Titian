@@ -8,10 +8,10 @@ export namespace titian {
     class GUISectionEntityProperties : public GUISection
     {
     public:
-        kl::Object<EditorLayer> editor_layer = nullptr;
-        kl::Object<GUILayer> gui_layer = nullptr;
+        EditorLayer* editor_layer = nullptr;
+        GUILayer* gui_layer = nullptr;
 
-        GUISectionEntityProperties(kl::Object<EditorLayer>& editor_layer, kl::Object<GUILayer>& gui_layer)
+        GUISectionEntityProperties(EditorLayer* editor_layer, GUILayer* gui_layer)
         {
             this->editor_layer = editor_layer;
             this->gui_layer = gui_layer;

@@ -10,9 +10,9 @@ export namespace titian {
     class ShadowPass : public RenderPass
     {
     public:
-        kl::Object<RenderLayer> render_layer = nullptr;
+        RenderLayer* render_layer = nullptr;
 
-        ShadowPass(kl::Object<GameLayer>& game_layer, kl::Object<RenderLayer>& render_layer)
+        ShadowPass(GameLayer* game_layer, RenderLayer* render_layer)
             : RenderPass(game_layer)
         {
             this->render_layer = render_layer;

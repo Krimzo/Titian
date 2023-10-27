@@ -12,12 +12,12 @@ export namespace titian {
 	class GUISectionScriptEditor : public GUISection
 	{
 	public:
-		kl::Object<EditorLayer> editor_layer = nullptr;
-		kl::Object<GUILayer> gui_layer = nullptr;
+		EditorLayer* editor_layer = nullptr;
+		GUILayer* gui_layer = nullptr;
 
 		std::string selected_script = "/";
 
-		GUISectionScriptEditor(kl::Object<EditorLayer>& editor_layer, kl::Object<GUILayer>& gui_layer)
+		GUISectionScriptEditor(EditorLayer* editor_layer, GUILayer* gui_layer)
 		{
 			this->editor_layer = editor_layer;
 			this->gui_layer = gui_layer;

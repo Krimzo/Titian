@@ -1,20 +1,18 @@
 export module section_log_view;
 
 export import gui_section;
-export import app_layer;
 export import gui_layer;
+export import logger;
 
 export namespace titian {
 	class GUISectionLogView : public GUISection
 	{
 	public:
-        kl::Object<AppLayer> app_layer = nullptr;
-        kl::Object<GUILayer> gui_layer = nullptr;
+        GUILayer* gui_layer = nullptr;
         uint64_t last_log_index = 0;
 
-		GUISectionLogView(kl::Object<AppLayer>& app_layer, kl::Object<GUILayer>& gui_layer)
+		GUISectionLogView(GUILayer* gui_layer)
 		{
-            this->app_layer = app_layer;
             this->gui_layer = gui_layer;
         }
 
