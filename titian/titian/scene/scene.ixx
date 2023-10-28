@@ -224,6 +224,11 @@ export namespace titian {
             }
         }
 
+        bool contains(const std::string& name) const
+        {
+            return m_entities.contains(name);
+        }
+
         // Update
         void update_physics(const float delta_t)
         {
@@ -283,27 +288,36 @@ export namespace titian {
             return nullptr;
         }
 
-        // Script helpers
-        int helper_mesh_count() const
+        // Helper new
+        Mesh* helper_new_mesh(const std::string& id)
         {
-            return static_cast<int>(meshes.size());
+            Mesh* mesh = new Mesh(m_gpu, m_physics, m_cooking);
+            meshes[id] = mesh;
+            return mesh;
         }
 
-        int helper_texture_count() const
+        Texture* helper_new_texture(const std::string& id)
         {
-            return static_cast<int>(textures.size());
+            Texture* texture = new Texture(m_gpu);
+            textures[id] = texture;
+            return texture;
         }
 
-        int helper_material_count() const
+        Material* helper_new_material(const std::string& id)
         {
-            return static_cast<int>(materials.size());
+            Material* material = new Material();
+            materials[id] = material;
+            return material;
         }
 
-        int helper_entity_count() const
+        Entity* helper_new_entity(const std::string& id)
         {
-            return static_cast<int>(m_entities.size());
+            kl::Object entity = this->make_entity(true);
+            this->add(id, entity);
+            return &entity;
         }
 
+        // Helper get
         Mesh* helper_get_mesh(const std::string& id)
         {
             if (meshes.contains(id)) {
@@ -334,6 +348,64 @@ export namespace titian {
                 return &m_entities.at(id);
             }
             return nullptr;
+        }
+
+        // Helper count
+        int helper_mesh_count() const
+        {
+            return static_cast<int>(meshes.size());
+        }
+
+        int helper_texture_count() const
+        {
+            return static_cast<int>(textures.size());
+        }
+
+        int helper_material_count() const
+        {
+            return static_cast<int>(materials.size());
+        }
+
+        int helper_entity_count() const
+        {
+            return static_cast<int>(m_entities.size());
+        }
+
+        // Helper get all
+        std::map<std::string, Mesh*> helper_get_all_meshes()
+        {
+            std::map<std::string, Mesh*> result = {};
+            for (auto& [name, mesh] : meshes) {
+                result[name] = &mesh;
+            }
+            return result;
+        }
+
+        std::map<std::string, Texture*> helper_get_all_textures()
+        {
+            std::map<std::string, Texture*> result = {};
+            for (auto& [name, texture] : textures) {
+                result[name] = &texture;
+            }
+            return result;
+        }
+
+        std::map<std::string, Material*> helper_get_all_materials()
+        {
+            std::map<std::string, Material*> result = {};
+            for (auto& [name, material] : materials) {
+                result[name] = &material;
+            }
+            return result;
+        }
+
+        std::map<std::string, Entity*> helper_get_all_entities()
+        {
+            std::map<std::string, Entity*> result = {};
+            for (auto& [name, entity] : m_entities) {
+                result[name] = &entity;
+            }
+            return result;
         }
 
     private:

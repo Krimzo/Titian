@@ -699,15 +699,25 @@ int load_types = [&]
 		{ chaiscript::fun(&Scene::set_gravity), "set_gravity" },
 		{ chaiscript::fun(&Scene::gravity), "gravity" },
 
-		{ chaiscript::fun(&Scene::helper_mesh_count), "mesh_count" },
-		{ chaiscript::fun(&Scene::helper_texture_count), "texture_count" },
-		{ chaiscript::fun(&Scene::helper_material_count), "material_count" },
-		{ chaiscript::fun(&Scene::helper_entity_count), "entity_count" },
+		{ chaiscript::fun(&Scene::helper_new_mesh), "new_mesh" },
+		{ chaiscript::fun(&Scene::helper_new_texture), "new_texture" },
+		{ chaiscript::fun(&Scene::helper_new_material), "new_material" },
+		{ chaiscript::fun(&Scene::helper_new_entity), "new_entity" },
 
 		{ chaiscript::fun(&Scene::helper_get_mesh), "get_mesh" },
 		{ chaiscript::fun(&Scene::helper_get_texture), "get_texture" },
 		{ chaiscript::fun(&Scene::helper_get_material), "get_material" },
 		{ chaiscript::fun(&Scene::helper_get_entity), "get_entity" },
+
+		{ chaiscript::fun(&Scene::helper_mesh_count), "mesh_count" },
+		{ chaiscript::fun(&Scene::helper_texture_count), "texture_count" },
+		{ chaiscript::fun(&Scene::helper_material_count), "material_count" },
+		{ chaiscript::fun(&Scene::helper_entity_count), "entity_count" },
+
+		{ chaiscript::fun(&Scene::helper_get_all_meshes), "get_all_meshes" },
+		{ chaiscript::fun(&Scene::helper_get_all_textures), "get_all_textures" },
+		{ chaiscript::fun(&Scene::helper_get_all_materials), "get_all_materials" },
+		{ chaiscript::fun(&Scene::helper_get_all_entities), "get_all_entities" },
 
 		{ chaiscript::fun<Camera*>(&Scene::get_casted<Camera>), "get_camera" },
 		{ chaiscript::fun<Light*>(&Scene::get_casted<Light>), "get_light" },

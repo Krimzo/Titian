@@ -24,9 +24,14 @@ export namespace titian {
     {
         auto& buffer = INPUT_WAITED_DATA[id];
         const int buffer_capacity = static_cast<int>(std::size(buffer) - 1);
-        if (!to_copy.empty()) {
-            memcpy(buffer, to_copy.data(), std::min(buffer_capacity, static_cast<int>(to_copy.size())));
+
+        // Copy/clear buffer
+        for (int i = 0; i < buffer_capacity; i++) {
+            const char value = (i < to_copy.size()) ? to_copy[i] : 0;
+            buffer[i] = value;
         }
+
+        // Render input
         if (ImGui::InputText(id.c_str(), buffer, buffer_capacity, ImGuiInputTextFlags_EnterReturnsTrue)) {
             const std::string result = { buffer };
             memset(buffer, 0, std::size(buffer));

@@ -23,7 +23,6 @@ export namespace titian {
 
 		kl::Float4 background = kl::Color(30, 30, 30);
 		bool render_wireframe = false;
-		bool render_colliders = true;
 		bool v_sync = true;
 
 		RenderLayer(GameLayer* game_layer)

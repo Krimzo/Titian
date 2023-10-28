@@ -72,10 +72,14 @@ export namespace titian {
             // Selector
             std::string& bound_mesh = entity->mesh_name;
             if (ImGui::BeginCombo("Bound Mesh", bound_mesh.c_str())) {
+                const std::string filter = gui_input_continuous("Search###EntityPropsMesh");
                 if (ImGui::Selectable("/", bound_mesh == "/")) {
                     bound_mesh = "/";
                 }
                 for (const auto& [mesh, _] : scene->meshes) {
+                    if (!filter.empty() && !mesh.contains(filter)) {
+                        continue;
+                    }
                     if (ImGui::Selectable(mesh.c_str(), mesh == bound_mesh)) {
                         bound_mesh = mesh;
                     }
@@ -92,10 +96,14 @@ export namespace titian {
             // Selector
             std::string& bound_material = entity->material_name;
             if (ImGui::BeginCombo("Bound Material", bound_material.c_str())) {
+                const std::string filter = gui_input_continuous("Search###EntityPropsMaterial");
                 if (ImGui::Selectable("/", bound_material == "/")) {
                     bound_material = "/";
                 }
                 for (auto& [material, _] : scene->materials) {
+                    if (!filter.empty() && !material.contains(filter)) {
+                        continue;
+                    }
                     if (ImGui::Selectable(material.c_str(), material == bound_material)) {
                         bound_material = material;
                     }

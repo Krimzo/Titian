@@ -28,13 +28,22 @@ export namespace titian {
 
                     // 0
                     ImGui::TableSetColumnIndex(0);
+
+                    const char* label = !editor_layer->game_layer->game_running ? "Start Game" : "Stop Game";
+                    float size = ImGui::CalcTextSize(label).x + ImGui::GetStyle().FramePadding.x * 2.0f;
+                    float avail = ImGui::GetContentRegionAvail().x;
+                    float off = avail - size;
+                    if (off > 0.0f) {
+                        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+                    }
+
                     if (!editor_layer->game_layer->game_running) {
-                        if (ImGui::Button("Start Game")) {
+                        if (ImGui::Button(label)) {
                             start_scene();
                         }
                     }
                     else {
-                        if (ImGui::Button("Stop Game")) {
+                        if (ImGui::Button(label)) {
                             stop_scene();
                         }
                     }

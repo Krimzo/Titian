@@ -75,9 +75,8 @@ export namespace titian {
 
                 if (ImGui::BeginMenu("View")) {
                     if (ImGui::BeginMenu("Features")) {
-                        ImGui::Checkbox("Use vSync", &render_layer->v_sync);
                         ImGui::Checkbox("Render Wireframe", &render_layer->render_wireframe);
-                        ImGui::Checkbox("Render Colliders", &render_layer->render_colliders);
+                        ImGui::Checkbox("Use vSync", &render_layer->v_sync);
 
                         ImGui::EndMenu();
                     }
@@ -86,7 +85,7 @@ export namespace titian {
                 }
 
                 if (ImGui::BeginMenu("About")) {
-                    ImGui::Text("Titian 0.4v");
+                    ImGui::Text("Titian 0.6v");
 
                     ImGui::EndMenu();
                 }

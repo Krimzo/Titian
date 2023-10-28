@@ -1,0 +1,3 @@
+entity list -> implement entity creation
+control menu -> improve the looks
+interpreted scripts parts -> add descriptors for all members, methods and functions
