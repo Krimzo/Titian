@@ -41,7 +41,7 @@ export namespace titian {
                     scene->materials[material_name] = material;
 
                     // Entity
-                    kl::Object cube = scene->make_entity(false);
+                    kl::Object cube = scene->new_entity(false);
                     cube->scale = kl::Float3{ 0.45f };
                     cube->set_position({
                         (float) (x - half_size) + x_offset,
@@ -52,7 +52,7 @@ export namespace titian {
                     cube->mesh_name = mesh_name;
                     cube->material_name = material_name;
 
-                    scene->add(entity_name, cube);
+                    scene->add_entity(entity_name, cube);
                     cube_counter += 1;
                 }
             }

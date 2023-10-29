@@ -35,6 +35,17 @@ export namespace titian {
 int load_types = [&]
 {
 	using namespace titian;
+	
+	// Bootstrap
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<Mesh*>>("MeshVector", *INTERPRETED_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<Texture*>>("TextureVector", *INTERPRETED_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<Material*>>("MaterialVector", *INTERPRETED_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<Entity*>>("EntityVector", *INTERPRETED_SCRIPT_MODULE);
+
+	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Mesh*>>("MeshMap", *INTERPRETED_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Texture*>>("TextureMap", *INTERPRETED_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Material*>>("MaterialMap", *INTERPRETED_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Entity*>>("EntityMap", *INTERPRETED_SCRIPT_MODULE);
 
 	// Int2
 	chaiscript::utility::add_class<kl::Int2>(*INTERPRETED_SCRIPT_MODULE, "Int2",
@@ -708,6 +719,16 @@ int load_types = [&]
 		{ chaiscript::fun(&Scene::helper_get_texture), "get_texture" },
 		{ chaiscript::fun(&Scene::helper_get_material), "get_material" },
 		{ chaiscript::fun(&Scene::helper_get_entity), "get_entity" },
+
+		{ chaiscript::fun(&Scene::helper_remove_mesh), "remove_mesh" },
+		{ chaiscript::fun(&Scene::helper_remove_texture), "remove_texture" },
+		{ chaiscript::fun(&Scene::helper_remove_material), "remove_material" },
+		{ chaiscript::fun(&Scene::helper_remove_entity), "remove_entity" },
+
+		{ chaiscript::fun(&Scene::helper_contains_mesh), "contains_mesh" },
+		{ chaiscript::fun(&Scene::helper_contains_texture), "contains_texture" },
+		{ chaiscript::fun(&Scene::helper_contains_material), "contains_material" },
+		{ chaiscript::fun(&Scene::helper_contains_entity), "contains_entity" },
 
 		{ chaiscript::fun(&Scene::helper_mesh_count), "mesh_count" },
 		{ chaiscript::fun(&Scene::helper_texture_count), "texture_count" },

@@ -73,27 +73,27 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
             const std::string name = serializer->read_string();
             const Entity::Type type = serializer->read_object<Entity::Type>();
 
-            kl::Object<Entity> object = nullptr;
+            kl::Object<Entity> entity = nullptr;
             switch (type) {
             case Entity::Type::BASIC:
-                object = new Entity(Entity::Type::BASIC, m_physics, false);
+                entity = new Entity(Entity::Type::BASIC, m_physics, false);
                 break;
             case Entity::Type::CAMERA:
-                object = new Camera(m_physics, false);
+                entity = new Camera(m_physics, false);
                 break;
             case Entity::Type::AMBIENT_LIGHT:
-                object = new AmbientLight(m_physics, false);
+                entity = new AmbientLight(m_physics, false);
                 break;
             case Entity::Type::POINT_LIGHT:
-                object = new PointLight(m_physics, false);
+                entity = new PointLight(m_physics, false);
                 break;
             case Entity::Type::DIRECTIONAL_LIGHT:
-                object = new DirectionalLight(m_physics, false, m_gpu, 4096);
+                entity = new DirectionalLight(m_physics, false, m_gpu, 4096);
                 break;
             }
 
-            object->deserialize(serializer, &meshes);
-            this->add(name, object);
+            entity->deserialize(serializer, &meshes);
+            this->add_entity(name, entity);
         }
     }
 }

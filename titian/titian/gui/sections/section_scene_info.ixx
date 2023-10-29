@@ -3,6 +3,10 @@ export module section_scene_info;
 export import gui_section;
 export import editor_layer;
 
+export import camera;
+export import ambient_light;
+export import directional_light;
+
 export namespace titian {
 	class GUISectionSceneInfo : public GUISection
 	{
@@ -22,47 +26,100 @@ export namespace titian {
             if (ImGui::Begin("Scene Info")) {
                 Scene* scene = &editor_layer->game_layer->scene;
 
-                int entity_count = (int) scene->entity_count();
-                ImGui::DragInt("Entity count", &entity_count);
+                int entity_count = static_cast<int>(scene->entity_count());
+                ImGui::DragInt("Entity count", &entity_count, 0.0f);
 
                 kl::Float3 gravity = scene->gravity();
                 if (ImGui::DragFloat3("Gravity", gravity)) {
                     scene->set_gravity(gravity);
                 }
+                
+                ImGui::Separator();
+                main_camera_info(scene);
 
-                Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
-                if (camera) {
-                    kl::Float3 camera_position = camera->position();
-                    ImGui::DragFloat3("Camera position", camera_position);
-                    camera->set_position(camera_position);
+                ImGui::Separator();
+                main_ambient_info(scene);
 
-                    kl::Float3 camera_direction = camera->forward();
-                    ImGui::DragFloat3("Camera direction", camera_direction);
-                    camera->set_forward(camera_direction);
-
-                    // Skybox
-                    if (ImGui::BeginCombo("Bound Skybox", camera->skybox_name.c_str())) {
-                        if (ImGui::Selectable("/", camera->skybox_name == "/")) {
-                            camera->skybox_name = "/";
-                        }
-                        for (auto& [texture_name, _] : scene->textures) {
-                            if (ImGui::Selectable(texture_name.c_str(), texture_name == camera->skybox_name)) {
-                                camera->skybox_name = texture_name;
-                            }
-                        }
-                        ImGui::EndCombo();
-                    }
-
-                    // Background
-                    if (!scene->textures.contains(camera->skybox_name)) {
-                        kl::Float4 background = camera->background;
-                        if (ImGui::ColorEdit4("Background", background)) {
-                            camera->background = background;
-                        }
-                    }
-                }
+                ImGui::Separator();
+                main_directional_info(scene);
             }
             ImGui::End();
 		}
+
+    private:
+        void main_camera_info(Scene* scene)
+        {
+            ImGui::Text("Main Camera");
+
+            std::string& bound_camera = scene->main_camera_name;
+            if (ImGui::BeginCombo("Bound Camera", bound_camera.c_str())) {
+                const std::string filter = gui_input_continuous("Search###SceneInfoCamera");
+                if (ImGui::Selectable("/", bound_camera == "/")) {
+                    bound_camera = "/";
+                }
+                for (const auto& [entity_name, entity] : *scene) {
+                    if (!dynamic_cast<const Camera*>(&entity)) {
+                        continue;
+                    }
+                    if (!filter.empty() && !entity_name.contains(filter)) {
+                        continue;
+                    }
+                    if (ImGui::Selectable(entity_name.c_str(), entity_name == bound_camera)) {
+                        bound_camera = entity_name;
+                    }
+                }
+                ImGui::EndCombo();
+            }
+        }
+
+        void main_ambient_info(Scene* scene)
+        {
+            ImGui::Text("Main Ambient Light");
+
+            std::string& bound_light = scene->main_ambient_light_name;
+            if (ImGui::BeginCombo("Bound Ambient Light", bound_light.c_str())) {
+                const std::string filter = gui_input_continuous("Search###SceneInfoAmbientLight");
+                if (ImGui::Selectable("/", bound_light == "/")) {
+                    bound_light = "/";
+                }
+                for (const auto& [entity_name, entity] : *scene) {
+                    if (!dynamic_cast<const AmbientLight*>(&entity)) {
+                        continue;
+                    }
+                    if (!filter.empty() && !entity_name.contains(filter)) {
+                        continue;
+                    }
+                    if (ImGui::Selectable(entity_name.c_str(), entity_name == bound_light)) {
+                        bound_light = entity_name;
+                    }
+                }
+                ImGui::EndCombo();
+            }
+        }
+
+        void main_directional_info(Scene* scene)
+        {
+            ImGui::Text("Main Directional Light");
+
+            std::string& bound_light = scene->main_directional_light_name;
+            if (ImGui::BeginCombo("Bound Directional Light", bound_light.c_str())) {
+                const std::string filter = gui_input_continuous("Search###SceneInfoDirectionalLight");
+                if (ImGui::Selectable("/", bound_light == "/")) {
+                    bound_light = "/";
+                }
+                for (const auto& [entity_name, entity] : *scene) {
+                    if (!dynamic_cast<const DirectionalLight*>(&entity)) {
+                        continue;
+                    }
+                    if (!filter.empty() && !entity_name.contains(filter)) {
+                        continue;
+                    }
+                    if (ImGui::Selectable(entity_name.c_str(), entity_name == bound_light)) {
+                        bound_light = entity_name;
+                    }
+                }
+                ImGui::EndCombo();
+            }
+        }
 	};
 }

@@ -80,8 +80,9 @@ export namespace titian {
                 kl::Float4x4 v_matrix; // View matrix
         
                 kl::Float4 ambient_light; // (color.r, color.g, color.b, intensity)
-                kl::Float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
-        
+                kl::Float4 directional_light; // (dir.x, dir.y, dir.z, sun_point_size)
+                kl::Float4 directional_light_color; // (color.r, color.g, color.b, none)
+
                 kl::Float4 shadow_map_info; // (width, height, texel_width, texel_size)
                 kl::Float4 cascade_distances; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
             } ps_data = {};
@@ -104,7 +105,9 @@ export namespace titian {
             
                 gpu->context()->PSSetShaderResources(1, DirectionalLight::CASCADE_COUNT, dir_light_views);
                 
-                ps_data.directional_light = { directional_light->direction(), directional_light->point_size };  
+                ps_data.directional_light = { directional_light->direction(), directional_light->point_size };
+                ps_data.directional_light_color = { directional_light->color, {} };
+
                 ps_data.shadow_map_info = { kl::Float2((float) directional_light->map_resolution()), kl::Float2(1.0f / directional_light->map_resolution()) };
                 for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
                     ps_data.cascade_distances[i] = kl::unwrap(directional_light->CASCADE_SPLITS[i + 1], camera->near_plane, camera->far_plane);

@@ -2,7 +2,7 @@ export module packaging_entry;
 
 export import packager;
 
-export int packaging_entry(const int create)
+export int packaging_entry(const bool create)
 {
 	using namespace titian;
 

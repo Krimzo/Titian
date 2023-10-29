@@ -38,19 +38,19 @@ export namespace titian {
             scene->materials[material_name] = scene->default_materials->white;
 
             // Entity
-            kl::Object platform = scene->make_entity(false);
+            kl::Object platform = scene->new_entity(false);
 
             const kl::Float3 scale = { 15.0f, 0.1f, 15.0f };
             platform->scale = scale;
 
             platform->set_rotation({ 1.0f, 0.0f, 0.0f });
             platform->set_position({ 0.0f, -7.0f, -25.0f });
-            platform->set_collider(scene->make_box_collider(scale));
+            platform->set_collider(scene->new_box_collider(scale));
 
             platform->mesh_name = mesh_name;
             platform->material_name = material_name;
 
-            scene->add(entity_name, platform);
+            scene->add_entity(entity_name, platform);
         }
 
         void setup_objects(Scene* scene)
@@ -96,11 +96,11 @@ export namespace titian {
                     scene->materials[material_name] = material;
 
                     // Entity
-                    kl::Object box = scene->make_entity(true);
+                    kl::Object box = scene->new_entity(true);
                     box->scale = scale;
                     box->set_rotation(kl::random::gen_float3(360.0f));
                     box->set_position({ (half_size - x) * 2.25f, 15.0f, -25.0f + (half_size - z) * 2.25f });
-                    box->set_collider(scene->make_box_collider(scale));
+                    box->set_collider(scene->new_box_collider(scale));
 
                     box->set_mass(2.5f);
                     box->set_gravity(true);
@@ -108,7 +108,7 @@ export namespace titian {
                     box->mesh_name = mesh_name;
                     box->material_name = material_name;
 
-                    scene->add(entity_name, box);
+                    scene->add_entity(entity_name, box);
                     box_counter += 1;
                 }
             }

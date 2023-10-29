@@ -6,7 +6,6 @@ export namespace titian {
 	class PointLight : public Light
 	{
 	public:
-		kl::Float3 position = {};
 		kl::Float3 color{ 1.0f };
 
 		PointLight(physx::PxPhysics* physics, const bool dynamic)
@@ -20,7 +19,6 @@ export namespace titian {
 		{
 			Light::serialize(serializer, helper_data);
 
-			serializer->write_object<kl::Float3>(position);
 			serializer->write_object<kl::Float3>(color);
 		}
 
@@ -28,7 +26,6 @@ export namespace titian {
 		{
 			Light::deserialize(serializer, helper_data);
 
-			serializer->read_object<kl::Float3>(position);
 			serializer->read_object<kl::Float3>(color);
 		}
 

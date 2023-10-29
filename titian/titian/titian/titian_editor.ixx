@@ -17,7 +17,6 @@ export import postprocess_pass;
 
 export import section_main_menu;
 export import section_scene_entities;
-export import section_scene_scripts;
 export import section_scene_info;
 export import section_mesh_editor;
 export import section_material_editor;
@@ -64,7 +63,6 @@ export namespace titian {
             // Init editor sections
             gui_layer->sections.emplace_back(new GUISectionMainMenu(&render_layer));
             gui_layer->sections.emplace_back(new GUISectionSceneEntities(&editor_layer));
-            gui_layer->sections.emplace_back(new GUISectionSceneScripts(&editor_layer, &gui_layer));
             gui_layer->sections.emplace_back(new GUISectionSceneInfo(&editor_layer));
             gui_layer->sections.emplace_back(new GUISectionMeshEditor(&editor_layer, &gui_layer));
             gui_layer->sections.emplace_back(new GUISectionMaterialEditor(&editor_layer, &gui_layer));

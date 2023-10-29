@@ -4,6 +4,11 @@ export import gui_section;
 export import editor_layer;
 export import gui_layer;
 
+export import camera;
+export import ambient_light;
+export import point_light;
+export import directional_light;
+
 export namespace titian {
     class GUISectionEntityProperties : public GUISection
     {
@@ -39,11 +44,95 @@ export namespace titian {
     private:
         void display_entity_info(Scene* scene, Entity* entity)
         {
-            ImGui::Text("Info");
+            ImGui::Text("Entity Info");
 
             ImGui::Text("Name: ");
             ImGui::SameLine();
             gui_colored_text(editor_layer->selected_entity, gui_layer->special_color);
+
+            if (Camera* camera = dynamic_cast<Camera*>(entity)) {
+                ImGui::Separator();
+                display_camera_special_info(scene, camera);
+            }
+            else if (AmbientLight* light = dynamic_cast<AmbientLight*>(entity)) {
+                ImGui::Separator();
+                display_ambient_light_special_info(scene, light);
+            }
+            else if (PointLight* light = dynamic_cast<PointLight*>(entity)) {
+                ImGui::Separator();
+                display_point_light_special_info(scene, light);
+            }
+            else if (DirectionalLight* light = dynamic_cast<DirectionalLight*>(entity)) {
+                ImGui::Separator();
+                display_directional_light_special_info(scene, light);
+            }
+        }
+
+        void display_camera_special_info(Scene* scene, Camera* camera)
+        {
+            ImGui::Text("Camera Special Info");
+
+            ImGui::DragFloat("Aspect Ratio", &camera->aspect_ratio);
+            ImGui::DragFloat("FOV", &camera->field_of_view);
+
+            ImGui::DragFloat("Near Plane", &camera->near_plane);
+            ImGui::DragFloat("Far Plane", &camera->far_plane);
+
+            ImGui::DragFloat("Sensitivity", &camera->sensitivity);
+            ImGui::DragFloat("Speed", &camera->speed);
+
+            kl::Float3 camera_direction = camera->forward();
+            ImGui::DragFloat3("Direction", camera_direction);
+            camera->set_forward(camera_direction);
+
+            // Skybox
+            if (ImGui::BeginCombo("Bound Skybox", camera->skybox_name.c_str())) {
+                if (ImGui::Selectable("/", camera->skybox_name == "/")) {
+                    camera->skybox_name = "/";
+                }
+                for (auto& [texture_name, _] : scene->textures) {
+                    if (ImGui::Selectable(texture_name.c_str(), texture_name == camera->skybox_name)) {
+                        camera->skybox_name = texture_name;
+                    }
+                }
+                ImGui::EndCombo();
+            }
+
+            // Background
+            if (!scene->textures.contains(camera->skybox_name)) {
+                kl::Float4 background = camera->background;
+                if (ImGui::ColorEdit4("Background", background)) {
+                    camera->background = background;
+                }
+            }
+        }
+
+        void display_ambient_light_special_info(Scene* scene, AmbientLight* light)
+        {
+            ImGui::Text("Ambient Light Special Info");
+
+            ImGui::ColorEdit3("Color", light->color);
+            ImGui::DragFloat("Intensity", &light->intensity);
+        }
+
+        void display_point_light_special_info(Scene* scene, PointLight* light)
+        {
+            ImGui::Text("Point Light Special Info");
+
+            ImGui::ColorEdit3("Color", light->color);
+        }
+
+        void display_directional_light_special_info(Scene* scene, DirectionalLight* light)
+        {
+            ImGui::Text("Directional Light Special Info");
+
+            ImGui::DragFloat("Point Size", &light->point_size);
+            ImGui::ColorEdit3("Color", light->color);
+
+            kl::Float3 direction = light->direction();
+            if (ImGui::DragFloat3("Direction", direction)) {
+                light->set_direction(direction);
+            }
         }
 
         void edit_entity_transform(Scene* scene, Entity* entity)
@@ -120,9 +209,9 @@ export namespace titian {
             bool dynamic = entity->is_dynamic();
             if (ImGui::Checkbox("Dynamic", &dynamic)) {
                 const std::string& name = editor_layer->selected_entity;
-                scene->remove(name);
+                scene->remove_entity(name);
                 entity->set_dynamic(dynamic);
-                scene->add(name, entity);
+                scene->add_entity(name, entity);
             }
 
             if (dynamic) {
@@ -172,7 +261,7 @@ export namespace titian {
                 for (auto& [type, name] : possible_colliders) {
                     if (ImGui::Selectable(name.c_str(), type == collider_type)) {
                         Mesh* mesh = &scene->get_mesh(entity->mesh_name);
-                        collider = scene->make_default_collider(type, mesh);
+                        collider = scene->new_default_collider(type, mesh);
                         collider_type = (collider ? collider->type() : physx::PxGeometryType::Enum::eINVALID);
                         collider_name = possible_colliders.at(collider_type);
                         entity->set_collider(collider);

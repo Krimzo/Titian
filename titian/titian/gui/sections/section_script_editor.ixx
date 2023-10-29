@@ -95,34 +95,26 @@ export namespace titian {
 
 				ImGui::SetColumnWidth(ImGui::GetColumnIndex(), available_width * 0.25f);
 				if (ImGui::BeginChild("ScriptListChild")) {
-					if (ImGui::BeginPopupContextWindow()) {
-						if (ImGui::Button("New NATIVE Script")) {
-							std::string possible_name = "new_script";
-							for (int i = 0; scene->scripts.contains(possible_name); i++) {
-								possible_name = kl::format("new_script", i);
-							}
-							scene->scripts[possible_name] = new NativeScript();
+					// Create script
+					if (ImGui::BeginPopupContextWindow("NewScript", ImGuiPopupFlags_MouseButtonMiddle)) {
+						const std::string name = gui_input_continuous("##CreateScriptInput");
+
+						if (ImGui::MenuItem("New Native Script") && !scene->scripts.contains(name)) {
+							scene->scripts[name] = new NativeScript();
 							ImGui::CloseCurrentPopup();
 						}
-						if (ImGui::Button("New INTERPRETED Script")) {
-							std::string possible_name = "new_script";
-							for (int i = 0; scene->scripts.contains(possible_name); i++) {
-								possible_name = kl::format("new_script", i);
-							}
-							scene->scripts[possible_name] = new InterpretedScript();
+						if (ImGui::MenuItem("New Interpreted Script") && !scene->scripts.contains(name)) {
+							scene->scripts[name] = new InterpretedScript();
 							ImGui::CloseCurrentPopup();
 						}
-						if (ImGui::Button("New NODE Script")) {
-							std::string possible_name = "new_script";
-							for (int i = 0; scene->scripts.contains(possible_name); i++) {
-								possible_name = kl::format("new_script", i);
-							}
-							scene->scripts[possible_name] = new NodeScript();
+						if (ImGui::MenuItem("New Node Script") && !scene->scripts.contains(name)) {
+							scene->scripts[name] = new NodeScript();
 							ImGui::CloseCurrentPopup();
 						}
 						ImGui::EndPopup();
 					}
 
+					// Scripts
 					display_scripts(scene);
 				}
 				ImGui::EndChild();
@@ -138,7 +130,10 @@ export namespace titian {
 						scene->scripts[path.stem().string()] = new_script;
 					}
 					else if (extension == ".dll") {
-
+						kl::Object new_script = new NativeScript();
+						new_script->path = path.string();
+						new_script->reload();
+						scene->scripts[path.stem().string()] = new_script;
 					}
 				}
 
@@ -183,19 +178,22 @@ export namespace titian {
 					continue;
 				}
 
+				// Script type
 				if (dynamic_cast<const NativeScript*>(&script)) {
 					ImGui::Button("NATIVE");
-					ImGui::SameLine();
 				}
 				else if (dynamic_cast<const InterpretedScript*>(&script)) {
-					ImGui::Button("INTER");
-					ImGui::SameLine();
+					ImGui::Button("INTERPRETED");
 				}
 				else if (dynamic_cast<const NodeScript*>(&script)) {
 					ImGui::Button("NODE");
-					ImGui::SameLine();
 				}
+				else {
+					ImGui::Button("SCRIPT");
+				}
+				ImGui::SameLine();
 
+				// Script name
 				if (ImGui::Selectable(script_name.c_str(), script_name == this->selected_script)) {
 					this->selected_script = script_name;
 

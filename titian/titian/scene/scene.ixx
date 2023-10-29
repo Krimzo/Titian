@@ -67,7 +67,7 @@ export namespace titian {
             scripts.clear();
 
             while (!m_entities.empty()) {
-                this->remove(m_entities.begin()->first);
+                this->remove_entity(m_entities.begin()->first);
             }
 
             m_scene->release();
@@ -106,7 +106,73 @@ export namespace titian {
         
         void deserialize(const Serializer* serializer, const void* helper_data) override;
 
-        // Iterate
+        // Get ptrs
+        physx::PxPhysics* physics() const
+        {
+            return m_physics;
+        }
+
+        physx::PxCooking* cooking() const
+        {
+            return m_cooking;
+        }
+
+        // Gravity
+        void set_gravity(const kl::Float3& gravity)
+        {
+            m_scene->setGravity(reinterpret_cast<const physx::PxVec3&>(gravity));
+        }
+
+        kl::Float3 gravity() const
+        {
+            const physx::PxVec3 gravity = m_scene->getGravity();
+            return reinterpret_cast<const kl::Float3&>(gravity);
+        }
+
+        // Update
+        void update_physics(const float delta_t)
+        {
+            m_scene->simulate(delta_t);
+            m_scene->fetchResults(true);
+        }
+
+        void update_scripts()
+        {
+            for (auto& [_, script] : scripts) {
+                script->call_update();
+            }
+        }
+
+        // Entity
+        kl::Object<Entity> new_entity(const bool dynamic) const
+        {
+            return new Entity(Entity::Type::BASIC, m_physics, dynamic);
+        }
+
+        void add_entity(const std::string& name, const kl::Object<Entity>& entity)
+        {
+            m_entities[name] = entity;
+            m_scene->addActor(*entity->actor());
+        }
+
+        void remove_entity(const std::string& name)
+        {
+            if (m_entities.contains(name)) {
+                m_scene->removeActor(*m_entities.at(name)->actor());
+                m_entities.erase(name);
+            }
+        }
+
+        bool contains_entity(const std::string& name) const
+        {
+            return m_entities.contains(name);
+        }
+
+        size_t entity_count() const
+        {
+            return m_entities.size();
+        }
+
         std::map<std::string, kl::Object<Entity>>::iterator begin()
         {
             return m_entities.begin();
@@ -127,17 +193,7 @@ export namespace titian {
             return m_entities.end();
         }
 
-        // Get
-        physx::PxPhysics* physics() const
-        {
-            return m_physics;
-        }
-
-        physx::PxCooking* cooking() const
-        {
-            return m_cooking;
-        }
-
+        // Get types
         kl::Object<Mesh> get_mesh(const std::string& id) const
         {
             if (meshes.contains(id)) {
@@ -178,12 +234,13 @@ export namespace titian {
             return nullptr;
         }
 
-        size_t entity_count() const
+        // Casted
+        template<typename T, typename... Args>
+        kl::Object<T> new_casted(const bool dynamic, const Args&... args) const
         {
-            return m_entities.size();
+            return new T(m_physics, dynamic, args...);
         }
 
-        // Dynamic
         template<typename T>
         T* get_casted(const std::string& id)
         {
@@ -198,92 +255,43 @@ export namespace titian {
             return dynamic_cast<const T*>(entity);
         }
 
-        // Set/Get
-        void set_gravity(const kl::Float3& gravity)
-        {
-            m_scene->setGravity(reinterpret_cast<const physx::PxVec3&>(gravity));
-        }
-
-        kl::Float3 gravity() const
-        {
-            const physx::PxVec3 gravity = m_scene->getGravity();
-            return reinterpret_cast<const kl::Float3&>(gravity);
-        }
-
-        void add(const std::string& name, const kl::Object<Entity>& entity)
-        {
-            m_entities[name] = entity;
-            m_scene->addActor(*entity->actor());
-        }
-
-        void remove(const std::string& name)
-        {
-            if (m_entities.contains(name)) {
-                m_scene->removeActor(*m_entities.at(name)->actor());
-                m_entities.erase(name);
-            }
-        }
-
-        bool contains(const std::string& name) const
-        {
-            return m_entities.contains(name);
-        }
-
-        // Update
-        void update_physics(const float delta_t)
-        {
-            m_scene->simulate(delta_t);
-            m_scene->fetchResults(true);
-        }
-
-        void update_scripts()
-        {
-            for (auto& [_, script] : scripts) {
-                script->call_update();
-            }
-        }
-
-        // Entity
-        kl::Object<Entity> make_entity(const bool dynamic) const
-        {
-            return new Entity(Entity::Type::BASIC, m_physics, dynamic);
-        }
-
         // Dynamic colliders
-        kl::Object<Collider> make_box_collider(const kl::Float3& scale) const
+        kl::Object<Collider> new_box_collider(const kl::Float3& scale) const
         {
-            return new Collider(m_physics, physx::PxBoxGeometry((physx::PxVec3&) scale));
+            return new Collider(m_physics, physx::PxBoxGeometry(reinterpret_cast<const physx::PxVec3&>(scale)));
         }
 
-        kl::Object<Collider> make_sphere_collider(const float radius) const
+        kl::Object<Collider> new_sphere_collider(const float radius) const
         {
             return new Collider(m_physics, physx::PxSphereGeometry(radius));
         }
 
-        kl::Object<Collider> make_capsule_collider(const float radius, const float height) const
+        kl::Object<Collider> new_capsule_collider(const float radius, const float height) const
         {
             return new Collider(m_physics, physx::PxCapsuleGeometry(radius, height));
         }
 
         // Static colliders
-        kl::Object<Collider> make_mesh_collider(const Mesh& mesh, const kl::Float3& scale) const
+        kl::Object<Collider> new_mesh_collider(const Mesh& mesh, const kl::Float3& scale) const
         {
-            return new Collider(m_physics, physx::PxTriangleMeshGeometry(mesh.physics_buffer, (physx::PxVec3&) scale));
+            return new Collider(m_physics, physx::PxTriangleMeshGeometry(mesh.physics_buffer, reinterpret_cast<const physx::PxVec3&>(scale)));
         }
 
         // Default collider
-        kl::Object<Collider> make_default_collider(physx::PxGeometryType::Enum type, const Mesh* optional_mesh) const
+        kl::Object<Collider> new_default_collider(const physx::PxGeometryType::Enum type, const Mesh* optional_mesh) const
         {
             switch (type) {
+                // Dynamic
             case physx::PxGeometryType::Enum::eBOX:
-                return make_box_collider(kl::Float3{ 1.0f });
+                return new_box_collider(kl::Float3{ 1.0f });
             case physx::PxGeometryType::Enum::eSPHERE:
-                return make_sphere_collider(1.0f);
+                return new_sphere_collider(1.0f);
             case physx::PxGeometryType::Enum::eCAPSULE:
-                return make_capsule_collider(1.0f, 2.0f);
+                return new_capsule_collider(1.0f, 2.0f);
 
+                // Static
             case physx::PxGeometryType::Enum::eTRIANGLEMESH:
-                return make_mesh_collider(*optional_mesh, kl::Float3{ 1.0f });
+                return new_mesh_collider(*optional_mesh, kl::Float3{ 1.0f });
             }
             return nullptr;
         }
@@ -312,8 +320,8 @@ export namespace titian {
 
         Entity* helper_new_entity(const std::string& id)
         {
-            kl::Object entity = this->make_entity(true);
-            this->add(id, entity);
+            kl::Object entity = this->new_entity(true);
+            this->add_entity(id, entity);
             return &entity;
         }
 
@@ -344,10 +352,49 @@ export namespace titian {
 
         Entity* helper_get_entity(const std::string& id)
         {
-            if (m_entities.contains(id)) {
-                return &m_entities.at(id);
-            }
-            return nullptr;
+            return &this->get_entity(id);
+        }
+
+        // Helper remove
+        void helper_remove_mesh(const std::string& id)
+        {
+            meshes.erase(id);
+        }
+
+        void helper_remove_texture(const std::string& id)
+        {
+            textures.erase(id);
+        }
+
+        void helper_remove_material(const std::string& id)
+        {
+            materials.erase(id);
+        }
+
+        void helper_remove_entity(const std::string& id)
+        {
+            this->remove_entity(id);
+        }
+
+        // Helper contains
+        bool helper_contains_mesh(const std::string& id) const
+        {
+            return meshes.contains(id);
+        }
+
+        bool helper_contains_texture(const std::string& id) const
+        {
+            return textures.contains(id);
+        }
+
+        bool helper_contains_material(const std::string& id) const
+        {
+            return materials.contains(id);
+        }
+
+        bool helper_contains_entity(const std::string& id) const
+        {
+            return this->contains_entity(id);
         }
 
         // Helper count

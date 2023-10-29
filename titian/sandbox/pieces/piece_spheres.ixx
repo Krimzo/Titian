@@ -43,13 +43,13 @@ export namespace titian {
                     scene->materials[material_name] = material;
 
                     // Entity
-                    kl::Object sphere = scene->make_entity(false);
+                    kl::Object sphere = scene->new_entity(false);
                     sphere->set_position({ (x - half_size) * 2.25f + x_offset, (y - half_size) * 2.25f, 5.0f });
 
                     sphere->mesh_name = mesh_name;
                     sphere->material_name = material_name;
 
-                    scene->add(entity_name, sphere);
+                    scene->add_entity(entity_name, sphere);
                     sphere_counter += 1;
                 }
             }

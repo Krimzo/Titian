@@ -45,7 +45,7 @@ export namespace titian {
                 scene->materials[material_name] = material;
 
                 // Entity
-                kl::Object monke = scene->make_entity(false);
+                kl::Object monke = scene->new_entity(false);
                 monke->scale = kl::Float3{ 0.5f };
                 monke->set_position({
                     (float) (x - half_size) + x_offset,
@@ -56,7 +56,7 @@ export namespace titian {
                 monke->mesh_name = mesh_name;
                 monke->material_name = material_name;
 
-                scene->add(entity_name, monke);
+                scene->add_entity(entity_name, monke);
             }
         }
     };

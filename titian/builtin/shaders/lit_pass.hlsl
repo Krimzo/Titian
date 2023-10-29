@@ -49,7 +49,8 @@ cbuffer PS_CB : register(b0)
     float4x4 v_matrix; // View matrix
 
     float4 ambient_light; // (color.r, color.g, color.b, intensity)
-    float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
+    float4 directional_light; // (dir.x, dir.y, dir.z, sun_point_size)
+    float4 directional_light_color; // (color.r, color.g, color.b, none)
 
     float4 shadow_map_info; // (width, height, texel_width, texel_size)
     float4 cascade_distances; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
@@ -108,15 +109,15 @@ ps_out p_shader(vs_out vs_data)
 
     const float ambient_diffuse_factor = dot(-directional_light.xyz, vs_data.normal);
     const float directional_diffuse_factor = dot(-directional_light.xyz, pixel_normal);
-    float3 diffuse_factor = 0;
+    float3 diffuse_factor = directional_light_color.xyz;
 
     if (ambient_diffuse_factor > 0) {
         const float camera_z = abs(mul(float4(vs_data.world, 1), v_matrix).z);
         const float shadow_factor = get_shadow_factor(vs_data, camera_z, 1);
-        diffuse_factor = directional_diffuse_factor * max(ambient_factor, shadow_factor);
+        diffuse_factor *= directional_diffuse_factor * max(ambient_factor, shadow_factor);
     }
     else {
-        diffuse_factor = directional_diffuse_factor * ambient_factor;
+        diffuse_factor *= directional_diffuse_factor * ambient_factor;
     }
     const float3 light_intensity = ambient_factor + diffuse_factor + specular_factor;
 

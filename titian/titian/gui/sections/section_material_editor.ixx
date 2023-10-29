@@ -119,8 +119,9 @@ export namespace titian {
     private:
         void display_materials(Scene* scene)
         {
-            if (ImGui::BeginPopupContextWindow("CreateMaterial", ImGuiPopupFlags_MouseButtonRight)) {
-                ImGui::Text("Create Material");
+            // New material
+            if (ImGui::BeginPopupContextWindow("NewMaterial", ImGuiPopupFlags_MouseButtonMiddle)) {
+                ImGui::Text("New Material");
 
                 if (std::optional name = gui_input_waited("##CreateMaterialInput", {})) {
                     if (!scene->materials.contains(name.value())) {
@@ -132,6 +133,7 @@ export namespace titian {
                 ImGui::EndPopup();
             }
 
+            // Materials
             const std::string filter = gui_input_continuous("Search###MeterialEditor");
             for (const auto& [material_name, material] : scene->materials) {
                 if (!filter.empty() && !material_name.contains(filter)) {
