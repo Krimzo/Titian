@@ -1,11 +1,9 @@
-# gui qof
-1. control menu -> improve the looks
-2. interpreted scripts parts -> add descriptors for all members, methods and functions
-3. entity properties -> add special info for special types like Camera, DirLight...
-
-# rendering features
-1. refactor collider render pass to editor render pass which implements rendering of colliders and camera frustums
+# editor features
+1. undo and redo
 
 # gui features
 1. mesh editor -> add list of vertices, ability to edit vertices and reloading the mesh
 2. texture editor -> add list of pixels, ability to edit pixels and reloading the texture
+
+# gui qof
+1. interpreted scripts parts -> add descriptors for all members, methods and functions

@@ -20,6 +20,7 @@ export namespace titian {
             shadow_raster_descriptor.MultisampleEnable = true;
             shadow_raster_descriptor.AntialiasedLineEnable = true;
             shadow_raster_descriptor.SlopeScaledDepthBias = 3.0f;
+            shadow_raster_descriptor.DepthClipEnable = true;
 
             wireframe = gpu->create_raster_state(true, false);
             solid = gpu->create_raster_state(false, false);

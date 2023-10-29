@@ -6,22 +6,24 @@ export import sandbox_entry;
 
 enum ExeType
 {
-	PACKAGER_OPEN = 0,
-	PACKAGER_CREATE = 1,
+	SANDBOX_OPEN = -1,
 
-	GAME_OPEN = 2,
-	GAME_CREATE = 3,
+	GAME_OPEN = 0,
+	GAME_CREATE = 1,
 
-	SANDBOX_OPEN = 4,
+	PACKAGER_OPEN = 2,
+	PACKAGER_CREATE = 3,
 };
-
-ExeType EXE_TYPE = SANDBOX_OPEN;
 
 export int main(const int argc, const char** argv)
 {
+	// Default exe type
+	ExeType exe_type = SANDBOX_OPEN;
+
+	// Parse explicit type
 	if (argc >= 2) {
 		try {
-			EXE_TYPE = static_cast<ExeType>(std::stoi(argv[1]));
+			exe_type = static_cast<ExeType>(std::stoi(argv[1]));
 		}
 		catch (std::exception&) {
 		}
@@ -30,25 +32,25 @@ export int main(const int argc, const char** argv)
 		kl::print("Missing entry argument. Defaulting to Titian Game.");
 	}
 
-	int return_code = 0;
-	switch (EXE_TYPE) {
-	case PACKAGER_OPEN:
-		return_code = packaging_entry(false);
-		break;
-	case PACKAGER_CREATE:
-		return_code = packaging_entry(true);
-		break;
+	// Init type
+	switch (exe_type) {
+	case SANDBOX_OPEN:
+		return sandbox_entry();
 
 	case GAME_OPEN:
-		return_code = titian_entry(false);
-		break;
-	case GAME_CREATE:
-		return_code = titian_entry(true);
-		break;
+		return titian_entry(false);
 
-	case SANDBOX_OPEN:
-		return_code = sandbox_entry();
-		break;
+	case GAME_CREATE:
+		return titian_entry(true);
+
+	case PACKAGER_OPEN:
+		return packaging_entry(false);
+
+	case PACKAGER_CREATE:
+		return packaging_entry(true);
 	};
-	return return_code;
+
+	// Display helper
+	kl::print("SANDBOX_OPEN(-1) | GAME_OPEN(0) | GAME_CREATE(1) | PACKAGER_OPEN(2) | PACKAGER_CREATE(3)");
+	return 1;
 }

@@ -81,9 +81,13 @@ export namespace titian {
             ImGui::DragFloat("Sensitivity", &camera->sensitivity);
             ImGui::DragFloat("Speed", &camera->speed);
 
-            kl::Float3 camera_direction = camera->forward();
-            ImGui::DragFloat3("Direction", camera_direction);
-            camera->set_forward(camera_direction);
+            kl::Float3 camera_forward = camera->forward();
+            ImGui::DragFloat3("Forward", camera_forward);
+            camera->set_forward(camera_forward);
+
+            kl::Float3 camera_up = camera->up();
+            ImGui::DragFloat3("Up", camera_up);
+            camera->set_up(camera_up);
 
             // Skybox
             if (ImGui::BeginCombo("Bound Skybox", camera->skybox_name.c_str())) {

@@ -12,6 +12,20 @@ export namespace titian {
         ImGui::TextColored(reinterpret_cast<const ImVec4&>(color), message.data());
     }
 
+    inline float gui_calculate_item_with(const std::string_view& label)
+    {
+        return ImGui::CalcTextSize(label.data()).x;
+    }
+
+    inline void gui_align_horizontally(const float width, const float alignment)
+    {
+        const float available = ImGui::GetContentRegionAvail().x;
+        const float offset = (available - width) * alignment;
+        if (offset > 0.0f) {
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offset);
+        }
+    }
+
     inline std::string gui_input_continuous(const std::string& id)
     {
         auto& buffer = INPUT_CONTINUOUS_DATA[id];

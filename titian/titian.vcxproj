@@ -145,8 +145,8 @@
     <ClCompile Include="titian\light\point_light.ixx" />
     <ClCompile Include="titian\render\pass\display_pass.ixx" />
     <ClCompile Include="titian\render\pass\lit_pass.ixx" />
-    <ClCompile Include="titian\render\pass\collider_pass.ixx" />
-    <ClCompile Include="titian\render\pass\postprocess_pass.ixx" />
+    <ClCompile Include="titian\render\pass\editor_unlit_pass.ixx" />
+    <ClCompile Include="titian\render\pass\editor_pp_pass.ixx" />
     <ClCompile Include="titian\render\pass\shadow_pass.ixx" />
     <ClCompile Include="titian\render\pass\skybox_pass.ixx" />
     <ClCompile Include="titian\render\render_layer.ixx" />

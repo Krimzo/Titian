@@ -19,61 +19,41 @@ export namespace titian {
 
         void render_gui() override
         {
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-            ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, { 10.0f, 5.0f });
-
             if (ImGui::Begin("Control Menu", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-                if (ImGui::BeginTable("ControlTable", 2, ImGuiTableFlags_Borders)) {
-                    ImGui::TableNextRow();
-
-                    // 0
-                    ImGui::TableSetColumnIndex(0);
-
-                    const char* label = !editor_layer->game_layer->game_running ? "Start Game" : "Stop Game";
-                    float size = ImGui::CalcTextSize(label).x + ImGui::GetStyle().FramePadding.x * 2.0f;
-                    float avail = ImGui::GetContentRegionAvail().x;
-                    float off = avail - size;
-                    if (off > 0.0f) {
-                        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+                // Game
+                ImGui::Text("Game");
+                
+                if (!editor_layer->game_layer->game_running) {
+                    if (ImGui::Button("Start Game", { -1.0f, 0.0f })) {
+                        start_scene();
                     }
-
-                    if (!editor_layer->game_layer->game_running) {
-                        if (ImGui::Button(label)) {
-                            start_scene();
-                        }
+                }
+                else {
+                    if (ImGui::Button("Stop Game", { -1.0f, 0.0f })) {
+                        stop_scene();
                     }
-                    else {
-                        if (ImGui::Button(label)) {
-                            stop_scene();
-                        }
-                    }
+                }
 
-                    // 1
-                    ImGui::TableSetColumnIndex(1);
-                    bool scaling_state = editor_layer->gizmo_operation == ImGuizmo::SCALE;
-                    if (ImGui::Checkbox("Scaling", &scaling_state)) {
-                        editor_layer->gizmo_operation = scaling_state ? ImGuizmo::SCALE : 0;
-                    }
-                    ImGui::SameLine();
+                // Gizmos
+                ImGui::Separator();
+                ImGui::Text("Gizmos");
 
-                    bool rotation_state = editor_layer->gizmo_operation == ImGuizmo::ROTATE;
-                    if (ImGui::Checkbox("Rotation", &rotation_state)) {
-                        editor_layer->gizmo_operation = rotation_state ? ImGuizmo::ROTATE : 0;
-                    }
-                    ImGui::SameLine();
+                bool scaling_state = editor_layer->gizmo_operation == ImGuizmo::SCALE;
+                if (ImGui::Checkbox("Scaling", &scaling_state)) {
+                    editor_layer->gizmo_operation = scaling_state ? ImGuizmo::SCALE : 0;
+                }
 
-                    bool translation_state = editor_layer->gizmo_operation == ImGuizmo::TRANSLATE;
-                    if (ImGui::Checkbox("Translation", &translation_state)) {
-                        editor_layer->gizmo_operation = translation_state ? ImGuizmo::TRANSLATE : 0;
-                    }
-                    ImGui::SameLine();
+                bool rotation_state = editor_layer->gizmo_operation == ImGuizmo::ROTATE;
+                if (ImGui::Checkbox("Rotation", &rotation_state)) {
+                    editor_layer->gizmo_operation = rotation_state ? ImGuizmo::ROTATE : 0;
+                }
 
-                    ImGui::EndTable();
+                bool translation_state = editor_layer->gizmo_operation == ImGuizmo::TRANSLATE;
+                if (ImGui::Checkbox("Translation", &translation_state)) {
+                    editor_layer->gizmo_operation = translation_state ? ImGuizmo::TRANSLATE : 0;
                 }
             }
             ImGui::End();
-
-            ImGui::PopStyleVar(2);
         }
 
     private:

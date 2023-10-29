@@ -21,6 +21,7 @@ kl::dx::RasterState kl::DeviceHolder::create_raster_state(const bool wireframe, 
     descriptor.FrontCounterClockwise = true;
     descriptor.MultisampleEnable = true;
     descriptor.AntialiasedLineEnable = true;
+    descriptor.DepthClipEnable = true;
     return create_raster_state(&descriptor);
 }
 

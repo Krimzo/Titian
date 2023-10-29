@@ -12,8 +12,8 @@ export import gui_layer;
 export import shadow_pass;
 export import skybox_pass;
 export import lit_pass;
-export import collider_pass;
-export import postprocess_pass;
+export import editor_unlit_pass;
+export import editor_pp_pass;
 
 export import section_main_menu;
 export import section_scene_entities;
@@ -57,8 +57,8 @@ export namespace titian {
             render_layer->passes.emplace_back(new ShadowPass(&game_layer, &render_layer));
             render_layer->passes.emplace_back(new SkyboxPass(&game_layer, &render_layer));
             render_layer->passes.emplace_back(new LitPass(&game_layer, &render_layer));
-            render_layer->passes.emplace_back(new ColliderPass(&game_layer, &editor_layer, &gui_layer));
-            render_layer->passes.emplace_back(new PostprocessPass(&game_layer, &editor_layer, &gui_layer));
+            render_layer->passes.emplace_back(new EditorUnlitPass(&game_layer, &editor_layer, &gui_layer));
+            render_layer->passes.emplace_back(new EditorPPPass(&game_layer, &editor_layer, &gui_layer));
 
             // Init editor sections
             gui_layer->sections.emplace_back(new GUISectionMainMenu(&render_layer));
