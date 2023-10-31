@@ -53,7 +53,7 @@ export namespace titian {
 
                 ImGui::SetColumnWidth(ImGui::GetColumnIndex(), available_width * 0.25f);
                 if (ImGui::BeginChild("Meshes")) {
-                    display_meshes(scene);
+                    display_meshes(gpu, scene);
                 }
                 ImGui::EndChild();
 
@@ -84,6 +84,8 @@ export namespace titian {
                         const kl::dx::ShaderView& shader_view = render_texture->shader_view;
                         ImGui::Image(render_texture->shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
                     }
+
+                    render_gizmos(mesh);
                     was_focused = ImGui::IsWindowFocused();
                 }
                 ImGui::EndChild();
@@ -97,8 +99,30 @@ export namespace titian {
         }
 
     private:
-        void display_meshes(Scene* scene)
+        int m_selected_vertex_index = -1;
+        int m_starting_vertex_index = 0;
+        int m_vertex_display_count = 6;
+        int m_last_scroll = 0;
+        int m_new_vertex_index = 0;
+
+        void display_meshes(kl::GPU* gpu, Scene* scene)
         {
+            // New mesh
+            if (ImGui::BeginPopupContextWindow("NewMesh", ImGuiPopupFlags_MouseButtonMiddle)) {
+                ImGui::Text("New Mesh");
+
+                if (std::optional name = gui_input_waited("##CreateMeshInput", {})) {
+                    if (!scene->meshes.contains(name.value())) {
+                        kl::Object mesh = new Mesh(gpu, scene->physics(), scene->cooking());
+                        mesh->reload();
+                        scene->meshes[name.value()] = mesh;
+                        ImGui::CloseCurrentPopup();
+                    }
+                }
+                ImGui::EndPopup();
+            }
+
+            // Meshes
             const std::string filter = gui_input_continuous("Search###MeshEditor");
             for (const auto& [mesh_name, mesh] : scene->meshes) {
                 if (!filter.empty() && !mesh_name.contains(filter)) {
@@ -201,7 +225,7 @@ export namespace titian {
             gpu->set_viewport_size(viewport_size);
 
             RenderStates* states = &gui_layer->render_layer->states;
-            gpu->bind_raster_state(states->raster_states->wireframe);
+            gpu->bind_raster_state(mesh->render_wireframe ? states->raster_states->wireframe : states->raster_states->solid);
             gpu->bind_depth_state(states->depth_states->disabled);
 
             kl::RenderShaders& render_shaders = states->shader_states->unlit_pass;
@@ -224,14 +248,60 @@ export namespace titian {
             render_shaders.vertex_shader.update_cbuffer(vs_data);
             render_shaders.pixel_shader.update_cbuffer(ps_data);
 
-            gpu->draw(mesh->graphics_buffer);
+            gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
 
             gpu->bind_internal_views();
             gpu->set_viewport_size(old_viewport_size);
         }
 
+        void render_gizmos(Mesh* mesh)
+        {
+            kl::Window* window = &editor_layer->game_layer->app_layer->window;
+
+            Mesh::Data& mesh_data = mesh->data_buffer;
+            if (m_selected_vertex_index < 0 || m_selected_vertex_index >= mesh_data.size()) {
+                return;
+            }
+            kl::Vertex* selected_vertex = &mesh_data[m_selected_vertex_index];
+
+            const float viewport_tab_height = ImGui::GetWindowContentRegionMin().y;
+            const kl::Float2 viewport_position = { ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + viewport_tab_height };
+            const kl::Float2 viewport_size = { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() };
+
+            ImGuizmo::Enable(true);
+            ImGuizmo::SetDrawlist();
+            ImGuizmo::SetRect(viewport_position.x, viewport_position.y, viewport_size.x, viewport_size.y);
+
+            kl::Float3 selected_snap = {};
+            if (window->keyboard.shift) {
+                selected_snap = kl::Float3{ 0.1f };
+            }
+
+            const kl::Float4x4 view_matrix = kl::transpose(camera->view_matrix());
+            const kl::Float4x4 projection_matrix = kl::transpose(camera->projection_matrix());
+            kl::Float4x4 transform_matrix = kl::transpose(kl::Float4x4::translation(selected_vertex->world));
+
+            ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
+                ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
+                transform_matrix.data, nullptr,
+                selected_snap);
+
+            if (ImGuizmo::IsUsing()) {
+                kl::Float3 decomposed_parts[3] = {};
+                ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
+                    decomposed_parts[2], decomposed_parts[1], decomposed_parts[0]);
+
+                selected_vertex->world = decomposed_parts[2];
+                mesh->reload();
+            }
+        }
+
         void show_mesh_properties(Mesh* mesh)
         {
+            kl::Window* window = &editor_layer->game_layer->app_layer->window;
+
+            const int current_scroll = window->mouse.scroll();
+
             if (ImGui::Begin("Mesh Properties") && mesh) {
                 ImGui::Text("Info");
 
@@ -241,8 +311,99 @@ export namespace titian {
 
                 int vertex_count = static_cast<int>(mesh->data_buffer.size());
                 ImGui::DragInt("Vertex Count", &vertex_count, 0);
+
+                std::string topology_name = "Point";
+                if (mesh->topology == D3D_PRIMITIVE_TOPOLOGY_LINELIST) {
+                    topology_name = "Line";
+                }
+                else if (mesh->topology == D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST) {
+                    topology_name = "Triangle";
+                }
+
+                if (ImGui::BeginCombo("Topology", topology_name.c_str())) {
+                    if (ImGui::Selectable("Point", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_POINTLIST)) {
+                        mesh->topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+                    }
+                    if (ImGui::Selectable("Line", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_LINELIST)) {
+                        mesh->topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+                    }
+                    if (ImGui::Selectable("Triangle", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)) {
+                        mesh->topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+                    }
+                    ImGui::EndCombo();
+                }
+
+                ImGui::Checkbox("Render Wireframe", &mesh->render_wireframe);
+
+                ImGui::Separator();
+                ImGui::Text("Vertices");
+
+                if (ImGui::Button("Reload")) {
+                    mesh->reload();
+                }
+
+                if (vertex_count > 0) {
+                    const std::pair window_rect = gui_window_rect();
+                    if (ImGui::IsMouseHoveringRect(window_rect.first, window_rect.second)) {
+                        m_starting_vertex_index += m_last_scroll - current_scroll;
+                    }
+                    m_starting_vertex_index = std::clamp(m_starting_vertex_index, 0, vertex_count - 1);
+
+                    int change_counter = 0;
+                    for (int i = m_starting_vertex_index; i < (m_starting_vertex_index + m_vertex_display_count) && i < vertex_count; i++) {
+                        kl::Vertex& vertex = mesh->data_buffer[i];
+
+                        if (ImGui::Selectable(kl::format(i, ". Vertex").c_str(), m_selected_vertex_index == i)) {
+                            m_selected_vertex_index = (m_selected_vertex_index != i) ? i : -1;
+                        }
+
+                        if (ImGui::BeginPopupContextItem()) {
+                            if (ImGui::Button("Delete")) {
+                                mesh->data_buffer.erase(mesh->data_buffer.begin() + i);
+                                mesh->reload();
+                                ImGui::CloseCurrentPopup();
+                            }
+                            ImGui::EndPopup();
+                        }
+
+                        const bool world_edited = ImGui::DragFloat3(kl::format("World##MeshEditor", i).c_str(), vertex.world, 0.1f);
+                        const bool texture_edited = ImGui::DragFloat2(kl::format("Texture##MeshEditor", i).c_str(), vertex.texture, 0.1f);
+                        const bool normal_edited = ImGui::DragFloat3(kl::format("Normal##MeshEditor", i).c_str(), vertex.normal, 0.1f);
+
+                        if (normal_edited) {
+                            vertex.normal = kl::normalize(vertex.normal);
+                        }
+
+                        change_counter += static_cast<int>(world_edited);
+                        change_counter += static_cast<int>(texture_edited);
+                        change_counter += static_cast<int>(normal_edited);
+                    }
+                    if (change_counter > 0) {
+                        mesh->reload();
+                    }
+                }
+
+                if (ImGui::BeginPopupContextWindow("EditDisplay", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
+                    ImGui::SliderInt("Display Count", &m_vertex_display_count, 1, 25);
+                    ImGui::EndPopup();
+                }
+
+                if (ImGui::BeginPopupContextWindow("NewVertex", ImGuiPopupFlags_MouseButtonMiddle)) {
+                    ImGui::Text("New Vertex");
+                    ImGui::SliderInt("Index", &m_new_vertex_index, 0, vertex_count);
+                    if (ImGui::Button("Create New")) {
+                        if (m_new_vertex_index >= 0 && m_new_vertex_index <= vertex_count /* This works dw */) {
+                            mesh->data_buffer.insert(mesh->data_buffer.begin() + m_new_vertex_index, kl::Vertex());
+                            mesh->reload();
+                            ImGui::CloseCurrentPopup();
+                        }
+                    }
+                    ImGui::EndPopup();
+                }
             }
             ImGui::End();
+
+            m_last_scroll = current_scroll;
         }
     };
 }

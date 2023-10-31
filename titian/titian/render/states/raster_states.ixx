@@ -17,10 +17,8 @@ export namespace titian {
             shadow_raster_descriptor.FillMode = D3D11_FILL_SOLID;
             shadow_raster_descriptor.CullMode = D3D11_CULL_BACK;
             shadow_raster_descriptor.FrontCounterClockwise = true;
-            shadow_raster_descriptor.MultisampleEnable = true;
-            shadow_raster_descriptor.AntialiasedLineEnable = true;
             shadow_raster_descriptor.SlopeScaledDepthBias = 3.0f;
-            shadow_raster_descriptor.DepthClipEnable = true;
+            shadow_raster_descriptor.DepthClipEnable = false;
 
             wireframe = gpu->create_raster_state(true, false);
             solid = gpu->create_raster_state(false, false);

@@ -106,20 +106,20 @@ export namespace titian {
 
                 switch (collider->type()) {
                 case physx::PxGeometryType::Enum::eBOX:
-                    gpu->draw(default_meshes->cube->graphics_buffer);
+                    gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology());
                     break;
 
                 case physx::PxGeometryType::Enum::eSPHERE:
-                    gpu->draw(default_meshes->sphere->graphics_buffer);
+                    gpu->draw(default_meshes->sphere->graphics_buffer, default_meshes->sphere->casted_topology());
                     break;
 
                 case physx::PxGeometryType::Enum::eCAPSULE:
-                    gpu->draw(default_meshes->capsule->graphics_buffer);
+                    gpu->draw(default_meshes->capsule->graphics_buffer, default_meshes->capsule->casted_topology());
                     break;
 
                 case physx::PxGeometryType::Enum::eTRIANGLEMESH:
                     if (Mesh* mesh = &scene->get_mesh(selected_entity->mesh_name)) {
-                        gpu->draw(mesh->graphics_buffer);
+                        gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
                     }
                     break;
                 }

@@ -12,6 +12,9 @@ export namespace titian {
         kl::dx::Buffer graphics_buffer = nullptr;
         physx::PxTriangleMesh* physics_buffer = nullptr;
 
+        int topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        bool render_wireframe = false;
+
         Mesh(kl::GPU* gpu, physx::PxPhysics* physics, physx::PxCooking* cooking)
             : m_gpu(gpu), m_physics(physics), m_cooking(cooking)
         {}
@@ -28,6 +31,9 @@ export namespace titian {
 
             const Data::value_type* data = data_buffer.data();
             serializer->write_array<Data::value_type>(data, size);
+
+            serializer->write_object<int>(topology);
+            serializer->write_object<bool>(render_wireframe);
         }
         
         void deserialize(const Serializer* serializer, const void* helper_data) override
@@ -38,11 +44,19 @@ export namespace titian {
             Data::value_type* data = data_buffer.data();
             serializer->read_array<Data::value_type>(data, size);
 
+            serializer->read_object<int>(topology);
+            serializer->read_object<bool>(render_wireframe);
+
             this->reload();
         }
 
         void reload()
         {
+            // Empty check
+            if (data_buffer.empty()) {
+                return;
+            }
+
             // Graphics
             graphics_buffer = m_gpu->create_vertex_buffer(data_buffer);
 
@@ -50,8 +64,8 @@ export namespace titian {
             free_physics_buffer();
 
             physx::PxTriangleMeshDesc mesh_descriptor = {};
-            mesh_descriptor.points.count = (physx::PxU32) data_buffer.size();
-            mesh_descriptor.points.stride = (physx::PxU32) sizeof(Data::value_type);
+            mesh_descriptor.points.stride = static_cast<physx::PxU32>(sizeof(Data::value_type));
+            mesh_descriptor.points.count = static_cast<physx::PxU32>(data_buffer.size() / 3 * 3);
             mesh_descriptor.points.data = data_buffer.data();
 
             physx::PxDefaultMemoryOutputStream cook_buffer = {};
@@ -59,7 +73,11 @@ export namespace titian {
 
             physx::PxDefaultMemoryInputData cooked_buffer(cook_buffer.getData(), cook_buffer.getSize());
             physics_buffer = m_physics->createTriangleMesh(cooked_buffer);
-            kl::assert(physics_buffer, "Failed to create mesh physics buffer");
+        }
+
+        D3D_PRIMITIVE_TOPOLOGY casted_topology() const
+        {
+            return static_cast<D3D_PRIMITIVE_TOPOLOGY>(topology);
         }
 
     private:

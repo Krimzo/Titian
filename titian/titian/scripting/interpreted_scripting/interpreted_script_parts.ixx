@@ -542,6 +542,9 @@ int load_types = [&]
 	{
 		{ chaiscript::fun(&Mesh::data_buffer), "data_buffer" },
 
+		{ chaiscript::fun(&Mesh::topology), "topology"},
+		{ chaiscript::fun(&Mesh::render_wireframe), "render_wireframe" },
+
 		{ chaiscript::fun(&Mesh::reload), "reload" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Mesh"] = "Object that contains triangle data.";
@@ -903,6 +906,14 @@ int load_constants = [&]
 	INTERPRETED_SCRIPT_IDENTIFIERS["CRIMSON"] = "Constant color (100, 0, 0).";
 	INTERPRETED_SCRIPT_IDENTIFIERS["WHEAT"] = "Constant color (245, 220, 180).";
 	INTERPRETED_SCRIPT_IDENTIFIERS["SKY"] = "Constant color (190, 245, 255).";
+
+	// Mesh
+	INTERPRETED_SCRIPT_MODULE->add_global_const(chaiscript::const_var<int>(D3D_PRIMITIVE_TOPOLOGY_POINTLIST), "TOPOLOGY_POINTS");
+	INTERPRETED_SCRIPT_MODULE->add_global_const(chaiscript::const_var<int>(D3D_PRIMITIVE_TOPOLOGY_LINELIST), "TOPOLOGY_LINES");
+	INTERPRETED_SCRIPT_MODULE->add_global_const(chaiscript::const_var<int>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST), "TOPOLOGY_TRIANGLES");
+	INTERPRETED_SCRIPT_IDENTIFIERS["TOPOLOGY_POINTS"] = "Makes the rasterizer render this mesh as an array of POINTS.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["TOPOLOGY_LINES"] = "Makes the rasterizer render this mesh as an array of LINES.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["TOPOLOGY_TRIANGLES"] = "Makes the rasterizer render this mesh as an array of TRIANGLES.";
 
 	return 0;
 }();

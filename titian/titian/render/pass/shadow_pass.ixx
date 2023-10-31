@@ -70,7 +70,7 @@ export namespace titian {
                 
                     // Draw
                     package.shader_state.vertex_shader.update_cbuffer(vs_data);
-                    gpu->draw(mesh->graphics_buffer);
+                    gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
                 }
             }
         }

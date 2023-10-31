@@ -274,7 +274,10 @@ export namespace titian {
         // Static colliders
         kl::Object<Collider> new_mesh_collider(const Mesh& mesh, const kl::Float3& scale) const
         {
-            return new Collider(m_physics, physx::PxTriangleMeshGeometry(mesh.physics_buffer, reinterpret_cast<const physx::PxVec3&>(scale)));
+            if (mesh.physics_buffer) {
+                return new Collider(m_physics, physx::PxTriangleMeshGeometry(mesh.physics_buffer, reinterpret_cast<const physx::PxVec3&>(scale)));
+            }
+            return nullptr;
         }
 
         // Default collider

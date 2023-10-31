@@ -33,7 +33,7 @@ export namespace titian {
             RenderStates* render_states = &render_layer->states;
             
             StatePackage package = {};
-            package.raster_state = render_layer->render_wireframe ? render_states->raster_states->wireframe : render_states->raster_states->solid;
+            package.raster_state = render_layer->render_wireframe ? render_states->raster_states->wireframe : nullptr;
             package.depth_state = render_states->depth_states->enabled;
             package.shader_state = render_states->shader_states->lit_pass;
             return package;
@@ -117,9 +117,14 @@ export namespace titian {
             uint32_t id_counter = 0;
             for (const auto& [name, entity] : *scene) {
                 id_counter += 1;
+
                 const Mesh* mesh = &scene->get_mesh(entity->mesh_name);
                 const Material* material = &scene->get_material(entity->material_name);
                 if (!mesh || !material) { continue; }
+
+                if (!render_layer->render_wireframe) {
+                    gpu->bind_raster_state(mesh->render_wireframe ? render_states->raster_states->wireframe : render_states->raster_states->solid);
+                }
 
                 const Texture* color_map = &scene->get_texture(material->color_map_name);
                 if (color_map) {
@@ -158,7 +163,7 @@ export namespace titian {
                 // Draw
                 package.shader_state.vertex_shader.update_cbuffer(vs_data);
                 package.shader_state.pixel_shader.update_cbuffer(ps_data);
-                gpu->draw(mesh->graphics_buffer);
+                gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
             }
 
             // Unbind shadow maps

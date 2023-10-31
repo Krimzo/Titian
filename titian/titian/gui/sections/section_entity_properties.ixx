@@ -168,13 +168,35 @@ export namespace titian {
                 const std::string filter = gui_input_continuous("Search###EntityPropsMesh");
                 if (ImGui::Selectable("/", bound_mesh == "/")) {
                     bound_mesh = "/";
+
+                    if (Collider* collider = &entity->collider()) {
+                        const physx::PxGeometryType::Enum type = collider->type();
+                        if (type == physx::PxGeometryType::Enum::eTRIANGLEMESH) {
+                            entity->set_collider(nullptr);
+                        }
+                    }
                 }
-                for (const auto& [mesh, _] : scene->meshes) {
-                    if (!filter.empty() && !mesh.contains(filter)) {
+                for (const auto& [mesh_name, mesh] : scene->meshes) {
+                    if (!filter.empty() && !mesh_name.contains(filter)) {
                         continue;
                     }
-                    if (ImGui::Selectable(mesh.c_str(), mesh == bound_mesh)) {
-                        bound_mesh = mesh;
+                    if (ImGui::Selectable(mesh_name.c_str(), mesh_name == bound_mesh)) {
+                        bound_mesh = mesh_name;
+
+                        if (Collider* collider = &entity->collider()) {
+                            const physx::PxGeometryType::Enum type = collider->type();
+                            if (type == physx::PxGeometryType::Enum::eTRIANGLEMESH) {
+                                physx::PxTriangleMesh* possible_collider_mesh = mesh->physics_buffer;
+                                if (possible_collider_mesh) {
+                                    physx::PxTriangleMeshGeometry triangle_geometry(possible_collider_mesh, physx::PxVec3(1.0f));
+                                    kl::Object collider = new Collider(scene->physics(), triangle_geometry);
+                                    entity->set_collider(collider);
+                                }
+                                else {
+                                    entity->set_collider(nullptr);
+                                }
+                            }
+                        }
                     }
                 }
                 ImGui::EndCombo();

@@ -406,7 +406,7 @@ export namespace titian {
             render_shaders.pixel_shader.update_cbuffer(ps_data);
 
             DefaultMeshes* default_meshes = &editor_layer->game_layer->scene->default_meshes;
-            gpu->draw(default_meshes->cube->graphics_buffer);
+            gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology());
 
             gpu->bind_internal_views();
             gpu->set_viewport_size(old_viewport_size);

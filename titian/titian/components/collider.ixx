@@ -172,7 +172,7 @@ export namespace titian {
                 m_shape = nullptr;
             }
             m_shape = m_physics->createShape(geometry, *m_material);
-            kl::assert(m_shape, "Failed to create collider SHAPE");
+            kl::verify(m_shape, "Failed to create collider SHAPE");
         }
 
         void set_rotation(const kl::Float3& rotation)

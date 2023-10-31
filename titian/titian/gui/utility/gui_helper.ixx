@@ -12,6 +12,14 @@ export namespace titian {
         ImGui::TextColored(reinterpret_cast<const ImVec4&>(color), message.data());
     }
 
+    inline std::pair<ImVec2, ImVec2> gui_window_rect()
+    {
+        const ImVec2 content_region = ImGui::GetContentRegionAvail();
+        const ImVec2 win_content_min = ImGui::GetWindowPos() + ImGui::GetWindowContentRegionMin();
+        const ImVec2 win_content_max = win_content_min + content_region;
+        return { win_content_min, win_content_max };
+    }
+
     inline float gui_calculate_item_with(const std::string_view& label)
     {
         return ImGui::CalcTextSize(label.data()).x;

@@ -1,9 +1,9 @@
 # editor features
-1. undo and redo
+1. serializer version checking
+2. undo and redo
 
 # gui features
-1. mesh editor -> add list of vertices, ability to edit vertices and reloading the mesh
-2. texture editor -> add list of pixels, ability to edit pixels and reloading the texture
+1. texture editor -> add list of pixels, ability to edit pixels and reloading the texture
 
 # gui qof
 1. interpreted scripts parts -> add descriptors for all members, methods and functions

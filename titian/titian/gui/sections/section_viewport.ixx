@@ -85,7 +85,9 @@ export namespace titian {
 		}
 
     private:
-        static kl::Int2 window_mouse_position()
+        std::map<ImGuiKey, bool> m_last_key_states = {};
+
+        kl::Int2 window_mouse_position()
         {
             const float tab_size = ImGui::GetWindowContentRegionMin().y;
             const ImVec2 window_position = ImGui::GetWindowPos();
@@ -119,16 +121,14 @@ export namespace titian {
 
         void handle_gizmo_operation_change(const int operation, const ImGuiKey switch_key)
         {
-            static std::map<ImGuiKey, bool> last_key_states = {};
-
             if (ImGui::IsKeyDown(switch_key)) {
-                if (!last_key_states[switch_key]) {
+                if (!m_last_key_states[switch_key]) {
                     editor_layer->gizmo_operation = editor_layer->gizmo_operation != operation ? operation : 0;
                 }
-                last_key_states[switch_key] = true;
+                m_last_key_states[switch_key] = true;
             }
             else {
-                last_key_states[switch_key] = false;
+                m_last_key_states[switch_key] = false;
             }
         }
 
