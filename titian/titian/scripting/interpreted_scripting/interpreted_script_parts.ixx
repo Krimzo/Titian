@@ -37,6 +37,9 @@ int load_types = [&]
 	using namespace titian;
 	
 	// Bootstrap
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<kl::Vertex>>("MeshData", *INTERPRETED_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<kl::Color>>("TextureData", *INTERPRETED_SCRIPT_MODULE);
+
 	chaiscript::bootstrap::standard_library::vector_type<std::vector<Mesh*>>("MeshVector", *INTERPRETED_SCRIPT_MODULE);
 	chaiscript::bootstrap::standard_library::vector_type<std::vector<Texture*>>("TextureVector", *INTERPRETED_SCRIPT_MODULE);
 	chaiscript::bootstrap::standard_library::vector_type<std::vector<Material*>>("MaterialVector", *INTERPRETED_SCRIPT_MODULE);
@@ -418,6 +421,7 @@ int load_types = [&]
 	chaiscript::utility::add_class<kl::Vertex>(*INTERPRETED_SCRIPT_MODULE, "Vertex",
 	{
 		chaiscript::constructor<kl::Vertex()>(),
+		chaiscript::constructor<kl::Vertex(kl::Float3)>(),
 		chaiscript::constructor<kl::Vertex(kl::Float3, kl::Float2)>(),
 		chaiscript::constructor<kl::Vertex(kl::Float3, kl::Float3)>(),
 		chaiscript::constructor<kl::Vertex(kl::Float3, kl::Float2, kl::Float3)>(),

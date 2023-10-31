@@ -25,6 +25,9 @@ export namespace titian {
 		{
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 
+            kl::GPU* gpu = &render_layer->game_layer->app_layer->gpu;
+            kl::Object<Scene>& scene = render_layer->game_layer->scene;
+
             if (ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
                 // Pre-display
                 const ImVec2 content_region = ImGui::GetContentRegionAvail();
@@ -39,11 +42,11 @@ export namespace titian {
                 ImGui::Image(render_layer->render_texture->shader_view.Get(), content_region);
                 
                 // Scene loading
-                const std::optional scene_file = gui_get_drag_drop<std::string>("SceneFile");
-                if (scene_file) {
-                    render_layer->game_layer->scene = new Scene(&render_layer->game_layer->app_layer->gpu);
-                    const Serializer serializer = { scene_file.value(), false };
-                    render_layer->game_layer->scene->deserialize(&serializer, nullptr);
+                if (const std::optional scene_file = gui_get_drag_drop<std::string>("SceneFile")) {
+                    scene = new Scene(gpu);
+                    if (const Serializer serializer = { scene_file.value(), false }) {
+                        scene->deserialize(&serializer, nullptr);
+                    }
                 }
 
                 // Handle entity picking
@@ -57,7 +60,7 @@ export namespace titian {
                     }
                     else {
                         uint32_t counter = 0;
-                        for (auto& [name, entity] : *render_layer->game_layer->scene) {
+                        for (auto& [name, entity] : *scene) {
                             if (++counter == entity_id) {
                                 editor_layer->selected_entity = name;
                                 break;
@@ -72,7 +75,7 @@ export namespace titian {
                     handle_gizmo_operation_change(ImGuizmo::OPERATION::ROTATE, ImGuiKey_2);
                     handle_gizmo_operation_change(ImGuizmo::OPERATION::TRANSLATE, ImGuiKey_3);
                 }
-                if (Entity* entity = &render_layer->game_layer->scene->get_entity(editor_layer->selected_entity)) {
+                if (Entity* entity = &scene->get_entity(editor_layer->selected_entity)) {
                     render_gizmos(entity);
                 }
             }

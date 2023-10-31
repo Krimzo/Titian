@@ -26,7 +26,7 @@ export namespace titian {
             const uint64_t unseen_count = Logger::last_log_index - last_log_index;
             const std::string title_extension = unseen_count > 0 ? kl::format(" [", unseen_count, "]###") : "###";
 
-            if (ImGui::Begin(kl::format("Log View", title_extension).c_str())) {
+            if (ImGui::Begin(kl::format("Log View", title_extension).c_str(), nullptr, ImGuiWindowFlags_HorizontalScrollbar)) {
                 last_log_index = Logger::last_log_index;
 
                 uint32_t log_counter = 1;
@@ -42,7 +42,7 @@ export namespace titian {
                 }
 
                 if (ImGui::BeginPopupContextWindow()) {
-                    if (ImGui::MenuItem("Clear all")) {
+                    if (ImGui::MenuItem("Clear All")) {
                         Logger::logs.clear();
                     }
                     ImGui::EndPopup();

@@ -15,5 +15,5 @@ export int packaging_entry(const bool create)
 		result = open_package(PACKAGED_BUILTIN_FILE);
 		result = open_package(PACKAGED_PREVIEW_FILE);
 	}
-	return static_cast<int>(result);
+	return static_cast<int>(!result);
 }

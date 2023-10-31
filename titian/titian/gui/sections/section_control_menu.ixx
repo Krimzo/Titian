@@ -66,10 +66,6 @@ export namespace titian {
             // Cache scene
             if (Serializer serializer = { m_temp_path, true }) {
                 game_layer->scene->serialize(&serializer, nullptr);
-                Logger::log("Scene cached.");
-            }
-            else {
-                Logger::log("Failed to cache the scene.");
             }
 
             // Start game
@@ -87,10 +83,6 @@ export namespace titian {
             // Load cached scene
             if (const Serializer serializer = { m_temp_path, false }) {
                 game_layer->scene->deserialize(&serializer, nullptr);
-                Logger::log("Cached scene loaded.");
-            }
-            else {
-                Logger::log("Failed to load the cached scene.");
             }
         }
     };

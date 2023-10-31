@@ -24,7 +24,7 @@ export namespace titian {
 		return found_files;
 	}
 
-	bool create_package(const std::string_view& input_dir, const std::string_view& output_file)
+	bool create_package(const std::string_view& input_dir, const std::string& output_file)
 	{
 		if (!std::filesystem::exists(input_dir)) {
 			kl::print("Create package error. ", input_dir, " doesn't exists.");
@@ -51,7 +51,7 @@ export namespace titian {
 		return true;
 	}
 
-	bool open_package(const std::string_view& input_file)
+	bool open_package(const std::string& input_file)
 	{
 		const Serializer serializer = { input_file, false };
 		if (!serializer) {

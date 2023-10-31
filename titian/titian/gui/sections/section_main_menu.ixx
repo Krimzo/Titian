@@ -3,7 +3,7 @@ export module section_main_menu;
 export import gui_section;
 export import render_layer;
 export import editor_layer;
-export import serialization;
+export import serializer;
 
 export namespace titian {
 	class GUISectionMainMenu : public GUISection
@@ -29,13 +29,8 @@ export namespace titian {
                     ImGui::SetNextItemWidth(-1.0f);
                     if (std::optional scene_name = gui_input_waited("##SaveSceneNameInput", {})) {
                         const std::string save_path = kl::format(scene_name.value(), ".titian");
-                        const bool serial_result = serialize(save_path, &scene, nullptr);
-
-                        if (serial_result) {
-                            Logger::log(kl::format("Scene saved. (", save_path, ") [", SERIAL_VERSION_FORMAT, "]"));
-                        }
-                        else {
-                            Logger::log(kl::format("Failed to save scene. File write error. (", save_path, ")"));
+                        if (Serializer serializer = { save_path, true }) {
+                            scene->serialize(&serializer, nullptr);
                         }
                         m_inputting_name = false;
                     }

@@ -172,7 +172,6 @@
     <ClCompile Include="titian\scripting\node_scripting\node_script_types.ixx" />
     <ClCompile Include="titian\scripting\node_script.ixx" />
     <ClCompile Include="titian\serialization\serializable.ixx" />
-    <ClCompile Include="titian\serialization\serialization.ixx" />
     <ClCompile Include="titian\serialization\serializer.ixx" />
     <ClCompile Include="titian\titian\titian_editor.ixx" />
     <ClCompile Include="titian\titian\titian_game.ixx" />

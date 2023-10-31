@@ -1,6 +1,5 @@
 # editor features
-1. serializer version checking
-2. undo and redo
+1. undo and redo
 
 # gui features
 1. texture editor -> add list of pixels, ability to edit pixels and reloading the texture
