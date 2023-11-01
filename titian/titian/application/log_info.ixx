@@ -12,8 +12,17 @@ export namespace titian {
         LogInfo()
         {}
 
+        LogInfo(const char* message)
+            : message(message)
+        {}
+
         LogInfo(const std::string& message)
             : message(message)
+        {}
+
+        template<typename... Args>
+        LogInfo(const Args&... objects)
+            : message(kl::format(objects...))
         {}
 	};
 }

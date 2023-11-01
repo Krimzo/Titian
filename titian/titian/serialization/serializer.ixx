@@ -26,17 +26,17 @@ export namespace titian {
 
 			if (write) {
 				this->write_object<uint32_t>(SERIAL_VERSION);
-				Logger::log(kl::format("Opened file for serialization [", path, "]", " (", SERIAL_VERSION_FORMAT, ")"));
+				Logger::log("Opened file for serialization [", path, "]", " (", SERIAL_VERSION_FORMAT, ")");
 			}
 			else {
 				const uint32_t version = this->read_object<uint32_t>();
 				if (version == SERIAL_VERSION) {
 					m_is_valid_version = true;
-					Logger::log(kl::format("Opened file for deserialization [", path, "]", " (", SERIAL_VERSION_FORMAT, ")"));
+					Logger::log("Opened file for deserialization [", path, "]", " (", SERIAL_VERSION_FORMAT, ")");
 				}
 				else {
 					m_is_valid_version = false;
-					Logger::log(kl::format("Failed to verify [", path, "] serial version (", format_serial_version(version), "), expected version (", SERIAL_VERSION_FORMAT, ")"));
+					Logger::log("Failed to verify [", path, "] serial version (", format_serial_version(version), "), expected version (", SERIAL_VERSION_FORMAT, ")");
 				}
 			}
 		}
@@ -44,7 +44,7 @@ export namespace titian {
 		~Serializer()
 		{
 			if (*this) {
-				Logger::log(kl::format("Closed ", m_writing ? "serialization" : "deserialization", " file [", m_path, "]"));
+				Logger::log("Closed ", m_writing ? "serialization" : "deserialization", " file [", m_path, "]");
 			}
 		}
 

@@ -27,13 +27,13 @@ export namespace titian {
 	bool create_package(const std::string_view& input_dir, const std::string& output_file)
 	{
 		if (!std::filesystem::exists(input_dir)) {
-			kl::print("Create package error. ", input_dir, " doesn't exists.");
+			Logger::log("Create package error. ", input_dir, " doesn't exists.");
 			return false;
 		}
 		
 		Serializer serializer = { output_file, true };
 		if (!serializer) {
-			kl::print("Create package error. Failed to open file ", output_file);
+			Logger::log("Create package error. Failed to open file ", output_file);
 			return false;
 		}
 		
@@ -44,10 +44,10 @@ export namespace titian {
 			serializer.write_string(file);
 			serializer.write_object<uint64_t>(file_data.size());
 			serializer.write_array(file_data.data(), file_data.size());
-			kl::print("Saved file ", file, " to package ", output_file);
+			Logger::log("Saved file ", file, " to package ", output_file);
 		}
 
-		kl::print("Created packaged ", output_file, " from ", input_dir);
+		Logger::log("Created packaged ", output_file, " from ", input_dir);
 		return true;
 	}
 
@@ -55,7 +55,7 @@ export namespace titian {
 	{
 		const Serializer serializer = { input_file, false };
 		if (!serializer) {
-			kl::print("Open package error. Failed to open file ", input_file);
+			Logger::log("Open package error. Failed to open file ", input_file);
 			return false;
 		}
 
@@ -72,11 +72,11 @@ export namespace titian {
 			if (path.has_parent_path()) {
 				const std::filesystem::path parent_dir = path.parent_path();
 				if (std::filesystem::create_directories(parent_dir)) {
-					kl::print("Created parent directory ", parent_dir);
+					Logger::log("Created parent directory ", parent_dir);
 				}
 
 				kl::write_file(file, file_data);
-				kl::print("Loaded file ", file, " from package ", input_file);
+				Logger::log("Loaded file ", file, " from package ", input_file);
 			}
 		}
 		return true;

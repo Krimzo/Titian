@@ -27,16 +27,10 @@ export namespace titian {
 			});
 			window->set_icon("builtin/textures/editor_icon.ico");
 			window->maximize();
-
-			if (!kl::IS_DEBUG) {
-				kl::console::set_enabled(false);
-			}
 		}
 
 		~AppLayer() override
-		{
-			kl::console::set_enabled(true);
-		}
+		{}
 
 		bool update() override
 		{

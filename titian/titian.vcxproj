@@ -112,6 +112,7 @@
     <ClCompile Include="sandbox\pieces\piece_physics_test.ixx" />
     <ClCompile Include="sandbox\sandbox_piece.ixx" />
     <ClCompile Include="sandbox\sandbox_entry.ixx" />
+    <ClCompile Include="source\exe_type.ixx" />
     <ClCompile Include="source\main.ixx" />
     <ClCompile Include="titian\application\app_layer.ixx" />
     <ClCompile Include="titian\application\logger.ixx" />

@@ -179,10 +179,10 @@ export namespace titian {
 
                     std::filesystem::rename(file, new_file, error);
                     if (error) {
-                        Logger::log(kl::format("Failed to rename file ", file, " to ", new_file));
+                        Logger::log("Failed to rename file ", file, " to ", new_file);
                     }
                     else {
-                        Logger::log(kl::format("Renamed file ", file, " to ", new_file));
+                        Logger::log("Renamed file ", file, " to ", new_file);
                     }
                 }
                 ImGui::Text(kl::format(std::setprecision(2), std::filesystem::file_size(file, error) / 1048576.0f, " mb").c_str());
@@ -190,10 +190,10 @@ export namespace titian {
                 if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
                     std::filesystem::remove(file, error);
                     if (error) {
-                        Logger::log(kl::format("Failed to delete file ", file));
-                    }
-                    else {
-                        Logger::log(kl::format("Deleted file ", file));
+                        Logger::log("Failed to delete file ", file);
+                    }              
+                    else {         
+                        Logger::log("Deleted file ", file);
                     }
                     ImGui::CloseCurrentPopup();
                 }

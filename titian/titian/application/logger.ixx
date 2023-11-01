@@ -5,27 +5,37 @@ export import log_info;
 export namespace titian {
 	class Logger
 	{
+		static bool m_is_ready;
+
 	public:
-		static constexpr uint64_t max_size = 250;
 		static std::list<LogInfo> logs;
 		static uint64_t last_log_index;
 
-		static void log(const std::string& message)
+		static void set_ready()
 		{
-			logs.emplace_front(message);
-			while (logs.size() > max_size) {
-				logs.pop_back();
-			}
-			last_log_index += 1;
+			m_is_ready = true;
 		}
 
-		template<typename T>
-		static void log_object(const T& object)
+		template<typename... Args>
+		static void log(const Args&... objects)
 		{
-			log(kl::format(object));
+			// Add to logs
+			const LogInfo& info = logs.emplace_front(objects...);
+			last_log_index += 1;
+
+			// Adjust size if needed
+			while (logs.size() > 250) {
+				logs.pop_back();
+			}
+
+			// Print if displaying is not ready
+			if (!m_is_ready) {
+				kl::print("[", info.date, "]: ", info.message);
+			}
 		}
 	};
 }
 
+bool titian::Logger::m_is_ready = false;
 std::list<titian::LogInfo> titian::Logger::logs = {};
 uint64_t titian::Logger::last_log_index = 0;

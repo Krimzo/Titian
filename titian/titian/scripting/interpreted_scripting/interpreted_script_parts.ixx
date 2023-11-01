@@ -942,7 +942,7 @@ int load_functions = [&]
 	INTERPRETED_SCRIPT_IDENTIFIERS["on_update"] = "Called every frame of the game.";
 
 	// Logging
-	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&Logger::log), "log");
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&Logger::log<const std::string&>), "log");
 	INTERPRETED_SCRIPT_MODULE->eval("global print = fun(object) { return log(to_string(object)); }");
 	INTERPRETED_SCRIPT_IDENTIFIERS["log"] = "Outputs the given string to the log window.";
 	INTERPRETED_SCRIPT_IDENTIFIERS["print"] = "Converts the given object to a string and logs it.";

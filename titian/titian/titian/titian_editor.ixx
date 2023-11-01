@@ -80,6 +80,9 @@ export namespace titian {
             push_layer(editor_layer);
             push_layer(render_layer);
             push_layer(gui_layer);
+
+            // Logger
+            Logger::set_ready();
         }
 
         ~TitianEditor() override
