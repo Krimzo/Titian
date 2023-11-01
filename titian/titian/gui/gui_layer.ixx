@@ -11,8 +11,8 @@ export namespace titian {
 
 		std::vector<kl::Object<GUISection>> sections = {};
 
-		kl::Float4 special_color = kl::Color(235, 170, 15);
-		kl::Float4 alternate_color = kl::Color(125, 190, 190);
+		kl::Float4 special_color = kl::colors::WHITE;
+		kl::Float4 alternate_color = kl::colors::BLACK;
 
 		ImFont* roboto_font = nullptr;
 		ImFont* jetbrains_font = nullptr;

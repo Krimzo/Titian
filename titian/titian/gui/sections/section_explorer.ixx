@@ -10,11 +10,10 @@ export namespace titian {
 	public:
         enum class FileType
         {
-            OTHER = 0,
-            CODE,
-            SCRIPT,
+            DEFAULT = 0,
             MESH,
             TEXTURE,
+            SCRIPT,
             SCENE,
         };
 
@@ -22,16 +21,14 @@ export namespace titian {
 
         std::string path = std::filesystem::absolute(".").string();
 
-        kl::Object<Texture> code_file_texture = nullptr;
-        kl::Object<Texture> script_file_texture = nullptr;
+        kl::Object<Texture> default_file_texture = nullptr;
         kl::Object<Texture> mesh_file_texture = nullptr;
         kl::Object<Texture> texture_file_texture = nullptr;
+        kl::Object<Texture> script_file_texture = nullptr;
         kl::Object<Texture> scene_file_texture = nullptr;
-        kl::Object<Texture> default_file_texture = nullptr;
 
-        kl::Object<Texture> empty_dir_texture = nullptr;
-        kl::Object<Texture> parent_dir_texture = nullptr;
         kl::Object<Texture> default_dir_texture = nullptr;
+        kl::Object<Texture> parent_dir_texture = nullptr;
 
         int icon_size = 65;
 
@@ -40,49 +37,41 @@ export namespace titian {
             this->app_layer = app_layer;
             kl::GPU* gpu = &app_layer->gpu;
 
-            code_file_texture = new Texture(gpu);
-            script_file_texture = new Texture(gpu);
+            default_file_texture = new Texture(gpu);
             mesh_file_texture = new Texture(gpu);
             texture_file_texture = new Texture(gpu);
+            script_file_texture = new Texture(gpu);
             scene_file_texture = new Texture(gpu);
-            default_file_texture = new Texture(gpu);
 
-            empty_dir_texture = new Texture(gpu);
-            parent_dir_texture = new Texture(gpu);
             default_dir_texture = new Texture(gpu);
+            parent_dir_texture = new Texture(gpu);
 
-            code_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/code_file.png"));
-            script_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/script_file.png"));
+            default_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/default_file.png"));
             mesh_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/mesh_file.png"));
             texture_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/texture_file.png"));
+            script_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/script_file.png"));
             scene_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/scene_file.png"));
-            default_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/default_file.png"));
 
-            empty_dir_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/empty_dir.png"));
-            parent_dir_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/parent_dir.png"));
             default_dir_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/default_dir.png"));
+            parent_dir_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/parent_dir.png"));
 
-            code_file_texture->create_shader_view(nullptr);
-            script_file_texture->create_shader_view(nullptr);
+            default_file_texture->create_shader_view(nullptr);
             mesh_file_texture->create_shader_view(nullptr);
             texture_file_texture->create_shader_view(nullptr);
+            script_file_texture->create_shader_view(nullptr);
             scene_file_texture->create_shader_view(nullptr);
-            default_file_texture->create_shader_view(nullptr);
 
-            empty_dir_texture->create_shader_view(nullptr);
-            parent_dir_texture->create_shader_view(nullptr);
             default_dir_texture->create_shader_view(nullptr);
+            parent_dir_texture->create_shader_view(nullptr);
 
-            kl::assert(code_file_texture->shader_view, "Failed to init CODE file texture");
-            kl::assert(script_file_texture->shader_view, "Failed to init SCRIPT file texture");
+            kl::assert(default_file_texture->shader_view, "Failed to init DEFAULT file texture");
             kl::assert(mesh_file_texture->shader_view, "Failed to init MESH file texture");
             kl::assert(texture_file_texture->shader_view, "Failed to init TEXTURE file texture");
+            kl::assert(script_file_texture->shader_view, "Failed to init SCRIPT file texture");
             kl::assert(scene_file_texture->shader_view, "Failed to init SCENE file texture");
-            kl::assert(default_file_texture->shader_view, "Failed to init DEFAULT file texture");
 
-            kl::assert(empty_dir_texture->shader_view, "Failed to init EMPTY dir texture");
-            kl::assert(parent_dir_texture->shader_view, "Failed to init PARENT dir texture");
             kl::assert(default_dir_texture->shader_view, "Failed to init DEFAULT dir texture");
+            kl::assert(parent_dir_texture->shader_view, "Failed to init PARENT dir texture");
         }
 
 		~GUISectionExplorer() override
@@ -204,14 +193,8 @@ export namespace titian {
         void handle_directory_entry(const std::filesystem::path& directory, const bool is_parent_dir)
         {
             const std::string path = std::filesystem::absolute(directory).string();
-            kl::dx::ShaderView icon = default_dir_texture->shader_view;
+            const kl::dx::ShaderView icon = is_parent_dir ? parent_dir_texture->shader_view : default_dir_texture->shader_view;
             std::error_code ignored_error = {};
-            if (is_parent_dir) {
-                icon = parent_dir_texture->shader_view;
-            }
-            else if (std::filesystem::is_empty(directory, ignored_error)) {
-                icon = empty_dir_texture->shader_view;
-            }
 
             constexpr float padding = 5.0f;
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
@@ -243,12 +226,6 @@ export namespace titian {
         FileType classify_file(const std::filesystem::path& file)
         {
             const std::string extension = file.extension().string();
-            if (extension == ".h" || extension == ".cpp") {
-                return FileType::CODE;
-            }
-            if (extension == ".dll" || extension == ".chai") {
-                return FileType::SCRIPT;
-            }
             if (extension == ".obj") {
                 return FileType::MESH;
             }
@@ -258,22 +235,20 @@ export namespace titian {
             if (extension == ".titian") {
                 return FileType::SCENE;
             }
-            return FileType::OTHER;
+            if (extension == ".dll" || extension == ".chai") {
+                return FileType::SCRIPT;
+            }
+            return FileType::DEFAULT;
         }
 
         kl::dx::ShaderView file_icon(const FileType type)
         {
-            switch (type) {
-            case FileType::CODE:
-                return code_file_texture->shader_view;
-            case FileType::SCRIPT:
-                return script_file_texture->shader_view;
-            case FileType::MESH:
-                return mesh_file_texture->shader_view;
-            case FileType::TEXTURE:
-                return texture_file_texture->shader_view;
-            case FileType::SCENE:
-                return scene_file_texture->shader_view;
+            switch (type)
+            {
+            case FileType::MESH:    return mesh_file_texture->shader_view;
+            case FileType::TEXTURE: return texture_file_texture->shader_view;
+            case FileType::SCRIPT:  return script_file_texture->shader_view;
+            case FileType::SCENE:   return scene_file_texture->shader_view;
             }
             return default_file_texture->shader_view;
         }
@@ -281,18 +256,16 @@ export namespace titian {
         void drag_file(const std::filesystem::path& file, const FileType type, const kl::dx::ShaderView& texture)
         {
             const std::string path = file.string();
-            switch (type) {
-            case FileType::CODE:
-                gui_set_drag_drop<std::string>("CodeFile", path, texture);
-                break;
-            case FileType::SCRIPT:
-                gui_set_drag_drop<std::string>("ScriptFile", path, texture);
-                break;
+            switch (type)
+            {
             case FileType::MESH:
                 gui_set_drag_drop<std::string>("MeshFile", path, texture);
                 break;
             case FileType::TEXTURE:
                 gui_set_drag_drop<std::string>("TextureFile", path, texture);
+                break;
+            case FileType::SCRIPT:
+                gui_set_drag_drop<std::string>("ScriptFile", path, texture);
                 break;
             case FileType::SCENE:
                 gui_set_drag_drop<std::string>("SceneFile", path, texture);
