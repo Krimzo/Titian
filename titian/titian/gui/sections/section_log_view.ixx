@@ -31,7 +31,7 @@ export namespace titian {
 
                 uint32_t log_counter = 1;
                 for (const auto& log_info : Logger::logs) {
-                    gui_colored_text(kl::format(std::setfill('0'), std::setw(3), log_counter, "."), gui_layer->alternate_color);
+                    gui_colored_text(kl::format(std::setfill('0'), std::setw(3), log_counter, "."), gui_layer->special_color);
                     ImGui::SameLine();
 
                     gui_colored_text(kl::format("[", log_info.date, "]:") , { 0.85f, 0.75f, 0.75f, 1.0f });

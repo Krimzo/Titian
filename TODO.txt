@@ -1,8 +1,6 @@
 # editor features
-1. undo and redo
+1. implement exposing of global vars in interpreted scripts
+2. undo and redo
 
 # gui features
 1. texture editor -> add list of pixels, ability to edit pixels and reloading the texture
-
-# gui qof
-1. interpreted scripts parts -> add descriptors for all members, methods and functions

@@ -16,6 +16,7 @@ export namespace titian {
 		"attr",
 		"auto",
 		"break",
+		"continue",
 		"def",
 		"else",
 		"for",
@@ -50,10 +51,33 @@ int load_types = [&]
 	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Material*>>("MaterialMap", *INTERPRETED_SCRIPT_MODULE);
 	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Entity*>>("EntityMap", *INTERPRETED_SCRIPT_MODULE);
 
+	// Derived
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::base_class<Entity, Camera>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::base_class<Entity, Light>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::base_class<Light, AmbientLight>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::base_class<Light, PointLight>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::base_class<Light, DirectionalLight>());
+
+	// Casts
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Int2, kl::Float2>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float2, kl::Int2>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float2, kl::Complex>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float3, kl::Color>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float3, kl::Quaternion>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float4, kl::Color>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float4, kl::Quaternion>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Complex, kl::Float2>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Quaternion, kl::Float3>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Quaternion, kl::Float4>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Color, kl::Float3>());
+	INTERPRETED_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Color, kl::Float4>());
+
 	// Int2
 	chaiscript::utility::add_class<kl::Int2>(*INTERPRETED_SCRIPT_MODULE, "Int2",
 	{
 		chaiscript::constructor<kl::Int2()>(),
+		chaiscript::constructor<kl::Int2(const kl::Int2&)>(),
+
 		chaiscript::constructor<kl::Int2(int)>(),
 		chaiscript::constructor<kl::Int2(int, int)>(),
 	},
@@ -61,9 +85,9 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Int2::x), "x" },
 		{ chaiscript::fun(&kl::Int2::y), "y" },
 
-		{ chaiscript::fun(&kl::Int2::operator kl::Float2), "as_float2" },
+		{ chaiscript::fun(static_cast<kl::Int2& (kl::Int2::*)(const kl::Int2&)>(&kl::Int2::operator=)), "=" },
 
-		{ chaiscript::fun<int&, kl::Int2, int>(&kl::Int2::operator[]), "[]"},
+		{ chaiscript::fun<int&, kl::Int2, int>(&kl::Int2::operator[]), "[]" },
 
 		{ chaiscript::fun(&kl::Int2::operator==), "==" },
 		{ chaiscript::fun(&kl::Int2::operator!=), "!=" },
@@ -96,6 +120,8 @@ int load_types = [&]
 	chaiscript::utility::add_class<kl::Float2>(*INTERPRETED_SCRIPT_MODULE, "Float2",
 	{
 		chaiscript::constructor<kl::Float2()>(),
+		chaiscript::constructor<kl::Float2(const kl::Float2&)>(),
+
 		chaiscript::constructor<kl::Float2(float)>(),
 		chaiscript::constructor<kl::Float2(float, float)>(),
 	},
@@ -103,8 +129,7 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Float2::x), "x" },
 		{ chaiscript::fun(&kl::Float2::y), "y" },
 
-		{ chaiscript::fun(&kl::Float2::operator kl::Int2), "as_int2" },
-		{ chaiscript::fun(&kl::Float2::operator kl::Complex), "as_complex" },
+		{ chaiscript::fun(static_cast<kl::Float2& (kl::Float2::*)(const kl::Float2&)>(&kl::Float2::operator=)), "=" },
 
 		{ chaiscript::fun<float&, kl::Float2, int>(&kl::Float2::operator[]), "[]"},
 
@@ -135,11 +160,14 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Float2& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Float2"] = "Two component float vector.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["length"] = "Returns length of this vector.";
 
 	// Float3
 	chaiscript::utility::add_class<kl::Float3>(*INTERPRETED_SCRIPT_MODULE, "Float3",
 	{
 		chaiscript::constructor<kl::Float3()>(),
+		chaiscript::constructor<kl::Float3(const kl::Float3&)>(),
+
 		chaiscript::constructor<kl::Float3(float)>(),
 		chaiscript::constructor<kl::Float3(float, float, float)>(),
 
@@ -151,9 +179,9 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Float3::y), "y" },
 		{ chaiscript::fun(&kl::Float3::z), "z" },
 
-		{ chaiscript::fun(&kl::Float3::operator kl::Color), "as_color" },
-		{ chaiscript::fun(&kl::Float3::operator kl::Quaternion), "as_quaternion" },
-		{ chaiscript::fun(&kl::Float3::xy), "xy"},
+		{ chaiscript::fun(static_cast<kl::Float3& (kl::Float3::*)(const kl::Float3&)>(&kl::Float3::operator=)), "=" },
+
+		{ chaiscript::fun(&kl::Float3::xy), "xy" },
 
 		{ chaiscript::fun<float&, kl::Float3, int>(&kl::Float3::operator[]), "[]"},
 
@@ -184,11 +212,14 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Float3& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Float3"] = "Three component float vector.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["xy"] = "Returns x and y as a Float2.";
 
 	// Float4
 	chaiscript::utility::add_class<kl::Float4>(*INTERPRETED_SCRIPT_MODULE, "Float4",
 	{
 		chaiscript::constructor<kl::Float4()>(),
+		chaiscript::constructor<kl::Float4(const kl::Float4&)>(),
+
 		chaiscript::constructor<kl::Float4(float)>(),
 		chaiscript::constructor<kl::Float4(float, float, float, float)>(),
 
@@ -206,8 +237,8 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Float4::z), "z" },
 		{ chaiscript::fun(&kl::Float4::w), "w" },
 
-		{ chaiscript::fun(&kl::Float4::operator kl::Color), "as_color" },
-		{ chaiscript::fun(&kl::Float4::operator kl::Quaternion), "as_quaternion" },
+		{ chaiscript::fun(static_cast<kl::Float4& (kl::Float4::*)(const kl::Float4&)>(&kl::Float4::operator=)), "=" },
+
 		{ chaiscript::fun(&kl::Float4::xy), "xy" },
 		{ chaiscript::fun(&kl::Float4::xyz), "xyz" },
 
@@ -240,15 +271,18 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Float4& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Float4"] = "Four component float vector.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["xyz"] = "Returns x, y and z as a Float3.";
 
 	// Float2x2
 	chaiscript::utility::add_class<kl::Float2x2>(*INTERPRETED_SCRIPT_MODULE, "Float2x2",
 	{
 		chaiscript::constructor<kl::Float2x2()>(),
+		chaiscript::constructor<kl::Float2x2(const kl::Float2x2&)>(),
 	},
 	{
+		{ chaiscript::fun(static_cast<kl::Float2x2& (kl::Float2x2::*)(const kl::Float2x2&)>(&kl::Float2x2::operator=)), "=" },
+
 		{ chaiscript::fun<float&, kl::Float2x2, int>(&kl::Float2x2::operator[]), "[]"},
-		//{ chaiscript::fun<float&, kl::Float2x2, int, int>(&kl::Float2x2::operator()), "()"},
 
 		{ chaiscript::fun(&kl::Float2x2::operator==), "==" },
 		{ chaiscript::fun(&kl::Float2x2::operator!=), "!=" },
@@ -272,15 +306,18 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Float2x2& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Float2x2"] = "Two float wide square matrix.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["determinant"] = "Returns the determinant of this matrix.";
 
 	// Float3x3
 	chaiscript::utility::add_class<kl::Float3x3>(*INTERPRETED_SCRIPT_MODULE, "Float3x3",
 	{
 		chaiscript::constructor<kl::Float3x3()>(),
+		chaiscript::constructor<kl::Float3x3(const kl::Float3x3&)>(),
 	},
 	{
+		{ chaiscript::fun(static_cast<kl::Float3x3& (kl::Float3x3::*)(const kl::Float3x3&)>(&kl::Float3x3::operator=)), "=" },
+
 		{ chaiscript::fun<float&, kl::Float3x3, int>(&kl::Float3x3::operator[]), "[]"},
-		//{ chaiscript::fun<float&, kl::Float3x3, int, int>(&kl::Float3x3::operator()), "()"},
 
 		{ chaiscript::fun(&kl::Float3x3::operator==), "==" },
 		{ chaiscript::fun(&kl::Float3x3::operator!=), "!=" },
@@ -309,10 +346,12 @@ int load_types = [&]
 	chaiscript::utility::add_class<kl::Float4x4>(*INTERPRETED_SCRIPT_MODULE, "Float4x4",
 	{
 		chaiscript::constructor<kl::Float4x4()>(),
+		chaiscript::constructor<kl::Float4x4(const kl::Float4x4&)>(),
 	},
 	{
+		{ chaiscript::fun(static_cast<kl::Float4x4& (kl::Float4x4::*)(const kl::Float4x4&)>(&kl::Float4x4::operator=)), "=" },
+
 		{ chaiscript::fun<float&, kl::Float4x4, int>(&kl::Float4x4::operator[]), "[]"},
-		//{ chaiscript::fun<float&, kl::Float4x4, int, int>(&kl::Float4x4::operator()), "()"},
 
 		{ chaiscript::fun(&kl::Float4x4::operator==), "==" },
 		{ chaiscript::fun(&kl::Float4x4::operator!=), "!=" },
@@ -341,15 +380,16 @@ int load_types = [&]
 	chaiscript::utility::add_class<kl::Complex>(*INTERPRETED_SCRIPT_MODULE, "Complex",
 	{
 		chaiscript::constructor<kl::Complex()>(),
-		chaiscript::constructor<kl::Complex(float, float)>(),
+		chaiscript::constructor<kl::Complex(const kl::Complex&)>(),
 
+		chaiscript::constructor<kl::Complex(float, float)>(),
 		chaiscript::constructor<kl::Complex(float)>(),
 	},
 	{
 		{ chaiscript::fun(&kl::Complex::r), "r" },
 		{ chaiscript::fun(&kl::Complex::i), "i" },
 
-		{ chaiscript::fun(&kl::Complex::operator kl::Float2), "as_float2" },
+		{ chaiscript::fun(static_cast<kl::Complex& (kl::Complex::*)(const kl::Complex&)>(&kl::Complex::operator=)), "=" },
 
 		{ chaiscript::fun<float&, kl::Complex, int>(&kl::Complex::operator[]), "[]"},
 
@@ -379,9 +419,10 @@ int load_types = [&]
 	chaiscript::utility::add_class<kl::Quaternion>(*INTERPRETED_SCRIPT_MODULE, "Quaternion",
 	{
 		chaiscript::constructor<kl::Quaternion()>(),
+		chaiscript::constructor<kl::Quaternion(const kl::Quaternion&)>(),
+
 		chaiscript::constructor<kl::Quaternion(float, float, float)>(),
 		chaiscript::constructor<kl::Quaternion(float, float, float, float)>(),
-
 		chaiscript::constructor<kl::Quaternion(kl::Float3, float)>(),
 	},
 	{
@@ -390,8 +431,7 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Quaternion::y), "y" },
 		{ chaiscript::fun(&kl::Quaternion::z), "z" },
 
-		{ chaiscript::fun(&kl::Quaternion::operator kl::Float3), "as_float3" },
-		{ chaiscript::fun(&kl::Quaternion::operator kl::Float4), "as_float4" },
+		{ chaiscript::fun(static_cast<kl::Quaternion& (kl::Quaternion::*)(const kl::Quaternion&)>(&kl::Quaternion::operator=)), "=" },
 
 		{ chaiscript::fun<float&, kl::Quaternion, int>(&kl::Quaternion::operator[]), "[]"},
 
@@ -421,6 +461,8 @@ int load_types = [&]
 	chaiscript::utility::add_class<kl::Vertex>(*INTERPRETED_SCRIPT_MODULE, "Vertex",
 	{
 		chaiscript::constructor<kl::Vertex()>(),
+		chaiscript::constructor<kl::Vertex(const kl::Vertex&)>(),
+
 		chaiscript::constructor<kl::Vertex(kl::Float3)>(),
 		chaiscript::constructor<kl::Vertex(kl::Float3, kl::Float2)>(),
 		chaiscript::constructor<kl::Vertex(kl::Float3, kl::Float3)>(),
@@ -431,6 +473,8 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Vertex::normal), "normal" },
 		{ chaiscript::fun(&kl::Vertex::texture), "texture" },
 
+		{ chaiscript::fun(static_cast<kl::Vertex& (kl::Vertex::*)(const kl::Vertex&)>(&kl::Vertex::operator=)), "=" },
+
 		{ chaiscript::fun([](const kl::Vertex& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Vertex"] = "A 3D point of a mesh.";
@@ -439,12 +483,16 @@ int load_types = [&]
 	chaiscript::utility::add_class<kl::Triangle>(*INTERPRETED_SCRIPT_MODULE, "Triangle",
 	{
 		chaiscript::constructor<kl::Triangle()>(),
+		chaiscript::constructor<kl::Triangle(const kl::Triangle&)>(),
+
 		chaiscript::constructor<kl::Triangle(kl::Vertex, kl::Vertex, kl::Vertex)>(),
 	},
 	{
 		{ chaiscript::fun(&kl::Triangle::a), "a" },
 		{ chaiscript::fun(&kl::Triangle::b), "b" },
 		{ chaiscript::fun(&kl::Triangle::c), "c" },
+
+		{ chaiscript::fun(static_cast<kl::Triangle& (kl::Triangle::*)(const kl::Triangle&)>(&kl::Triangle::operator=)), "=" },
 
 		{ chaiscript::fun([](const kl::Triangle& object) { return kl::format(object); }), "to_string" },
 	});
@@ -454,10 +502,14 @@ int load_types = [&]
 	chaiscript::utility::add_class<kl::Plane>(*INTERPRETED_SCRIPT_MODULE, "Plane",
 	{
 		chaiscript::constructor<kl::Plane()>(),
+		chaiscript::constructor<kl::Plane(const kl::Plane&)>(),
+
 		chaiscript::constructor<kl::Plane(kl::Float3, kl::Float3)>(),
 	},
 	{
 		{ chaiscript::fun(&kl::Plane::origin), "origin" },
+
+		{ chaiscript::fun(static_cast<kl::Plane& (kl::Plane::*)(const kl::Plane&)>(&kl::Plane::operator=)), "=" },
 
 		{ chaiscript::fun(&kl::Plane::set_normal), "set_normal" },
 		{ chaiscript::fun(&kl::Plane::normal), "normal" },
@@ -467,16 +519,23 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Plane& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Plane"] = "A 3D plane in space.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_normal"] = "Normalizes and sets the normal.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["normal"] = "Returns the normalized normal.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["in_front"] = "Checks if a 3D point is in front of the plane.";
 
 	// Sphere
 	chaiscript::utility::add_class<kl::Sphere>(*INTERPRETED_SCRIPT_MODULE, "Sphere",
 	{
 		chaiscript::constructor<kl::Sphere()>(),
+		chaiscript::constructor<kl::Sphere(const kl::Sphere&)>(),
+
 		chaiscript::constructor<kl::Sphere(kl::Float3, float)>(),
 	},
 	{
 		{ chaiscript::fun(&kl::Sphere::origin), "origin" },
 		{ chaiscript::fun(&kl::Sphere::radius), "radius" },
+
+		{ chaiscript::fun(static_cast<kl::Sphere& (kl::Sphere::*)(const kl::Sphere&)>(&kl::Sphere::operator=)), "=" },
 
 		{ chaiscript::fun([](const kl::Sphere& object) { return kl::format(object); }), "to_string" },
 	});
@@ -486,11 +545,15 @@ int load_types = [&]
 	chaiscript::utility::add_class<kl::Ray>(*INTERPRETED_SCRIPT_MODULE, "Ray",
 	{
 		chaiscript::constructor<kl::Ray()>(),
+		chaiscript::constructor<kl::Ray(const kl::Ray&)>(),
+
 		chaiscript::constructor<kl::Ray(kl::Float3, kl::Float3)>(),
 		chaiscript::constructor<kl::Ray(kl::Float3, kl::Float4x4, kl::Float2)>(),
 	},
 	{
 		{ chaiscript::fun(&kl::Ray::origin), "origin" },
+
+		{ chaiscript::fun(static_cast<kl::Ray& (kl::Ray::*)(const kl::Ray&)>(&kl::Ray::operator=)), "=" },
 
 		{ chaiscript::fun(&kl::Ray::set_direction), "set_direction" },
 		{ chaiscript::fun(&kl::Ray::direction), "direction" },
@@ -504,11 +567,19 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Ray& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Ray"] = "A 3D ray in space.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_direction"] = "Sets the normalized direction.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["direction"] = "Returns the normalized direction.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["intersect_plane"] = "Ray interesects plane.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["intersect_triangle"] = "Ray interesects triangle.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["can_intersect_sphere"] = "Checks if this ray can intersect a sphere.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["intersect_sphere"] = "Ray interesects sphere.";
 
 	// Color
 	chaiscript::utility::add_class<kl::Color>(*INTERPRETED_SCRIPT_MODULE, "Color",
 	{
 		chaiscript::constructor<kl::Color()>(),
+		chaiscript::constructor<kl::Color(const kl::Color&)>(),
+
 		chaiscript::constructor<kl::Color(byte, byte, byte)>(),
 		chaiscript::constructor<kl::Color(byte, byte, byte, byte)>(),
 	},
@@ -518,8 +589,7 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Color::b), "b" },
 		{ chaiscript::fun(&kl::Color::a), "a" },
 
-		{ chaiscript::fun(&kl::Color::operator kl::Float3), "as_float3" },
-		{ chaiscript::fun(&kl::Color::operator kl::Float4), "as_float4" },
+		{ chaiscript::fun(static_cast<kl::Color& (kl::Color::*)(const kl::Color&)>(&kl::Color::operator=)), "=" },
 
 		{ chaiscript::fun(&kl::Color::operator==), "==" },
 		{ chaiscript::fun(&kl::Color::operator!=), "!=" },
@@ -539,6 +609,10 @@ int load_types = [&]
 		}), "to_string" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Color"] = "Four component byte[0, 255] color.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["gray"] = "Returns the color as gray.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["inverted"] = "Inverts the color channels.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["as_ascii"] = "Converts the color to closes ascii char.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["mix"] = "Mixes two colors.";
 
 	// Mesh
 	chaiscript::utility::add_class<Mesh>(*INTERPRETED_SCRIPT_MODULE, "Mesh",
@@ -552,6 +626,7 @@ int load_types = [&]
 		{ chaiscript::fun(&Mesh::reload), "reload" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Mesh"] = "Object that contains triangle data.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["reload"] = "Reloads the entity component.";
 
 	// Texture
 	chaiscript::utility::add_class<Texture>(*INTERPRETED_SCRIPT_MODULE, "Texture",
@@ -568,7 +643,13 @@ int load_types = [&]
 		{ chaiscript::fun(&Texture::create_access_view), "create_access_view" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Texture"] = "Object that contains pixel data.";
-	
+	INTERPRETED_SCRIPT_IDENTIFIERS["load_as_2D"] = "Reloads the texture as 2D.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["load_as_cube"] = "Reloads the texture as a cube map.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["create_target_view"] = "Creates target view for this texture.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["create_depth_view"] = "Creates depth view for this texture.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["create_shader_view"] = "Creates shader view for this texture.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["create_access_view"] = "Creates access view for this texture.";
+
 	// Material
 	chaiscript::utility::add_class<Material>(*INTERPRETED_SCRIPT_MODULE, "Material",
 	{},
@@ -619,6 +700,22 @@ int load_types = [&]
 		{ chaiscript::fun(&Entity::angular), "angular" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Entity"] = "Base entity that's a part of a scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["model_matrix"] = "Returns the model matrix of entity.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["collider_matrix"] = "Returns the collider matrix of entity.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_rotation"] = "Sets the entity rotation.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["rotation"] = "Returns entity rotation.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_position"] = "Sets the entity position.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["position"] = "Returns the entity position.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_dynamic"] = "Changes the dynamic state of entity.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["is_dynamic"] = "Returns the dynamic state of entity.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_gravity"] = "Sets the gravity state.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["has_gravity"] = "Returns the gravity state.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_mass"] = "Sets the mass of entity.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["mass"] = "Returns the mass of entity.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_velocity"] = "Sets the directional velocity of entity.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["velocity"] = "Returns the directional velocity of entity.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_angular"] = "Sets the angular velocity of entity.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["angular"] = "Returns the angular velocity of entity.";
 
 	// Camera
 	chaiscript::utility::add_class<Camera>(*INTERPRETED_SCRIPT_MODULE, "Camera",
@@ -657,6 +754,22 @@ int load_types = [&]
 		{ chaiscript::fun(&Camera::camera_matrix), "camera_matrix" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Camera"] = "Entity that has a view of the scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["update_aspect_ratio"] = "Sets the camera's aspect ratio.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_forward"] = "Sets the normalized forward vector of camera.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["forward"] = "Returns the normalized forward vector of camera.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_up"] = "Sets the normalized up vector of camera.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["up"] = "Returns the normalized up vector of camera.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["right"] = "Returns the normalized right vector of camera.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["move_forward"] = "Moves the camera forward.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["move_back"] = "Moves the camera back.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["move_right"] = "Moves the camera right.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["move_left"] = "Moves the camera left.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["move_up"] = "Moves the camera up.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["move_down"] = "Moves the camera down.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["rotate"] = "Handles the camera rotation with a mouse.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["view_matrix"] = "Returns the camera's view matrix.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["projection_matrix"] = "Returns the camera's projection matrix.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["camera_matrix"] = "Returns the camera's matrix.";
 
 	// Light
 	chaiscript::utility::add_class<Light>(*INTERPRETED_SCRIPT_MODULE, "Light",
@@ -665,6 +778,7 @@ int load_types = [&]
 		{ chaiscript::fun(&Light::light_at_point), "light_at_point" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Light"] = "Base class of every light class.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["light_at_point"] = "Returns the lights intensity at some 3D point.";
 
 	// Ambient light
 	chaiscript::utility::add_class<AmbientLight>(*INTERPRETED_SCRIPT_MODULE, "AmbientLight",
@@ -672,8 +786,6 @@ int load_types = [&]
 	{
 		{ chaiscript::fun(&AmbientLight::color), "color" },
 		{ chaiscript::fun(&AmbientLight::intensity), "intensity" },
-
-		{ chaiscript::fun(&AmbientLight::light_at_point), "light_at_point" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["AmbientLight"] = "Non directional light at shines at all points.";
 
@@ -681,10 +793,7 @@ int load_types = [&]
 	chaiscript::utility::add_class<PointLight>(*INTERPRETED_SCRIPT_MODULE, "PointLight",
 	{},
 	{
-		{ chaiscript::fun(&PointLight::position), "position" },
 		{ chaiscript::fun(&PointLight::color), "color" },
-
-		{ chaiscript::fun(&PointLight::light_at_point), "light_at_point" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["PointLight"] = "Light that shines in all directions.";
 
@@ -695,8 +804,6 @@ int load_types = [&]
 		{ chaiscript::fun(&DirectionalLight::point_size), "point_size" },
 		{ chaiscript::fun(&DirectionalLight::color), "color" },
 
-		{ chaiscript::fun(&DirectionalLight::light_at_point), "light_at_point" },
-
 		{ chaiscript::fun(&DirectionalLight::map_resolution), "map_resolution" },
 
 		{ chaiscript::fun(&DirectionalLight::set_direction), "set_direction" },
@@ -705,6 +812,8 @@ int load_types = [&]
 		{ chaiscript::fun(&DirectionalLight::light_matrix), "light_matrix" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["DirectionalLight"] = "Light that shines in a single direction and is infinitely far away.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["map_resolution"] = "Returns the shadow map resolution of directional light.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["light_matrix"] = "Returns the light matrix.";
 
 	// Scene
 	chaiscript::utility::add_class<Scene>(*INTERPRETED_SCRIPT_MODULE, "Scene",
@@ -754,6 +863,35 @@ int load_types = [&]
 		{ chaiscript::fun<DirectionalLight*>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Scene"] = "Collection of meshes, textures, materials, scripts and entities.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["new_mesh"] = "Creates a new mesh in scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["new_texture"] = "Creates a new texture in scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["new_material"] = "Creates a new material in scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["new_entity"] = "Creates a new entity in scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_mesh"] = "Returns a scene mesh.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_texture"] = "Returns a scene texture.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_material"] = "Returns a scene material.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_entity"] = "Returns a scene entity.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["remove_mesh"] = "Removes a mesh from scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["remove_texture"] = "Removes a texture from scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["remove_material"] = "Removes a material from scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["remove_entity"] = "Removes an entity from scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["contains_mesh"] = "Returns true if scene contains mesh.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["contains_texture"] = "Returns true if scene contains texture.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["contains_material"] = "Returns true if scene contains material.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["contains_entity"] = "Returns true if scene contains entity.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["mesh_count"] = "Returns the integer count of meshes in scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["texture_count"] = "Returns the integer count of texture in scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["material_count"] = "Returns the integer count of materials in scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["entity_count"] = "Returns the integer count of entities in scene.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_all_meshes"] = "Returns a map of all scene meshes.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_all_textures"] = "Returns a map of all scene textures.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_all_materials"] = "Returns a map of all scene materials.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_all_entities"] = "Returns a map of all scene entities.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_camera"] = "Returns a scene camera.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_light"] = "Returns a scene light.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_ambient_light"] = "Returns a scene ambient light.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_point_light"] = "Returns a scene point light.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["get_directional_light"] = "Returns a scene directional light.";
 
 	// Key
 	chaiscript::utility::add_class<kl::Key>(*INTERPRETED_SCRIPT_MODULE, "Key",
@@ -762,6 +900,7 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Key::is_down), "is_down" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Key"] = "Class representing a single keyboard or a mouse button.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["is_down"] = "Returns the down state of key.";
 
 	// Keyboard
 	chaiscript::utility::add_class<kl::Keyboard>(*INTERPRETED_SCRIPT_MODULE, "Keyboard",
@@ -859,6 +998,10 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Mouse::scroll), "scroll" },
 	});
 	INTERPRETED_SCRIPT_IDENTIFIERS["Mouse"] = "Class representing a physical mouse.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["set_hidden"] = "Sets the mouse hidden state.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["is_hidden"] = "Returns the mouse hidden state.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["normalized_position"] = "Returns the normalized position.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["scroll"] = "Returns the mouse scroll value.";
 
 	return 0;
 }();
@@ -963,6 +1106,9 @@ int load_functions = [&]
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::translation), "Float3x3_translation");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::rotation), "Float3x3_rotation");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::scaling), "Float3x3_scaling");
+	INTERPRETED_SCRIPT_IDENTIFIERS["Float3x3_translation"] = "Creates a 3x3 translation matrix.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["Float3x3_rotation"] = "Creates a 3x3 rotation matrix.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["Float3x3_scaling"] = "Creates a 3x3 scaling matrix.";
 
 	// Float4x4
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::translation), "Float4x4_translation");
@@ -971,32 +1117,56 @@ int load_functions = [&]
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::look_at), "Float4x4_look_at");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::perspective), "Float4x4_perspective");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::orthographic), "Float4x4_orthographic");
+	INTERPRETED_SCRIPT_IDENTIFIERS["Float4x4_translation"] = "Creates a 4x4 translation matrix.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["Float4x4_rotation"] = "Creates a 4x4 rotation matrix.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["Float4x4_scaling"] = "Creates a 4x4 scaling matrix.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["Float4x4_look_at"] = "Creates a 4x4 look at matrix.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["Float4x4_perspective"] = "Creates a 4x4 perspective matrix.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["Float4x4_orthographic"] = "Creates a 4x4 orthographic matrix.";
 
 	// Math
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::sin_deg), "sin_deg");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::cos_deg), "cos_deg");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::tan_deg), "tan_deg");
+	INTERPRETED_SCRIPT_IDENTIFIERS["sin_deg"] = "Returns sin of the given angle in degrees.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["cos_deg"] = "Returns cos of the given angle in degrees.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["tan_deg"] = "Returns tan of the given angle in degrees.";
 
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::asin_deg), "asin_deg");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::acos_deg), "acos_deg");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::atan_deg), "atan_deg");
+	INTERPRETED_SCRIPT_IDENTIFIERS["asin_deg"] = "Returns angle in degrees of the given sin.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["acos_deg"] = "Returns angle in degrees of the given cos.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["atan_deg"] = "Returns angle in degrees of the given tan.";
 
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::calc_ndc), "calc_ndc");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::calc_ndc_ar), "calc_ndc_ar");
+	INTERPRETED_SCRIPT_IDENTIFIERS["calc_ndc"] = "Converts coorinates into ndc.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["calc_ndc_ar"] = "Converts coorinates into ndc and applies aspect ratio.";
 
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::line_x), "line_x");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::line_y), "line_y");
+	INTERPRETED_SCRIPT_IDENTIFIERS["line_x"] = "Calculates line x.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["line_y"] = "Calculates line y.";
 
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::wrap), "wrap");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::unwrap), "unwrap");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::clamp), "clamp");
+	INTERPRETED_SCRIPT_IDENTIFIERS["wrap"] = "Wraps the given value to the range [0, 1].";
+	INTERPRETED_SCRIPT_IDENTIFIERS["unwrap"] = "Unwraps the given value to the defined range.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["clamp"] = "Clamps the given value between the given min and max.";
 
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::to_quaternion), "to_quaternion");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun(&kl::to_euler), "to_euler");
+	INTERPRETED_SCRIPT_IDENTIFIERS["to_quaternion"] = "Converts the given euler angles to a quaternion.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["to_euler"] = "Converts the given quaternion to euler angles.";
 
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex, const kl::Complex&>(&kl::abs), "abs");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex, const kl::Complex&>(&kl::normalize), "normalize");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex, const kl::Complex&>(&kl::inverse), "inverse");
+	INTERPRETED_SCRIPT_IDENTIFIERS["abs"] = "Returns the absolute value.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["normalize"] = "Normalizes the given vector.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["inverse"] = "Returns the inverse of the given math object.";
 
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion, const kl::Quaternion&>(&kl::abs), "abs");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion, const kl::Quaternion&>(&kl::normalize), "normalize");
@@ -1010,6 +1180,10 @@ int load_functions = [&]
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<float, kl::Float2, kl::Float2, bool>(&kl::angle), "angle");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::rotate), "rotate");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::reflect), "reflect");
+	INTERPRETED_SCRIPT_IDENTIFIERS["dot"] = "Returns the dot product of two vectors.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["angle"] = "Returns the angle in degrees between two vectors.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["rotate"] = "Returns the rotated vector.";
+	INTERPRETED_SCRIPT_IDENTIFIERS["reflect"] = "Returns the reflected vector.";
 
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::abs), "abs");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::normalize), "normalize");
@@ -1018,6 +1192,7 @@ int load_functions = [&]
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::rotate), "rotate");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::reflect), "reflect");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::cross), "cross");
+	INTERPRETED_SCRIPT_IDENTIFIERS["cross"] = "Returns the cross product of two vectors.";
 
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4, const kl::Float4&>(&kl::abs), "abs");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4, const kl::Float4&>(&kl::normalize), "normalize");
@@ -1027,6 +1202,7 @@ int load_functions = [&]
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::abs), "abs");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::inverse), "inverse");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::transpose), "transpose");
+	INTERPRETED_SCRIPT_IDENTIFIERS["transpose"] = "Returns the transposed matrix.";
 
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3x3, const kl::Float3x3&>(&kl::abs), "abs");
 	INTERPRETED_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3x3, const kl::Float3x3&>(&kl::inverse), "inverse");
