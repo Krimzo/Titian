@@ -4,7 +4,7 @@
 
 
 namespace kl {
-    inline const int CPU_CORE_COUNT = std::thread::hardware_concurrency();
+    inline const uint32_t CPU_CORE_COUNT = std::thread::hardware_concurrency();
 }
 
 namespace kl {

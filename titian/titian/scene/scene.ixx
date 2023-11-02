@@ -32,7 +32,7 @@ export namespace titian {
         Scene(kl::GPU* gpu)
             : m_gpu(gpu)
         {
-            m_dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
+            m_dispatcher = physx::PxDefaultCpuDispatcherCreate(kl::CPU_CORE_COUNT / 4);
             kl::assert(m_dispatcher, "Failed to create physics dispatcher");
 
             m_physics = PxCreatePhysics(PX_VERSION, *m_foundation, physx::PxTolerancesScale());
