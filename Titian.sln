@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klib", "klib\klib.vcxproj", "{5B9896B1-803A-45DD-A262-8055D73C6DD0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "titian", "titian\titian.vcxproj", "{0E354A3A-110E-4BAD-8E77-BF1A524D31B5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "physx", "physx\physx.vcxproj", "{A885895C-A34E-4BE4-9FC9-BF25C60EDCBA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klibrary", "klibrary\klibrary.vcxproj", "{5B9896B1-803A-45DD-A262-8055D73C6DD0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "imgui\imgui.vcxproj", "{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "titian", "titian\titian.vcxproj", "{0E354A3A-110E-4BAD-8E77-BF1A524D31B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +19,6 @@ Global
 		{5B9896B1-803A-45DD-A262-8055D73C6DD0}.Debug|x64.Build.0 = Debug|x64
 		{5B9896B1-803A-45DD-A262-8055D73C6DD0}.Release|x64.ActiveCfg = Release|x64
 		{5B9896B1-803A-45DD-A262-8055D73C6DD0}.Release|x64.Build.0 = Release|x64
-		{A885895C-A34E-4BE4-9FC9-BF25C60EDCBA}.Debug|x64.ActiveCfg = Debug|x64
-		{A885895C-A34E-4BE4-9FC9-BF25C60EDCBA}.Debug|x64.Build.0 = Debug|x64
-		{A885895C-A34E-4BE4-9FC9-BF25C60EDCBA}.Release|x64.ActiveCfg = Release|x64
-		{A885895C-A34E-4BE4-9FC9-BF25C60EDCBA}.Release|x64.Build.0 = Release|x64
 		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Debug|x64.ActiveCfg = Debug|x64
 		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Debug|x64.Build.0 = Debug|x64
 		{737A8ABD-A62F-4E28-8DA3-D24A40D276BD}.Release|x64.ActiveCfg = Release|x64

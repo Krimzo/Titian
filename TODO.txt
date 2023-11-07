@@ -1,3 +1,6 @@
+# project
+1. switch to using squirrel
+
 # editor features
 1. implement exposing of global vars in interpreted scripts
 2. undo and redo

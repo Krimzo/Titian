@@ -577,7 +577,7 @@ namespace chaiscript
                 const auto children = t_node.get_children();
                 std::transform(children.begin(), children.end(),
                                std::back_inserter(retval),
-                               &chaiscript::var<const std::reference_wrapper<chaiscript::AST_Node> &>);
+                               &chaiscript::var<const std::reference_wrapper<chaiscript::AST_Node>&>);
                 return retval;
               }), "children"}
             }
