@@ -46,7 +46,7 @@ void titian::GUISectionViewport::render_gui()
             }
             else {
                 uint32_t counter = 0;
-                for (auto& [name, entity] : *scene) {
+                for (const auto& [name, _] : *scene) {
                     if (++counter == entity_id) {
                         editor_layer->selected_entity = name;
                         break;

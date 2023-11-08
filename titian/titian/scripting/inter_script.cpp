@@ -1,6 +1,7 @@
 #include "main.h"
 
 
+/* Inter script */
 titian::InterScript::InterScript()
 	: Script(Type::INTER)
 {
@@ -76,7 +77,7 @@ void titian::InterScript::call_update()
 	}
 }
 
-// Statically bind script data
+/* SCRIPT BINDS */
 int load_types = [&]
 {
 	using namespace titian;

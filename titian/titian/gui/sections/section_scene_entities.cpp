@@ -31,11 +31,11 @@ void titian::GUISectionSceneEntities::render_gui()
 					scene->add_entity(name, entity);
 					ImGui::CloseCurrentPopup();
 				}
-				//if (ImGui::MenuItem("New Point Light") && !scene->contains_entity(name)) {
-				//	kl::Object entity = scene->new_casted<PointLight>(false);
-				//	scene->add_entity(name, entity);
-				//	ImGui::CloseCurrentPopup();
-				//}
+				if (ImGui::MenuItem("New Point Light") && !scene->contains_entity(name)) {
+					kl::Object entity = scene->new_casted<PointLight>(false);
+					scene->add_entity(name, entity);
+					ImGui::CloseCurrentPopup();
+				}
 				if (ImGui::MenuItem("New Directional Light") && !scene->contains_entity(name)) {
 					kl::Object entity = scene->new_casted<DirectionalLight>(false, gpu, 4096);
 					scene->add_entity(name, entity);
