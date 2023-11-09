@@ -87,14 +87,14 @@ void titian::GUISectionScriptEditor::render_gui()
 		if (script_path) {
 			const std::filesystem::path path{ script_path.value() };
 			const std::string extension = path.extension().string();
-			if (extension == ".chai") {
-				kl::Object new_script = new InterScript();
+			if (extension == FILE_EXTENSION_NATIVE_SCRIPT) {
+				kl::Object new_script = new NativeScript();
 				new_script->path = path.string();
 				new_script->reload();
 				scene->scripts[path.stem().string()] = new_script;
 			}
-			else if (extension == ".dll") {
-				kl::Object new_script = new NativeScript();
+			else if (extension == FILE_EXTENSION_INTER_SCRIPT) {
+				kl::Object new_script = new InterScript();
 				new_script->path = path.string();
 				new_script->reload();
 				scene->scripts[path.stem().string()] = new_script;

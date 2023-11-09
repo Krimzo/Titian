@@ -381,6 +381,7 @@
     <ClCompile Include="titian\gui\sections\section_viewport.cpp" />
     <ClInclude Include="titian\gui\sections\section_viewport.h" />
     <ClInclude Include="titian\gui\utility\gui_helper.h" />
+    <ClInclude Include="titian\gui\utility\gui_types.h" />
     <ClInclude Include="titian\layer\layer.h" />
     <ClInclude Include="titian\layer\layer_stack.h" />
     <ClCompile Include="titian\layer\layer.cpp" />

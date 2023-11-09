@@ -1,6 +1,6 @@
 #pragma once
 
-#include "klibrary.h"
+#include "gui/utility/gui_types.h"
 
 
 namespace titian::_priv {

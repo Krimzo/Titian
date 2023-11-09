@@ -53,10 +53,9 @@ void titian::InterScript::reload()
 
 void titian::InterScript::call_start()
 {
-	Scene* scene = &GameLayer::BOUND_SELF->scene;
-	if (m_start_function && scene) {
+	if (m_start_function) {
 		try {
-			m_start_function(scene);
+			m_start_function(&GameLayer::BOUND_SELF->scene);
 		}
 		catch (std::exception& e) {
 			Logger::log(e.what());
@@ -66,10 +65,9 @@ void titian::InterScript::call_start()
 
 void titian::InterScript::call_update()
 {
-	Scene* scene = &GameLayer::BOUND_SELF->scene;
-	if (m_update_function && scene) {
+	if (m_update_function) {
 		try {
-			m_update_function(scene);
+			m_update_function(&GameLayer::BOUND_SELF->scene);
 		}
 		catch (std::exception& e) {
 			Logger::log(e.what());

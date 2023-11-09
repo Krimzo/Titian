@@ -13,9 +13,9 @@ namespace kl {
         T* m_instance = nullptr;
         std::atomic<uint64_t>* m_count = nullptr;
 
-        uint64_t increase_count() const
+        void increase_count() const
         {
-            return m_count ? (*m_count += 1) : 0;
+            if (m_count) { *m_count += 1; }
         }
 
         uint64_t decrease_count() const

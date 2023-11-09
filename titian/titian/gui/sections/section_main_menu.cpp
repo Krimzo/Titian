@@ -17,7 +17,7 @@ void titian::GUISectionMainMenu::render_gui()
             if (std::optional opt_name = gui_input_waited("##SaveSceneNameInput", {})) {
                 const std::string& name = opt_name.value();
                 if (!name.empty()) {
-                    const std::string save_path = kl::format(opt_name.value(), ".titian");
+                    const std::string save_path = kl::format(opt_name.value(), FILE_EXTENSION_SCENE);
                     if (Serializer serializer = { save_path, true }) {
                         scene->serialize(&serializer, nullptr);
                     }

@@ -46,17 +46,15 @@ void titian::NativeScript::reload()
 
 void titian::NativeScript::call_start()
 {
-	Scene* scene = &GameLayer::BOUND_SELF->scene;
-	if (m_start_function && scene) {
-		m_start_function(scene);
+	if (m_start_function) {
+		m_start_function(&GameLayer::BOUND_SELF->scene);
 	}
 }
 
 void titian::NativeScript::call_update()
 {
-	Scene* scene = &GameLayer::BOUND_SELF->scene;
-	if (m_update_function && scene) {
-		m_update_function(scene);
+	if (m_update_function) {
+		m_update_function(&GameLayer::BOUND_SELF->scene);
 	}
 }
 
