@@ -13,7 +13,6 @@ namespace titian {
 		using Function = Return(__stdcall*)(Args...);
 
 		std::vector<byte> data = {};
-		std::string path = {};
 
 		NativeScript();
 

@@ -121,6 +121,8 @@ void titian::GUISectionScriptEditor::render_gui()
 		ImGui::EndChild();
 
 		ImGui::PopStyleVar(2);
+
+		show_script_properties(script);
 	}
 	ImGui::End();
 }
@@ -128,7 +130,7 @@ void titian::GUISectionScriptEditor::render_gui()
 void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 {
 	const std::string filter = gui_input_continuous("Search###ScriptEditor");
-	for (const auto& [script_name, script] : scene->scripts) {
+	for (auto& [script_name, script] : scene->scripts) {
 		if (!filter.empty() && script_name.find(filter) == -1) {
 			continue;
 		}
@@ -171,6 +173,15 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 				}
 			}
 
+			if (ImGui::Button("Reload", { -1.0f, 0.0f })) {
+				script->reload();
+				if (InterScript* inter_script = dynamic_cast<InterScript*>(&script)) {
+					m_text_editor.SetText(inter_script->source);
+				}
+				should_break = true;
+				ImGui::CloseCurrentPopup();
+			}
+
 			if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
 				if (this->selected_script == script_name) {
 					this->selected_script = "/";
@@ -203,4 +214,37 @@ void titian::GUISectionScriptEditor::edit_inter_script(InterScript* script)
 	script->source = m_text_editor.GetText();
 
 	ImGui::PopFont();
+}
+
+void titian::GUISectionScriptEditor::show_script_properties(Script* script)
+{
+	if (ImGui::Begin("Script Properties") && script) {
+		ImGui::Text("Info");
+
+		ImGui::Text("Name: ");
+		ImGui::SameLine();
+		gui_colored_text(selected_script, gui_layer->special_color);
+
+		ImGui::Text("Type: ");
+		ImGui::SameLine();
+		if (NativeScript* native_script = dynamic_cast<NativeScript*>(script)) {
+			ImGui::Text("NATIVE");
+		}
+		else if (InterScript* inter_script = dynamic_cast<InterScript*>(script)) {
+			ImGui::Text("INTER");
+		}
+
+		std::string buffer = script->path;
+		buffer.resize(150);
+		if (ImGui::InputText("Path", buffer.data(), buffer.size())) {
+			script->path.clear();
+			for (const char value : buffer) {
+				if (!value) {
+					break;
+				}
+				script->path.push_back(value);
+			}
+		}
+	}
+	ImGui::End();
 }

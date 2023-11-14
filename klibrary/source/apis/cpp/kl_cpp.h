@@ -33,6 +33,7 @@
 #include <mutex>
 #include <atomic>
 #include <execution>
+#include <future>
 
 // Old-C
 #include <ctime>

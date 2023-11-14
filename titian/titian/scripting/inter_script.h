@@ -35,7 +35,6 @@ namespace titian {
 	{
 	public:
 		std::string source = {};
-		std::string path = {};
 
 		InterScript();
 

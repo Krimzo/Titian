@@ -30,5 +30,7 @@ namespace titian {
 
 		void edit_native_script(NativeScript* script);
 		void edit_inter_script(InterScript* script);
+
+		void show_script_properties(Script* script);
 	};
 }

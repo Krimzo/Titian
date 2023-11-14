@@ -324,11 +324,12 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
             for (int i = m_starting_vertex_index; i < (m_starting_vertex_index + m_vertex_display_count) && i < vertex_count; i++) {
                 kl::Vertex& vertex = mesh->data_buffer[i];
 
-                if (ImGui::Selectable(kl::format(i, ". Vertex").c_str(), m_selected_vertex_index == i)) {
+                const std::string vertex_name = kl::format(i, ". Vertex");
+                if (ImGui::Selectable(vertex_name.c_str(), m_selected_vertex_index == i)) {
                     m_selected_vertex_index = (m_selected_vertex_index != i) ? i : -1;
                 }
 
-                if (ImGui::BeginPopupContextItem()) {
+                if (ImGui::BeginPopupContextItem(vertex_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
                     if (ImGui::Button("Delete")) {
                         mesh->data_buffer.erase(mesh->data_buffer.begin() + i);
                         mesh->reload();

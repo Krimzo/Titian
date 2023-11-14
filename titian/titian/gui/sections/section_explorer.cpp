@@ -112,38 +112,6 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
     const float text_height = ImGui::CalcTextSize(path.c_str()).y;
 
     if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
-        if (ImGui::BeginPopupContextItem()) {
-            std::error_code error = {};
-            if (std::optional opt_name = gui_input_waited("##RenameFileInput", file.filename().string())) {
-                const std::string& name = opt_name.value();
-                if (!name.empty()) {
-                    std::filesystem::path new_file = file;
-                    new_file.replace_filename(opt_name.value());
-
-                    std::filesystem::rename(file, new_file, error);
-                    if (error) {
-                        Logger::log("Failed to rename file ", file, " to ", new_file);
-                    }
-                    else {
-                        Logger::log("Renamed file ", file, " to ", new_file);
-                    }
-                }
-            }
-            ImGui::Text(kl::format(std::setprecision(2), std::filesystem::file_size(file, error) / 1048576.0f, " mb").c_str());
-
-            if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
-                std::filesystem::remove(file, error);
-                if (error) {
-                    Logger::log("Failed to delete file ", file);
-                }
-                else {
-                    Logger::log("Deleted file ", file);
-                }
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::EndPopup();
-        }
-
         const ImVec2 cursor_pos = ImGui::GetCursorPos();
         if (ImGui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
             ShellExecuteA(nullptr, nullptr, path.c_str(), nullptr, nullptr, 5);
@@ -156,6 +124,38 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
     ImGui::EndChild();
 
     ImGui::PopStyleVar(2);
+
+    if (ImGui::BeginPopupContextItem(file.string().c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+        std::error_code error = {};
+        if (std::optional opt_name = gui_input_waited("##RenameFileInput", file.filename().string())) {
+            const std::string& name = opt_name.value();
+            if (!name.empty()) {
+                std::filesystem::path new_file = file;
+                new_file.replace_filename(opt_name.value());
+
+                std::filesystem::rename(file, new_file, error);
+                if (error) {
+                    Logger::log("Failed to rename file ", file, " to ", new_file);
+                }
+                else {
+                    Logger::log("Renamed file ", file, " to ", new_file);
+                }
+            }
+        }
+        ImGui::Text(kl::format(std::setprecision(2), std::filesystem::file_size(file, error) / 1048576.0f, " mb").c_str());
+
+        if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+            std::filesystem::remove(file, error);
+            if (error) {
+                Logger::log("Failed to delete file ", file);
+            }
+            else {
+                Logger::log("Deleted file ", file);
+            }
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
 }
 
 void titian::GUISectionExplorer::handle_directory_entry(const std::filesystem::path& directory, const bool is_parent_dir)

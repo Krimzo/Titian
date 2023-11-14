@@ -13,6 +13,8 @@ namespace titian {
 			INTER,
 		} const type = {};
 
+		std::string path = {};
+
 		Script(Type type);
 
 		Script(const Script&) = delete;

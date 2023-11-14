@@ -12,7 +12,6 @@ void titian::NativeScript::serialize(Serializer* serializer, const void* helper_
 	const uint64_t size = data.size();
 	serializer->write_object<uint64_t>(size);
 	serializer->write_array<byte>(data.data(), size);
-	serializer->write_string(path);
 }
 
 void titian::NativeScript::deserialize(const Serializer* serializer, const void* helper_data)
@@ -22,7 +21,6 @@ void titian::NativeScript::deserialize(const Serializer* serializer, const void*
 	const uint64_t size = serializer->read_object<uint64_t>();
 	data.resize(size);
 	serializer->read_array(data.data(), size);
-	serializer->read_string(path);
 	this->reload();
 }
 

@@ -25,9 +25,9 @@ void sandbox::SandboxPieceSpheres::setup_self()
 
             // Material
             kl::Object material = new Material();
-            material->color = kl::Float4{ 1.0f };
-            material->reflection_factor = (float)sphere_counter / (size * size);
-            material->refraction_factor = (float)(size * size - sphere_counter) / (size * size);
+            material->color = kl::Float4{1.0f};
+            material->reflection_factor = (float) sphere_counter / (size * size);
+            material->refraction_factor = (float) (size * size - sphere_counter) / (size * size);
             material->refraction_index = 1.0f / 1.52f;
             scene->materials[material_name] = material;
 

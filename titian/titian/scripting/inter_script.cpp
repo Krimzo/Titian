@@ -5,7 +5,7 @@
 titian::InterScript::InterScript()
 	: Script(Type::INTER)
 {
-	this->source = "def on_start(scene) {\n\t\n}\n\ndef on_update(scene) {\n\t\n}\n";
+	this->source = "def on_start(scene)\n{\n}\n\ndef on_update(scene)\n{\n}\n";
 }
 
 void titian::InterScript::serialize(Serializer* serializer, const void* helper_data) const
@@ -13,7 +13,6 @@ void titian::InterScript::serialize(Serializer* serializer, const void* helper_d
 	Script::serialize(serializer, helper_data);
 
 	serializer->write_string(source);
-	serializer->write_string(path);
 }
 
 void titian::InterScript::deserialize(const Serializer* serializer, const void* helper_data)
@@ -21,7 +20,6 @@ void titian::InterScript::deserialize(const Serializer* serializer, const void* 
 	Script::deserialize(serializer, helper_data);
 
 	serializer->read_string(source);
-	serializer->read_string(path);
 	this->reload();
 }
 
