@@ -1,5 +1,8 @@
-# project
-1. switch to using squirrel
+# material features
+1. implement a better text editor
+2. implement the new editor in the material editor page
+3. add ability for materials to have custom shader parts (vertex and pixel shaders)
+4. update serialization for materials and updates the serialization version
 
 # editor features
 1. implement exposing of global vars in interpreted scripts
