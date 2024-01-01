@@ -30,7 +30,7 @@ VS_OUT v_shader(const float3 position : KL_Position, const float2 textur : KL_Te
     for (int i = 0; i < SHADOW_CASCADE_COUNT; i++) {
         data.light_coords[i] = mul(float4(position, 1.0f), mul(W, LIGHT_VPs[i]));
         data.light_coords[i].xy *= float2(0.5f, -0.5f);
-        data.light_coords[i].xy += float2(0.5f, 0.5f) * data.light_coords[i].w;
+        data.light_coords[i].xy += 0.5f;
     }
     return data;
 }
@@ -102,16 +102,6 @@ float get_pixel_reflectivity(const float reflectivity, const float2 texture_coor
     return 1.0f - roughness;
 }
 
-VS_OUT compute_light_transforms(VS_OUT data)
-{
-    [unroll]
-    for (int i = 0; i < SHADOW_CASCADE_COUNT; i++) {
-        data.light_coords[i] /= data.light_coords[i].w;
-        data.light_coords[i].z = min(data.light_coords[i].z, 1);
-    }
-    return data;
-}
-
 float get_pcf_shadow(const Texture2D shadow_map, const float3 light_coords, const int half_kernel_size)
 {
     static const float2 adder = 0.25f;
@@ -159,7 +149,6 @@ PS_OUT p_shader(VS_OUT data)
     data.normal = normalize(data.normal);
     const float3 pixel_normal = get_pixel_normal(data.world, data.normal, data.textur);
     const float pixel_reflectivity = get_pixel_reflectivity(OBJECT_MATERIAL.y, data.textur);
-    data = compute_light_transforms(data);
 
     // Reflection calculations
     const float3 camera_pixel_direction = normalize(data.world - CAMERA_INFO.xyz);
