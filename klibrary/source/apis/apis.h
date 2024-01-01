@@ -9,6 +9,7 @@
 #include "apis/windows/kl_directx.h"
 
 // External
+#include "apis/external/kl_dx12.h"
 #include "apis/external/kl_physx.h"
 #include "apis/external/kl_imgui.h"
 

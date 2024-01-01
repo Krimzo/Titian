@@ -1,23 +1,25 @@
 #include "klibrary.h"
 
 
+using kl::ComPtr;
+
 // Utility
-static void configure_reader(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
+static void configure_reader(const ComPtr<IMFSourceReader>& reader)
 {
-    Microsoft::WRL::ComPtr<IMFMediaType> media_type = nullptr;
+    ComPtr<IMFMediaType> media_type = nullptr;
     reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &media_type) >> kl::hr_checker;
 
     GUID major_type = {};
     media_type->GetGUID(MF_MT_MAJOR_TYPE, &major_type) >> kl::hr_checker;
 
-    Microsoft::WRL::ComPtr<IMFMediaType> new_type = nullptr;
+    ComPtr<IMFMediaType> new_type = nullptr;
     MFCreateMediaType(&new_type) >> kl::hr_checker;
     new_type->SetGUID(MF_MT_MAJOR_TYPE, major_type) >> kl::hr_checker;
     new_type->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32) >> kl::hr_checker;
     reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, new_type.Get()) >> kl::hr_checker;
 }
 
-static uint64_t video_byte_size(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
+static uint64_t video_byte_size(const ComPtr<IMFSourceReader>& reader)
 {
     PROPVARIANT variant = {};
     if (FAILED(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &variant))) {
@@ -30,7 +32,7 @@ static uint64_t video_byte_size(const Microsoft::WRL::ComPtr<IMFSourceReader>& r
     return byte_size;
 }
 
-static int64_t video_duration_100ns(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
+static int64_t video_duration_100ns(const ComPtr<IMFSourceReader>& reader)
 {
     PROPVARIANT variant = {};
     if (FAILED(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &variant))) {
@@ -43,9 +45,9 @@ static int64_t video_duration_100ns(const Microsoft::WRL::ComPtr<IMFSourceReader
     return duration;
 }
 
-static kl::Int2 video_frame_size(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
+static kl::Int2 video_frame_size(const ComPtr<IMFSourceReader>& reader)
 {
-    Microsoft::WRL::ComPtr<IMFMediaType> current_type = nullptr;
+    ComPtr<IMFMediaType> current_type = nullptr;
     reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, &current_type);
     if (!current_type) {
         return {};
@@ -56,9 +58,9 @@ static kl::Int2 video_frame_size(const Microsoft::WRL::ComPtr<IMFSourceReader>& 
     return frame_size;
 }
 
-static float video_fps(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
+static float video_fps(const ComPtr<IMFSourceReader>& reader)
 {
-    Microsoft::WRL::ComPtr<IMFMediaType> current_type = nullptr;
+    ComPtr<IMFMediaType> current_type = nullptr;
     reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, &current_type);
     if (!current_type) {
         return 0.0f;
@@ -74,7 +76,7 @@ static float video_fps(const Microsoft::WRL::ComPtr<IMFSourceReader>& reader)
 kl::VideoReader::VideoReader(const std::string& filepath)
 {
     // Init
-    Microsoft::WRL::ComPtr<IMFAttributes> attributes = nullptr;
+    ComPtr<IMFAttributes> attributes = nullptr;
     MFCreateAttributes(&attributes, 1) >> hr_checker;
 
     attributes->SetUINT32(MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, true) >> hr_checker;
@@ -130,14 +132,14 @@ bool kl::VideoReader::next_frame(Image& out) const
     // Read sample
     DWORD flags = NULL;
     LONGLONG time_stamp = 0;
-    Microsoft::WRL::ComPtr<IMFSample> sample = nullptr;
+    ComPtr<IMFSample> sample = nullptr;
 
     if (FAILED(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
         return false;
     }
 
     // Convert to array
-    Microsoft::WRL::ComPtr<IMFMediaBuffer> media_buffer = nullptr;
+    ComPtr<IMFMediaBuffer> media_buffer = nullptr;
     if (FAILED(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
         return false;
     }

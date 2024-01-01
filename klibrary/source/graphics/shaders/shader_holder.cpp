@@ -29,11 +29,8 @@ kl::ShaderHolder<S>::operator bool() const
 template<typename S>
 void kl::ShaderHolder<S>::update_cbuffer(const void* data, UINT byte_size)
 {
-    // Fix size scaling
-    const UINT size_mod = byte_size % 16;
-    if (size_mod != 0) {
-        byte_size += (16 - size_mod);
-    }
+	// Verify alignment
+    kl::assert(byte_size % 16 == 0, "CBuffers must have 16 byte alignment");
 
     // Regenerate buffer if needed
     const UINT buffer_size = cbuffer ? gpu->buffer_size(cbuffer) : 0;

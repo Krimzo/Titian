@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-titian::EditorUnlitPass::EditorUnlitPass(GameLayer* game_layer, EditorLayer* editor_layer, GUILayer* gui_layer)
+titian::EditorPass::EditorPass(GameLayer* game_layer, EditorLayer* editor_layer, GUILayer* gui_layer)
     : RenderPass(game_layer)
 {
     this->editor_layer = editor_layer;
@@ -37,25 +37,25 @@ titian::EditorUnlitPass::EditorUnlitPass(GameLayer* game_layer, EditorLayer* edi
     frustum_mesh = gpu->create_vertex_buffer(frustum_data);
 }
 
-bool titian::EditorUnlitPass::is_renderable() const
+bool titian::EditorPass::is_renderable() const
 {
     const Scene* scene = &game_layer->scene;
     const Entity* entity = &scene->get_entity(editor_layer->selected_entity);
     return static_cast<bool>(entity);
 }
 
-titian::StatePackage titian::EditorUnlitPass::get_state_package()
+titian::StatePackage titian::EditorPass::get_state_package()
 {
     RenderStates* render_states = &gui_layer->render_layer->states;
 
     StatePackage package = {};
     package.raster_state = render_states->raster_states->wireframe;
     package.depth_state = render_states->depth_states->enabled;
-    package.shader_state = render_states->shader_states->unlit_pass;
+    package.shader_state = render_states->shader_states->solid_pass;
     return package;
 }
 
-void titian::EditorUnlitPass::render_self(StatePackage& package)
+void titian::EditorPass::render_self(StatePackage& package)
 {
     kl::GPU* gpu = &game_layer->app_layer->gpu;
     Scene* scene = &game_layer->scene;
@@ -70,24 +70,27 @@ void titian::EditorUnlitPass::render_self(StatePackage& package)
         return;
     }
 
+    struct VS_CB
+    {
+        kl::Float4x4 WVP;
+    };
+    struct PS_CB
+    {
+        kl::Float4 SOLID_COLOR;
+    };
+
     // Collider
     if (Collider* collider = &selected_entity->collider()) {
         const auto& default_meshes = scene->default_meshes;
 
-        struct VSData
-        {
-            kl::Float4x4 wvp_matrix;
-        } vs_data = {};
-        vs_data.wvp_matrix = main_camera->camera_matrix() * selected_entity->collider_matrix();
-
-        struct PSData
-        {
-            kl::Float4 object_color; // (color.r, color.g, color.b, none)
-        } ps_data = {};
-        ps_data.object_color = gui_layer->alternate_color;
-
-        package.shader_state.vertex_shader.update_cbuffer(vs_data);
-        package.shader_state.pixel_shader.update_cbuffer(ps_data);
+        const VS_CB vs_cb{
+            .WVP = main_camera->camera_matrix() * selected_entity->collider_matrix(),
+        };
+        const PS_CB ps_cb{
+            .SOLID_COLOR = gui_layer->alternate_color,
+        };
+        package.shader_state.vertex_shader.update_cbuffer(vs_cb);
+        package.shader_state.pixel_shader.update_cbuffer(ps_cb);
 
         switch (collider->type()) {
         case physx::PxGeometryType::Enum::eBOX:
@@ -112,20 +115,14 @@ void titian::EditorUnlitPass::render_self(StatePackage& package)
 
     // Camera frustum
     if (Camera* selected_camera = dynamic_cast<Camera*>(selected_entity)) {
-        struct VSData
-        {
-            kl::Float4x4 wvp_matrix;
-        } vs_data = {};
-        vs_data.wvp_matrix = main_camera->camera_matrix() * kl::inverse(selected_camera->camera_matrix());
-
-        struct PSData
-        {
-            kl::Float4 object_color; // (color.r, color.g, color.b, none)
-        } ps_data = {};
-        ps_data.object_color = kl::colors::WHITE;
-
-        package.shader_state.vertex_shader.update_cbuffer(vs_data);
-        package.shader_state.pixel_shader.update_cbuffer(ps_data);
+        const VS_CB vs_cb{
+            .WVP = main_camera->camera_matrix() * kl::inverse(selected_camera->camera_matrix()),
+        };
+        const PS_CB ps_cb{
+            .SOLID_COLOR = kl::colors::WHITE,
+        };
+        package.shader_state.vertex_shader.update_cbuffer(vs_cb);
+        package.shader_state.pixel_shader.update_cbuffer(ps_cb);
 
         gpu->draw(frustum_mesh, D3D_PRIMITIVE_TOPOLOGY_LINELIST);
     }

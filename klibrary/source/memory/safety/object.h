@@ -13,30 +13,32 @@ namespace kl {
         T* m_instance = nullptr;
         std::atomic<uint64_t>* m_count = nullptr;
 
-        void increase_count() const
+        inline void increase_count() const
         {
-            if (m_count) { *m_count += 1; }
+            if (m_count) {
+                *m_count += 1;
+            }
         }
 
-        uint64_t decrease_count() const
+        inline uint64_t decrease_count() const
         {
             return m_count ? (*m_count -= 1) : 0;
         }
 
-        void allocate()
+        inline void allocate()
         {
             m_count = new std::atomic<uint64_t>();
             if (!m_count) throw std::runtime_error("Could not allocate memory for reference counter.");
             *m_count = 1;
         }
 
-        void deallocate() const
+        inline void deallocate() const
         {
             if (m_instance) delete m_instance;
             if (m_count) delete m_count;
         }
 
-        void clear()
+        inline void clear()
         {
             m_instance = nullptr;
             m_count = nullptr;

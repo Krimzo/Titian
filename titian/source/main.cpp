@@ -1,6 +1,8 @@
 #include "main.h"
 
 
+static ExeType EXE_TYPE = ExeType::SANDBOX;
+
 int main(const int argc, const char** argv)
 {
 	using namespace sandbox;
@@ -12,23 +14,21 @@ int main(const int argc, const char** argv)
 		kl::console::set_enabled(false);
 	}
 
-	// Default exe type
-	ExeType exe_type = ExeType::SANDBOX;
-
 	// Parse explicit type
 	if (argc >= 2) {
 		try {
-			exe_type = static_cast<ExeType>(std::stoi(argv[1]));
+			EXE_TYPE = static_cast<ExeType>(std::stoi(argv[1]));
 		}
 		catch (std::exception&) {
+			Logger::log("Invalid entry argument. Defaulting to ", EXE_TYPE);
 		}
 	}
 	else {
-		Logger::log("Missing entry argument. Defaulting to ", exe_type);
+		Logger::log("Missing entry argument. Defaulting to ", EXE_TYPE);
 	}
 
 	// Init type
-	switch (exe_type)
+	switch (EXE_TYPE)
 	{
 	case ExeType::SANDBOX:         return sandbox_entry();
 	case ExeType::GAME_OPEN:       return titian_entry(false);

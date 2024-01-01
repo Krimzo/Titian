@@ -151,8 +151,8 @@ kl::Float4x4 kl::Float4x4::scaling(const Float3& scale)
 kl::Float4x4 kl::Float4x4::rotation(const Float3& rotation)
 {
     const float x_rad = rotation.x * TO_RADIANS;
-    const float x_sin = sin(x_rad);
-    const float x_cos = cos(x_rad);
+    const float x_sin = std::sin(x_rad);
+    const float x_cos = std::cos(x_rad);
 
     Float4x4 x_rot = {};
     x_rot[5] = x_cos;
@@ -161,8 +161,8 @@ kl::Float4x4 kl::Float4x4::rotation(const Float3& rotation)
     x_rot[10] = x_cos;
 
     const float y_rad = rotation.y * TO_RADIANS;
-    const float y_sin = sin(y_rad);
-    const float y_cos = cos(y_rad);
+    const float y_sin = std::sin(y_rad);
+    const float y_cos = std::cos(y_rad);
 
     Float4x4 y_rot = {};
     y_rot[0] = y_cos;
@@ -171,8 +171,8 @@ kl::Float4x4 kl::Float4x4::rotation(const Float3& rotation)
     y_rot[10] = y_cos;
 
     const float z_rad = rotation.z * TO_RADIANS;
-    const float z_sin = sin(z_rad);
-    const float z_cos = cos(z_rad);
+    const float z_sin = std::sin(z_rad);
+    const float z_cos = std::cos(z_rad);
 
     Float4x4 z_rot = {};
     z_rot[0] = z_cos;
@@ -216,7 +216,7 @@ kl::Float4x4 kl::Float4x4::look_at(const Float3& position, const Float3& target,
 
 kl::Float4x4 kl::Float4x4::perspective(float field_of_view, float aspect_ratio, float near_plane, float far_plane)
 {
-    const float tan_half = 1.0f / tan(field_of_view * 0.5f * TO_RADIANS);
+    const float tan_half = 1.0f / std::tan(field_of_view * 0.5f * TO_RADIANS);
 
     Float4x4 result = {};
     result[0] = tan_half / aspect_ratio;

@@ -2,10 +2,10 @@
 
 
 // Class
-kl::HashT::HashT()
+kl::Hash::Hash()
 {}
 
-kl::HashT::HashT(const std::string& hash)
+kl::Hash::Hash(const std::string& hash)
 {
     if (hash.size() < 64) {
         return;
@@ -21,17 +21,17 @@ kl::HashT::HashT(const std::string& hash)
     }
 }
 
-uint8_t& kl::HashT::operator[](const size_t index)
+uint8_t& kl::Hash::operator[](const size_t index)
 {
     return buffer[index];
 }
 
-const uint8_t& kl::HashT::operator[](const size_t index) const
+const uint8_t& kl::Hash::operator[](const size_t index) const
 {
     return buffer[index];
 }
 
-bool kl::HashT::operator==(const HashT& other) const
+bool kl::Hash::operator==(const Hash& other) const
 {
     for (uint64_t i = 0; i < 32; i++) {
         if (buffer[i] != other[i]) {
@@ -41,13 +41,13 @@ bool kl::HashT::operator==(const HashT& other) const
     return true;
 }
 
-bool kl::HashT::operator!=(const HashT& other) const
+bool kl::Hash::operator!=(const Hash& other) const
 {
     return !(*this == other);
 }
 
 // Format
-std::ostream& kl::operator<<(std::ostream& stream, const HashT& hash)
+std::ostream& kl::operator<<(std::ostream& stream, const Hash& hash)
 {
     stream << std::hex << std::setfill('0');
     for (auto& value : hash.buffer) {

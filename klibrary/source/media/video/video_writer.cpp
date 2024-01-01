@@ -11,7 +11,7 @@ kl::VideoWriter::VideoWriter(const std::string& filepath, const kl::Int2& frame_
     MFCreateSinkWriterFromURL(converted_path.c_str(), nullptr, nullptr, &m_sink_writer) >> hr_checker;
 
     // Output media type
-    Microsoft::WRL::ComPtr<IMFMediaType> media_type_out = nullptr;
+    ComPtr<IMFMediaType> media_type_out = nullptr;
     MFCreateMediaType(&media_type_out) >> hr_checker;
 
     // Output media type info
@@ -25,7 +25,7 @@ kl::VideoWriter::VideoWriter(const std::string& filepath, const kl::Int2& frame_
     m_sink_writer->AddStream(media_type_out.Get(), &m_stream_index) >> hr_checker;
 
     // Input media type
-    Microsoft::WRL::ComPtr<IMFMediaType> media_type_in = nullptr;
+    ComPtr<IMFMediaType> media_type_in = nullptr;
     MFCreateMediaType(&media_type_in) >> hr_checker;
 
     // Input media type info

@@ -6,15 +6,13 @@
 
 
 namespace titian {
-    class EditorUnlitPass : public RenderPass
+    class OutlinePass : public RenderPass
     {
     public:
         EditorLayer* editor_layer = nullptr;
         GUILayer* gui_layer = nullptr;
 
-        kl::dx::Buffer frustum_mesh = nullptr;
-
-        EditorUnlitPass(GameLayer* game_layer, EditorLayer* editor_layer, GUILayer* gui_layer);
+        OutlinePass(GameLayer* game_layer, EditorLayer* editor_layer, GUILayer* gui_layer);
 
         bool is_renderable() const override;
         StatePackage get_state_package() override;

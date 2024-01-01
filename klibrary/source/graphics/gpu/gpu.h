@@ -1,12 +1,12 @@
 #pragma once
 
-#include "graphics/device_holder/device_holder.h"
-#include "graphics/context_holder/context_holder.h"
+#include "graphics/gpu/device_holder.h"
+#include "graphics/gpu/context_holder.h"
 #include "graphics/shaders/shader_compiler.h"
 
 
 namespace kl {
-    enum class GpuCreationType
+    enum class GPUCreationType
     {
         NONE = 0,
         RENDER,
@@ -22,7 +22,7 @@ namespace kl {
         dx::DepthView m_depth_view = nullptr;
 
     public:
-        const GpuCreationType creation_type = GpuCreationType::NONE;
+        const GPUCreationType creation_type = GPUCreationType::NONE;
 
         // Creation
         GPU(bool debug = false, bool single_threaded = true);

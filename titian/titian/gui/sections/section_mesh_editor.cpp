@@ -11,6 +11,7 @@ titian::GUISectionMeshEditor::GUISectionMeshEditor(EditorLayer* editor_layer, GU
 
     camera = new Camera(scene->physics(), true);
     render_texture = new Texture(gpu);
+    depth_texture = new Texture(gpu);
 
     camera->background = kl::Color{ 30, 30, 30 };
     camera->set_position({ 0.642787576f, 0.577350259f, 0.766044438f });
@@ -182,42 +183,63 @@ void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh
         return;
     }
 
-    const kl::Int2 texture_size = render_texture->graphics_buffer_size();
-    if (texture_size != viewport_size) {
+    if (render_texture->graphics_buffer_size() != viewport_size) {
         render_texture->graphics_buffer = gpu->create_target_texture(viewport_size);
         render_texture->create_target_view(nullptr);
         render_texture->create_shader_view(nullptr);
     }
+    if (depth_texture->graphics_buffer_size() != viewport_size) {
+        kl::dx::TextureDescriptor descriptor = {};
+        descriptor.Width = viewport_size.x;
+        descriptor.Height = viewport_size.y;
+        descriptor.MipLevels = 1;
+        descriptor.ArraySize = 1;
+        descriptor.Format = DXGI_FORMAT_D32_FLOAT;
+        descriptor.SampleDesc.Count = 1;
+        descriptor.Usage = D3D11_USAGE_DEFAULT;
+        descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+        depth_texture->graphics_buffer = gpu->create_texture(&descriptor, nullptr);
+        depth_texture->create_depth_view(nullptr);
+    }
 
-    gpu->bind_target_depth_views({ render_texture->target_view }, nullptr);
+    gpu->bind_target_depth_views({ render_texture->target_view }, depth_texture->depth_view);
     gpu->clear_target_view(render_texture->target_view, camera->background);
+    gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
 
     const kl::Int2 old_viewport_size = gpu->viewport_size();
     gpu->set_viewport_size(viewport_size);
 
     RenderStates* states = &gui_layer->render_layer->states;
     gpu->bind_raster_state(mesh->render_wireframe ? states->raster_states->wireframe : states->raster_states->solid);
-    gpu->bind_depth_state(states->depth_states->disabled);
+    gpu->bind_depth_state(states->depth_states->enabled);
 
-    kl::RenderShaders& render_shaders = states->shader_states->unlit_pass;
+    kl::RenderShaders& render_shaders = states->shader_states->mesh_editor_pass;
     gpu->bind_render_shaders(render_shaders);
 
     camera->update_aspect_ratio(viewport_size);
 
-    struct VSData
+    struct VS_CB
     {
+        kl::Float4x4 W;
         kl::Float4x4 WVP;
-    } vs_data = {};
-    vs_data.WVP = camera->camera_matrix();
+    };
 
-    struct PSData
+    const VS_CB vs_cb{
+        .W = {},
+		.WVP = camera->camera_matrix(),
+    };
+
+    struct PS_CB
     {
-        kl::Float4 color;
-    } ps_data = {};
-    ps_data.color = line_color;
+        kl::Float4 OBJECT_COLOR;
+    };
 
-    render_shaders.vertex_shader.update_cbuffer(vs_data);
-    render_shaders.pixel_shader.update_cbuffer(ps_data);
+    const PS_CB ps_cb{
+        .OBJECT_COLOR = line_color,
+    };
+
+    render_shaders.vertex_shader.update_cbuffer(vs_cb);
+    render_shaders.pixel_shader.update_cbuffer(ps_cb);
 
     gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
 

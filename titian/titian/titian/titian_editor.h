@@ -11,9 +11,9 @@
 
 #include "render/pass/shadow_pass.h"
 #include "render/pass/skybox_pass.h"
-#include "render/pass/lit_pass.h"
-#include "render/pass/editor_unlit_pass.h"
-#include "render/pass/editor_pp_pass.h"
+#include "render/pass/scene_pass.h"
+#include "render/pass/editor_pass.h"
+#include "render/pass/outline_pass.h"
 
 #include "gui/sections/section_main_menu.h"
 #include "gui/sections/section_scene_entities.h"

@@ -16,16 +16,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\apis\apis.cpp" />
-    <ClCompile Include="source\apis\cpp\kl_cpp.cpp" />
-    <ClCompile Include="source\apis\external\kl_imgui.cpp" />
-    <ClCompile Include="source\apis\external\kl_physx.cpp" />
-    <ClCompile Include="source\apis\windows\kl_directx.cpp" />
-    <ClCompile Include="source\apis\windows\kl_windows.cpp" />
-    <ClCompile Include="source\graphics\context_holder\context_holder.cpp" />
-    <ClCompile Include="source\graphics\device_holder\device_holder.cpp" />
+    <ClCompile Include="source\graphics\gpu\context_holder.cpp" />
+    <ClCompile Include="source\graphics\gpu\device_holder.cpp" />
     <ClCompile Include="source\graphics\gpu\gpu.cpp" />
-    <ClCompile Include="source\graphics\graphics.cpp" />
+    <ClCompile Include="source\graphics\gpu_12\gpu_12.cpp" />
+    <ClCompile Include="source\graphics\gpu_12\gpu_12_commands.cpp" />
+    <ClCompile Include="source\graphics\gpu_12\gpu_12_fence.cpp" />
+    <ClCompile Include="source\graphics\gpu_12\gpu_12_queue.cpp" />
     <ClCompile Include="source\graphics\shaders\compiled_shader.cpp" />
     <ClCompile Include="source\graphics\shaders\render_shaders.cpp" />
     <ClCompile Include="source\graphics\shaders\shader_compiler.cpp" />
@@ -34,7 +31,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\math\helper\constants.cpp" />
     <ClCompile Include="source\math\imaginary\complex.cpp" />
     <ClCompile Include="source\math\imaginary\quaternion.cpp" />
     <ClCompile Include="source\math\math.cpp" />
@@ -58,7 +54,6 @@
     <ClCompile Include="source\media\video\video_writer.cpp" />
     <ClCompile Include="source\memory\files\file.cpp" />
     <ClCompile Include="source\memory\linking\dll.cpp" />
-    <ClCompile Include="source\memory\memory.cpp" />
     <ClCompile Include="source\memory\safety\array.cpp" />
     <ClCompile Include="source\memory\safety\object.cpp" />
     <ClCompile Include="source\render\components\collider.cpp" />
@@ -68,7 +63,6 @@
     <ClCompile Include="source\render\light\ambient_light.cpp" />
     <ClCompile Include="source\render\light\directional_light.cpp" />
     <ClCompile Include="source\render\light\point_light.cpp" />
-    <ClCompile Include="source\render\render.cpp" />
     <ClCompile Include="source\render\scene\camera.cpp" />
     <ClCompile Include="source\render\scene\entity.cpp" />
     <ClCompile Include="source\render\scene\scene.cpp" />
@@ -83,7 +77,6 @@
     <ClCompile Include="source\utility\format\strings.cpp" />
     <ClCompile Include="source\utility\hash\hash_t.cpp" />
     <ClCompile Include="source\utility\hash\sha256.cpp" />
-    <ClCompile Include="source\utility\utility.cpp" />
     <ClCompile Include="source\web\socket\socket.cpp" />
     <ClCompile Include="source\web\web.cpp" />
     <ClCompile Include="source\window\draw\frame_buffer.cpp" />
@@ -95,13 +88,18 @@
   <ItemGroup>
     <ClInclude Include="source\apis\apis.h" />
     <ClInclude Include="source\apis\cpp\kl_cpp.h" />
+    <ClInclude Include="source\apis\external\kl_dx12.h" />
     <ClInclude Include="source\apis\external\kl_imgui.h" />
     <ClInclude Include="source\apis\external\kl_physx.h" />
     <ClInclude Include="source\apis\windows\kl_directx.h" />
     <ClInclude Include="source\apis\windows\kl_windows.h" />
-    <ClInclude Include="source\graphics\context_holder\context_holder.h" />
-    <ClInclude Include="source\graphics\device_holder\device_holder.h" />
+    <ClInclude Include="source\graphics\gpu\context_holder.h" />
+    <ClInclude Include="source\graphics\gpu\device_holder.h" />
     <ClInclude Include="source\graphics\gpu\gpu.h" />
+    <ClInclude Include="source\graphics\gpu_12\gpu_12.h" />
+    <ClInclude Include="source\graphics\gpu_12\gpu_12_commands.h" />
+    <ClInclude Include="source\graphics\gpu_12\gpu_12_fence.h" />
+    <ClInclude Include="source\graphics\gpu_12\gpu_12_queue.h" />
     <ClInclude Include="source\graphics\graphics.h" />
     <ClInclude Include="source\graphics\shaders\compiled_shader.h" />
     <ClInclude Include="source\graphics\shaders\render_shaders.h" />

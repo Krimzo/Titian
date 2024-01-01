@@ -18,7 +18,7 @@ titian::TitianGame::TitianGame()
     // Init render passes
     render_layer->passes.emplace_back(new ShadowPass(&game_layer, &render_layer));
     render_layer->passes.emplace_back(new SkyboxPass(&game_layer, &render_layer));
-    render_layer->passes.emplace_back(new LitPass(&game_layer, &render_layer));
+    render_layer->passes.emplace_back(new ScenePass(&game_layer, &render_layer));
     render_layer->passes.emplace_back(new DisplayPass(&game_layer, &render_layer));
 
     // Push layers

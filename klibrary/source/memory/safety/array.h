@@ -11,17 +11,19 @@ namespace kl {
         std::atomic<uint64_t>* m_count = nullptr;
         uint64_t m_size = 0;
 
-        uint64_t increase_count() const
+        inline void increase_count() const
         {
-            return m_count ? (*m_count += 1) : 0;
+            if (m_count) {
+                *m_count += 1;
+            }
         }
 
-        uint64_t decrease_count() const
+        inline uint64_t decrease_count() const
         {
             return m_count ? (*m_count -= 1) : 0;
         }
 
-        void allocate()
+        inline void allocate()
         {
             // Data
             m_data = new T[m_size]();
@@ -33,13 +35,13 @@ namespace kl {
             *m_count = 1;
         }
 
-        void deallocate() const
+        inline void deallocate() const
         {
             if (m_data) delete[] m_data;
             if (m_count) delete m_count;
         }
 
-        void clear()
+        inline void clear()
         {
             m_data = nullptr;
             m_count = nullptr;

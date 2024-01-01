@@ -10,31 +10,6 @@ static const HANDLE CONSOLE_HANDLE = []
     return temp_handle;
 }();
 
-int kl::get()
-{
-    return std::cin.get();
-}
-
-bool kl::verify(const bool value, const std::string_view& message, const bool wait)
-{
-    if (!value) {
-        console::set_enabled(true);
-        print(colors::ORANGE, "Failed to verify: ", message, colors::CONSOLE);
-        if (wait) kl::get();
-    }
-    return value;
-}
-
-void kl::assert(const bool value, const std::string_view& message, const bool wait)
-{
-    if (!value) {
-        console::set_enabled(true);
-        print(colors::RED, "Assertion failed: ", message, colors::CONSOLE);
-        if (wait) kl::get();
-        std::terminate();
-    }
-}
-
 void kl::console::set_enabled(const bool state)
 {
     static HWND console_window = GetConsoleWindow();

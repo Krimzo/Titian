@@ -1,28 +1,28 @@
 // Vertex shader
 cbuffer VS_CB : register(b0)
 {
-    float4x4 vp_matrix;
+    float4x4 VP;
 }
 
-struct VSOut
+struct VS_OUT
 {
-	float4 world : SV_Position;
-	float3 textur : VS_Texture;
+	float4 position : SV_Position;
+    float3 textur : VS_Texture;
 };
 
-VSOut v_shader(float3 position : KL_Position)
+VS_OUT v_shader(const float3 position : KL_Position)
 {
-    VSOut data;
-    data.world = mul(float4(position, 0.0f), vp_matrix).xyww;
-	data.textur = position;
+    VS_OUT data;
+    data.position = mul(float4(position, 0.0f), VP).xyww;
+    data.textur = position;
 	return data;
 }
 
 // Pixel shader
-SamplerState skybox_sampler : register(s0);
-TextureCube skybox_texture : register(t0);
+SamplerState SKYBOX_SAMPLER : register(s0);
+TextureCube SKYBOX_TEXTURE : register(t0);
 
-float4 p_shader(VSOut data) : SV_Target
+float4 p_shader(const VS_OUT data) : SV_Target
 {
-    return skybox_texture.Sample(skybox_sampler, data.textur);
+    return SKYBOX_TEXTURE.Sample(SKYBOX_SAMPLER, data.textur);
 }

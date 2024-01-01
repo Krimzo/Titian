@@ -1,4 +1,3 @@
 ﻿#include "klibrary.h"
 
-
 // PCH

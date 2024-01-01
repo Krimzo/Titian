@@ -7,13 +7,16 @@ namespace titian {
     class ShaderStates
     {
     public:
+        kl::RenderShaders solid_pass = {};
+
         kl::RenderShaders shadow_pass = {};
         kl::RenderShaders skybox_pass = {};
-        kl::RenderShaders material_pass = {};
-        kl::RenderShaders unlit_pass = {};
-        kl::RenderShaders lit_pass = {};
-        kl::RenderShaders pp_pass = {};
+        kl::RenderShaders scene_pass = {};
+        kl::RenderShaders outline_pass = {};
         kl::RenderShaders display_pass = {};
+
+        kl::RenderShaders material_editor_pass = {};
+        kl::RenderShaders mesh_editor_pass = {};
 
         ShaderStates(kl::GPU* gpu);
     };

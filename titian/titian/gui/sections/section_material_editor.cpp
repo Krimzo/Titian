@@ -297,34 +297,37 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     gpu->bind_raster_state(states->raster_states->solid);
     gpu->bind_depth_state(states->depth_states->enabled);
 
-    kl::RenderShaders& render_shaders = states->shader_states->material_pass;
+    kl::RenderShaders& render_shaders = states->shader_states->material_editor_pass;
     gpu->bind_render_shaders(render_shaders);
 
     camera->update_aspect_ratio(viewport_size);
 
-    class VSData
+    struct VS_CB
     {
-    public:
-        kl::Float4x4  w_matrix;
-        kl::Float4x4 vp_matrix;
-    } vs_data = {};
-    vs_data.w_matrix = {};
-    vs_data.vp_matrix = camera->camera_matrix();
+        kl::Float4x4 W;
+        kl::Float4x4 VP;
+    };
 
-    class PSData
+    const VS_CB vs_cb{
+        .W = {},
+        .VP = camera->camera_matrix(),
+    };
+
+    struct PS_CB
     {
-    public:
-        kl::Float4 object_color; // (color.r, color.g, color.b, none)
+        kl::Float4 OBJECT_COLOR; // (color.r, color.g, color.b, none)
 
-        kl::Float4     object_material; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
-        kl::Float4 object_texture_info; // (has_normal_map, has_roughness_map, none, none)
+        kl::Float4 OBJECT_MATERIAL; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
+        kl::Float4 OBJECT_TEXTURE_INFO; // (has_normal_map, has_roughness_map, none, none)
 
-        kl::Float4 camera_info; // (camera.x, camera.y, camera.z, skybox?)
-        kl::Float4 camera_background; // (color.r, color.g, color.b, color.a)
+        kl::Float4 CAMERA_INFO; // (camera.x, camera.y, camera.z, skybox?)
+        kl::Float4 CAMERA_BACKGROUND; // (color.r, color.g, color.b, color.a)
 
-        kl::Float4     ambient_light; // (color.r, color.g, color.b, intensity)
-        kl::Float4 directional_light; // (sun.x, sun.y, sun.z, sun_point_size)
-    } ps_data = {};
+        kl::Float4 AMBIENT_LIGHT; // (color.r, color.g, color.b, intensity)
+        kl::Float4 DIRECTIONAL_LIGHT; // (sun.x, sun.y, sun.z, sun_point_size)
+    };
+
+    PS_CB ps_cb{};
 
     Camera* scene_camera = scene->get_casted<Camera>(scene->main_camera_name);
     if (!scene_camera) {
@@ -350,36 +353,36 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     Texture* normal_map_texture = &scene->get_texture(material->normal_map_name);
     if (normal_map_texture) {
         gpu->bind_shader_view_for_pixel_shader(normal_map_texture->shader_view, 2);
-        ps_data.object_texture_info.x = 1.0f;
+        ps_cb.OBJECT_TEXTURE_INFO.x = 1.0f;
     }
     else {
-        ps_data.object_texture_info.x = 0.0f;
+        ps_cb.OBJECT_TEXTURE_INFO.x = 0.0f;
     }
 
     Texture* roughness_map_texture = &scene->get_texture(material->roughness_map_name);
     if (roughness_map_texture) {
         gpu->bind_shader_view_for_pixel_shader(roughness_map_texture->shader_view, 3);
-        ps_data.object_texture_info.y = 1.0f;
+        ps_cb.OBJECT_TEXTURE_INFO.y = 1.0f;
     }
     else {
-        ps_data.object_texture_info.y = 0.0f;
+        ps_cb.OBJECT_TEXTURE_INFO.y = 0.0f;
     }
 
-    ps_data.ambient_light = { kl::Float3 {1.0f}, 0.1f };
-    ps_data.directional_light = { kl::normalize(kl::Float3 { 0.0f, -1.0f, -1.0f }), 1.0f };
+    ps_cb.AMBIENT_LIGHT = { kl::Float3 {1.0f}, 0.1f };
+    ps_cb.DIRECTIONAL_LIGHT = { kl::normalize(kl::Float3 { 0.0f, -1.0f, -1.0f }), 1.0f };
 
-    ps_data.object_color = material->color;
-    ps_data.object_material = {
+    ps_cb.OBJECT_COLOR = material->color;
+    ps_cb.OBJECT_MATERIAL = {
         material->texture_blend,
         material->reflection_factor,
         material->refraction_factor,
         material->refraction_index,
     };
-    ps_data.camera_info = { camera->position(), static_cast<float>(static_cast<bool>(skybox_texture)) };
-    ps_data.camera_background = camera->background;
+    ps_cb.CAMERA_INFO = { camera->position(), static_cast<float>(static_cast<bool>(skybox_texture)) };
+    ps_cb.CAMERA_BACKGROUND = camera->background;
 
-    render_shaders.vertex_shader.update_cbuffer(vs_data);
-    render_shaders.pixel_shader.update_cbuffer(ps_data);
+    render_shaders.vertex_shader.update_cbuffer(vs_cb);
+    render_shaders.pixel_shader.update_cbuffer(ps_cb);
 
     DefaultMeshes* default_meshes = &editor_layer->game_layer->scene->default_meshes;
     gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology());

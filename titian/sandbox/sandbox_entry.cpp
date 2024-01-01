@@ -5,13 +5,10 @@ int sandbox_entry()
 {
     using namespace sandbox;
 
-    TitianEditor editor = {};
-
-    // Unpackage
-    packager::open_package(packager::PACKAGED_PREVIEW_FILE);
+    TitianEditor editor{};
 
     // Collect pieces
-    std::vector<kl::Object<SandboxPiece>> pieces = {
+    std::vector<kl::Object<SandboxPiece>> pieces{
         new SandboxPiecePrepare(&editor),
         new SandboxPieceSkybox(&editor),
         new SandboxPieceMonkes(&editor, 15),

@@ -5,23 +5,23 @@
 
 // Class
 namespace kl {
-    class HashT
+    class Hash
     {
     public:
         uint8_t buffer[32] = {};
 
-        HashT();
-        HashT(const std::string& hash);
+        Hash();
+        Hash(const std::string& hash);
 
         uint8_t& operator[](size_t index);
         const uint8_t& operator[](size_t index) const;
 
-        bool operator==(const HashT& other) const;
-        bool operator!=(const HashT& other) const;
+        bool operator==(const Hash& other) const;
+        bool operator!=(const Hash& other) const;
     };
 }
 
 // Format
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const HashT& hash);
+    std::ostream& operator<<(std::ostream& stream, const Hash& hash);
 }

@@ -3,7 +3,7 @@
 
 // Creation
 kl::GPU::GPU(const bool debug, const bool single_threaded)
-    : creation_type(GpuCreationType::COMPUTE)
+    : creation_type(GPUCreationType::COMPUTE)
 {
     UINT creation_flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
     if (debug) {
@@ -30,7 +30,7 @@ kl::GPU::GPU(const bool debug, const bool single_threaded)
 }
 
 kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
-    : creation_type(GpuCreationType::RENDER)
+    : creation_type(GPUCreationType::RENDER)
 {
     RECT window_client_area = {};
     GetClientRect(window, &window_client_area);

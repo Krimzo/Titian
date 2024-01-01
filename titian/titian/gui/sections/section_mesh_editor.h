@@ -14,6 +14,7 @@ namespace titian {
 
         kl::Object<Camera> camera = nullptr;
         kl::Object<Texture> render_texture = nullptr;
+        kl::Object<Texture> depth_texture = nullptr;
         kl::Float4 line_color = kl::colors::WHITE;
 
         bool was_focused = true;

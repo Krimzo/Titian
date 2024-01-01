@@ -37,10 +37,10 @@ void sandbox::SandboxPieceMonkes::setup_self()
         kl::Object monke = scene->new_entity(false);
         monke->scale = kl::Float3{ 0.5f };
         monke->set_position({
-            (float)(x - half_size) + x_offset,
-            (float)(y - half_size),
-            5.0f
-            });
+            (float) (x - half_size) + x_offset,
+            (float) (y - half_size),
+            5.0f,
+        });
 
         monke->mesh_name = mesh_name;
         monke->material_name = material_name;

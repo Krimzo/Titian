@@ -3,9 +3,6 @@
 
 titian::TitianEditor::TitianEditor()
 {
-    // Unpackage
-    packager::open_package(packager::PACKAGED_BUILTIN_FILE);
-
     // Init layers
     app_layer = new AppLayer("Titian Editor");
     game_layer = new GameLayer(&app_layer);
@@ -19,9 +16,9 @@ titian::TitianEditor::TitianEditor()
     // Init render passes
     render_layer->passes.emplace_back(new ShadowPass(&game_layer, &render_layer));
     render_layer->passes.emplace_back(new SkyboxPass(&game_layer, &render_layer));
-    render_layer->passes.emplace_back(new LitPass(&game_layer, &render_layer));
-    render_layer->passes.emplace_back(new EditorUnlitPass(&game_layer, &editor_layer, &gui_layer));
-    render_layer->passes.emplace_back(new EditorPPPass(&game_layer, &editor_layer, &gui_layer));
+    render_layer->passes.emplace_back(new ScenePass(&game_layer, &render_layer));
+    render_layer->passes.emplace_back(new EditorPass(&game_layer, &editor_layer, &gui_layer));
+    render_layer->passes.emplace_back(new OutlinePass(&game_layer, &editor_layer, &gui_layer));
 
     // Init editor sections
     gui_layer->sections.emplace_back(new GUISectionMainMenu(&render_layer));

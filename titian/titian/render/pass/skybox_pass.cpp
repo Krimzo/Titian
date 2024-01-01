@@ -39,12 +39,15 @@ void titian::SkyboxPass::render_self(StatePackage& package)
     if (!skybox) { return; }
 
     // Set cb data
-    struct VSData
+    struct VS_CB
     {
-        kl::Float4x4 vp_matrix = {};
-    } vs_data = {};
-    vs_data.vp_matrix = camera->camera_matrix();
-    package.shader_state.vertex_shader.update_cbuffer(vs_data);
+        kl::Float4x4 VP;
+    };
+
+    const VS_CB vs_cb{
+        .VP = camera->camera_matrix(),
+    };
+    package.shader_state.vertex_shader.update_cbuffer(vs_cb);
 
     // Draw
     gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);

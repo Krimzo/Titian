@@ -131,18 +131,18 @@ float kl::Float3x3::determinant() const
 }
 
 // Static
-kl::Float3x3 kl::Float3x3::scaling(const Float2& vec)
+kl::Float3x3 kl::Float3x3::scaling(const Float2& scale)
 {
     Float3x3 result = {};
-    result[0] = vec.x;
-    result[4] = vec.y;
+    result[0] = scale.x;
+    result[4] = scale.y;
     return result;
 }
 
-kl::Float3x3 kl::Float3x3::rotation(float rotation)
+kl::Float3x3 kl::Float3x3::rotation(const float rotation)
 {
-    const float z_sin = sin(rotation * TO_RADIANS);
-    const float z_cos = cos(rotation * TO_RADIANS);
+    const float z_sin = std::sin(rotation * TO_RADIANS);
+    const float z_cos = std::cos(rotation * TO_RADIANS);
 
     Float3x3 result = {};
     result[0] = z_cos;
@@ -152,11 +152,11 @@ kl::Float3x3 kl::Float3x3::rotation(float rotation)
     return result;
 }
 
-kl::Float3x3 kl::Float3x3::translation(const Float2& val)
+kl::Float3x3 kl::Float3x3::translation(const Float2& translation)
 {
     Float3x3 result = {};
-    result[2] = val.x;
-    result[5] = val.y;
+    result[2] = translation.x;
+    result[5] = translation.y;
     return result;
 }
 

@@ -4,12 +4,6 @@
 
 #undef assert
 
-namespace kl {
-    int get();
-    bool verify(bool value, const std::string_view& message, bool wait = false);
-    void assert(bool value, const std::string_view& message, bool wait = true);
-}
-
 namespace kl::console {
     void set_enabled(bool state);
     void clear();
@@ -35,4 +29,29 @@ namespace kl::console {
 
     void dump(const std::string& data, const Int2& location = {});
     void progress_bar(const std::string& message, int output_y, float percentage);
+}
+
+namespace kl {
+    inline int get()
+    {
+        return std::cin.get();
+    }
+
+    inline constexpr bool verify(const bool value, const std::string_view& message, const bool wait = false)
+    {
+        if (!value) {
+            console::set_enabled(true);
+            print(colors::ORANGE, "Failed to verify: ", message, colors::CONSOLE);
+            if (wait) get();
+        }
+        return value;
+    }
+
+    inline constexpr void assert(const bool value, const std::string_view& message, const int exit_code = 1)
+    {
+        if (!value) {
+            MessageBoxA(nullptr, message.data(), "Assertion failed!", MB_ICONERROR | MB_OK);
+            exit(exit_code);
+        }
+    }
 }

@@ -48,14 +48,16 @@ void titian::ShadowPass::render_self(StatePackage& package)
             Mesh* mesh = &scene->get_mesh(entity->mesh_name);
             if (!mesh) { continue; }
 
-            struct VSData
+            struct VS_CB
             {
                 kl::Float4x4 WVP;
-            } vs_data = {};
-            vs_data.WVP = VP * entity->model_matrix();
+            };
 
-            // Draw
-            package.shader_state.vertex_shader.update_cbuffer(vs_data);
+            const VS_CB vs_cb{
+                .WVP = VP * entity->model_matrix(),
+            };
+            package.shader_state.vertex_shader.update_cbuffer(vs_cb);
+
             gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
         }
     }
