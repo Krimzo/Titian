@@ -10,7 +10,8 @@ void titian::GUISectionControlMenu::render_gui()
 {
     if (ImGui::Begin("Control Menu", nullptr, ImGuiWindowFlags_NoScrollbar)) {
         // Game
-        ImGui::Text("Game");
+        gui_align_horizontally(ImGui::CalcTextSize("Simulator").x, 0.5f);
+        ImGui::Text("Simulator");
 
         if (!editor_layer->game_layer->game_running) {
             if (ImGui::Button("Start Game", { -1.0f, 0.0f })) {

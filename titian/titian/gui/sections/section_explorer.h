@@ -3,6 +3,7 @@
 #include "gui/gui_section.h"
 #include "application/app_layer.h"
 #include "components/texture.h"
+#include "utility/string_util.h"
 
 
 namespace titian {
@@ -15,6 +16,7 @@ namespace titian {
             MESH,
             TEXTURE,
             SCRIPT,
+            SHADER,
             SCENE,
         };
 
@@ -26,6 +28,7 @@ namespace titian {
         kl::Object<Texture> mesh_file_texture = nullptr;
         kl::Object<Texture> texture_file_texture = nullptr;
         kl::Object<Texture> script_file_texture = nullptr;
+        kl::Object<Texture> shader_file_texture = nullptr;
         kl::Object<Texture> scene_file_texture = nullptr;
 
         kl::Object<Texture> default_dir_texture = nullptr;

@@ -10,6 +10,7 @@ titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer)
     mesh_file_texture = new Texture(gpu);
     texture_file_texture = new Texture(gpu);
     script_file_texture = new Texture(gpu);
+    shader_file_texture = new Texture(gpu);
     scene_file_texture = new Texture(gpu);
 
     default_dir_texture = new Texture(gpu);
@@ -19,6 +20,7 @@ titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer)
     mesh_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/mesh_file.png"));
     texture_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/texture_file.png"));
     script_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/script_file.png"));
+    shader_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/shader_file.png"));
     scene_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/scene_file.png"));
 
     default_dir_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/default_dir.png"));
@@ -28,6 +30,7 @@ titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer)
     mesh_file_texture->create_shader_view(nullptr);
     texture_file_texture->create_shader_view(nullptr);
     script_file_texture->create_shader_view(nullptr);
+    shader_file_texture->create_shader_view(nullptr);
     scene_file_texture->create_shader_view(nullptr);
 
     default_dir_texture->create_shader_view(nullptr);
@@ -37,6 +40,7 @@ titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer)
     kl::assert(mesh_file_texture->shader_view, "Failed to init MESH file texture");
     kl::assert(texture_file_texture->shader_view, "Failed to init TEXTURE file texture");
     kl::assert(script_file_texture->shader_view, "Failed to init SCRIPT file texture");
+    kl::assert(shader_file_texture->shader_view, "Failed to init SHADER file texture");
     kl::assert(scene_file_texture->shader_view, "Failed to init SCENE file texture");
 
     kl::assert(default_dir_texture->shader_view, "Failed to init DEFAULT dir texture");
@@ -45,18 +49,34 @@ titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer)
 
 void titian::GUISectionExplorer::render_gui()
 {
-    std::list<std::filesystem::path> directories = {};
-    std::list<std::filesystem::path> files = {};
+    std::list<std::filesystem::path> directories{};
+    std::list<std::filesystem::path> files{};
 
     try {
         for (auto& entry : std::filesystem::directory_iterator(path)) {
             (entry.is_directory() ? directories : files).push_back(entry);
         }
     }
-    catch (std::exception ignored) {
+    catch (std::exception) {
     }
 
     if (ImGui::Begin("Explorer", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+        // New file
+        if (ImGui::BeginPopupContextWindow("NewFile", ImGuiPopupFlags_MouseButtonMiddle)) {
+            ImGui::Text("New File");
+            if (std::optional opt_name = gui_input_waited("##CreateFileInput", {})) {
+                const std::string& name = opt_name.value();
+                if (!name.empty()) {
+                    const std::string full_file = this->path + "/" + name;
+                    if (!std::filesystem::exists(name)) {
+                        std::ofstream _{ full_file };
+                        ImGui::CloseCurrentPopup();
+                    }
+                }
+            }
+            ImGui::EndPopup();
+        }
+
         const float window_width = ImGui::GetWindowWidth() - ImGui::GetStyle().WindowPadding.x * 2.0f;
         int column_count = static_cast<int>(window_width / (icon_size + ImGui::GetStyle().CellPadding.x * 2.0f));
         if (column_count < 1) {
@@ -74,17 +94,14 @@ void titian::GUISectionExplorer::render_gui()
                 ImGui::TableNextColumn();
                 handle_directory_entry(current_path.parent_path(), true);
             }
-
             for (auto& dir : directories) {
                 ImGui::TableNextColumn();
                 handle_directory_entry(dir, false);
             }
-
             for (auto& file : files) {
                 ImGui::TableNextColumn();
                 handle_file_entry(file);
             }
-
             ImGui::EndTable();
         }
 
@@ -142,8 +159,6 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
                 }
             }
         }
-        ImGui::Text(kl::format(std::setprecision(2), std::filesystem::file_size(file, error) / 1048576.0f, " mb").c_str());
-
         if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
             std::filesystem::remove(file, error);
             if (error) {
@@ -154,6 +169,7 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
             }
             ImGui::CloseCurrentPopup();
         }
+        ImGui::Text(string_util::format_byte_size(std::filesystem::file_size(file, error)).c_str());
         ImGui::EndPopup();
     }
 }
@@ -203,6 +219,9 @@ titian::GUISectionExplorer::FileType titian::GUISectionExplorer::classify_file(c
     if (extension == FILE_EXTENSION_NATIVE_SCRIPT || extension == FILE_EXTENSION_INTER_SCRIPT) {
         return FileType::SCRIPT;
     }
+    if (extension == FILE_EXTENSION_SHADER) {
+        return FileType::SHADER;
+    }
     if (extension == FILE_EXTENSION_SCENE) {
         return FileType::SCENE;
     }
@@ -211,12 +230,17 @@ titian::GUISectionExplorer::FileType titian::GUISectionExplorer::classify_file(c
 
 kl::dx::ShaderView titian::GUISectionExplorer::file_icon(const FileType type)
 {
-    switch (type)
-    {
-    case FileType::MESH:    return mesh_file_texture->shader_view;
-    case FileType::TEXTURE: return texture_file_texture->shader_view;
-    case FileType::SCRIPT:  return script_file_texture->shader_view;
-    case FileType::SCENE:   return scene_file_texture->shader_view;
+    switch (type) {
+    case FileType::MESH:
+        return mesh_file_texture->shader_view;
+    case FileType::TEXTURE:
+        return texture_file_texture->shader_view;
+    case FileType::SCRIPT:
+        return script_file_texture->shader_view;
+    case FileType::SHADER:
+        return shader_file_texture->shader_view;
+    case FileType::SCENE:
+        return scene_file_texture->shader_view;
     }
     return default_file_texture->shader_view;
 }
@@ -224,8 +248,7 @@ kl::dx::ShaderView titian::GUISectionExplorer::file_icon(const FileType type)
 void titian::GUISectionExplorer::drag_file(const std::filesystem::path& file, const FileType type, const kl::dx::ShaderView& texture)
 {
     const std::string path = file.string();
-    switch (type)
-    {
+    switch (type) {
     case FileType::MESH:
         gui_set_drag_drop<std::string>("MeshFile", path, texture);
         break;
@@ -234,6 +257,9 @@ void titian::GUISectionExplorer::drag_file(const std::filesystem::path& file, co
         break;
     case FileType::SCRIPT:
         gui_set_drag_drop<std::string>("ScriptFile", path, texture);
+        break;
+    case FileType::SHADER:
+        gui_set_drag_drop<std::string>("ShaderFile", path, texture);
         break;
     case FileType::SCENE:
         gui_set_drag_drop<std::string>("SceneFile", path, texture);

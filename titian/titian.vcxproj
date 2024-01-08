@@ -447,6 +447,7 @@
     <ClInclude Include="titian\titian\titian_game.h" />
     <ClCompile Include="titian\titian\titian_game.cpp" />
     <ClCompile Include="titian\titian_entry.cpp" />
+    <ClInclude Include="titian\utility\string_util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\chaiscript\chaiscript.h" />

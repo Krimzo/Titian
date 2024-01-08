@@ -10,6 +10,7 @@ sandbox::SandboxPieceSpheres::SandboxPieceSpheres(TitianEditor* editor, const in
 void sandbox::SandboxPieceSpheres::setup_self()
 {
     Scene* scene = &editor->game_layer->scene;
+    kl::GPU* gpu = &editor->app_layer->gpu;
 
     const int half_size = size / 2;
     int sphere_counter = 0;
@@ -24,8 +25,8 @@ void sandbox::SandboxPieceSpheres::setup_self()
             scene->meshes[mesh_name] = scene->default_meshes->sphere;
 
             // Material
-            kl::Object material = new Material();
-            material->color = kl::Float4{1.0f};
+            kl::Object material = new Material(gpu);
+            material->color = kl::Float4{ 1.0f };
             material->reflection_factor = (float) sphere_counter / (size * size);
             material->refraction_factor = (float) (size * size - sphere_counter) / (size * size);
             material->refraction_index = 1.0f / 1.52f;

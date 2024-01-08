@@ -4,9 +4,9 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 # Custom
-.idea/
+_test_
 *.titian
-*.tis
+*.chai
 
 # User-specific files
 *.rsuser

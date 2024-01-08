@@ -77,7 +77,7 @@ void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
             scene->meshes[mesh_name] = scene->default_meshes->cube;
 
             // Material
-            kl::Object material = new Material();
+            kl::Object material = new Material(gpu);
             material->texture_blend = 0.5f;
             material->color = kl::random::gen_color();
             material->color_map_name = color_map;

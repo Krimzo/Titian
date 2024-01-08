@@ -28,7 +28,7 @@ titian::Scene::Scene(kl::GPU* gpu)
     default_meshes = new DefaultMeshes(gpu, m_physics, m_cooking);
     kl::assert(default_meshes, "Failed to init default meshes");
 
-    default_materials = new DefaultMaterials();
+    default_materials = new DefaultMaterials(gpu);
     kl::assert(default_materials, "Failed to init default materials");
 }
 
@@ -97,7 +97,7 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     std::function texture_provider = [&] { return kl::Object{ new Texture(m_gpu) }; };
     read_map(textures, texture_provider, nullptr);
 
-    std::function material_provider = [&] { return kl::Object{ new Material() }; };
+    std::function material_provider = [&] { return kl::Object{ new Material(m_gpu) }; };
     read_map(materials, material_provider, nullptr);
 
     /* SCRIPTS */
@@ -342,7 +342,7 @@ titian::Texture* titian::Scene::helper_new_texture(const std::string& id)
 
 titian::Material* titian::Scene::helper_new_material(const std::string& id)
 {
-    Material* material = new Material();
+    Material* material = new Material(m_gpu);
     materials[id] = material;
     return material;
 }

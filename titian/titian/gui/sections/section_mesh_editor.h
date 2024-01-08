@@ -19,7 +19,7 @@ namespace titian {
 
         bool was_focused = true;
         int last_scroll = 0;
-        kl::Float2 initial_camera_info = { 40.0f, 30.0f };
+        kl::Float2 initial_camera_info = { 200.0f, 10.0f };
         kl::Float2 camera_info = initial_camera_info;
 
         std::string selected_mesh = "/";

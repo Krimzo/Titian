@@ -10,6 +10,7 @@ sandbox::SandboxPieceCubes::SandboxPieceCubes(TitianEditor* editor, const int si
 void sandbox::SandboxPieceCubes::setup_self()
 {
     Scene* scene = &editor->game_layer->scene;
+    kl::GPU* gpu = &editor->app_layer->gpu;
 
     const int half_size = size / 2;
     int cube_counter = 0;
@@ -24,7 +25,7 @@ void sandbox::SandboxPieceCubes::setup_self()
             scene->meshes[mesh_name] = scene->default_meshes->cube;
 
             // Material
-            kl::Object material = new Material();
+            kl::Object material = new Material(gpu);
             material->color = kl::colors::ORANGE;
             material->reflection_factor = cube_counter / static_cast<float>(size * size);
             scene->materials[material_name] = material;

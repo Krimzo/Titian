@@ -56,9 +56,9 @@ void titian::GUISectionMaterialEditor::render_gui()
         }
         ImGui::NextColumn();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 2.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f });
+        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
 
         const bool should_rotate_cam = was_focused && !texture;
         if (ImGui::BeginChild("Material/Texture View", {}, should_rotate_cam)) {
@@ -92,6 +92,8 @@ void titian::GUISectionMaterialEditor::render_gui()
 
 void titian::GUISectionMaterialEditor::display_materials(Scene* scene)
 {
+	kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
+
     // New material
     if (ImGui::BeginPopupContextWindow("NewMaterial", ImGuiPopupFlags_MouseButtonMiddle)) {
         ImGui::Text("New Material");
@@ -99,7 +101,7 @@ void titian::GUISectionMaterialEditor::display_materials(Scene* scene)
         if (std::optional opt_name = gui_input_waited("##CreateMaterialInput", {})) {
             const std::string& name = opt_name.value();
             if (!name.empty() && !scene->materials.contains(name)) {
-                kl::Object material = new Material();
+                kl::Object material = new Material(gpu);
                 scene->materials[name] = material;
                 ImGui::CloseCurrentPopup();
             }
@@ -368,8 +370,8 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         ps_cb.OBJECT_TEXTURE_INFO.y = 0.0f;
     }
 
-    ps_cb.AMBIENT_LIGHT = { kl::Float3 {1.0f}, 0.1f };
-    ps_cb.DIRECTIONAL_LIGHT = { kl::normalize(kl::Float3 { 0.0f, -1.0f, -1.0f }), 1.0f };
+    ps_cb.AMBIENT_LIGHT = { kl::Float3{ 1.0f }, 0.1f };
+    ps_cb.DIRECTIONAL_LIGHT = { kl::normalize(kl::Float3{ 0.0f, -1.0f, -1.0f }), 1.0f };
 
     ps_cb.OBJECT_COLOR = material->color;
     ps_cb.OBJECT_MATERIAL = {
@@ -452,6 +454,19 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
             }
             ImGui::EndCombo();
         }
+
+        ImGui::Separator();
+
+        if (ImGui::Button("Reload")) {
+            material->reload();
+        }
+
+        char source_file_buffer[151] = {};
+        memcpy(source_file_buffer, material->shader_source_file.c_str(), std::min(material->shader_source_file.size(), std::size(source_file_buffer) - 1));
+        if (ImGui::InputText("Shader Source File", source_file_buffer, std::size(source_file_buffer))) {
+            material->shader_source_file = source_file_buffer;
+        }
+        ImGui::InputTextMultiline("Shader Source", material->shader_source.data(), material->shader_source.size(), {}, ImGuiInputTextFlags_ReadOnly);
     }
     ImGui::End();
 }

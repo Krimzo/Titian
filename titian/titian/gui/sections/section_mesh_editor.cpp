@@ -14,7 +14,7 @@ titian::GUISectionMeshEditor::GUISectionMeshEditor(EditorLayer* editor_layer, GU
     depth_texture = new Texture(gpu);
 
     camera->background = kl::Color{ 30, 30, 30 };
-    camera->set_position({ 0.642787576f, 0.577350259f, 0.766044438f });
+    camera->set_position({ -0.34f, 0.18f, -0.94f });
     camera->speed = 3.1f;
 }
 
@@ -47,9 +47,9 @@ void titian::GUISectionMeshEditor::render_gui()
         }
         ImGui::NextColumn();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 2.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f });
+        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
 
         if (ImGui::BeginChild("Mesh View", {}, was_focused)) {
             const kl::Int2 viewport_size = { (int)ImGui::GetContentRegionAvail().x, (int)ImGui::GetContentRegionAvail().y };
@@ -165,7 +165,7 @@ void titian::GUISectionMeshEditor::update_mesh_camera()
             kl::sin_deg(camera_info.x),
             kl::tan_deg(camera_info.y),
             kl::cos_deg(camera_info.x),
-            });
+        });
 
         camera->speed += (last_scroll - scroll) * 0.1f;
         camera->speed = std::max(camera->speed, 0.1f);

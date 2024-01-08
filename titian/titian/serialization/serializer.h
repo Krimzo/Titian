@@ -6,7 +6,7 @@
 namespace titian {
 	std::string format_serial_version(const uint32_t version);
 
-	inline constexpr uint32_t SERIAL_VERSION = 0x10112023;
+	inline constexpr uint32_t SERIAL_VERSION = 0x08'01'2024;
 	inline const std::string SERIAL_VERSION_FORMAT = format_serial_version(SERIAL_VERSION);
 }
 
