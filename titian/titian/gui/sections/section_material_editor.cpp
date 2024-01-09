@@ -299,7 +299,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     gpu->bind_raster_state(states->raster_states->solid);
     gpu->bind_depth_state(states->depth_states->enabled);
 
-    kl::RenderShaders& render_shaders = states->shader_states->material_editor_pass;
+    kl::RenderShaders& render_shaders = states->shader_states->scene_pass;
     gpu->bind_render_shaders(render_shaders);
 
     camera->update_aspect_ratio(viewport_size);
@@ -308,6 +308,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     {
         kl::Float4x4 W;
         kl::Float4x4 VP;
+        kl::Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
     };
 
     const VS_CB vs_cb{
@@ -317,16 +318,23 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
 
     struct PS_CB
     {
-        kl::Float4 OBJECT_COLOR; // (color.r, color.g, color.b, none)
+        kl::Float3 OBJECT_COLOR; // (color.r, color.g, color.b)
+        float OBJECT_INDEX; // (index)
 
         kl::Float4 OBJECT_MATERIAL; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
-        kl::Float4 OBJECT_TEXTURE_INFO; // (has_normal_map, has_roughness_map, none, none)
+        kl::Float2 OBJECT_TEXTURE_INFO; // (has_normal_map, has_roughness_map)
 
-        kl::Float4 CAMERA_INFO; // (camera.x, camera.y, camera.z, skybox?)
+        alignas(16) kl::Float4 CAMERA_INFO; // (camera.x, camera.y, camera.z, skybox?)
         kl::Float4 CAMERA_BACKGROUND; // (color.r, color.g, color.b, color.a)
+        kl::Float4x4 V; // View matrix
 
         kl::Float4 AMBIENT_LIGHT; // (color.r, color.g, color.b, intensity)
-        kl::Float4 DIRECTIONAL_LIGHT; // (sun.x, sun.y, sun.z, sun_point_size)
+        kl::Float4 DIRECTIONAL_LIGHT; // (dir.x, dir.y, dir.z, sun_point_size)
+        kl::Float3 DIRECTIONAL_LIGHT_COLOR; // (color.r, color.g, color.b)
+
+        float HAS_SHADOWS; // (has_shadows)
+        kl::Float4 SHADOW_MAP_INFO; // (width, height, texel_width, texel_size)
+        kl::Float4 CASCADE_DISTANCES; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
     };
 
     PS_CB ps_cb{};
@@ -372,16 +380,19 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
 
     ps_cb.AMBIENT_LIGHT = { kl::Float3{ 1.0f }, 0.1f };
     ps_cb.DIRECTIONAL_LIGHT = { kl::normalize(kl::Float3{ 0.0f, -1.0f, -1.0f }), 1.0f };
+    ps_cb.DIRECTIONAL_LIGHT_COLOR = kl::colors::WHITE;
 
-    ps_cb.OBJECT_COLOR = material->color;
+    ps_cb.OBJECT_COLOR = material->color.xyz();
     ps_cb.OBJECT_MATERIAL = {
         material->texture_blend,
         material->reflection_factor,
         material->refraction_factor,
         material->refraction_index,
     };
+
     ps_cb.CAMERA_INFO = { camera->position(), static_cast<float>(static_cast<bool>(skybox_texture)) };
     ps_cb.CAMERA_BACKGROUND = camera->background;
+    ps_cb.HAS_SHADOWS = false;
 
     render_shaders.vertex_shader.update_cbuffer(vs_cb);
     render_shaders.pixel_shader.update_cbuffer(ps_cb);

@@ -18,6 +18,9 @@ struct VS_OUT
     float4 light_coords[SHADOW_CASCADE_COUNT] : VS_Light;
 };
 
+#define _ALTER_VERTEX_NOT_DECLARED
+void _alter_vertex(inout VS_OUT data) {}
+
 VS_OUT v_shader(const float3 position : KL_Position, const float2 textur : KL_Texture, const float3 normal : KL_Normal)
 {
     VS_OUT data;
@@ -32,17 +35,22 @@ VS_OUT v_shader(const float3 position : KL_Position, const float2 textur : KL_Te
         data.light_coords[i].xy *= float2(0.5f, -0.5f);
         data.light_coords[i].xy += 0.5f;
     }
+    
+#ifndef _ALTER_VERTEX_NOT_DECLARED
+    _alter_vertex(data);
+#endif
+    
     return data;
 }
 
 // Pixel shader
 cbuffer PS_CB : register(b0)
 {
-    float4 OBJECT_COLOR; // (color.r, color.g, color.b, none)
-    float4 OBJECT_INDEX; // (index, index, index, index)
+    float3 OBJECT_COLOR; // (color.r, color.g, color.b)
+    float OBJECT_INDEX; // (index)
 
     float4 OBJECT_MATERIAL; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
-    float4 OBJECT_TEXTURE_INFO; // (has_normal_map, has_roughness_map, none, none)
+    float2 OBJECT_TEXTURE_INFO; // (has_normal_map, has_roughness_map)
     
     float4 CAMERA_INFO; // (camera.x, camera.y, camera.z, skybox?)
     float4 CAMERA_BACKGROUND; // (color.r, color.g, color.b, color.a)
@@ -50,8 +58,9 @@ cbuffer PS_CB : register(b0)
 
     float4 AMBIENT_LIGHT; // (color.r, color.g, color.b, intensity)
     float4 DIRECTIONAL_LIGHT; // (dir.x, dir.y, dir.z, sun_point_size)
-    float4 DIRECTIONAL_LIGHT_COLOR; // (color.r, color.g, color.b, none)
+    float3 DIRECTIONAL_LIGHT_COLOR; // (color.r, color.g, color.b)
 
+    float HAS_SHADOWS; // (has_shadows)
     float4 SHADOW_MAP_INFO; // (width, height, texel_width, texel_size)
     float4 CASCADE_DISTANCES; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
 };
@@ -143,12 +152,29 @@ float get_shadow_factor(const VS_OUT data, const float camera_z, const int half_
     return pcf_value;
 }
 
+#define _ALTER_UNLIT_NOT_DECLARED
+bool _alter_unlit(inout VS_OUT data, inout float3 result_color) { return false; }
+
+#define _ALTER_LIT_NOT_DECLARED
+void _alter_lit(inout float3 color) {}
+
 PS_OUT p_shader(VS_OUT data)
 {
     // Setup
     data.normal = normalize(data.normal);
     const float3 pixel_normal = get_pixel_normal(data.world, data.normal, data.textur);
     const float pixel_reflectivity = get_pixel_reflectivity(OBJECT_MATERIAL.y, data.textur);
+    
+#ifndef _ALTER_UNLIT_NOT_DECLARED
+    // Unlit
+    float3 _result_color = 0.0f;
+    if (_alter_unlit(data, _result_color)) {
+        PS_OUT result;
+        result.color = float4(_result_color, 1.0f);
+        result.index = OBJECT_INDEX;
+        return result;
+    }
+#endif
 
     // Reflection calculations
     const float3 camera_pixel_direction = normalize(data.world - CAMERA_INFO.xyz);
@@ -168,29 +194,38 @@ PS_OUT p_shader(VS_OUT data)
 
     const float ambient_diffuse_factor = dot(-DIRECTIONAL_LIGHT.xyz, data.normal);
     const float directional_diffuse_factor = dot(-DIRECTIONAL_LIGHT.xyz, pixel_normal);
-    float3 diffuse_factor = DIRECTIONAL_LIGHT_COLOR.xyz;
+    float3 diffuse_factor = DIRECTIONAL_LIGHT_COLOR;
 
-    if (ambient_diffuse_factor > 0.0f) {
-        const float camera_z = abs(mul(float4(data.world, 1.0f), V).z);
-        const float shadow_factor = get_shadow_factor(data, camera_z, 1.0f);
-        diffuse_factor *= directional_diffuse_factor * max(ambient_factor, shadow_factor);
+    if (HAS_SHADOWS) {
+        if (ambient_diffuse_factor > 0.0f) {
+            const float camera_z = abs(mul(float4(data.world, 1.0f), V).z);
+            const float shadow_factor = get_shadow_factor(data, camera_z, 1.0f);
+            diffuse_factor *= directional_diffuse_factor * max(ambient_factor, shadow_factor);
+        }
+        else {
+            diffuse_factor *= directional_diffuse_factor * ambient_factor;
+        }
     }
     else {
-        diffuse_factor *= directional_diffuse_factor * ambient_factor;
+        diffuse_factor *= directional_diffuse_factor;
     }
     const float3 light_intensity = ambient_factor + diffuse_factor + specular_factor;
 
     // Color calculations
     const float3 texture_color = ENTITY_TEXTURE.Sample(ENTITY_SAMPLER, data.textur).xyz;
-    const float3 unlit_color = lerp(OBJECT_COLOR.xyz, texture_color, OBJECT_MATERIAL.x);
+    const float3 unlit_color = lerp(OBJECT_COLOR, texture_color, OBJECT_MATERIAL.x);
     const float3 lit_color = unlit_color * light_intensity;
 
     const float3 reflected_color = lerp(lit_color, reflected_sky_color, pixel_reflectivity);
-    const float3 refracted_color = lerp(reflected_color, refracted_sky_color, OBJECT_MATERIAL.z);
+    float3 refracted_color = lerp(reflected_color, refracted_sky_color, OBJECT_MATERIAL.z);
+
+#ifndef _ALTER_LIT_NOT_DECLARED
+    _alter_lit(refracted_color);
+#endif
 
     // Final
     PS_OUT result;
     result.color = float4(refracted_color, 1.0f);
-    result.index = OBJECT_INDEX.r;
+    result.index = OBJECT_INDEX;
     return result;
 }

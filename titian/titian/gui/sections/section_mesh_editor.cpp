@@ -213,7 +213,7 @@ void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh
     gpu->bind_raster_state(mesh->render_wireframe ? states->raster_states->wireframe : states->raster_states->solid);
     gpu->bind_depth_state(states->depth_states->enabled);
 
-    kl::RenderShaders& render_shaders = states->shader_states->mesh_editor_pass;
+    kl::RenderShaders& render_shaders = states->shader_states->solid_lit_pass;
     gpu->bind_render_shaders(render_shaders);
 
     camera->update_aspect_ratio(viewport_size);
