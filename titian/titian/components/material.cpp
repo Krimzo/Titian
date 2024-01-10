@@ -47,6 +47,38 @@ void titian::Material::reload()
 		shader_source = kl::read_file_string(shader_source_file);
 	}
 	if (!shader_source.empty()) {
-		shaders = m_gpu->create_render_shaders(shader_source);
+		const std::string processed_source = process_shader_source();
+		shaders = m_gpu->create_render_shaders(processed_source);
 	}
+}
+
+std::string titian::Material::process_shader_source() const
+{
+	std::stringstream shader_sources[2] = {};
+	int shader_process_type = -1;
+	for (const auto& line : kl::split_string(shader_source, '\n')) {
+		if (line.find("#define _CUSTOM_VERTEX_SHADER") != -1) {
+			shader_process_type = 0;
+		}
+		if (line.find("#define _CUSTOM_PIXEL_SHADER") != -1) {
+			shader_process_type = 1;
+		}
+		if (shader_process_type >= 0) {
+			shader_sources[shader_process_type] << line << '\n';
+		}
+	}
+
+	std::stringstream full_source{};
+	for (const auto& line : kl::split_string(kl::read_file_string("builtin/shaders/scene_pass.hlsl"), '\n')) {
+		if (line.find("#define _CUSTOM_VERTEX_SHADER_PLACEHOLDER") != -1) {
+			full_source << shader_sources[0].str() << '\n';
+		}
+		else if (line.find("#define _CUSTOM_PIXEL_SHADER_PLACEHOLDER") != -1) {
+			full_source << shader_sources[1].str() << '\n';
+		}
+		else {
+			full_source << line << '\n';
+		}
+	}
+	return full_source.str();
 }

@@ -64,12 +64,40 @@ void titian::GUISectionExplorer::render_gui()
         // New file
         if (ImGui::BeginPopupContextWindow("NewFile", ImGuiPopupFlags_MouseButtonMiddle)) {
             ImGui::Text("New File");
-            if (std::optional opt_name = gui_input_waited("##CreateFileInput", {})) {
-                const std::string& name = opt_name.value();
-                if (!name.empty()) {
-                    const std::string full_file = this->path + "/" + name;
-                    if (!std::filesystem::exists(name)) {
+            const std::string file_input = gui_input_continuous("##CreateFileInput");
+            if (!file_input.empty()) {
+                if (ImGui::MenuItem("Create Text File")) {
+                    std::stringstream stream{};
+					stream << path << "/" << file_input;
+                    const std::string full_file = stream.str();
+                    if (!std::filesystem::exists(full_file)) {
                         std::ofstream _{ full_file };
+                        ImGui::CloseCurrentPopup();
+                    }
+                }
+                if (ImGui::MenuItem("Create Script File")) {
+                    std::stringstream stream{};
+					stream << path << "/" << file_input;
+                    if (file_input.find(FILE_EXTENSION_INTER_SCRIPT) == -1) {
+                        stream << FILE_EXTENSION_INTER_SCRIPT;
+                    }
+                    const std::string full_file = stream.str();
+                    if (!std::filesystem::exists(full_file)) {
+                        std::ofstream file{ full_file };
+                        file << string_defaults::DEFAULT_SCRIPT;
+                        ImGui::CloseCurrentPopup();
+                    }
+                }
+                if (ImGui::MenuItem("Create Shader File")) {
+                    std::stringstream stream{};
+                    stream << path << "/" << file_input;
+                    if (file_input.find(FILE_EXTENSION_SHADER) == -1) {
+                        stream << FILE_EXTENSION_SHADER;
+                    }
+                    const std::string full_file = stream.str();
+                    if (!std::filesystem::exists(full_file)) {
+                        std::ofstream file{ full_file };
+                        file << string_defaults::DEFAULT_SHADER;
                         ImGui::CloseCurrentPopup();
                     }
                 }

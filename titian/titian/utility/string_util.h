@@ -1,6 +1,6 @@
 #pragma once
 
-#include "klibrary.h"
+#include "utility/string_defaults.h"
 
 
 namespace string_util {

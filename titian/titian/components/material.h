@@ -32,5 +32,7 @@ namespace titian {
 
 	private:
 		kl::GPU* m_gpu = nullptr;
+
+		std::string process_shader_source() const;
 	};
 }

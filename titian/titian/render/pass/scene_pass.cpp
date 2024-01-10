@@ -43,45 +43,58 @@ void titian::ScenePass::render_self(StatePackage& package)
         gpu->unbind_shader_view_for_pixel_shader(0);
     }
 
-    struct VS_CB
+    struct GLOBAL_CB
     {
-        kl::Float4x4 W;
+        float ELAPSED_TIME{};
+        float DELTA_TIME{};
+
+        alignas(16) kl::Float3 CAMERA_POSITION;
+        float CAMERA_HAS_SKYBOX{};
+        kl::Float4 CAMERA_BACKGROUND;
+
+        kl::Float3 AMBIENT_COLOR;
+        float AMBIENT_INTENSITY{};
+
+        kl::Float3 SUN_DIRECTION;
+        float SUN_POINT_SIZE{};
+        kl::Float3 SUN_COLOR;
+
+        float OBJECT_INDEX{};
+        kl::Float3 OBJECT_COLOR;
+        alignas(16) kl::Float3 OBJECT_SCALE;
+        alignas(16) kl::Float3 OBJECT_ROTATION;
+        alignas(16) kl::Float3 OBJECT_POSITION;
+
+        float TEXTURE_BLEND{};
+        float REFLECTION_FACTOR{};
+        float REFRACTION_FACTOR{};
+        float REFRACTION_INDEX{};
+
+        float HAS_NORMAL_MAP{};
+        float HAS_ROUGHNESS_MAP{};
+
+        alignas(16) kl::Float4x4 W;
+        kl::Float4x4 V;
         kl::Float4x4 VP;
+
+        float RECEIVES_SHADOWS{};
+        kl::Float2 SHADOW_MAP_SIZE;
+        alignas(16) kl::Float2 SHADOW_MAP_TEXEL_SIZE;
+        alignas(16) kl::Float4 SHADOW_CASCADES;
         kl::Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
     };
+    GLOBAL_CB global_cb{};
 
-    VS_CB vs_cb{};
-    vs_cb.VP = camera->camera_matrix();
-
-    struct PS_CB
-    {
-        kl::Float3 OBJECT_COLOR; // (color.r, color.g, color.b)
-        float OBJECT_INDEX; // (index)
-
-        kl::Float4 OBJECT_MATERIAL; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
-        kl::Float2 OBJECT_TEXTURE_INFO; // (has_normal_map, has_roughness_map)
-
-        alignas(16) kl::Float4 CAMERA_INFO; // (camera.x, camera.y, camera.z, skybox?)
-        kl::Float4 CAMERA_BACKGROUND; // (color.r, color.g, color.b, color.a)
-        kl::Float4x4 V; // View matrix
-
-        kl::Float4 AMBIENT_LIGHT; // (color.r, color.g, color.b, intensity)
-        kl::Float4 DIRECTIONAL_LIGHT; // (dir.x, dir.y, dir.z, sun_point_size)
-        kl::Float3 DIRECTIONAL_LIGHT_COLOR; // (color.r, color.g, color.b)
-
-        float HAS_SHADOWS; // (has_shadows)
-        kl::Float4 SHADOW_MAP_INFO; // (width, height, texel_width, texel_size)
-        kl::Float4 CASCADE_DISTANCES; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
-    };
-
-    PS_CB ps_cb{};
-    ps_cb.CAMERA_INFO = { camera->position(), static_cast<float>(scene->textures.contains(camera->skybox_name)) };
-    ps_cb.CAMERA_BACKGROUND = camera->background;
-    ps_cb.V = camera->view_matrix();
+    global_cb.V = camera->view_matrix();
+    global_cb.VP = camera->camera_matrix();
+    global_cb.CAMERA_POSITION = camera->position();
+    global_cb.CAMERA_HAS_SKYBOX = static_cast<float>(scene->textures.contains(camera->skybox_name));
+    global_cb.CAMERA_BACKGROUND = camera->background;
 
     AmbientLight* ambient_light = scene->get_casted<AmbientLight>(scene->main_ambient_light_name);
     if (ambient_light) {
-        ps_cb.AMBIENT_LIGHT = { ambient_light->color, ambient_light->intensity };
+        global_cb.AMBIENT_COLOR = ambient_light->color;
+        global_cb.AMBIENT_INTENSITY = ambient_light->intensity;
     }
 
     DirectionalLight* directional_light = scene->get_casted<DirectionalLight>(scene->main_directional_light_name);
@@ -89,27 +102,33 @@ void titian::ScenePass::render_self(StatePackage& package)
         ID3D11ShaderResourceView* dir_light_views[DirectionalLight::CASCADE_COUNT] = {};
         for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
             dir_light_views[i] = directional_light->shader_view(i).Get();
-            vs_cb.LIGHT_VPs[i] = directional_light->light_matrix(camera, i);
+            global_cb.LIGHT_VPs[i] = directional_light->light_matrix(camera, i);
         }
 
         gpu->context()->PSSetShaderResources(1, DirectionalLight::CASCADE_COUNT, dir_light_views);
 
-        ps_cb.DIRECTIONAL_LIGHT = { directional_light->direction(), directional_light->point_size };
-        ps_cb.DIRECTIONAL_LIGHT_COLOR = directional_light->color;
+        global_cb.SUN_DIRECTION = directional_light->direction();
+		global_cb.SUN_COLOR = directional_light->color;
+		global_cb.SUN_POINT_SIZE = directional_light->point_size;
 
-        ps_cb.HAS_SHADOWS = true;
-        ps_cb.SHADOW_MAP_INFO = { kl::Float2((float)directional_light->map_resolution()), kl::Float2(1.0f / directional_light->map_resolution()) };
+        global_cb.SHADOW_MAP_SIZE = kl::Float2((float) directional_light->map_resolution());
+        global_cb.SHADOW_MAP_TEXEL_SIZE = kl::Float2(1.0f / directional_light->map_resolution());
         for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
-            ps_cb.CASCADE_DISTANCES[i] = kl::unwrap(directional_light->CASCADE_SPLITS[i + 1], camera->near_plane, camera->far_plane);
+            global_cb.SHADOW_CASCADES[i] = kl::unwrap(directional_light->CASCADE_SPLITS[i + 1], camera->near_plane, camera->far_plane);
         }
     }
+    global_cb.RECEIVES_SHADOWS = true;
+
+    const kl::Timer* timer = &game_layer->app_layer->timer;
+    global_cb.ELAPSED_TIME = timer->elapsed();
+    global_cb.DELTA_TIME = timer->delta();
 
     uint32_t id_counter = 0;
     for (const auto& [name, entity] : *scene) {
         id_counter += 1;
 
         const Mesh* mesh = &scene->get_mesh(entity->mesh_name);
-        const Material* material = &scene->get_material(entity->material_name);
+        Material* material = &scene->get_material(entity->material_name);
         if (!mesh || !material) { continue; }
 
         if (!render_layer->render_wireframe) {
@@ -124,35 +143,39 @@ void titian::ScenePass::render_self(StatePackage& package)
         const Texture* normal_map = &scene->get_texture(material->normal_map_name);
         if (normal_map) {
             gpu->bind_shader_view_for_pixel_shader(normal_map->shader_view, 6);
-            ps_cb.OBJECT_TEXTURE_INFO.x = 1.0f;
+            global_cb.HAS_NORMAL_MAP = 1.0f;
         }
         else {
-            ps_cb.OBJECT_TEXTURE_INFO.x = 0.0f;
+            global_cb.HAS_NORMAL_MAP = 0.0f;
         }
 
         const Texture* roughness_map = &scene->get_texture(material->roughness_map_name);
         if (roughness_map) {
             gpu->bind_shader_view_for_pixel_shader(roughness_map->shader_view, 7);
-            ps_cb.OBJECT_TEXTURE_INFO.y = 1.0f;
+            global_cb.HAS_ROUGHNESS_MAP = 1.0f;
         }
         else {
-            ps_cb.OBJECT_TEXTURE_INFO.y = 0.0f;
+            global_cb.HAS_ROUGHNESS_MAP = 0.0f;
         }
 
-        vs_cb.W = entity->model_matrix();
+        global_cb.W = entity->model_matrix();
 
-        ps_cb.OBJECT_COLOR = material->color.xyz();
-        ps_cb.OBJECT_INDEX = static_cast<float>(id_counter);
-        ps_cb.OBJECT_MATERIAL = {
-            material->texture_blend,
-            material->reflection_factor,
-            material->refraction_factor,
-            material->refraction_index,
-        };
+        global_cb.OBJECT_COLOR = material->color.xyz();
+        global_cb.OBJECT_INDEX = static_cast<float>(id_counter);
+		global_cb.OBJECT_SCALE = entity->scale;
+		global_cb.OBJECT_ROTATION = entity->rotation();
+		global_cb.OBJECT_POSITION = entity->position();
+
+		global_cb.TEXTURE_BLEND = material->texture_blend;
+		global_cb.REFLECTION_FACTOR = material->reflection_factor;
+		global_cb.REFRACTION_FACTOR = material->refraction_factor;
+		global_cb.REFRACTION_INDEX = material->refraction_index;
 
         // Draw
-        package.shader_state.vertex_shader.update_cbuffer(vs_cb);
-        package.shader_state.pixel_shader.update_cbuffer(ps_cb);
+		kl::RenderShaders* render_shaders = material->shaders ? &material->shaders : &package.shader_state;
+        gpu->bind_render_shaders(*render_shaders);
+        render_shaders->vertex_shader.update_cbuffer(global_cb);
+        render_shaders->pixel_shader.update_cbuffer(global_cb);
         gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
     }
 

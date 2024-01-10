@@ -35,7 +35,7 @@ namespace titian {
 
         void update_material_camera();
 
-        void render_selected_material(Scene* scene, kl::GPU* gpu, const Material* material, kl::Int2 viewport_size);
+        void render_selected_material(Scene* scene, kl::GPU* gpu, Material* material, kl::Int2 viewport_size);
         void render_selected_texture(Texture* texture, kl::Int2 viewport_size);
 
         void show_material_properties(Scene* scene, Material* material);

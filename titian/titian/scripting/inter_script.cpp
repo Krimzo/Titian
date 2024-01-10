@@ -5,7 +5,7 @@
 titian::InterScript::InterScript()
 	: Script(Type::INTER)
 {
-	this->source = "def on_start(scene)\n{\n}\n\ndef on_update(scene)\n{\n}\n";
+	this->source = string_defaults::DEFAULT_SCRIPT;
 }
 
 void titian::InterScript::serialize(Serializer* serializer, const void* helper_data) const

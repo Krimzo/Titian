@@ -19,7 +19,7 @@ int main(const int argc, const char** argv)
 		try {
 			EXE_TYPE = static_cast<ExeType>(std::stoi(argv[1]));
 		}
-		catch (std::exception&) {
+		catch (std::exception) {
 			Logger::log("Invalid entry argument. Defaulting to ", EXE_TYPE);
 		}
 	}

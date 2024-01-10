@@ -263,7 +263,7 @@ void titian::GUISectionMaterialEditor::update_material_camera()
     camera->set_forward(-camera->position());
 }
 
-void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl::GPU* gpu, const Material* material, const kl::Int2 viewport_size)
+void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl::GPU* gpu, Material* material, const kl::Int2 viewport_size)
 {
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
         return;
@@ -299,50 +299,63 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     gpu->bind_raster_state(states->raster_states->solid);
     gpu->bind_depth_state(states->depth_states->enabled);
 
-    kl::RenderShaders& render_shaders = states->shader_states->scene_pass;
-    gpu->bind_render_shaders(render_shaders);
+    kl::RenderShaders* render_shaders = material->shaders ? &material->shaders : &states->shader_states->scene_pass;
+    gpu->bind_render_shaders(*render_shaders);
 
     camera->update_aspect_ratio(viewport_size);
-
-    struct VS_CB
-    {
-        kl::Float4x4 W;
-        kl::Float4x4 VP;
-        kl::Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
-    };
-
-    const VS_CB vs_cb{
-        .W = {},
-        .VP = camera->camera_matrix(),
-    };
-
-    struct PS_CB
-    {
-        kl::Float3 OBJECT_COLOR; // (color.r, color.g, color.b)
-        float OBJECT_INDEX; // (index)
-
-        kl::Float4 OBJECT_MATERIAL; // (texture_blend, reflection_factor, refraction_factor, refraction_index)
-        kl::Float2 OBJECT_TEXTURE_INFO; // (has_normal_map, has_roughness_map)
-
-        alignas(16) kl::Float4 CAMERA_INFO; // (camera.x, camera.y, camera.z, skybox?)
-        kl::Float4 CAMERA_BACKGROUND; // (color.r, color.g, color.b, color.a)
-        kl::Float4x4 V; // View matrix
-
-        kl::Float4 AMBIENT_LIGHT; // (color.r, color.g, color.b, intensity)
-        kl::Float4 DIRECTIONAL_LIGHT; // (dir.x, dir.y, dir.z, sun_point_size)
-        kl::Float3 DIRECTIONAL_LIGHT_COLOR; // (color.r, color.g, color.b)
-
-        float HAS_SHADOWS; // (has_shadows)
-        kl::Float4 SHADOW_MAP_INFO; // (width, height, texel_width, texel_size)
-        kl::Float4 CASCADE_DISTANCES; // (cascade_0_far, cascade_1_far, cascade_2_far, cascade_3_far)
-    };
-
-    PS_CB ps_cb{};
-
     Camera* scene_camera = scene->get_casted<Camera>(scene->main_camera_name);
     if (!scene_camera) {
         return;
     }
+
+    struct GLOBAL_CB
+    {
+        float ELAPSED_TIME{};
+        float DELTA_TIME{};
+
+        alignas(16) kl::Float3 CAMERA_POSITION;
+        float CAMERA_HAS_SKYBOX{};
+        kl::Float4 CAMERA_BACKGROUND;
+
+        kl::Float3 AMBIENT_COLOR;
+        float AMBIENT_INTENSITY{};
+
+        kl::Float3 SUN_DIRECTION;
+        float SUN_POINT_SIZE{};
+        kl::Float3 SUN_COLOR;
+
+        float OBJECT_INDEX{};
+        kl::Float3 OBJECT_COLOR;
+        alignas(16) kl::Float3 OBJECT_SCALE;
+        alignas(16) kl::Float3 OBJECT_ROTATION;
+        alignas(16) kl::Float3 OBJECT_POSITION;
+
+        float TEXTURE_BLEND{};
+        float REFLECTION_FACTOR{};
+        float REFRACTION_FACTOR{};
+        float REFRACTION_INDEX{};
+
+        float HAS_NORMAL_MAP{};
+        float HAS_ROUGHNESS_MAP{};
+
+        alignas(16) kl::Float4x4 W;
+        kl::Float4x4 V;
+        kl::Float4x4 VP;
+
+        float RECEIVES_SHADOWS{};
+        kl::Float2 SHADOW_MAP_SIZE;
+        alignas(16) kl::Float2 SHADOW_MAP_TEXEL_SIZE;
+        alignas(16) kl::Float4 SHADOW_CASCADES;
+        kl::Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
+    };
+    GLOBAL_CB global_cb{};
+
+    const kl::Timer* timer = &editor_layer->game_layer->app_layer->timer;
+    global_cb.ELAPSED_TIME = timer->elapsed();
+    global_cb.DELTA_TIME = timer->delta();
+
+    global_cb.W = {};
+    global_cb.VP = camera->camera_matrix();
 
     Texture* skybox_texture = &scene->get_texture(scene_camera->skybox_name);
     if (skybox_texture) {
@@ -363,39 +376,41 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     Texture* normal_map_texture = &scene->get_texture(material->normal_map_name);
     if (normal_map_texture) {
         gpu->bind_shader_view_for_pixel_shader(normal_map_texture->shader_view, 2);
-        ps_cb.OBJECT_TEXTURE_INFO.x = 1.0f;
+        global_cb.HAS_NORMAL_MAP = 1.0f;
     }
     else {
-        ps_cb.OBJECT_TEXTURE_INFO.x = 0.0f;
+        global_cb.HAS_NORMAL_MAP = 0.0f;
     }
 
     Texture* roughness_map_texture = &scene->get_texture(material->roughness_map_name);
     if (roughness_map_texture) {
         gpu->bind_shader_view_for_pixel_shader(roughness_map_texture->shader_view, 3);
-        ps_cb.OBJECT_TEXTURE_INFO.y = 1.0f;
+        global_cb.HAS_ROUGHNESS_MAP = 1.0f;
     }
     else {
-        ps_cb.OBJECT_TEXTURE_INFO.y = 0.0f;
+        global_cb.HAS_ROUGHNESS_MAP = 0.0f;
     }
 
-    ps_cb.AMBIENT_LIGHT = { kl::Float3{ 1.0f }, 0.1f };
-    ps_cb.DIRECTIONAL_LIGHT = { kl::normalize(kl::Float3{ 0.0f, -1.0f, -1.0f }), 1.0f };
-    ps_cb.DIRECTIONAL_LIGHT_COLOR = kl::colors::WHITE;
+    global_cb.AMBIENT_COLOR = kl::Float3{ 1.0f };
+    global_cb.AMBIENT_INTENSITY = 0.1f;
 
-    ps_cb.OBJECT_COLOR = material->color.xyz();
-    ps_cb.OBJECT_MATERIAL = {
-        material->texture_blend,
-        material->reflection_factor,
-        material->refraction_factor,
-        material->refraction_index,
-    };
+    global_cb.SUN_DIRECTION = kl::normalize(kl::Float3{ 0.0f, -1.0f, -1.0f });
+    global_cb.SUN_COLOR = kl::colors::WHITE;
 
-    ps_cb.CAMERA_INFO = { camera->position(), static_cast<float>(static_cast<bool>(skybox_texture)) };
-    ps_cb.CAMERA_BACKGROUND = camera->background;
-    ps_cb.HAS_SHADOWS = false;
+    global_cb.OBJECT_COLOR = material->color.xyz();
+    global_cb.RECEIVES_SHADOWS = false;
 
-    render_shaders.vertex_shader.update_cbuffer(vs_cb);
-    render_shaders.pixel_shader.update_cbuffer(ps_cb);
+    global_cb.TEXTURE_BLEND = material->texture_blend;
+    global_cb.REFLECTION_FACTOR = material->reflection_factor;
+    global_cb.REFRACTION_FACTOR = material->refraction_factor;
+    global_cb.REFRACTION_INDEX = material->refraction_index;
+
+    global_cb.CAMERA_POSITION = camera->position();
+	global_cb.CAMERA_HAS_SKYBOX = static_cast<float>(static_cast<bool>(skybox_texture));
+    global_cb.CAMERA_BACKGROUND = camera->background;
+
+    render_shaders->vertex_shader.update_cbuffer(global_cb);
+    render_shaders->pixel_shader.update_cbuffer(global_cb);
 
     DefaultMeshes* default_meshes = &editor_layer->game_layer->scene->default_meshes;
     gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology());
@@ -476,6 +491,9 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
         memcpy(source_file_buffer, material->shader_source_file.c_str(), std::min(material->shader_source_file.size(), std::size(source_file_buffer) - 1));
         if (ImGui::InputText("Shader Source File", source_file_buffer, std::size(source_file_buffer))) {
             material->shader_source_file = source_file_buffer;
+        }
+        if (std::optional shader_file = gui_get_drag_drop<std::string>("ShaderFile")) {
+			material->shader_source_file = shader_file.value();
         }
         ImGui::InputTextMultiline("Shader Source", material->shader_source.data(), material->shader_source.size(), {}, ImGuiInputTextFlags_ReadOnly);
     }
