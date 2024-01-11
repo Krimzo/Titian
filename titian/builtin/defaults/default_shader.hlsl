@@ -18,12 +18,14 @@ cbuffer GLOBAL_CB : register(b0)
     float3 SUN_COLOR;
     
     float OBJECT_INDEX;
-    float3 OBJECT_COLOR;
     float3 OBJECT_SCALE;
     float3 OBJECT_ROTATION;
     float3 OBJECT_POSITION;
 
+    float3 MATERIAL_COLOR;
+    float ALPHA_BLEND;
     float TEXTURE_BLEND;
+    
     float REFLECTION_FACTOR;
     float REFRACTION_FACTOR;
     float REFRACTION_INDEX;
