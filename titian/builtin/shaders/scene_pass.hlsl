@@ -18,12 +18,14 @@ cbuffer GLOBAL_CB : register(b0)
     float3 SUN_COLOR;
     
     float OBJECT_INDEX;
-    float3 OBJECT_COLOR;
     float3 OBJECT_SCALE;
     float3 OBJECT_ROTATION;
     float3 OBJECT_POSITION;
 
+    float3 MATERIAL_COLOR;
+    float ALPHA_BLEND;
     float TEXTURE_BLEND;
+    
     float REFLECTION_FACTOR;
     float REFRACTION_FACTOR;
     float REFRACTION_INDEX;
@@ -220,13 +222,13 @@ PS_OUT p_shader(VS_OUT data)
 
     // Color calculations
     const float3 texture_color = ENTITY_TEXTURE.Sample(ENTITY_SAMPLER, data.textur).xyz;
-    const float3 unlit_color = lerp(OBJECT_COLOR, texture_color, TEXTURE_BLEND);
+    const float3 unlit_color = lerp(MATERIAL_COLOR, texture_color, TEXTURE_BLEND);
     const float3 lit_color = unlit_color * light_intensity;
     
     const float3 reflected_color = lerp(lit_color, reflected_sky_color, pixel_reflectivity);
     const float3 refracted_color = lerp(reflected_color, refracted_sky_color, REFRACTION_FACTOR);
     
-    float4 _post_color = float4(refracted_color, 1.0f);
+    float4 _post_color = float4(refracted_color, ALPHA_BLEND);
 #ifdef _CUSTOM_PIXEL_SHADER
     _alter_post(data, _post_color);
 #endif

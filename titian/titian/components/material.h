@@ -9,7 +9,9 @@ namespace titian {
 	public:
 		kl::RenderShaders shaders{};
 
+		float alpha_blend = 1.0f;
 		float texture_blend = 0.0f;
+
 		float reflection_factor = 0.0f;
 		float refraction_factor = 0.0f;
 		float refraction_index = 1.0f;
@@ -29,6 +31,8 @@ namespace titian {
 		void deserialize(const Serializer* serializer, const void* helper_data) override;
 
 		void reload();
+
+		bool is_transparent() const;
 
 	private:
 		kl::GPU* m_gpu = nullptr;

@@ -7,7 +7,9 @@ titian::Material::Material(kl::GPU* gpu)
 
 void titian::Material::serialize(Serializer* serializer, const void* helper_data) const
 {
+	serializer->write_object<float>(alpha_blend);
 	serializer->write_object<float>(texture_blend);
+
 	serializer->write_object<float>(reflection_factor);
 	serializer->write_object<float>(refraction_factor);
 	serializer->write_object<float>(refraction_index);
@@ -24,7 +26,9 @@ void titian::Material::serialize(Serializer* serializer, const void* helper_data
 
 void titian::Material::deserialize(const Serializer* serializer, const void* helper_data)
 {
+	serializer->read_object<float>(alpha_blend);
 	serializer->read_object<float>(texture_blend);
+
 	serializer->read_object<float>(reflection_factor);
 	serializer->read_object<float>(refraction_factor);
 	serializer->read_object<float>(refraction_index);
@@ -50,6 +54,11 @@ void titian::Material::reload()
 		const std::string processed_source = process_shader_source();
 		shaders = m_gpu->create_render_shaders(processed_source);
 	}
+}
+
+bool titian::Material::is_transparent() const
+{
+	return alpha_blend < 1.0f;
 }
 
 std::string titian::Material::process_shader_source() const

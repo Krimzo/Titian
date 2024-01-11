@@ -13,18 +13,19 @@ kl::GPU::GPU(const bool debug, const bool single_threaded)
         creation_flags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
     }
 
+    const D3D_FEATURE_LEVEL feature_levels[1] = { D3D_FEATURE_LEVEL_11_1 };
     D3D11CreateDevice(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
         nullptr,
         creation_flags,
-        nullptr,
-        NULL,
+        feature_levels,
+        static_cast<UINT>(std::size(feature_levels)),
         D3D11_SDK_VERSION,
         &m_device,
         nullptr,
         &m_context
-    );
+    ) >> verify_result;
     assert(m_device, "Failed to create device");
     assert(m_context, "Failed to create device context");
 }
@@ -54,20 +55,21 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
         creation_flags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
     }
 
+    const D3D_FEATURE_LEVEL feature_levels[1] = { D3D_FEATURE_LEVEL_11_1 };
     D3D11CreateDeviceAndSwapChain(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
         nullptr,
         creation_flags,
-        nullptr,
-        NULL,
+        feature_levels,
+        static_cast<UINT>(std::size(feature_levels)),
         D3D11_SDK_VERSION,
         &chain_descriptor,
         &m_chain,
         &m_device,
         nullptr,
         &m_context
-    );
+    ) >> verify_result;
     assert(m_device, "Failed to create device");
     assert(m_context, "Failed to create device context");
     assert(m_chain, "Failed to create swapchain");
