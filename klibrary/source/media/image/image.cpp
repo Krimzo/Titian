@@ -350,7 +350,7 @@ void kl::Image::draw_image(const Int2& top_left, const Image& image, const bool 
     }
 }
 
-// Files
+// Formats
 static constexpr CLSID bmp_encoder_clsid = {
     0x557cf400, 0x1a04, 0x11d3, { 0x9a, 0x73, 0x00, 0x00, 0xf8, 0x1e, 0xf3, 0x2e }
 };
@@ -361,30 +361,84 @@ static constexpr CLSID png_encoder_clsid = {
     0x557cf406, 0x1a04, 0x11d3, { 0x9a, 0x73, 0x00, 0x00, 0xf8, 0x1e, 0xf3, 0x2e }
 };
 
-bool kl::Image::load_from_file(const std::string& filepath)
+// Decoding
+bool kl::Image::load_from_memory(const byte* data, const uint64_t byte_size)
 {
-    Gdiplus::Bitmap loaded_bitmap(convert_string(filepath).c_str());
-    if (!verify(!loaded_bitmap.GetLastStatus(), "Failed to open image file \"" + filepath + "\"")) {
+    const ComPtr<IStream> stream = SHCreateMemStream(data, (UINT) byte_size);
+    Gdiplus::Bitmap loaded_bitmap(stream.Get());
+    if (!verify(!loaded_bitmap.GetLastStatus(), "Failed to decode image")) {
         return false;
     }
-    resize({ (int) loaded_bitmap.GetWidth(), (int) loaded_bitmap.GetHeight() });
 
     Gdiplus::BitmapData bitmap_data = {};
     loaded_bitmap.LockBits(nullptr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bitmap_data);
-    if (!verify(bitmap_data.Scan0, "Failed to load image data from file \"" + filepath + "\"")) {
+    if (!verify(bitmap_data.Scan0, "Failed to load image data")) {
         return false;
     }
-    memcpy(PixelStorage::data(), bitmap_data.Scan0, PixelStorage::size() * sizeof(Color));
 
+    resize({ static_cast<int>(bitmap_data.Width), static_cast<int>(bitmap_data.Height) });
+    memcpy(PixelStorage::data(), bitmap_data.Scan0, PixelStorage::size() * sizeof(Color));
     return true;
 }
 
-bool kl::Image::save_to_file(const std::string& filepath) const
+bool kl::Image::load_from_vector(const std::vector<byte>& buffer)
 {
-    const std::string extension = file_extension(filepath);
+    return load_from_memory(buffer.data(), buffer.size());
+}
 
-    if (extension == ".txt") {
-        std::ofstream file(filepath);
+bool kl::Image::load_from_file(const std::string_view& filepath)
+{
+    const std::vector file_data = kl::read_file(filepath);
+    return load_from_vector(file_data);
+}
+
+// Encoding
+bool kl::Image::save_to_vector(std::vector<byte>* buffer, const std::string_view& type) const
+{
+    const CLSID* format_to_use;
+    if (type == ".bmp") {
+        format_to_use = &bmp_encoder_clsid;
+    }
+    else if (type == ".jpg") {
+        format_to_use = &jpg_encoder_clsid;
+    }
+    else if (type == ".png") {
+        format_to_use = &png_encoder_clsid;
+    }
+    else {
+        return false;
+    }
+
+    Gdiplus::Bitmap bitmap(m_size.x, m_size.y, PixelFormat32bppARGB);
+    if (!verify(!bitmap.GetLastStatus(), "Failed to create bitmap")) {
+        return false;
+    }
+
+    Gdiplus::BitmapData bitmap_data{};
+    bitmap.LockBits(nullptr, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bitmap_data);
+    if (!verify(bitmap_data.Scan0, "Failed to lock bitmap bits")) {
+        return false;
+    }
+
+    memcpy(bitmap_data.Scan0, PixelStorage::data(), PixelStorage::size() * sizeof(Color));
+    bitmap.UnlockBits(&bitmap_data);
+
+    ComPtr<IStream> stream = SHCreateMemStream(nullptr, 0);
+    bitmap.Save(stream.Get(), format_to_use, nullptr);
+
+    STATSTG stream_info{};
+    stream->Stat(&stream_info, STATFLAG_NONAME);
+    buffer->resize(stream_info.cbSize.QuadPart);
+
+    stream->Seek({}, STREAM_SEEK_SET, nullptr);
+    stream->Read(buffer->data(), (ULONG) buffer->size(), nullptr);
+    return true;
+}
+
+bool kl::Image::save_to_file(const std::string_view& filepath, const std::string_view& type) const
+{
+    if (type == ".txt") {
+        std::ofstream file(filepath.data());
         if (!file) {
             return false;
         }
@@ -399,36 +453,11 @@ bool kl::Image::save_to_file(const std::string& filepath) const
         return true;
     }
 
-    const CLSID* format_to_use;
-    if (extension == ".bmp") {
-        format_to_use = &bmp_encoder_clsid;
-    }
-    else if (extension == ".jpg") {
-        format_to_use = &jpg_encoder_clsid;
-    }
-    else if (extension == ".png") {
-        format_to_use = &png_encoder_clsid;
-    }
-    else {
+    std::vector<byte> buffer{};
+    if (!save_to_vector(&buffer, type)) {
         return false;
     }
-
-    Gdiplus::Bitmap temp_bitmap(m_size.x, m_size.y, PixelFormat32bppARGB);
-    if (!verify(!temp_bitmap.GetLastStatus(), "Failed to create bitmap")) {
-        return false;
-    }
-
-    Gdiplus::BitmapData bitmap_data = {};
-    temp_bitmap.LockBits(nullptr, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bitmap_data);
-    if (!verify(bitmap_data.Scan0, "Failed to lock bitmap bits")) {
-        return false;
-    }
-
-    memcpy(bitmap_data.Scan0, PixelStorage::data(), PixelStorage::size() * sizeof(Color));
-    temp_bitmap.UnlockBits(&bitmap_data);
-    temp_bitmap.Save(convert_string(filepath).c_str(), format_to_use, nullptr);
-
-    return true;
+    return kl::write_file(filepath, buffer);
 }
 
 // Static

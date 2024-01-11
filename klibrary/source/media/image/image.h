@@ -63,9 +63,14 @@ namespace kl {
         void draw_circle(const Int2& center, const Int2& outer_position, const Color& color, bool fill = false);
         void draw_image(const Int2& top_left, const Image& image, bool mix_alpha = true);
 
-        // Files
-        bool load_from_file(const std::string& filepath);
-        bool save_to_file(const std::string& filepath) const;
+        // Decoding
+        bool load_from_memory(const byte* data, uint64_t byte_size);
+        bool load_from_vector(const std::vector<byte>& buffer);
+        bool load_from_file(const std::string_view& filepath);
+
+        // Encoding
+        bool save_to_vector(std::vector<byte>* buffer, const std::string_view& type) const;
+        bool save_to_file(const std::string_view& filepath, const std::string_view& type) const;
     };
 }
 
