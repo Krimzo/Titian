@@ -1,11 +1,8 @@
 #include "main.h"
 
 
-titian::TitianGame::TitianGame()
+titian::TitianGame::TitianGame(const std::string& entry_scene)
 {
-    // Unpackage
-    packager::open_package(packager::PACKAGED_BUILTIN_FILE);
-
     // Init layers
     app_layer = new AppLayer("Titian Game");
     game_layer = new GameLayer(&app_layer);
@@ -28,13 +25,23 @@ titian::TitianGame::TitianGame()
     push_layer(gui_layer);
 
     // Start entry scene
-    const Serializer serializer = { "entry.titian", false };
-    game_layer->scene->deserialize(&serializer, nullptr);
-    game_layer->start_game();
+    const Serializer serializer = { entry_scene, false };
+    if (serializer) {
+        game_layer->scene->deserialize(&serializer, nullptr);
+        game_layer->start_game();
+    }
+    else {
+        m_is_valid = false;
+    }
 }
 
 titian::TitianGame::~TitianGame()
 {
     gui_layer->sections.clear();
     render_layer->passes.clear();
+}
+
+bool titian::TitianGame::is_valid() const
+{
+    return m_is_valid;
 }

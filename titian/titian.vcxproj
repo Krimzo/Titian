@@ -327,7 +327,8 @@
     <ClInclude Include="sandbox\sandbox_piece.h" />
     <ClInclude Include="source\exe_type.h" />
     <ClCompile Include="source\exe_type.cpp" />
-    <ClCompile Include="source\main.cpp">
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>

@@ -8,4 +8,4 @@
 #include "pieces/piece_physics_test.h"
 
 
-int sandbox_entry();
+int sandbox_entry(int argc, const char** argv);

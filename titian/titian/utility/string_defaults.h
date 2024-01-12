@@ -4,6 +4,13 @@
 
 
 namespace string_defaults {
-	inline const std::string DEFAULT_SCRIPT = kl::read_file_string("builtin/defaults/default_script.chai");
-	inline const std::string DEFAULT_SHADER = kl::read_file_string("builtin/defaults/default_shader.hlsl");
+	inline std::string get_default_script()
+	{
+		return kl::read_file_string("builtin/defaults/default_script.chai");
+	}
+
+	inline std::string get_default_shader()
+	{
+		return kl::read_file_string("builtin/defaults/default_shader.hlsl");
+	}
 }

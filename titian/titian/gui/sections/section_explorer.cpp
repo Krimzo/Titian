@@ -84,7 +84,7 @@ void titian::GUISectionExplorer::render_gui()
                     const std::string full_file = stream.str();
                     if (!std::filesystem::exists(full_file)) {
                         std::ofstream file{ full_file };
-                        file << string_defaults::DEFAULT_SCRIPT;
+                        file << string_defaults::get_default_script();
                         ImGui::CloseCurrentPopup();
                     }
                 }
@@ -97,7 +97,7 @@ void titian::GUISectionExplorer::render_gui()
                     const std::string full_file = stream.str();
                     if (!std::filesystem::exists(full_file)) {
                         std::ofstream file{ full_file };
-                        file << string_defaults::DEFAULT_SHADER;
+                        file << string_defaults::get_default_shader();
                         ImGui::CloseCurrentPopup();
                     }
                 }

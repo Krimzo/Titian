@@ -3,4 +3,4 @@
 #include "packager.h"
 
 
-int packager_entry(bool create);
+int packager_entry(int argc, const char** argv, bool package);

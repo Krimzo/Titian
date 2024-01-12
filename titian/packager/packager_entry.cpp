@@ -1,18 +1,26 @@
 #include "main.h"
 
 
-int packager_entry(const bool create)
+int packager_entry(const int argc, const char** argv, const bool package)
 {
 	using namespace packager;
 
 	bool result = false;
-	if (create) {
-		result = create_package(BUILTIN_DIR, PACKAGED_BUILTIN_FILE);
-		result = create_package(PREVIEW_DIR, PACKAGED_PREVIEW_FILE);
+	if (package) {
+		if (argc >= 4) {
+			result = create_package(argv[2], argv[3]);
+		}
+		else {
+			Logger::log("Usage: ... <input_dir> <output_file>");
+		}
 	}
 	else {
-		result = open_package(PACKAGED_BUILTIN_FILE);
-		result = open_package(PACKAGED_PREVIEW_FILE);
+		if (argc >= 3) {
+			result = open_package(argv[2]);
+		}
+		else {
+			Logger::log("Usage: ... <input_file>");
+		}
 	}
 	return static_cast<int>(!result);
 }

@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-int sandbox_entry()
+int sandbox_entry(const int argc, const char** argv)
 {
     using namespace sandbox;
 
