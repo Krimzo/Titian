@@ -5,7 +5,7 @@
 titian::InterScript::InterScript()
 	: Script(Type::INTER)
 {
-	this->source = string_defaults::get_default_script();
+	this->source = get_default_script();
 }
 
 void titian::InterScript::serialize(Serializer* serializer, const void* helper_data) const

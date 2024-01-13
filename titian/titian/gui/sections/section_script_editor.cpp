@@ -83,9 +83,8 @@ void titian::GUISectionScriptEditor::render_gui()
 		}
 		ImGui::EndChild();
 
-		const std::optional script_path = gui_get_drag_drop<std::string>("ScriptFile");
-		if (script_path) {
-			const std::filesystem::path path{ script_path.value() };
+		if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+			const std::filesystem::path path = file.value();
 			const std::string extension = path.extension().string();
 			if (extension == FILE_EXTENSION_NATIVE_SCRIPT) {
 				kl::Object new_script = new NativeScript();

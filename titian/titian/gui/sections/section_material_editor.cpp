@@ -42,16 +42,17 @@ void titian::GUISectionMaterialEditor::render_gui()
         }
         ImGui::EndChild();
 
-        const std::optional texture_file_path = gui_get_drag_drop<std::string>("TextureFile");
-        if (texture_file_path) {
-            const std::filesystem::path path = texture_file_path.value();
-            const std::string texture_name = path.filename().string();
-            if (!scene->textures.contains(texture_name)) {
-                kl::Object new_texture = new Texture(gpu);
-                new_texture->data_buffer.load_from_file(path.string());
-                new_texture->load_as_2D(false, false);
-                new_texture->create_shader_view(nullptr);
-                scene->textures[texture_name] = new_texture;
+        if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+            if (classify_file(file.value()) == FileType::TEXTURE) {
+                const std::filesystem::path path = file.value();
+                const std::string texture_name = path.filename().string();
+                if (!scene->textures.contains(texture_name)) {
+                    kl::Object new_texture = new Texture(gpu);
+                    new_texture->data_buffer.load_from_file(path.string());
+                    new_texture->load_as_2D(false, false);
+                    new_texture->create_shader_view(nullptr);
+                    scene->textures[texture_name] = new_texture;
+                }
             }
         }
         ImGui::NextColumn();
@@ -510,8 +511,10 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
         if (ImGui::InputText("Shader Source File", source_file_buffer, std::size(source_file_buffer))) {
             material->shader_source_file = source_file_buffer;
         }
-        if (std::optional shader_file = gui_get_drag_drop<std::string>("ShaderFile")) {
-            material->shader_source_file = shader_file.value();
+        if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+            if (classify_file(file.value()) == FileType::SHADER) {
+                material->shader_source_file = file.value();
+            }
         }
         ImGui::InputTextMultiline("Shader Source", material->shader_source.data(), material->shader_source.size(), {}, ImGuiInputTextFlags_ReadOnly);
     }

@@ -1,15 +1,26 @@
 #pragma once
 
-#include "gui/utility/gui_types.h"
+#include "klibrary.h"
 
-
-namespace titian::_priv {
-    inline std::unordered_map<std::string, std::any> DRAG_DROP_DATA = {};
-    inline std::unordered_map<std::string, char[101]> INPUT_CONTINUOUS_DATA = {};
-    inline std::unordered_map<std::string, char[101]> INPUT_WAITED_DATA = {};
-}
 
 namespace titian {
+    namespace _priv {
+        inline std::unordered_map<std::string, std::any> DRAG_DROP_DATA = {};
+        inline std::unordered_map<std::string, char[101]> INPUT_CONTINUOUS_DATA = {};
+        inline std::unordered_map<std::string, char[101]> INPUT_WAITED_DATA = {};
+    }
+
+    inline const std::string FILE_EXTENSION_MESH = ".obj";
+    inline const std::string FILE_EXTENSION_JPG = ".jpg";
+    inline const std::string FILE_EXTENSION_PNG = ".png";
+    inline const std::string FILE_EXTENSION_NATIVE_SCRIPT = ".dll";
+    inline const std::string FILE_EXTENSION_INTER_SCRIPT = ".chai";
+    inline const std::string FILE_EXTENSION_SHADER = ".hlsl";
+    inline const std::string FILE_EXTENSION_SCENE = ".titian";
+
+    inline const std::string DRAG_FILE_ID = "DragFileID";
+    inline const std::string DRAG_DIR_ID = "DragDirID";
+
     inline void gui_colored_text(const std::string_view& message, const kl::Float4& color)
     {
         ImGui::TextColored(reinterpret_cast<const ImVec4&>(color), message.data());
@@ -68,20 +79,23 @@ namespace titian {
     template<typename T>
     void gui_set_drag_drop(const std::string& id, const T& data, const kl::dx::ShaderView& texture = nullptr)
     {
+        ImGui::PushStyleColor(ImGuiCol_PopupBg, {});
+        ImGui::PushStyleColor(ImGuiCol_Border, {});
         if (ImGui::BeginDragDropSource()) {
             ImGui::SetDragDropPayload(id.c_str(), nullptr, 0);
+            _priv::DRAG_DROP_DATA[id] = std::any{ data };
             if (texture) {
                 ImGui::Image(texture.Get(), { 50.0f, 50.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
             }
-            _priv::DRAG_DROP_DATA[id] = std::any{ data };
             ImGui::EndDragDropSource();
         }
+		ImGui::PopStyleColor(2);
     }
 
     template<typename T>
     std::optional<T> gui_get_drag_drop(const std::string& id)
     {
-        std::optional<T> result = {};
+        std::optional<T> result{};
         if (ImGui::BeginDragDropTarget()) {
             if (ImGui::AcceptDragDropPayload(id.c_str())) {
                 const std::any data = _priv::DRAG_DROP_DATA[id];

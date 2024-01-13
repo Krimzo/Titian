@@ -28,10 +28,12 @@ void titian::GUISectionViewport::render_gui()
         ImGui::Image(render_layer->render_texture->shader_view.Get(), content_region);
 
         // Scene loading
-        if (const std::optional scene_file = gui_get_drag_drop<std::string>("SceneFile")) {
-            scene = new Scene(gpu);
-            if (const Serializer serializer = { scene_file.value(), false }) {
-                scene->deserialize(&serializer, nullptr);
+        if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+            if (classify_file(file.value()) == FileType::SCENE) {
+                scene = new Scene(gpu);
+                if (const Serializer serializer = { file.value(), false }) {
+                    scene->deserialize(&serializer, nullptr);
+                }
             }
         }
 

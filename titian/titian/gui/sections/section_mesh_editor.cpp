@@ -34,15 +34,16 @@ void titian::GUISectionMeshEditor::render_gui()
         }
         ImGui::EndChild();
 
-        const std::optional mesh_file_path = gui_get_drag_drop<std::string>("MeshFile");
-        if (mesh_file_path) {
-            const std::filesystem::path path = mesh_file_path.value();
-            const std::string mesh_name = path.filename().string();
-            if (!scene->meshes.contains(mesh_name)) {
-                kl::Object<Mesh> new_mesh = new Mesh(gpu, scene->physics(), scene->cooking());
-                new_mesh->data_buffer = kl::parse_obj_file(path.string());
-                new_mesh->reload();
-                scene->meshes[mesh_name] = new_mesh;
+        if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+            if (classify_file(file.value()) == FileType::MESH) {
+                const std::filesystem::path path = file.value();
+                const std::string mesh_name = path.filename().string();
+                if (!scene->meshes.contains(mesh_name)) {
+                    kl::Object<Mesh> new_mesh = new Mesh(gpu, scene->physics(), scene->cooking());
+                    new_mesh->data_buffer = kl::parse_obj_file(path.string());
+                    new_mesh->reload();
+                    scene->meshes[mesh_name] = new_mesh;
+                }
             }
         }
         ImGui::NextColumn();

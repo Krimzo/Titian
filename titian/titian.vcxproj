@@ -381,8 +381,7 @@
     <ClInclude Include="titian\gui\sections\section_script_editor.h" />
     <ClCompile Include="titian\gui\sections\section_viewport.cpp" />
     <ClInclude Include="titian\gui\sections\section_viewport.h" />
-    <ClInclude Include="titian\gui\utility\gui_helper.h" />
-    <ClInclude Include="titian\gui\utility\gui_types.h" />
+    <ClInclude Include="titian\utility\gui_util.h" />
     <ClInclude Include="titian\layer\layer.h" />
     <ClInclude Include="titian\layer\layer_stack.h" />
     <ClCompile Include="titian\layer\layer.cpp" />
@@ -448,7 +447,7 @@
     <ClInclude Include="titian\titian\titian_game.h" />
     <ClCompile Include="titian\titian\titian_game.cpp" />
     <ClCompile Include="titian\titian_entry.cpp" />
-    <ClInclude Include="titian\utility\string_defaults.h" />
+    <ClInclude Include="titian\utility\file_util.h" />
     <ClInclude Include="titian\utility\string_util.h" />
   </ItemGroup>
   <ItemGroup>

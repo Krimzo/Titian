@@ -31,7 +31,7 @@ void titian::GUISectionExplorer::render_gui()
     std::list<std::filesystem::path> files{};
 
     try {
-        for (auto& entry : std::filesystem::directory_iterator(path)) {
+        for (auto& entry : std::filesystem::directory_iterator(m_path)) {
             (entry.is_directory() ? directories : files).push_back(entry);
         }
     }
@@ -41,41 +41,50 @@ void titian::GUISectionExplorer::render_gui()
     if (ImGui::Begin("Explorer", nullptr, ImGuiWindowFlags_NoScrollbar)) {
         // New file
         if (ImGui::BeginPopupContextWindow("NewFile", ImGuiPopupFlags_MouseButtonMiddle)) {
-            ImGui::Text("New File");
-            const std::string file_input = gui_input_continuous("##CreateFileInput");
-            if (!file_input.empty()) {
-                if (ImGui::MenuItem("Create Text File")) {
+            ImGui::Text("Create");
+            const std::string name_input = gui_input_continuous("##CreateFileInput");
+            if (!name_input.empty()) {
+                if (ImGui::MenuItem("Directory")) {
                     std::stringstream stream{};
-                    stream << path << "/" << file_input;
-                    const std::string full_file = stream.str();
-                    if (!std::filesystem::exists(full_file)) {
-                        std::ofstream _{ full_file };
+                    stream << m_path << "/" << name_input;
+                    const std::string full_path = stream.str();
+                    if (!std::filesystem::exists(full_path)) {
+                        std::filesystem::create_directory(full_path);
                         ImGui::CloseCurrentPopup();
                     }
                 }
-                if (ImGui::MenuItem("Create Script File")) {
+                if (ImGui::MenuItem("Text File")) {
                     std::stringstream stream{};
-                    stream << path << "/" << file_input;
-                    if (file_input.find(FILE_EXTENSION_INTER_SCRIPT) == -1) {
+                    stream << m_path << "/" << name_input;
+                    const std::string full_path = stream.str();
+                    if (!std::filesystem::exists(full_path)) {
+                        std::ofstream _{ full_path };
+                        ImGui::CloseCurrentPopup();
+                    }
+                }
+                if (ImGui::MenuItem("Script File")) {
+                    std::stringstream stream{};
+                    stream << m_path << "/" << name_input;
+                    if (name_input.find(FILE_EXTENSION_INTER_SCRIPT) == -1) {
                         stream << FILE_EXTENSION_INTER_SCRIPT;
                     }
-                    const std::string full_file = stream.str();
-                    if (!std::filesystem::exists(full_file)) {
-                        std::ofstream file{ full_file };
-                        file << string_defaults::get_default_script();
+                    const std::string full_path = stream.str();
+                    if (!std::filesystem::exists(full_path)) {
+                        std::ofstream file{ full_path };
+                        file << get_default_script();
                         ImGui::CloseCurrentPopup();
                     }
                 }
-                if (ImGui::MenuItem("Create Shader File")) {
+                if (ImGui::MenuItem("Shader File")) {
                     std::stringstream stream{};
-                    stream << path << "/" << file_input;
-                    if (file_input.find(FILE_EXTENSION_SHADER) == -1) {
+                    stream << m_path << "/" << name_input;
+                    if (name_input.find(FILE_EXTENSION_SHADER) == -1) {
                         stream << FILE_EXTENSION_SHADER;
                     }
-                    const std::string full_file = stream.str();
-                    if (!std::filesystem::exists(full_file)) {
-                        std::ofstream file{ full_file };
-                        file << string_defaults::get_default_shader();
+                    const std::string full_path = stream.str();
+                    if (!std::filesystem::exists(full_path)) {
+                        std::ofstream file{ full_path };
+                        file << get_default_shader();
                         ImGui::CloseCurrentPopup();
                     }
                 }
@@ -84,18 +93,18 @@ void titian::GUISectionExplorer::render_gui()
         }
 
         const float window_width = ImGui::GetWindowWidth() - ImGui::GetStyle().WindowPadding.x * 2.0f;
-        int column_count = static_cast<int>(window_width / (icon_size + ImGui::GetStyle().CellPadding.x * 2.0f));
+        int column_count = static_cast<int>(window_width / (m_icon_size + ImGui::GetStyle().CellPadding.x * 2.0f));
         if (column_count < 1) {
             column_count = 1;
         }
 
-        ImGui::Text(path.c_str());
+        ImGui::Text(m_path.c_str());
         ImGui::Separator();
 
         ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2{ 0.0f, 4.0f });
 
         if (ImGui::BeginTable("##ExplorerTable", (int) column_count)) {
-            const std::filesystem::path current_path = { path };
+            const std::filesystem::path current_path = { m_path };
             if (current_path.has_parent_path()) {
                 ImGui::TableNextColumn();
                 handle_directory_entry(current_path.parent_path(), true);
@@ -113,8 +122,8 @@ void titian::GUISectionExplorer::render_gui()
 
         ImGui::PopStyleVar();
 
-        if (ImGui::BeginPopupContextWindow()) {
-            ImGui::SliderInt("Icon Size", &icon_size, 25, 250);
+        if (ImGui::IsKeyDown(ImGuiKey_LeftShift) && ImGui::BeginPopupContextWindow()) {
+            ImGui::SliderInt("Icon Size", &m_icon_size, 25, 250);
             ImGui::EndPopup();
         }
     }
@@ -131,7 +140,7 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
-    const float icon_size = static_cast<float>(this->icon_size);
+    const float icon_size = static_cast<float>(m_icon_size);
     const float text_height = ImGui::CalcTextSize(path.c_str()).y;
 
     if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
@@ -139,7 +148,7 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
         if (ImGui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
             ShellExecuteA(nullptr, nullptr, path.c_str(), nullptr, nullptr, 5);
         }
-        drag_file(path, file_type, icon);
+        gui_set_drag_drop<std::string>(DRAG_FILE_ID, path, icon);
 
         ImGui::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
         ImGui::Text(file.filename().string().c_str());
@@ -149,89 +158,112 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
     ImGui::PopStyleVar(2);
 
     if (ImGui::BeginPopupContextItem(file.string().c_str(), ImGuiPopupFlags_MouseButtonRight)) {
-        std::error_code error = {};
         if (std::optional opt_name = gui_input_waited("##RenameFileInput", file.filename().string())) {
             const std::string& name = opt_name.value();
             if (!name.empty()) {
                 std::filesystem::path new_file = file;
                 new_file.replace_filename(opt_name.value());
 
-                std::filesystem::rename(file, new_file, error);
-                if (error) {
-                    Logger::log("Failed to rename file ", file, " to ", new_file);
-                }
+				if (!std::filesystem::exists(new_file)) {
+                    std::filesystem::rename(file, new_file);
+                    Logger::log("Renamed file ", format_path(file), " to ", format_path(new_file));
+					ImGui::CloseCurrentPopup();
+				}
                 else {
-                    Logger::log("Renamed file ", file, " to ", new_file);
+                    Logger::log("Failed to rename file ", format_path(file), " to ", format_path(new_file));
                 }
             }
         }
         if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
-            std::filesystem::remove(file, error);
-            if (error) {
-                Logger::log("Failed to delete file ", file);
-            }
-            else {
-                Logger::log("Deleted file ", file);
-            }
+            Logger::log("Removed file ", format_path(file));
+            std::filesystem::remove(file);
             ImGui::CloseCurrentPopup();
         }
-        ImGui::Text(string_util::format_byte_size(std::filesystem::file_size(file, error)).c_str());
+        else {
+            ImGui::Text(format_byte_size(std::filesystem::file_size(file)).c_str());
+        }
         ImGui::EndPopup();
     }
 }
 
-void titian::GUISectionExplorer::handle_directory_entry(const std::filesystem::path& directory, const bool is_parent_dir)
+void titian::GUISectionExplorer::handle_directory_entry(const std::filesystem::path& dir, const bool is_parent_dir)
 {
-    const std::string path = std::filesystem::absolute(directory).string();
+    const std::string path = std::filesystem::absolute(dir).string();
     const kl::dx::ShaderView icon = is_parent_dir ? parent_dir_texture->shader_view : default_dir_texture->shader_view;
-    std::error_code ignored_error = {};
 
     constexpr float padding = 5.0f;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
-    const float icon_size = static_cast<float>(this->icon_size);
+    const float icon_size = static_cast<float>(m_icon_size);
     const float text_height = ImGui::CalcTextSize(path.c_str()).y;
 
-    constexpr float shadow_size = 2.0f;
-    const ImVec2 child_size = { icon_size + padding * 2, icon_size + text_height + padding * 4.0f };
-
-    if (ImGui::BeginChild(kl::format(path, "_elder").c_str(), { child_size.x + shadow_size, child_size.y + shadow_size })) {
-        if (ImGui::BeginChild(path.c_str(), child_size, true, ImGuiWindowFlags_NoScrollbar)) {
-            const ImVec2 cursor_pos = ImGui::GetCursorPos();
-            if (ImGui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
-                this->path = path;
-            }
-
-            ImGui::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
-            ImGui::Text(directory.filename().string().c_str());
+    if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
+        const ImVec2 cursor_pos = ImGui::GetCursorPos();
+        if (ImGui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+            this->m_path = path;
         }
-        ImGui::EndChild();
+
+        if (std::optional dragged_path = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+            handle_item_transfer(dragged_path.value(), path);
+        }
+        if (std::optional dragged_path = gui_get_drag_drop<std::string>(DRAG_DIR_ID)) {
+            handle_item_transfer(dragged_path.value(), path);
+        }
+        if (!is_parent_dir) {
+            gui_set_drag_drop<std::string>(DRAG_DIR_ID, path, icon);
+        }
+
+        ImGui::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
+        ImGui::Text(dir.filename().string().c_str());
     }
     ImGui::EndChild();
 
     ImGui::PopStyleVar(2);
+
+    if (ImGui::BeginPopupContextItem(dir.string().c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+        if (std::optional opt_name = gui_input_waited("##RenameDirInput", dir.filename().string())) {
+            const std::string& name = opt_name.value();
+            if (!name.empty()) {
+                std::filesystem::path new_dir = dir;
+                new_dir.replace_filename(opt_name.value());
+
+                if (!std::filesystem::exists(new_dir)) {
+                    std::filesystem::rename(dir, new_dir);
+                    Logger::log("Renamed directory ", format_path(dir), " to ", format_path(new_dir));
+                    ImGui::CloseCurrentPopup();
+                }
+                else {
+                    Logger::log("Failed to rename directory ", format_path(dir), " to ", format_path(new_dir));
+                }
+            }
+        }
+        if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+            Logger::log("Removed directory ", format_path(dir));
+			std::filesystem::remove_all(dir);
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
 }
 
-titian::GUISectionExplorer::FileType titian::GUISectionExplorer::classify_file(const std::filesystem::path& file)
+void titian::GUISectionExplorer::handle_item_transfer(const std::string& item, const std::string& destination)
 {
-    const std::string extension = file.extension().string();
-    if (extension == FILE_EXTENSION_MESH) {
-        return FileType::MESH;
+	const auto item_absolute = std::filesystem::absolute(item);
+	const auto destination_absolute = std::filesystem::absolute(destination);
+    if (item_absolute == destination_absolute) {
+		Logger::log("Failed to transfer file ", format_path(item_absolute), " to ", format_path(destination_absolute));
+        return;
     }
-    if (extension == FILE_EXTENSION_JPG || extension == FILE_EXTENSION_PNG) {
-        return FileType::TEXTURE;
-    }
-    if (extension == FILE_EXTENSION_NATIVE_SCRIPT || extension == FILE_EXTENSION_INTER_SCRIPT) {
-        return FileType::SCRIPT;
-    }
-    if (extension == FILE_EXTENSION_SHADER) {
-        return FileType::SHADER;
-    }
-    if (extension == FILE_EXTENSION_SCENE) {
-        return FileType::SCENE;
-    }
-    return FileType::DEFAULT;
+
+	const std::string new_item_absolute = destination_absolute.string() + "/" + item_absolute.filename().string();
+	if (std::filesystem::exists(new_item_absolute)) {
+		Logger::log("Failed to transfer file ", format_path(item_absolute), " to ", format_path(new_item_absolute));
+		return;
+	}
+
+	std::filesystem::rename(item_absolute, new_item_absolute);
+	Logger::log("Transferred file ", format_path(item_absolute), " to ", format_path(new_item_absolute));
 }
 
 kl::dx::ShaderView titian::GUISectionExplorer::file_icon(const FileType type)
@@ -249,26 +281,4 @@ kl::dx::ShaderView titian::GUISectionExplorer::file_icon(const FileType type)
         return scene_file_texture->shader_view;
     }
     return default_file_texture->shader_view;
-}
-
-void titian::GUISectionExplorer::drag_file(const std::filesystem::path& file, const FileType type, const kl::dx::ShaderView& texture)
-{
-    const std::string path = file.string();
-    switch (type) {
-    case FileType::MESH:
-        gui_set_drag_drop<std::string>("MeshFile", path, texture);
-        break;
-    case FileType::TEXTURE:
-        gui_set_drag_drop<std::string>("TextureFile", path, texture);
-        break;
-    case FileType::SCRIPT:
-        gui_set_drag_drop<std::string>("ScriptFile", path, texture);
-        break;
-    case FileType::SHADER:
-        gui_set_drag_drop<std::string>("ShaderFile", path, texture);
-        break;
-    case FileType::SCENE:
-        gui_set_drag_drop<std::string>("SceneFile", path, texture);
-        break;
-    }
 }
