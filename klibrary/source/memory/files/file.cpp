@@ -99,52 +99,63 @@ bool kl::append_file_string(const std::string& filepath, const std::string& data
 
 std::vector<kl::Vertex> kl::parse_obj_file(const std::string& filepath, const bool flip_z)
 {
-    std::fstream file = {};
-    file.open(filepath, std::ios::in);
+    // Handle file
+    std::ifstream file{ filepath };
     if (!verify(file.is_open(), "Failed to open file \"" + filepath + "\"")) {
         return {};
     }
 
-    const float z_flip = (flip_z ? -1.0f : 1.0f);
+    // Buffers
+    std::vector<Float3> world_data{};
+    std::vector<Float2> texture_data{};
+    std::vector<Float3> normal_data{};
+    std::vector<Vertex> vertex_data{};
 
-    std::vector<Float3>   world_data = {};
-    std::vector<Float2> texture_data = {};
-    std::vector<Float3>  normal_data = {};
-
-    std::vector<Vertex> vertex_data = {};
-
+    // Parse
+    const float z_flip = flip_z ? -1.0f : 1.0f;
     for (std::string line; std::getline(file, line);) {
+        // Split line
         const std::vector<std::string> parts = split_string(line, ' ');
 
+        // Parse world
         if (parts.size() == 4 && parts.front() == "v") {
-            Float3 result = {};
+            Float3 result{};
             result.x = strtof(parts[1].c_str(), nullptr);
             result.y = strtof(parts[2].c_str(), nullptr);
             result.z = strtof(parts[3].c_str(), nullptr) * z_flip;
             world_data.push_back(result);
+            continue;
         }
-        
+
+        // Parse texture
         if (parts.size() == 3 && parts.front() == "vt") {
-            Float2 result = {};
+            Float2 result{};
             result.x = strtof(parts[1].c_str(), nullptr);
             result.y = strtof(parts[2].c_str(), nullptr);
             texture_data.push_back(result);
+            continue;
         }
-        
+
+        // Parse normal
         if (parts.size() == 4 && parts.front() == "vn") {
-            Float3 result = {};
+            Float3 result{};
             result.x = strtof(parts[1].c_str(), nullptr);
             result.y = strtof(parts[2].c_str(), nullptr);
             result.z = strtof(parts[3].c_str(), nullptr) * z_flip;
             normal_data.push_back(result);
+            continue;
         }
-        
-        if (parts.size() == 4 && parts.front() == "f") {
-            for (int i = 1; i < 4; i++) {
-                const std::vector<std::string> line_part_parts = split_string(parts[i], '/');
-                if (line_part_parts.size() != 3) { continue; }
 
-                Vertex vertex = {};
+        // Parse face
+        if (parts.size() == 4 && parts.front() == "f") {
+            for (int i = 1; i <= 3; i++) {
+                // Split part
+                const std::vector<std::string> line_part_parts = split_string(parts[i], '/');
+                if (line_part_parts.size() != 3) {
+                    continue;
+                }
+
+                Vertex vertex{};
                 if (uint64_t index = strtoull(line_part_parts[0].c_str(), nullptr, 10) - 1; index >= 0 && index < world_data.size()) {
                     vertex.world = world_data[index];
                 }
@@ -158,8 +169,6 @@ std::vector<kl::Vertex> kl::parse_obj_file(const std::string& filepath, const bo
             }
         }
     }
-
-    file.close();
     return vertex_data;
 }
 

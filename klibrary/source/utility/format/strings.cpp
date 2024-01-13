@@ -25,8 +25,8 @@ std::wstring kl::convert_string(const std::string& data)
 
 std::vector<std::string> kl::split_string(const std::string& data, const char delimiter)
 {
-    std::vector<std::string> parts;
-    std::stringstream stream(data);
+    std::stringstream stream{ data };
+    std::vector<std::string> parts{};
     for (std::string part; std::getline(stream, part, delimiter);) {
         parts.push_back(part);
     }
@@ -35,8 +35,8 @@ std::vector<std::string> kl::split_string(const std::string& data, const char de
 
 std::vector<std::wstring> kl::split_string(const std::wstring& data, const wchar_t delimiter)
 {
+    std::wstringstream stream{ data };
     std::vector<std::wstring> parts;
-    std::wstringstream stream(data);
     for (std::wstring part; std::getline(stream, part, delimiter);) {
         parts.push_back(part);
     }

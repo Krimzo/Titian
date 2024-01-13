@@ -3,18 +3,16 @@
 
 titian::DefaultMeshes::DefaultMeshes(kl::GPU* gpu, physx::PxPhysics* physics, physx::PxCooking* cooking)
 {
-    cube = new Mesh(gpu, physics, cooking);
-    sphere = new Mesh(gpu, physics, cooking);
-    capsule = new Mesh(gpu, physics, cooking);
-    monke = new Mesh(gpu, physics, cooking);
-
-    cube->data_buffer = kl::parse_obj_file("builtin/meshes/cube.obj");
-    sphere->data_buffer = kl::parse_obj_file("builtin/meshes/sphere.obj");
-    capsule->data_buffer = kl::parse_obj_file("builtin/meshes/capsule.obj");
-    monke->data_buffer = kl::parse_obj_file("builtin/meshes/monke.obj");
-
-    cube->reload();
-    sphere->reload();
-    capsule->reload();
-    monke->reload();
+    const std::initializer_list<std::pair<kl::Object<Mesh>&, const char*>> meshes = {
+        { cube, "builtin/meshes/cube.obj" },
+        { sphere, "builtin/meshes/sphere.obj" },
+        { capsule, "builtin/meshes/capsule.obj" },
+        { monke, "builtin/meshes/monke.obj" },
+    };
+    std::for_each(std::execution::par, meshes.begin(), meshes.end(), [&](auto entry)
+    {
+        entry.first = new Mesh(gpu, physics, cooking);
+        entry.first->data_buffer = kl::parse_obj_file(entry.second);
+        entry.first->reload();
+    });
 }

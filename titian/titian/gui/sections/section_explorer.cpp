@@ -6,45 +6,23 @@ titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer)
     this->app_layer = app_layer;
     kl::GPU* gpu = &app_layer->gpu;
 
-    default_file_texture = new Texture(gpu);
-    mesh_file_texture = new Texture(gpu);
-    texture_file_texture = new Texture(gpu);
-    script_file_texture = new Texture(gpu);
-    shader_file_texture = new Texture(gpu);
-    scene_file_texture = new Texture(gpu);
-
-    default_dir_texture = new Texture(gpu);
-    parent_dir_texture = new Texture(gpu);
-
-    default_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/default_file.png"));
-    mesh_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/mesh_file.png"));
-    texture_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/texture_file.png"));
-    script_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/script_file.png"));
-    shader_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/shader_file.png"));
-    scene_file_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/scene_file.png"));
-
-    default_dir_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/default_dir.png"));
-    parent_dir_texture->graphics_buffer = gpu->create_texture(kl::Image("builtin/textures/parent_dir.png"));
-
-    default_file_texture->create_shader_view(nullptr);
-    mesh_file_texture->create_shader_view(nullptr);
-    texture_file_texture->create_shader_view(nullptr);
-    script_file_texture->create_shader_view(nullptr);
-    shader_file_texture->create_shader_view(nullptr);
-    scene_file_texture->create_shader_view(nullptr);
-
-    default_dir_texture->create_shader_view(nullptr);
-    parent_dir_texture->create_shader_view(nullptr);
-
-    kl::assert(default_file_texture->shader_view, "Failed to init DEFAULT file texture");
-    kl::assert(mesh_file_texture->shader_view, "Failed to init MESH file texture");
-    kl::assert(texture_file_texture->shader_view, "Failed to init TEXTURE file texture");
-    kl::assert(script_file_texture->shader_view, "Failed to init SCRIPT file texture");
-    kl::assert(shader_file_texture->shader_view, "Failed to init SHADER file texture");
-    kl::assert(scene_file_texture->shader_view, "Failed to init SCENE file texture");
-
-    kl::assert(default_dir_texture->shader_view, "Failed to init DEFAULT dir texture");
-    kl::assert(parent_dir_texture->shader_view, "Failed to init PARENT dir texture");
+    const std::initializer_list<std::pair<kl::Object<Texture>&, const char*>> icons = {
+        { default_file_texture, "builtin/textures/default_file.png" },
+        { mesh_file_texture, "builtin/textures/mesh_file.png" },
+        { texture_file_texture, "builtin/textures/texture_file.png" },
+        { script_file_texture, "builtin/textures/script_file.png" },
+        { shader_file_texture, "builtin/textures/shader_file.png" },
+        { scene_file_texture, "builtin/textures/scene_file.png" },
+        { default_dir_texture, "builtin/textures/default_dir.png" },
+        { parent_dir_texture, "builtin/textures/parent_dir.png" },
+    };
+    std::for_each(std::execution::par, icons.begin(), icons.end(), [&](auto entry)
+    {
+        entry.first = new Texture(gpu);
+        entry.first->graphics_buffer = gpu->create_texture(kl::Image(entry.second));
+        entry.first->create_shader_view(nullptr);
+        kl::assert(entry.first, kl::format("Failed to init ", entry.second, " file texture"));
+    });
 }
 
 void titian::GUISectionExplorer::render_gui()
@@ -68,7 +46,7 @@ void titian::GUISectionExplorer::render_gui()
             if (!file_input.empty()) {
                 if (ImGui::MenuItem("Create Text File")) {
                     std::stringstream stream{};
-					stream << path << "/" << file_input;
+                    stream << path << "/" << file_input;
                     const std::string full_file = stream.str();
                     if (!std::filesystem::exists(full_file)) {
                         std::ofstream _{ full_file };
@@ -77,7 +55,7 @@ void titian::GUISectionExplorer::render_gui()
                 }
                 if (ImGui::MenuItem("Create Script File")) {
                     std::stringstream stream{};
-					stream << path << "/" << file_input;
+                    stream << path << "/" << file_input;
                     if (file_input.find(FILE_EXTENSION_INTER_SCRIPT) == -1) {
                         stream << FILE_EXTENSION_INTER_SCRIPT;
                     }
@@ -116,7 +94,7 @@ void titian::GUISectionExplorer::render_gui()
 
         ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2{ 0.0f, 4.0f });
 
-        if (ImGui::BeginTable("##ExplorerTable", (int)column_count)) {
+        if (ImGui::BeginTable("##ExplorerTable", (int) column_count)) {
             const std::filesystem::path current_path = { path };
             if (current_path.has_parent_path()) {
                 ImGui::TableNextColumn();

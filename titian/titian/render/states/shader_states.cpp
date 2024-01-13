@@ -3,25 +3,19 @@
 
 titian::ShaderStates::ShaderStates(kl::GPU* gpu)
 {
-    const auto parse_render_shaders = [&](const std::string& name)
-    {
-        const std::string source = kl::read_file_string("builtin/shaders/" + name);
-        return gpu->create_render_shaders(source);
+    const std::initializer_list<std::pair<kl::RenderShaders&, const char*>> shaders = {
+        { solid_pass, "solid_pass.hlsl" },
+        { solid_lit_pass, "solid_lit_pass.hlsl" },
+        { shadow_pass, "shadow_pass.hlsl" },
+        { skybox_pass, "skybox_pass.hlsl" },
+        { scene_pass, "scene_pass.hlsl" },
+        { outline_pass, "outline_pass.hlsl" },
+        { display_pass, "display_pass.hlsl" },
     };
-
-    solid_pass = parse_render_shaders("solid_pass.hlsl");
-    solid_lit_pass = parse_render_shaders("solid_lit_pass.hlsl");
-    shadow_pass = parse_render_shaders("shadow_pass.hlsl");
-    skybox_pass = parse_render_shaders("skybox_pass.hlsl");
-    scene_pass = parse_render_shaders("scene_pass.hlsl");
-    outline_pass = parse_render_shaders("outline_pass.hlsl");
-    display_pass = parse_render_shaders("display_pass.hlsl");
-
-    kl::assert(solid_pass, "Failed to init SOLID_PASS shaders.");
-    kl::assert(solid_lit_pass, "Failed to init SOLID_LIT_PASS shaders.");
-    kl::assert(shadow_pass, "Failed to init SHADOW_PASS shaders.");
-    kl::assert(skybox_pass, "Failed to init SKYBOX_PASS shaders.");
-    kl::assert(scene_pass, "Failed to init SCENE_PASS shaders.");
-    kl::assert(outline_pass, "Failed to init OUTLINE_PASS shaders.");
-    kl::assert(display_pass, "Failed to init DISPLAY_PASS shaders.");
+    std::for_each(std::execution::par, shaders.begin(), shaders.end(), [&](auto entry)
+    {
+        const std::string source = kl::read_file_string(kl::format("builtin/shaders/", entry.second));
+        entry.first = gpu->create_render_shaders(source);
+        kl::assert(entry.first, kl::format("Failed to init [", entry.second, "] shaders."));
+    });
 }
