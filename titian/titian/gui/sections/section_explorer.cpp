@@ -221,7 +221,7 @@ void titian::GUISectionExplorer::handle_directory_entry(const std::filesystem::p
 
     ImGui::PopStyleVar(2);
 
-    if (ImGui::BeginPopupContextItem(dir.string().c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+    if (!is_parent_dir && ImGui::BeginPopupContextItem(dir.string().c_str(), ImGuiPopupFlags_MouseButtonRight)) {
         if (std::optional opt_name = gui_input_waited("##RenameDirInput", dir.filename().string())) {
             const std::string& name = opt_name.value();
             if (!name.empty()) {
