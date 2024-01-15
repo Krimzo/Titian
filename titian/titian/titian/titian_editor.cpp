@@ -43,6 +43,7 @@ titian::TitianEditor::TitianEditor()
 
     // Logger
     Logger::set_ready();
+    kl::VERIFICATION_LOGGER = Logger::log<std::string_view>;
 }
 
 titian::TitianEditor::~TitianEditor()
