@@ -16,76 +16,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\graphics\gpu\context_holder.cpp" />
-    <ClCompile Include="source\graphics\gpu\device_holder.cpp" />
-    <ClCompile Include="source\graphics\gpu\gpu.cpp" />
-    <ClCompile Include="source\graphics\gpu_12\gpu_12.cpp" />
-    <ClCompile Include="source\graphics\gpu_12\gpu_12_commands.cpp" />
-    <ClCompile Include="source\graphics\gpu_12\gpu_12_fence.cpp" />
-    <ClCompile Include="source\graphics\gpu_12\gpu_12_queue.cpp" />
-    <ClCompile Include="source\graphics\shaders\compiled_shader.cpp" />
-    <ClCompile Include="source\graphics\shaders\render_shaders.cpp" />
-    <ClCompile Include="source\graphics\shaders\shader_compiler.cpp" />
-    <ClCompile Include="source\graphics\shaders\shader_holder.cpp" />
-    <ClCompile Include="source\klibrary.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="source\math\imaginary\complex.cpp" />
-    <ClCompile Include="source\math\imaginary\quaternion.cpp" />
-    <ClCompile Include="source\math\math.cpp" />
-    <ClCompile Include="source\math\matrix\float2x2.cpp" />
-    <ClCompile Include="source\math\matrix\float3x3.cpp" />
-    <ClCompile Include="source\math\matrix\float4x4.cpp" />
-    <ClCompile Include="source\math\ray\plane.cpp" />
-    <ClCompile Include="source\math\ray\ray.cpp" />
-    <ClCompile Include="source\math\ray\sphere.cpp" />
-    <ClCompile Include="source\math\triangle\triangle.cpp" />
-    <ClCompile Include="source\math\triangle\vertex.cpp" />
-    <ClCompile Include="source\math\vector\float2.cpp" />
-    <ClCompile Include="source\math\vector\float3.cpp" />
-    <ClCompile Include="source\math\vector\float4.cpp" />
-    <ClCompile Include="source\math\vector\int2.cpp" />
-    <ClCompile Include="source\media\audio\audio.cpp" />
-    <ClCompile Include="source\media\image\color.cpp" />
-    <ClCompile Include="source\media\image\image.cpp" />
-    <ClCompile Include="source\media\media.cpp" />
-    <ClCompile Include="source\media\video\video_reader.cpp" />
-    <ClCompile Include="source\media\video\video_writer.cpp" />
-    <ClCompile Include="source\memory\files\file.cpp" />
-    <ClCompile Include="source\memory\linking\dll.cpp" />
-    <ClCompile Include="source\memory\safety\array.cpp" />
-    <ClCompile Include="source\memory\safety\object.cpp" />
-    <ClCompile Include="source\render\components\collider.cpp" />
-    <ClCompile Include="source\render\components\material.cpp" />
-    <ClCompile Include="source\render\components\mesh.cpp" />
-    <ClCompile Include="source\render\components\texture.cpp" />
-    <ClCompile Include="source\render\light\ambient_light.cpp" />
-    <ClCompile Include="source\render\light\directional_light.cpp" />
-    <ClCompile Include="source\render\light\point_light.cpp" />
-    <ClCompile Include="source\render\scene\camera.cpp" />
-    <ClCompile Include="source\render\scene\entity.cpp" />
-    <ClCompile Include="source\render\scene\scene.cpp" />
-    <ClCompile Include="source\time\date\date.cpp" />
-    <ClCompile Include="source\time\time.cpp" />
-    <ClCompile Include="source\time\timer\timer.cpp" />
-    <ClCompile Include="source\utility\async\async.cpp" />
-    <ClCompile Include="source\utility\async\async_iterator.cpp" />
-    <ClCompile Include="source\utility\data\encryptor.cpp" />
-    <ClCompile Include="source\utility\data\random.cpp" />
-    <ClCompile Include="source\utility\format\console.cpp" />
-    <ClCompile Include="source\utility\format\strings.cpp" />
-    <ClCompile Include="source\utility\hash\hash_t.cpp" />
-    <ClCompile Include="source\utility\hash\sha256.cpp" />
-    <ClCompile Include="source\web\socket\socket.cpp" />
-    <ClCompile Include="source\web\web.cpp" />
-    <ClCompile Include="source\window\draw\frame_buffer.cpp" />
-    <ClCompile Include="source\window\input\key.cpp" />
-    <ClCompile Include="source\window\input\keyboard.cpp" />
-    <ClCompile Include="source\window\input\mouse.cpp" />
-    <ClCompile Include="source\window\window.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="source\apis\apis.h" />
     <ClInclude Include="source\apis\cpp\kl_cpp.h" />
     <ClInclude Include="source\apis\external\kl_dx12.h" />
@@ -163,6 +93,72 @@
     <ClInclude Include="source\window\input\keyboard.h" />
     <ClInclude Include="source\window\input\mouse.h" />
     <ClInclude Include="source\window\window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\graphics\gpu\context_holder.cpp" />
+    <ClCompile Include="source\graphics\gpu\device_holder.cpp" />
+    <ClCompile Include="source\graphics\gpu\gpu.cpp" />
+    <ClCompile Include="source\graphics\gpu_12\gpu_12.cpp" />
+    <ClCompile Include="source\graphics\gpu_12\gpu_12_commands.cpp" />
+    <ClCompile Include="source\graphics\gpu_12\gpu_12_fence.cpp" />
+    <ClCompile Include="source\graphics\gpu_12\gpu_12_queue.cpp" />
+    <ClCompile Include="source\graphics\shaders\compiled_shader.cpp" />
+    <ClCompile Include="source\graphics\shaders\render_shaders.cpp" />
+    <ClCompile Include="source\graphics\shaders\shader_compiler.cpp" />
+    <ClCompile Include="source\graphics\shaders\shader_holder.cpp" />
+    <ClCompile Include="source\klibrary.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="source\math\imaginary\complex.cpp" />
+    <ClCompile Include="source\math\imaginary\quaternion.cpp" />
+    <ClCompile Include="source\math\math.cpp" />
+    <ClCompile Include="source\math\matrix\float2x2.cpp" />
+    <ClCompile Include="source\math\matrix\float3x3.cpp" />
+    <ClCompile Include="source\math\matrix\float4x4.cpp" />
+    <ClCompile Include="source\math\ray\plane.cpp" />
+    <ClCompile Include="source\math\ray\ray.cpp" />
+    <ClCompile Include="source\math\ray\sphere.cpp" />
+    <ClCompile Include="source\math\triangle\triangle.cpp" />
+    <ClCompile Include="source\math\triangle\vertex.cpp" />
+    <ClCompile Include="source\math\vector\float2.cpp" />
+    <ClCompile Include="source\math\vector\float3.cpp" />
+    <ClCompile Include="source\math\vector\float4.cpp" />
+    <ClCompile Include="source\math\vector\int2.cpp" />
+    <ClCompile Include="source\media\audio\audio.cpp" />
+    <ClCompile Include="source\media\image\color.cpp" />
+    <ClCompile Include="source\media\image\image.cpp" />
+    <ClCompile Include="source\media\media.cpp" />
+    <ClCompile Include="source\media\video\video_reader.cpp" />
+    <ClCompile Include="source\media\video\video_writer.cpp" />
+    <ClCompile Include="source\memory\files\file.cpp" />
+    <ClCompile Include="source\memory\linking\dll.cpp" />
+    <ClCompile Include="source\render\components\collider.cpp" />
+    <ClCompile Include="source\render\components\material.cpp" />
+    <ClCompile Include="source\render\components\mesh.cpp" />
+    <ClCompile Include="source\render\components\texture.cpp" />
+    <ClCompile Include="source\render\light\directional_light.cpp" />
+    <ClCompile Include="source\render\scene\camera.cpp" />
+    <ClCompile Include="source\render\scene\entity.cpp" />
+    <ClCompile Include="source\render\scene\scene.cpp" />
+    <ClCompile Include="source\time\date\date.cpp" />
+    <ClCompile Include="source\time\time.cpp" />
+    <ClCompile Include="source\time\timer\timer.cpp" />
+    <ClCompile Include="source\utility\async\async.cpp" />
+    <ClCompile Include="source\utility\async\async_iterator.cpp" />
+    <ClCompile Include="source\utility\data\encryptor.cpp" />
+    <ClCompile Include="source\utility\data\random.cpp" />
+    <ClCompile Include="source\utility\format\console.cpp" />
+    <ClCompile Include="source\utility\format\strings.cpp" />
+    <ClCompile Include="source\utility\hash\hash_t.cpp" />
+    <ClCompile Include="source\utility\hash\sha256.cpp" />
+    <ClCompile Include="source\web\socket\socket.cpp" />
+    <ClCompile Include="source\web\web.cpp" />
+    <ClCompile Include="source\window\draw\frame_buffer.cpp" />
+    <ClCompile Include="source\window\input\key.cpp" />
+    <ClCompile Include="source\window\input\keyboard.cpp" />
+    <ClCompile Include="source\window\input\mouse.cpp" />
+    <ClCompile Include="source\window\window.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

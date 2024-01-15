@@ -6,48 +6,58 @@
 namespace kl {
     class Socket
     {
+    public:
+        using ID = uint64_t;
+        static const std::string SELF;
+
+    private:
         sockaddr_in m_address = {};
-        SOCKET m_socket = {};
+        ID m_socket = {};
 
     public:
-        static const std::string self;
-
-        // Init
         Socket();
         Socket(int port);
-        Socket(const std::string& address, int port);
-        virtual ~Socket();
+        Socket(const std::string_view& address, int port);
+        ~Socket();
+
+        Socket(const Socket&) = delete;
+        Socket(Socket&&) = delete;
+
+        void operator=(const Socket&) = delete;
+        void operator=(Socket&&) = delete;
 
         // Properties
-        SOCKET id() const;
+        ID id() const;
 
         std::string address() const;
-        int set_address(const std::string& address);
+        int set_address(const std::string_view& address);
 
         int port() const;
         void set_port(int port);
 
         // Connection
         int listen(int queue_size);
-        Socket accept();
+        void accept(Socket* socket);
         int connect();
-        int close() const;
+        int close();
 
         // Data transfer
         int send(const void* data, int byte_size) const;
         int receive(void* buff, int byte_size) const;
-        int exhaust(std::vector<byte>& output, int buffer_size = 16384) const;
+        int exhaust(std::vector<byte>* output, int buffer_size = 16384) const;
 
         template <typename T>
-        int send(const T& obj) const
+        bool send(const T& obj) const
         {
-            return send(&obj, sizeof(T));
+            const int sent_size = send(&obj, sizeof(T));
+            return sent_size == sizeof(T);
         }
 
         template <typename T>
-        int receive(T& obj) const
+        bool receive(T& obj) const
         {
-            return receive(&obj, sizeof(T));
+            const int received_size = receive(&obj, sizeof(T));
+            return received_size == sizeof(T);
         }
     };
 }

@@ -32,17 +32,21 @@ namespace kl::console {
 }
 
 namespace kl {
+    inline std::function<void(const std::string_view&)> VERIFICATION_LOGGER = [](const std::string_view& message)
+    {
+        console::set_enabled(true);
+        print(colors::ORANGE, "Failed to verify: ", message, colors::CONSOLE);
+    };
+
     inline int get()
     {
         return std::cin.get();
     }
 
-    inline constexpr bool verify(const bool value, const std::string_view& message, const bool wait = false)
+    inline constexpr bool verify(const bool value, const std::string_view& message)
     {
         if (!value) {
-            console::set_enabled(true);
-            print(colors::ORANGE, "Failed to verify: ", message, colors::CONSOLE);
-            if (wait) get();
+            VERIFICATION_LOGGER(message);
         }
         return value;
     }

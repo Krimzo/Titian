@@ -4,14 +4,14 @@
 
 
 namespace kl {
-    template<typename T>
+    template<typename T, typename C = std::atomic<uint64_t>>
     class Object
     {
-        template<typename>
+        template<typename, typename>
         friend class Object;
 
         T* m_instance = nullptr;
-        std::atomic<uint64_t>* m_count = nullptr;
+        C* m_count = nullptr;
 
         inline void increase_count() const
         {
@@ -27,7 +27,7 @@ namespace kl {
 
         inline void allocate()
         {
-            m_count = new std::atomic<uint64_t>();
+            m_count = new C();
             if (!m_count) throw std::runtime_error("Could not allocate memory for reference counter.");
             *m_count = 1;
         }
@@ -101,9 +101,9 @@ namespace kl {
 
         // Derived cast
         template<typename B> requires std::is_base_of_v<B, T>
-        operator Object<B> ()
+        operator Object<B, C> ()
         {
-            Object<B> result = {};
+            Object<B, C> result{};
             result.m_instance = m_instance;
             result.m_count = m_count;
             increase_count();
@@ -113,7 +113,7 @@ namespace kl {
         // Info
         operator bool() const
         {
-            return (bool) m_instance;
+            return static_cast<bool>(m_instance);
         }
 
         uint64_t count() const
@@ -122,16 +122,14 @@ namespace kl {
         }
 
         // Compare
-        template<typename O>
-        bool operator==(const Object<O>& other) const
+        bool operator==(const Object& other) const
         {
             const void* first = m_instance;
             const void* second = other.m_instance;
             return (first == second);
         }
 
-        template<typename O>
-        bool operator!=(const Object<O>& other) const
+        bool operator!=(const Object& other) const
         {
             return !(*this == other);
         }
@@ -171,8 +169,8 @@ namespace kl {
 }
 
 namespace kl {
-    template<typename T>
-    std::ostream& operator<<(std::ostream& stream, const Object<T>& object)
+    template<typename T, typename C>
+    std::ostream& operator<<(std::ostream& stream, const Object<T, C>& object)
     {
         // Address
         stream << "(0x" << std::hex << &object << std::dec;

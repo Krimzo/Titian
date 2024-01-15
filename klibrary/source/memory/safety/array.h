@@ -4,11 +4,11 @@
 
 
 namespace kl {
-    template<typename T>
+    template<typename T, typename C = std::atomic<uint64_t>>
     class Array
     {
         T* m_data = nullptr;
-        std::atomic<uint64_t>* m_count = nullptr;
+        C* m_count = nullptr;
         uint64_t m_size = 0;
 
         inline void increase_count() const
@@ -30,7 +30,7 @@ namespace kl {
             if (!m_data) throw std::runtime_error("Could not allocate memory for array data.");
 
             // Counter
-            m_count = new std::atomic<uint64_t>;
+            m_count = new C();
             if (!m_count) throw std::runtime_error("Could not allocate memory for reference counter.");
             *m_count = 1;
         }
@@ -74,18 +74,18 @@ namespace kl {
         }
 
         // Create copy
-        Array(const Array<T>& other)
+        Array(const Array& other)
             : m_data(other.m_data), m_count(other.m_count), m_size(other.m_size)
         {
             increase_count();
         }
 
-        Array(const Array<T>&& other) noexcept
-            : Array<T>(other)
+        Array(const Array&& other) noexcept
+            : Array(other)
         {}
 
         // Copy
-        Array<T>& operator=(const Array<T>& other)
+        Array& operator=(const Array& other)
         {
             if (other.m_data != m_data) {
                 this->free();
@@ -97,7 +97,7 @@ namespace kl {
             return *this;
         }
 
-        Array<T>& operator=(Array<T>&& other) noexcept
+        Array& operator=(Array&& other) noexcept
         {
             return (*this = other);
         }
@@ -105,7 +105,7 @@ namespace kl {
         // Info
         operator bool() const
         {
-            return (bool) m_data;
+            return static_cast<bool>(m_data);
         }
 
         uint64_t count() const
@@ -150,12 +150,12 @@ namespace kl {
         }
 
         // Compare
-        bool operator==(const Array<T>& other) const
+        bool operator==(const Array& other) const
         {
             return (m_data == other.m_data);
         }
 
-        bool operator!=(const Array<T>& other) const
+        bool operator!=(const Array& other) const
         {
             return !(*this == other);
         }
@@ -205,8 +205,8 @@ namespace kl {
 }
 
 namespace kl {
-    template<typename T>
-    std::ostream& operator<<(std::ostream& stream, const Array<T>& array)
+    template<typename T, typename C>
+    std::ostream& operator<<(std::ostream& stream, const Array<T, C>& array)
     {
         // Address
         stream << "(0x" << std::hex << &array << std::dec;

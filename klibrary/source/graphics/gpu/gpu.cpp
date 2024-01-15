@@ -33,10 +33,10 @@ kl::GPU::GPU(const bool debug, const bool single_threaded)
 kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
     : creation_type(GPUCreationType::RENDER)
 {
-    RECT window_client_area = {};
+    RECT window_client_area{};
     GetClientRect(window, &window_client_area);
 
-    DXGI_SWAP_CHAIN_DESC chain_descriptor = {};
+    DXGI_SWAP_CHAIN_DESC chain_descriptor{};
     chain_descriptor.BufferCount = 1;
     chain_descriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     chain_descriptor.BufferDesc.Width = window_client_area.right;
@@ -170,7 +170,7 @@ void kl::GPU::resize_internal(const Int2& size)
     m_target_view = create_target_view(render_texture, nullptr);
 
     // Depth buffer
-    dx::TextureDescriptor descriptor = {};
+    dx::TextureDescriptor descriptor{};
     descriptor.Width = size.x;
     descriptor.Height = size.y;
     descriptor.MipLevels = 1;
@@ -189,7 +189,7 @@ void kl::GPU::resize_internal(const Int2& size)
 
 void kl::GPU::resize_to_window(const HWND window)
 {
-    RECT window_client_area = {};
+    RECT window_client_area{};
     GetClientRect(window, &window_client_area);
     resize_internal({ window_client_area.right, window_client_area.bottom });
     set_viewport_size({ window_client_area.right, window_client_area.bottom });
@@ -230,7 +230,7 @@ kl::RenderShaders kl::GPU::create_render_shaders(const std::string& shader_sourc
     const CompiledShader compiled_vertex_shader = compile_vertex_shader(shader_sources);
     const CompiledShader compiled_pixel_shader = compile_pixel_shader(shader_sources);
 
-    RenderShaders shaders = {};
+    RenderShaders shaders{};
     shaders.input_layout = create_input_layout(compiled_vertex_shader);
     shaders.vertex_shader = { this, DeviceHolder::create_vertex_shader(compiled_vertex_shader) };
     shaders.pixel_shader = { this, DeviceHolder::create_pixel_shader(compiled_pixel_shader) };

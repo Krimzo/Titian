@@ -15,7 +15,7 @@ kl::dx::RasterState kl::DeviceHolder::create_raster_state(const dx::RasterStateD
 
 kl::dx::RasterState kl::DeviceHolder::create_raster_state(const bool wireframe, const bool cull, const bool cull_back) const
 {
-    dx::RasterStateDescriptor descriptor = {};
+    dx::RasterStateDescriptor descriptor{};
     descriptor.FillMode = wireframe ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
     descriptor.CullMode = cull ? (cull_back ? D3D11_CULL_BACK : D3D11_CULL_FRONT) : D3D11_CULL_NONE;
     descriptor.FrontCounterClockwise = true;
@@ -35,7 +35,7 @@ kl::dx::DepthState kl::DeviceHolder::create_depth_state(const dx::DepthStateDesc
 
 kl::dx::DepthState kl::DeviceHolder::create_depth_state(const bool depth, const bool stencil, const bool mask) const
 {
-    dx::DepthStateDescriptor descriptor = {};
+    dx::DepthStateDescriptor descriptor{};
     if (depth) {
         descriptor.DepthEnable = true;
         descriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -81,7 +81,7 @@ kl::dx::SamplerState kl::DeviceHolder::create_sampler_state(const dx::SamplerSta
 
 kl::dx::SamplerState kl::DeviceHolder::create_sampler_state(const bool linear, const bool mirror) const
 {
-    dx::SamplerStateDescriptor descriptor = {};
+    dx::SamplerStateDescriptor descriptor{};
     descriptor.Filter = linear ? D3D11_FILTER_MIN_MAG_MIP_LINEAR : D3D11_FILTER_MIN_MAG_MIP_POINT;
     descriptor.AddressU = mirror ? D3D11_TEXTURE_ADDRESS_MIRROR : D3D11_TEXTURE_ADDRESS_WRAP;
     descriptor.AddressV = descriptor.AddressU;
@@ -99,7 +99,7 @@ kl::dx::BlendState kl::DeviceHolder::create_blend_state(const dx::BlendStateDesc
 
 kl::dx::BlendState kl::DeviceHolder::create_blend_state(const bool transparency) const
 {
-    dx::BlendStateDescriptor descriptor = {};
+    dx::BlendStateDescriptor descriptor{};
     descriptor.RenderTarget[0].BlendEnable = transparency;
     descriptor.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
     descriptor.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
@@ -122,12 +122,12 @@ kl::dx::Buffer kl::DeviceHolder::create_buffer(const dx::BufferDescriptor* descr
 
 kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const void* data, const UINT byte_size) const
 {
-    dx::BufferDescriptor descriptor = {};
+    dx::BufferDescriptor descriptor{};
     descriptor.ByteWidth = byte_size;
     descriptor.Usage = D3D11_USAGE_IMMUTABLE;
     descriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
-    dx::SubresourceDescriptor subresource_data = {};
+    dx::SubresourceDescriptor subresource_data{};
     subresource_data.pSysMem = data;
 
     return create_buffer(&descriptor, &subresource_data);
@@ -146,12 +146,12 @@ kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::string& filepat
 
 kl::dx::Buffer kl::DeviceHolder::create_index_buffer(const uint32_t* data, const UINT element_count) const
 {
-    dx::BufferDescriptor descriptor = {};
+    dx::BufferDescriptor descriptor{};
     descriptor.ByteWidth = element_count * sizeof(uint32_t);
     descriptor.Usage = D3D11_USAGE_IMMUTABLE;
     descriptor.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-    dx::SubresourceDescriptor subresource_data = {};
+    dx::SubresourceDescriptor subresource_data{};
     subresource_data.pSysMem = data;
 
     return create_buffer(&descriptor, &subresource_data);
@@ -168,7 +168,7 @@ kl::dx::Buffer kl::DeviceHolder::create_const_buffer(const UINT byte_size) const
         return nullptr;
     }
 
-    dx::BufferDescriptor descriptor = {};
+    dx::BufferDescriptor descriptor{};
     descriptor.ByteWidth = byte_size;
     descriptor.Usage = D3D11_USAGE_DYNAMIC;
     descriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -179,7 +179,7 @@ kl::dx::Buffer kl::DeviceHolder::create_const_buffer(const UINT byte_size) const
 
 kl::dx::Buffer kl::DeviceHolder::create_structured_buffer(const void* data, const UINT element_count, const UINT element_size, const bool has_unordered_access, const bool cpu_read) const
 {
-    dx::BufferDescriptor descriptor = {};
+    dx::BufferDescriptor descriptor{};
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE | (has_unordered_access ? D3D11_BIND_UNORDERED_ACCESS : NULL);
     descriptor.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -187,7 +187,7 @@ kl::dx::Buffer kl::DeviceHolder::create_structured_buffer(const void* data, cons
     descriptor.StructureByteStride = element_size;
     descriptor.ByteWidth = element_count * element_size;
 
-    dx::SubresourceDescriptor subresource = {};
+    dx::SubresourceDescriptor subresource{};
     subresource.pSysMem = data;
 
     return create_buffer(&descriptor, &subresource);
@@ -195,7 +195,7 @@ kl::dx::Buffer kl::DeviceHolder::create_structured_buffer(const void* data, cons
 
 kl::dx::Buffer kl::DeviceHolder::create_staging_buffer(const dx::Buffer& buffer, const UINT byte_size) const
 {
-    dx::BufferDescriptor descriptor = {};
+    dx::BufferDescriptor descriptor{};
     buffer->GetDesc(&descriptor);
 
     descriptor.Usage = D3D11_USAGE_STAGING;
@@ -213,7 +213,7 @@ kl::dx::Buffer kl::DeviceHolder::create_plane_mesh(const float size, size_t num_
     num_of_points += 1;
 
     // Generating points
-    std::vector<Float2> points = {};
+    std::vector<Float2> points{};
     points.reserve(num_of_points * num_of_points);
     for (int x = 0; x < num_of_points; x++) {
         for (int z = 0; z < num_of_points; z++) {
@@ -225,7 +225,7 @@ kl::dx::Buffer kl::DeviceHolder::create_plane_mesh(const float size, size_t num_
     }
 
     // Generating triangles
-    std::vector<Vertex> vertices = {};
+    std::vector<Vertex> vertices{};
     vertices.reserve((num_of_points - 1) * (num_of_points - 1) * 6);
     for (size_t x = 0; x < num_of_points - 1; x++) {
         for (size_t z = 0; z < num_of_points - 1; z++) {
@@ -266,7 +266,7 @@ kl::dx::Texture kl::DeviceHolder::create_texture(const Image& image, const bool 
 {
     const kl::Image flipped_image = image.flip_vertical();
 
-    dx::TextureDescriptor descriptor = {};
+    dx::TextureDescriptor descriptor{};
     descriptor.Width = image.width();
     descriptor.Height = image.height();
     descriptor.MipLevels = 1;
@@ -278,7 +278,7 @@ kl::dx::Texture kl::DeviceHolder::create_texture(const Image& image, const bool 
         (has_unordered_access ? D3D11_BIND_UNORDERED_ACCESS : NULL) |
         (is_target ? D3D11_BIND_RENDER_TARGET : NULL);
 
-    dx::SubresourceDescriptor data = {};
+    dx::SubresourceDescriptor data{};
     data.pSysMem = flipped_image;
     data.SysMemPitch = image.width() * sizeof(Color);
 
@@ -295,7 +295,7 @@ kl::dx::Texture kl::DeviceHolder::create_cube_texture(const Image& front, const 
         return nullptr;
     }
 
-    dx::TextureDescriptor descriptor = {};
+    dx::TextureDescriptor descriptor{};
     descriptor.Width = front.width();
     descriptor.Height = front.height();
     descriptor.MipLevels = 1;
@@ -321,10 +321,10 @@ kl::dx::Texture kl::DeviceHolder::create_cube_texture(const Image& front, const 
 
 kl::dx::Texture kl::DeviceHolder::create_staging_texture(const dx::Texture& texture, const Int2& size) const
 {
-    dx::TextureDescriptor descriptor = {};
+    dx::TextureDescriptor descriptor{};
     texture->GetDesc(&descriptor);
 
-    dx::TextureDescriptor staging_descriptor = {};
+    dx::TextureDescriptor staging_descriptor{};
     staging_descriptor.Width = (size.x > 0) ? size.x : descriptor.Width;
     staging_descriptor.Height = (size.y > 0) ? size.y : descriptor.Height;
     staging_descriptor.MipLevels = 1;
@@ -339,7 +339,7 @@ kl::dx::Texture kl::DeviceHolder::create_staging_texture(const dx::Texture& text
 
 kl::dx::Texture kl::DeviceHolder::create_target_texture(const kl::Int2& size) const
 {
-    kl::dx::TextureDescriptor descriptor = {};
+    kl::dx::TextureDescriptor descriptor{};
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
     descriptor.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;

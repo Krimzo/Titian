@@ -1,5 +1,6 @@
 #include "klibrary.h"
 
+
 kl::ContextHolder::ContextHolder()
 {}
 
@@ -7,45 +8,51 @@ kl::ContextHolder::ContextHolder()
 void kl::ContextHolder::set_viewport_position(const Int2& position) const
 {
     UINT number_of_vps = 1;
-    D3D11_VIEWPORT viewport = {};
+    D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
 
-    viewport.TopLeftX = (float) position.x;
-    viewport.TopLeftY = (float) position.y;
+    viewport.TopLeftX = static_cast<float>(position.x);
+    viewport.TopLeftY = static_cast<float>(position.y);
     m_context->RSSetViewports(1, &viewport);
 }
 
 kl::Int2 kl::ContextHolder::viewport_position() const
 {
     UINT number_of_vps = 1;
-    D3D11_VIEWPORT viewport = {};
+    D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
-    return { (int) viewport.TopLeftX, (int) viewport.TopLeftY };
+    return {
+        static_cast<int>(viewport.TopLeftX),
+        static_cast<int>(viewport.TopLeftY),
+    };
 }
 
 void kl::ContextHolder::set_viewport_size(const Int2& size) const
 {
     UINT number_of_vps = 1;
-    D3D11_VIEWPORT viewport = {};
+    D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
 
-    viewport.Width = (float) size.x;
-    viewport.Height = (float) size.y;
+    viewport.Width = static_cast<float>(size.x);
+    viewport.Height = static_cast<float>(size.y);
     m_context->RSSetViewports(1, &viewport);
 }
 
 kl::Int2 kl::ContextHolder::viewport_size() const
 {
     UINT number_of_vps = 1;
-    D3D11_VIEWPORT viewport = {};
+    D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
-    return { (int) viewport.Width, (int) viewport.Height };
+    return {
+        static_cast<int>(viewport.Width),
+        static_cast<int>(viewport.Height),
+    };
 }
 
 void kl::ContextHolder::set_viewport_min_max(const Float2& min_max) const
 {
     UINT number_of_vps = 1;
-    D3D11_VIEWPORT viewport = {};
+    D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
 
     viewport.MinDepth = min_max.x;
@@ -56,7 +63,7 @@ void kl::ContextHolder::set_viewport_min_max(const Float2& min_max) const
 kl::Float2 kl::ContextHolder::viewport_min_max() const
 {
     UINT number_of_vps = 1;
-    D3D11_VIEWPORT viewport = {};
+    D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
     return { viewport.MinDepth, viewport.MaxDepth };
 }
@@ -120,7 +127,7 @@ void kl::ContextHolder::copy_resource(const dx::Resource& destination, const dx:
 
 void kl::ContextHolder::read_from_resource(void* cpu_buffer, const dx::Resource& gpu_buffer, SIZE_T byte_size) const
 {
-    dx::MappedSubresourceDescriptor mapped_subresource = {};
+    dx::MappedSubresourceDescriptor mapped_subresource{};
     m_context->Map(gpu_buffer.Get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource);
     if (cpu_buffer && mapped_subresource.pData) {
         memcpy(cpu_buffer, mapped_subresource.pData, byte_size);
@@ -130,7 +137,7 @@ void kl::ContextHolder::read_from_resource(void* cpu_buffer, const dx::Resource&
 
 void kl::ContextHolder::write_to_resource(const dx::Resource& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard) const
 {
-    dx::MappedSubresourceDescriptor mapped_subresource = {};
+    dx::MappedSubresourceDescriptor mapped_subresource{};
     m_context->Map(gpu_buffer.Get(), 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, NULL, &mapped_subresource);
     if (mapped_subresource.pData && cpu_buffer) {
         memcpy(mapped_subresource.pData, cpu_buffer, byte_size);
@@ -144,7 +151,7 @@ UINT kl::ContextHolder::buffer_size(const dx::Buffer& buffer) const
     if (!buffer) {
         return 0;
     }
-    dx::BufferDescriptor descriptor = {};
+    dx::BufferDescriptor descriptor{};
     buffer->GetDesc(&descriptor);
     return descriptor.ByteWidth;
 }
@@ -274,7 +281,6 @@ void kl::ContextHolder::bind_target_depth_views(const std::vector<dx::TargetView
     for (size_t i = 0; i < list_of_targets.size(); i++) {
         list_of_targets[i] = target_views[i].Get();
     }
-
     m_context->OMSetRenderTargets((UINT) target_views.size(), list_of_targets.data(), depth_view.Get());
 }
 
