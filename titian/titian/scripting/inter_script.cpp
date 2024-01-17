@@ -695,7 +695,9 @@ int load_types = [&]
 	chaiscript::utility::add_class<Material>(*INTER_SCRIPT_MODULE, "Material",
 	{},
 	{
+		{ chaiscript::fun(&Material::alpha_blend), "alpha_blend" },
 		{ chaiscript::fun(&Material::texture_blend), "texture_blend" },
+
 		{ chaiscript::fun(&Material::reflection_factor), "reflection_factor" },
 		{ chaiscript::fun(&Material::refraction_factor), "refraction_factor" },
 		{ chaiscript::fun(&Material::refraction_index), "refraction_index" },
