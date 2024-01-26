@@ -176,9 +176,9 @@ void kl::GPU::resize_internal(const Int2& size)
     m_chain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, NULL);
 
     // Render buffer
-    for (UINT i = 0; i < BUFFER_COUNT; i++) {
+    for (auto& view : m_target_views) {
         dx::Texture buffer = back_buffer();
-        m_target_views[i] = create_target_view(buffer, nullptr);
+        view = create_target_view(buffer, nullptr);
         m_chain->Present(0, NULL);
     }
 
