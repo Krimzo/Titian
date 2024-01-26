@@ -18,6 +18,21 @@ bool titian::EditorLayer::update()
         return true;
     }
 
+    // Rotation
+    if (window->mouse.right) {
+        const kl::Int2 frame_center = window->frame_center();
+        if (window->mouse.is_hidden()) {
+            camera->rotate(window->mouse.position(), frame_center);
+        }
+        else {
+            window->mouse.set_hidden(true);
+        }
+        window->mouse.set_position(frame_center);
+    }
+    else if (window->mouse.is_hidden()) {
+        window->mouse.set_hidden(false);
+    }
+
     // Speed
     if (window->keyboard.shift) {
         camera->speed = 5.0f;
@@ -44,21 +59,6 @@ bool titian::EditorLayer::update()
     }
     if (window->keyboard.q) {
         camera->move_down(delta_time);
-    }
-
-    // Rotation
-    if (window->mouse.right) {
-        const kl::Int2 frame_center = window->frame_center();
-        if (window->mouse.is_hidden()) {
-            camera->rotate(window->mouse.position(), frame_center);
-        }
-        else {
-            window->mouse.set_hidden(true);
-        }
-        window->mouse.set_position(frame_center);
-    }
-    else if (window->mouse.is_hidden()) {
-        window->mouse.set_hidden(false);
     }
     return true;
 }

@@ -37,7 +37,7 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
     GetClientRect(window, &window_client_area);
 
     DXGI_SWAP_CHAIN_DESC chain_descriptor{};
-    chain_descriptor.BufferCount = 1;
+    chain_descriptor.BufferCount = BUFFER_COUNT;
     chain_descriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     chain_descriptor.BufferDesc.Width = window_client_area.right;
     chain_descriptor.BufferDesc.Height = window_client_area.bottom;
@@ -45,6 +45,7 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
     chain_descriptor.OutputWindow = window;
     chain_descriptor.SampleDesc.Count = 1;
     chain_descriptor.Windowed = true;
+    chain_descriptor.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     chain_descriptor.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
     UINT creation_flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -56,6 +57,7 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
     }
 
     const D3D_FEATURE_LEVEL feature_levels[1] = { D3D_FEATURE_LEVEL_11_1 };
+    ComPtr<IDXGISwapChain> temp_chain{};
     D3D11CreateDeviceAndSwapChain(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
@@ -65,11 +67,12 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
         static_cast<UINT>(std::size(feature_levels)),
         D3D11_SDK_VERSION,
         &chain_descriptor,
-        &m_chain,
+        &temp_chain,
         &m_device,
         nullptr,
         &m_context
     ) >> verify_result;
+    temp_chain.As(&m_chain) >> verify_result;
     assert(m_device, "Failed to create device");
     assert(m_context, "Failed to create device context");
     assert(m_chain, "Failed to create swapchain");
@@ -104,12 +107,14 @@ kl::dx::Chain kl::GPU::chain() const
 
 kl::dx::TargetView kl::GPU::internal_target() const
 {
-    return m_target_view;
+    const UINT index = m_chain->GetCurrentBackBufferIndex();
+    return m_target_views[index];
 }
 
 kl::dx::DepthView kl::GPU::internal_depth() const
 {
-    return m_depth_view;
+    const UINT index = m_chain->GetCurrentBackBufferIndex();
+    return m_depth_views[index];
 }
 
 // Chain
@@ -124,6 +129,7 @@ kl::dx::Texture kl::GPU::back_buffer() const
 void kl::GPU::swap_buffers(const bool v_sync) const
 {
     m_chain->Present(v_sync, NULL);
+    bind_internal_views();
 }
 
 bool kl::GPU::in_fullscreen() const
@@ -142,13 +148,13 @@ void kl::GPU::set_fullscreen(const bool enabled) const
 // Internal buffers
 void kl::GPU::clear_internal_color(const Float4& color) const
 {
-    m_context->ClearRenderTargetView(m_target_view.Get(), color);
+    m_context->ClearRenderTargetView(internal_target().Get(), color);
 }
 
 void kl::GPU::clear_internal_depth(const float depth, const UINT8 stencil) const
 {
     static constexpr UINT clear_type = (D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL);
-    m_context->ClearDepthStencilView(m_depth_view.Get(), clear_type, depth, stencil);
+    m_context->ClearDepthStencilView(internal_depth().Get(), clear_type, depth, stencil);
 }
 
 void kl::GPU::clear_internal(const Float4& color) const
@@ -161,13 +167,20 @@ void kl::GPU::resize_internal(const Int2& size)
 {
     // Cleanup
     unbind_target_depth_views();
-    m_target_view = nullptr;
-    m_depth_view = nullptr;
+    for (auto& view : m_target_views) {
+        view.Reset();
+    }
+    for (auto& view : m_depth_views) {
+        view.Reset();
+    }
     m_chain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, NULL);
 
     // Render buffer
-    const dx::Texture render_texture = this->back_buffer();
-    m_target_view = create_target_view(render_texture, nullptr);
+    for (UINT i = 0; i < BUFFER_COUNT; i++) {
+        dx::Texture buffer = back_buffer();
+        m_target_views[i] = create_target_view(buffer, nullptr);
+        m_chain->Present(0, NULL);
+    }
 
     // Depth buffer
     dx::TextureDescriptor descriptor{};
@@ -181,7 +194,9 @@ void kl::GPU::resize_internal(const Int2& size)
     descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
     const dx::Texture depth_texture = create_texture(&descriptor, nullptr);
-    m_depth_view = create_depth_view(depth_texture, nullptr);
+    for (auto& view : m_depth_views) {
+        view = create_depth_view(depth_texture, nullptr);
+    }
 
     // Rebind
     bind_internal_views();
@@ -197,7 +212,7 @@ void kl::GPU::resize_to_window(const HWND window)
 
 void kl::GPU::bind_internal_views() const
 {
-    bind_target_depth_views({ m_target_view }, m_depth_view);
+    bind_target_depth_views({ internal_target() }, internal_depth());
 }
 
 // Shader helper

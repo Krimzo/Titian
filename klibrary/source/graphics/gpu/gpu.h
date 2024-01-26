@@ -17,9 +17,13 @@ namespace kl {
 namespace kl {
     class GPU : public DeviceHolder, public ContextHolder, public ShaderCompiler
     {
+    public:
+        static inline constexpr UINT BUFFER_COUNT = 2;
+
+    private:
         dx::Chain m_chain = nullptr;
-        dx::TargetView m_target_view = nullptr;
-        dx::DepthView m_depth_view = nullptr;
+        dx::TargetView m_target_views[BUFFER_COUNT] = {};
+        dx::DepthView m_depth_views[BUFFER_COUNT] = {};
 
     public:
         const GPUCreationType creation_type = GPUCreationType::NONE;

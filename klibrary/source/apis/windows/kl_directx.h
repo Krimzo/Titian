@@ -27,7 +27,7 @@ namespace kl::dx {
     // Device
     using Device = ComPtr<ID3D11Device>;
     using Context = ComPtr<ID3D11DeviceContext>;
-    using Chain = ComPtr<IDXGISwapChain>;
+    using Chain = ComPtr<IDXGISwapChain4>;
 
     // Data
     using Buffer = ComPtr<ID3D11Buffer>;

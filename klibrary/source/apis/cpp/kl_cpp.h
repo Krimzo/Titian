@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <format>
+#include <ranges>
 
 // Threading
 #include <thread>

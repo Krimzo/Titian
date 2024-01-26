@@ -396,13 +396,13 @@ bool kl::Image::load_from_file(const std::string_view& filepath)
 bool kl::Image::save_to_vector(std::vector<byte>* buffer, const std::string_view& type) const
 {
     const CLSID* format_to_use;
-    if (type == ".bmp") {
+    if (type == "bmp") {
         format_to_use = &bmp_encoder_clsid;
     }
-    else if (type == ".jpg") {
+    else if (type == "jpg") {
         format_to_use = &jpg_encoder_clsid;
     }
-    else if (type == ".png") {
+    else if (type == "png") {
         format_to_use = &png_encoder_clsid;
     }
     else {
@@ -437,7 +437,7 @@ bool kl::Image::save_to_vector(std::vector<byte>* buffer, const std::string_view
 
 bool kl::Image::save_to_file(const std::string_view& filepath, const std::string_view& type) const
 {
-    if (type == ".txt") {
+    if (type == "txt") {
         std::ofstream file(filepath.data());
         if (!file) {
             return false;
