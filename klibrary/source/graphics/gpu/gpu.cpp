@@ -163,7 +163,7 @@ void kl::GPU::clear_internal(const Float4& color) const
     clear_internal_depth();
 }
 
-void kl::GPU::resize_internal(const Int2& size)
+void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
 {
     // Cleanup
     unbind_target_depth_views();
@@ -175,27 +175,27 @@ void kl::GPU::resize_internal(const Int2& size)
     }
     m_chain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, NULL);
 
-    // Render buffer
+    // Target buffers
     for (auto& view : m_target_views) {
-        dx::Texture buffer = back_buffer();
-        view = create_target_view(buffer, nullptr);
+        const dx::Texture texture = back_buffer();
+        view = create_target_view(texture, nullptr);
         m_chain->Present(0, NULL);
     }
 
-    // Depth buffer
+    // Depth buffers
     dx::TextureDescriptor descriptor{};
-    descriptor.Width = size.x;
-    descriptor.Height = size.y;
+    descriptor.Width = (UINT) size.x;
+    descriptor.Height = (UINT) size.y;
     descriptor.MipLevels = 1;
     descriptor.ArraySize = 1;
-    descriptor.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    descriptor.Format = depth_format;
     descriptor.SampleDesc.Count = 1;
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-    const dx::Texture depth_texture = create_texture(&descriptor, nullptr);
     for (auto& view : m_depth_views) {
-        view = create_depth_view(depth_texture, nullptr);
+        const dx::Texture texture = create_texture(&descriptor, nullptr);
+        view = create_depth_view(texture, nullptr);
     }
 
     // Rebind
