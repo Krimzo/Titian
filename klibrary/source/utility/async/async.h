@@ -4,9 +4,14 @@
 
 
 namespace kl {
-    inline const uint32_t CPU_CORE_COUNT = std::thread::hardware_concurrency();
+    inline const int CPU_CORE_COUNT = std::thread::hardware_concurrency();
 }
 
 namespace kl {
-    void async_for(int64_t start_inclusive, int64_t end_exclusive, const std::function<void(int64_t)>& loop_body);
+    template<typename T = int>
+    inline constexpr void async_for(const T start_inclusive, const T end_exclusive, const auto loop_body)
+    {
+        const std::ranges::iota_view view{ start_inclusive, end_exclusive };
+        std::for_each(std::execution::par, view.begin(), view.end(), loop_body);
+    }
 }

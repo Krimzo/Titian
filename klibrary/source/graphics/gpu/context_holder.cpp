@@ -128,7 +128,7 @@ void kl::ContextHolder::copy_resource(const dx::Resource& destination, const dx:
 void kl::ContextHolder::read_from_resource(void* cpu_buffer, const dx::Resource& gpu_buffer, SIZE_T byte_size) const
 {
     dx::MappedSubresourceDescriptor mapped_subresource{};
-    m_context->Map(gpu_buffer.Get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource);
+    m_context->Map(gpu_buffer.Get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource) >> verify_result;
     if (cpu_buffer && mapped_subresource.pData) {
         memcpy(cpu_buffer, mapped_subresource.pData, byte_size);
     }
@@ -138,7 +138,7 @@ void kl::ContextHolder::read_from_resource(void* cpu_buffer, const dx::Resource&
 void kl::ContextHolder::write_to_resource(const dx::Resource& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard) const
 {
     dx::MappedSubresourceDescriptor mapped_subresource{};
-    m_context->Map(gpu_buffer.Get(), 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, NULL, &mapped_subresource);
+    m_context->Map(gpu_buffer.Get(), 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, NULL, &mapped_subresource) >> verify_result;
     if (mapped_subresource.pData && cpu_buffer) {
         memcpy(mapped_subresource.pData, cpu_buffer, byte_size);
     }
@@ -242,11 +242,12 @@ void kl::ContextHolder::draw(const UINT vertex_count, const UINT start_index) co
 
 void kl::ContextHolder::draw(const dx::Buffer& vertex_buffer, const D3D_PRIMITIVE_TOPOLOGY draw_type, const UINT stride) const
 {
+    if (!vertex_buffer) {
+        return;
+    }
     set_draw_type(draw_type);
     bind_vertex_buffer(vertex_buffer, 0, 0, stride);
-
-    const UINT vertex_count = vertex_buffer_size(vertex_buffer, stride);
-    draw(vertex_count, 0);
+    draw(vertex_buffer_size(vertex_buffer, stride), 0);
 }
 
 void kl::ContextHolder::draw_indexed(const UINT index_count, const UINT start_index, const INT base_vertex) const

@@ -35,6 +35,7 @@
     <ClInclude Include="source\graphics\shaders\render_shaders.h" />
     <ClInclude Include="source\graphics\shaders\shader_compiler.h" />
     <ClInclude Include="source\graphics\shaders\shader_holder.h" />
+    <ClInclude Include="source\graphics\text\text_raster.h" />
     <ClInclude Include="source\klibrary.h" />
     <ClInclude Include="source\math\helper\constants.h" />
     <ClInclude Include="source\math\imaginary\complex.h" />
@@ -78,7 +79,6 @@
     <ClInclude Include="source\time\time.h" />
     <ClInclude Include="source\time\timer\timer.h" />
     <ClInclude Include="source\utility\async\async.h" />
-    <ClInclude Include="source\utility\async\async_iterator.h" />
     <ClInclude Include="source\utility\data\encryptor.h" />
     <ClInclude Include="source\utility\data\random.h" />
     <ClInclude Include="source\utility\format\console.h" />
@@ -106,6 +106,7 @@
     <ClCompile Include="source\graphics\shaders\render_shaders.cpp" />
     <ClCompile Include="source\graphics\shaders\shader_compiler.cpp" />
     <ClCompile Include="source\graphics\shaders\shader_holder.cpp" />
+    <ClCompile Include="source\graphics\text\text_raster.cpp" />
     <ClCompile Include="source\klibrary.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -144,8 +145,6 @@
     <ClCompile Include="source\time\date\date.cpp" />
     <ClCompile Include="source\time\time.cpp" />
     <ClCompile Include="source\time\timer\timer.cpp" />
-    <ClCompile Include="source\utility\async\async.cpp" />
-    <ClCompile Include="source\utility\async\async_iterator.cpp" />
     <ClCompile Include="source\utility\data\encryptor.cpp" />
     <ClCompile Include="source\utility\data\random.cpp" />
     <ClCompile Include="source\utility\format\console.cpp" />

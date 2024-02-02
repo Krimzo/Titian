@@ -14,10 +14,10 @@ namespace kl {
         ContextHolder();
 
         ContextHolder(const ContextHolder&) = delete;
-        ContextHolder(const ContextHolder&&) = delete;
+        ContextHolder(ContextHolder&&) = delete;
 
         void operator=(const ContextHolder&) = delete;
-        void operator=(const ContextHolder&&) = delete;
+        void operator=(ContextHolder&&) = delete;
 
         // Viewport
         void set_viewport_position(const Int2& position) const;

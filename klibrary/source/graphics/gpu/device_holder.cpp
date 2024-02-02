@@ -395,7 +395,7 @@ kl::dx::InputLayout kl::DeviceHolder::create_input_layout(const CompiledShader& 
     };
 
     const dx::LayoutDescriptor* descriptors_ptr = (!descriptors.empty()) ? descriptors.data() : default_layout_descriptors;
-    const UINT descriptors_count = (!descriptors.empty()) ? ((UINT) descriptors.size()) : 3;
+    const UINT descriptors_count = (!descriptors.empty()) ? ((UINT) descriptors.size()) : ((UINT) std::size(default_layout_descriptors));
 
     dx::InputLayout layout = nullptr;
     m_device->CreateInputLayout(descriptors_ptr, descriptors_count, compiled_shader.data_val(), compiled_shader.data_size(), &layout);

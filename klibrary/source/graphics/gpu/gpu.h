@@ -2,6 +2,7 @@
 
 #include "graphics/gpu/device_holder.h"
 #include "graphics/gpu/context_holder.h"
+#include "graphics/text/text_raster.h"
 #include "graphics/shaders/shader_compiler.h"
 
 
@@ -15,7 +16,7 @@ namespace kl {
 }
 
 namespace kl {
-    class GPU : public DeviceHolder, public ContextHolder, public ShaderCompiler
+    class GPU : public DeviceHolder, public ContextHolder, public ShaderCompiler, public TextRaster
     {
     public:
         static inline constexpr UINT BUFFER_COUNT = 2;
@@ -70,6 +71,9 @@ namespace kl {
         ShaderHolder<dx::PixelShader> create_pixel_shader(const std::string& shader_source);
         ShaderHolder<dx::ComputeShader> create_compute_shader(const std::string& shader_source);
 
-        RenderShaders create_render_shaders(const std::string& shader_sources);
+        RenderShaders create_render_shaders(const std::string& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors = {});
+
+        // Text
+        void render_text() const;
     };
 }

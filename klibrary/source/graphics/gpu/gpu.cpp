@@ -20,7 +20,7 @@ kl::GPU::GPU(const bool debug, const bool single_threaded)
         nullptr,
         creation_flags,
         feature_levels,
-        static_cast<UINT>(std::size(feature_levels)),
+        (UINT) std::size(feature_levels),
         D3D11_SDK_VERSION,
         &m_device,
         nullptr,
@@ -64,7 +64,7 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
         nullptr,
         creation_flags,
         feature_levels,
-        static_cast<UINT>(std::size(feature_levels)),
+        (UINT) std::size(feature_levels),
         D3D11_SDK_VERSION,
         &chain_descriptor,
         &temp_chain,
@@ -123,12 +123,13 @@ kl::dx::Texture kl::GPU::back_buffer() const
     dx::Texture buffer = nullptr;
     const long result = m_chain->GetBuffer(0, IID_PPV_ARGS(&buffer));
     verify(buffer, format("Failed to get backbuffer texture. Result: 0x", std::hex, result));
+    result >> verify_result;
     return buffer;
 }
 
 void kl::GPU::swap_buffers(const bool v_sync) const
 {
-    m_chain->Present(v_sync, NULL);
+    m_chain->Present(v_sync, NULL) >> verify_result;
     bind_internal_views();
 }
 
@@ -142,7 +143,7 @@ bool kl::GPU::in_fullscreen() const
 
 void kl::GPU::set_fullscreen(const bool enabled) const
 {
-    m_chain->SetFullscreenState(enabled, nullptr);
+    m_chain->SetFullscreenState(enabled, nullptr) >> verify_result;
 }
 
 // Internal buffers
@@ -173,13 +174,30 @@ void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
     for (auto& view : m_depth_views) {
         view.Reset();
     }
-    m_chain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, NULL);
+    for (auto& target : m_d2d1_targets) {
+        target.Reset();
+    }
+    m_chain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, NULL) >> verify_result;
 
     // Target buffers
-    for (auto& view : m_target_views) {
+    for (int i = 0; i < BUFFER_COUNT; i++) {
+        // Render target
         const dx::Texture texture = back_buffer();
-        view = create_target_view(texture, nullptr);
-        m_chain->Present(0, NULL);
+        m_target_views[i] = create_target_view(texture, nullptr);
+
+        // Surface
+        ComPtr<IDXGISurface> surface{};
+        texture->QueryInterface(IID_PPV_ARGS(&surface)) >> verify_result;
+        
+        // Text raster target
+        const D2D1_RENDER_TARGET_PROPERTIES target_properties = D2D1::RenderTargetProperties(
+            D2D1_RENDER_TARGET_TYPE_DEFAULT,
+            D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
+        );
+        m_d2d1_factory->CreateDxgiSurfaceRenderTarget(surface.Get(), target_properties, &m_d2d1_targets[i]) >> verify_result;
+
+        // Swap
+        m_chain->Present(0, NULL) >> verify_result;
     }
 
     // Depth buffers
@@ -192,7 +210,6 @@ void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
     descriptor.SampleDesc.Count = 1;
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-
     for (auto& view : m_depth_views) {
         const dx::Texture texture = create_texture(&descriptor, nullptr);
         view = create_depth_view(texture, nullptr);
@@ -240,14 +257,20 @@ kl::ShaderHolder<kl::dx::ComputeShader> kl::GPU::create_compute_shader(const std
     return { this, DeviceHolder::create_compute_shader(compiled_shader) };
 }
 
-kl::RenderShaders kl::GPU::create_render_shaders(const std::string& shader_sources)
+kl::RenderShaders kl::GPU::create_render_shaders(const std::string& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors)
 {
     const CompiledShader compiled_vertex_shader = compile_vertex_shader(shader_sources);
     const CompiledShader compiled_pixel_shader = compile_pixel_shader(shader_sources);
 
     RenderShaders shaders{};
-    shaders.input_layout = create_input_layout(compiled_vertex_shader);
+    shaders.input_layout = create_input_layout(compiled_vertex_shader, descriptors);
     shaders.vertex_shader = { this, DeviceHolder::create_vertex_shader(compiled_vertex_shader) };
     shaders.pixel_shader = { this, DeviceHolder::create_pixel_shader(compiled_pixel_shader) };
     return shaders;
+}
+
+void kl::GPU::render_text() const
+{
+    const UINT index = m_chain->GetCurrentBackBufferIndex();
+    TextRaster::render_text(index);
 }

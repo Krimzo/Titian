@@ -2,7 +2,6 @@
 
 
 // Async
-#include "utility/async/async_iterator.h"
 #include "utility/async/async.h"
 
 // Data
