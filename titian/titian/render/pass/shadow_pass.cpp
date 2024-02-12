@@ -28,6 +28,7 @@ titian::StatePackage titian::ShadowPass::get_state_package()
 void titian::ShadowPass::render_self(StatePackage& package)
 {
     // Helper
+    RenderStates* render_states = &render_layer->states;
     kl::GPU* gpu = &game_layer->app_layer->gpu;
     Scene* scene = &game_layer->scene;
 
@@ -59,6 +60,11 @@ void titian::ShadowPass::render_self(StatePackage& package)
             Material* material = &scene->get_material(entity->material_name);
             if (!mesh || !material || material->is_transparent()) {
                 continue;
+            }
+
+            // Bind raster state
+            if (!render_layer->render_wireframe) {
+                gpu->bind_raster_state(mesh->render_wireframe ? render_states->raster_states->wireframe : render_states->raster_states->shadow);
             }
 
             // Set cb data
