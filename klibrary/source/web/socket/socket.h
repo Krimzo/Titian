@@ -54,10 +54,18 @@ namespace kl {
         }
 
         template <typename T>
-        bool receive(T& obj) const
+        bool receive(T* obj) const
         {
-            const int received_size = receive(&obj, sizeof(T));
+            const int received_size = receive(obj, sizeof(T));
             return received_size == sizeof(T);
+        }
+
+        template <typename T>
+        T receive() const
+        {
+            T t{};
+            receive(&t);
+            return t;
         }
     };
 }

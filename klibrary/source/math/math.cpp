@@ -350,48 +350,48 @@ kl::Float4x4 kl::inverse(const Float4x4& mat)
 {
     const float determinant = mat.determinant();
 
-    const float A2323 = mat(2, 2) * mat(3, 3) - mat(3, 2) * mat(2, 3);
-    const float A1323 = mat(1, 2) * mat(3, 3) - mat(3, 2) * mat(1, 3);
-    const float A1223 = mat(1, 2) * mat(2, 3) - mat(2, 2) * mat(1, 3);
-    const float A0323 = mat(0, 2) * mat(3, 3) - mat(3, 2) * mat(0, 3);
-    const float A0223 = mat(0, 2) * mat(2, 3) - mat(2, 2) * mat(0, 3);
-    const float A0123 = mat(0, 2) * mat(1, 3) - mat(1, 2) * mat(0, 3);
-    const float A2313 = mat(2, 1) * mat(3, 3) - mat(3, 1) * mat(2, 3);
-    const float A1313 = mat(1, 1) * mat(3, 3) - mat(3, 1) * mat(1, 3);
-    const float A1213 = mat(1, 1) * mat(2, 3) - mat(2, 1) * mat(1, 3);
-    const float A2312 = mat(2, 1) * mat(3, 2) - mat(3, 1) * mat(2, 2);
-    const float A1312 = mat(1, 1) * mat(3, 2) - mat(3, 1) * mat(1, 2);
-    const float A1212 = mat(1, 1) * mat(2, 2) - mat(2, 1) * mat(1, 2);
-    const float A0313 = mat(0, 1) * mat(3, 3) - mat(3, 1) * mat(0, 3);
-    const float A0213 = mat(0, 1) * mat(2, 3) - mat(2, 1) * mat(0, 3);
-    const float A0312 = mat(0, 1) * mat(3, 2) - mat(3, 1) * mat(0, 2);
-    const float A0212 = mat(0, 1) * mat(2, 2) - mat(2, 1) * mat(0, 2);
-    const float A0113 = mat(0, 1) * mat(1, 3) - mat(1, 1) * mat(0, 3);
-    const float A0112 = mat(0, 1) * mat(1, 2) - mat(1, 1) * mat(0, 2);
+    const float a_2323 = mat(2, 2) * mat(3, 3) - mat(3, 2) * mat(2, 3);
+    const float a_1323 = mat(1, 2) * mat(3, 3) - mat(3, 2) * mat(1, 3);
+    const float a_1223 = mat(1, 2) * mat(2, 3) - mat(2, 2) * mat(1, 3);
+    const float a_0323 = mat(0, 2) * mat(3, 3) - mat(3, 2) * mat(0, 3);
+    const float a_0223 = mat(0, 2) * mat(2, 3) - mat(2, 2) * mat(0, 3);
+    const float a_0123 = mat(0, 2) * mat(1, 3) - mat(1, 2) * mat(0, 3);
+    const float a_2313 = mat(2, 1) * mat(3, 3) - mat(3, 1) * mat(2, 3);
+    const float a_1313 = mat(1, 1) * mat(3, 3) - mat(3, 1) * mat(1, 3);
+    const float a_1213 = mat(1, 1) * mat(2, 3) - mat(2, 1) * mat(1, 3);
+    const float a_2312 = mat(2, 1) * mat(3, 2) - mat(3, 1) * mat(2, 2);
+    const float a_1312 = mat(1, 1) * mat(3, 2) - mat(3, 1) * mat(1, 2);
+    const float a_1212 = mat(1, 1) * mat(2, 2) - mat(2, 1) * mat(1, 2);
+    const float a_0313 = mat(0, 1) * mat(3, 3) - mat(3, 1) * mat(0, 3);
+    const float a_0213 = mat(0, 1) * mat(2, 3) - mat(2, 1) * mat(0, 3);
+    const float a_0312 = mat(0, 1) * mat(3, 2) - mat(3, 1) * mat(0, 2);
+    const float a_0212 = mat(0, 1) * mat(2, 2) - mat(2, 1) * mat(0, 2);
+    const float a_0113 = mat(0, 1) * mat(1, 3) - mat(1, 1) * mat(0, 3);
+    const float a_0112 = mat(0, 1) * mat(1, 2) - mat(1, 1) * mat(0, 2);
 
-    Float4x4 result = {};
-    result(0, 0) = +(mat(1, 1) * A2323 - mat(2, 1) * A1323 + mat(3, 1) * A1223) * determinant;
-    result(1, 0) = -(mat(1, 0) * A2323 - mat(2, 0) * A1323 + mat(3, 0) * A1223) * determinant;
-    result(2, 0) = +(mat(1, 0) * A2313 - mat(2, 0) * A1313 + mat(3, 0) * A1213) * determinant;
-    result(3, 0) = -(mat(1, 0) * A2312 - mat(2, 0) * A1312 + mat(3, 0) * A1212) * determinant;
-    result(0, 1) = -(mat(0, 1) * A2323 - mat(2, 1) * A0323 + mat(3, 1) * A0223) * determinant;
-    result(1, 1) = +(mat(0, 0) * A2323 - mat(2, 0) * A0323 + mat(3, 0) * A0223) * determinant;
-    result(2, 1) = -(mat(0, 0) * A2313 - mat(2, 0) * A0313 + mat(3, 0) * A0213) * determinant;
-    result(3, 1) = +(mat(0, 0) * A2312 - mat(2, 0) * A0312 + mat(3, 0) * A0212) * determinant;
-    result(0, 2) = +(mat(0, 1) * A1323 - mat(1, 1) * A0323 + mat(3, 1) * A0123) * determinant;
-    result(1, 2) = -(mat(0, 0) * A1323 - mat(1, 0) * A0323 + mat(3, 0) * A0123) * determinant;
-    result(2, 2) = +(mat(0, 0) * A1313 - mat(1, 0) * A0313 + mat(3, 0) * A0113) * determinant;
-    result(3, 2) = -(mat(0, 0) * A1312 - mat(1, 0) * A0312 + mat(3, 0) * A0112) * determinant;
-    result(0, 3) = -(mat(0, 1) * A1223 - mat(1, 1) * A0223 + mat(2, 1) * A0123) * determinant;
-    result(1, 3) = +(mat(0, 0) * A1223 - mat(1, 0) * A0223 + mat(2, 0) * A0123) * determinant;
-    result(2, 3) = -(mat(0, 0) * A1213 - mat(1, 0) * A0213 + mat(2, 0) * A0113) * determinant;
-    result(3, 3) = +(mat(0, 0) * A1212 - mat(1, 0) * A0212 + mat(2, 0) * A0112) * determinant;
+    Float4x4 result{};
+    result(0, 0) = +(mat(1, 1) * a_2323 - mat(2, 1) * a_1323 + mat(3, 1) * a_1223) * determinant;
+    result(1, 0) = -(mat(1, 0) * a_2323 - mat(2, 0) * a_1323 + mat(3, 0) * a_1223) * determinant;
+    result(2, 0) = +(mat(1, 0) * a_2313 - mat(2, 0) * a_1313 + mat(3, 0) * a_1213) * determinant;
+    result(3, 0) = -(mat(1, 0) * a_2312 - mat(2, 0) * a_1312 + mat(3, 0) * a_1212) * determinant;
+    result(0, 1) = -(mat(0, 1) * a_2323 - mat(2, 1) * a_0323 + mat(3, 1) * a_0223) * determinant;
+    result(1, 1) = +(mat(0, 0) * a_2323 - mat(2, 0) * a_0323 + mat(3, 0) * a_0223) * determinant;
+    result(2, 1) = -(mat(0, 0) * a_2313 - mat(2, 0) * a_0313 + mat(3, 0) * a_0213) * determinant;
+    result(3, 1) = +(mat(0, 0) * a_2312 - mat(2, 0) * a_0312 + mat(3, 0) * a_0212) * determinant;
+    result(0, 2) = +(mat(0, 1) * a_1323 - mat(1, 1) * a_0323 + mat(3, 1) * a_0123) * determinant;
+    result(1, 2) = -(mat(0, 0) * a_1323 - mat(1, 0) * a_0323 + mat(3, 0) * a_0123) * determinant;
+    result(2, 2) = +(mat(0, 0) * a_1313 - mat(1, 0) * a_0313 + mat(3, 0) * a_0113) * determinant;
+    result(3, 2) = -(mat(0, 0) * a_1312 - mat(1, 0) * a_0312 + mat(3, 0) * a_0112) * determinant;
+    result(0, 3) = -(mat(0, 1) * a_1223 - mat(1, 1) * a_0223 + mat(2, 1) * a_0123) * determinant;
+    result(1, 3) = +(mat(0, 0) * a_1223 - mat(1, 0) * a_0223 + mat(2, 0) * a_0123) * determinant;
+    result(2, 3) = -(mat(0, 0) * a_1213 - mat(1, 0) * a_0213 + mat(2, 0) * a_0113) * determinant;
+    result(3, 3) = +(mat(0, 0) * a_1212 - mat(1, 0) * a_0212 + mat(2, 0) * a_0112) * determinant;
     return result;
 }
 
 kl::Float4x4 kl::transpose(const Float4x4& mat)
 {
-    kl::Float4x4 result = {};
+    kl::Float4x4 result{};
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
             result(x, y) = mat(y, x);

@@ -58,6 +58,8 @@ kl::Window::~Window()
     // Clearing window
     DestroyWindow(m_window);
     UnregisterClassA(m_name.c_str(), m_instance);
+
+	m_window = nullptr;
 }
 
 kl::Window::operator HWND() const
@@ -67,7 +69,7 @@ kl::Window::operator HWND() const
 
 bool kl::Window::process(const bool wait)
 {
-    MSG message = {};
+    MSG message{};
     if (wait) {
         GetMessageA(&message, m_window, 0, 0);
         handle_message(message);
@@ -77,10 +79,8 @@ bool kl::Window::process(const bool wait)
             handle_message(message);
         }
     }
-
     keyboard.process();
     mouse.process();
-
     return is_open();
 }
 
@@ -157,7 +157,7 @@ void kl::Window::set_fullscreen(const bool enabled)
 
 kl::Int2 kl::Window::position(const bool client) const
 {
-    RECT rect = {};
+    RECT rect{};
     if (client) {
         GetClientRect(m_window, &rect);
     }
@@ -281,15 +281,26 @@ extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam
 
 LRESULT CALLBACK kl::Window::window_procedure(const HWND window_handle, const UINT message, const WPARAM w_param, const LPARAM l_param) const
 {
-    // On-Resize
-    if (message == WM_SIZE) {
+    switch (message) {
+    case WM_SIZE:
+    {
         const Int2 new_size = { LOWORD(l_param), HIWORD(l_param) };
         for (auto& callback : on_resize) {
             callback(new_size);
         }
     }
+    break;
 
-    return DefWindowProcA(window_handle, message, w_param, l_param);
+    case WM_MOVE:
+    {
+        const Int2 new_position = { LOWORD(l_param), HIWORD(l_param) };
+        for (auto& callback : on_move) {
+            callback(new_position);
+        }
+    }
+    break;
+    }
+	return DefWindowProcA(window_handle, message, w_param, l_param);
 }
 
 void kl::Window::handle_message(const MSG& message)
@@ -349,9 +360,6 @@ void kl::Window::handle_message(const MSG& message)
     case WM_MOUSEWHEEL:
         mouse.m_scroll += GET_WHEEL_DELTA_WPARAM(message.wParam) / 120;
         break;
-
-    default:
-        DispatchMessageA(&message);
-        break;
     }
+    DispatchMessageA(&message);
 }

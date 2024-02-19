@@ -132,7 +132,7 @@ void kl::ContextHolder::read_from_resource(void* cpu_buffer, const dx::Resource&
     if (cpu_buffer && mapped_subresource.pData) {
         memcpy(cpu_buffer, mapped_subresource.pData, byte_size);
     }
-    m_context->Unmap(gpu_buffer.Get(), NULL);
+    m_context->Unmap(gpu_buffer.Get(), 0);
 }
 
 void kl::ContextHolder::write_to_resource(const dx::Resource& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard) const
@@ -142,7 +142,7 @@ void kl::ContextHolder::write_to_resource(const dx::Resource& gpu_buffer, const 
     if (mapped_subresource.pData && cpu_buffer) {
         memcpy(mapped_subresource.pData, cpu_buffer, byte_size);
     }
-    m_context->Unmap(gpu_buffer.Get(), NULL);
+    m_context->Unmap(gpu_buffer.Get(), 0);
 }
 
 // Buffers

@@ -93,7 +93,7 @@ void kl::Float4x4::operator*=(float value)
 
 kl::Float4x4 kl::Float4x4::operator*(const Float4x4& other) const
 {
-    Float4x4 result = {};
+    Float4x4 result{};
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
             result(x, y) = 0.0f;
@@ -112,7 +112,7 @@ void kl::Float4x4::operator*=(const Float4x4& other)
 
 kl::Float4 kl::Float4x4::operator*(const Float4& vec) const
 {
-    Float4 result = {};
+    Float4 result{};
     for (int y = 0; y < 4; y++) {
         for (int i = 0; i < 4; i++) {
             result[y] += (*this)(i, y) * vec[i];
@@ -141,7 +141,7 @@ float kl::Float4x4::determinant() const
 // Static
 kl::Float4x4 kl::Float4x4::scaling(const Float3& scale)
 {
-    Float4x4 result = {};
+    Float4x4 result{};
     result[0] = scale.x;
     result[5] = scale.y;
     result[10] = scale.z;
@@ -154,7 +154,7 @@ kl::Float4x4 kl::Float4x4::rotation(const Float3& rotation)
     const float x_sin = std::sin(x_rad);
     const float x_cos = std::cos(x_rad);
 
-    Float4x4 x_rot = {};
+    Float4x4 x_rot{};
     x_rot[5] = x_cos;
     x_rot[6] = -x_sin;
     x_rot[9] = x_sin;
@@ -164,7 +164,7 @@ kl::Float4x4 kl::Float4x4::rotation(const Float3& rotation)
     const float y_sin = std::sin(y_rad);
     const float y_cos = std::cos(y_rad);
 
-    Float4x4 y_rot = {};
+    Float4x4 y_rot{};
     y_rot[0] = y_cos;
     y_rot[2] = y_sin;
     y_rot[8] = -y_sin;
@@ -174,7 +174,7 @@ kl::Float4x4 kl::Float4x4::rotation(const Float3& rotation)
     const float z_sin = std::sin(z_rad);
     const float z_cos = std::cos(z_rad);
 
-    Float4x4 z_rot = {};
+    Float4x4 z_rot{};
     z_rot[0] = z_cos;
     z_rot[1] = -z_sin;
     z_rot[4] = z_sin;
@@ -185,7 +185,7 @@ kl::Float4x4 kl::Float4x4::rotation(const Float3& rotation)
 
 kl::Float4x4 kl::Float4x4::translation(const Float3& translation)
 {
-    Float4x4 result = {};
+    Float4x4 result{};
     result[3] = translation.x;
     result[7] = translation.y;
     result[11] = translation.z;
@@ -198,7 +198,7 @@ kl::Float4x4 kl::Float4x4::look_at(const Float3& position, const Float3& target,
     const Float3 s = normalize(cross(up, f));
     const Float3 u = cross(f, s);
 
-    Float4x4 result = {};
+    Float4x4 result{};
     result[0] = s.x;
     result[1] = s.y;
     result[2] = s.z;
@@ -218,7 +218,7 @@ kl::Float4x4 kl::Float4x4::perspective(float field_of_view, float aspect_ratio, 
 {
     const float tan_half = 1.0f / std::tan(field_of_view * 0.5f * TO_RADIANS);
 
-    Float4x4 result = {};
+    Float4x4 result{};
     result[0] = tan_half / aspect_ratio;
     result[5] = tan_half;
     result[10] = (-far_plane - near_plane) / (near_plane - far_plane);
@@ -230,7 +230,7 @@ kl::Float4x4 kl::Float4x4::perspective(float field_of_view, float aspect_ratio, 
 
 kl::Float4x4 kl::Float4x4::orthographic(float left, float right, float bottom, float top, float near_plane, float far_plane)
 {
-    Float4x4 result = {};
+    Float4x4 result{};
     result[0] = 2.0f / (right - left);
     result[5] = 2.0f / (top - bottom);
     result[10] = 2.0f / (far_plane - near_plane);

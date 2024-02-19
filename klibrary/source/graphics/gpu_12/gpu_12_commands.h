@@ -20,7 +20,7 @@ namespace kl {
 		void transition_resource(const dx12::Resource& resource, D3D12_RESOURCE_STATES from, D3D12_RESOURCE_STATES to) const;
 
 		void clear_target_view(const dx12::DescriptorHandle& handle, const Float4& color) const;
-		void copy(const dx12::Resource& from, const dx12::Resource& to) const;
+		void copy(dx12::Resource& destination, const dx12::Resource& source) const;
 
 		void set_root_signature(const dx12::RootSignature& root_signature) const;
 		void set_pipeline_state(const dx12::PipelineState& pipeline_state) const;

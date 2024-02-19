@@ -34,9 +34,9 @@ void kl::GPU12Commands::clear_target_view(const dx12::DescriptorHandle& handle, 
 	list->ClearRenderTargetView(handle, color, 0, nullptr);
 }
 
-void kl::GPU12Commands::copy(const dx12::Resource& from, const dx12::Resource& to) const
+void kl::GPU12Commands::copy(dx12::Resource& destination, const dx12::Resource& source) const
 {
-	list->CopyResource(to.Get(), from.Get());
+	list->CopyResource(destination.Get(), source.Get());
 }
 
 void kl::GPU12Commands::set_root_signature(const dx12::RootSignature& root_signature) const

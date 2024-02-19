@@ -92,7 +92,7 @@ namespace kl::dx12 {
     // Context commands
     using CommandQueue = ComPtr<ID3D12CommandQueue>;
     using CommandAllocator = ComPtr<ID3D12CommandAllocator>;
-    using CommandList = ComPtr<ID3D12GraphicsCommandList>;
+    using CommandList = ComPtr<ID3D12GraphicsCommandList4>;
     using Fence = ComPtr<ID3D12Fence>;
 
     // Swapchain
@@ -111,8 +111,14 @@ namespace kl::dx12 {
     using InputLayout = D3D12_INPUT_ELEMENT_DESC;
     using RootSignature = ComPtr<ID3D12RootSignature>;
     using PipelineState = ComPtr<ID3D12PipelineState>;
+    using StateObject = ComPtr<ID3D12StateObject>;
 
     // Clippers
     using Scissors = CD3DX12_RECT;
     using Viewport = CD3DX12_VIEWPORT;
+
+    // Raytracing
+    using AccelerationInputs = D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS;
+    using AccelerationStructure = ComPtr<ID3D12Resource>;
+    using ObjectProperties = ComPtr<ID3D12StateObjectProperties>;
 }

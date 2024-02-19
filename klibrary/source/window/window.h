@@ -37,6 +37,8 @@ namespace kl {
 
     public:
         std::vector<std::function<void(Int2)>> on_resize = {};
+		std::vector<std::function<void(Int2)>> on_move = {};
+
         Keyboard keyboard = {};
         Mouse mouse = {};
 
