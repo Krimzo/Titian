@@ -5,50 +5,6 @@ titian::GUISectionScriptEditor::GUISectionScriptEditor(EditorLayer* editor_layer
 {
 	this->editor_layer = editor_layer;
 	this->gui_layer = gui_layer;
-
-	// Text editor
-	m_text_editor.SetTabSize(4);
-	m_text_editor.SetShowWhitespaces(false);
-	m_text_editor.SetColorizerEnable(true);
-
-	TextEditor::LanguageDefinition language_definition = m_text_editor.GetLanguageDefinition();
-	language_definition.mName = "Chaiscript";
-	language_definition.mAutoIndentation = true;
-	language_definition.mCaseSensitive = true;
-	language_definition.mCommentStart = "/*";
-	language_definition.mCommentEnd = "*/";
-	language_definition.mSingleLineComment = "/";
-	language_definition.mKeywords = INTER_SCRIPT_KEYWORDS;
-	language_definition.mIdentifiers.clear();
-	for (const auto& [name, info] : INTER_SCRIPT_IDENTIFIERS) {
-		TextEditor::Identifier identifier = {};
-		identifier.mDeclaration = info;
-		language_definition.mIdentifiers[name] = identifier;
-	}
-	m_text_editor.SetLanguageDefinition(language_definition);
-
-	TextEditor::Palette color_pallete = m_text_editor.GetDarkPalette();
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Keyword)] = ImColor(240, 155, 120);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Number)] = ImColor(200, 95, 95);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::String)] = ImColor(211, 158, 104);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::CharLiteral)] = ImColor(204, 170, 135);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Punctuation)] = ImColor(225, 225, 225);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Preprocessor)] = ImColor(224, 179, 215);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Identifier)] = ImColor(210, 210, 210);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::KnownIdentifier)] = ImColor(105, 210, 190);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::PreprocIdentifier)] = ImColor(210, 178, 203);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Comment)] = ImColor(128, 128, 128);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::MultiLineComment)] = ImColor(116, 116, 116);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Background)] = ImColor(25, 25, 25);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Cursor)] = ImColor(220, 220, 220);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Selection)] = ImColor(70, 70, 70);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::ErrorMarker)] = ImColor(196, 57, 57);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::Breakpoint)] = ImColor(222, 73, 73);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::LineNumber)] = ImColor(210, 210, 210);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::CurrentLineFill)] = ImColor(51, 51, 51, 10);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::CurrentLineFillInactive)] = ImColor(51, 51, 51, 20);
-	color_pallete[static_cast<ImU32>(TextEditor::PaletteIndex::CurrentLineEdge)] = ImColor(89, 89, 89);
-	m_text_editor.SetPalette(color_pallete);
 }
 
 void titian::GUISectionScriptEditor::render_gui()
@@ -83,23 +39,6 @@ void titian::GUISectionScriptEditor::render_gui()
 		}
 		ImGui::EndChild();
 
-		if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-			const std::filesystem::path path = file.value();
-			const std::string extension = path.extension().string();
-			if (extension == FILE_EXTENSION_NATIVE_SCRIPT) {
-				kl::Object new_script = new NativeScript();
-				new_script->path = path.string();
-				new_script->reload();
-				scene->scripts[path.stem().string()] = new_script;
-			}
-			else if (extension == FILE_EXTENSION_INTER_SCRIPT) {
-				kl::Object new_script = new InterScript();
-				new_script->path = path.string();
-				new_script->reload();
-				scene->scripts[path.stem().string()] = new_script;
-			}
-		}
-
 		ImGui::NextColumn();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
@@ -112,9 +51,27 @@ void titian::GUISectionScriptEditor::render_gui()
 		if (ImGui::BeginChild("ScriptEditorChild")) {
 			if (native_script) {
 				edit_native_script(native_script);
+
+				if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+					const std::filesystem::path path = file.value();
+					const std::string extension = path.extension().string();
+					if (extension == FILE_EXTENSION_NATIVE_SCRIPT) {
+						native_script->data = kl::read_file(path.string());
+						native_script->reload();
+					}
+				}
 			}
 			else if (inter_script) {
 				edit_inter_script(inter_script);
+
+				if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+					const std::filesystem::path path = file.value();
+					const std::string extension = path.extension().string();
+					if (extension == FILE_EXTENSION_INTER_SCRIPT) {
+						inter_script->source = kl::read_file_string(path.string());
+						inter_script->reload();
+					}
+				}
 			}
 		}
 		ImGui::EndChild();
@@ -149,10 +106,6 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 		// Script name
 		if (ImGui::Selectable(script_name.c_str(), script_name == this->selected_script)) {
 			this->selected_script = script_name;
-
-			if (const InterScript* inter_script = dynamic_cast<const InterScript*>(&script)) {
-				m_text_editor.SetText(inter_script->source);
-			}
 		}
 
 		if (ImGui::BeginPopupContextItem(script_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
@@ -174,9 +127,6 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 
 			if (ImGui::Button("Reload", { -1.0f, 0.0f })) {
 				script->reload();
-				if (InterScript* inter_script = dynamic_cast<InterScript*>(&script)) {
-					m_text_editor.SetText(inter_script->source);
-				}
 				should_break = true;
 				ImGui::CloseCurrentPopup();
 			}
@@ -198,24 +148,7 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 	}
 }
 
-void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
-{
-	std::vector<byte>& data = script->data;
-	m_memory_editor.DrawContents(data.data(), data.size());
-}
-
-void titian::GUISectionScriptEditor::edit_inter_script(InterScript* script)
-{
-	ImGui::PushFont(gui_layer->jetbrains_font);
-
-	//m_text_editor.SetText(script->source);
-	m_text_editor.Render(selected_script.c_str());
-	script->source = m_text_editor.GetText();
-
-	ImGui::PopFont();
-}
-
-void titian::GUISectionScriptEditor::show_script_properties(Script* script)
+void titian::GUISectionScriptEditor::show_script_properties(Script* script) const
 {
 	if (ImGui::Begin("Script Properties") && script) {
 		ImGui::Text("Info");
@@ -232,18 +165,20 @@ void titian::GUISectionScriptEditor::show_script_properties(Script* script)
 		else if (InterScript* inter_script = dynamic_cast<InterScript*>(script)) {
 			ImGui::Text("INTER");
 		}
-
-		std::string buffer = script->path;
-		buffer.resize(150);
-		if (ImGui::InputText("Path", buffer.data(), buffer.size())) {
-			script->path.clear();
-			for (const char value : buffer) {
-				if (!value) {
-					break;
-				}
-				script->path.push_back(value);
-			}
-		}
 	}
 	ImGui::End();
+}
+
+void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
+{
+	std::vector<byte>& data = script->data;
+	m_memory_editor.DrawContents(data.data(), data.size());
+}
+
+void titian::GUISectionScriptEditor::edit_inter_script(InterScript* script)
+{
+	ImGui::PushFont(gui_layer->jetbrains_font);
+	const std::string id = kl::format("##", selected_script);
+	ImGui::InputTextMultiline(id.c_str(), &script->source, ImVec2(-1.0f, -1.0f), ImGuiInputTextFlags_AllowTabInput);
+	ImGui::PopFont();
 }

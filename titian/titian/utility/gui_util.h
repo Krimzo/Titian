@@ -6,8 +6,8 @@
 namespace titian {
     namespace _priv {
         inline std::unordered_map<std::string, std::any> DRAG_DROP_DATA = {};
-        inline std::unordered_map<std::string, char[101]> INPUT_CONTINUOUS_DATA = {};
-        inline std::unordered_map<std::string, char[101]> INPUT_WAITED_DATA = {};
+        inline std::unordered_map<std::string, std::string> INPUT_CONTINUOUS_DATA = {};
+        inline std::unordered_map<std::string, std::string> INPUT_WAITED_DATA = {};
     }
 
     inline const std::string FILE_EXTENSION_MESH = ".obj";
@@ -51,26 +51,18 @@ namespace titian {
     inline std::string gui_input_continuous(const std::string& id)
     {
         auto& buffer = _priv::INPUT_CONTINUOUS_DATA[id];
-        const int buffer_capacity = static_cast<int>(std::size(buffer) - 1);
-        ImGui::InputText(id.c_str(), buffer, buffer_capacity);
-        return { { buffer } };
+        ImGui::InputText(id.c_str(), &buffer);
+        return buffer;
     }
 
     inline std::optional<std::string> gui_input_waited(const std::string& id, const std::string_view& to_copy)
     {
         auto& buffer = _priv::INPUT_WAITED_DATA[id];
-        const int buffer_capacity = static_cast<int>(std::size(buffer) - 1);
+        buffer = to_copy;
 
-        // Copy/clear buffer
-        for (int i = 0; i < buffer_capacity; i++) {
-            const char value = (i < to_copy.size()) ? to_copy[i] : 0;
-            buffer[i] = value;
-        }
-
-        // Render input
-        if (ImGui::InputText(id.c_str(), buffer, buffer_capacity, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            const std::string result = { buffer };
-            memset(buffer, 0, std::size(buffer));
+        if (ImGui::InputText(id.c_str(), &buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
+            const std::string result = buffer;
+            buffer.clear();
             return { result };
         }
         return {};

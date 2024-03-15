@@ -20,16 +20,16 @@ namespace titian {
         if (extension == FILE_EXTENSION_MESH) {
             return FileType::MESH;
         }
-        if (extension == FILE_EXTENSION_JPG || extension == FILE_EXTENSION_PNG) {
+        else if (extension == FILE_EXTENSION_JPG || extension == FILE_EXTENSION_PNG) {
             return FileType::TEXTURE;
         }
-        if (extension == FILE_EXTENSION_NATIVE_SCRIPT || extension == FILE_EXTENSION_INTER_SCRIPT) {
+        else if (extension == FILE_EXTENSION_NATIVE_SCRIPT || extension == FILE_EXTENSION_INTER_SCRIPT) {
             return FileType::SCRIPT;
         }
-        if (extension == FILE_EXTENSION_SHADER) {
+        else if (extension == FILE_EXTENSION_SHADER) {
             return FileType::SHADER;
         }
-        if (extension == FILE_EXTENSION_SCENE) {
+        else if (extension == FILE_EXTENSION_SCENE) {
             return FileType::SCENE;
         }
         return FileType::DEFAULT;

@@ -24,6 +24,8 @@ namespace titian {
 		"try",
 		"while",
 		"var",
+		"true",
+		"false",
 	};
 
 	inline std::unordered_map<std::string, std::string> INTER_SCRIPT_IDENTIFIERS

@@ -14,7 +14,7 @@ namespace titian {
             AMBIENT_LIGHT,
             POINT_LIGHT,
             DIRECTIONAL_LIGHT,
-        } const type = {};
+        } const type;
 
         kl::Float3 scale{ 1.0f };
         std::string mesh_name = "/";

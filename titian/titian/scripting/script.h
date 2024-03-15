@@ -11,9 +11,7 @@ namespace titian {
 		{
 			NATIVE,
 			INTER,
-		} const type = {};
-
-		std::string path = {};
+		} const type;
 
 		Script(Type type);
 

@@ -70,7 +70,7 @@ void titian::GUISectionMainMenu::render_gui()
         }
 
         if (ImGui::BeginMenu("About")) {
-            ImGui::Text("Titian 0.6v");
+            ImGui::Text("Titian 0.64v");
 
             ImGui::EndMenu();
         }

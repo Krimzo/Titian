@@ -112,7 +112,7 @@ void titian::GUISectionMaterialEditor::display_materials(Scene* scene)
 
     // Materials
     const std::string filter = gui_input_continuous("Search###MeterialEditor");
-    for (const auto& [material_name, material] : scene->materials) {
+    for (auto& [material_name, material] : scene->materials) {
         if (!filter.empty() && material_name.find(filter) == -1) {
             continue;
         }
@@ -142,6 +142,12 @@ void titian::GUISectionMaterialEditor::display_materials(Scene* scene)
                     should_break = true;
                     ImGui::CloseCurrentPopup();
                 }
+            }
+
+            if (ImGui::Button("Reload", { -1.0f, 0.0f })) {
+                material->reload();
+                should_break = true;
+                ImGui::CloseCurrentPopup();
             }
 
             if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
@@ -502,21 +508,13 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
 
         ImGui::Separator();
 
-        if (ImGui::Button("Reload")) {
-            material->reload();
-        }
-
-        char source_file_buffer[151] = {};
-        memcpy(source_file_buffer, material->shader_source_file.c_str(), std::min(material->shader_source_file.size(), std::size(source_file_buffer) - 1));
-        if (ImGui::InputText("Shader Source File", source_file_buffer, std::size(source_file_buffer))) {
-            material->shader_source_file = source_file_buffer;
-        }
+        ImGui::InputTextMultiline("##ShadersSource", &material->shaders_source, ImVec2(-1.0f, -1.0f), ImGuiInputTextFlags_AllowTabInput);
         if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
             if (classify_file(file.value()) == FileType::SHADER) {
-                material->shader_source_file = file.value();
+                material->shaders_source = kl::read_file_string(file.value());
+				material->reload();
             }
         }
-        ImGui::InputTextMultiline("Shader Source", material->shader_source.data(), material->shader_source.size(), {}, ImGuiInputTextFlags_ReadOnly);
     }
     ImGui::End();
 }

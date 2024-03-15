@@ -7,8 +7,6 @@ namespace titian {
 	class Material : public Serializable
 	{
 	public:
-		kl::RenderShaders shaders{};
-
 		float alpha_blend = 1.0f;
 		float texture_blend = 0.0f;
 
@@ -22,8 +20,8 @@ namespace titian {
 		std::string normal_map_name = "/";
 		std::string roughness_map_name = "/";
 
-		std::string shader_source{};
-		std::string shader_source_file{};
+		std::string shaders_source{};
+		kl::RenderShaders shaders{};
 
 		Material(kl::GPU* gpu);
 

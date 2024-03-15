@@ -1,12 +1,9 @@
-# material features
-1. implement a better text editor
-2. implement the new editor in the material editor page
-3. add ability for materials to have custom shader parts (vertex and pixel shaders)
-4. update serialization for materials and updates the serialization version
+# loading
+1. disable creation of a mesh/texture on load, should create an empty mesh/texture first then drag file to load data
 
 # editor features
 1. implement exposing of global vars in interpreted scripts
 2. undo and redo
 
 # gui features
-1. texture editor -> add list of pixels, ability to edit pixels and reloading the texture
+1. add list of pixels, ability to edit pixels and reloading the texture (new texture editor)

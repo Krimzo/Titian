@@ -33,10 +33,6 @@ void titian::NativeScript::reload()
 {
 	this->unload();
 
-	if (std::filesystem::exists(path)) {
-		data = kl::read_file(path);
-	}
-
 	m_memory_module = MemoryLoadLibrary(data.data(), data.size());
 	m_start_function = read_function<void, Scene*>("on_start");
 	m_update_function = read_function<void, Scene*>("on_update");

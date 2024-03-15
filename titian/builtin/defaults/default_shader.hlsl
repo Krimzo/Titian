@@ -56,8 +56,7 @@ struct VS_OUT
 
 #define _CUSTOM_VERTEX_SHADER
 void _alter_vertex(inout VS_OUT data)
-{
-}
+{}
 
 #define _CUSTOM_PIXEL_SHADER
 bool _alter_pre(inout VS_OUT data, inout float4 color)
@@ -66,5 +65,4 @@ bool _alter_pre(inout VS_OUT data, inout float4 color)
 }
 
 void _alter_post(inout VS_OUT data, inout float4 color)
-{
-}
+{}

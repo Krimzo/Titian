@@ -96,7 +96,7 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
 
     // Meshes
     const std::string filter = gui_input_continuous("Search###MeshEditor");
-    for (const auto& [mesh_name, mesh] : scene->meshes) {
+    for (auto& [mesh_name, mesh] : scene->meshes) {
         if (!filter.empty() && mesh_name.find(filter) == -1) {
             continue;
         }
@@ -125,6 +125,12 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
                     should_break = true;
                     ImGui::CloseCurrentPopup();
                 }
+            }
+
+            if (ImGui::Button("Reload", { -1.0f, 0.0f })) {
+                mesh->reload();
+                should_break = true;
+                ImGui::CloseCurrentPopup();
             }
 
             if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
@@ -330,11 +336,6 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
         ImGui::Checkbox("Render Wireframe", &mesh->render_wireframe);
 
         ImGui::Separator();
-        ImGui::Text("Vertices");
-
-        if (ImGui::Button("Reload")) {
-            mesh->reload();
-        }
 
         if (vertex_count > 0) {
             const std::pair window_rect = gui_window_rect();
@@ -347,7 +348,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
             for (int i = m_starting_vertex_index; i < (m_starting_vertex_index + m_vertex_display_count) && i < vertex_count; i++) {
                 kl::Vertex& vertex = mesh->data_buffer[i];
 
-                const std::string vertex_name = kl::format(i, ". Vertex");
+                const std::string vertex_name = kl::format(i + 1, ". Vertex");
                 if (ImGui::Selectable(vertex_name.c_str(), m_selected_vertex_index == i)) {
                     m_selected_vertex_index = (m_selected_vertex_index != i) ? i : -1;
                 }

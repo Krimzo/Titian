@@ -23,14 +23,11 @@ namespace titian {
 
 	private:
 		MemoryEditor m_memory_editor = {};
-		TextEditor m_text_editor = {};
-		bool m_should_open_node_popup = false;
 
 		void display_scripts(Scene* scene);
+		void show_script_properties(Script* script) const;
 
 		void edit_native_script(NativeScript* script);
 		void edit_inter_script(InterScript* script);
-
-		void show_script_properties(Script* script);
 	};
 }

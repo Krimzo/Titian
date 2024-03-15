@@ -6,7 +6,6 @@
 # Custom
 _test_
 *.titian
-*.chai
 
 # User-specific files
 *.rsuser

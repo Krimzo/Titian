@@ -34,10 +34,6 @@ void titian::InterScript::reload()
 	m_update_function = {};
 	m_engine = new chaiscript::ChaiScript();
 
-	if (std::filesystem::exists(path)) {
-		source = kl::read_file_string(path);
-	}
-
 	try {
 		m_engine->add(INTER_SCRIPT_MODULE);
 		m_engine->eval(this->source);

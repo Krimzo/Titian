@@ -180,7 +180,8 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
             ImGui::CloseCurrentPopup();
         }
         else {
-            ImGui::Text(format_byte_size(std::filesystem::file_size(file)).c_str());
+            std::error_code ignored{};
+            ImGui::Text(format_byte_size(std::filesystem::file_size(file, ignored)).c_str());
         }
         ImGui::EndPopup();
     }

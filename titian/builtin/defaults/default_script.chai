@@ -1,0 +1,5 @@
+def on_start(scene)
+{}
+
+def on_update(scene)
+{}
