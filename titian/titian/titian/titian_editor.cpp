@@ -25,6 +25,7 @@ titian::TitianEditor::TitianEditor()
     gui_layer->sections.emplace_back(new GUISectionSceneEntities(&editor_layer));
     gui_layer->sections.emplace_back(new GUISectionSceneInfo(&editor_layer));
     gui_layer->sections.emplace_back(new GUISectionMeshEditor(&editor_layer, &gui_layer));
+    gui_layer->sections.emplace_back(new GUISectionTextureEditor(&editor_layer, &gui_layer));
     gui_layer->sections.emplace_back(new GUISectionMaterialEditor(&editor_layer, &gui_layer));
     gui_layer->sections.emplace_back(new GUISectionScriptEditor(&editor_layer, &gui_layer));
     gui_layer->sections.emplace_back(new GUISectionViewport(&editor_layer, &render_layer));

@@ -20,8 +20,9 @@ void sandbox::SandboxPieceMonkes::setup_self()
         const int y = i / size;
 
         const std::string mesh_name = "monke";
-        const std::string material_name = kl::format("monke_mat_", i);
-        const std::string entity_name = kl::format("Monke", i);
+        const std::string counter_id = kl::format(std::setw(3), std::setfill('0'), i);
+        const std::string material_name = kl::format("monke_mat_", counter_id);
+        const std::string entity_name = kl::format("Monke", counter_id);
 
         // Mesh
         scene->meshes[mesh_name] = editor->game_layer->scene->default_meshes->monke;

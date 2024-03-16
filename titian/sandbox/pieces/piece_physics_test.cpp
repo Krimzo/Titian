@@ -70,8 +70,9 @@ void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
     for (int z = 0; z < size; z++) {
         for (int x = 0; x < size; x++) {
             const std::string mesh_name = "cube";
-            const std::string material_name = kl::format("box_mat_", box_counter);
-            const std::string entity_name = kl::format("Box", box_counter);
+            const std::string counter_id = kl::format(std::setw(3), std::setfill('0'), box_counter);
+            const std::string material_name = kl::format("box_mat_", counter_id);
+            const std::string entity_name = kl::format("Box", counter_id);
 
             // Mesh
             scene->meshes[mesh_name] = scene->default_meshes->cube;

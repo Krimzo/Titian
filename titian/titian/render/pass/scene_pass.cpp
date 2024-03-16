@@ -165,6 +165,9 @@ void titian::ScenePass::render_self(StatePackage& package)
         if (color_map) {
             gpu->bind_shader_view_for_pixel_shader(color_map->shader_view, 5);
         }
+        else {
+            gpu->unbind_shader_view_for_pixel_shader(5);
+        }
 
         const Texture* normal_map = &scene->get_texture(material->normal_map_name);
         if (normal_map) {

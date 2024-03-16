@@ -379,7 +379,9 @@
     </ClInclude>
     <ClCompile Include="titian\gui\sections\section_script_editor.cpp" />
     <ClInclude Include="titian\gui\sections\section_script_editor.h" />
+    <ClCompile Include="titian\gui\sections\section_texture_editor.cpp" />
     <ClCompile Include="titian\gui\sections\section_viewport.cpp" />
+    <ClInclude Include="titian\gui\sections\section_texture_editor.h" />
     <ClInclude Include="titian\gui\sections\section_viewport.h" />
     <ClInclude Include="titian\utility\gui_util.h" />
     <ClInclude Include="titian\layer\layer.h" />

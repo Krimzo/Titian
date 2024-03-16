@@ -19,6 +19,7 @@
 #include "gui/sections/section_scene_entities.h"
 #include "gui/sections/section_scene_info.h"
 #include "gui/sections/section_mesh_editor.h"
+#include "gui/sections/section_texture_editor.h"
 #include "gui/sections/section_material_editor.h"
 #include "gui/sections/section_script_editor.h"
 #include "gui/sections/section_viewport.h"

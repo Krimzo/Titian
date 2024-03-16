@@ -23,46 +23,24 @@ void titian::GUISectionMaterialEditor::render_gui()
     kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
     Scene* scene = &editor_layer->game_layer->scene;
     Material* material = &scene->get_material(this->selected_material);
-    Texture* texture = &scene->get_texture(this->selected_texture);
 
     if (ImGui::Begin("Material Editor")) {
         const float available_width = ImGui::GetContentRegionAvail().x;
-        ImGui::Columns(3, "MaterialEditorColumns", false);
+        ImGui::Columns(2, "MaterialEditorColumns", false);
 
         ImGui::SetColumnWidth(ImGui::GetColumnIndex(), available_width * 0.25f);
         if (ImGui::BeginChild("Materials")) {
-            display_materials(scene);
+            display_materials(gpu, scene);
         }
         ImGui::EndChild();
-
-        ImGui::NextColumn();
-        ImGui::SetColumnWidth(ImGui::GetColumnIndex(), available_width * 0.25f);
-        if (ImGui::BeginChild("Textures")) {
-            display_textures(scene);
-        }
-        ImGui::EndChild();
-
-        if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-            if (classify_file(file.value()) == FileType::TEXTURE) {
-                const std::filesystem::path path = file.value();
-                const std::string texture_name = path.filename().string();
-                if (!scene->textures.contains(texture_name)) {
-                    kl::Object new_texture = new Texture(gpu);
-                    new_texture->data_buffer.load_from_file(path.string());
-                    new_texture->load_as_2D(false, false);
-                    new_texture->create_shader_view(nullptr);
-                    scene->textures[texture_name] = new_texture;
-                }
-            }
-        }
         ImGui::NextColumn();
 
         ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
 
-        const bool should_rotate_cam = was_focused && !texture;
-        if (ImGui::BeginChild("Material/Texture View", {}, should_rotate_cam)) {
+        const bool should_rotate_cam = was_focused;
+        if (ImGui::BeginChild("Material View", {}, should_rotate_cam)) {
             const kl::Int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
             if (should_rotate_cam) {
                 update_material_camera();
@@ -70,9 +48,6 @@ void titian::GUISectionMaterialEditor::render_gui()
             if (material) {
                 render_selected_material(scene, gpu, material, viewport_size);
                 ImGui::Image(render_texture->shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
-            }
-            else if (texture) {
-                render_selected_texture(texture, viewport_size);
             }
             was_focused = ImGui::IsWindowFocused();
         }
@@ -84,17 +59,12 @@ void titian::GUISectionMaterialEditor::render_gui()
         if (material) {
             show_material_properties(scene, material);
         }
-        else if (texture) {
-            show_texture_properties(texture);
-        }
     }
     ImGui::End();
 }
 
-void titian::GUISectionMaterialEditor::display_materials(Scene* scene)
+void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* scene)
 {
-    kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
-
     // New material
     if (ImGui::BeginPopupContextWindow("NewMaterial", ImGuiPopupFlags_MouseButtonMiddle)) {
         ImGui::Text("New Material");
@@ -119,7 +89,6 @@ void titian::GUISectionMaterialEditor::display_materials(Scene* scene)
 
         if (ImGui::Selectable(material_name.c_str(), material_name == this->selected_material)) {
             this->selected_material = material_name;
-            this->selected_texture = "/";
         }
 
         if (ImGui::BeginPopupContextItem(material_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
@@ -170,104 +139,6 @@ void titian::GUISectionMaterialEditor::display_materials(Scene* scene)
             }
         }
     }
-}
-
-void titian::GUISectionMaterialEditor::display_textures(Scene* scene)
-{
-    const std::string filter = gui_input_continuous("Search###TextureEditor");
-    for (const auto& [texture_name, texture] : scene->textures) {
-        if (!filter.empty() && texture_name.find(filter) == -1) {
-            continue;
-        }
-
-        if (ImGui::Selectable(texture_name.c_str(), texture_name == this->selected_texture)) {
-            this->selected_texture = texture_name;
-            this->selected_material = "/";
-        }
-
-        if (ImGui::BeginPopupContextItem(texture_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
-            bool should_break = false;
-            ImGui::Text("Edit Texture");
-
-            if (std::optional opt_name = gui_input_waited("##RenameTextureInput", texture_name)) {
-                const std::string& name = opt_name.value();
-                if (!name.empty() && !scene->textures.contains(name)) {
-                    for (auto& [_, material] : scene->materials) {
-                        if (material->color_map_name == texture_name) {
-                            material->color_map_name = name;
-                        }
-                        if (material->normal_map_name == texture_name) {
-                            material->normal_map_name = name;
-                        }
-                        if (material->roughness_map_name == texture_name) {
-                            material->roughness_map_name = name;
-                        }
-                    }
-                    if (this->selected_texture == texture_name) {
-                        this->selected_texture = name;
-                    }
-                    scene->textures[name] = texture;
-                    scene->textures.erase(texture_name);
-                    should_break = true;
-                    ImGui::CloseCurrentPopup();
-                }
-            }
-
-            if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
-                for (auto& [_, material] : scene->materials) {
-                    if (material->color_map_name == texture_name) {
-                        material->color_map_name = "/";
-                    }
-                    if (material->normal_map_name == texture_name) {
-                        material->normal_map_name = "/";
-                    }
-                    if (material->roughness_map_name == texture_name) {
-                        material->roughness_map_name = "/";
-                    }
-                }
-                if (this->selected_texture == texture_name) {
-                    this->selected_texture = "/";
-                }
-                scene->textures.erase(texture_name);
-                should_break = true;
-                ImGui::CloseCurrentPopup();
-            }
-
-            ImGui::EndPopup();
-            if (should_break) {
-                break;
-            }
-        }
-    }
-}
-
-void titian::GUISectionMaterialEditor::update_material_camera()
-{
-    if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-        initial_camera_info = camera_info;
-    }
-
-    const int scroll = editor_layer->game_layer->app_layer->window->mouse.scroll();
-    if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
-        const ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
-        camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;
-        camera_info.y = initial_camera_info.y + drag_delta.y * camera->sensitivity;
-        camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
-
-        camera->set_position({
-            kl::sin_deg(camera_info.x),
-            kl::tan_deg(camera_info.y),
-            kl::cos_deg(camera_info.x),
-            });
-
-        camera->speed += (last_scroll - scroll) * 0.1f;
-        camera->speed = std::max(camera->speed, 0.1f);
-    }
-    last_scroll = scroll;
-
-    const float camera_distance = camera->speed;
-    camera->set_position(kl::normalize(camera->position()) * camera_distance);
-    camera->set_forward(-camera->position());
 }
 
 void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl::GPU* gpu, Material* material, const kl::Int2 viewport_size)
@@ -386,15 +257,15 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
 
     Texture* color_map_texture = &scene->get_texture(material->color_map_name);
     if (color_map_texture) {
-        gpu->bind_shader_view_for_pixel_shader(color_map_texture->shader_view, 1);
+        gpu->bind_shader_view_for_pixel_shader(color_map_texture->shader_view, 5);
     }
     else {
-        gpu->unbind_shader_view_for_pixel_shader(1);
+        gpu->unbind_shader_view_for_pixel_shader(5);
     }
 
     Texture* normal_map_texture = &scene->get_texture(material->normal_map_name);
     if (normal_map_texture) {
-        gpu->bind_shader_view_for_pixel_shader(normal_map_texture->shader_view, 2);
+        gpu->bind_shader_view_for_pixel_shader(normal_map_texture->shader_view, 6);
         global_cb.HAS_NORMAL_MAP = 1.0f;
     }
     else {
@@ -403,7 +274,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
 
     Texture* roughness_map_texture = &scene->get_texture(material->roughness_map_name);
     if (roughness_map_texture) {
-        gpu->bind_shader_view_for_pixel_shader(roughness_map_texture->shader_view, 3);
+        gpu->bind_shader_view_for_pixel_shader(roughness_map_texture->shader_view, 7);
         global_cb.HAS_ROUGHNESS_MAP = 1.0f;
     }
     else {
@@ -441,16 +312,6 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     // Restore
     gpu->bind_internal_views();
     gpu->set_viewport_size(old_viewport_size);
-}
-
-void titian::GUISectionMaterialEditor::render_selected_texture(Texture* texture, const kl::Int2 viewport_size)
-{
-    const float min_size = static_cast<float>(std::min(viewport_size.x, viewport_size.y));
-    ImGui::SetCursorPos(ImVec2{
-        (ImGui::GetWindowWidth() - min_size) * 0.5f,
-        (ImGui::GetWindowHeight() - min_size) * 0.5f,
-        });
-    ImGui::Image(texture->shader_view.Get(), { min_size, min_size }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 }
 
 void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Material* material)
@@ -519,33 +380,31 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
     ImGui::End();
 }
 
-void titian::GUISectionMaterialEditor::show_texture_properties(Texture* texture)
+void titian::GUISectionMaterialEditor::update_material_camera()
 {
-    if (ImGui::Begin("Texture Properties") && texture) {
-        ImGui::Text("Info");
-
-        ImGui::Text("Name: ");
-        ImGui::SameLine();
-        gui_colored_text(selected_texture, gui_layer->special_color);
-
-        kl::Int2 size = texture->data_buffer.size();
-        ImGui::DragInt2("Size", size, 0.0f);
-
-        int pixel_count = texture->data_buffer.pixel_count();
-        ImGui::DragInt("Pixel Count", &pixel_count, 0.0f);
-
-        bool cube_map = texture->is_cube();
-        if (ImGui::Checkbox("Cube Map", &cube_map)) {
-            if (cube_map) {
-                if (texture->load_as_cube()) {
-                    texture->create_shader_view(nullptr);
-                }
-            }
-            else {
-                texture->load_as_2D(false, false);
-                texture->create_shader_view(nullptr);
-            }
-        }
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+        initial_camera_info = camera_info;
     }
-    ImGui::End();
+
+    const int scroll = editor_layer->game_layer->app_layer->window->mouse.scroll();
+    if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
+        const ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+        camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;
+        camera_info.y = initial_camera_info.y + drag_delta.y * camera->sensitivity;
+        camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
+
+        camera->set_position({
+            kl::sin_deg(camera_info.x),
+            kl::tan_deg(camera_info.y),
+            kl::cos_deg(camera_info.x),
+            });
+
+        camera->speed += (last_scroll - scroll) * 0.1f;
+        camera->speed = std::max(camera->speed, 0.1f);
+    }
+    last_scroll = scroll;
+
+    const float camera_distance = camera->speed;
+    camera->set_position(kl::normalize(camera->position()) * camera_distance);
+    camera->set_forward(-camera->position());
 }
