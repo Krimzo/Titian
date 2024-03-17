@@ -38,4 +38,23 @@ namespace titian {
 	{
 		return "[" + std::filesystem::absolute(path).string() + "]";
 	}
+
+	inline std::string ltrim(const std::string_view& source, const char* t = " \t\n\r\f\v")
+	{
+		std::string data{ source };
+		data.erase(0, data.find_first_not_of(t));
+		return data;
+	}
+
+	inline std::string rtrim(const std::string_view& source, const char* t = " \t\n\r\f\v")
+	{
+		std::string data{ source };
+		data.erase(data.find_last_not_of(t) + 1);
+		return data;
+	}
+
+	inline std::string trim(const std::string_view& source, const char* t = " \t\n\r\f\v")
+	{
+		return ltrim(rtrim(source, t), t);
+	}
 }
