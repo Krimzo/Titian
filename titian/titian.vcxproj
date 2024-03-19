@@ -53,7 +53,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;KL_USING_IMGUI;IMGUI_DEFINE_MATH_OPERATORS;PX_PHYSX_STATIC_LIB;CHAISCRIPT_NO_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;CHAISCRIPT_NO_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
@@ -78,7 +78,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;KL_USING_IMGUI;IMGUI_DEFINE_MATH_OPERATORS;PX_PHYSX_STATIC_LIB;CHAISCRIPT_NO_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;CHAISCRIPT_NO_THREADS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
