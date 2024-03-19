@@ -65,8 +65,8 @@ void titian::GUISectionExplorer::render_gui()
                 if (ImGui::MenuItem("Script File")) {
                     std::stringstream stream{};
                     stream << m_path << "/" << name_input;
-                    if (name_input.find(FILE_EXTENSION_INTER_SCRIPT) == -1) {
-                        stream << FILE_EXTENSION_INTER_SCRIPT;
+                    if (name_input.find(FILE_EXTENSION_INTERP_SCRIPT) == -1) {
+                        stream << FILE_EXTENSION_INTERP_SCRIPT;
                     }
                     const std::string full_path = stream.str();
                     if (!std::filesystem::exists(full_path)) {
@@ -175,7 +175,7 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
             }
         }
         if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
-            Logger::log("Removed file ", format_path(file));
+            Logger::log("Deleted file ", format_path(file));
             std::filesystem::remove(file);
             ImGui::CloseCurrentPopup();
         }
@@ -240,7 +240,7 @@ void titian::GUISectionExplorer::handle_directory_entry(const std::filesystem::p
             }
         }
         if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
-            Logger::log("Removed directory ", format_path(dir));
+            Logger::log("Deleted directory ", format_path(dir));
 			std::filesystem::remove_all(dir);
             ImGui::CloseCurrentPopup();
         }

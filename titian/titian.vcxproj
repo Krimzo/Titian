@@ -441,8 +441,8 @@
     <ClInclude Include="titian\scene\entity.h" />
     <ClInclude Include="titian\scene\scene.h" />
     <ClCompile Include="titian\scene\scene.cpp" />
-    <ClInclude Include="titian\scripting\inter_script.h" />
-    <ClCompile Include="titian\scripting\inter_script.cpp" />
+    <ClInclude Include="titian\scripting\interp_script.h" />
+    <ClCompile Include="titian\scripting\interp_script.cpp" />
     <ClCompile Include="titian\scripting\native_script.cpp" />
     <ClCompile Include="titian\scripting\script.cpp" />
     <ClInclude Include="titian\scripting\script.h" />

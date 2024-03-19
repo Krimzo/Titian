@@ -112,8 +112,8 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
             case Script::Type::NATIVE:
                 object = new NativeScript();
                 break;
-            case Script::Type::INTER:
-                object = new InterScript();
+            case Script::Type::INTERP:
+                object = new InterpScript();
                 break;
             }
 

@@ -2,20 +2,20 @@
 
 
 /* Inter script */
-titian::InterScript::InterScript()
-	: Script(Type::INTER)
+titian::InterpScript::InterpScript()
+	: Script(Type::INTERP)
 {
 	this->source = get_default_script();
 }
 
-void titian::InterScript::serialize(Serializer* serializer, const void* helper_data) const
+void titian::InterpScript::serialize(Serializer* serializer, const void* helper_data) const
 {
 	Script::serialize(serializer, helper_data);
 
 	serializer->write_string(source);
 }
 
-void titian::InterScript::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::InterpScript::deserialize(const Serializer* serializer, const void* helper_data)
 {
 	Script::deserialize(serializer, helper_data);
 
@@ -23,19 +23,19 @@ void titian::InterScript::deserialize(const Serializer* serializer, const void* 
 	this->reload();
 }
 
-bool titian::InterScript::is_valid() const
+bool titian::InterpScript::is_valid() const
 {
 	return m_engine && m_start_function && m_update_function;
 }
 
-void titian::InterScript::reload()
+void titian::InterpScript::reload()
 {
 	m_start_function = {};
 	m_update_function = {};
 	m_engine = new chaiscript::ChaiScript();
 
 	try {
-		m_engine->add(INTER_SCRIPT_MODULE);
+		m_engine->add(INTERP_SCRIPT_MODULE);
 		m_engine->eval(this->source);
 		m_start_function = m_engine->eval<std::function<void(Scene*)>>("on_start");
 		m_update_function = m_engine->eval<std::function<void(Scene*)>>("on_update");
@@ -45,7 +45,7 @@ void titian::InterScript::reload()
 	}
 }
 
-void titian::InterScript::call_start()
+void titian::InterpScript::call_start()
 {
 	if (m_start_function) {
 		try {
@@ -57,7 +57,7 @@ void titian::InterScript::call_start()
 	}
 }
 
-void titian::InterScript::call_update()
+void titian::InterpScript::call_update()
 {
 	if (m_update_function) {
 		try {
@@ -75,42 +75,42 @@ int load_types = [&]
 	using namespace titian;
 	
 	// Bootstrap
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<kl::Vertex>>("MeshData", *INTER_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<kl::Color>>("TextureData", *INTER_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<kl::Vertex>>("MeshData", *INTERP_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<kl::Color>>("TextureData", *INTERP_SCRIPT_MODULE);
 
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<Mesh*>>("MeshVector", *INTER_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<Texture*>>("TextureVector", *INTER_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<Material*>>("MaterialVector", *INTER_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<Entity*>>("EntityVector", *INTER_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<Mesh*>>("MeshVector", *INTERP_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<Texture*>>("TextureVector", *INTERP_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<Material*>>("MaterialVector", *INTERP_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::vector_type<std::vector<Entity*>>("EntityVector", *INTERP_SCRIPT_MODULE);
 
-	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Mesh*>>("MeshMap", *INTER_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Texture*>>("TextureMap", *INTER_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Material*>>("MaterialMap", *INTER_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Entity*>>("EntityMap", *INTER_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Mesh*>>("MeshMap", *INTERP_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Texture*>>("TextureMap", *INTERP_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Material*>>("MaterialMap", *INTERP_SCRIPT_MODULE);
+	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Entity*>>("EntityMap", *INTERP_SCRIPT_MODULE);
 
 	// Derived
-	INTER_SCRIPT_MODULE->add(chaiscript::base_class<Entity, Camera>());
-	INTER_SCRIPT_MODULE->add(chaiscript::base_class<Entity, Light>());
-	INTER_SCRIPT_MODULE->add(chaiscript::base_class<Light, AmbientLight>());
-	INTER_SCRIPT_MODULE->add(chaiscript::base_class<Light, PointLight>());
-	INTER_SCRIPT_MODULE->add(chaiscript::base_class<Light, DirectionalLight>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::base_class<Entity, Camera>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::base_class<Entity, Light>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::base_class<Light, AmbientLight>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::base_class<Light, PointLight>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::base_class<Light, DirectionalLight>());
 
 	// Casts
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Int2, kl::Float2>());
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float2, kl::Int2>());
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float2, kl::Complex>());
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float3, kl::Color>());
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float3, kl::Quaternion>());
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float4, kl::Color>());
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float4, kl::Quaternion>());
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Complex, kl::Float2>());
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Quaternion, kl::Float3>());
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Quaternion, kl::Float4>());
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Color, kl::Float3>());
-	INTER_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Color, kl::Float4>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Int2, kl::Float2>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float2, kl::Int2>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float2, kl::Complex>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float3, kl::Color>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float3, kl::Quaternion>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float4, kl::Color>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float4, kl::Quaternion>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Complex, kl::Float2>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Quaternion, kl::Float3>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Quaternion, kl::Float4>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Color, kl::Float3>());
+	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Color, kl::Float4>());
 
 	// Int2
-	chaiscript::utility::add_class<kl::Int2>(*INTER_SCRIPT_MODULE, "Int2",
+	chaiscript::utility::add_class<kl::Int2>(*INTERP_SCRIPT_MODULE, "Int2",
 	{
 		chaiscript::constructor<kl::Int2()>(),
 		chaiscript::constructor<kl::Int2(const kl::Int2&)>(),
@@ -151,10 +151,10 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Int2& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Int2"] = "Two component integer vector.";
+	INTERP_SCRIPT_IDENTIFIERS["Int2"] = "Two component integer vector.";
 
 	// Float2
-	chaiscript::utility::add_class<kl::Float2>(*INTER_SCRIPT_MODULE, "Float2",
+	chaiscript::utility::add_class<kl::Float2>(*INTERP_SCRIPT_MODULE, "Float2",
 	{
 		chaiscript::constructor<kl::Float2()>(),
 		chaiscript::constructor<kl::Float2(const kl::Float2&)>(),
@@ -196,11 +196,11 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Float2& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Float2"] = "Two component float vector.";
-	INTER_SCRIPT_IDENTIFIERS["length"] = "Returns length of this vector.";
+	INTERP_SCRIPT_IDENTIFIERS["Float2"] = "Two component float vector.";
+	INTERP_SCRIPT_IDENTIFIERS["length"] = "Returns length of this vector.";
 
 	// Float3
-	chaiscript::utility::add_class<kl::Float3>(*INTER_SCRIPT_MODULE, "Float3",
+	chaiscript::utility::add_class<kl::Float3>(*INTERP_SCRIPT_MODULE, "Float3",
 	{
 		chaiscript::constructor<kl::Float3()>(),
 		chaiscript::constructor<kl::Float3(const kl::Float3&)>(),
@@ -248,11 +248,11 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Float3& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Float3"] = "Three component float vector.";
-	INTER_SCRIPT_IDENTIFIERS["xy"] = "Returns x and y as a Float2.";
+	INTERP_SCRIPT_IDENTIFIERS["Float3"] = "Three component float vector.";
+	INTERP_SCRIPT_IDENTIFIERS["xy"] = "Returns x and y as a Float2.";
 
 	// Float4
-	chaiscript::utility::add_class<kl::Float4>(*INTER_SCRIPT_MODULE, "Float4",
+	chaiscript::utility::add_class<kl::Float4>(*INTERP_SCRIPT_MODULE, "Float4",
 	{
 		chaiscript::constructor<kl::Float4()>(),
 		chaiscript::constructor<kl::Float4(const kl::Float4&)>(),
@@ -307,11 +307,11 @@ int load_types = [&]
 		
 		{ chaiscript::fun([](const kl::Float4& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Float4"] = "Four component float vector.";
-	INTER_SCRIPT_IDENTIFIERS["xyz"] = "Returns x, y and z as a Float3.";
+	INTERP_SCRIPT_IDENTIFIERS["Float4"] = "Four component float vector.";
+	INTERP_SCRIPT_IDENTIFIERS["xyz"] = "Returns x, y and z as a Float3.";
 
 	// Float2x2
-	chaiscript::utility::add_class<kl::Float2x2>(*INTER_SCRIPT_MODULE, "Float2x2",
+	chaiscript::utility::add_class<kl::Float2x2>(*INTERP_SCRIPT_MODULE, "Float2x2",
 	{
 		chaiscript::constructor<kl::Float2x2()>(),
 		chaiscript::constructor<kl::Float2x2(const kl::Float2x2&)>(),
@@ -342,11 +342,11 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Float2x2& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Float2x2"] = "Two float wide square matrix.";
-	INTER_SCRIPT_IDENTIFIERS["determinant"] = "Returns the determinant of this matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["Float2x2"] = "Two float wide square matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["determinant"] = "Returns the determinant of this matrix.";
 
 	// Float3x3
-	chaiscript::utility::add_class<kl::Float3x3>(*INTER_SCRIPT_MODULE, "Float3x3",
+	chaiscript::utility::add_class<kl::Float3x3>(*INTERP_SCRIPT_MODULE, "Float3x3",
 	{
 		chaiscript::constructor<kl::Float3x3()>(),
 		chaiscript::constructor<kl::Float3x3(const kl::Float3x3&)>(),
@@ -377,10 +377,10 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Float3x3& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Float3x3"] = "Three float wide square matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["Float3x3"] = "Three float wide square matrix.";
 
 	// Float4x4
-	chaiscript::utility::add_class<kl::Float4x4>(*INTER_SCRIPT_MODULE, "Float4x4",
+	chaiscript::utility::add_class<kl::Float4x4>(*INTERP_SCRIPT_MODULE, "Float4x4",
 	{
 		chaiscript::constructor<kl::Float4x4()>(),
 		chaiscript::constructor<kl::Float4x4(const kl::Float4x4&)>(),
@@ -411,10 +411,10 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Float4x4& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Float4x4"] = "Four float wide square matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["Float4x4"] = "Four float wide square matrix.";
 
 	// Complex
-	chaiscript::utility::add_class<kl::Complex>(*INTER_SCRIPT_MODULE, "Complex",
+	chaiscript::utility::add_class<kl::Complex>(*INTERP_SCRIPT_MODULE, "Complex",
 	{
 		chaiscript::constructor<kl::Complex()>(),
 		chaiscript::constructor<kl::Complex(const kl::Complex&)>(),
@@ -450,10 +450,10 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Complex& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Complex"] = "Two component imaginary number.";
+	INTERP_SCRIPT_IDENTIFIERS["Complex"] = "Two component imaginary number.";
 
 	// Quaternion
-	chaiscript::utility::add_class<kl::Quaternion>(*INTER_SCRIPT_MODULE, "Quaternion",
+	chaiscript::utility::add_class<kl::Quaternion>(*INTERP_SCRIPT_MODULE, "Quaternion",
 	{
 		chaiscript::constructor<kl::Quaternion()>(),
 		chaiscript::constructor<kl::Quaternion(const kl::Quaternion&)>(),
@@ -492,10 +492,10 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Quaternion& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Quaternion"] = "Four component imaginary number.";
+	INTERP_SCRIPT_IDENTIFIERS["Quaternion"] = "Four component imaginary number.";
 
 	// Vertex
-	chaiscript::utility::add_class<kl::Vertex>(*INTER_SCRIPT_MODULE, "Vertex",
+	chaiscript::utility::add_class<kl::Vertex>(*INTERP_SCRIPT_MODULE, "Vertex",
 	{
 		chaiscript::constructor<kl::Vertex()>(),
 		chaiscript::constructor<kl::Vertex(const kl::Vertex&)>(),
@@ -514,10 +514,10 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Vertex& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Vertex"] = "A 3D point of a mesh.";
+	INTERP_SCRIPT_IDENTIFIERS["Vertex"] = "A 3D point of a mesh.";
 
 	// Triangle
-	chaiscript::utility::add_class<kl::Triangle>(*INTER_SCRIPT_MODULE, "Triangle",
+	chaiscript::utility::add_class<kl::Triangle>(*INTERP_SCRIPT_MODULE, "Triangle",
 	{
 		chaiscript::constructor<kl::Triangle()>(),
 		chaiscript::constructor<kl::Triangle(const kl::Triangle&)>(),
@@ -533,10 +533,10 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Triangle& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Triangle"] = "A 3D triangle in space.";
+	INTERP_SCRIPT_IDENTIFIERS["Triangle"] = "A 3D triangle in space.";
 
 	// Plane
-	chaiscript::utility::add_class<kl::Plane>(*INTER_SCRIPT_MODULE, "Plane",
+	chaiscript::utility::add_class<kl::Plane>(*INTERP_SCRIPT_MODULE, "Plane",
 	{
 		chaiscript::constructor<kl::Plane()>(),
 		chaiscript::constructor<kl::Plane(const kl::Plane&)>(),
@@ -555,13 +555,13 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Plane& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Plane"] = "A 3D plane in space.";
-	INTER_SCRIPT_IDENTIFIERS["set_normal"] = "Normalizes and sets the normal.";
-	INTER_SCRIPT_IDENTIFIERS["normal"] = "Returns the normalized normal.";
-	INTER_SCRIPT_IDENTIFIERS["in_front"] = "Checks if a 3D point is in front of the plane.";
+	INTERP_SCRIPT_IDENTIFIERS["Plane"] = "A 3D plane in space.";
+	INTERP_SCRIPT_IDENTIFIERS["set_normal"] = "Normalizes and sets the normal.";
+	INTERP_SCRIPT_IDENTIFIERS["normal"] = "Returns the normalized normal.";
+	INTERP_SCRIPT_IDENTIFIERS["in_front"] = "Checks if a 3D point is in front of the plane.";
 
 	// Sphere
-	chaiscript::utility::add_class<kl::Sphere>(*INTER_SCRIPT_MODULE, "Sphere",
+	chaiscript::utility::add_class<kl::Sphere>(*INTERP_SCRIPT_MODULE, "Sphere",
 	{
 		chaiscript::constructor<kl::Sphere()>(),
 		chaiscript::constructor<kl::Sphere(const kl::Sphere&)>(),
@@ -576,10 +576,10 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Sphere& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Sphere"] = "A 3D sphere in space.";
+	INTERP_SCRIPT_IDENTIFIERS["Sphere"] = "A 3D sphere in space.";
 
 	// Ray
-	chaiscript::utility::add_class<kl::Ray>(*INTER_SCRIPT_MODULE, "Ray",
+	chaiscript::utility::add_class<kl::Ray>(*INTERP_SCRIPT_MODULE, "Ray",
 	{
 		chaiscript::constructor<kl::Ray()>(),
 		chaiscript::constructor<kl::Ray(const kl::Ray&)>(),
@@ -603,16 +603,16 @@ int load_types = [&]
 
 		{ chaiscript::fun([](const kl::Ray& object) { return kl::format(object); }), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Ray"] = "A 3D ray in space.";
-	INTER_SCRIPT_IDENTIFIERS["set_direction"] = "Sets the normalized direction.";
-	INTER_SCRIPT_IDENTIFIERS["direction"] = "Returns the normalized direction.";
-	INTER_SCRIPT_IDENTIFIERS["intersect_plane"] = "Ray interesects plane.";
-	INTER_SCRIPT_IDENTIFIERS["intersect_triangle"] = "Ray interesects triangle.";
-	INTER_SCRIPT_IDENTIFIERS["can_intersect_sphere"] = "Checks if this ray can intersect a sphere.";
-	INTER_SCRIPT_IDENTIFIERS["intersect_sphere"] = "Ray interesects sphere.";
+	INTERP_SCRIPT_IDENTIFIERS["Ray"] = "A 3D ray in space.";
+	INTERP_SCRIPT_IDENTIFIERS["set_direction"] = "Sets the normalized direction.";
+	INTERP_SCRIPT_IDENTIFIERS["direction"] = "Returns the normalized direction.";
+	INTERP_SCRIPT_IDENTIFIERS["intersect_plane"] = "Ray interesects plane.";
+	INTERP_SCRIPT_IDENTIFIERS["intersect_triangle"] = "Ray interesects triangle.";
+	INTERP_SCRIPT_IDENTIFIERS["can_intersect_sphere"] = "Checks if this ray can intersect a sphere.";
+	INTERP_SCRIPT_IDENTIFIERS["intersect_sphere"] = "Ray interesects sphere.";
 
 	// Color
-	chaiscript::utility::add_class<kl::Color>(*INTER_SCRIPT_MODULE, "Color",
+	chaiscript::utility::add_class<kl::Color>(*INTERP_SCRIPT_MODULE, "Color",
 	{
 		chaiscript::constructor<kl::Color()>(),
 		chaiscript::constructor<kl::Color(const kl::Color&)>(),
@@ -645,14 +645,14 @@ int load_types = [&]
 				", ", static_cast<int>(object.a), ')');
 		}), "to_string" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Color"] = "Four component byte[0, 255] color.";
-	INTER_SCRIPT_IDENTIFIERS["gray"] = "Returns the color as gray.";
-	INTER_SCRIPT_IDENTIFIERS["inverted"] = "Inverts the color channels.";
-	INTER_SCRIPT_IDENTIFIERS["as_ascii"] = "Converts the color to closes ascii char.";
-	INTER_SCRIPT_IDENTIFIERS["mix"] = "Mixes two colors.";
+	INTERP_SCRIPT_IDENTIFIERS["Color"] = "Four component byte[0, 255] color.";
+	INTERP_SCRIPT_IDENTIFIERS["gray"] = "Returns the color as gray.";
+	INTERP_SCRIPT_IDENTIFIERS["inverted"] = "Inverts the color channels.";
+	INTERP_SCRIPT_IDENTIFIERS["as_ascii"] = "Converts the color to closes ascii char.";
+	INTERP_SCRIPT_IDENTIFIERS["mix"] = "Mixes two colors.";
 
 	// Mesh
-	chaiscript::utility::add_class<Mesh>(*INTER_SCRIPT_MODULE, "Mesh",
+	chaiscript::utility::add_class<Mesh>(*INTERP_SCRIPT_MODULE, "Mesh",
 	{},
 	{
 		{ chaiscript::fun(&Mesh::data_buffer), "data_buffer" },
@@ -662,11 +662,11 @@ int load_types = [&]
 
 		{ chaiscript::fun(&Mesh::reload), "reload" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Mesh"] = "Object that contains triangle data.";
-	INTER_SCRIPT_IDENTIFIERS["reload"] = "Reloads the entity component.";
+	INTERP_SCRIPT_IDENTIFIERS["Mesh"] = "Object that contains triangle data.";
+	INTERP_SCRIPT_IDENTIFIERS["reload"] = "Reloads the entity component.";
 
 	// Texture
-	chaiscript::utility::add_class<Texture>(*INTER_SCRIPT_MODULE, "Texture",
+	chaiscript::utility::add_class<Texture>(*INTERP_SCRIPT_MODULE, "Texture",
 	{},
 	{
 		{ chaiscript::fun(&Texture::data_buffer), "data_buffer" },
@@ -679,16 +679,16 @@ int load_types = [&]
 		{ chaiscript::fun(&Texture::create_shader_view), "create_shader_view" },
 		{ chaiscript::fun(&Texture::create_access_view), "create_access_view" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Texture"] = "Object that contains pixel data.";
-	INTER_SCRIPT_IDENTIFIERS["load_as_2D"] = "Reloads the texture as 2D.";
-	INTER_SCRIPT_IDENTIFIERS["load_as_cube"] = "Reloads the texture as a cube map.";
-	INTER_SCRIPT_IDENTIFIERS["create_target_view"] = "Creates target view for this texture.";
-	INTER_SCRIPT_IDENTIFIERS["create_depth_view"] = "Creates depth view for this texture.";
-	INTER_SCRIPT_IDENTIFIERS["create_shader_view"] = "Creates shader view for this texture.";
-	INTER_SCRIPT_IDENTIFIERS["create_access_view"] = "Creates access view for this texture.";
+	INTERP_SCRIPT_IDENTIFIERS["Texture"] = "Object that contains pixel data.";
+	INTERP_SCRIPT_IDENTIFIERS["load_as_2D"] = "Reloads the texture as 2D.";
+	INTERP_SCRIPT_IDENTIFIERS["load_as_cube"] = "Reloads the texture as a cube map.";
+	INTERP_SCRIPT_IDENTIFIERS["create_target_view"] = "Creates target view for this texture.";
+	INTERP_SCRIPT_IDENTIFIERS["create_depth_view"] = "Creates depth view for this texture.";
+	INTERP_SCRIPT_IDENTIFIERS["create_shader_view"] = "Creates shader view for this texture.";
+	INTERP_SCRIPT_IDENTIFIERS["create_access_view"] = "Creates access view for this texture.";
 
 	// Material
-	chaiscript::utility::add_class<Material>(*INTER_SCRIPT_MODULE, "Material",
+	chaiscript::utility::add_class<Material>(*INTERP_SCRIPT_MODULE, "Material",
 	{},
 	{
 		{ chaiscript::fun(&Material::alpha_blend), "alpha_blend" },
@@ -704,10 +704,10 @@ int load_types = [&]
 		{ chaiscript::fun(&Material::normal_map_name), "normal_map_name" },
 		{ chaiscript::fun(&Material::roughness_map_name), "roughness_map_name" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Material"] = "Object that defines the look of the entity.";
+	INTERP_SCRIPT_IDENTIFIERS["Material"] = "Object that defines the look of the entity.";
 
 	// Entity
-	chaiscript::utility::add_class<Entity>(*INTER_SCRIPT_MODULE, "Entity",
+	chaiscript::utility::add_class<Entity>(*INTERP_SCRIPT_MODULE, "Entity",
 	{},
 	{
 		{ chaiscript::fun(&Entity::scale), "scale" },
@@ -738,26 +738,26 @@ int load_types = [&]
 		{ chaiscript::fun(&Entity::set_angular), "set_angular" },
 		{ chaiscript::fun(&Entity::angular), "angular" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Entity"] = "Base entity that's a part of a scene.";
-	INTER_SCRIPT_IDENTIFIERS["model_matrix"] = "Returns the model matrix of entity.";
-	INTER_SCRIPT_IDENTIFIERS["collider_matrix"] = "Returns the collider matrix of entity.";
-	INTER_SCRIPT_IDENTIFIERS["set_rotation"] = "Sets the entity rotation.";
-	INTER_SCRIPT_IDENTIFIERS["rotation"] = "Returns entity rotation.";
-	INTER_SCRIPT_IDENTIFIERS["set_position"] = "Sets the entity position.";
-	INTER_SCRIPT_IDENTIFIERS["position"] = "Returns the entity position.";
-	INTER_SCRIPT_IDENTIFIERS["set_dynamic"] = "Changes the dynamic state of entity.";
-	INTER_SCRIPT_IDENTIFIERS["is_dynamic"] = "Returns the dynamic state of entity.";
-	INTER_SCRIPT_IDENTIFIERS["set_gravity"] = "Sets the gravity state.";
-	INTER_SCRIPT_IDENTIFIERS["has_gravity"] = "Returns the gravity state.";
-	INTER_SCRIPT_IDENTIFIERS["set_mass"] = "Sets the mass of entity.";
-	INTER_SCRIPT_IDENTIFIERS["mass"] = "Returns the mass of entity.";
-	INTER_SCRIPT_IDENTIFIERS["set_velocity"] = "Sets the directional velocity of entity.";
-	INTER_SCRIPT_IDENTIFIERS["velocity"] = "Returns the directional velocity of entity.";
-	INTER_SCRIPT_IDENTIFIERS["set_angular"] = "Sets the angular velocity of entity.";
-	INTER_SCRIPT_IDENTIFIERS["angular"] = "Returns the angular velocity of entity.";
+	INTERP_SCRIPT_IDENTIFIERS["Entity"] = "Base entity that's a part of a scene.";
+	INTERP_SCRIPT_IDENTIFIERS["model_matrix"] = "Returns the model matrix of entity.";
+	INTERP_SCRIPT_IDENTIFIERS["collider_matrix"] = "Returns the collider matrix of entity.";
+	INTERP_SCRIPT_IDENTIFIERS["set_rotation"] = "Sets the entity rotation.";
+	INTERP_SCRIPT_IDENTIFIERS["rotation"] = "Returns entity rotation.";
+	INTERP_SCRIPT_IDENTIFIERS["set_position"] = "Sets the entity position.";
+	INTERP_SCRIPT_IDENTIFIERS["position"] = "Returns the entity position.";
+	INTERP_SCRIPT_IDENTIFIERS["set_dynamic"] = "Changes the dynamic state of entity.";
+	INTERP_SCRIPT_IDENTIFIERS["is_dynamic"] = "Returns the dynamic state of entity.";
+	INTERP_SCRIPT_IDENTIFIERS["set_gravity"] = "Sets the gravity state.";
+	INTERP_SCRIPT_IDENTIFIERS["has_gravity"] = "Returns the gravity state.";
+	INTERP_SCRIPT_IDENTIFIERS["set_mass"] = "Sets the mass of entity.";
+	INTERP_SCRIPT_IDENTIFIERS["mass"] = "Returns the mass of entity.";
+	INTERP_SCRIPT_IDENTIFIERS["set_velocity"] = "Sets the directional velocity of entity.";
+	INTERP_SCRIPT_IDENTIFIERS["velocity"] = "Returns the directional velocity of entity.";
+	INTERP_SCRIPT_IDENTIFIERS["set_angular"] = "Sets the angular velocity of entity.";
+	INTERP_SCRIPT_IDENTIFIERS["angular"] = "Returns the angular velocity of entity.";
 
 	// Camera
-	chaiscript::utility::add_class<Camera>(*INTER_SCRIPT_MODULE, "Camera",
+	chaiscript::utility::add_class<Camera>(*INTERP_SCRIPT_MODULE, "Camera",
 	{},
 	{
 		{ chaiscript::fun(&Camera::aspect_ratio), "aspect_ratio" },
@@ -792,52 +792,52 @@ int load_types = [&]
 		{ chaiscript::fun(&Camera::projection_matrix), "projection_matrix" },
 		{ chaiscript::fun(&Camera::camera_matrix), "camera_matrix" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Camera"] = "Entity that has a view of the scene.";
-	INTER_SCRIPT_IDENTIFIERS["update_aspect_ratio"] = "Sets the camera's aspect ratio.";
-	INTER_SCRIPT_IDENTIFIERS["set_forward"] = "Sets the normalized forward vector of camera.";
-	INTER_SCRIPT_IDENTIFIERS["forward"] = "Returns the normalized forward vector of camera.";
-	INTER_SCRIPT_IDENTIFIERS["set_up"] = "Sets the normalized up vector of camera.";
-	INTER_SCRIPT_IDENTIFIERS["up"] = "Returns the normalized up vector of camera.";
-	INTER_SCRIPT_IDENTIFIERS["right"] = "Returns the normalized right vector of camera.";
-	INTER_SCRIPT_IDENTIFIERS["move_forward"] = "Moves the camera forward.";
-	INTER_SCRIPT_IDENTIFIERS["move_back"] = "Moves the camera back.";
-	INTER_SCRIPT_IDENTIFIERS["move_right"] = "Moves the camera right.";
-	INTER_SCRIPT_IDENTIFIERS["move_left"] = "Moves the camera left.";
-	INTER_SCRIPT_IDENTIFIERS["move_up"] = "Moves the camera up.";
-	INTER_SCRIPT_IDENTIFIERS["move_down"] = "Moves the camera down.";
-	INTER_SCRIPT_IDENTIFIERS["rotate"] = "Handles the camera rotation with a mouse.";
-	INTER_SCRIPT_IDENTIFIERS["view_matrix"] = "Returns the camera's view matrix.";
-	INTER_SCRIPT_IDENTIFIERS["projection_matrix"] = "Returns the camera's projection matrix.";
-	INTER_SCRIPT_IDENTIFIERS["camera_matrix"] = "Returns the camera's matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["Camera"] = "Entity that has a view of the scene.";
+	INTERP_SCRIPT_IDENTIFIERS["update_aspect_ratio"] = "Sets the camera's aspect ratio.";
+	INTERP_SCRIPT_IDENTIFIERS["set_forward"] = "Sets the normalized forward vector of camera.";
+	INTERP_SCRIPT_IDENTIFIERS["forward"] = "Returns the normalized forward vector of camera.";
+	INTERP_SCRIPT_IDENTIFIERS["set_up"] = "Sets the normalized up vector of camera.";
+	INTERP_SCRIPT_IDENTIFIERS["up"] = "Returns the normalized up vector of camera.";
+	INTERP_SCRIPT_IDENTIFIERS["right"] = "Returns the normalized right vector of camera.";
+	INTERP_SCRIPT_IDENTIFIERS["move_forward"] = "Moves the camera forward.";
+	INTERP_SCRIPT_IDENTIFIERS["move_back"] = "Moves the camera back.";
+	INTERP_SCRIPT_IDENTIFIERS["move_right"] = "Moves the camera right.";
+	INTERP_SCRIPT_IDENTIFIERS["move_left"] = "Moves the camera left.";
+	INTERP_SCRIPT_IDENTIFIERS["move_up"] = "Moves the camera up.";
+	INTERP_SCRIPT_IDENTIFIERS["move_down"] = "Moves the camera down.";
+	INTERP_SCRIPT_IDENTIFIERS["rotate"] = "Handles the camera rotation with a mouse.";
+	INTERP_SCRIPT_IDENTIFIERS["view_matrix"] = "Returns the camera's view matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["projection_matrix"] = "Returns the camera's projection matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["camera_matrix"] = "Returns the camera's matrix.";
 
 	// Light
-	chaiscript::utility::add_class<Light>(*INTER_SCRIPT_MODULE, "Light",
+	chaiscript::utility::add_class<Light>(*INTERP_SCRIPT_MODULE, "Light",
 	{},
 	{
 		{ chaiscript::fun(&Light::light_at_point), "light_at_point" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Light"] = "Base class of every light class.";
-	INTER_SCRIPT_IDENTIFIERS["light_at_point"] = "Returns the lights intensity at some 3D point.";
+	INTERP_SCRIPT_IDENTIFIERS["Light"] = "Base class of every light class.";
+	INTERP_SCRIPT_IDENTIFIERS["light_at_point"] = "Returns the lights intensity at some 3D point.";
 
 	// Ambient light
-	chaiscript::utility::add_class<AmbientLight>(*INTER_SCRIPT_MODULE, "AmbientLight",
+	chaiscript::utility::add_class<AmbientLight>(*INTERP_SCRIPT_MODULE, "AmbientLight",
 	{},
 	{
 		{ chaiscript::fun(&AmbientLight::color), "color" },
 		{ chaiscript::fun(&AmbientLight::intensity), "intensity" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["AmbientLight"] = "Non directional light at shines at all points.";
+	INTERP_SCRIPT_IDENTIFIERS["AmbientLight"] = "Non directional light at shines at all points.";
 
 	// Point light
-	chaiscript::utility::add_class<PointLight>(*INTER_SCRIPT_MODULE, "PointLight",
+	chaiscript::utility::add_class<PointLight>(*INTERP_SCRIPT_MODULE, "PointLight",
 	{},
 	{
 		{ chaiscript::fun(&PointLight::color), "color" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["PointLight"] = "Light that shines in all directions.";
+	INTERP_SCRIPT_IDENTIFIERS["PointLight"] = "Light that shines in all directions.";
 
 	// Directional light
-	chaiscript::utility::add_class<DirectionalLight>(*INTER_SCRIPT_MODULE, "DirectionalLight",
+	chaiscript::utility::add_class<DirectionalLight>(*INTERP_SCRIPT_MODULE, "DirectionalLight",
 	{},
 	{
 		{ chaiscript::fun(&DirectionalLight::point_size), "point_size" },
@@ -850,12 +850,12 @@ int load_types = [&]
 
 		{ chaiscript::fun(&DirectionalLight::light_matrix), "light_matrix" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["DirectionalLight"] = "Light that shines in a single direction and is infinitely far away.";
-	INTER_SCRIPT_IDENTIFIERS["map_resolution"] = "Returns the shadow map resolution of directional light.";
-	INTER_SCRIPT_IDENTIFIERS["light_matrix"] = "Returns the light matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["DirectionalLight"] = "Light that shines in a single direction and is infinitely far away.";
+	INTERP_SCRIPT_IDENTIFIERS["map_resolution"] = "Returns the shadow map resolution of directional light.";
+	INTERP_SCRIPT_IDENTIFIERS["light_matrix"] = "Returns the light matrix.";
 
 	// Scene
-	chaiscript::utility::add_class<Scene>(*INTER_SCRIPT_MODULE, "Scene",
+	chaiscript::utility::add_class<Scene>(*INTERP_SCRIPT_MODULE, "Scene",
 	{},
 	{
 		{ chaiscript::fun(&Scene::main_camera_name), "main_camera_name" },
@@ -901,48 +901,48 @@ int load_types = [&]
 		{ chaiscript::fun<PointLight*>(&Scene::get_casted<PointLight>), "get_point_light" },
 		{ chaiscript::fun<DirectionalLight*>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Scene"] = "Collection of meshes, textures, materials, scripts and entities.";
-	INTER_SCRIPT_IDENTIFIERS["new_mesh"] = "Creates a new mesh in scene.";
-	INTER_SCRIPT_IDENTIFIERS["new_texture"] = "Creates a new texture in scene.";
-	INTER_SCRIPT_IDENTIFIERS["new_material"] = "Creates a new material in scene.";
-	INTER_SCRIPT_IDENTIFIERS["new_entity"] = "Creates a new entity in scene.";
-	INTER_SCRIPT_IDENTIFIERS["get_mesh"] = "Returns a scene mesh.";
-	INTER_SCRIPT_IDENTIFIERS["get_texture"] = "Returns a scene texture.";
-	INTER_SCRIPT_IDENTIFIERS["get_material"] = "Returns a scene material.";
-	INTER_SCRIPT_IDENTIFIERS["get_entity"] = "Returns a scene entity.";
-	INTER_SCRIPT_IDENTIFIERS["remove_mesh"] = "Removes a mesh from scene.";
-	INTER_SCRIPT_IDENTIFIERS["remove_texture"] = "Removes a texture from scene.";
-	INTER_SCRIPT_IDENTIFIERS["remove_material"] = "Removes a material from scene.";
-	INTER_SCRIPT_IDENTIFIERS["remove_entity"] = "Removes an entity from scene.";
-	INTER_SCRIPT_IDENTIFIERS["contains_mesh"] = "Returns true if scene contains mesh.";
-	INTER_SCRIPT_IDENTIFIERS["contains_texture"] = "Returns true if scene contains texture.";
-	INTER_SCRIPT_IDENTIFIERS["contains_material"] = "Returns true if scene contains material.";
-	INTER_SCRIPT_IDENTIFIERS["contains_entity"] = "Returns true if scene contains entity.";
-	INTER_SCRIPT_IDENTIFIERS["mesh_count"] = "Returns the integer count of meshes in scene.";
-	INTER_SCRIPT_IDENTIFIERS["texture_count"] = "Returns the integer count of texture in scene.";
-	INTER_SCRIPT_IDENTIFIERS["material_count"] = "Returns the integer count of materials in scene.";
-	INTER_SCRIPT_IDENTIFIERS["entity_count"] = "Returns the integer count of entities in scene.";
-	INTER_SCRIPT_IDENTIFIERS["get_all_meshes"] = "Returns a map of all scene meshes.";
-	INTER_SCRIPT_IDENTIFIERS["get_all_textures"] = "Returns a map of all scene textures.";
-	INTER_SCRIPT_IDENTIFIERS["get_all_materials"] = "Returns a map of all scene materials.";
-	INTER_SCRIPT_IDENTIFIERS["get_all_entities"] = "Returns a map of all scene entities.";
-	INTER_SCRIPT_IDENTIFIERS["get_camera"] = "Returns a scene camera.";
-	INTER_SCRIPT_IDENTIFIERS["get_light"] = "Returns a scene light.";
-	INTER_SCRIPT_IDENTIFIERS["get_ambient_light"] = "Returns a scene ambient light.";
-	INTER_SCRIPT_IDENTIFIERS["get_point_light"] = "Returns a scene point light.";
-	INTER_SCRIPT_IDENTIFIERS["get_directional_light"] = "Returns a scene directional light.";
+	INTERP_SCRIPT_IDENTIFIERS["Scene"] = "Collection of meshes, textures, materials, scripts and entities.";
+	INTERP_SCRIPT_IDENTIFIERS["new_mesh"] = "Creates a new mesh in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["new_texture"] = "Creates a new texture in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["new_material"] = "Creates a new material in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["new_entity"] = "Creates a new entity in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["get_mesh"] = "Returns a scene mesh.";
+	INTERP_SCRIPT_IDENTIFIERS["get_texture"] = "Returns a scene texture.";
+	INTERP_SCRIPT_IDENTIFIERS["get_material"] = "Returns a scene material.";
+	INTERP_SCRIPT_IDENTIFIERS["get_entity"] = "Returns a scene entity.";
+	INTERP_SCRIPT_IDENTIFIERS["remove_mesh"] = "Removes a mesh from scene.";
+	INTERP_SCRIPT_IDENTIFIERS["remove_texture"] = "Removes a texture from scene.";
+	INTERP_SCRIPT_IDENTIFIERS["remove_material"] = "Removes a material from scene.";
+	INTERP_SCRIPT_IDENTIFIERS["remove_entity"] = "Removes an entity from scene.";
+	INTERP_SCRIPT_IDENTIFIERS["contains_mesh"] = "Returns true if scene contains mesh.";
+	INTERP_SCRIPT_IDENTIFIERS["contains_texture"] = "Returns true if scene contains texture.";
+	INTERP_SCRIPT_IDENTIFIERS["contains_material"] = "Returns true if scene contains material.";
+	INTERP_SCRIPT_IDENTIFIERS["contains_entity"] = "Returns true if scene contains entity.";
+	INTERP_SCRIPT_IDENTIFIERS["mesh_count"] = "Returns the integer count of meshes in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["texture_count"] = "Returns the integer count of texture in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["material_count"] = "Returns the integer count of materials in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["entity_count"] = "Returns the integer count of entities in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["get_all_meshes"] = "Returns a map of all scene meshes.";
+	INTERP_SCRIPT_IDENTIFIERS["get_all_textures"] = "Returns a map of all scene textures.";
+	INTERP_SCRIPT_IDENTIFIERS["get_all_materials"] = "Returns a map of all scene materials.";
+	INTERP_SCRIPT_IDENTIFIERS["get_all_entities"] = "Returns a map of all scene entities.";
+	INTERP_SCRIPT_IDENTIFIERS["get_camera"] = "Returns a scene camera.";
+	INTERP_SCRIPT_IDENTIFIERS["get_light"] = "Returns a scene light.";
+	INTERP_SCRIPT_IDENTIFIERS["get_ambient_light"] = "Returns a scene ambient light.";
+	INTERP_SCRIPT_IDENTIFIERS["get_point_light"] = "Returns a scene point light.";
+	INTERP_SCRIPT_IDENTIFIERS["get_directional_light"] = "Returns a scene directional light.";
 
 	// Key
-	chaiscript::utility::add_class<kl::Key>(*INTER_SCRIPT_MODULE, "Key",
+	chaiscript::utility::add_class<kl::Key>(*INTERP_SCRIPT_MODULE, "Key",
 	{},
 	{
 		{ chaiscript::fun(&kl::Key::is_down), "is_down" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Key"] = "Class representing a single keyboard or a mouse button.";
-	INTER_SCRIPT_IDENTIFIERS["is_down"] = "Returns the down state of key.";
+	INTERP_SCRIPT_IDENTIFIERS["Key"] = "Class representing a single keyboard or a mouse button.";
+	INTERP_SCRIPT_IDENTIFIERS["is_down"] = "Returns the down state of key.";
 
 	// Keyboard
-	chaiscript::utility::add_class<kl::Keyboard>(*INTER_SCRIPT_MODULE, "Keyboard",
+	chaiscript::utility::add_class<kl::Keyboard>(*INTERP_SCRIPT_MODULE, "Keyboard",
 	{},
 	{
 		{ chaiscript::fun(&kl::Keyboard::q), "q" },
@@ -1017,10 +1017,10 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Keyboard::f11), "f11" },
 		{ chaiscript::fun(&kl::Keyboard::f12), "f12" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Keyboard"] = "Class representing a physical keyboard.";
+	INTERP_SCRIPT_IDENTIFIERS["Keyboard"] = "Class representing a physical keyboard.";
 
 	// Mouse
-	chaiscript::utility::add_class<kl::Mouse>(*INTER_SCRIPT_MODULE, "Mouse",
+	chaiscript::utility::add_class<kl::Mouse>(*INTERP_SCRIPT_MODULE, "Mouse",
 	{},
 	{
 		{ chaiscript::fun(&kl::Mouse::left), "left" },
@@ -1036,11 +1036,11 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Mouse::normalized_position), "normalized_position" },
 		{ chaiscript::fun(&kl::Mouse::scroll), "scroll" },
 	});
-	INTER_SCRIPT_IDENTIFIERS["Mouse"] = "Class representing a physical mouse.";
-	INTER_SCRIPT_IDENTIFIERS["set_hidden"] = "Sets the mouse hidden state.";
-	INTER_SCRIPT_IDENTIFIERS["is_hidden"] = "Returns the mouse hidden state.";
-	INTER_SCRIPT_IDENTIFIERS["normalized_position"] = "Returns the normalized position.";
-	INTER_SCRIPT_IDENTIFIERS["scroll"] = "Returns the mouse scroll value.";
+	INTERP_SCRIPT_IDENTIFIERS["Mouse"] = "Class representing a physical mouse.";
+	INTERP_SCRIPT_IDENTIFIERS["set_hidden"] = "Sets the mouse hidden state.";
+	INTERP_SCRIPT_IDENTIFIERS["is_hidden"] = "Returns the mouse hidden state.";
+	INTERP_SCRIPT_IDENTIFIERS["normalized_position"] = "Returns the normalized position.";
+	INTERP_SCRIPT_IDENTIFIERS["scroll"] = "Returns the mouse scroll value.";
 
 	return 0;
 }();
@@ -1050,56 +1050,56 @@ int load_constants = [&]
 	using namespace titian;
 
 	// Numbers
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::PI), "PI");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::TO_RADIANS), "TO_RADIANS");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::TO_DEGREES), "TO_DEGREES");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::TO_FLOAT_COLOR), "TO_FLOAT_COLOR");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::TO_BYTE_COLOR), "TO_BYTE_COLOR");
-	INTER_SCRIPT_IDENTIFIERS["PI"] = "Constant of a number PI (3.1415...).";
-	INTER_SCRIPT_IDENTIFIERS["TO_RADIANS"] = "Constant for converting degrees to radians (PI / 180).";
-	INTER_SCRIPT_IDENTIFIERS["TO_DEGREES"] = "Constant for converting degrees to radians (180 / PI).";
-	INTER_SCRIPT_IDENTIFIERS["TO_FLOAT_COLOR"] = "Constant for converting byte color to float color (1 / 255).";
-	INTER_SCRIPT_IDENTIFIERS["TO_BYTE_COLOR"] = "Constant for converting float color to byte color (255 / 1).";
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::PI), "PI");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::TO_RADIANS), "TO_RADIANS");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::TO_DEGREES), "TO_DEGREES");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::TO_FLOAT_COLOR), "TO_FLOAT_COLOR");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::TO_BYTE_COLOR), "TO_BYTE_COLOR");
+	INTERP_SCRIPT_IDENTIFIERS["PI"] = "Constant of a number PI (3.1415...).";
+	INTERP_SCRIPT_IDENTIFIERS["TO_RADIANS"] = "Constant for converting degrees to radians (PI / 180).";
+	INTERP_SCRIPT_IDENTIFIERS["TO_DEGREES"] = "Constant for converting degrees to radians (180 / PI).";
+	INTERP_SCRIPT_IDENTIFIERS["TO_FLOAT_COLOR"] = "Constant for converting byte color to float color (1 / 255).";
+	INTERP_SCRIPT_IDENTIFIERS["TO_BYTE_COLOR"] = "Constant for converting float color to byte color (255 / 1).";
 
 	// Colors
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::CONSOLE), "CONSOLE");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::BLACK), "BLACK");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::WHITE), "WHITE");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::GRAY), "GRAY");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::RED), "RED");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::GREEN), "GREEN");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::BLUE), "BLUE");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::CYAN), "CYAN");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::PURPLE), "PURPLE");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::YELLOW), "YELLOW");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::ORANGE), "ORANGE");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::MAGENTA), "MAGENTA");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::CRIMSON), "CRIMSON");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::WHEAT), "WHEAT");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::SKY), "SKY");
-	INTER_SCRIPT_IDENTIFIERS["CONSOLE"] = "Constant color (204, 204, 204).";
-	INTER_SCRIPT_IDENTIFIERS["BLACK"] = "Constant color (0, 0, 0).";
-	INTER_SCRIPT_IDENTIFIERS["WHITE"] = "Constant color (255, 255, 255).";
-	INTER_SCRIPT_IDENTIFIERS["GRAY"] = "Constant color (50, 50, 50).";
-	INTER_SCRIPT_IDENTIFIERS["RED"] = "Constant color (255, 0, 0).";
-	INTER_SCRIPT_IDENTIFIERS["GREEN"] = "Constant color (0, 255, 0).";
-	INTER_SCRIPT_IDENTIFIERS["BLUE"] = "Constant color (0, 0, 255).";
-	INTER_SCRIPT_IDENTIFIERS["CYAN"] = "Constant color (30, 180, 170).";
-	INTER_SCRIPT_IDENTIFIERS["PURPLE"] = "Constant color (220, 0, 220).";
-	INTER_SCRIPT_IDENTIFIERS["YELLOW"] = "Constant color (220, 220, 0).";
-	INTER_SCRIPT_IDENTIFIERS["ORANGE"] = "Constant color (255, 140, 0).";
-	INTER_SCRIPT_IDENTIFIERS["MAGENTA"] = "Constant color (155, 0, 155).";
-	INTER_SCRIPT_IDENTIFIERS["CRIMSON"] = "Constant color (100, 0, 0).";
-	INTER_SCRIPT_IDENTIFIERS["WHEAT"] = "Constant color (245, 220, 180).";
-	INTER_SCRIPT_IDENTIFIERS["SKY"] = "Constant color (190, 245, 255).";
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::CONSOLE), "CONSOLE");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::BLACK), "BLACK");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::WHITE), "WHITE");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::GRAY), "GRAY");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::RED), "RED");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::GREEN), "GREEN");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::BLUE), "BLUE");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::CYAN), "CYAN");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::PURPLE), "PURPLE");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::YELLOW), "YELLOW");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::ORANGE), "ORANGE");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::MAGENTA), "MAGENTA");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::CRIMSON), "CRIMSON");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::WHEAT), "WHEAT");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var(&kl::colors::SKY), "SKY");
+	INTERP_SCRIPT_IDENTIFIERS["CONSOLE"] = "Constant color (204, 204, 204).";
+	INTERP_SCRIPT_IDENTIFIERS["BLACK"] = "Constant color (0, 0, 0).";
+	INTERP_SCRIPT_IDENTIFIERS["WHITE"] = "Constant color (255, 255, 255).";
+	INTERP_SCRIPT_IDENTIFIERS["GRAY"] = "Constant color (50, 50, 50).";
+	INTERP_SCRIPT_IDENTIFIERS["RED"] = "Constant color (255, 0, 0).";
+	INTERP_SCRIPT_IDENTIFIERS["GREEN"] = "Constant color (0, 255, 0).";
+	INTERP_SCRIPT_IDENTIFIERS["BLUE"] = "Constant color (0, 0, 255).";
+	INTERP_SCRIPT_IDENTIFIERS["CYAN"] = "Constant color (30, 180, 170).";
+	INTERP_SCRIPT_IDENTIFIERS["PURPLE"] = "Constant color (220, 0, 220).";
+	INTERP_SCRIPT_IDENTIFIERS["YELLOW"] = "Constant color (220, 220, 0).";
+	INTERP_SCRIPT_IDENTIFIERS["ORANGE"] = "Constant color (255, 140, 0).";
+	INTERP_SCRIPT_IDENTIFIERS["MAGENTA"] = "Constant color (155, 0, 155).";
+	INTERP_SCRIPT_IDENTIFIERS["CRIMSON"] = "Constant color (100, 0, 0).";
+	INTERP_SCRIPT_IDENTIFIERS["WHEAT"] = "Constant color (245, 220, 180).";
+	INTERP_SCRIPT_IDENTIFIERS["SKY"] = "Constant color (190, 245, 255).";
 
 	// Mesh
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var<int>(D3D_PRIMITIVE_TOPOLOGY_POINTLIST), "TOPOLOGY_POINTS");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var<int>(D3D_PRIMITIVE_TOPOLOGY_LINELIST), "TOPOLOGY_LINES");
-	INTER_SCRIPT_MODULE->add_global_const(chaiscript::const_var<int>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST), "TOPOLOGY_TRIANGLES");
-	INTER_SCRIPT_IDENTIFIERS["TOPOLOGY_POINTS"] = "Makes the rasterizer render this mesh as an array of POINTS.";
-	INTER_SCRIPT_IDENTIFIERS["TOPOLOGY_LINES"] = "Makes the rasterizer render this mesh as an array of LINES.";
-	INTER_SCRIPT_IDENTIFIERS["TOPOLOGY_TRIANGLES"] = "Makes the rasterizer render this mesh as an array of TRIANGLES.";
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var<int>(D3D_PRIMITIVE_TOPOLOGY_POINTLIST), "TOPOLOGY_POINTS");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var<int>(D3D_PRIMITIVE_TOPOLOGY_LINELIST), "TOPOLOGY_LINES");
+	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var<int>(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST), "TOPOLOGY_TRIANGLES");
+	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_POINTS"] = "Makes the rasterizer render this mesh as an array of POINTS.";
+	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_LINES"] = "Makes the rasterizer render this mesh as an array of LINES.";
+	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_TRIANGLES"] = "Makes the rasterizer render this mesh as an array of TRIANGLES.";
 
 	return 0;
 }();
@@ -1109,147 +1109,147 @@ int load_functions = [&]
 	using namespace titian;
 
 	// Var info
-	INTER_SCRIPT_MODULE->eval("global is_valid = fun(object) { return !is_var_null(object); }");
-	INTER_SCRIPT_MODULE->eval("global get_type = fun(object) { return type_name(object); }");
-	INTER_SCRIPT_IDENTIFIERS["is_valid"] = "Returns true if the given object is NOT null, false otherwise.";
-	INTER_SCRIPT_IDENTIFIERS["get_type"] = "Returns the type name (string) of the given object.";
+	INTERP_SCRIPT_MODULE->eval("global is_valid = fun(object) { return !is_var_null(object); }");
+	INTERP_SCRIPT_MODULE->eval("global get_type = fun(object) { return type_name(object); }");
+	INTERP_SCRIPT_IDENTIFIERS["is_valid"] = "Returns true if the given object is NOT null, false otherwise.";
+	INTERP_SCRIPT_IDENTIFIERS["get_type"] = "Returns the type name (string) of the given object.";
 
 	// Casting
-	INTER_SCRIPT_IDENTIFIERS["to_string"] = "Converts the given object to a string.";
-	INTER_SCRIPT_IDENTIFIERS["to_float"] = "Converts the given object to a float.";
-	INTER_SCRIPT_IDENTIFIERS["to_int"] = "Converts the given object to an int.";
+	INTERP_SCRIPT_IDENTIFIERS["to_string"] = "Converts the given object to a string.";
+	INTERP_SCRIPT_IDENTIFIERS["to_float"] = "Converts the given object to a float.";
+	INTERP_SCRIPT_IDENTIFIERS["to_int"] = "Converts the given object to an int.";
 
 	// Calls
-	INTER_SCRIPT_IDENTIFIERS["on_start"] = "Called once at the start of the game.";
-	INTER_SCRIPT_IDENTIFIERS["on_update"] = "Called every frame of the game.";
+	INTERP_SCRIPT_IDENTIFIERS["on_start"] = "Called once at the start of the game.";
+	INTERP_SCRIPT_IDENTIFIERS["on_update"] = "Called every frame of the game.";
 
 	// Logging
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&Logger::log<const std::string&>), "log");
-	INTER_SCRIPT_MODULE->eval("global print = fun(object) { return log(to_string(object)); }");
-	INTER_SCRIPT_IDENTIFIERS["log"] = "Outputs the given string to the log window.";
-	INTER_SCRIPT_IDENTIFIERS["print"] = "Converts the given object to a string and logs it.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&Logger::log<const std::string&>), "log");
+	INTERP_SCRIPT_MODULE->eval("global print = fun(object) { return log(to_string(object)); }");
+	INTERP_SCRIPT_IDENTIFIERS["log"] = "Outputs the given string to the log window.";
+	INTERP_SCRIPT_IDENTIFIERS["print"] = "Converts the given object to a string and logs it.";
 
 	// Time
-	INTER_SCRIPT_MODULE->add(chaiscript::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->elapsed(); }), "get_elapsed_t");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->delta(); }), "get_delta_t");
-	INTER_SCRIPT_IDENTIFIERS["get_elapsed_t"] = "Returns the elapsed time since the game start.";
-	INTER_SCRIPT_IDENTIFIERS["get_delta_t"] = "Returns the time since the last frame.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->elapsed(); }), "get_elapsed_t");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->delta(); }), "get_delta_t");
+	INTERP_SCRIPT_IDENTIFIERS["get_elapsed_t"] = "Returns the elapsed time since the game start.";
+	INTERP_SCRIPT_IDENTIFIERS["get_delta_t"] = "Returns the time since the last frame.";
 
 	// Input
-	INTER_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Keyboard* { return &GameLayer::BOUND_SELF->app_layer->window->keyboard; }), "get_keyboard");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Mouse* { return &GameLayer::BOUND_SELF->app_layer->window->mouse; }), "get_mouse");
-	INTER_SCRIPT_IDENTIFIERS["get_keyboard"] = "Returns a reference to the window keyboard.";
-	INTER_SCRIPT_IDENTIFIERS["get_mouse"] = "Returns a reference to the window mouse.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Keyboard* { return &GameLayer::BOUND_SELF->app_layer->window->keyboard; }), "get_keyboard");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Mouse* { return &GameLayer::BOUND_SELF->app_layer->window->mouse; }), "get_mouse");
+	INTERP_SCRIPT_IDENTIFIERS["get_keyboard"] = "Returns a reference to the window keyboard.";
+	INTERP_SCRIPT_IDENTIFIERS["get_mouse"] = "Returns a reference to the window mouse.";
 
 	// Float3x3
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::translation), "Float3x3_translation");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::rotation), "Float3x3_rotation");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::scaling), "Float3x3_scaling");
-	INTER_SCRIPT_IDENTIFIERS["Float3x3_translation"] = "Creates a 3x3 translation matrix.";
-	INTER_SCRIPT_IDENTIFIERS["Float3x3_rotation"] = "Creates a 3x3 rotation matrix.";
-	INTER_SCRIPT_IDENTIFIERS["Float3x3_scaling"] = "Creates a 3x3 scaling matrix.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::translation), "Float3x3_translation");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::rotation), "Float3x3_rotation");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::scaling), "Float3x3_scaling");
+	INTERP_SCRIPT_IDENTIFIERS["Float3x3_translation"] = "Creates a 3x3 translation matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["Float3x3_rotation"] = "Creates a 3x3 rotation matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["Float3x3_scaling"] = "Creates a 3x3 scaling matrix.";
 
 	// Float4x4
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::translation), "Float4x4_translation");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::rotation), "Float4x4_rotation");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::scaling), "Float4x4_scaling");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::look_at), "Float4x4_look_at");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::perspective), "Float4x4_perspective");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::orthographic), "Float4x4_orthographic");
-	INTER_SCRIPT_IDENTIFIERS["Float4x4_translation"] = "Creates a 4x4 translation matrix.";
-	INTER_SCRIPT_IDENTIFIERS["Float4x4_rotation"] = "Creates a 4x4 rotation matrix.";
-	INTER_SCRIPT_IDENTIFIERS["Float4x4_scaling"] = "Creates a 4x4 scaling matrix.";
-	INTER_SCRIPT_IDENTIFIERS["Float4x4_look_at"] = "Creates a 4x4 look at matrix.";
-	INTER_SCRIPT_IDENTIFIERS["Float4x4_perspective"] = "Creates a 4x4 perspective matrix.";
-	INTER_SCRIPT_IDENTIFIERS["Float4x4_orthographic"] = "Creates a 4x4 orthographic matrix.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::translation), "Float4x4_translation");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::rotation), "Float4x4_rotation");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::scaling), "Float4x4_scaling");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::look_at), "Float4x4_look_at");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::perspective), "Float4x4_perspective");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::orthographic), "Float4x4_orthographic");
+	INTERP_SCRIPT_IDENTIFIERS["Float4x4_translation"] = "Creates a 4x4 translation matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["Float4x4_rotation"] = "Creates a 4x4 rotation matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["Float4x4_scaling"] = "Creates a 4x4 scaling matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["Float4x4_look_at"] = "Creates a 4x4 look at matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["Float4x4_perspective"] = "Creates a 4x4 perspective matrix.";
+	INTERP_SCRIPT_IDENTIFIERS["Float4x4_orthographic"] = "Creates a 4x4 orthographic matrix.";
 
 	// Math
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::sin_deg), "sin_deg");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::cos_deg), "cos_deg");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::tan_deg), "tan_deg");
-	INTER_SCRIPT_IDENTIFIERS["sin_deg"] = "Returns sin of the given angle in degrees.";
-	INTER_SCRIPT_IDENTIFIERS["cos_deg"] = "Returns cos of the given angle in degrees.";
-	INTER_SCRIPT_IDENTIFIERS["tan_deg"] = "Returns tan of the given angle in degrees.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::sin_deg), "sin_deg");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::cos_deg), "cos_deg");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::tan_deg), "tan_deg");
+	INTERP_SCRIPT_IDENTIFIERS["sin_deg"] = "Returns sin of the given angle in degrees.";
+	INTERP_SCRIPT_IDENTIFIERS["cos_deg"] = "Returns cos of the given angle in degrees.";
+	INTERP_SCRIPT_IDENTIFIERS["tan_deg"] = "Returns tan of the given angle in degrees.";
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::asin_deg), "asin_deg");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::acos_deg), "acos_deg");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::atan_deg), "atan_deg");
-	INTER_SCRIPT_IDENTIFIERS["asin_deg"] = "Returns angle in degrees of the given sin.";
-	INTER_SCRIPT_IDENTIFIERS["acos_deg"] = "Returns angle in degrees of the given cos.";
-	INTER_SCRIPT_IDENTIFIERS["atan_deg"] = "Returns angle in degrees of the given tan.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::asin_deg), "asin_deg");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::acos_deg), "acos_deg");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::atan_deg), "atan_deg");
+	INTERP_SCRIPT_IDENTIFIERS["asin_deg"] = "Returns angle in degrees of the given sin.";
+	INTERP_SCRIPT_IDENTIFIERS["acos_deg"] = "Returns angle in degrees of the given cos.";
+	INTERP_SCRIPT_IDENTIFIERS["atan_deg"] = "Returns angle in degrees of the given tan.";
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::calc_ndc), "calc_ndc");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::calc_ndc_ar), "calc_ndc_ar");
-	INTER_SCRIPT_IDENTIFIERS["calc_ndc"] = "Converts coorinates into ndc.";
-	INTER_SCRIPT_IDENTIFIERS["calc_ndc_ar"] = "Converts coorinates into ndc and applies aspect ratio.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::calc_ndc), "calc_ndc");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::calc_ndc_ar), "calc_ndc_ar");
+	INTERP_SCRIPT_IDENTIFIERS["calc_ndc"] = "Converts coorinates into ndc.";
+	INTERP_SCRIPT_IDENTIFIERS["calc_ndc_ar"] = "Converts coorinates into ndc and applies aspect ratio.";
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::line_x), "line_x");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::line_y), "line_y");
-	INTER_SCRIPT_IDENTIFIERS["line_x"] = "Calculates line x.";
-	INTER_SCRIPT_IDENTIFIERS["line_y"] = "Calculates line y.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::line_x), "line_x");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::line_y), "line_y");
+	INTERP_SCRIPT_IDENTIFIERS["line_x"] = "Calculates line x.";
+	INTERP_SCRIPT_IDENTIFIERS["line_y"] = "Calculates line y.";
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::wrap), "wrap");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::unwrap), "unwrap");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::clamp), "clamp");
-	INTER_SCRIPT_IDENTIFIERS["wrap"] = "Wraps the given value to the range [0, 1].";
-	INTER_SCRIPT_IDENTIFIERS["unwrap"] = "Unwraps the given value to the defined range.";
-	INTER_SCRIPT_IDENTIFIERS["clamp"] = "Clamps the given value between the given min and max.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::wrap), "wrap");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::unwrap), "unwrap");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::clamp), "clamp");
+	INTERP_SCRIPT_IDENTIFIERS["wrap"] = "Wraps the given value to the range [0, 1].";
+	INTERP_SCRIPT_IDENTIFIERS["unwrap"] = "Unwraps the given value to the defined range.";
+	INTERP_SCRIPT_IDENTIFIERS["clamp"] = "Clamps the given value between the given min and max.";
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::to_quaternion), "to_quaternion");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun(&kl::to_euler), "to_euler");
-	INTER_SCRIPT_IDENTIFIERS["to_quaternion"] = "Converts the given euler angles to a quaternion.";
-	INTER_SCRIPT_IDENTIFIERS["to_euler"] = "Converts the given quaternion to euler angles.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::to_quaternion), "to_quaternion");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::to_euler), "to_euler");
+	INTERP_SCRIPT_IDENTIFIERS["to_quaternion"] = "Converts the given euler angles to a quaternion.";
+	INTERP_SCRIPT_IDENTIFIERS["to_euler"] = "Converts the given quaternion to euler angles.";
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex, const kl::Complex&>(&kl::abs), "abs");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex, const kl::Complex&>(&kl::normalize), "normalize");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex, const kl::Complex&>(&kl::inverse), "inverse");
-	INTER_SCRIPT_IDENTIFIERS["abs"] = "Returns the absolute value.";
-	INTER_SCRIPT_IDENTIFIERS["normalize"] = "Normalizes the given vector.";
-	INTER_SCRIPT_IDENTIFIERS["inverse"] = "Returns the inverse of the given math object.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex, const kl::Complex&>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex, const kl::Complex&>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex, const kl::Complex&>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_IDENTIFIERS["abs"] = "Returns the absolute value.";
+	INTERP_SCRIPT_IDENTIFIERS["normalize"] = "Normalizes the given vector.";
+	INTERP_SCRIPT_IDENTIFIERS["inverse"] = "Returns the inverse of the given math object.";
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion, const kl::Quaternion&>(&kl::abs), "abs");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion, const kl::Quaternion&>(&kl::normalize), "normalize");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion, const kl::Quaternion&>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion, const kl::Quaternion&>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion, const kl::Quaternion&>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion, const kl::Quaternion&>(&kl::inverse), "inverse");
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Int2, const kl::Int2&>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Int2, const kl::Int2&>(&kl::abs), "abs");
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::abs), "abs");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::normalize), "normalize");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float2&>(&kl::dot), "dot");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<float, kl::Float2, kl::Float2, bool>(&kl::angle), "angle");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::rotate), "rotate");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::reflect), "reflect");
-	INTER_SCRIPT_IDENTIFIERS["dot"] = "Returns the dot product of two vectors.";
-	INTER_SCRIPT_IDENTIFIERS["angle"] = "Returns the angle in degrees between two vectors.";
-	INTER_SCRIPT_IDENTIFIERS["rotate"] = "Returns the rotated vector.";
-	INTER_SCRIPT_IDENTIFIERS["reflect"] = "Returns the reflected vector.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float2&>(&kl::dot), "dot");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, kl::Float2, kl::Float2, bool>(&kl::angle), "angle");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::rotate), "rotate");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::reflect), "reflect");
+	INTERP_SCRIPT_IDENTIFIERS["dot"] = "Returns the dot product of two vectors.";
+	INTERP_SCRIPT_IDENTIFIERS["angle"] = "Returns the angle in degrees between two vectors.";
+	INTERP_SCRIPT_IDENTIFIERS["rotate"] = "Returns the rotated vector.";
+	INTERP_SCRIPT_IDENTIFIERS["reflect"] = "Returns the reflected vector.";
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::abs), "abs");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::normalize), "normalize");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float3&>(&kl::dot), "dot");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float3&, const kl::Float3&>(&kl::angle), "angle");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::rotate), "rotate");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::reflect), "reflect");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::cross), "cross");
-	INTER_SCRIPT_IDENTIFIERS["cross"] = "Returns the cross product of two vectors.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float3&>(&kl::dot), "dot");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float3&, const kl::Float3&>(&kl::angle), "angle");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::rotate), "rotate");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::reflect), "reflect");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::cross), "cross");
+	INTERP_SCRIPT_IDENTIFIERS["cross"] = "Returns the cross product of two vectors.";
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4, const kl::Float4&>(&kl::abs), "abs");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4, const kl::Float4&>(&kl::normalize), "normalize");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float4&>(&kl::dot), "dot");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float4&, const kl::Float4&>(&kl::angle), "angle");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4, const kl::Float4&>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4, const kl::Float4&>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float4&>(&kl::dot), "dot");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float4&, const kl::Float4&>(&kl::angle), "angle");
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::abs), "abs");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::inverse), "inverse");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::transpose), "transpose");
-	INTER_SCRIPT_IDENTIFIERS["transpose"] = "Returns the transposed matrix.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::transpose), "transpose");
+	INTERP_SCRIPT_IDENTIFIERS["transpose"] = "Returns the transposed matrix.";
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3x3, const kl::Float3x3&>(&kl::abs), "abs");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3x3, const kl::Float3x3&>(&kl::inverse), "inverse");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3x3, const kl::Float3x3&>(&kl::transpose), "transpose");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3x3, const kl::Float3x3&>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3x3, const kl::Float3x3&>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3x3, const kl::Float3x3&>(&kl::transpose), "transpose");
 
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::abs), "abs");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::inverse), "inverse");
-	INTER_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::transpose), "transpose");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::transpose), "transpose");
 
 	return 0;
 }();

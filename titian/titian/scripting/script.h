@@ -10,7 +10,7 @@ namespace titian {
 		enum class Type
 		{
 			NATIVE,
-			INTER,
+			INTERP,
 		} const type;
 
 		Script(Type type);

@@ -26,8 +26,8 @@ void titian::GUISectionScriptEditor::render_gui()
 						scene->scripts[name] = new NativeScript();
 						ImGui::CloseCurrentPopup();
 					}
-					if (ImGui::MenuItem("New Inter Script") && !scene->scripts.contains(name)) {
-						scene->scripts[name] = new InterScript();
+					if (ImGui::MenuItem("New Interp Script") && !scene->scripts.contains(name)) {
+						scene->scripts[name] = new InterpScript();
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -46,7 +46,7 @@ void titian::GUISectionScriptEditor::render_gui()
 
 		Script* script = &scene->get_script(selected_script);
 		NativeScript* native_script = dynamic_cast<NativeScript*>(script);
-		InterScript* inter_script = dynamic_cast<InterScript*>(script);
+		InterpScript* interp_script = dynamic_cast<InterpScript*>(script);
 
 		if (ImGui::BeginChild("ScriptEditorChild")) {
 			if (native_script) {
@@ -61,15 +61,15 @@ void titian::GUISectionScriptEditor::render_gui()
 					}
 				}
 			}
-			else if (inter_script) {
-				edit_inter_script(inter_script);
+			else if (interp_script) {
+				edit_interp_script(interp_script);
 
 				if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
 					const std::filesystem::path path = file.value();
 					const std::string extension = path.extension().string();
-					if (extension == FILE_EXTENSION_INTER_SCRIPT) {
-						inter_script->source = kl::read_file_string(path.string());
-						inter_script->reload();
+					if (extension == FILE_EXTENSION_INTERP_SCRIPT) {
+						interp_script->source = kl::read_file_string(path.string());
+						interp_script->reload();
 					}
 				}
 			}
@@ -95,8 +95,8 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 		if (dynamic_cast<const NativeScript*>(&script)) {
 			ImGui::Button("NATIVE");
 		}
-		else if (dynamic_cast<const InterScript*>(&script)) {
-			ImGui::Button("INTER");
+		else if (dynamic_cast<const InterpScript*>(&script)) {
+			ImGui::Button("INTERP");
 		}
 		else {
 			ImGui::Button("SCRIPT");
@@ -162,8 +162,8 @@ void titian::GUISectionScriptEditor::show_script_properties(Script* script) cons
 		if (NativeScript* native_script = dynamic_cast<NativeScript*>(script)) {
 			ImGui::Text("NATIVE");
 		}
-		else if (InterScript* inter_script = dynamic_cast<InterScript*>(script)) {
-			ImGui::Text("INTER");
+		else if (InterpScript* interp_script = dynamic_cast<InterpScript*>(script)) {
+			ImGui::Text("INTERP");
 		}
 	}
 	ImGui::End();
@@ -175,7 +175,7 @@ void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
 	m_memory_editor.DrawContents(data.data(), data.size());
 }
 
-void titian::GUISectionScriptEditor::edit_inter_script(InterScript* script)
+void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 {
 	ImGui::PushFont(gui_layer->jetbrains_font);
 	const std::string id = kl::format("##", selected_script);

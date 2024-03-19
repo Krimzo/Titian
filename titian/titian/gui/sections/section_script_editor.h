@@ -5,7 +5,7 @@
 #include "gui/gui_layer.h"
 
 #include "scripting/native_script.h"
-#include "scripting/inter_script.h"
+#include "scripting/interp_script.h"
 
 
 namespace titian {
@@ -28,6 +28,6 @@ namespace titian {
 		void show_script_properties(Script* script) const;
 
 		void edit_native_script(NativeScript* script);
-		void edit_inter_script(InterScript* script);
+		void edit_interp_script(InterpScript* script);
 	};
 }
