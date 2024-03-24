@@ -389,6 +389,8 @@
     <ClCompile Include="titian\gui\sections\section_viewport.cpp" />
     <ClInclude Include="titian\gui\sections\section_texture_editor.h" />
     <ClInclude Include="titian\gui\sections\section_viewport.h" />
+    <ClInclude Include="titian\scripting\nodes\scripting_nodes.h" />
+    <ClInclude Include="titian\scripting\node_script.h" />
     <ClInclude Include="titian\utility\gui_util.h" />
     <ClInclude Include="titian\layer\layer.h" />
     <ClInclude Include="titian\layer\layer_stack.h" />
@@ -444,6 +446,8 @@
     <ClInclude Include="titian\scripting\interp_script.h" />
     <ClCompile Include="titian\scripting\interp_script.cpp" />
     <ClCompile Include="titian\scripting\native_script.cpp" />
+    <ClCompile Include="titian\scripting\nodes\scripting_nodes.cpp" />
+    <ClCompile Include="titian\scripting\node_script.cpp" />
     <ClCompile Include="titian\scripting\script.cpp" />
     <ClInclude Include="titian\scripting\script.h" />
     <ClInclude Include="titian\scripting\native_script.h" />
@@ -456,6 +460,7 @@
     <ClCompile Include="titian\titian\titian_game.cpp" />
     <ClCompile Include="titian\titian_entry.cpp" />
     <ClInclude Include="titian\utility\file_util.h" />
+    <ClInclude Include="titian\utility\id_util.h" />
     <ClInclude Include="titian\utility\string_util.h" />
   </ItemGroup>
   <ItemGroup>

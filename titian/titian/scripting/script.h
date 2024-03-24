@@ -11,6 +11,7 @@ namespace titian {
 		{
 			NATIVE,
 			INTERP,
+			NODE,
 		} const type;
 
 		Script(Type type);

@@ -115,8 +115,10 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
             case Script::Type::INTERP:
                 object = new InterpScript();
                 break;
+            case Script::Type::NODE:
+                object = new NodeScript();
+                break;
             }
-
             object->deserialize(serializer, nullptr);
             scripts[name] = object;
         }
