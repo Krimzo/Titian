@@ -8,7 +8,7 @@
 #include "scripting/interp_script.h"
 #include "scripting/node_script.h"
 
-#include "zep.h"
+#include "scripting/interp/language_editor.h"
 
 namespace ed = ax::NodeEditor;
 
@@ -27,8 +27,9 @@ namespace titian {
 		void render_gui() override;
 
 	private:
-		MemoryEditor m_memory_editor = {};
-		ed::EditorContext* m_node_editor = nullptr;
+		MemoryEditor m_native_editor;
+		LanguageEditor m_interp_editor;
+		ed::EditorContext* m_node_editor;
 
 		void display_scripts(Scene* scene);
 		void show_script_properties(Script* script) const;

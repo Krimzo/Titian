@@ -53,7 +53,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;CHAISCRIPT_NO_THREADS;CHAISCRIPT_NO_THREADS_WARNING;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;CHAISCRIPT_NO_THREADS;CHAISCRIPT_NO_THREADS_WARNING;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(ProjectDir)external\zep\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
@@ -78,7 +78,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;CHAISCRIPT_NO_THREADS;CHAISCRIPT_NO_THREADS_WARNING;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;CHAISCRIPT_NO_THREADS;CHAISCRIPT_NO_THREADS_WARNING;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(ProjectDir)external\zep\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
@@ -112,185 +112,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="external\zep\buffer.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\commands.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\display.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\editor.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\filesystem.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\glyph_iterator.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\indexer.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\keymap.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\line_widgets.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\mcommon\animation\timer.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\mcommon\file\path.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\mcommon\string\stringutils.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\mode.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\mode_repl.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\mode_search.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\mode_standard.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\mode_tree.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\mode_vim.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\range_markers.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\regress.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\scroller.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\splits.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\syntax.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\syntax_markdown.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\syntax_providers.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\syntax_rainbow_brackets.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\syntax_tree.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\tab_window.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\theme.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="external\zep\window.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="packager\packager.cpp" />
     <ClCompile Include="packager\packager_entry.cpp" />
-    <ClInclude Include="external\zep\zep.h" />
-    <ClInclude Include="external\zep\zep\buffer.h" />
-    <ClInclude Include="external\zep\zep\commands.h" />
-    <ClInclude Include="external\zep\zep\display.h" />
-    <ClInclude Include="external\zep\zep\editor.h" />
-    <ClInclude Include="external\zep\zep\filesystem.h" />
-    <ClInclude Include="external\zep\zep\gap_buffer.h" />
-    <ClInclude Include="external\zep\zep\glyph_iterator.h" />
-    <ClInclude Include="external\zep\zep\imgui\console_imgui.h" />
-    <ClInclude Include="external\zep\zep\imgui\display_imgui.h" />
-    <ClInclude Include="external\zep\zep\imgui\editor_imgui.h" />
-    <ClInclude Include="external\zep\zep\imgui\usb_hid_keys.h" />
-    <ClInclude Include="external\zep\zep\indexer.h" />
-    <ClInclude Include="external\zep\zep\keymap.h" />
-    <ClInclude Include="external\zep\zep\line_widgets.h" />
-    <ClInclude Include="external\zep\zep\mcommon\animation\timer.h" />
-    <ClInclude Include="external\zep\zep\mcommon\callback.h" />
-    <ClInclude Include="external\zep\zep\mcommon\file\cpptoml.h" />
-    <ClInclude Include="external\zep\zep\mcommon\file\fnmatch.h" />
-    <ClInclude Include="external\zep\zep\mcommon\file\path.h" />
-    <ClInclude Include="external\zep\zep\mcommon\gsl-lite.hpp" />
-    <ClInclude Include="external\zep\zep\mcommon\logger.h" />
-    <ClInclude Include="external\zep\zep\mcommon\math\math.h" />
-    <ClInclude Include="external\zep\zep\mcommon\platform.h" />
-    <ClInclude Include="external\zep\zep\mcommon\registrar.h" />
-    <ClInclude Include="external\zep\zep\mcommon\signals.h" />
-    <ClInclude Include="external\zep\zep\mcommon\string\murmur_hash.h" />
-    <ClInclude Include="external\zep\zep\mcommon\string\stringutils.h" />
-    <ClInclude Include="external\zep\zep\mcommon\threadpool.h" />
-    <ClInclude Include="external\zep\zep\mcommon\threadutils.h" />
-    <ClInclude Include="external\zep\zep\mcommon\utf8.h" />
-    <ClInclude Include="external\zep\zep\mcommon\utf8\checked.h" />
-    <ClInclude Include="external\zep\zep\mcommon\utf8\core.h" />
-    <ClInclude Include="external\zep\zep\mcommon\utf8\cpp11.h" />
-    <ClInclude Include="external\zep\zep\mcommon\utf8\unchecked.h" />
-    <ClInclude Include="external\zep\zep\mode.h" />
-    <ClInclude Include="external\zep\zep\mode_repl.h" />
-    <ClInclude Include="external\zep\zep\mode_search.h" />
-    <ClInclude Include="external\zep\zep\mode_standard.h" />
-    <ClInclude Include="external\zep\zep\mode_tree.h" />
-    <ClInclude Include="external\zep\zep\mode_vim.h" />
-    <ClInclude Include="external\zep\zep\qt\common_qt.h" />
-    <ClInclude Include="external\zep\zep\qt\zepdisplay_qt.h" />
-    <ClInclude Include="external\zep\zep\qt\zepwidget_qt.h" />
-    <ClInclude Include="external\zep\zep\range_markers.h" />
-    <ClInclude Include="external\zep\zep\regress.h" />
-    <ClInclude Include="external\zep\zep\scroller.h" />
-    <ClInclude Include="external\zep\zep\splits.h" />
-    <ClInclude Include="external\zep\zep\syntax.h" />
-    <ClInclude Include="external\zep\zep\syntax_markdown.h" />
-    <ClInclude Include="external\zep\zep\syntax_providers.h" />
-    <ClInclude Include="external\zep\zep\syntax_rainbow_brackets.h" />
-    <ClInclude Include="external\zep\zep\syntax_tree.h" />
-    <ClInclude Include="external\zep\zep\tab_window.h" />
-    <ClInclude Include="external\zep\zep\theme.h" />
-    <ClInclude Include="external\zep\zep\window.h" />
-    <ClInclude Include="external\zep\zep\zep_config.h" />
     <ClInclude Include="sandbox\pieces\piece_prepare.h">
       <FileType>Document</FileType>
     </ClInclude>
@@ -566,6 +389,7 @@
     <ClCompile Include="titian\gui\sections\section_viewport.cpp" />
     <ClInclude Include="titian\gui\sections\section_texture_editor.h" />
     <ClInclude Include="titian\gui\sections\section_viewport.h" />
+    <ClInclude Include="titian\scripting\interp\language_editor.h" />
     <ClInclude Include="titian\scripting\nodes\scripting_nodes.h" />
     <ClInclude Include="titian\scripting\node_script.h" />
     <ClInclude Include="titian\utility\gui_util.h" />
@@ -621,6 +445,7 @@
     <ClInclude Include="titian\scene\scene.h" />
     <ClCompile Include="titian\scene\scene.cpp" />
     <ClInclude Include="titian\scripting\interp_script.h" />
+    <ClCompile Include="titian\scripting\interp\language_editor.cpp" />
     <ClCompile Include="titian\scripting\interp_script.cpp" />
     <ClCompile Include="titian\scripting\native_script.cpp" />
     <ClCompile Include="titian\scripting\nodes\scripting_nodes.cpp" />

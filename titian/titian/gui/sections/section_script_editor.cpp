@@ -2,6 +2,9 @@
 
 
 titian::GUISectionScriptEditor::GUISectionScriptEditor(EditorLayer* editor_layer, GUILayer* gui_layer)
+	: m_native_editor()
+	, m_interp_editor()
+	, m_node_editor(nullptr)
 {
 	this->editor_layer = editor_layer;
 	this->gui_layer = gui_layer;
@@ -185,14 +188,13 @@ void titian::GUISectionScriptEditor::show_script_properties(Script* script) cons
 void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
 {
 	std::vector<byte>& data = script->data;
-	m_memory_editor.DrawContents(data.data(), data.size());
+	m_native_editor.DrawContents(data.data(), data.size());
 }
 
 void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 {
 	ImGui::PushFont(gui_layer->jetbrains_font);
-	const std::string id = kl::format("##", selected_script);
-	ImGui::InputTextMultiline(id.c_str(), &script->source, ImVec2(-1.0f, -1.0f), ImGuiInputTextFlags_AllowTabInput);
+	m_interp_editor.edit(&script->source);
 	ImGui::PopFont();
 }
 
