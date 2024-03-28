@@ -8,6 +8,8 @@
 #include "scripting/interp_script.h"
 #include "scripting/node_script.h"
 
+#include "zep.h"
+
 namespace ed = ax::NodeEditor;
 
 namespace titian {
