@@ -1293,5 +1293,23 @@ int load_functions = [&]
 	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::inverse), "inverse");
 	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::transpose), "transpose");
 
+	// Random
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<bool>(&kl::random::gen_bool), "gen_random_bool");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<int, int, int>(&kl::random::gen_int), "gen_random_int");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float, float>(&kl::random::gen_float), "gen_random_float");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, float, float>(&kl::random::gen_float2), "gen_random_float2");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, float, float>(&kl::random::gen_float3), "gen_random_float3");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4, float, float>(&kl::random::gen_float4), "gen_random_float4");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::random::gen_char), "gen_random_char");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::random::gen_string), "gen_random_string");
+	INTERP_SCRIPT_IDENTIFIERS["gen_random_bool"] = "Generates a random bool.";
+	INTERP_SCRIPT_IDENTIFIERS["gen_random_int"] = "Generates a random integer (start_inclusive, end_exclusive).";
+	INTERP_SCRIPT_IDENTIFIERS["gen_random_float"] = "Generates a random float (start_inclusive, end_inclusive).";
+	INTERP_SCRIPT_IDENTIFIERS["gen_random_float2"] = "Generates a random float2 (start_inclusive, end_inclusive).";
+	INTERP_SCRIPT_IDENTIFIERS["gen_random_float3"] = "Generates a random float3 (start_inclusive, end_inclusive).";
+	INTERP_SCRIPT_IDENTIFIERS["gen_random_float4"] = "Generates a random float4 (start_inclusive, end_inclusive).";
+	INTERP_SCRIPT_IDENTIFIERS["gen_random_char"] = "Generates a random char (can_be_upper).";
+	INTERP_SCRIPT_IDENTIFIERS["gen_random_string"] = "Generates a random string (length).";
+
 	return 0;
 }();
