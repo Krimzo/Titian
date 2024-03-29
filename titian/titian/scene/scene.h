@@ -3,6 +3,7 @@
 #include "components/mesh.h"
 #include "components/texture.h"
 #include "components/material.h"
+#include "components/shader.h"
 #include "scripting/script.h"
 #include "scene/entity.h"
 
@@ -17,6 +18,7 @@ namespace titian {
         std::map<std::string, kl::Object<Mesh>> meshes = {};
         std::map<std::string, kl::Object<Texture>> textures = {};
         std::map<std::string, kl::Object<Material>> materials = {};
+        std::map<std::string, kl::Object<Shader>> shaders = {};
         std::map<std::string, kl::Object<Script>> scripts = {};
 
         kl::Object<DefaultMeshes> default_meshes = nullptr;
@@ -66,6 +68,7 @@ namespace titian {
         kl::Object<Mesh> get_mesh(const std::string& id) const;
         kl::Object<Texture> get_texture(const std::string& id) const;
         kl::Object<Material> get_material(const std::string& id) const;
+        kl::Object<Shader> get_shader(const std::string& id) const;
         kl::Object<Script> get_script(const std::string& id) const;
         kl::Object<Entity> get_entity(const std::string& id) const;
 
@@ -105,36 +108,42 @@ namespace titian {
         Mesh* helper_new_mesh(const std::string& id);
         Texture* helper_new_texture(const std::string& id);
         Material* helper_new_material(const std::string& id);
+        Shader* helper_new_shader(const std::string& id);
         Entity* helper_new_entity(const std::string& id);
 
         // Helper get
         Mesh* helper_get_mesh(const std::string& id);
         Texture* helper_get_texture(const std::string& id);
         Material* helper_get_material(const std::string& id);
+        Shader* helper_get_shader(const std::string& id);
         Entity* helper_get_entity(const std::string& id);
 
         // Helper remove
         void helper_remove_mesh(const std::string& id);
         void helper_remove_texture(const std::string& id);
         void helper_remove_material(const std::string& id);
+        void helper_remove_shader(const std::string& id);
         void helper_remove_entity(const std::string& id);
 
         // Helper contains
         bool helper_contains_mesh(const std::string& id) const;
         bool helper_contains_texture(const std::string& id) const;
         bool helper_contains_material(const std::string& id) const;
+        bool helper_contains_shader(const std::string& id) const;
         bool helper_contains_entity(const std::string& id) const;
 
         // Helper count
         int helper_mesh_count() const;
         int helper_texture_count() const;
         int helper_material_count() const;
+        int helper_shader_count() const;
         int helper_entity_count() const;
 
         // Helper get all
         std::map<std::string, Mesh*> helper_get_all_meshes();
         std::map<std::string, Texture*> helper_get_all_textures();
         std::map<std::string, Material*> helper_get_all_materials();
+        std::map<std::string, Shader*> helper_get_all_shaders();
         std::map<std::string, Entity*> helper_get_all_entities();
 
     private:

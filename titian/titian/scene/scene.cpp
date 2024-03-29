@@ -70,6 +70,7 @@ void titian::Scene::serialize(Serializer* serializer, const void* helper_data) c
     write_map(meshes, nullptr);
     write_map(textures, nullptr);
     write_map(materials, nullptr);
+    write_map(shaders, nullptr);
     write_map(scripts, nullptr);
     write_map(m_entities, &meshes);
 }
@@ -97,8 +98,11 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     std::function texture_provider = [&] { return kl::Object{ new Texture(m_gpu) }; };
     read_map(textures, texture_provider, nullptr);
 
-    std::function material_provider = [&] { return kl::Object{ new Material(m_gpu) }; };
+    std::function material_provider = [&] { return kl::Object{ new Material() }; };
     read_map(materials, material_provider, nullptr);
+
+    std::function shader_provider = [&] { return kl::Object{ new Shader(m_gpu) }; };
+    read_map(shaders, shader_provider, nullptr);
 
     /* SCRIPTS */
     {
@@ -267,6 +271,14 @@ kl::Object<titian::Material> titian::Scene::get_material(const std::string& id) 
     return nullptr;
 }
 
+kl::Object<titian::Shader> titian::Scene::get_shader(const std::string& id) const
+{
+    if (shaders.contains(id)) {
+        return shaders.at(id);
+    }
+    return nullptr;
+}
+
 kl::Object<titian::Script> titian::Scene::get_script(const std::string& id) const
 {
     if (scripts.contains(id)) {
@@ -344,9 +356,16 @@ titian::Texture* titian::Scene::helper_new_texture(const std::string& id)
 
 titian::Material* titian::Scene::helper_new_material(const std::string& id)
 {
-    Material* material = new Material(m_gpu);
+    Material* material = new Material();
     materials[id] = material;
     return material;
+}
+
+titian::Shader* titian::Scene::helper_new_shader(const std::string& id)
+{
+    Shader* shader = new Shader(m_gpu);
+    shaders[id] = shader;
+    return shader;
 }
 
 titian::Entity* titian::Scene::helper_new_entity(const std::string& id)
@@ -381,6 +400,14 @@ titian::Material* titian::Scene::helper_get_material(const std::string& id)
     return nullptr;
 }
 
+titian::Shader* titian::Scene::helper_get_shader(const std::string& id)
+{
+    if (shaders.contains(id)) {
+        return &shaders.at(id);
+    }
+    return nullptr;
+}
+
 titian::Entity* titian::Scene::helper_get_entity(const std::string& id)
 {
     return &this->get_entity(id);
@@ -400,6 +427,11 @@ void titian::Scene::helper_remove_texture(const std::string& id)
 void titian::Scene::helper_remove_material(const std::string& id)
 {
     materials.erase(id);
+}
+
+void titian::Scene::helper_remove_shader(const std::string& id)
+{
+    shaders.erase(id);
 }
 
 void titian::Scene::helper_remove_entity(const std::string& id)
@@ -423,6 +455,11 @@ bool titian::Scene::helper_contains_material(const std::string& id) const
     return materials.contains(id);
 }
 
+bool titian::Scene::helper_contains_shader(const std::string& id) const
+{
+    return shaders.contains(id);
+}
+
 bool titian::Scene::helper_contains_entity(const std::string& id) const
 {
     return this->contains_entity(id);
@@ -442,6 +479,11 @@ int titian::Scene::helper_texture_count() const
 int titian::Scene::helper_material_count() const
 {
     return static_cast<int>(materials.size());
+}
+
+int titian::Scene::helper_shader_count() const
+{
+    return static_cast<int>(shaders.size());
 }
 
 int titian::Scene::helper_entity_count() const
@@ -473,6 +515,15 @@ std::map<std::string, titian::Material*> titian::Scene::helper_get_all_materials
     std::map<std::string, Material*> result = {};
     for (auto& [name, material] : materials) {
         result[name] = &material;
+    }
+    return result;
+}
+
+std::map<std::string, titian::Shader*> titian::Scene::helper_get_all_shaders()
+{
+    std::map<std::string, Shader*> result = {};
+    for (auto& [name, shader] : shaders) {
+        result[name] = &shader;
     }
     return result;
 }

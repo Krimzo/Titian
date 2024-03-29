@@ -3,5 +3,5 @@
 
 titian::DefaultMaterials::DefaultMaterials(kl::GPU* gpu)
 {
-	white = new Material(gpu);
+	white = new Material();
 }

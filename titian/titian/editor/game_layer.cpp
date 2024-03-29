@@ -31,10 +31,17 @@ void titian::GameLayer::reset_scene()
 
 void titian::GameLayer::start_game()
 {
-	// Reload and call scripts
-	app_layer->timer->reset_elapsed();
+	// Reload
+	for (auto& [_, shader] : scene->shaders) {
+		shader->reload();
+	}
 	for (auto& [_, script] : scene->scripts) {
 		script->reload();
+	}
+
+	// Start
+	app_layer->timer->reset_elapsed();
+	for (auto& [_, script] : scene->scripts) {
 		script->call_start();
 	}
 

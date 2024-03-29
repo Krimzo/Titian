@@ -31,7 +31,7 @@ void sandbox::SandboxPieceMonkes::setup_self()
         const float percentage = (i + 1.0f) / entity_count;
         const float normalized = kl::clamp(percentage, 0.0f, 1.0f);
 
-        kl::Object material = new Material(gpu);
+        kl::Object material = new Material();
         material->color = kl::Float4{ normalized };
         scene->materials[material_name] = material;
 

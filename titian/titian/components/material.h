@@ -20,21 +20,13 @@ namespace titian {
 		std::string normal_map_name = "/";
 		std::string roughness_map_name = "/";
 
-		std::string shaders_source{};
-		kl::RenderShaders shaders{};
+		std::string custom_shader_name = "/";
 
-		Material(kl::GPU* gpu);
+		Material();
 
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;
 
-		void reload();
-
 		bool is_transparent() const;
-
-	private:
-		kl::GPU* m_gpu = nullptr;
-
-		std::string process_shader_source() const;
 	};
 }

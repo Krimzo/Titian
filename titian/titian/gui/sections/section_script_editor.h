@@ -10,6 +10,7 @@
 
 #include "scripting/interp/language_editor.h"
 
+
 namespace ed = ax::NodeEditor;
 
 namespace titian {
@@ -30,6 +31,7 @@ namespace titian {
 		MemoryEditor m_native_editor;
 		LanguageEditor m_interp_editor;
 		ed::EditorContext* m_node_editor;
+		Script* m_last_script = nullptr;
 
 		void display_scripts(Scene* scene);
 		void show_script_properties(Script* script) const;

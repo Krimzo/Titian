@@ -1,3 +1,18 @@
+#define _CUSTOM_VERTEX_SHADER
+void _alter_vertex(inout VS_OUT data)
+{
+}
+
+#define _CUSTOM_PIXEL_SHADER
+bool _alter_pre(inout VS_OUT data, inout float4 color)
+{
+    return false;
+}
+
+void _alter_post(inout VS_OUT data, inout float4 color)
+{
+}
+
 /*
 static const int SHADOW_CASCADE_COUNT = 4;
 
@@ -53,18 +68,3 @@ struct VS_OUT
     float4 light_coords[SHADOW_CASCADE_COUNT] : VS_Light;
 };
 */
-
-#define _CUSTOM_VERTEX_SHADER
-void _alter_vertex(inout VS_OUT data)
-{
-}
-
-#define _CUSTOM_PIXEL_SHADER
-bool _alter_pre(inout VS_OUT data, inout float4 color)
-{
-    return false;
-}
-
-void _alter_post(inout VS_OUT data, inout float4 color)
-{
-}

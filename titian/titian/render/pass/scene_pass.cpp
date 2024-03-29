@@ -203,13 +203,18 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.REFRACTION_FACTOR = material->refraction_factor;
         global_cb.REFRACTION_INDEX = material->refraction_index;
 
-        kl::RenderShaders* render_shaders = material->shaders ? &material->shaders : &package.shader_state;
-        render_shaders->vertex_shader.update_cbuffer(global_cb);
-        render_shaders->pixel_shader.update_cbuffer(global_cb);
-        gpu->bind_render_shaders(*render_shaders);
+        kl::RenderShaders* render_shaders = &package.shader_state;
+        if (Shader* shader = &scene->get_shader(material->custom_shader_name)) {
+            render_shaders = &shader->graphics_buffer;
+        }
+        if (render_shaders && *render_shaders) {
+            render_shaders->vertex_shader.update_cbuffer(global_cb);
+            render_shaders->pixel_shader.update_cbuffer(global_cb);
+            gpu->bind_render_shaders(*render_shaders);
 
-        // Draw
-        gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
+            // Draw
+            gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
+        }
     }
 
     // Prepare transparent objects
@@ -269,7 +274,10 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.REFRACTION_FACTOR = material->refraction_factor;
         global_cb.REFRACTION_INDEX = material->refraction_index;
 
-        kl::RenderShaders* render_shaders = material->shaders ? &material->shaders : &package.shader_state;
+        kl::RenderShaders* render_shaders = &package.shader_state;
+        if (Shader* shader = &scene->get_shader(material->custom_shader_name)) {
+            render_shaders = &shader->graphics_buffer;
+        }
         render_shaders->vertex_shader.update_cbuffer(global_cb);
         render_shaders->pixel_shader.update_cbuffer(global_cb);
         gpu->bind_render_shaders(*render_shaders);

@@ -84,6 +84,7 @@ void titian::GUISectionScriptEditor::render_gui()
 				if (extension == FILE_EXTENSION_INTERP_SCRIPT) {
 					interp_script->source = kl::read_file_string(path.string());
 					interp_script->reload();
+					m_last_script = nullptr;
 				}
 			}
 		}
@@ -195,9 +196,8 @@ void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
 
 void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 {
-	static InterpScript* last_script = nullptr;
-	if (script != last_script) {
-		last_script = script;
+	if (script != m_last_script) {
+		m_last_script = script;
 		m_interp_editor.load(script->source);
 	}
 

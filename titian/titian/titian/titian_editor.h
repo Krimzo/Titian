@@ -21,6 +21,7 @@
 #include "gui/sections/section_mesh_editor.h"
 #include "gui/sections/section_texture_editor.h"
 #include "gui/sections/section_material_editor.h"
+#include "gui/sections/section_shader_editor.h"
 #include "gui/sections/section_script_editor.h"
 #include "gui/sections/section_viewport.h"
 #include "gui/sections/section_control_menu.h"

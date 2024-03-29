@@ -663,7 +663,7 @@ int load_types = [&]
 		{ chaiscript::fun(&Mesh::reload), "reload" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Mesh"] = "Object that contains triangle data.";
-	INTERP_SCRIPT_IDENTIFIERS["reload"] = "Reloads the entity component.";
+	INTERP_SCRIPT_IDENTIFIERS["reload"] = "Reloads the self.";
 
 	// Texture
 	chaiscript::utility::add_class<Texture>(*INTERP_SCRIPT_MODULE, "Texture",
@@ -705,6 +705,16 @@ int load_types = [&]
 		{ chaiscript::fun(&Material::roughness_map_name), "roughness_map_name" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Material"] = "Object that defines the look of the entity.";
+
+	// Shader
+	chaiscript::utility::add_class<Shader>(*INTERP_SCRIPT_MODULE, "Shader",
+	{},
+	{
+		{ chaiscript::fun(&Shader::data_buffer), "data_buffer" },
+
+		{ chaiscript::fun(&Shader::reload), "reload" },
+	});
+	INTERP_SCRIPT_IDENTIFIERS["Shader"] = "Custom shader override for a material.";
 
 	// Entity
 	chaiscript::utility::add_class<Entity>(*INTERP_SCRIPT_MODULE, "Entity",
@@ -868,31 +878,37 @@ int load_types = [&]
 		{ chaiscript::fun(&Scene::helper_new_mesh), "new_mesh" },
 		{ chaiscript::fun(&Scene::helper_new_texture), "new_texture" },
 		{ chaiscript::fun(&Scene::helper_new_material), "new_material" },
+		{ chaiscript::fun(&Scene::helper_new_shader), "new_shader" },
 		{ chaiscript::fun(&Scene::helper_new_entity), "new_entity" },
 
 		{ chaiscript::fun(&Scene::helper_get_mesh), "get_mesh" },
 		{ chaiscript::fun(&Scene::helper_get_texture), "get_texture" },
 		{ chaiscript::fun(&Scene::helper_get_material), "get_material" },
+		{ chaiscript::fun(&Scene::helper_get_shader), "get_shader" },
 		{ chaiscript::fun(&Scene::helper_get_entity), "get_entity" },
 
 		{ chaiscript::fun(&Scene::helper_remove_mesh), "remove_mesh" },
 		{ chaiscript::fun(&Scene::helper_remove_texture), "remove_texture" },
 		{ chaiscript::fun(&Scene::helper_remove_material), "remove_material" },
+		{ chaiscript::fun(&Scene::helper_remove_shader), "remove_shader" },
 		{ chaiscript::fun(&Scene::helper_remove_entity), "remove_entity" },
 
 		{ chaiscript::fun(&Scene::helper_contains_mesh), "contains_mesh" },
 		{ chaiscript::fun(&Scene::helper_contains_texture), "contains_texture" },
 		{ chaiscript::fun(&Scene::helper_contains_material), "contains_material" },
+		{ chaiscript::fun(&Scene::helper_contains_shader), "contains_shader" },
 		{ chaiscript::fun(&Scene::helper_contains_entity), "contains_entity" },
 
 		{ chaiscript::fun(&Scene::helper_mesh_count), "mesh_count" },
 		{ chaiscript::fun(&Scene::helper_texture_count), "texture_count" },
 		{ chaiscript::fun(&Scene::helper_material_count), "material_count" },
+		{ chaiscript::fun(&Scene::helper_shader_count), "shader_count" },
 		{ chaiscript::fun(&Scene::helper_entity_count), "entity_count" },
 
 		{ chaiscript::fun(&Scene::helper_get_all_meshes), "get_all_meshes" },
 		{ chaiscript::fun(&Scene::helper_get_all_textures), "get_all_textures" },
 		{ chaiscript::fun(&Scene::helper_get_all_materials), "get_all_materials" },
+		{ chaiscript::fun(&Scene::helper_get_all_shaders), "get_all_shaders" },
 		{ chaiscript::fun(&Scene::helper_get_all_entities), "get_all_entities" },
 
 		{ chaiscript::fun<Camera*>(&Scene::get_casted<Camera>), "get_camera" },
@@ -905,26 +921,32 @@ int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["new_mesh"] = "Creates a new mesh in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["new_texture"] = "Creates a new texture in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["new_material"] = "Creates a new material in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["new_shader"] = "Creates a new shader in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["new_entity"] = "Creates a new entity in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["get_mesh"] = "Returns a scene mesh.";
 	INTERP_SCRIPT_IDENTIFIERS["get_texture"] = "Returns a scene texture.";
 	INTERP_SCRIPT_IDENTIFIERS["get_material"] = "Returns a scene material.";
+	INTERP_SCRIPT_IDENTIFIERS["get_shader"] = "Returns a scene shader.";
 	INTERP_SCRIPT_IDENTIFIERS["get_entity"] = "Returns a scene entity.";
 	INTERP_SCRIPT_IDENTIFIERS["remove_mesh"] = "Removes a mesh from scene.";
 	INTERP_SCRIPT_IDENTIFIERS["remove_texture"] = "Removes a texture from scene.";
 	INTERP_SCRIPT_IDENTIFIERS["remove_material"] = "Removes a material from scene.";
+	INTERP_SCRIPT_IDENTIFIERS["remove_shader"] = "Removes a shader from scene.";
 	INTERP_SCRIPT_IDENTIFIERS["remove_entity"] = "Removes an entity from scene.";
 	INTERP_SCRIPT_IDENTIFIERS["contains_mesh"] = "Returns true if scene contains mesh.";
 	INTERP_SCRIPT_IDENTIFIERS["contains_texture"] = "Returns true if scene contains texture.";
 	INTERP_SCRIPT_IDENTIFIERS["contains_material"] = "Returns true if scene contains material.";
+	INTERP_SCRIPT_IDENTIFIERS["contains_shader"] = "Returns true if scene contains shader.";
 	INTERP_SCRIPT_IDENTIFIERS["contains_entity"] = "Returns true if scene contains entity.";
 	INTERP_SCRIPT_IDENTIFIERS["mesh_count"] = "Returns the integer count of meshes in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["texture_count"] = "Returns the integer count of texture in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["material_count"] = "Returns the integer count of materials in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["shader_count"] = "Returns the integer count of shaders in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["entity_count"] = "Returns the integer count of entities in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["get_all_meshes"] = "Returns a map of all scene meshes.";
 	INTERP_SCRIPT_IDENTIFIERS["get_all_textures"] = "Returns a map of all scene textures.";
 	INTERP_SCRIPT_IDENTIFIERS["get_all_materials"] = "Returns a map of all scene materials.";
+	INTERP_SCRIPT_IDENTIFIERS["get_all_shaders"] = "Returns a map of all scene shaders.";
 	INTERP_SCRIPT_IDENTIFIERS["get_all_entities"] = "Returns a map of all scene entities.";
 	INTERP_SCRIPT_IDENTIFIERS["get_camera"] = "Returns a scene camera.";
 	INTERP_SCRIPT_IDENTIFIERS["get_light"] = "Returns a scene light.";

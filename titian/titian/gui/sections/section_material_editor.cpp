@@ -72,7 +72,7 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
         if (std::optional opt_name = gui_input_waited("##CreateMaterialInput", {})) {
             const std::string& name = opt_name.value();
             if (!name.empty() && !scene->materials.contains(name)) {
-                kl::Object material = new Material(gpu);
+                kl::Object material = new Material();
                 scene->materials[name] = material;
                 ImGui::CloseCurrentPopup();
             }
@@ -111,12 +111,6 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
                     should_break = true;
                     ImGui::CloseCurrentPopup();
                 }
-            }
-
-            if (ImGui::Button("Reload", { -1.0f, 0.0f })) {
-                material->reload();
-                should_break = true;
-                ImGui::CloseCurrentPopup();
             }
 
             if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
@@ -182,10 +176,6 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     gpu->bind_raster_state(states->raster_states->solid);
     gpu->bind_depth_state(material->is_transparent() ? states->depth_states->only_compare : states->depth_states->enabled);
     gpu->bind_blend_state(states->blend_states->enabled);
-
-    // Bind shaders
-    kl::RenderShaders* render_shaders = material->shaders ? &material->shaders : &states->shader_states->scene_pass;
-    gpu->bind_render_shaders(*render_shaders);
 
     // Bind camera
     camera->update_aspect_ratio(viewport_size);
@@ -302,12 +292,19 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
 
     global_cb.RECEIVES_SHADOWS = false;
 
-    render_shaders->vertex_shader.update_cbuffer(global_cb);
-    render_shaders->pixel_shader.update_cbuffer(global_cb);
+    kl::RenderShaders* render_shaders = &states->shader_states->scene_pass;
+    if (Shader* shader = &scene->get_shader(material->custom_shader_name)) {
+        render_shaders = &shader->graphics_buffer;
+    }
+    if (render_shaders && *render_shaders) {
+        render_shaders->vertex_shader.update_cbuffer(global_cb);
+        render_shaders->pixel_shader.update_cbuffer(global_cb);
+        gpu->bind_render_shaders(*render_shaders);
 
-    // Draw mesh
-    DefaultMeshes* default_meshes = &editor_layer->game_layer->scene->default_meshes;
-    gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology());
+        // Draw
+        DefaultMeshes* default_meshes = &editor_layer->game_layer->scene->default_meshes;
+        gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology());
+    }
 
     // Restore
     gpu->bind_internal_views();
@@ -367,14 +364,16 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
             ImGui::EndCombo();
         }
 
-        ImGui::Separator();
-
-        ImGui::InputTextMultiline("##ShadersSource", &material->shaders_source, ImVec2(-1.0f, -1.0f), ImGuiInputTextFlags_AllowTabInput);
-        if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-            if (classify_file(file.value()) == FileType::SHADER) {
-                material->shaders_source = kl::read_file_string(file.value());
-				material->reload();
+        if (ImGui::BeginCombo("Custom Shader", material->custom_shader_name.c_str())) {
+            if (ImGui::Selectable("/", material->custom_shader_name == "/")) {
+                material->custom_shader_name = "/";
             }
+            for (auto& [shader_name, _] : scene->shaders) {
+                if (ImGui::Selectable(shader_name.c_str(), material->custom_shader_name == shader_name)) {
+                    material->custom_shader_name = shader_name;
+                }
+            }
+            ImGui::EndCombo();
         }
     }
     ImGui::End();

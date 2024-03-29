@@ -350,7 +350,9 @@
     <ClInclude Include="titian\components\material.h" />
     <ClCompile Include="titian\components\mesh.cpp" />
     <ClInclude Include="titian\components\mesh.h" />
+    <ClCompile Include="titian\components\shader.cpp" />
     <ClCompile Include="titian\components\texture.cpp" />
+    <ClInclude Include="titian\components\shader.h" />
     <ClInclude Include="titian\components\texture.h" />
     <ClCompile Include="titian\editor\editor_layer.cpp" />
     <ClInclude Include="titian\editor\editor_layer.h" />
@@ -385,8 +387,10 @@
     </ClInclude>
     <ClCompile Include="titian\gui\sections\section_script_editor.cpp" />
     <ClInclude Include="titian\gui\sections\section_script_editor.h" />
+    <ClCompile Include="titian\gui\sections\section_shader_editor.cpp" />
     <ClCompile Include="titian\gui\sections\section_texture_editor.cpp" />
     <ClCompile Include="titian\gui\sections\section_viewport.cpp" />
+    <ClInclude Include="titian\gui\sections\section_shader_editor.h" />
     <ClInclude Include="titian\gui\sections\section_texture_editor.h" />
     <ClInclude Include="titian\gui\sections\section_viewport.h" />
     <ClInclude Include="titian\scripting\interp\language_editor.h" />
