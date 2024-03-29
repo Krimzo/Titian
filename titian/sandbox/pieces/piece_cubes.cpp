@@ -26,7 +26,7 @@ void sandbox::SandboxPieceCubes::setup_self()
 
             // Material
             kl::Object material = new Material(gpu);
-            material->color = kl::colors::ORANGE;
+            material->color = kl::Color(214, 156, 86);
             material->reflection_factor = cube_counter / static_cast<float>(size * size);
             scene->materials[material_name] = material;
 

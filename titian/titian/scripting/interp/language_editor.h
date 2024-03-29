@@ -7,14 +7,15 @@ namespace titian {
 	class LanguageEditor
 	{
 	public:
-		std::unordered_set<std::string> keywords;
-		std::unordered_set<std::string> identifiers;
+		LanguageEditor();
 
-		LanguageEditor() = default;
-
-		void edit(std::string* source) const;
+		void load(const std::string& source);
+		void edit(std::string* source);
 
 		void load_chai_standard();
 		void load_hlsl_standard();
+
+	private:
+		TextEditor m_text_editor;
 	};
 }

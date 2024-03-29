@@ -1109,9 +1109,11 @@ int load_functions = [&]
 	using namespace titian;
 
 	// Var info
-	INTERP_SCRIPT_MODULE->eval("global is_valid = fun(object) { return !is_var_null(object); }");
+	INTERP_SCRIPT_MODULE->eval("global is_null = fun(object) { return is_var_null(object); }");
+	INTERP_SCRIPT_MODULE->eval("global is_valid = fun(object) { return !is_null(object); }");
 	INTERP_SCRIPT_MODULE->eval("global get_type = fun(object) { return type_name(object); }");
-	INTERP_SCRIPT_IDENTIFIERS["is_valid"] = "Returns true if the given object is NOT null, false otherwise.";
+	INTERP_SCRIPT_IDENTIFIERS["is_null"] = "Returns true if the given object IS null, false otherwise.";
+	INTERP_SCRIPT_IDENTIFIERS["is_valid"] = "Returns true if the given object IS NOT null, false otherwise.";
 	INTERP_SCRIPT_IDENTIFIERS["get_type"] = "Returns the type name (string) of the given object.";
 
 	// Casting
@@ -1164,6 +1166,24 @@ int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["Float4x4_orthographic"] = "Creates a 4x4 orthographic matrix.";
 
 	// Math
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<int, int>(&std::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::abs), "abs");
+	INTERP_SCRIPT_IDENTIFIERS["abs"] = "Returns absolute value of the given value.";
+
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::sin), "sin");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::cos), "cos");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::tan), "tan");
+	INTERP_SCRIPT_IDENTIFIERS["sin"] = "Returns sin of the given angle in radians.";
+	INTERP_SCRIPT_IDENTIFIERS["cos"] = "Returns cos of the given angle in radians.";
+	INTERP_SCRIPT_IDENTIFIERS["tan"] = "Returns tan of the given angle in radians.";
+
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::asin), "asin");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::acos), "acos");
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::atan), "atan");
+	INTERP_SCRIPT_IDENTIFIERS["asin"] = "Returns angle in radians of the given sin.";
+	INTERP_SCRIPT_IDENTIFIERS["acos"] = "Returns angle in radians of the given cos.";
+	INTERP_SCRIPT_IDENTIFIERS["atan"] = "Returns angle in radians of the given tan.";
+
 	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::sin_deg), "sin_deg");
 	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::cos_deg), "cos_deg");
 	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::tan_deg), "tan_deg");

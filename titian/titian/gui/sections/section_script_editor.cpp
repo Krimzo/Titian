@@ -9,6 +9,8 @@ titian::GUISectionScriptEditor::GUISectionScriptEditor(EditorLayer* editor_layer
 	this->editor_layer = editor_layer;
 	this->gui_layer = gui_layer;
 
+	m_interp_editor.load_chai_standard();
+
 	ed::Config node_config{};
 	node_config.SettingsFile = "node_editor.json";
 	m_node_editor = ed::CreateEditor(&node_config);
@@ -193,6 +195,12 @@ void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
 
 void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 {
+	static InterpScript* last_script = nullptr;
+	if (script != last_script) {
+		last_script = script;
+		m_interp_editor.load(script->source);
+	}
+
 	ImGui::PushFont(gui_layer->jetbrains_font);
 	m_interp_editor.edit(&script->source);
 	ImGui::PopFont();
