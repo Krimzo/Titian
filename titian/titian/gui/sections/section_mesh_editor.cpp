@@ -48,9 +48,8 @@ void titian::GUISectionMeshEditor::render_gui()
                 render_selected_mesh(gpu, mesh, viewport_size);
                 const kl::dx::ShaderView& shader_view = render_texture->shader_view;
                 ImGui::Image(render_texture->shader_view.Get(), { (float)viewport_size.x, (float)viewport_size.y });
+                render_gizmos(mesh);
             }
-
-            render_gizmos(mesh);
             was_focused = ImGui::IsWindowFocused();
         }
         ImGui::EndChild();
