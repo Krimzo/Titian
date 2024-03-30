@@ -48,6 +48,8 @@ namespace titian {
 		void call_start() override;
 		void call_update() override;
 
+		std::map<std::string, chaiscript::Boxed_Value> get_parameters();
+
 	private:
 		kl::Object<chaiscript::ChaiScript> m_engine = nullptr;
 		std::function<void(Scene*)> m_start_function = {};

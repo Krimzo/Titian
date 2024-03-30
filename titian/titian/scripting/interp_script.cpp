@@ -69,6 +69,21 @@ void titian::InterpScript::call_update()
 	}
 }
 
+std::map<std::string, chaiscript::Boxed_Value> titian::InterpScript::get_parameters()
+{
+	if (!m_engine) {
+		return {};
+	}
+
+	std::map<std::string, chaiscript::Boxed_Value> result;
+	for (auto& [name, value] : m_engine->get_state().engine_state.m_global_objects) {
+		if (name.starts_with("p_")) {
+			result[name] = value;
+		}
+	}
+	return result;
+}
+
 /* SCRIPT BINDS */
 int load_types = [&]
 {

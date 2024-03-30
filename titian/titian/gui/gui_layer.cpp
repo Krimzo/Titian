@@ -45,9 +45,11 @@ void titian::GUILayer::load_custom_fonts()
 
 	roboto_font = atlas->AddFontFromFileTTF("builtin/fonts/Roboto.ttf", 16);
 	jetbrains_font = atlas->AddFontFromFileTTF("builtin/fonts/JetBrains.ttf", 20);
+	jetbrains_font_small = atlas->AddFontFromFileTTF("builtin/fonts/JetBrains.ttf", 16);
 
 	kl::assert(roboto_font, "Failed to load ROBOTO font");
 	kl::assert(jetbrains_font, "Failed to load JETBRAINS font");
+	kl::assert(jetbrains_font_small, "Failed to load JETBRAINS_SMALL font");
 
 	atlas->Build();
 }

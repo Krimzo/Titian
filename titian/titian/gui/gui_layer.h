@@ -17,6 +17,7 @@ namespace titian {
 
 		ImFont* roboto_font = nullptr;
 		ImFont* jetbrains_font = nullptr;
+		ImFont* jetbrains_font_small = nullptr;
 		
 		GUILayer(RenderLayer* render_layer);
 

@@ -30,6 +30,7 @@ titian::TitianEditor::TitianEditor()
     gui_layer->sections.emplace_back(new GUISectionShaderEditor(&editor_layer, &gui_layer));
     gui_layer->sections.emplace_back(new GUISectionScriptEditor(&editor_layer, &gui_layer));
     gui_layer->sections.emplace_back(new GUISectionViewport(&editor_layer, &render_layer));
+    gui_layer->sections.emplace_back(new GUISectionScriptingParameters(&game_layer, &gui_layer));
     gui_layer->sections.emplace_back(new GUISectionControlMenu(&editor_layer));
     gui_layer->sections.emplace_back(new GUISectionLogView(&gui_layer));
     gui_layer->sections.emplace_back(new GUISectionExplorer(&app_layer));

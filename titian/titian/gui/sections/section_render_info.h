@@ -19,6 +19,7 @@ namespace titian {
         void render_gui() override;
 
     private:
+        kl::Timer m_timer = {};
         float m_last_update_time = 0.0f;
     };
 }

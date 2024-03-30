@@ -385,11 +385,13 @@
     <ClInclude Include="titian\gui\sections\section_scene_entities.h">
       <FileType>Document</FileType>
     </ClInclude>
+    <ClCompile Include="titian\gui\sections\section_scripting_parameters.cpp" />
     <ClCompile Include="titian\gui\sections\section_script_editor.cpp" />
     <ClInclude Include="titian\gui\sections\section_script_editor.h" />
     <ClCompile Include="titian\gui\sections\section_shader_editor.cpp" />
     <ClCompile Include="titian\gui\sections\section_texture_editor.cpp" />
     <ClCompile Include="titian\gui\sections\section_viewport.cpp" />
+    <ClInclude Include="titian\gui\sections\section_scripting_parameters.h" />
     <ClInclude Include="titian\gui\sections\section_shader_editor.h" />
     <ClInclude Include="titian\gui\sections\section_texture_editor.h" />
     <ClInclude Include="titian\gui\sections\section_viewport.h" />

@@ -24,6 +24,7 @@
 #include "gui/sections/section_shader_editor.h"
 #include "gui/sections/section_script_editor.h"
 #include "gui/sections/section_viewport.h"
+#include "gui/sections/section_scripting_parameters.h"
 #include "gui/sections/section_control_menu.h"
 #include "gui/sections/section_log_view.h"
 #include "gui/sections/section_explorer.h"
