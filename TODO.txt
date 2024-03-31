@@ -1,11 +1,8 @@
-# scripts
-
 # editor features
 2. undo and redo
 
 # gui features
-1. add list of pixels, ability to edit pixels and reloading the texture (new texture editor)
+1. add list of pixels, ability to edit pixels and reloading the texture (advanced texture editor)
 
 # serialization
-1. add texture compression (maybe compression for the whole scene file?)
-2. add scene key encryption
+1. add scene key encryption

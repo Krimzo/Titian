@@ -7,22 +7,22 @@ titian::Texture::Texture(kl::GPU* gpu)
 
 void titian::Texture::serialize(Serializer* serializer, const void* helper_data) const
 {
-	const kl::Int2 size = data_buffer.size();
-	serializer->write_object<kl::Int2>(size);
+	std::vector<byte> compressed_image;
+	data_buffer.save_to_vector(&compressed_image, COMPRESSION_TYPE);
 
-	const kl::Color* data = static_cast<const kl::Color*>(data_buffer);
-	serializer->write_array<kl::Color>(data, size.x * size.y);
-
+	serializer->write_object<uint64_t>(compressed_image.size());
+	serializer->write_array<byte>(compressed_image.data(), compressed_image.size());
 	serializer->write_object<bool>(m_is_cube);
 }
 
 void titian::Texture::deserialize(const Serializer* serializer, const void* helper_data)
 {
-	const kl::Int2 size = serializer->read_object<kl::Int2>();
-	data_buffer.resize(size);
+	const uint64_t data_size = serializer->read_object<uint64_t>();
+	std::vector<byte> image_data{};
+	image_data.resize(data_size);
 
-	kl::Color* data = static_cast<kl::Color*>(data_buffer);
-	serializer->read_array<kl::Color>(data, size.x * size.y);
+	serializer->read_array<byte>(image_data.data(), data_size);
+	data_buffer.load_from_vector(image_data);
 
 	serializer->read_object<bool>(m_is_cube);
 	if (m_is_cube) {
