@@ -47,10 +47,10 @@ namespace kl {
         virtual ~Window();
 
         Window(const Window&) = delete;
-        Window(const Window&&) = delete;
+        Window(Window&&) = delete;
 
         void operator=(const Window&) = delete;
-        void operator=(const Window&&) = delete;
+        void operator=(Window&&) = delete;
 
         // Methods
         operator HWND() const;

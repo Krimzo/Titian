@@ -1079,6 +1079,54 @@ int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["normalized_position"] = "Returns the normalized position.";
 	INTERP_SCRIPT_IDENTIFIERS["scroll"] = "Returns the mouse scroll value.";
 
+	// Window
+	chaiscript::utility::add_class<kl::Window>(*INTERP_SCRIPT_MODULE, "Window",
+	{},
+	{
+		{ chaiscript::fun(&kl::Window::is_open), "is_open" },
+		{ chaiscript::fun(&kl::Window::close), "close" },
+		{ chaiscript::fun(&kl::Window::is_resizeable), "is_resizeable" },
+		{ chaiscript::fun(&kl::Window::set_resizeable), "set_resizeable" },
+		{ chaiscript::fun(&kl::Window::maximize), "maximize" },
+		{ chaiscript::fun(&kl::Window::minimize), "minimize" },
+		{ chaiscript::fun(&kl::Window::restore), "restore" },
+		{ chaiscript::fun(&kl::Window::in_fullscreen), "in_fullscreen" },
+		{ chaiscript::fun(&kl::Window::set_fullscreen), "set_fullscreen" },
+		{ chaiscript::fun(&kl::Window::position), "position" },
+		{ chaiscript::fun(&kl::Window::set_position), "set_position" },
+		{ chaiscript::fun(&kl::Window::width), "width" },
+		{ chaiscript::fun(&kl::Window::set_width), "set_width" },
+		{ chaiscript::fun(&kl::Window::height), "height" },
+		{ chaiscript::fun(&kl::Window::set_height), "set_height" },
+		{ chaiscript::fun(&kl::Window::size), "size" },
+		{ chaiscript::fun(&kl::Window::resize), "resize" },
+		{ chaiscript::fun(&kl::Window::aspect_ratio), "aspect_ratio" },
+		{ chaiscript::fun(&kl::Window::frame_center), "frame_center" },
+		{ chaiscript::fun(&kl::Window::set_title), "set_title" },
+		{ chaiscript::fun(&kl::Window::set_icon), "set_icon" },
+	});
+	INTERP_SCRIPT_IDENTIFIERS["is_open"] = "Returns true if the window is open, false otherwise.";
+	INTERP_SCRIPT_IDENTIFIERS["close"] = "Closes the window.";
+	INTERP_SCRIPT_IDENTIFIERS["is_resizeable"] = "Returns true if the window is resizeable, false otherwise.";
+	INTERP_SCRIPT_IDENTIFIERS["set_resizeable"] = "Enables or disables window resizing feature.";
+	INTERP_SCRIPT_IDENTIFIERS["maximize"] = "Maximizes the window.";
+	INTERP_SCRIPT_IDENTIFIERS["minimize"] = "Minimizes the window.";
+	INTERP_SCRIPT_IDENTIFIERS["restore"] = "Restores the window.";
+	INTERP_SCRIPT_IDENTIFIERS["in_fullscreen"] = "Returns true if the window is in fullscreen mode, false otherwise.";
+	INTERP_SCRIPT_IDENTIFIERS["set_fullscreen"] = "Enables or disables window fullscreen mode.";
+	INTERP_SCRIPT_IDENTIFIERS["position"] = "Returns the window position on screen as Int2.";
+	INTERP_SCRIPT_IDENTIFIERS["set_position"] = "Sets the window position on screen.";
+	INTERP_SCRIPT_IDENTIFIERS["width"] = "Returns the window width. (true for client area, false for full window)";
+	INTERP_SCRIPT_IDENTIFIERS["set_width"] = "Sets the window width. (true for client area, false for full window)";
+	INTERP_SCRIPT_IDENTIFIERS["height"] = "Returns the window height. (true for client area, false for full window)";
+	INTERP_SCRIPT_IDENTIFIERS["set_height"] = "Sets the window height. (true for client area, false for full window)";
+	INTERP_SCRIPT_IDENTIFIERS["size"] = "Returns the window size. (true for client area, false for full window)";
+	INTERP_SCRIPT_IDENTIFIERS["resize"] = "Sets the window size. (true for client area, false for full window)";
+	INTERP_SCRIPT_IDENTIFIERS["aspect_ratio"] = "Returns the window aspect ratio. (width / height)";
+	INTERP_SCRIPT_IDENTIFIERS["frame_center"] = "Returns the window center point as Int2.";
+	INTERP_SCRIPT_IDENTIFIERS["set_title"] = "Sets the window title.";
+	INTERP_SCRIPT_IDENTIFIERS["set_icon"] = "Sets the window icon by passing a path to the icon file.";
+
 	return 0;
 }();
 
@@ -1177,8 +1225,10 @@ int load_functions = [&]
 	// Input
 	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Keyboard* { return &GameLayer::BOUND_SELF->app_layer->window->keyboard; }), "get_keyboard");
 	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Mouse* { return &GameLayer::BOUND_SELF->app_layer->window->mouse; }), "get_mouse");
-	INTERP_SCRIPT_IDENTIFIERS["get_keyboard"] = "Returns a reference to the window keyboard.";
-	INTERP_SCRIPT_IDENTIFIERS["get_mouse"] = "Returns a reference to the window mouse.";
+	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Window* { return &GameLayer::BOUND_SELF->app_layer->window; }), "get_window");
+	INTERP_SCRIPT_IDENTIFIERS["get_keyboard"] = "Returns a reference to the game keyboard.";
+	INTERP_SCRIPT_IDENTIFIERS["get_mouse"] = "Returns a reference to the game mouse.";
+	INTERP_SCRIPT_IDENTIFIERS["get_window"] = "Returns a reference to the game window.";
 
 	// Float3x3
 	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::translation), "Float3x3_translation");
