@@ -1,7 +1,11 @@
 #pragma once
 
-#include "serialization/serializable.h"
+#include "scene/entity.h"
 
+
+namespace titian {
+	class Scene;
+}
 
 namespace titian {
 	class Script : public Serializable
@@ -28,7 +32,8 @@ namespace titian {
 		virtual bool is_valid() const = 0;
 		virtual void reload() = 0;
 
-		virtual void call_start() = 0;
-		virtual void call_update() = 0;
+		virtual void call_start(Scene* scene) = 0;
+		virtual void call_update(Scene* scene) = 0;
+		virtual void call_collision(Scene* scene, Entity* first, Entity* second) = 0;
 	};
 }

@@ -59,7 +59,7 @@ void titian::Serializer::read_string(std::string& data) const
 
 std::string titian::Serializer::read_string() const
 {
-	std::string result = {};
+	std::string result;
 	read_string(result);
 	return result;
 }

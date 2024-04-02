@@ -36,19 +36,27 @@ void titian::NativeScript::reload()
 	m_memory_module = MemoryLoadLibrary(data.data(), data.size());
 	m_start_function = read_function<void, Scene*>("on_start");
 	m_update_function = read_function<void, Scene*>("on_update");
+	m_collision_function = read_function<void, Scene*, Entity*, Entity*>("on_collision");
 }
 
-void titian::NativeScript::call_start()
+void titian::NativeScript::call_start(Scene* scene)
 {
 	if (m_start_function) {
-		m_start_function(&GameLayer::BOUND_SELF->scene);
+		m_start_function(scene);
 	}
 }
 
-void titian::NativeScript::call_update()
+void titian::NativeScript::call_update(Scene* scene)
 {
 	if (m_update_function) {
-		m_update_function(&GameLayer::BOUND_SELF->scene);
+		m_update_function(scene);
+	}
+}
+
+void titian::NativeScript::call_collision(Scene* scene, Entity* first, Entity* second)
+{
+	if (m_collision_function) {
+		m_collision_function(scene, first, second);
 	}
 }
 

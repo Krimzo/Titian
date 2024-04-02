@@ -21,13 +21,16 @@ namespace titian {
 
 		bool is_valid() const override;
 		void reload() override;
-		void call_start() override;
-		void call_update() override;
+
+		void call_start(Scene* scene) override;
+		void call_update(Scene* scene) override;
+		void call_collision(Scene* scene, Entity* first, Entity* second) override;
 
 	private:
 		void* m_memory_module = nullptr;
 		Function<void, Scene*> m_start_function = nullptr;
 		Function<void, Scene*> m_update_function = nullptr;
+		Function<void, Scene*, Entity*, Entity*> m_collision_function = nullptr;
 
 		void unload();
 

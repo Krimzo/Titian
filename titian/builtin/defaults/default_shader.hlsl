@@ -36,7 +36,7 @@ cbuffer GLOBAL_CB : register(b0)
     float3 OBJECT_SCALE;
     float3 OBJECT_ROTATION;
     float3 OBJECT_POSITION;
-
+    
     float3 MATERIAL_COLOR;
     float ALPHA_BLEND;
     float TEXTURE_BLEND;
@@ -51,7 +51,7 @@ cbuffer GLOBAL_CB : register(b0)
     float4x4 W;
     float4x4 V;
     float4x4 VP;
-
+    
     float RECEIVES_SHADOWS;
     float2 SHADOW_MAP_SIZE;
     float2 SHADOW_MAP_TEXEL_SIZE;

@@ -244,6 +244,7 @@ void titian::Entity::generate_actor(const physx::PxTransform& transform, const b
         m_actor = m_physics->createRigidStatic(transform);
     }
     kl::assert(m_actor, "Failed to create physics actor");
+    m_actor->userData = this;
 }
 
 void titian::Entity::wake_up() const

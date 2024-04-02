@@ -4,20 +4,70 @@
 titian::LanguageEditor::LanguageEditor()
 	: m_text_editor()
 {
+	// global langs
 	static bool first_time_init = false;
 	if (!first_time_init) {
 		first_time_init = true;
 
-		TextEditor::LanguageDefinition* definition = TextEditor::LanguageDefinition::Chai();
-		definition->mKeywords = INTERP_SCRIPT_KEYWORDS;
-		definition->mIdentifiers.clear();
+		// chai
+		TextEditor::LanguageDefinition* chai = TextEditor::LanguageDefinition::Chai();
+		chai->mKeywords = INTERP_SCRIPT_KEYWORDS;
+		chai->mIdentifiers.clear();
 		for (const auto& [name, info] : INTERP_SCRIPT_IDENTIFIERS) {
 			TextEditor::Identifier identifier = {};
 			identifier.mDeclaration = info;
-			definition->mIdentifiers[name] = identifier;
+			chai->mIdentifiers[name] = identifier;
+		}
+
+		// hlsl
+		std::unordered_map<std::string, std::string> HLSL_IDENTIFIERS;
+		HLSL_IDENTIFIERS["VS_OUT"] = "Computed vertex data.";
+
+		HLSL_IDENTIFIERS["_alter_vertex"] = "Alter vertex data before the pixel shader.";
+		HLSL_IDENTIFIERS["_alter_pre"] = "Alter pixel data before the full pixel shader. (return true to cancel the full shader)";
+		HLSL_IDENTIFIERS["_alter_post"] = "Alter pixel data after the full pixel shader.";
+
+		HLSL_IDENTIFIERS["SHADOW_CASCADE_COUNT"] = "Directional light cascade count.";
+		HLSL_IDENTIFIERS["ELAPSED_TIME"] = "Elapsed game time in seconds.";
+		HLSL_IDENTIFIERS["DELTA_TIME"] = "Frame time in seconds.";
+		HLSL_IDENTIFIERS["CAMERA_POSITION"] = "Camera 3D origin. (position)";
+		HLSL_IDENTIFIERS["CAMERA_HAS_SKYBOX"] = "True if camera has a bound skybox, false otherwise.";
+		HLSL_IDENTIFIERS["CAMERA_BACKGROUND"] = "Camera backgroun as a float4.";
+		HLSL_IDENTIFIERS["AMBIENT_COLOR"] = "Ambient light color.";
+		HLSL_IDENTIFIERS["AMBIENT_INTENSITY"] = "Ambient light intensity.";
+		HLSL_IDENTIFIERS["SUN_DIRECTION"] = "Sun direction as a normalized float3.";
+		HLSL_IDENTIFIERS["SUN_POINT_SIZE"] = "Sun point size.";
+		HLSL_IDENTIFIERS["SUN_COLOR"] = "Sun color as a float4.";
+		HLSL_IDENTIFIERS["OBJECT_INDEX"] = "Current entity unique index.";
+		HLSL_IDENTIFIERS["OBJECT_SCALE"] = "Entity scale as a float3.";
+		HLSL_IDENTIFIERS["OBJECT_ROTATION"] = "Entity rotation as a float3.";
+		HLSL_IDENTIFIERS["OBJECT_POSITION"] = "Entity position as a float3.";
+		HLSL_IDENTIFIERS["MATERIAL_COLOR"] = "Material color as a float4.";
+		HLSL_IDENTIFIERS["ALPHA_BLEND"] = "Material alpha blend.";
+		HLSL_IDENTIFIERS["TEXTURE_BLEND"] = "Material texture blend.";
+		HLSL_IDENTIFIERS["REFLECTION_FACTOR"] = "Material reflection factor.";
+		HLSL_IDENTIFIERS["REFRACTION_FACTOR"] = "Material refraction factor.";
+		HLSL_IDENTIFIERS["REFRACTION_INDEX"] = "Material refraction index.";
+		HLSL_IDENTIFIERS["HAS_NORMAL_MAP"] = "True if material has a normal map bound, false otherwise.";
+		HLSL_IDENTIFIERS["HAS_ROUGHNESS_MAP"] = "True if material has a roughness map bound, false otherwise.";
+		HLSL_IDENTIFIERS["W"] = "W matrix. (aka model matrix)";
+		HLSL_IDENTIFIERS["V"] = "V matrix. (aka view matrix)";
+		HLSL_IDENTIFIERS["VP"] = "VP matrix. (aka view/projection matrix)";
+		HLSL_IDENTIFIERS["RECEIVES_SHADOWS"] = "True if entity receives shadows, false otherwise.";
+		HLSL_IDENTIFIERS["SHADOW_MAP_SIZE"] = "Directional light shadow map resolution.";
+		HLSL_IDENTIFIERS["SHADOW_MAP_TEXEL_SIZE"] = "Directional light shadow map texel size.";
+		HLSL_IDENTIFIERS["SHADOW_CASCADES"] = "Directional light shadow coverage zones.";
+		HLSL_IDENTIFIERS["LIGHT_VPs"] = "Directional light VP matrices.";
+
+		TextEditor::LanguageDefinition* hlsl = TextEditor::LanguageDefinition::Hlsl();
+		for (const auto& [name, info] : HLSL_IDENTIFIERS) {
+			TextEditor::Identifier identifier = {};
+			identifier.mDeclaration = info;
+			hlsl->mIdentifiers[name] = identifier;
 		}
 	}
 
+	// editor
 	m_text_editor.SetPalette(TextEditor::PaletteId::Dark);
 	m_text_editor.SetLanguageDefinition(TextEditor::LanguageDefinitionId::Chai);
 }

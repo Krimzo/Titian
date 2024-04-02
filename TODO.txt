@@ -1,3 +1,6 @@
+# scripting
+1. add code suggestions
+
 # editor features
 2. undo and redo
 

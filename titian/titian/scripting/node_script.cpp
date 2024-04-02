@@ -9,6 +9,9 @@ titian::NodeScript::NodeScript()
 
 	update_node.title = "on_update";
 	update_node.flow_output = Pin("flow out", PinType::FLOW, nullptr);
+
+	collision_node.title = "on_collision";
+	collision_node.flow_output = Pin("flow out", PinType::FLOW, nullptr);
 }
 
 void titian::NodeScript::serialize(Serializer* serializer, const void* helper_data) const
@@ -31,12 +34,17 @@ bool titian::NodeScript::is_valid() const
 void titian::NodeScript::reload()
 {}
 
-void titian::NodeScript::call_start()
+void titian::NodeScript::call_start(Scene* scene)
 {
 	start_node.call();
 }
 
-void titian::NodeScript::call_update()
+void titian::NodeScript::call_update(Scene* scene)
 {
 	update_node.call();
+}
+
+void titian::NodeScript::call_collision(Scene* scene, Entity* first, Entity* second)
+{
+	collision_node.call();
 }

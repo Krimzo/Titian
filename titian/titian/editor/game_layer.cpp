@@ -42,7 +42,7 @@ void titian::GameLayer::start_game()
 	// Start
 	app_layer->timer->reset_elapsed();
 	for (auto& [_, script] : scene->scripts) {
-		script->call_start();
+		script->call_start(&scene);
 	}
 
 	// Change state

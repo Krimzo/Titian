@@ -45,8 +45,10 @@ namespace titian {
 
 		bool is_valid() const override;
 		void reload() override;
-		void call_start() override;
-		void call_update() override;
+
+		void call_start(Scene* scene) override;
+		void call_update(Scene* scene) override;
+		void call_collision(Scene* scene, Entity* first, Entity* second) override;
 
 		std::map<std::string, chaiscript::Boxed_Value> get_parameters();
 
@@ -54,5 +56,6 @@ namespace titian {
 		kl::Object<chaiscript::ChaiScript> m_engine = nullptr;
 		std::function<void(Scene*)> m_start_function = {};
 		std::function<void(Scene*)> m_update_function = {};
+		std::function<void(Scene*, Entity*, Entity*)> m_collision_function = {};
 	};
 }

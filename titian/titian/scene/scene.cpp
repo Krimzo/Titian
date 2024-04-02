@@ -5,6 +5,20 @@ physx::PxDefaultAllocator     titian::Scene::m_allocator = {};
 physx::PxDefaultErrorCallback titian::Scene::m_error_callback = {};
 physx::PxFoundation*          titian::Scene::m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_allocator, m_error_callback);
 
+static physx::PxFilterFlags filter_shader(
+    physx::PxFilterObjectAttributes attributes0,
+    physx::PxFilterData filterData0,
+    physx::PxFilterObjectAttributes attributes1,
+    physx::PxFilterData filterData1,
+    physx::PxPairFlags& pairFlags,
+    const void* constantBlock,
+    physx::PxU32 constantBlockSize)
+{
+    pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+    pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+    return physx::PxFilterFlag::eDEFAULT;
+}
+
 titian::Scene::Scene(kl::GPU* gpu)
     : m_gpu(gpu)
 {
@@ -20,7 +34,8 @@ titian::Scene::Scene(kl::GPU* gpu)
     physx::PxSceneDesc scene_descriptor = { m_physics->getTolerancesScale() };
     scene_descriptor.gravity.y = -9.81f;
     scene_descriptor.cpuDispatcher = m_dispatcher;
-    scene_descriptor.filterShader = physx::PxDefaultSimulationFilterShader;
+    scene_descriptor.filterShader = filter_shader;
+    scene_descriptor.simulationEventCallback = this;
 
     m_scene = m_physics->createScene(scene_descriptor);
     kl::assert(m_scene, "Failed to create physics scene");
@@ -52,6 +67,7 @@ titian::Scene::~Scene()
     m_physics->release();
 }
 
+// Overrides
 void titian::Scene::serialize(Serializer* serializer, const void* helper_data) const
 {
     serializer->write_string(main_camera_name);
@@ -160,6 +176,33 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     }
 }
 
+void titian::Scene::onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count)
+{}
+
+void titian::Scene::onWake(physx::PxActor** actors, physx::PxU32 count)
+{}
+
+void titian::Scene::onSleep(physx::PxActor** actors, physx::PxU32 count)
+{}
+
+void titian::Scene::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
+{
+    Entity* entity_0 = static_cast<Entity*>(pairHeader.actors[0]->userData);
+    Entity* entity_1 = static_cast<Entity*>(pairHeader.actors[1]->userData);
+    if (entity_0 && entity_1) {
+        for (auto& [_, script] : scripts) {
+            script->call_collision(this, entity_0, entity_1);
+        }
+    }
+}
+
+void titian::Scene::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
+{}
+
+void titian::Scene::onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count)
+{}
+
+// Get ptrs
 physx::PxPhysics* titian::Scene::physics() const
 {
     return m_physics;
@@ -192,7 +235,7 @@ void titian::Scene::update_physics(const float delta_t)
 void titian::Scene::update_scripts()
 {
     for (auto& [_, script] : scripts) {
-        script->call_update();
+        script->call_update(this);
     }
 }
 

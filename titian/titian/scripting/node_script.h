@@ -11,6 +11,7 @@ namespace titian {
 	public:
 		Node start_node;
 		Node update_node;
+		Node collision_node;
 		std::vector<Node> nodes;
 
 		NodeScript();
@@ -20,7 +21,9 @@ namespace titian {
 
 		bool is_valid() const override;
 		void reload() override;
-		void call_start() override;
-		void call_update() override;
+
+		void call_start(Scene* scene) override;
+		void call_update(Scene* scene) override;
+		void call_collision(Scene* scene, Entity* first, Entity* second) override;
 	};
 }

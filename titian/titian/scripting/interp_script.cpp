@@ -37,19 +37,35 @@ void titian::InterpScript::reload()
 	try {
 		m_engine->add(INTERP_SCRIPT_MODULE);
 		m_engine->eval(this->source);
-		m_start_function = m_engine->eval<std::function<void(Scene*)>>("on_start");
-		m_update_function = m_engine->eval<std::function<void(Scene*)>>("on_update");
 	}
 	catch (std::exception& e) {
 		Logger::log(e.what());
 	}
+
+	try {
+		m_start_function = m_engine->eval<std::function<void(Scene*)>>("on_start");
+	}
+	catch (std::exception&)
+	{}
+
+	try {
+		m_update_function = m_engine->eval<std::function<void(Scene*)>>("on_update");
+	}
+	catch (std::exception&)
+	{}
+
+	try {
+		m_collision_function = m_engine->eval<std::function<void(Scene*, Entity*, Entity*)>>("on_collision");
+	}
+	catch (std::exception&)
+	{}
 }
 
-void titian::InterpScript::call_start()
+void titian::InterpScript::call_start(Scene* scene)
 {
 	if (m_start_function) {
 		try {
-			m_start_function(&GameLayer::BOUND_SELF->scene);
+			m_start_function(scene);
 		}
 		catch (std::exception& e) {
 			Logger::log(e.what());
@@ -57,11 +73,23 @@ void titian::InterpScript::call_start()
 	}
 }
 
-void titian::InterpScript::call_update()
+void titian::InterpScript::call_update(Scene* scene)
 {
 	if (m_update_function) {
 		try {
-			m_update_function(&GameLayer::BOUND_SELF->scene);
+			m_update_function(scene);
+		}
+		catch (std::exception& e) {
+			Logger::log(e.what());
+		}
+	}
+}
+
+void titian::InterpScript::call_collision(Scene* scene, Entity* first, Entity* second)
+{
+	if (m_collision_function) {
+		try {
+			m_collision_function(scene, first, second);
 		}
 		catch (std::exception& e) {
 			Logger::log(e.what());
@@ -1209,6 +1237,7 @@ int load_functions = [&]
 	// Calls
 	INTERP_SCRIPT_IDENTIFIERS["on_start"] = "Called once at the start of the game.";
 	INTERP_SCRIPT_IDENTIFIERS["on_update"] = "Called every frame of the game.";
+	INTERP_SCRIPT_IDENTIFIERS["on_collision"] = "Called every time a collision happens.";
 
 	// Logging
 	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&Logger::log<const std::string&>), "log");
