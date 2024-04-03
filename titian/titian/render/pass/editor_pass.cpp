@@ -2,11 +2,10 @@
 
 
 titian::EditorPass::EditorPass(GameLayer* game_layer, EditorLayer* editor_layer, GUILayer* gui_layer)
-    : RenderPass(game_layer)
+    : RenderPass("EditorPass", game_layer)
+    , editor_layer(editor_layer)
+    , gui_layer(gui_layer)
 {
-    this->editor_layer = editor_layer;
-    this->gui_layer = gui_layer;
-
     kl::GPU* gpu = &game_layer->app_layer->gpu;
 
     // Generate frustum mesh

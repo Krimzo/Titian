@@ -2,11 +2,10 @@
 
 
 titian::OutlinePass::OutlinePass(GameLayer* game_layer, EditorLayer* editor_layer, GUILayer* gui_layer)
-    : RenderPass(game_layer)
-{
-    this->editor_layer = editor_layer;
-    this->gui_layer = gui_layer;
-}
+    : RenderPass("OutlinePass", game_layer)
+    , editor_layer(editor_layer)
+    , gui_layer(gui_layer)
+{}
 
 bool titian::OutlinePass::is_renderable() const
 {

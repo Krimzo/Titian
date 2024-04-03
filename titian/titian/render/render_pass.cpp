@@ -1,13 +1,15 @@
 #include "main.h"
 
 
-titian::RenderPass::RenderPass(GameLayer* game_layer)
-{
-	this->game_layer = game_layer;
-}
+titian::RenderPass::RenderPass(const std::string& name, GameLayer* game_layer)
+	: BenchmarkInfo(name)
+	, game_layer(game_layer)
+{}
 
 void titian::RenderPass::process()
 {
+	const TimeBomb _ = this->time_it();
+
 	if (!is_renderable()) {
 		return;
 	}

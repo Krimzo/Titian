@@ -2,13 +2,13 @@
 
 
 titian::GUISectionScriptEditor::GUISectionScriptEditor(EditorLayer* editor_layer, GUILayer* gui_layer)
-	: m_native_editor()
+	: GUISection("GUISectionScriptEditor")
+	, editor_layer(editor_layer)
+	, gui_layer(gui_layer)
+	, m_native_editor()
 	, m_interp_editor()
 	, m_node_editor(nullptr)
 {
-	this->editor_layer = editor_layer;
-	this->gui_layer = gui_layer;
-
 	m_interp_editor.load_chai_standard();
 
 	ed::Config node_config{};
@@ -23,6 +23,8 @@ titian::GUISectionScriptEditor::~GUISectionScriptEditor()
 
 void titian::GUISectionScriptEditor::render_gui()
 {
+	const TimeBomb _ = this->time_it();
+
 	kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
 	Scene* scene = &editor_layer->game_layer->scene;
 

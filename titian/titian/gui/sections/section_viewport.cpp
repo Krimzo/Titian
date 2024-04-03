@@ -2,13 +2,15 @@
 
 
 titian::GUISectionViewport::GUISectionViewport(EditorLayer* editor_layer, RenderLayer* render_layer)
-{
-    this->editor_layer = editor_layer;
-    this->render_layer = render_layer;
-}
+    : GUISection("GUISectionViewport")
+    , editor_layer(editor_layer)
+    , render_layer(render_layer)
+{}
 
 void titian::GUISectionViewport::render_gui()
 {
+    const TimeBomb _ = this->time_it();
+
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 
     kl::GPU* gpu = &render_layer->game_layer->app_layer->gpu;

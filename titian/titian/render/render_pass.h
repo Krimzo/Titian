@@ -5,12 +5,12 @@
 
 
 namespace titian {
-	class RenderPass
+	class RenderPass : public BenchmarkInfo
 	{
 	public:
 		GameLayer* game_layer = nullptr;
 
-		RenderPass(GameLayer* game_layer);
+		RenderPass(const std::string& name, GameLayer* game_layer);
 		virtual ~RenderPass() = default;
 
 		void process();

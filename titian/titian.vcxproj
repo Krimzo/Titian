@@ -361,6 +361,7 @@
     <ClCompile Include="titian\gui\gui_layer.cpp" />
     <ClInclude Include="titian\gui\gui_layer.h" />
     <ClInclude Include="titian\gui\gui_section.h" />
+    <ClCompile Include="titian\gui\gui_section.cpp" />
     <ClCompile Include="titian\gui\sections\section_control_menu.cpp" />
     <ClCompile Include="titian\gui\sections\section_entity_properties.cpp" />
     <ClCompile Include="titian\gui\sections\section_explorer.cpp" />
@@ -370,8 +371,8 @@
     <ClInclude Include="titian\gui\sections\section_material_editor.h" />
     <ClCompile Include="titian\gui\sections\section_mesh_editor.cpp" />
     <ClInclude Include="titian\gui\sections\section_mesh_editor.h" />
-    <ClCompile Include="titian\gui\sections\section_render_info.cpp" />
-    <ClInclude Include="titian\gui\sections\section_render_info.h" />
+    <ClCompile Include="titian\gui\sections\section_time_info.cpp" />
+    <ClInclude Include="titian\gui\sections\section_time_info.h" />
     <ClInclude Include="titian\gui\sections\section_entity_properties.h" />
     <ClInclude Include="titian\gui\sections\section_control_menu.h" />
     <ClInclude Include="titian\gui\sections\section_explorer.h" />
@@ -470,6 +471,7 @@
     <ClInclude Include="titian\utility\file_util.h" />
     <ClInclude Include="titian\utility\id_util.h" />
     <ClInclude Include="titian\utility\string_util.h" />
+    <ClInclude Include="titian\utility\time_util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\chaiscript\chaiscript.h" />

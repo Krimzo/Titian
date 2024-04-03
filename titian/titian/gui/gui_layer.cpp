@@ -2,9 +2,9 @@
 
 
 titian::GUILayer::GUILayer(RenderLayer* render_layer)
+	: Layer("GUILayer")
+	, render_layer(render_layer)
 {
-	this->render_layer = render_layer;
-
 	kl::Window* window = &render_layer->game_layer->app_layer->window;
 	kl::GPU* gpu = &render_layer->game_layer->app_layer->gpu;
 
@@ -21,6 +21,8 @@ titian::GUILayer::GUILayer(RenderLayer* render_layer)
 
 bool titian::GUILayer::update()
 {
+	const TimeBomb _ = this->time_it();
+
 	ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
 	ImGui::NewFrame();

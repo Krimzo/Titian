@@ -2,10 +2,9 @@
 
 
 titian::ScenePass::ScenePass(GameLayer* game_layer, RenderLayer* render_layer)
-    : RenderPass(game_layer)
-{
-    this->render_layer = render_layer;
-}
+    : RenderPass("ScenePass", game_layer)
+    , render_layer(render_layer)
+{}
 
 bool titian::ScenePass::is_renderable() const
 {

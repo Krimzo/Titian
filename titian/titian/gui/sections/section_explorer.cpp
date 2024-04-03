@@ -2,8 +2,9 @@
 
 
 titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer)
+    : GUISection("GUISectionExplorer")
+    , app_layer(app_layer)
 {
-    this->app_layer = app_layer;
     kl::GPU* gpu = &app_layer->gpu;
 
     const std::initializer_list<std::pair<kl::Object<Texture>&, const char*>> icons = {
@@ -27,6 +28,8 @@ titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer)
 
 void titian::GUISectionExplorer::render_gui()
 {
+    const TimeBomb _ = this->time_it();
+
     std::list<std::filesystem::path> directories{};
     std::list<std::filesystem::path> files{};
 

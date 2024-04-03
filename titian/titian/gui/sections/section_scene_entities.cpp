@@ -2,12 +2,14 @@
 
 
 titian::GUISectionSceneEntities::GUISectionSceneEntities(EditorLayer* editor_layer)
-{
-	this->editor_layer = editor_layer;
-}
+	: GUISection("GUISectionSceneEntities")
+	, editor_layer(editor_layer)
+{}
 
 void titian::GUISectionSceneEntities::render_gui()
 {
+	const TimeBomb _ = this->time_it();
+
 	kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
 	Scene* scene = &editor_layer->game_layer->scene;
 

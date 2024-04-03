@@ -2,12 +2,14 @@
 
 
 titian::GUISectionSceneInfo::GUISectionSceneInfo(EditorLayer* editor_layer)
-{
-    this->editor_layer = editor_layer;
-}
+    : GUISection("GUISectionSceneInfo")
+    , editor_layer(editor_layer)
+{}
 
 void titian::GUISectionSceneInfo::render_gui()
 {
+    const TimeBomb _ = this->time_it();
+
     if (ImGui::Begin("Scene Info")) {
         Scene* scene = &editor_layer->game_layer->scene;
 

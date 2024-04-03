@@ -2,10 +2,10 @@
 
 
 titian::GUISectionMaterialEditor::GUISectionMaterialEditor(EditorLayer* editor_layer, GUILayer* gui_layer)
+    : GUISection("GUISectionMaterialEditor")
+    , editor_layer(editor_layer)
+    , gui_layer(gui_layer)
 {
-    this->editor_layer = editor_layer;
-    this->gui_layer = gui_layer;
-
     kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
     Scene* scene = &editor_layer->game_layer->scene;
 
@@ -20,6 +20,8 @@ titian::GUISectionMaterialEditor::GUISectionMaterialEditor(EditorLayer* editor_l
 
 void titian::GUISectionMaterialEditor::render_gui()
 {
+    const TimeBomb _ = this->time_it();
+
     kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
     Scene* scene = &editor_layer->game_layer->scene;
     Material* material = &scene->get_material(this->selected_material);
@@ -279,7 +281,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     global_cb.AMBIENT_COLOR = kl::Float3{ 1.0f };
     global_cb.AMBIENT_INTENSITY = 0.1f;
 
-    global_cb.SUN_DIRECTION = kl::normalize(kl::Float3{ 0.0f, -1.0f, -1.0f });
+    global_cb.SUN_DIRECTION = kl::normalize(kl::Float3{ 0.0f, -1.0f, 1.0f });
     global_cb.SUN_COLOR = kl::colors::WHITE;
 
     global_cb.OBJECT_COLOR = material->color.xyz();
@@ -303,7 +305,8 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
 
         // Draw
         DefaultMeshes* default_meshes = &editor_layer->game_layer->scene->default_meshes;
-        gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology());
+        Mesh* material_mesh = &default_meshes->sphere;
+        gpu->draw(material_mesh->graphics_buffer, material_mesh->casted_topology());
     }
 
     // Restore
@@ -396,7 +399,7 @@ void titian::GUISectionMaterialEditor::update_material_camera()
             kl::sin_deg(camera_info.x),
             kl::tan_deg(camera_info.y),
             kl::cos_deg(camera_info.x),
-            });
+        });
 
         camera->speed += (last_scroll - scroll) * 0.1f;
         camera->speed = std::max(camera->speed, 0.1f);

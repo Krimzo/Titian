@@ -2,13 +2,15 @@
 
 
 titian::GUISectionEntityProperties::GUISectionEntityProperties(EditorLayer* editor_layer, GUILayer* gui_layer)
-{
-    this->editor_layer = editor_layer;
-    this->gui_layer = gui_layer;
-}
+    : GUISection("GUISectionEntityProperties")
+    , editor_layer(editor_layer)
+    , gui_layer(gui_layer)
+{}
 
 void titian::GUISectionEntityProperties::render_gui()
 {
+    const TimeBomb _ = this->time_it();
+
     Scene* scene = &editor_layer->game_layer->scene;
     kl::Object<Entity> entity = scene->get_entity(editor_layer->selected_entity);
 

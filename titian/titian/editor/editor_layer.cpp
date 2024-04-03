@@ -2,12 +2,14 @@
 
 
 titian::EditorLayer::EditorLayer(GameLayer* game_layer)
-{
-    this->game_layer = game_layer;
-}
+    : Layer("EditorLayer")
+    , game_layer(game_layer)
+{}
 
 bool titian::EditorLayer::update()
 {
+    const TimeBomb _ = this->time_it();
+
     Camera* camera = game_layer->scene->get_casted<Camera>(game_layer->scene->main_camera_name);
     if (!camera) { return true; }
 

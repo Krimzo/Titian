@@ -2,9 +2,9 @@
 
 
 titian::RenderLayer::RenderLayer(GameLayer* game_layer)
+	: Layer("RenderLayer")
+	, game_layer(game_layer)
 {
-	this->game_layer = game_layer;
-
 	// Textures
 	states = new RenderStates(&game_layer->app_layer->gpu);
 	render_texture = new Texture(&game_layer->app_layer->gpu);
@@ -21,6 +21,8 @@ titian::RenderLayer::RenderLayer(GameLayer* game_layer)
 
 bool titian::RenderLayer::update()
 {
+	const TimeBomb _ = this->time_it();
+
 	kl::GPU* gpu = &game_layer->app_layer->gpu;
 	Scene* scene = &game_layer->scene;
 

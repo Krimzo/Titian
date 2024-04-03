@@ -2,10 +2,9 @@
 
 
 titian::DisplayPass::DisplayPass(GameLayer* game_layer, RenderLayer* render_layer)
-    : RenderPass(game_layer)
-{
-    this->render_layer = render_layer;
-}
+    : RenderPass("DisplayPass", game_layer)
+    , render_layer(render_layer)
+{}
 
 bool titian::DisplayPass::is_renderable() const
 {

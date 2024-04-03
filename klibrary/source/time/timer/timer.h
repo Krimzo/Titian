@@ -6,9 +6,9 @@
 namespace kl {
     class Timer
     {
-        time_t m_delta_start;
-        time_t m_delta_end;
-        time_t m_elapsed_start;
+        uint64_t m_delta_start;
+        uint64_t m_delta_end;
+        uint64_t m_elapsed_start;
 
     public:
         Timer();

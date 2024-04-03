@@ -4,13 +4,16 @@
 titian::GameLayer* titian::GameLayer::BOUND_SELF = nullptr;
 
 titian::GameLayer::GameLayer(AppLayer* app_layer)
+	: Layer("GameLayer")
+	, app_layer(app_layer)
 {
-	this->app_layer = app_layer;
 	scene = new Scene(&app_layer->gpu);
 }
 
 bool titian::GameLayer::update()
 {
+	const TimeBomb _ = this->time_it();
+
 	if (game_running) {
 		const float delta_time = app_layer->timer->delta();
 		scene->update_physics(delta_time);

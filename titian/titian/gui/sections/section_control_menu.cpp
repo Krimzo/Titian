@@ -2,12 +2,14 @@
 
 
 titian::GUISectionControlMenu::GUISectionControlMenu(EditorLayer* editor_layer)
-{
-    this->editor_layer = editor_layer;
-}
+    : GUISection("GUISectionControlMenu")
+    , editor_layer(editor_layer)
+{}
 
 void titian::GUISectionControlMenu::render_gui()
 {
+    const TimeBomb _ = this->time_it();
+
     if (ImGui::Begin("Control Menu", nullptr, ImGuiWindowFlags_NoScrollbar)) {
         // Game
         gui_align_horizontally(ImGui::CalcTextSize("Simulator").x, 0.5f);

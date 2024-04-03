@@ -2,13 +2,15 @@
 
 
 titian::GUISectionTextureEditor::GUISectionTextureEditor(EditorLayer* editor_layer, GUILayer* gui_layer)
-{
-    this->editor_layer = editor_layer;
-    this->gui_layer = gui_layer;
-}
+    : GUISection("GUISectionTextureEditor")
+    , editor_layer(editor_layer)
+    , gui_layer(gui_layer)
+{}
 
 void titian::GUISectionTextureEditor::render_gui()
 {
+    const TimeBomb _ = this->time_it();
+
     kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
     Scene* scene = &editor_layer->game_layer->scene;
     Texture* texture = &scene->get_texture(this->selected_texture);

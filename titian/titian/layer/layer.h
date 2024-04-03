@@ -1,13 +1,13 @@
 #pragma once
 
-#include "klibrary.h"
+#include "utility/time_util.h"
 
 
 namespace titian {
-	class Layer
+	class Layer : public BenchmarkInfo
 	{
 	public:
-		Layer() = default;
+		Layer(const std::string& name);
 		virtual ~Layer() = default;
 
 		virtual bool update() = 0;

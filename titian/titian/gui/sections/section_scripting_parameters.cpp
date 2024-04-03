@@ -2,11 +2,15 @@
 
 
 titian::GUISectionScriptingParameters::GUISectionScriptingParameters(GameLayer* game_layer, GUILayer* gui_layer)
-	: game_layer(game_layer), gui_layer(gui_layer)
+	: GUISection("GUISectionScriptingParameters")
+	, game_layer(game_layer)
+	, gui_layer(gui_layer)
 {}
 
 void titian::GUISectionScriptingParameters::render_gui()
 {
+	const TimeBomb _ = this->time_it();
+
 	Scene* scene = &game_layer->scene;
 
 	std::vector<std::pair<std::string, std::map<std::string, chaiscript::Boxed_Value>>> scripts;
@@ -25,16 +29,16 @@ void titian::GUISectionScriptingParameters::render_gui()
 	ImGui::PushFont(gui_layer->jetbrains_font_small);
 
 	if (ImGui::Begin("Scripting Parameters")) {
-		if (!scripts.empty()) {
-			ImGui::Separator();
-		}
-		int script_counter = 0;
+		int script_counter = 1;
 		for (auto& [name, parameters] : scripts) {
-			ImGui::Text(kl::format("Interp Script: ", name).c_str());
-			for (auto& [name, parameter] : parameters) {
-				display_parameter_editor(++script_counter, name, parameter);
+			if (script_counter > 1) {
+				ImGui::Separator();
 			}
-			ImGui::Separator();
+			ImGui::Text(kl::format("Script ", name).c_str());
+			for (auto& [name, parameter] : parameters) {
+				display_parameter_editor(script_counter, name, parameter);
+			}
+			script_counter += 1;
 		}
 	}
 	ImGui::End();

@@ -2,6 +2,7 @@
 
 
 titian::AppLayer::AppLayer(const std::string_view& name)
+	: Layer("AppLayer")
 {
 	window = new kl::Window(name.data(), { 1920, 1080 });
 	gpu = new kl::GPU(*window, kl::IS_DEBUG, true);
@@ -20,6 +21,8 @@ titian::AppLayer::AppLayer(const std::string_view& name)
 
 bool titian::AppLayer::update()
 {
+	const TimeBomb _ = this->time_it();
+
 	timer->update_delta();
 	return window->process(false);
 }

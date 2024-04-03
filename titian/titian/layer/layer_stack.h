@@ -6,9 +6,9 @@
 namespace titian {
 	class LayerStack
 	{
-		std::vector<kl::Object<Layer>> m_layers = {};
-
 	public:
+		std::vector<kl::Object<Layer>> layers = {};
+
 		LayerStack() = default;
 		virtual ~LayerStack() = default;
 

@@ -2,12 +2,14 @@
 
 
 titian::GUISectionMainMenu::GUISectionMainMenu(RenderLayer* render_layer)
-{
-    this->render_layer = render_layer;
-}
+    : GUISection("GUISectionMainMenu")
+    , render_layer(render_layer)
+{}
 
 void titian::GUISectionMainMenu::render_gui()
 {
+    const TimeBomb _ = this->time_it();
+
     AppLayer* app_layer = render_layer->game_layer->app_layer;
     kl::Object<Scene>& scene = render_layer->game_layer->scene;
 

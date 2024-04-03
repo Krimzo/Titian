@@ -2,12 +2,14 @@
 
 
 titian::GUISectionLogView::GUISectionLogView(GUILayer* gui_layer)
-{
-    this->gui_layer = gui_layer;
-}
+    : GUISection("GUISectionLogView")
+    , gui_layer(gui_layer)
+{}
 
 void titian::GUISectionLogView::render_gui()
 {
+    const TimeBomb _ = this->time_it();
+
     ImGui::PushFont(gui_layer->jetbrains_font);
 
     const uint64_t unseen_count = Logger::last_log_index - last_log_index;
