@@ -4,7 +4,7 @@
 titian::TitianEditor::TitianEditor()
 {
     // Init layers
-    app_layer = new AppLayer("Titian Editor");
+    app_layer = new AppLayer("TITIAN");
     game_layer = new GameLayer(&app_layer);
     editor_layer = new EditorLayer(&game_layer);
     render_layer = new RenderLayer(&game_layer);
@@ -21,7 +21,7 @@ titian::TitianEditor::TitianEditor()
     render_layer->passes.emplace_back(new OutlinePass(&game_layer, &editor_layer, &gui_layer));
 
     // Init editor sections
-    gui_layer->sections.emplace_back(new GUISectionMainMenu(&render_layer));
+    gui_layer->sections.emplace_back(new GUISectionMainMenu(&editor_layer, &gui_layer));
     gui_layer->sections.emplace_back(new GUISectionSceneEntities(&editor_layer));
     gui_layer->sections.emplace_back(new GUISectionSceneInfo(&editor_layer));
     gui_layer->sections.emplace_back(new GUISectionMeshEditor(&editor_layer, &gui_layer));
@@ -31,7 +31,6 @@ titian::TitianEditor::TitianEditor()
     gui_layer->sections.emplace_back(new GUISectionScriptEditor(&editor_layer, &gui_layer));
     gui_layer->sections.emplace_back(new GUISectionViewport(&editor_layer, &render_layer));
     gui_layer->sections.emplace_back(new GUISectionScriptingParameters(&game_layer, &gui_layer));
-    gui_layer->sections.emplace_back(new GUISectionControlMenu(&editor_layer));
     gui_layer->sections.emplace_back(new GUISectionLogView(&gui_layer));
     gui_layer->sections.emplace_back(new GUISectionExplorer(&app_layer));
     gui_layer->sections.emplace_back(new GUISectionEntityProperties(&editor_layer, &gui_layer));

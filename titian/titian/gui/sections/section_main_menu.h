@@ -10,13 +10,24 @@ namespace titian {
 	class GUISectionMainMenu : public GUISection
 	{
     public:
-        RenderLayer* render_layer = nullptr;
+        EditorLayer* editor_layer = nullptr;
+        GUILayer* gui_layer = nullptr;
 
-        GUISectionMainMenu(RenderLayer* render_layer);
+        GUISectionMainMenu(EditorLayer* editor_layer, GUILayer* gui_layer);
 
         void render_gui() override;
 
     private:
+        const std::string m_temp_path = "temp.titian";
+
+        kl::Object<Texture> m_start_button_texture = nullptr;
+        kl::Object<Texture> m_pause_button_texture = nullptr;
+        kl::Object<Texture> m_stop_button_texture = nullptr;
+
         bool m_inputting_name = false;
+        bool m_testing_exit = false;
+
+        float m_control_buttons_width = 0.0f;
+        float m_gizmo_buttons_width = 0.0f;
 	};
 }

@@ -25,6 +25,7 @@
 #include <windowsx.h>
 #include <wininet.h>
 #include <conio.h>
+#include <dwmapi.h>
 
 #pragma comment(lib, "kernel32.lib")
 #pragma comment(lib, "user32.lib")

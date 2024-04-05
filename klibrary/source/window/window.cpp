@@ -118,6 +118,23 @@ void kl::Window::set_resizeable(const bool enabled)
     m_resizeable = enabled;
 }
 
+int kl::Window::style() const
+{
+    return GetWindowLongA(m_window, GWL_STYLE);
+}
+
+void kl::Window::add_style(const int style)
+{
+    const int current_style = GetWindowLongA(m_window, GWL_STYLE);
+    SetWindowLongA(m_window, GWL_STYLE, current_style | style);
+}
+
+void kl::Window::remove_style(const int style)
+{
+    const int current_style = GetWindowLongA(m_window, GWL_STYLE);
+    SetWindowLongA(m_window, GWL_STYLE, current_style & ~style);
+}
+
 void kl::Window::maximize() const
 {
     ShowWindow(m_window, SW_MAXIMIZE);
@@ -133,6 +150,30 @@ void kl::Window::restore() const
     ShowWindow(m_window, SW_RESTORE);
 }
 
+bool kl::Window::is_maximized() const
+{
+    WINDOWPLACEMENT placement{};
+    placement.length = sizeof(WINDOWPLACEMENT);
+    GetWindowPlacement(m_window, &placement);
+    return placement.showCmd == SW_MAXIMIZE;
+}
+
+bool kl::Window::is_minimized() const
+{
+    WINDOWPLACEMENT placement{};
+    placement.length = sizeof(WINDOWPLACEMENT);
+    GetWindowPlacement(m_window, &placement);
+    return placement.showCmd == SW_MINIMIZE;
+}
+
+bool kl::Window::is_restored() const
+{
+    WINDOWPLACEMENT placement{};
+    placement.length = sizeof(WINDOWPLACEMENT);
+    GetWindowPlacement(m_window, &placement);
+    return placement.showCmd == SW_RESTORE;
+}
+
 bool kl::Window::in_fullscreen() const
 {
     return m_in_fullscreen;
@@ -141,17 +182,17 @@ bool kl::Window::in_fullscreen() const
 void kl::Window::set_fullscreen(const bool enabled)
 {
     if (!m_in_fullscreen) {
-        m_window_style = GetWindowLong(m_window, GWL_STYLE);
-        m_window_ex_style = GetWindowLong(m_window, GWL_EXSTYLE);
+        m_window_style = GetWindowLongA(m_window, GWL_STYLE);
+        m_window_ex_style = GetWindowLongA(m_window, GWL_EXSTYLE);
     }
 
     if (m_in_fullscreen = enabled) {
-        SetWindowLong(m_window, GWL_STYLE, m_window_style & ~(WS_CAPTION | WS_THICKFRAME));
-        SetWindowLong(m_window, GWL_EXSTYLE, m_window_ex_style & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
+        SetWindowLongA(m_window, GWL_STYLE, m_window_style & ~(WS_CAPTION | WS_THICKFRAME));
+        SetWindowLongA(m_window, GWL_EXSTYLE, m_window_ex_style & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
     }
     else {
-        SetWindowLong(m_window, GWL_STYLE, m_window_style);
-        SetWindowLong(m_window, GWL_EXSTYLE, m_window_ex_style);
+        SetWindowLongA(m_window, GWL_STYLE, m_window_style);
+        SetWindowLongA(m_window, GWL_EXSTYLE, m_window_ex_style);
     }
 }
 

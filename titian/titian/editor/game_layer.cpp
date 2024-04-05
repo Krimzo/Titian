@@ -14,7 +14,7 @@ bool titian::GameLayer::update()
 {
 	const TimeBomb _ = this->time_it();
 
-	if (game_running) {
+	if (game_running && !game_paused) {
 		const float delta_time = app_layer->timer->delta();
 		scene->update_physics(delta_time);
 		scene->update_scripts();
@@ -50,12 +50,26 @@ void titian::GameLayer::start_game()
 
 	// Change state
 	game_running = true;
+	game_paused = false;
 	Logger::log("Game started.");
+}
+
+void titian::GameLayer::pause_game()
+{
+	game_paused = true;
+	app_layer->timer->pause();
+}
+
+void titian::GameLayer::resume_game()
+{
+	app_layer->timer->resume();
+	game_paused = false;
 }
 
 void titian::GameLayer::stop_game()
 {
 	// Change state
 	game_running = false;
+	game_paused = false;
 	Logger::log("Game stopped.");
 }

@@ -22,7 +22,7 @@ titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer)
         entry.first = new Texture(gpu);
         entry.first->graphics_buffer = gpu->create_texture(kl::Image(entry.second));
         entry.first->create_shader_view(nullptr);
-        kl::assert(entry.first, kl::format("Failed to init ", entry.second, " file texture"));
+        kl::assert(entry.first->shader_view, kl::format("Failed to init ", entry.second, " file texture"));
     });
 }
 

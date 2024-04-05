@@ -63,9 +63,17 @@ namespace kl {
         bool is_resizeable() const;
         void set_resizeable(bool enabled);
 
+        int style() const;
+        void add_style(int style);
+        void remove_style(int style);
+
         void maximize() const;
         void minimize() const;
         void restore() const;
+
+        bool is_maximized() const;
+        bool is_minimized() const;
+        bool is_restored() const;
 
         bool in_fullscreen() const;
         void set_fullscreen(bool enabled);

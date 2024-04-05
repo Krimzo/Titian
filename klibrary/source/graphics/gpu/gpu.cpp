@@ -121,15 +121,14 @@ kl::dx::DepthView kl::GPU::internal_depth() const
 kl::dx::Texture kl::GPU::back_buffer() const
 {
     dx::Texture buffer = nullptr;
-    const long result = m_chain->GetBuffer(0, IID_PPV_ARGS(&buffer));
-    verify(buffer, format("Failed to get backbuffer texture. Result: 0x", std::hex, result));
-    result >> verify_result;
+    m_chain->GetBuffer(0, IID_PPV_ARGS(&buffer)) >> verify_result;
     return buffer;
 }
 
 void kl::GPU::swap_buffers(const bool v_sync) const
 {
-    m_chain->Present(v_sync, NULL) >> verify_result;
+    const UINT sync_interval = static_cast<UINT>(v_sync);
+    m_chain->Present(sync_interval, NULL) >> verify_result;
     bind_internal_views();
 }
 
@@ -138,7 +137,7 @@ bool kl::GPU::in_fullscreen() const
     BOOL result = false;
     IDXGIOutput* ignored = nullptr;
     m_chain->GetFullscreenState(&result, &ignored);
-    return (bool) result;
+    return static_cast<bool>(result);
 }
 
 void kl::GPU::set_fullscreen(const bool enabled) const

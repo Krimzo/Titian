@@ -15,6 +15,14 @@ titian::AppLayer::AppLayer(const std::string_view& name)
 			gpu->set_viewport_size(new_size);
 		}
 	});
+
+	{
+		BOOL dark_mode = true;
+		DwmSetWindowAttribute(
+				*window, DWMWINDOWATTRIBUTE::DWMWA_USE_IMMERSIVE_DARK_MODE,
+				&dark_mode, sizeof(dark_mode));
+	}
+
 	window->set_icon("builtin/textures/editor_icon.ico");
 	window->maximize();
 }
