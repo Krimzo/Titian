@@ -63,11 +63,11 @@ void titian::GUISectionMainMenu::render_gui()
     if (m_testing_exit) {
         if (ImGui::Begin("Exit?", nullptr, ImGuiWindowFlags_NoScrollbar)) {
             ImGui::Text("Are you sure you want to exit?");
-            if (ImGui::Button("No", ImVec2(45.0f, 20.0f))) {
+            if (ImGui::Button("No", ImVec2(50.0f, 0.0f))) {
                 m_testing_exit = false;
             }
             ImGui::SameLine();
-            if (ImGui::Button("Yes", ImVec2(35.0f, 20.0f))) {
+            if (ImGui::Button("Yes", ImVec2(40.0f, 0.0f))) {
                 app_layer->window->close();
             }
         }

@@ -38,16 +38,18 @@ void titian::GUISectionScriptEditor::render_gui()
 			if (ImGui::BeginPopupContextWindow("NewScript", ImGuiPopupFlags_MouseButtonMiddle)) {
 				const std::string name = gui_input_continuous("##CreateScriptInput");
 				if (!name.empty()) {
-					if (ImGui::MenuItem("New Native Script") && !scene->scripts.contains(name)) {
-						scene->scripts[name] = new NativeScript();
-						ImGui::CloseCurrentPopup();
-					}
 					if (ImGui::MenuItem("New Interp Script") && !scene->scripts.contains(name)) {
 						scene->scripts[name] = new InterpScript();
 						ImGui::CloseCurrentPopup();
 					}
+#if 0
 					if (ImGui::MenuItem("New Node Script") && !scene->scripts.contains(name)) {
 						scene->scripts[name] = new NodeScript();
+						ImGui::CloseCurrentPopup();
+					}
+#endif
+					if (ImGui::MenuItem("New Native Script") && !scene->scripts.contains(name)) {
+						scene->scripts[name] = new NativeScript();
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -203,7 +205,7 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 		m_interp_editor.load(script->source);
 	}
 
-	ImGui::PushFont(gui_layer->jetbrains_font);
+	ImGui::PushFont(gui_layer->roboto_font_large);
 	m_interp_editor.edit(&script->source);
 	ImGui::PopFont();
 }

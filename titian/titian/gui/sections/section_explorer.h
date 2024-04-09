@@ -12,6 +12,7 @@ namespace titian {
 	{
 	public:
         AppLayer* app_layer = nullptr;
+        GUILayer* gui_layer = nullptr;
 
         kl::Object<Texture> default_file_texture = nullptr;
         kl::Object<Texture> mesh_file_texture = nullptr;
@@ -22,13 +23,13 @@ namespace titian {
         kl::Object<Texture> default_dir_texture = nullptr;
         kl::Object<Texture> parent_dir_texture = nullptr;
 
-        GUISectionExplorer(AppLayer* app_layer);
+        GUISectionExplorer(AppLayer* app_layer, GUILayer* gui_layer);
 
         void render_gui() override;
 
     private:
         std::string m_path = std::filesystem::absolute(".").string();
-        int m_icon_size = 65;
+        float m_icon_size = 65.0f;
 
         void handle_file_entry(const std::filesystem::path& file);
         void handle_directory_entry(const std::filesystem::path& directory, bool is_parent_dir);

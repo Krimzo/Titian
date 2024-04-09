@@ -11,12 +11,15 @@ titian::GUILayer::GUILayer(RenderLayer* render_layer)
 	ImGui::CreateContext();
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
+	ImGui_ImplWin32_Init(static_cast<HWND>(*window));
+	ImGui_ImplDX11_Init(gpu->device().Get(), gpu->context().Get());
+
+	ImGui_ImplWin32_EnableDpiAwareness();
+	dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(*window);
+
 	ImGui::StyleColorsDark();
 	load_custom_fonts();
 	load_custom_theme();
-
-	ImGui_ImplWin32_Init(static_cast<HWND>(*window));
-	ImGui_ImplDX11_Init(gpu->device().Get(), gpu->context().Get());
 }
 
 bool titian::GUILayer::update()
@@ -45,13 +48,11 @@ void titian::GUILayer::load_custom_fonts()
 {
 	ImFontAtlas* atlas = ImGui::GetIO().Fonts;
 
-	roboto_font = atlas->AddFontFromFileTTF("builtin/fonts/Roboto.ttf", 16);
-	jetbrains_font = atlas->AddFontFromFileTTF("builtin/fonts/JetBrains.ttf", 20);
-	jetbrains_font_small = atlas->AddFontFromFileTTF("builtin/fonts/JetBrains.ttf", 16);
+	roboto_font_small = atlas->AddFontFromFileTTF("builtin/fonts/Roboto.ttf", 16 * dpi_scaling);
+	roboto_font_large = atlas->AddFontFromFileTTF("builtin/fonts/Roboto.ttf", 20 * dpi_scaling);
 
-	kl::assert(roboto_font, "Failed to load ROBOTO font");
-	kl::assert(jetbrains_font, "Failed to load JETBRAINS font");
-	kl::assert(jetbrains_font_small, "Failed to load JETBRAINS_SMALL font");
+	kl::assert(roboto_font_small, "Failed to load ROBOTO_SMALL font");
+	kl::assert(roboto_font_large, "Failed to load ROBOTO_LARGE font");
 
 	atlas->Build();
 }

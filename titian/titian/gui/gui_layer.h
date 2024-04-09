@@ -11,13 +11,13 @@ namespace titian {
 		RenderLayer* render_layer = nullptr;
 
 		std::vector<kl::Object<GUISection>> sections = {};
+		float dpi_scaling = 1.0f;
 
 		kl::Float4 special_color = kl::colors::WHITE;
 		kl::Float4 alternate_color = kl::colors::BLACK;
 
-		ImFont* roboto_font = nullptr;
-		ImFont* jetbrains_font = nullptr;
-		ImFont* jetbrains_font_small = nullptr;
+		ImFont* roboto_font_small = nullptr;
+		ImFont* roboto_font_large = nullptr;
 		
 		GUILayer(RenderLayer* render_layer);
 

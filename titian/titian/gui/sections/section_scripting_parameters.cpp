@@ -26,7 +26,7 @@ void titian::GUISectionScriptingParameters::render_gui()
 		scripts.emplace_back(name, parameters);
 	}
 
-	ImGui::PushFont(gui_layer->jetbrains_font_small);
+	ImGui::PushFont(gui_layer->roboto_font_small);
 
 	if (ImGui::Begin("Scripting Parameters")) {
 		int script_counter = 1;

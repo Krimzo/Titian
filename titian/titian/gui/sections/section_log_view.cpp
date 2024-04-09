@@ -10,7 +10,7 @@ void titian::GUISectionLogView::render_gui()
 {
     const TimeBomb _ = this->time_it();
 
-    ImGui::PushFont(gui_layer->jetbrains_font);
+    ImGui::PushFont(gui_layer->roboto_font_large);
 
     const uint64_t unseen_count = Logger::last_log_index - last_log_index;
     const std::string title_extension = unseen_count > 0 ? kl::format(" [", unseen_count, "]###") : "###";

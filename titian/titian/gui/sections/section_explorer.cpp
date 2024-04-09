@@ -1,9 +1,10 @@
 #include "main.h"
 
 
-titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer)
+titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer, GUILayer* gui_layer)
     : GUISection("GUISectionExplorer")
     , app_layer(app_layer)
+    , gui_layer(gui_layer)
 {
     kl::GPU* gpu = &app_layer->gpu;
 
@@ -95,18 +96,17 @@ void titian::GUISectionExplorer::render_gui()
             ImGui::EndPopup();
         }
 
+        const float icon_size = m_icon_size * gui_layer->dpi_scaling;
         const float window_width = ImGui::GetWindowWidth() - ImGui::GetStyle().WindowPadding.x * 2.0f;
-        int column_count = static_cast<int>(window_width / (m_icon_size + ImGui::GetStyle().CellPadding.x * 2.0f));
-        if (column_count < 1) {
-            column_count = 1;
-        }
+        const float icon_width = icon_size + ImGui::GetStyle().CellPadding.x * 2.0f;
+        const int column_count = std::max((int) (window_width / icon_width), 1);
 
         ImGui::Text(m_path.c_str());
         ImGui::Separator();
 
         ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2{ 0.0f, 4.0f });
 
-        if (ImGui::BeginTable("##ExplorerTable", (int) column_count)) {
+        if (ImGui::BeginTable("##ExplorerTable", column_count)) {
             const std::filesystem::path current_path = { m_path };
             if (current_path.has_parent_path()) {
                 ImGui::TableNextColumn();
@@ -126,7 +126,7 @@ void titian::GUISectionExplorer::render_gui()
         ImGui::PopStyleVar();
 
         if (ImGui::IsKeyDown(ImGuiKey_LeftShift) && ImGui::BeginPopupContextWindow()) {
-            ImGui::SliderInt("Icon Size", &m_icon_size, 25, 250);
+            ImGui::SliderFloat("Icon Size", &m_icon_size, 25.0f, 250.0f);
             ImGui::EndPopup();
         }
     }
@@ -143,7 +143,7 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
-    const float icon_size = static_cast<float>(m_icon_size);
+    const float icon_size = m_icon_size * gui_layer->dpi_scaling;
     const float text_height = ImGui::CalcTextSize(path.c_str()).y;
 
     if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
@@ -199,7 +199,7 @@ void titian::GUISectionExplorer::handle_directory_entry(const std::filesystem::p
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
-    const float icon_size = static_cast<float>(m_icon_size);
+    const float icon_size = m_icon_size * gui_layer->dpi_scaling;
     const float text_height = ImGui::CalcTextSize(path.c_str()).y;
 
     if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {

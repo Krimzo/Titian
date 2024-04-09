@@ -140,7 +140,7 @@ void titian::GUISectionShaderEditor::edit_shader(Shader* shader)
 		m_editor.load(shader->data_buffer);
 	}
 
-	ImGui::PushFont(gui_layer->jetbrains_font);
+	ImGui::PushFont(gui_layer->roboto_font_large);
 	m_editor.edit(&shader->data_buffer);
 	ImGui::PopFont();
 }
