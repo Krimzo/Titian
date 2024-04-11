@@ -22,8 +22,7 @@ cbuffer GLOBAL_CB : register(b0)
     float3 OBJECT_ROTATION;
     float3 OBJECT_POSITION;
 
-    float3 MATERIAL_COLOR;
-    float ALPHA_BLEND;
+    float4 MATERIAL_COLOR;
     float TEXTURE_BLEND;
     
     float REFLECTION_FACTOR;
@@ -188,11 +187,11 @@ PS_OUT p_shader(VS_OUT data)
     // Reflection calculations
     const float3 camera_pixel_direction = normalize(data.world - CAMERA_POSITION);
     const float3 reflected_pixel_direction = reflect(camera_pixel_direction, pixel_normal);
-    const float3 reflected_sky_color = CAMERA_HAS_SKYBOX ? SKYBOX_TEXTURE.Sample(SKYBOX_SAMPLER, reflected_pixel_direction).xyz : CAMERA_BACKGROUND.xyz;
+    const float4 reflected_sky_color = CAMERA_HAS_SKYBOX ? SKYBOX_TEXTURE.Sample(SKYBOX_SAMPLER, reflected_pixel_direction) : CAMERA_BACKGROUND;
     
     // Refraction calculations
     const float3 refracted_pixel_direction = refract(camera_pixel_direction, pixel_normal, REFRACTION_INDEX);
-    const float3 refracted_sky_color = CAMERA_HAS_SKYBOX ? SKYBOX_TEXTURE.Sample(SKYBOX_SAMPLER, refracted_pixel_direction).xyz : CAMERA_BACKGROUND.xyz;
+    const float4 refracted_sky_color = CAMERA_HAS_SKYBOX ? SKYBOX_TEXTURE.Sample(SKYBOX_SAMPLER, refracted_pixel_direction) : CAMERA_BACKGROUND;
 
     // Light calculations
     const float3 reflected_sun_direction = reflect(-SUN_DIRECTION, pixel_normal);
@@ -221,14 +220,14 @@ PS_OUT p_shader(VS_OUT data)
     const float3 light_intensity = ambient_factor + diffuse_factor + specular_factor;
 
     // Color calculations
-    const float3 texture_color = ENTITY_TEXTURE.Sample(ENTITY_SAMPLER, data.textur).xyz;
-    const float3 unlit_color = lerp(MATERIAL_COLOR, texture_color, TEXTURE_BLEND);
-    const float3 lit_color = unlit_color * light_intensity;
+    const float4 texture_color = ENTITY_TEXTURE.Sample(ENTITY_SAMPLER, data.textur);
+    const float4 unlit_color = lerp(MATERIAL_COLOR, texture_color, TEXTURE_BLEND);
+    const float4 lit_color = unlit_color * float4(light_intensity, 1.0f);
     
-    const float3 reflected_color = lerp(lit_color, reflected_sky_color, pixel_reflectivity);
-    const float3 refracted_color = lerp(reflected_color, refracted_sky_color, REFRACTION_FACTOR);
+    const float4 reflected_color = lerp(lit_color, reflected_sky_color, pixel_reflectivity);
+    const float4 refracted_color = lerp(reflected_color, refracted_sky_color, REFRACTION_FACTOR);
     
-    float4 _post_color = float4(refracted_color, ALPHA_BLEND);
+    float4 _post_color = refracted_color;
 #ifdef _CUSTOM_PIXEL_SHADER
     _alter_post(data, _post_color);
 #endif

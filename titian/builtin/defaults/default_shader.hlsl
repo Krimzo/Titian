@@ -37,8 +37,7 @@ cbuffer GLOBAL_CB : register(b0)
     float3 OBJECT_ROTATION;
     float3 OBJECT_POSITION;
     
-    float3 MATERIAL_COLOR;
-    float ALPHA_BLEND;
+    float4 MATERIAL_COLOR;
     float TEXTURE_BLEND;
     
     float REFLECTION_FACTOR;

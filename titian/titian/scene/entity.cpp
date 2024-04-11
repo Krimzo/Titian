@@ -204,7 +204,7 @@ kl::Float3 titian::Entity::angular() const
     }
     const physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*)m_actor;
     const physx::PxVec3 angular = actor->getAngularVelocity();
-    return (const kl::Float3&)angular;
+    return (const kl::Float3&) angular;
 }
 
 // Collision

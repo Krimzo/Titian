@@ -32,7 +32,7 @@ void sandbox::SandboxPieceMonkes::setup_self()
         const float normalized = kl::clamp(percentage, 0.0f, 1.0f);
 
         kl::Object material = new Material();
-        material->color = kl::Float4{ normalized };
+        material->color = kl::Float4{ kl::Float3{ normalized }, 1.0f };
         scene->materials[material_name] = material;
 
         // Entity

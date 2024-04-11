@@ -69,8 +69,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         alignas(16) kl::Float3 OBJECT_ROTATION;
         alignas(16) kl::Float3 OBJECT_POSITION;
 
-        alignas(16) kl::Float3 OBJECT_COLOR;
-        float ALPHA_BLEND{};
+        alignas(16) kl::Float4 OBJECT_COLOR;
         float TEXTURE_BLEND{};
 
         float REFLECTION_FACTOR{};
@@ -194,8 +193,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.OBJECT_ROTATION = entity->rotation();
         global_cb.OBJECT_POSITION = entity->position();
 
-        global_cb.OBJECT_COLOR = material->color.xyz();
-        global_cb.ALPHA_BLEND = material->alpha_blend;
+        global_cb.OBJECT_COLOR = material->color;
         global_cb.TEXTURE_BLEND = material->texture_blend;
 
         global_cb.REFLECTION_FACTOR = material->reflection_factor;
@@ -265,8 +263,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.OBJECT_ROTATION = entity->rotation();
         global_cb.OBJECT_POSITION = entity->position();
 
-        global_cb.OBJECT_COLOR = material->color.xyz();
-        global_cb.ALPHA_BLEND = material->alpha_blend;
+        global_cb.OBJECT_COLOR = material->color;
         global_cb.TEXTURE_BLEND = material->texture_blend;
 
         global_cb.REFLECTION_FACTOR = material->reflection_factor;

@@ -208,8 +208,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         alignas(16) kl::Float3 OBJECT_ROTATION;
         alignas(16) kl::Float3 OBJECT_POSITION;
 
-        alignas(16) kl::Float3 OBJECT_COLOR;
-        float ALPHA_BLEND{};
+        alignas(16) kl::Float4 OBJECT_COLOR;
         float TEXTURE_BLEND{};
 
         float REFLECTION_FACTOR{};
@@ -284,8 +283,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     global_cb.SUN_DIRECTION = kl::normalize(kl::Float3{ 0.0f, -1.0f, 1.0f });
     global_cb.SUN_COLOR = kl::colors::WHITE;
 
-    global_cb.OBJECT_COLOR = material->color.xyz();
-    global_cb.ALPHA_BLEND = material->alpha_blend;
+    global_cb.OBJECT_COLOR = material->color;
     global_cb.TEXTURE_BLEND = material->texture_blend;
 
     global_cb.REFLECTION_FACTOR = material->reflection_factor;
@@ -323,13 +321,12 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
         ImGui::SameLine();
         gui_colored_text(selected_material, gui_layer->special_color);
 
-        ImGui::DragFloat("Alpha Blend", &material->alpha_blend, 0.05f, 0.0f, 1.0f);
+        ImGui::ColorEdit4("Base Color", material->color);
         ImGui::DragFloat("Texture Blend", &material->texture_blend, 0.05f, 0.0f, 1.0f);
+
         ImGui::DragFloat("Reflection Factor", &material->reflection_factor, 0.05f, 0.0f, 1.0f);
         ImGui::DragFloat("Refraction Factor", &material->refraction_factor, 0.05f, 0.0f, 1.0f);
         ImGui::DragFloat("Refraction Index", &material->refraction_index, 0.05f, 0.0f, 1.0f);
-
-        ImGui::ColorEdit4("Base Color", material->color);
 
         if (ImGui::BeginCombo("Color Map", material->color_map_name.c_str())) {
             if (ImGui::Selectable("/", material->color_map_name == "/")) {
