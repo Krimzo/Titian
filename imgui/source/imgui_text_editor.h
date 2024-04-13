@@ -12,15 +12,10 @@
 #include <boost/regex.hpp>
 #include "imgui.h"
 
-namespace titian {
-	class LanguageEditor;
-}
 
 class IMGUI_API TextEditor
 {
 public:
-	friend class titian::LanguageEditor;
-
 	// ------------- Exposed API ------------- //
 
 	TextEditor();
@@ -104,7 +99,23 @@ public:
 	void ImGuiDebugPanel(const std::string& panelName = "Debug");
 	void UnitTests();
 
-private:
+	/* CUSTOM */
+	inline std::string get_word_at_cursor() const
+	{
+		Coordinates coords{};
+		this->GetCursorPosition(coords.mLine, coords.mColumn);
+		if (coords.mColumn > 0) {
+			coords.mColumn -= 1;
+		}
+		const Coordinates start = this->FindWordStart(coords);
+		const Coordinates end = this->FindWordEnd(coords);
+		if (start >= end) {
+			return "";
+		}
+		return this->GetText(start, end);
+	}
+	/* ------ */
+
 	// ------------- Generic utils ------------- //
 
 	static inline ImVec4 U32ColorToVec4(ImU32 in)
@@ -256,7 +267,7 @@ private:
 		std::string mDeclaration;
 	};
 
-	typedef std::unordered_map<std::string, Identifier> Identifiers;
+	typedef std::map<std::string, Identifier> Identifiers;
 	typedef std::array<ImU32, (unsigned)PaletteIndex::Max> Palette;
 
 	struct Glyph
@@ -279,7 +290,7 @@ private:
 		typedef bool(*TokenizeCallback)(const char* in_begin, const char* in_end, const char*& out_begin, const char*& out_end, PaletteIndex& paletteIndex);
 
 		std::string mName;
-		std::unordered_set<std::string> mKeywords;
+		std::set<std::string> mKeywords;
 		Identifiers mIdentifiers;
 		Identifiers mPreprocIdentifiers;
 		std::string mCommentStart, mCommentEnd, mSingleLineComment;

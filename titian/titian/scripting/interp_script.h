@@ -8,7 +8,7 @@
 namespace titian {
 	inline const chaiscript::ModulePtr INTERP_SCRIPT_MODULE = chaiscript::ModulePtr(new chaiscript::Module());
 
-	inline const std::unordered_set<std::string> INTERP_SCRIPT_KEYWORDS
+	inline const std::set<std::string> INTERP_SCRIPT_KEYWORDS
 	{
 		"attr",
 		"auto",
@@ -28,7 +28,7 @@ namespace titian {
 		"while",
 	};
 
-	inline std::unordered_map<std::string, std::string> INTERP_SCRIPT_IDENTIFIERS
+	inline std::map<std::string, std::string> INTERP_SCRIPT_IDENTIFIERS
 	{};
 }
 

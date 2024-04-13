@@ -16,5 +16,8 @@ namespace titian {
 		AppLayer(const std::string_view& name);
 
 		bool update() override;
+
+	private:
+		void handle_resize(kl::Int2 size);
 	};
 }

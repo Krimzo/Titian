@@ -309,6 +309,14 @@ void kl::Window::draw_image(const Image& image, const Int2& position) const
     draw_pixel_data(image, image.size(), position);
 }
 
+void kl::Window::set_dark_mode(const bool enabled) const
+{
+    const BOOL mode = static_cast<BOOL>(enabled);
+    DwmSetWindowAttribute(m_window,
+        DWMWINDOWATTRIBUTE::DWMWA_USE_IMMERSIVE_DARK_MODE,
+        &mode, sizeof(BOOL));
+}
+
 void kl::Window::notify() const
 {
     PostMessageA(m_window, WM_NULL, NULL, NULL);

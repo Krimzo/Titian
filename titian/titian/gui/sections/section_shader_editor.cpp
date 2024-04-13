@@ -44,16 +44,6 @@ void titian::GUISectionShaderEditor::render_gui()
 		Shader* shader = &scene->get_shader(selected_shader);
 		if (shader) {
 			edit_shader(shader);
-
-			if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-				const std::filesystem::path path = file.value();
-				const std::string extension = path.extension().string();
-				if (extension == FILE_EXTENSION_SHADER) {
-					shader->data_buffer = kl::read_file_string(path.string());
-					shader->reload();
-					m_last_shader = nullptr;
-				}
-			}
 		}
 		show_shader_properties(shader);
 	}
@@ -142,5 +132,37 @@ void titian::GUISectionShaderEditor::edit_shader(Shader* shader)
 
 	ImGui::PushFont(gui_layer->roboto_font_large);
 	m_editor.edit(&shader->data_buffer);
+
+	if (ImGui::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+		const TextEditor::LanguageDefinition* definition = m_editor.get_definition();
+		const std::string current_word = m_editor.get_word_at_cursor();
+		if (definition && !current_word.empty()) {
+			const TextEditor::Palette& palette = *m_editor.get_palette();
+			ImGui::PushStyleColor(ImGuiCol_Text, palette[1]);
+			for (const auto& keyword : definition->mKeywords) {
+				if (keyword.find(current_word) != -1) {
+					ImGui::MenuItem(keyword.c_str());
+				}
+			}
+			ImGui::PushStyleColor(ImGuiCol_Text, palette[8]);
+			for (const auto& [identifier, _] : definition->mIdentifiers) {
+				if (identifier.find(current_word) != -1) {
+					ImGui::MenuItem(identifier.c_str());
+				}
+			}
+			ImGui::PopStyleColor(2);
+		}
+	}
+	ImGui::End();
 	ImGui::PopFont();
+
+	if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+		const std::filesystem::path path = file.value();
+		const std::string extension = path.extension().string();
+		if (extension == FILE_EXTENSION_SHADER) {
+			shader->data_buffer = kl::read_file_string(path.string());
+			shader->reload();
+			m_last_shader = nullptr;
+		}
+	}
 }

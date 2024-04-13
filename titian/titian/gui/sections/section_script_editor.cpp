@@ -28,69 +28,27 @@ void titian::GUISectionScriptEditor::render_gui()
 	kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
 	Scene* scene = &editor_layer->game_layer->scene;
 
+	Script* script = &scene->get_script(selected_script);
+	NativeScript* native_script = dynamic_cast<NativeScript*>(script);
+	InterpScript* interp_script = dynamic_cast<InterpScript*>(script);
+	NodeScript* node_script = dynamic_cast<NodeScript*>(script);
+
 	if (ImGui::Begin("Script Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const float available_width = ImGui::GetContentRegionAvail().x;
 		ImGui::Columns(2, "ScriptEditorColumns", false);
 
 		ImGui::SetColumnWidth(ImGui::GetColumnIndex(), available_width * 0.25f);
 		if (ImGui::BeginChild("ScriptListChild")) {
-			// Create script
-			if (ImGui::BeginPopupContextWindow("NewScript", ImGuiPopupFlags_MouseButtonMiddle)) {
-				const std::string name = gui_input_continuous("##CreateScriptInput");
-				if (!name.empty()) {
-					if (ImGui::MenuItem("New Interp Script") && !scene->scripts.contains(name)) {
-						scene->scripts[name] = new InterpScript();
-						ImGui::CloseCurrentPopup();
-					}
-#if 0
-					if (ImGui::MenuItem("New Node Script") && !scene->scripts.contains(name)) {
-						scene->scripts[name] = new NodeScript();
-						ImGui::CloseCurrentPopup();
-					}
-#endif
-					if (ImGui::MenuItem("New Native Script") && !scene->scripts.contains(name)) {
-						scene->scripts[name] = new NativeScript();
-						ImGui::CloseCurrentPopup();
-					}
-				}
-				ImGui::EndPopup();
-			}
-
-			// Scripts
 			display_scripts(scene);
 		}
 		ImGui::EndChild();
 		ImGui::NextColumn();
 
-		Script* script = &scene->get_script(selected_script);
-		NativeScript* native_script = dynamic_cast<NativeScript*>(script);
-		InterpScript* interp_script = dynamic_cast<InterpScript*>(script);
-		NodeScript* node_script = dynamic_cast<NodeScript*>(script);
-
 		if (native_script) {
 			edit_native_script(native_script);
-
-			if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-				const std::filesystem::path path = file.value();
-				const std::string extension = path.extension().string();
-				if (extension == FILE_EXTENSION_NATIVE_SCRIPT) {
-					native_script->data = kl::read_file(path.string());
-					native_script->reload();
-				}
-			}
 		}
 		else if (interp_script) {
 			edit_interp_script(interp_script);
-
-			if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-				const std::filesystem::path path = file.value();
-				const std::string extension = path.extension().string();
-				if (extension == FILE_EXTENSION_INTERP_SCRIPT) {
-					interp_script->source = kl::read_file_string(path.string());
-					interp_script->reload();
-					m_last_script = nullptr;
-				}
-			}
 		}
 		else if (node_script) {
 			edit_node_script(node_script);
@@ -102,6 +60,27 @@ void titian::GUISectionScriptEditor::render_gui()
 
 void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 {
+	if (ImGui::BeginPopupContextWindow("NewScript", ImGuiPopupFlags_MouseButtonMiddle)) {
+		const std::string name = gui_input_continuous("##CreateScriptInput");
+		if (!name.empty()) {
+			if (ImGui::MenuItem("New Interp Script") && !scene->scripts.contains(name)) {
+				scene->scripts[name] = new InterpScript();
+				ImGui::CloseCurrentPopup();
+			}
+#if 0
+			if (ImGui::MenuItem("New Node Script") && !scene->scripts.contains(name)) {
+				scene->scripts[name] = new NodeScript();
+				ImGui::CloseCurrentPopup();
+			}
+#endif
+			if (ImGui::MenuItem("New Native Script") && !scene->scripts.contains(name)) {
+				scene->scripts[name] = new NativeScript();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+		ImGui::EndPopup();
+	}
+
 	const std::string filter = gui_input_continuous("Search###ScriptEditor");
 	for (auto& [script_name, script] : scene->scripts) {
 		if (!filter.empty() && script_name.find(filter) == -1) {
@@ -196,6 +175,15 @@ void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
 {
 	std::vector<byte>& data = script->data;
 	m_native_editor.DrawContents(data.data(), data.size());
+
+	if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+		const std::filesystem::path path = file.value();
+		const std::string extension = path.extension().string();
+		if (extension == FILE_EXTENSION_NATIVE_SCRIPT) {
+			script->data = kl::read_file(path.string());
+			script->reload();
+		}
+	}
 }
 
 void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
@@ -207,7 +195,39 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 
 	ImGui::PushFont(gui_layer->roboto_font_large);
 	m_interp_editor.edit(&script->source);
+
+	if (ImGui::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+		const TextEditor::LanguageDefinition* definition = m_interp_editor.get_definition();
+		const std::string current_word = m_interp_editor.get_word_at_cursor();
+		if (definition && !current_word.empty()) {
+			const TextEditor::Palette& palette = *m_interp_editor.get_palette();
+			ImGui::PushStyleColor(ImGuiCol_Text, palette[1]);
+			for (const auto& keyword : definition->mKeywords) {
+				if (keyword.find(current_word) != -1) {
+					ImGui::MenuItem(keyword.c_str());
+				}
+			}
+			ImGui::PushStyleColor(ImGuiCol_Text, palette[8]);
+			for (const auto& [identifier, _] : definition->mIdentifiers) {
+				if (identifier.find(current_word) != -1) {
+					ImGui::MenuItem(identifier.c_str());
+				}
+			}
+			ImGui::PopStyleColor(2);
+		}
+	}
+	ImGui::End();
 	ImGui::PopFont();
+
+	if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+		const std::filesystem::path path = file.value();
+		const std::string extension = path.extension().string();
+		if (extension == FILE_EXTENSION_INTERP_SCRIPT) {
+			script->source = kl::read_file_string(path.string());
+			script->reload();
+			m_last_script = nullptr;
+		}
+	}
 }
 
 void titian::GUISectionScriptEditor::edit_node_script(NodeScript* script)

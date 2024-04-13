@@ -99,6 +99,7 @@ namespace kl {
         void draw_pixel_data(const Color* data, const Int2& size, const Int2& position = {}) const;
         void draw_image(const Image& image, const Int2& position = {}) const;
 
+        void set_dark_mode(bool enabled) const;
         void notify() const;
     };
 }

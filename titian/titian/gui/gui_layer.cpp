@@ -13,8 +13,6 @@ titian::GUILayer::GUILayer(RenderLayer* render_layer)
 
 	ImGui_ImplWin32_Init(static_cast<HWND>(*window));
 	ImGui_ImplDX11_Init(gpu->device().Get(), gpu->context().Get());
-
-	ImGui_ImplWin32_EnableDpiAwareness();
 	dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(*window);
 
 	ImGui::StyleColorsDark();

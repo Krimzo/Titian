@@ -69,7 +69,6 @@ titian::LanguageEditor::LanguageEditor()
 
 	// editor
 	m_text_editor.SetPalette(TextEditor::PaletteId::Dark);
-	m_text_editor.SetLanguageDefinition(TextEditor::LanguageDefinitionId::Chai);
 }
 
 void titian::LanguageEditor::load(const std::string& source)
@@ -81,6 +80,28 @@ void titian::LanguageEditor::edit(std::string* source)
 {
 	m_text_editor.Render("Interp Editor");
 	*source = m_text_editor.GetText();
+}
+
+std::string titian::LanguageEditor::get_word_at_cursor() const
+{
+	return m_text_editor.get_word_at_cursor();
+}
+
+const TextEditor::LanguageDefinition* titian::LanguageEditor::get_definition() const
+{
+	switch (m_text_editor.GetLanguageDefinition())
+	{
+	case TextEditor::LanguageDefinitionId::Chai:
+		return TextEditor::LanguageDefinition::Chai();
+	case TextEditor::LanguageDefinitionId::Hlsl:
+		return TextEditor::LanguageDefinition::Hlsl();
+	}
+	return nullptr;
+}
+
+const TextEditor::Palette* titian::LanguageEditor::get_palette() const
+{
+	return &m_text_editor.mPalette;
 }
 
 void titian::LanguageEditor::load_chai_standard()
