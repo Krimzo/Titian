@@ -79,20 +79,18 @@ bool kl::Ray::intersect_triangle(const Triangle& triangle, Float3* out_intersect
     return true;
 }
 
-bool kl::Ray::intersect_box(const Float3& box_min, const Float3& box_max, Float3* out_intersection) const
+bool kl::Ray::intersect_aabb(const Float3& aabb_min, const Float3& aabb_max, Float3* out_intersection) const
 {
     const Float3 inv_ray{ 1.0f / m_direction.x, 1.0f / m_direction.y, 1.0f / m_direction.z };
-
-    const Float3 t1 = (box_min - origin) * inv_ray;
-    const Float3 t2 = (box_max - origin) * inv_ray;
+    const Float3 t1 = (aabb_min - origin) * inv_ray;
+    const Float3 t2 = (aabb_max - origin) * inv_ray;
 
     const Float3 t_min{ std::min(t1.x, t2.x), std::min(t1.y, t2.y), std::min(t1.z, t2.z) };
     const Float3 t_max{ std::max(t1.x, t2.x), std::max(t1.y, t2.y), std::max(t1.z, t2.z) };
-
     const float t_min_max = std::max(std::max(t_min.x, t_min.y), t_min.z);
     const float t_max_min = std::min(std::min(t_max.x, t_max.y), t_max.z);
 
-    if (t_min_max > t_max_min) {
+    if (t_max_min < 0.0f || t_min_max > t_max_min) {
         return false;
     }
     if (out_intersection) {

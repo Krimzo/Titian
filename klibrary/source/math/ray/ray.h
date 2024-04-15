@@ -26,7 +26,7 @@ namespace kl {
         // Intersection
         bool intersect_plane(const Plane& plane, Float3* out_intersection) const;
         bool intersect_triangle(const Triangle& triangle, Float3* out_intersection) const;
-        bool intersect_box(const Float3& box_min, const Float3& box_max, Float3* out_intersection) const;
+        bool intersect_aabb(const Float3& aabb_min, const Float3& aabb_max, Float3* out_intersection) const;
 
         bool can_intersect_sphere(const Sphere& sphere) const;
         bool intersect_sphere(const Sphere& sphere, Float3* out_intersection, float* out_distance) const;
