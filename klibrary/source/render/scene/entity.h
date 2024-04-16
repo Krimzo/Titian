@@ -28,10 +28,10 @@ namespace kl {
         virtual ~Entity();
 
         Entity(const Entity&) = delete;
-        Entity(const Entity&&) = delete;
+        Entity(Entity&&) = delete;
 
         void operator=(const Entity&) = delete;
-        void operator=(const Entity&&) = delete;
+        void operator=(Entity&&) = delete;
 
         // Get
         physx::PxRigidActor* actor() const;

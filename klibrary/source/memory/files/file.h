@@ -31,10 +31,10 @@ namespace kl {
         virtual ~File();
 
         File(const File&) = delete;
-        File(const File&&) = delete;
+        File(File&&) = delete;
 
         void operator=(const File&) = delete;
-        void operator=(const File&&) = delete;
+        void operator=(File&&) = delete;
 
         operator bool() const;
 

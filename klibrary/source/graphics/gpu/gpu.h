@@ -35,10 +35,10 @@ namespace kl {
         virtual ~GPU();
 
         GPU(const GPU&) = delete;
-        GPU(const GPU&&) = delete;
+        GPU(GPU&&) = delete;
 
         void operator=(const GPU&) = delete;
-        void operator=(const GPU&&) = delete;
+        void operator=(GPU&&) = delete;
 
         // Get
         dx::Device device() const;
@@ -52,8 +52,8 @@ namespace kl {
         dx::Texture back_buffer() const;
         void swap_buffers(bool v_sync) const;
 
-        bool in_fullscreen() const;
         void set_fullscreen(bool enabled) const;
+        bool in_fullscreen() const;
 
         // Internal buffers
         void clear_internal_color(const Float4& color = {}) const;
@@ -66,14 +66,14 @@ namespace kl {
         void bind_internal_views() const;
 
         // Shader helper
-        ShaderHolder<dx::VertexShader> create_vertex_shader(const std::string& shader_source);
-        ShaderHolder<dx::GeometryShader> create_geometry_shader(const std::string& shader_source);
-        ShaderHolder<dx::PixelShader> create_pixel_shader(const std::string& shader_source);
-        ShaderHolder<dx::ComputeShader> create_compute_shader(const std::string& shader_source);
+        ShaderHolder<dx::VertexShader> create_vertex_shader(const std::string& shader_source) const;
+        ShaderHolder<dx::GeometryShader> create_geometry_shader(const std::string& shader_source) const;
+        ShaderHolder<dx::PixelShader> create_pixel_shader(const std::string& shader_source) const;
+        ShaderHolder<dx::ComputeShader> create_compute_shader(const std::string& shader_source) const;
 
-        RenderShaders create_render_shaders(const std::string& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors = {});
+        RenderShaders create_render_shaders(const std::string& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors = {}) const;
 
         // Text
-        void render_text() const;
+        void draw_text() const;
     };
 }

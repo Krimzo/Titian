@@ -24,6 +24,7 @@
 
 namespace kl {
     using Microsoft::WRL::ComPtr;
+    using TextFormat = ComPtr<IDWriteTextFormat>;
 }
 
 namespace kl::dx {

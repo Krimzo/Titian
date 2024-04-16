@@ -40,10 +40,10 @@ namespace kl {
         virtual ~Scene();
 
         Scene(const Scene&) = delete;
-        Scene(const Scene&&) = delete;
+        Scene(Scene&&) = delete;
 
         void operator=(const Scene&) = delete;
-        void operator=(const Scene&&) = delete;
+        void operator=(Scene&&) = delete;
 
         // Iterate
         std::map<std::string, Object<Entity>>::iterator begin();

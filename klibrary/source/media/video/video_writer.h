@@ -31,10 +31,10 @@ namespace kl {
         VideoWriter(const std::string& filepath, const kl::Int2& frame_size, int fps, int bit_rate, const GUID& encoding_format);
 
         VideoWriter(const VideoWriter&) = delete;
-        VideoWriter(const VideoWriter&&) = delete;
+        VideoWriter(VideoWriter&&) = delete;
 
         void operator=(const VideoWriter&) = delete;
-        void operator=(const VideoWriter&&) = delete;
+        void operator=(VideoWriter&&) = delete;
 
         Int2 frame_size() const;
         int fps() const;

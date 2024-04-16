@@ -12,13 +12,13 @@ namespace kl {
     class ShaderHolder
     {
     public:
-        GPU* gpu = nullptr;
+        const GPU* gpu = nullptr;
         S shader = nullptr;
         dx::Buffer cbuffer = nullptr;
 
         // Construct
-        ShaderHolder(kl::GPU* gpu);
-        ShaderHolder(kl::GPU* gpu, const S& shader);
+        ShaderHolder(const kl::GPU* gpu);
+        ShaderHolder(const kl::GPU* gpu, const S& shader);
 
         // Get
         operator S() const;

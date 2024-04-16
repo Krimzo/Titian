@@ -3,12 +3,12 @@
 
 // Construct
 template<typename S>
-kl::ShaderHolder<S>::ShaderHolder(kl::GPU* gpu)
+kl::ShaderHolder<S>::ShaderHolder(const GPU* gpu)
     : gpu(gpu)
 {}
 
 template<typename S>
-kl::ShaderHolder<S>::ShaderHolder(kl::GPU* gpu, const S& shader)
+kl::ShaderHolder<S>::ShaderHolder(const GPU* gpu, const S& shader)
     : gpu(gpu), shader(shader)
 {}
 
@@ -22,7 +22,7 @@ kl::ShaderHolder<S>::operator S() const
 template<typename S>
 kl::ShaderHolder<S>::operator bool() const
 {
-    return (bool) shader;
+    return static_cast<bool>(shader);
 }
 
 // CBuffer
@@ -30,7 +30,7 @@ template<typename S>
 void kl::ShaderHolder<S>::update_cbuffer(const void* data, UINT byte_size)
 {
 	// Verify alignment
-    kl::assert(byte_size % 16 == 0, "CBuffers must have 16 byte alignment");
+    assert(byte_size % 16 == 0, "CBuffers must have 16 byte alignment");
 
     // Regenerate buffer if needed
     const UINT buffer_size = cbuffer ? gpu->buffer_size(cbuffer) : 0;

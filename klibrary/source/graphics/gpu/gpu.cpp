@@ -127,8 +127,7 @@ kl::dx::Texture kl::GPU::back_buffer() const
 
 void kl::GPU::swap_buffers(const bool v_sync) const
 {
-    const UINT sync_interval = static_cast<UINT>(v_sync);
-    m_chain->Present(sync_interval, NULL) >> verify_result;
+    m_chain->Present(v_sync, NULL) >> verify_result;
     bind_internal_views();
 }
 
@@ -232,31 +231,31 @@ void kl::GPU::bind_internal_views() const
 }
 
 // Shader helper
-kl::ShaderHolder<kl::dx::VertexShader> kl::GPU::create_vertex_shader(const std::string& shader_source)
+kl::ShaderHolder<kl::dx::VertexShader> kl::GPU::create_vertex_shader(const std::string& shader_source) const
 {
     const CompiledShader compiled_shader = compile_vertex_shader(shader_source);
     return { this, DeviceHolder::create_vertex_shader(compiled_shader) };
 }
 
-kl::ShaderHolder<kl::dx::GeometryShader> kl::GPU::create_geometry_shader(const std::string& shader_source)
+kl::ShaderHolder<kl::dx::GeometryShader> kl::GPU::create_geometry_shader(const std::string& shader_source) const
 {
     const CompiledShader compiled_shader = compile_geometry_shader(shader_source);
     return { this, DeviceHolder::create_geometry_shader(compiled_shader) };
 }
 
-kl::ShaderHolder<kl::dx::PixelShader> kl::GPU::create_pixel_shader(const std::string& shader_source)
+kl::ShaderHolder<kl::dx::PixelShader> kl::GPU::create_pixel_shader(const std::string& shader_source) const
 {
     const CompiledShader compiled_shader = compile_pixel_shader(shader_source);
     return { this, DeviceHolder::create_pixel_shader(compiled_shader) };
 }
 
-kl::ShaderHolder<kl::dx::ComputeShader> kl::GPU::create_compute_shader(const std::string& shader_source)
+kl::ShaderHolder<kl::dx::ComputeShader> kl::GPU::create_compute_shader(const std::string& shader_source) const
 {
     const CompiledShader compiled_shader = compile_compute_shader(shader_source);
     return { this, DeviceHolder::create_compute_shader(compiled_shader) };
 }
 
-kl::RenderShaders kl::GPU::create_render_shaders(const std::string& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors)
+kl::RenderShaders kl::GPU::create_render_shaders(const std::string& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors) const
 {
     const CompiledShader compiled_vertex_shader = compile_vertex_shader(shader_sources);
     const CompiledShader compiled_pixel_shader = compile_pixel_shader(shader_sources);
@@ -268,8 +267,8 @@ kl::RenderShaders kl::GPU::create_render_shaders(const std::string& shader_sourc
     return shaders;
 }
 
-void kl::GPU::render_text() const
+void kl::GPU::draw_text() const
 {
     const UINT index = m_chain->GetCurrentBackBufferIndex();
-    TextRaster::render_text(index);
+    TextRaster::draw_text(index);
 }

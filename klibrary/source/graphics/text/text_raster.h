@@ -4,18 +4,21 @@
 
 
 namespace kl {
+	struct Text
+	{
+		TextFormat format{};
+		kl::Float4 color{ 1.0f };
+		kl::Float2 position{};
+		kl::Float2 rect_size{};
+		std::wstring data{};
+	};
+}
+
+namespace kl {
 	class TextRaster
 	{
 	public:
 		static inline constexpr UINT BUFFER_COUNT = 2;
-
-		struct Text
-		{
-			ComPtr<IDWriteTextFormat> format{};
-			kl::Float4 color{ 1.0f };
-			kl::Float2 position{};
-			std::wstring data{};
-		};
 
 	protected:
 		ComPtr<ID2D1Factory> m_d2d1_factory{};
@@ -23,7 +26,7 @@ namespace kl {
 		ComPtr<ID2D1RenderTarget> m_d2d1_targets[BUFFER_COUNT] = {};
 
 	public:
-		std::vector<Text> texts{};
+		std::vector<Text> text_data{};
 
 		// Init
 		TextRaster();
@@ -36,7 +39,7 @@ namespace kl {
 		void operator=(TextRaster&&) = delete;
 
 		// Create
-		ComPtr<IDWriteTextFormat> create_text_format(
+		TextFormat create_text_format(
 			const std::wstring_view& font_family,
 			DWRITE_FONT_WEIGHT font_weight,
 			DWRITE_FONT_STYLE font_style,
@@ -45,6 +48,6 @@ namespace kl {
 		) const;
 
 		// Draw
-		void render_text(UINT target_index) const;
+		void draw_text(UINT target_index) const;
 	};
 }

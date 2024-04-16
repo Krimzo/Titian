@@ -22,10 +22,10 @@ namespace kl {
         virtual ~DLL();
 
         DLL(const DLL&) = delete;
-        DLL(const DLL&&) = delete;
+        DLL(DLL&&) = delete;
 
         void operator=(const DLL&) = delete;
-        void operator=(const DLL&&) = delete;
+        void operator=(DLL&&) = delete;
 
         operator bool() const;
 

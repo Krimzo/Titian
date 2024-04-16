@@ -21,10 +21,10 @@ namespace kl {
         VideoReader(const std::string& filepath);
 
         VideoReader(const VideoReader&) = delete;
-        VideoReader(const VideoReader&&) = delete;
+        VideoReader(VideoReader&&) = delete;
 
         void operator=(const VideoReader&) = delete;
-        void operator=(const VideoReader&&) = delete;
+        void operator=(VideoReader&&) = delete;
 
         uint64_t byte_size() const;
 

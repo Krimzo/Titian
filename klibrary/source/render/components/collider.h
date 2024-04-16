@@ -16,10 +16,10 @@ namespace kl {
         virtual ~Collider();
 
         Collider(const Collider&) = delete;
-        Collider(const Collider&&) = delete;
+        Collider(Collider&&) = delete;
 
         void operator=(const Collider&) = delete;
-        void operator=(const Collider&&) = delete;
+        void operator=(Collider&&) = delete;
 
         // Get
         physx::PxShape* shape() const;
