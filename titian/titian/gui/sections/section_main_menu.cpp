@@ -112,11 +112,8 @@ void titian::GUISectionMainMenu::render_gui()
         // View
         if (ImGui::BeginMenu("View")) {
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
-            if (ImGui::BeginMenu("Features")) {
-                ImGui::Checkbox("Render Wireframe", &render_layer->render_wireframe);
-                ImGui::Checkbox("Use vSync", &render_layer->v_sync);
-                ImGui::EndMenu();
-            }
+            ImGui::Checkbox("Wireframe", &render_layer->render_wireframe);
+            ImGui::Checkbox("vSync", &render_layer->v_sync);
             ImGui::PopStyleVar();
             ImGui::EndMenu();
         }
