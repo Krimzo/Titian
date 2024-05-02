@@ -43,7 +43,7 @@ void titian::GameLayer::start_game()
 	}
 
 	// Start
-	app_layer->timer->reset_elapsed();
+	app_layer->timer->reset();
 	for (auto& [_, script] : scene->scripts) {
 		script->call_start(&scene);
 	}
@@ -52,6 +52,7 @@ void titian::GameLayer::start_game()
 	game_running = true;
 	game_paused = false;
 	Logger::log("Game started.");
+	app_layer->timer->reset();
 }
 
 void titian::GameLayer::pause_game()
