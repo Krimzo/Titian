@@ -57,14 +57,14 @@ void titian::GameLayer::start_game()
 
 void titian::GameLayer::pause_game()
 {
-	game_paused = true;
 	app_layer->timer->pause();
+	game_paused = true;
 }
 
 void titian::GameLayer::resume_game()
 {
-	app_layer->timer->resume();
 	game_paused = false;
+	app_layer->timer->resume();
 }
 
 void titian::GameLayer::stop_game()

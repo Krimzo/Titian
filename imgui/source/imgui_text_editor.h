@@ -114,10 +114,29 @@ public:
 		}
 		return this->GetText(start, end);
 	}
+
+	inline void replace_word_at_cursor(const std::string_view& text)
+	{
+		Coordinates coords{};
+		this->GetCursorPosition(coords.mLine, coords.mColumn);
+		if (coords.mColumn > 0) {
+			coords.mColumn -= 1;
+		}
+
+		const int start = GetCharacterIndexL(this->FindWordStart(coords));
+		const int end = GetCharacterIndexL(this->FindWordEnd(coords));
+		if (start > end) {
+			return;
+		}
+
+		std::vector<std::string> lines = this->GetTextLines();
+		auto& line = lines[coords.mLine];
+		line.replace(line.begin() + start, line.begin() + end, text.data());
+		this->SetTextLines(lines);
+	}
 	/* ------ */
 
 	// ------------- Generic utils ------------- //
-
 	static inline ImVec4 U32ColorToVec4(ImU32 in)
 	{
 		float s = 1.0f / 255.0f;

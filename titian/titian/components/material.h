@@ -14,6 +14,8 @@ namespace titian {
 		float refraction_factor = 0.0f;
 		float refraction_index = 1.0f;
 
+		kl::Float4x4 custom_data = {};
+
 		std::string color_map_name = "/";
 		std::string normal_map_name = "/";
 		std::string roughness_map_name = "/";

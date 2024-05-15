@@ -13,6 +13,7 @@ namespace titian {
 		void edit(std::string* source);
 
 		std::string get_word_at_cursor() const;
+		void replace_word_at_cursor(const std::string_view& text);
 
 		const TextEditor::LanguageDefinition* get_definition() const;
 		const TextEditor::Palette* get_palette() const;

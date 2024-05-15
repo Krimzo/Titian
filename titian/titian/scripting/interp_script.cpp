@@ -741,6 +741,8 @@ int load_types = [&]
 		{ chaiscript::fun(&Material::refraction_factor), "refraction_factor" },
 		{ chaiscript::fun(&Material::refraction_index), "refraction_index" },
 
+		{ chaiscript::fun(&Material::custom_data), "custom_data" },
+
 		{ chaiscript::fun(&Material::color_map_name), "color_map_name" },
 		{ chaiscript::fun(&Material::normal_map_name), "normal_map_name" },
 		{ chaiscript::fun(&Material::roughness_map_name), "roughness_map_name" },

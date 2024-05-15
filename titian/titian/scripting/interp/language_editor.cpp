@@ -58,6 +58,7 @@ titian::LanguageEditor::LanguageEditor()
 		HLSL_IDENTIFIERS["SHADOW_MAP_TEXEL_SIZE"] = "Directional light shadow map texel size.";
 		HLSL_IDENTIFIERS["SHADOW_CASCADES"] = "Directional light shadow coverage zones.";
 		HLSL_IDENTIFIERS["LIGHT_VPs"] = "Directional light VP matrices.";
+		HLSL_IDENTIFIERS["CUSTOM_DATA"] = "Custom user data of a material.";
 
 		TextEditor::LanguageDefinition* hlsl = TextEditor::LanguageDefinition::Hlsl();
 		for (const auto& [name, info] : HLSL_IDENTIFIERS) {
@@ -85,6 +86,11 @@ void titian::LanguageEditor::edit(std::string* source)
 std::string titian::LanguageEditor::get_word_at_cursor() const
 {
 	return m_text_editor.get_word_at_cursor();
+}
+
+void titian::LanguageEditor::replace_word_at_cursor(const std::string_view& text)
+{
+	m_text_editor.replace_word_at_cursor(text);
 }
 
 const TextEditor::LanguageDefinition* titian::LanguageEditor::get_definition() const

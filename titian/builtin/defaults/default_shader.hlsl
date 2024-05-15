@@ -56,6 +56,8 @@ cbuffer GLOBAL_CB : register(b0)
     float2 SHADOW_MAP_TEXEL_SIZE;
     float4 SHADOW_CASCADES;
     float4x4 LIGHT_VPs[SHADOW_CASCADE_COUNT];
+
+    float4x4 CUSTOM_DATA;
 };
 
 struct VS_OUT

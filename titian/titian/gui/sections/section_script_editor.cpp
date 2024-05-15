@@ -204,13 +204,17 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 			ImGui::PushStyleColor(ImGuiCol_Text, palette[1]);
 			for (const auto& keyword : definition->mKeywords) {
 				if (keyword.find(current_word) != -1) {
-					ImGui::MenuItem(keyword.c_str());
+					if (ImGui::MenuItem(keyword.c_str())) {
+						m_interp_editor.replace_word_at_cursor(keyword);
+					}
 				}
 			}
 			ImGui::PushStyleColor(ImGuiCol_Text, palette[8]);
 			for (const auto& [identifier, _] : definition->mIdentifiers) {
 				if (identifier.find(current_word) != -1) {
-					ImGui::MenuItem(identifier.c_str());
+					if (ImGui::MenuItem(identifier.c_str())) {
+						m_interp_editor.replace_word_at_cursor(identifier);
+					}
 				}
 			}
 			ImGui::PopStyleColor(2);

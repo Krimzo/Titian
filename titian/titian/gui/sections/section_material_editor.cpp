@@ -227,6 +227,8 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         alignas(16) kl::Float2 SHADOW_MAP_TEXEL_SIZE;
         alignas(16) kl::Float4 SHADOW_CASCADES;
         kl::Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
+
+        kl::Float4x4 CUSTOM_DATA;
     };
     GLOBAL_CB global_cb{};
 
@@ -289,6 +291,8 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     global_cb.REFLECTION_FACTOR = material->reflection_factor;
     global_cb.REFRACTION_FACTOR = material->refraction_factor;
     global_cb.REFRACTION_INDEX = material->refraction_index;
+
+    global_cb.CUSTOM_DATA = material->custom_data;
 
     global_cb.RECEIVES_SHADOWS = false;
 
