@@ -113,7 +113,7 @@ std::map<std::string, chaiscript::Boxed_Value> titian::InterpScript::get_paramet
 }
 
 /* SCRIPT BINDS */
-int load_types = [&]
+const int load_types = [&]
 {
 	using namespace titian;
 	
@@ -195,6 +195,8 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Int2& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Int2"] = "Two component integer vector.";
+	INTERP_SCRIPT_MEMBERS["x"] = "x";
+	INTERP_SCRIPT_MEMBERS["x"] = "y";
 
 	// Float2
 	chaiscript::utility::add_class<kl::Float2>(*INTERP_SCRIPT_MODULE, "Float2",
@@ -292,6 +294,7 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Float3& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float3"] = "Three component float vector.";
+	INTERP_SCRIPT_MEMBERS["z"] = "z";
 	INTERP_SCRIPT_IDENTIFIERS["xy"] = "Returns x and y as a Float2.";
 
 	// Float4
@@ -351,6 +354,7 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Float4& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float4"] = "Four component float vector.";
+	INTERP_SCRIPT_MEMBERS["w"] = "w";
 	INTERP_SCRIPT_IDENTIFIERS["xyz"] = "Returns x, y and z as a Float3.";
 
 	// Float2x2
@@ -494,6 +498,8 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Complex& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Complex"] = "Two component imaginary number.";
+	INTERP_SCRIPT_MEMBERS["r"] = "r";
+	INTERP_SCRIPT_MEMBERS["i"] = "i";
 
 	// Quaternion
 	chaiscript::utility::add_class<kl::Quaternion>(*INTERP_SCRIPT_MODULE, "Quaternion",
@@ -558,6 +564,9 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Vertex& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Vertex"] = "A 3D point of a mesh.";
+	INTERP_SCRIPT_MEMBERS["world"] = "world";
+	INTERP_SCRIPT_MEMBERS["normal"] = "normal";
+	INTERP_SCRIPT_MEMBERS["texture"] = "texture";
 
 	// Triangle
 	chaiscript::utility::add_class<kl::Triangle>(*INTERP_SCRIPT_MODULE, "Triangle",
@@ -577,6 +586,9 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Triangle& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Triangle"] = "A 3D triangle in space.";
+	INTERP_SCRIPT_MEMBERS["a"] = "a";
+	INTERP_SCRIPT_MEMBERS["b"] = "b";
+	INTERP_SCRIPT_MEMBERS["c"] = "c";
 
 	// Plane
 	chaiscript::utility::add_class<kl::Plane>(*INTERP_SCRIPT_MODULE, "Plane",
@@ -599,6 +611,7 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Plane& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Plane"] = "A 3D plane in space.";
+	INTERP_SCRIPT_MEMBERS["origin"] = "origin";
 	INTERP_SCRIPT_IDENTIFIERS["set_normal"] = "Normalizes and sets the normal.";
 	INTERP_SCRIPT_IDENTIFIERS["normal"] = "Returns the normalized normal.";
 	INTERP_SCRIPT_IDENTIFIERS["in_front"] = "Checks if a 3D point is in front of the plane.";
@@ -620,6 +633,7 @@ int load_types = [&]
 		{ chaiscript::fun([](const kl::Sphere& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Sphere"] = "A 3D sphere in space.";
+	INTERP_SCRIPT_MEMBERS["radius"] = "radius";
 
 	// Ray
 	chaiscript::utility::add_class<kl::Ray>(*INTERP_SCRIPT_MODULE, "Ray",
@@ -689,6 +703,10 @@ int load_types = [&]
 		}), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Color"] = "Four component byte[0, 255] color.";
+	INTERP_SCRIPT_MEMBERS["r"] = "r";
+	INTERP_SCRIPT_MEMBERS["g"] = "g";
+	INTERP_SCRIPT_MEMBERS["b"] = "b";
+	INTERP_SCRIPT_MEMBERS["a"] = "a";
 	INTERP_SCRIPT_IDENTIFIERS["gray"] = "Returns the color as gray.";
 	INTERP_SCRIPT_IDENTIFIERS["inverted"] = "Inverts the color channels.";
 	INTERP_SCRIPT_IDENTIFIERS["as_ascii"] = "Converts the color to closes ascii char.";
@@ -706,6 +724,9 @@ int load_types = [&]
 		{ chaiscript::fun(&Mesh::reload), "reload" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Mesh"] = "Object that contains triangle data.";
+	INTERP_SCRIPT_MEMBERS["data_buffer"] = "data_buffer";
+	INTERP_SCRIPT_MEMBERS["topology"] = "topology";
+	INTERP_SCRIPT_MEMBERS["render_wireframe"] = "render_wireframe";
 	INTERP_SCRIPT_IDENTIFIERS["reload"] = "Reloads the self.";
 
 	// Texture
@@ -750,6 +771,16 @@ int load_types = [&]
 		{ chaiscript::fun(&Material::shader_name), "shader_name" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Material"] = "Object that defines the look of the entity.";
+	INTERP_SCRIPT_MEMBERS["color"] = "color";
+	INTERP_SCRIPT_MEMBERS["texture_blend"] = "texture_blend";
+	INTERP_SCRIPT_MEMBERS["reflection_factor"] = "reflection_factor";
+	INTERP_SCRIPT_MEMBERS["refraction_factor"] = "refraction_factor";
+	INTERP_SCRIPT_MEMBERS["refraction_index"] = "refraction_index";
+	INTERP_SCRIPT_MEMBERS["custom_data"] = "custom_data";
+	INTERP_SCRIPT_MEMBERS["color_map_name"] = "color_map_name";
+	INTERP_SCRIPT_MEMBERS["normal_map_name"] = "normal_map_name";
+	INTERP_SCRIPT_MEMBERS["roughness_map_name"] = "roughness_map_name";
+	INTERP_SCRIPT_MEMBERS["shader_name"] = "shader_name";
 
 	// Shader
 	chaiscript::utility::add_class<Shader>(*INTERP_SCRIPT_MODULE, "Shader",
@@ -794,6 +825,9 @@ int load_types = [&]
 		{ chaiscript::fun(&Entity::angular), "angular" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Entity"] = "Base entity that's a part of a scene.";
+	INTERP_SCRIPT_MEMBERS["scale"] = "scale";
+	INTERP_SCRIPT_MEMBERS["mesh_name"] = "mesh_name";
+	INTERP_SCRIPT_MEMBERS["material_name"] = "material_name";
 	INTERP_SCRIPT_IDENTIFIERS["model_matrix"] = "Returns the model matrix of entity.";
 	INTERP_SCRIPT_IDENTIFIERS["collider_matrix"] = "Returns the collider matrix of entity.";
 	INTERP_SCRIPT_IDENTIFIERS["set_rotation"] = "Sets the entity rotation.";
@@ -848,6 +882,14 @@ int load_types = [&]
 		{ chaiscript::fun(&Camera::camera_matrix), "camera_matrix" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Camera"] = "Entity that has a view of the scene.";
+	INTERP_SCRIPT_MEMBERS["aspect_ratio"] = "aspect_ratio";
+	INTERP_SCRIPT_MEMBERS["field_of_view"] = "field_of_view";
+	INTERP_SCRIPT_MEMBERS["near_plane"] = "near_plane";
+	INTERP_SCRIPT_MEMBERS["far_plane"] = "far_plane";
+	INTERP_SCRIPT_MEMBERS["sensitivity"] = "sensitivity";
+	INTERP_SCRIPT_MEMBERS["speed"] = "speed";
+	INTERP_SCRIPT_MEMBERS["background"] = "background";
+	INTERP_SCRIPT_MEMBERS["skybox_name"] = "skybox_name";
 	INTERP_SCRIPT_IDENTIFIERS["update_aspect_ratio"] = "Sets the camera's aspect ratio.";
 	INTERP_SCRIPT_IDENTIFIERS["set_forward"] = "Sets the normalized forward vector of camera.";
 	INTERP_SCRIPT_IDENTIFIERS["forward"] = "Returns the normalized forward vector of camera.";
@@ -882,6 +924,8 @@ int load_types = [&]
 		{ chaiscript::fun(&AmbientLight::intensity), "intensity" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["AmbientLight"] = "Non directional light at shines at all points.";
+	INTERP_SCRIPT_MEMBERS["color"] = "color";
+	INTERP_SCRIPT_MEMBERS["intensity"] = "intensity";
 
 	// Point light
 	chaiscript::utility::add_class<PointLight>(*INTERP_SCRIPT_MODULE, "PointLight",
@@ -906,6 +950,7 @@ int load_types = [&]
 		{ chaiscript::fun(&DirectionalLight::light_matrix), "light_matrix" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["DirectionalLight"] = "Light that shines in a single direction and is infinitely far away.";
+	INTERP_SCRIPT_MEMBERS["point_size"] = "point_size";
 	INTERP_SCRIPT_IDENTIFIERS["map_resolution"] = "Returns the shadow map resolution of directional light.";
 	INTERP_SCRIPT_IDENTIFIERS["light_matrix"] = "Returns the light matrix.";
 
@@ -963,6 +1008,9 @@ int load_types = [&]
 		{ chaiscript::fun<DirectionalLight*>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Scene"] = "Collection of meshes, textures, materials, scripts and entities.";
+	INTERP_SCRIPT_MEMBERS["main_camera_name"] = "main_camera_name";
+	INTERP_SCRIPT_MEMBERS["main_ambient_light_name"] = "main_ambient_light_name";
+	INTERP_SCRIPT_MEMBERS["main_directional_light_name"] = "main_directional_light_name";
 	INTERP_SCRIPT_IDENTIFIERS["new_mesh"] = "Creates a new mesh in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["new_texture"] = "Creates a new texture in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["new_material"] = "Creates a new material in scene.";
@@ -1085,6 +1133,72 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Keyboard::f12), "f12" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Keyboard"] = "Class representing a physical keyboard.";
+	INTERP_SCRIPT_MEMBERS["q"] = "q";
+	INTERP_SCRIPT_MEMBERS["w"] = "w";
+	INTERP_SCRIPT_MEMBERS["e"] = "e";
+	INTERP_SCRIPT_MEMBERS["r"] = "r";
+	INTERP_SCRIPT_MEMBERS["t"] = "t";
+	INTERP_SCRIPT_MEMBERS["z"] = "z";
+	INTERP_SCRIPT_MEMBERS["u"] = "u";
+	INTERP_SCRIPT_MEMBERS["i"] = "i";
+	INTERP_SCRIPT_MEMBERS["o"] = "o";
+	INTERP_SCRIPT_MEMBERS["p"] = "p";
+	INTERP_SCRIPT_MEMBERS["a"] = "a";
+	INTERP_SCRIPT_MEMBERS["s"] = "s";
+	INTERP_SCRIPT_MEMBERS["d"] = "d";
+	INTERP_SCRIPT_MEMBERS["f"] = "f";
+	INTERP_SCRIPT_MEMBERS["g"] = "g";
+	INTERP_SCRIPT_MEMBERS["h"] = "h";
+	INTERP_SCRIPT_MEMBERS["j"] = "j";
+	INTERP_SCRIPT_MEMBERS["k"] = "k";
+	INTERP_SCRIPT_MEMBERS["l"] = "l";
+	INTERP_SCRIPT_MEMBERS["y"] = "y";
+	INTERP_SCRIPT_MEMBERS["x"] = "x";
+	INTERP_SCRIPT_MEMBERS["c"] = "c";
+	INTERP_SCRIPT_MEMBERS["v"] = "v";
+	INTERP_SCRIPT_MEMBERS["b"] = "b";
+	INTERP_SCRIPT_MEMBERS["n"] = "n";
+	INTERP_SCRIPT_MEMBERS["m"] = "m";
+	INTERP_SCRIPT_MEMBERS["num0"] = "num0";
+	INTERP_SCRIPT_MEMBERS["num1"] = "num1";
+	INTERP_SCRIPT_MEMBERS["num2"] = "num2";
+	INTERP_SCRIPT_MEMBERS["num3"] = "num3";
+	INTERP_SCRIPT_MEMBERS["num4"] = "num4";
+	INTERP_SCRIPT_MEMBERS["num5"] = "num5";
+	INTERP_SCRIPT_MEMBERS["num6"] = "num6";
+	INTERP_SCRIPT_MEMBERS["num7"] = "num7";
+	INTERP_SCRIPT_MEMBERS["num8"] = "num8";
+	INTERP_SCRIPT_MEMBERS["num9"] = "num9";
+	INTERP_SCRIPT_MEMBERS["period"] = "period";
+	INTERP_SCRIPT_MEMBERS["comma"] = "comma";
+	INTERP_SCRIPT_MEMBERS["plus"] = "plus";
+	INTERP_SCRIPT_MEMBERS["minus"] = "minus";
+	INTERP_SCRIPT_MEMBERS["esc"] = "esc";
+	INTERP_SCRIPT_MEMBERS["tab"] = "tab";
+	INTERP_SCRIPT_MEMBERS["caps"] = "caps";
+	INTERP_SCRIPT_MEMBERS["shift"] = "shift";
+	INTERP_SCRIPT_MEMBERS["ctrl"] = "ctrl";
+	INTERP_SCRIPT_MEMBERS["alt"] = "alt";
+	INTERP_SCRIPT_MEMBERS["space"] = "space";
+	INTERP_SCRIPT_MEMBERS["enter"] = "enter";
+	INTERP_SCRIPT_MEMBERS["insert"] = "insert";
+	INTERP_SCRIPT_MEMBERS["delet"] = "delet";
+	INTERP_SCRIPT_MEMBERS["up"] = "up";
+	INTERP_SCRIPT_MEMBERS["left"] = "left";
+	INTERP_SCRIPT_MEMBERS["down"] = "down";
+	INTERP_SCRIPT_MEMBERS["right"] = "right";
+	INTERP_SCRIPT_MEMBERS["f1"] = "f1";
+	INTERP_SCRIPT_MEMBERS["f2"] = "f2";
+	INTERP_SCRIPT_MEMBERS["f3"] = "f3";
+	INTERP_SCRIPT_MEMBERS["f4"] = "f4";
+	INTERP_SCRIPT_MEMBERS["f5"] = "f5";
+	INTERP_SCRIPT_MEMBERS["f6"] = "f6";
+	INTERP_SCRIPT_MEMBERS["f7"] = "f7";
+	INTERP_SCRIPT_MEMBERS["f8"] = "f8";
+	INTERP_SCRIPT_MEMBERS["f9"] = "f9";
+	INTERP_SCRIPT_MEMBERS["f10"] = "f10";
+	INTERP_SCRIPT_MEMBERS["f11"] = "f11";
+	INTERP_SCRIPT_MEMBERS["f12"] = "f12";
 
 	// Mouse
 	chaiscript::utility::add_class<kl::Mouse>(*INTERP_SCRIPT_MODULE, "Mouse",
@@ -1104,6 +1218,9 @@ int load_types = [&]
 		{ chaiscript::fun(&kl::Mouse::scroll), "scroll" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Mouse"] = "Class representing a physical mouse.";
+	INTERP_SCRIPT_MEMBERS["left"] = "left";
+	INTERP_SCRIPT_MEMBERS["middle"] = "middle";
+	INTERP_SCRIPT_MEMBERS["right"] = "right";
 	INTERP_SCRIPT_IDENTIFIERS["set_hidden"] = "Sets the mouse hidden state.";
 	INTERP_SCRIPT_IDENTIFIERS["is_hidden"] = "Returns the mouse hidden state.";
 	INTERP_SCRIPT_IDENTIFIERS["normalized_position"] = "Returns the normalized position.";
@@ -1160,7 +1277,7 @@ int load_types = [&]
 	return 0;
 }();
 
-int load_constants = [&]
+const int load_constants = [&]
 {
 	using namespace titian;
 
@@ -1219,7 +1336,7 @@ int load_constants = [&]
 	return 0;
 }();
 
-int load_functions = [&]
+const int load_functions = [&]
 {
 	using namespace titian;
 

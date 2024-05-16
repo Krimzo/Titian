@@ -201,6 +201,14 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 		const std::string current_word = m_interp_editor.get_word_at_cursor();
 		if (definition && !current_word.empty()) {
 			const TextEditor::Palette& palette = *m_interp_editor.get_palette();
+			ImGui::PushStyleColor(ImGuiCol_Text, (ImU32) ImColor(220, 206, 125, 255));
+			for (const auto& [member, _] : INTERP_SCRIPT_MEMBERS) {
+				if (member.find(current_word) != -1) {
+					if (ImGui::MenuItem(member.c_str())) {
+						m_interp_editor.replace_word_at_cursor(member);
+					}
+				}
+			}
 			ImGui::PushStyleColor(ImGuiCol_Text, palette[1]);
 			for (const auto& keyword : definition->mKeywords) {
 				if (keyword.find(current_word) != -1) {
@@ -217,7 +225,7 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 					}
 				}
 			}
-			ImGui::PopStyleColor(2);
+			ImGui::PopStyleColor(3);
 		}
 	}
 	ImGui::End();

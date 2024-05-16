@@ -4,11 +4,7 @@
 titian::LanguageEditor::LanguageEditor()
 	: m_text_editor()
 {
-	// global langs
-	static bool first_time_init = false;
-	if (!first_time_init) {
-		first_time_init = true;
-
+	static const bool first_time_init = [&]() {
 		// chai
 		TextEditor::LanguageDefinition* chai = TextEditor::LanguageDefinition::Chai();
 		chai->mKeywords = INTERP_SCRIPT_KEYWORDS;
@@ -23,9 +19,10 @@ titian::LanguageEditor::LanguageEditor()
 		std::unordered_map<std::string, std::string> HLSL_IDENTIFIERS;
 		HLSL_IDENTIFIERS["VS_OUT"] = "Computed vertex data.";
 
-		HLSL_IDENTIFIERS["_alter_vertex"] = "Alter vertex data before the pixel shader.";
-		HLSL_IDENTIFIERS["_alter_pre"] = "Alter pixel data before the full pixel shader. (return true to cancel the full shader)";
-		HLSL_IDENTIFIERS["_alter_post"] = "Alter pixel data after the full pixel shader.";
+		HLSL_IDENTIFIERS["_vertex_pre"] = "Alter the vertex before the transforms.";
+		HLSL_IDENTIFIERS["_vertex_post"] = "Alter the vertex data after the computed transforms.";
+		HLSL_IDENTIFIERS["_pixel_pre"] = "Alter the pixel data before the full pixel shader. (return true to cancel the full shader)";
+		HLSL_IDENTIFIERS["_pixel_post"] = "Alter the pixel data after the full pixel shader.";
 
 		HLSL_IDENTIFIERS["SHADOW_CASCADE_COUNT"] = "Directional light cascade count.";
 		HLSL_IDENTIFIERS["ELAPSED_TIME"] = "Elapsed game time in seconds.";
@@ -66,7 +63,8 @@ titian::LanguageEditor::LanguageEditor()
 			identifier.mDeclaration = info;
 			hlsl->mIdentifiers[name] = identifier;
 		}
-	}
+		return true;
+	}();
 
 	// editor
 	m_text_editor.SetPalette(TextEditor::PaletteId::Dark);

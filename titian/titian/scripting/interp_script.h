@@ -30,6 +30,9 @@ namespace titian {
 
 	inline std::map<std::string, std::string> INTERP_SCRIPT_IDENTIFIERS
 	{};
+
+	inline std::map<std::string, std::string> INTERP_SCRIPT_MEMBERS
+	{};
 }
 
 namespace titian {

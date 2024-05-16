@@ -102,13 +102,13 @@ public:
 	/* CUSTOM */
 	inline std::string get_word_at_cursor() const
 	{
-		Coordinates coords{};
-		this->GetCursorPosition(coords.mLine, coords.mColumn);
-		if (coords.mColumn > 0) {
-			coords.mColumn -= 1;
+		Coordinates cursor_coords{};
+		this->GetCursorPosition(cursor_coords.mLine, cursor_coords.mColumn);
+		if (cursor_coords.mColumn > 0) {
+			cursor_coords.mColumn -= 1;
 		}
-		const Coordinates start = this->FindWordStart(coords);
-		const Coordinates end = this->FindWordEnd(coords);
+		const Coordinates start = this->FindWordStart(cursor_coords);
+		const Coordinates end = this->FindWordEnd(cursor_coords);
 		if (start >= end) {
 			return "";
 		}
@@ -117,22 +117,21 @@ public:
 
 	inline void replace_word_at_cursor(const std::string_view& text)
 	{
-		Coordinates coords{};
-		this->GetCursorPosition(coords.mLine, coords.mColumn);
-		if (coords.mColumn > 0) {
-			coords.mColumn -= 1;
+		Coordinates cursor_coords{};
+		this->GetCursorPosition(cursor_coords.mLine, cursor_coords.mColumn);
+		if (cursor_coords.mColumn > 0) {
+			cursor_coords.mColumn -= 1;
 		}
 
-		const int start = GetCharacterIndexL(this->FindWordStart(coords));
-		const int end = GetCharacterIndexL(this->FindWordEnd(coords));
-		if (start > end) {
-			return;
+		Coordinates word_start = this->FindWordStart(cursor_coords);
+		Coordinates word_end = this->FindWordEnd(cursor_coords);
+		const int word_start_index = this->GetCharacterIndexL(word_start);
+		const int word_end_index = this->GetCharacterIndexL(word_end);
+		if (word_start_index < word_end_index) {
+			RemoveGlyphsFromLine(cursor_coords.mLine, word_start_index, word_end_index);
 		}
-
-		std::vector<std::string> lines = this->GetTextLines();
-		auto& line = lines[coords.mLine];
-		line.replace(line.begin() + start, line.begin() + end, text.data());
-		this->SetTextLines(lines);
+		this->InsertTextAt(word_start, text.data());
+		this->Colorize(cursor_coords.mLine, 1);
 	}
 	/* ------ */
 
