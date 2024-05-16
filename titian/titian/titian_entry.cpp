@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-int titian_entry(const int argc, const char** argv, const bool use_editor)
+int titian_entry(const int argc, const char** argv, const std::unordered_map<std::string, std::string>& ini_data, const bool use_editor)
 {
 	using namespace titian;
 
@@ -13,6 +13,9 @@ int titian_entry(const int argc, const char** argv, const bool use_editor)
 	}
 	else {
 		std::string entry_scene = "entry.titian";
+		if (ini_data.contains(inikey::ENTRY_SCENE)) {
+			entry_scene = ini_data.at(inikey::ENTRY_SCENE);
+		}
 		if (argc >= 3) {
 			entry_scene = argv[2];
 		}

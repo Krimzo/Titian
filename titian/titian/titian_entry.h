@@ -4,4 +4,4 @@
 #include "titian/titian_editor.h"
 
 
-int titian_entry(int argc, const char** argv, bool use_editor);
+int titian_entry(int argc, const char** argv, const std::unordered_map<std::string, std::string>& ini_data, bool use_editor);

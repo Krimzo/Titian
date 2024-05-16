@@ -297,7 +297,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     global_cb.RECEIVES_SHADOWS = false;
 
     kl::RenderShaders* render_shaders = &states->shader_states->scene_pass;
-    if (Shader* shader = &scene->get_shader(material->custom_shader_name)) {
+    if (Shader* shader = &scene->get_shader(material->shader_name)) {
         render_shaders = &shader->graphics_buffer;
     }
     if (render_shaders && *render_shaders) {
@@ -368,13 +368,13 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
             ImGui::EndCombo();
         }
 
-        if (ImGui::BeginCombo("Custom Shader", material->custom_shader_name.c_str())) {
-            if (ImGui::Selectable("/", material->custom_shader_name == "/")) {
-                material->custom_shader_name = "/";
+        if (ImGui::BeginCombo("Shader", material->shader_name.c_str())) {
+            if (ImGui::Selectable("/", material->shader_name == "/")) {
+                material->shader_name = "/";
             }
             for (auto& [shader_name, _] : scene->shaders) {
-                if (ImGui::Selectable(shader_name.c_str(), material->custom_shader_name == shader_name)) {
-                    material->custom_shader_name = shader_name;
+                if (ImGui::Selectable(shader_name.c_str(), material->shader_name == shader_name)) {
+                    material->shader_name = shader_name;
                 }
             }
             ImGui::EndCombo();

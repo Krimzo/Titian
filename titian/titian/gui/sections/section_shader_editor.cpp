@@ -90,8 +90,8 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 					this->selected_shader = "/";
 				}
 				for (auto& [_, material] : scene->materials) {
-					if (material->custom_shader_name == shader_name) {
-						material->custom_shader_name = "/";
+					if (material->shader_name == shader_name) {
+						material->shader_name = "/";
 					}
 				}
 				scene->shaders.erase(shader_name);

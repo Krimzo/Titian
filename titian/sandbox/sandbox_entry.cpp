@@ -4,10 +4,9 @@
 int sandbox_entry(const int argc, const char** argv)
 {
     using namespace sandbox;
-
     TitianEditor editor{};
 
-    // Collect pieces
+    // Pieces
     std::vector<kl::Object<SandboxPiece>> pieces{
         new SandboxPiecePrepare(&editor),
         new SandboxPieceSkybox(&editor),
@@ -16,8 +15,6 @@ int sandbox_entry(const int argc, const char** argv)
         new SandboxPieceSpheres(&editor, 7),
         new SandboxPiecePhysicsTest(&editor, 9),
     };
-
-    // Setup pieces
     for (auto& piece : pieces) {
         piece->setup_self();
     }

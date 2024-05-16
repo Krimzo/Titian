@@ -19,7 +19,7 @@ void titian::Material::serialize(Serializer* serializer, const void* helper_data
 	serializer->write_string(normal_map_name);
 	serializer->write_string(roughness_map_name);
 
-	serializer->write_string(custom_shader_name);
+	serializer->write_string(shader_name);
 }
 
 void titian::Material::deserialize(const Serializer* serializer, const void* helper_data)
@@ -37,7 +37,7 @@ void titian::Material::deserialize(const Serializer* serializer, const void* hel
 	serializer->read_string(normal_map_name);
 	serializer->read_string(roughness_map_name);
 
-	serializer->read_string(custom_shader_name);
+	serializer->read_string(shader_name);
 }
 
 bool titian::Material::is_transparent() const

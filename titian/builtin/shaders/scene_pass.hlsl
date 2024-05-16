@@ -1,5 +1,5 @@
 // Global
-static const int SHADOW_CASCADE_COUNT = 4;
+static const uint SHADOW_CASCADE_COUNT = 4;
 
 cbuffer GLOBAL_CB : register(b0)
 {
@@ -57,23 +57,26 @@ struct VS_OUT
 
 #define _CUSTOM_VERTEX_SHADER_PLACEHOLDER
 
-VS_OUT v_shader(const float3 position : KL_Position, const float2 textur : KL_Texture, const float3 normal : KL_Normal)
+VS_OUT v_shader(float3 position : KL_Position, float2 textur : KL_Texture, float3 normal : KL_Normal)
 {
-    VS_OUT data;
+#ifdef _CUSTOM_VERTEX_SHADER
+    _vertex_pre(position, textur, normal);
+#endif
 
+    VS_OUT data;
     data.world = mul(float4(position, 1.0f), W).xyz;
     data.screen = mul(float4(data.world, 1.0f), VP);
     data.textur = textur;
     data.normal = mul(float4(normal, 0.0f), W).xyz;
 
-    for (int i = 0; i < SHADOW_CASCADE_COUNT; i++) {
+    for (uint i = 0; i < SHADOW_CASCADE_COUNT; i++) {
         data.light_coords[i] = mul(float4(position, 1.0f), mul(W, LIGHT_VPs[i]));
         data.light_coords[i].xy *= float2(0.5f, -0.5f);
         data.light_coords[i].xy += 0.5f;
     }
     
 #ifdef _CUSTOM_VERTEX_SHADER
-    _alter_vertex(data);
+    _vertex_post(data);
 #endif
     
     return data;
@@ -176,12 +179,12 @@ PS_OUT p_shader(VS_OUT data)
     const float3 pixel_normal = get_pixel_normal(data.world, data.normal, data.textur);
     const float pixel_reflectivity = get_pixel_reflectivity(REFLECTION_FACTOR, data.textur);
 
+    PS_OUT result;
+    result.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    result.index = OBJECT_INDEX;
+    
 #ifdef _CUSTOM_PIXEL_SHADER
-    float4 _pre_color = { 0.0f, 0.0f, 0.0f, 1.0f };
-    if (_alter_pre(data, _pre_color)) {
-        PS_OUT result;
-        result.color = _pre_color;
-        result.index = OBJECT_INDEX;
+    if (_pixel_pre(data, result.color)) {
         return result;
     }
 #endif
@@ -229,14 +232,11 @@ PS_OUT p_shader(VS_OUT data)
     const float4 reflected_color = lerp(lit_color, reflected_sky_color, pixel_reflectivity);
     const float4 refracted_color = lerp(reflected_color, refracted_sky_color, REFRACTION_FACTOR);
     
-    float4 _post_color = refracted_color;
+    result.color = refracted_color;
+    
 #ifdef _CUSTOM_PIXEL_SHADER
-    _alter_post(data, _post_color);
+    _pixel_post(data, result.color);
 #endif
 
-    // Final
-    PS_OUT result;
-    result.color = _post_color;
-    result.index = OBJECT_INDEX;
     return result;
 }

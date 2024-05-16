@@ -1,6 +1,6 @@
 #pragma once
 
-#include "exe_type.h"
+#include "main_data.h"
 
 #include "titian_entry.h"
 #include "sandbox_entry.h"

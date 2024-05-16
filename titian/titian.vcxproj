@@ -331,14 +331,13 @@
     <ClCompile Include="sandbox\pieces\piece_cubes.cpp" />
     <ClInclude Include="sandbox\sandbox_entry.h" />
     <ClInclude Include="sandbox\sandbox_piece.h" />
-    <ClInclude Include="source\exe_type.h" />
-    <ClCompile Include="source\exe_type.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="titian\application\app_layer.cpp" />
+    <ClInclude Include="source\main_data.h" />
     <ClInclude Include="titian\application\app_layer.h" />
     <ClInclude Include="titian\application\logger.h" />
     <ClInclude Include="titian\application\log_info.h" />

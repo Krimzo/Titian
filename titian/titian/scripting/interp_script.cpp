@@ -746,6 +746,8 @@ int load_types = [&]
 		{ chaiscript::fun(&Material::color_map_name), "color_map_name" },
 		{ chaiscript::fun(&Material::normal_map_name), "normal_map_name" },
 		{ chaiscript::fun(&Material::roughness_map_name), "roughness_map_name" },
+
+		{ chaiscript::fun(&Material::shader_name), "shader_name" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Material"] = "Object that defines the look of the entity.";
 

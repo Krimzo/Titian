@@ -1,20 +1,5 @@
-#define _CUSTOM_VERTEX_SHADER
-void _alter_vertex(inout VS_OUT data)
-{
-}
-
-#define _CUSTOM_PIXEL_SHADER
-bool _alter_pre(inout VS_OUT data, inout float4 color)
-{
-    return false;
-}
-
-void _alter_post(inout VS_OUT data, inout float4 color)
-{
-}
-
 /*
-static const int SHADOW_CASCADE_COUNT = 4;
+static const uint SHADOW_CASCADE_COUNT = 4;
 
 cbuffer GLOBAL_CB : register(b0)
 {
@@ -36,7 +21,7 @@ cbuffer GLOBAL_CB : register(b0)
     float3 OBJECT_SCALE;
     float3 OBJECT_ROTATION;
     float3 OBJECT_POSITION;
-    
+
     float4 MATERIAL_COLOR;
     float TEXTURE_BLEND;
     
@@ -50,7 +35,7 @@ cbuffer GLOBAL_CB : register(b0)
     float4x4 W;
     float4x4 V;
     float4x4 VP;
-    
+
     float RECEIVES_SHADOWS;
     float2 SHADOW_MAP_SIZE;
     float2 SHADOW_MAP_TEXEL_SIZE;
@@ -69,3 +54,22 @@ struct VS_OUT
     float4 light_coords[SHADOW_CASCADE_COUNT] : VS_Light;
 };
 */
+
+#define _CUSTOM_VERTEX_SHADER
+void _vertex_pre(inout float3 position, inout float2 textur, inout float3 normal)
+{
+}
+
+void _vertex_post(inout VS_OUT data)
+{
+}
+
+#define _CUSTOM_PIXEL_SHADER
+bool _pixel_pre(inout VS_OUT data, inout float4 color)
+{
+    return false;
+}
+
+void _pixel_post(inout VS_OUT data, inout float4 color)
+{
+}

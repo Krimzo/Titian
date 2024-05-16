@@ -205,7 +205,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.CUSTOM_DATA = material->custom_data;
 
         kl::RenderShaders* render_shaders = &package.shader_state;
-        if (Shader* shader = &scene->get_shader(material->custom_shader_name)) {
+        if (Shader* shader = &scene->get_shader(material->shader_name)) {
             render_shaders = &shader->graphics_buffer;
         }
         if (render_shaders && *render_shaders) {
@@ -275,7 +275,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.REFRACTION_INDEX = material->refraction_index;
 
         kl::RenderShaders* render_shaders = &package.shader_state;
-        if (Shader* shader = &scene->get_shader(material->custom_shader_name)) {
+        if (Shader* shader = &scene->get_shader(material->shader_name)) {
             render_shaders = &shader->graphics_buffer;
         }
         render_shaders->vertex_shader.update_cbuffer(global_cb);

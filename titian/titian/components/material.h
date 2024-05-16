@@ -20,7 +20,7 @@ namespace titian {
 		std::string normal_map_name = "/";
 		std::string roughness_map_name = "/";
 
-		std::string custom_shader_name = "/";
+		std::string shader_name = "/";
 
 		Material();
 

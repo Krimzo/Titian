@@ -1,10 +1,6 @@
 #include "main.h"
 
 
-static constexpr bool PACKAGE_DEFAULTS = false;
-static constexpr const char* INI_FILE = "titian.ini";
-static constexpr const char* INI_EXE_TYPE = "exe_type";
-
 static inline void display_helper()
 {
 	using namespace titian;
@@ -26,7 +22,7 @@ int main(const int argc, const char** argv)
 	using namespace sandbox;
 
 	// Defaults
-	if constexpr (PACKAGE_DEFAULTS) {
+	if constexpr (SHOULD_PACKAGE_DEFAULTS) {
 		create_package(BUILTIN_DIR, PACKAGED_BUILTIN_FILE);
 		create_package(PREVIEW_DIR, PACKAGED_PREVIEW_FILE);
 	}
@@ -36,8 +32,8 @@ int main(const int argc, const char** argv)
 		kl::console::set_enabled(false);
 	}
 
-	// Default ini
-	const std::unordered_map<std::string, std::string> ini_data = parse_ini_file(INI_FILE);
+	// Defaults ini
+	const std::unordered_map<std::string, std::string> ini_data = parse_ini_file(INI_FILE_NAME);
 
 	// Parse explicit type
 	ExeType exe_type = ExeType::GAME_OPEN;
@@ -51,13 +47,13 @@ int main(const int argc, const char** argv)
 			Logger::log("Defaulting to ", exe_type);
 		}
 	}
-	else if (ini_data.contains(INI_EXE_TYPE)) {
+	else if (ini_data.contains(inikey::EXE_TYPE)) {
 		try {
-			const std::string value = ini_data.at(INI_EXE_TYPE);
+			const std::string value = ini_data.at(inikey::EXE_TYPE);
 			exe_type = static_cast<ExeType>(std::stoi(value));
 		}
 		catch (std::exception) {
-			Logger::log("Failed to parse [", INI_EXE_TYPE, "] from [", INI_FILE, "]");
+			Logger::log("Failed to parse [", inikey::EXE_TYPE, "] from [", INI_FILE_NAME, "]");
 			Logger::log("Defaulting to ", exe_type);
 		}
 	}
@@ -71,10 +67,10 @@ int main(const int argc, const char** argv)
 	switch (exe_type)
 	{
 	case ExeType::GAME_OPEN:
-		return titian_entry(argc, argv, false);
+		return titian_entry(argc, argv, ini_data, false);
 
 	case ExeType::GAME_CREATE:
-		return titian_entry(argc, argv, true);
+		return titian_entry(argc, argv, ini_data, true);
 
 	case ExeType::PACKAGER_UNPACK:
 		return packager_entry(argc, argv, false);
