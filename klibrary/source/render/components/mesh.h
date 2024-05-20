@@ -4,7 +4,7 @@
 
 
 namespace kl {
-    using MeshData = std::vector<Vertex>;
+    using MeshData = std::vector<Vertex<float>>;
 }
 
 #ifdef KL_USING_PHYSX

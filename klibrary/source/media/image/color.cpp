@@ -13,19 +13,19 @@ kl::Color::Color(const byte r, const byte g, const byte b, const byte a)
 kl::Color::operator kl::Float3() const
 {
     return {
-        r * TO_FLOAT_COLOR,
-        g * TO_FLOAT_COLOR,
-        b * TO_FLOAT_COLOR,
+        static_cast<float>(r * TO_FLOAT_COLOR),
+        static_cast<float>(g * TO_FLOAT_COLOR),
+        static_cast<float>(b * TO_FLOAT_COLOR),
     };
 }
 
 kl::Color::operator kl::Float4() const
 {
     return {
-        r * TO_FLOAT_COLOR,
-        g * TO_FLOAT_COLOR,
-        b * TO_FLOAT_COLOR,
-        a * TO_FLOAT_COLOR,
+        static_cast<float>(r * TO_FLOAT_COLOR),
+        static_cast<float>(g * TO_FLOAT_COLOR),
+        static_cast<float>(b * TO_FLOAT_COLOR),
+        static_cast<float>(a * TO_FLOAT_COLOR),
     };
 }
 
@@ -72,7 +72,7 @@ kl::Color kl::Color::mix(const Color& color, float ratio) const
 
 kl::Color kl::Color::mix(const Color& color) const
 {
-    return mix(color, color.a * TO_FLOAT_COLOR);
+    return mix(color, float(color.a * TO_FLOAT_COLOR));
 }
 
 // Format

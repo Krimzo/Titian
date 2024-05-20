@@ -133,9 +133,9 @@ kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const void* data, const UI
     return create_buffer(&descriptor, &subresource_data);
 }
 
-kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::vector<Vertex>& vertices) const
+kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::vector<Vertex<float>>& vertices) const
 {
-    return create_vertex_buffer(vertices.data(), (UINT) (vertices.size() * sizeof(Vertex)));
+    return create_vertex_buffer(vertices.data(), (UINT) (vertices.size() * sizeof(Vertex<float>)));
 }
 
 kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::string& filepath) const
@@ -225,7 +225,7 @@ kl::dx::Buffer kl::DeviceHolder::create_plane_mesh(const float size, size_t num_
     }
 
     // Generating triangles
-    std::vector<Vertex> vertices{};
+    std::vector<Vertex<float>> vertices{};
     vertices.reserve((num_of_points - 1) * (num_of_points - 1) * 6);
     for (size_t x = 0; x < num_of_points - 1; x++) {
         for (size_t z = 0; z < num_of_points - 1; z++) {

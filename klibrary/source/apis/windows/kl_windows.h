@@ -1,5 +1,9 @@
 #pragma once
 
+
+// get out
+#define NOMINMAX
+
 // Web
 #include <ws2tcpip.h>
 

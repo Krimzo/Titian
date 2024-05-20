@@ -97,7 +97,7 @@ bool kl::append_file_string(const std::string& filepath, const std::string& data
     return true;
 }
 
-std::vector<kl::Vertex> kl::parse_obj_file(const std::string& filepath, const bool flip_z)
+std::vector<kl::Vertex<float>> kl::parse_obj_file(const std::string& filepath, const bool flip_z)
 {
     // Handle file
     std::ifstream file{ filepath };
@@ -109,7 +109,7 @@ std::vector<kl::Vertex> kl::parse_obj_file(const std::string& filepath, const bo
     std::vector<Float3> world_data{};
     std::vector<Float2> texture_data{};
     std::vector<Float3> normal_data{};
-    std::vector<Vertex> vertex_data{};
+    std::vector<Vertex<float>> vertex_data{};
 
     // Parse
     const float z_flip = flip_z ? -1.0f : 1.0f;

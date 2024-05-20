@@ -8,7 +8,7 @@ namespace titian {
     class Mesh : public Serializable
     {
     public:
-        using Data = std::vector<kl::Vertex>;
+        using Data = std::vector<kl::Vertex<float>>;
 
         Data data_buffer = {};
         kl::dx::Buffer graphics_buffer = nullptr;

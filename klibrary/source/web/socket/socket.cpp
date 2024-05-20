@@ -1,7 +1,35 @@
 #include "klibrary.h"
 
 
-// Init
+// Address
+kl::Address::Address()
+    : sockaddr_in()
+{
+    sin_family = AF_INET;
+}
+
+std::string kl::Address::address() const
+{
+    char buffer[INET_ADDRSTRLEN + 1] = {};
+    return ::inet_ntop(AF_INET, &sin_addr, buffer, INET_ADDRSTRLEN);
+}
+
+int kl::Address::set_address(const std::string_view& address)
+{
+    return ::inet_pton(AF_INET, address.data(), &sin_addr);
+}
+
+int kl::Address::port() const
+{
+    return (int) ::ntohs(sin_port);
+}
+
+void kl::Address::set_port(int port)
+{
+    sin_port = ::htons((u_short) port);
+}
+
+// Socket
 namespace kl_ignored {
     [[maybe_unused]] static const int DONT_CARE = []()
     {
@@ -16,28 +44,18 @@ namespace kl_ignored {
 const std::string kl::Socket::SELF = "127.0.0.1";
 
 // Construct
-kl::Socket::Socket()
+kl::Socket::Socket(const bool udp)
 {
-    m_socket = ::socket(AF_INET, SOCK_STREAM, NULL);
-    m_address.sin_family = AF_INET;
+    m_socket = ::socket(AF_INET,
+        udp ? SOCK_DGRAM : SOCK_STREAM,
+        udp ? IPPROTO_UDP : IPPROTO_TCP);
     m_address.sin_addr.s_addr = INADDR_ANY;
     verify(m_socket != INVALID_SOCKET, "Failed to create socket");
 }
 
-kl::Socket::Socket(const int port)
-    : Socket(SELF, port)
-{}
-
-kl::Socket::Socket(const std::string_view& address, const int port)
-    : Socket()
-{
-    set_address(address);
-    set_port(port);
-}
-
 kl::Socket::~Socket()
 {
-    close();
+    ::closesocket(m_socket);
 }
 
 // Properties
@@ -46,74 +64,73 @@ kl::Socket::ID kl::Socket::id() const
     return m_socket;
 }
 
+kl::Socket::operator bool() const
+{
+    return m_socket != INVALID_SOCKET;
+}
+
 std::string kl::Socket::address() const
 {
-    char buffer[INET_ADDRSTRLEN] = {};
-    ::inet_ntop(AF_INET, &m_address.sin_addr, buffer, INET_ADDRSTRLEN);
-    return { buffer };
+    return m_address.address();
 }
 
 int kl::Socket::set_address(const std::string_view& address)
 {
-    const int result = ::inet_pton(AF_INET, address.data(), &m_address.sin_addr);
-    verify(result == 1, format("Could not convert address ", address));
-    return result;
+    return m_address.set_address(address);
 }
 
 int kl::Socket::port() const
 {
-    const u_short port = ::ntohs(m_address.sin_port);
-    return static_cast<int>(port);
+    return m_address.port();
 }
 
 void kl::Socket::set_port(const int port)
 {
-    const u_short new_port = static_cast<u_short>(port);
-    m_address.sin_port = ::htons(new_port);
+    m_address.set_port(port);
 }
 
 // Connection
+int kl::Socket::bind()
+{
+    return ::bind(m_socket, (sockaddr*) &m_address, sizeof(Address));
+}
+
 int kl::Socket::listen(const int queue_size)
 {
-    const int bind_result = ::bind(m_socket, reinterpret_cast<sockaddr*>(&m_address), sizeof(m_address));
-    if (!verify(bind_result == 0, "Could not bind socket")) {
-        return bind_result;
-    }
-
-    const int listen_result = ::listen(m_socket, queue_size);
-    verify(listen_result == 0, "Could not listen on socket");
-    return listen_result;
+    return ::listen(m_socket, queue_size);
 }
 
 void kl::Socket::accept(Socket* socket)
 {
-    socket->close();
-    int address_length = sizeof(m_address);
-    socket->m_socket = ::accept(m_socket, reinterpret_cast<sockaddr*>(&m_address), &address_length);
-    verify(socket->m_socket != INVALID_SOCKET, "Could not accept socket");
+    int address_length = sizeof(Address);
+    socket->m_socket = ::accept(m_socket, (sockaddr*) &m_address, &address_length);
 }
 
 int kl::Socket::connect()
 {
-    const int result = ::connect(m_socket, reinterpret_cast<sockaddr*>(&m_address), sizeof(m_address));
-    verify(result == 0, "Could not connect to socket");
-    return result;
-}
-
-int kl::Socket::close()
-{
-    return ::closesocket(m_socket);
+    return ::connect(m_socket, (sockaddr*) &m_address, sizeof(Address));
 }
 
 // Data transfer
 int kl::Socket::send(const void* data, const int byte_size) const
 {
-    return ::send(m_socket, reinterpret_cast<const char*>(data), byte_size, NULL);
+    return ::send(m_socket, (const char*) data, byte_size, NULL);
 }
 
 int kl::Socket::receive(void* buff, const int byte_size) const
 {
-    return ::recv(m_socket, reinterpret_cast<char*>(buff), byte_size, NULL);
+    return ::recv(m_socket, (char*) buff, byte_size, NULL);
+}
+
+int kl::Socket::send_to(const void* data, int byte_size, const Address& address) const
+{
+    return ::sendto(m_socket, (const char*) data, byte_size, NULL, (const sockaddr*) &address, sizeof(Address));
+}
+
+int kl::Socket::receive_from(void* buff, int byte_size, Address* address) const
+{
+    int address_length = sizeof(Address);
+    return ::recvfrom(m_socket, (char*) buff, byte_size, NULL, (sockaddr*) address, &address_length);
 }
 
 int kl::Socket::exhaust(std::vector<byte>* output, const int buffer_size) const

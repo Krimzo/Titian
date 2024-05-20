@@ -1,28 +1,51 @@
 #pragma once
 
-#include "math/vector/float4.h"
+#include "math/vector/vector4.h"
 
 
 namespace kl {
+    template<typename T = float>
     class Plane
     {
-        Float3 m_normal = { 0.0f, 1.0f, 0.0f };
+        Vector3<T> m_normal = { T(0), T(1), T(0) };
 
     public:
-        Float3 origin = {};
+        Vector3<T> origin;
 
-        Plane();
-        Plane(const Float3& origin, const Float3& normal);
+        constexpr Plane()
+        {}
+
+        constexpr Plane(const Vector3<T>& origin, const Vector3<T>& normal)
+			: origin(origin)
+        {
+			set_normal(normal);
+        }
 
         // Normal
-        void set_normal(const Float3& normal);
-        Float3 normal() const;
+        constexpr void set_normal(const Vector3<T>& normal)
+		{
+			m_normal = normalize(normal);
+		}
+
+        constexpr Vector3<T> normal() const
+		{
+			return m_normal;
+		}
 
         // Math
-        bool in_front(const Float3& point) const;
+        constexpr bool in_front(const Vector3<T>& point) const
+        {
+            const T result = dot(point - origin, m_normal);
+            return result >= T(0);
+        }
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& os, const Plane& obj);
+    template<typename T>
+    std::ostream& operator<<(std::ostream& stream, const Plane<T>& plane)
+    {
+        stream << "{" << plane.origin << ", " << plane.normal() << "}";
+        return stream;
+    }
 }

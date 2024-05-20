@@ -4,52 +4,149 @@
 
 
 namespace kl {
+    template<typename T = float>
     class Quaternion
     {
     public:
-        float w = 0.0f;
-        float x = 0.0f;
-        float y = 0.0f;
-        float z = 0.0f;
+        T w = {};
+        T x = {};
+        T y = {};
+        T z = {};
 
         // Construct
-        Quaternion();
-        Quaternion(float x, float y, float z);
-        Quaternion(float w, float x, float y, float z);
+        constexpr Quaternion()
+        {}
 
-        explicit Quaternion(const Float3& axis, float angle);
+        constexpr Quaternion(T x, T y, T z)
+            : x(x), y(y), z(z)
+        {}
+
+        constexpr Quaternion(T w, T x, T y, T z)
+            : w(w), x(x), y(y), z(z)
+        {}
+
+        explicit constexpr Quaternion(const Vector3<T>& axis, T angle)
+            : w((T) cos_deg(angle * 0.5))
+        {
+            reinterpret_cast<Vector3<T>&>(x) = normalize(axis) * (T) sin_deg(angle * 0.5);
+        }
 
         // Get
-        operator float* () const;
-        operator kl::Float3() const;
-        operator kl::Float4() const;
+        constexpr operator T* ()
+        {
+            return &w;
+        }
 
-        float& operator[](int index);
-        const float& operator[](int index) const;
+        constexpr operator const T* () const
+        {
+            return &w;
+        }
+
+        constexpr T& operator[](int index)
+        {
+            return (&w)[index];
+        }
+
+        constexpr const T& operator[](int index) const
+        {
+            return (&w)[index];
+        }
+
+        constexpr operator Vector3<T>() const
+        {
+            return { x, y, z };
+        }
+
+        constexpr operator Vector4<T>() const
+        {
+            return { x, y, z, w };
+        }
 
         // Compare
-        bool operator==(const Quaternion& other) const;
-        bool operator!=(const Quaternion& other) const;
+        constexpr bool operator==(const Quaternion<T>& other) const
+        {
+            return w == other.w && x == other.x && y == other.y && z == other.z;
+        }
+
+        constexpr bool operator!=(const Quaternion<T>& other) const
+        {
+			return !(*this == other);
+        }
 
         // Math
-        Quaternion operator+(const Quaternion& other) const;
-        void operator+=(const Quaternion& other);
+        constexpr Quaternion<T> operator+(const Quaternion<T>& other) const
+        {
+			return { w + other.w, x + other.x, y + other.y, z + other.z };
+        }
 
-        Quaternion operator-(const Quaternion& other) const;
-        void operator-=(const Quaternion& other);
+        constexpr void operator+=(const Quaternion<T>& other)
+        {
+			w += other.w;
+			x += other.x;
+			y += other.y;
+			z += other.z;
+        }
 
-        Quaternion operator*(float value) const;
-        void operator*=(float value);
+        constexpr Quaternion<T> operator-(const Quaternion<T>& other) const
+        {
+			return { w - other.w, x - other.x, y - other.y, z - other.z };
+        }
 
-        Quaternion operator*(const Quaternion& other) const;
-        void operator*=(const Quaternion& other);
+        constexpr void operator-=(const Quaternion<T>& other)
+        {
+			w -= other.w;
+			x -= other.x;
+			y -= other.y;
+			z -= other.z;
+        }
+
+        constexpr Quaternion<T> operator*(T value) const
+        {
+			return { w * value, x * value, y * value, z * value };
+        }
+
+        constexpr void operator*=(T value)
+        {
+			w *= value;
+			x *= value;
+			y *= value;
+			z *= value;
+        }
+
+        constexpr Quaternion<T> operator*(const Quaternion<T>& other) const
+        {
+            return {
+                w * other.w - x * other.x - y * other.y - z * other.z,
+                w * other.x + x * other.w + y * other.z - z * other.y,
+                w * other.y - x * other.z + y * other.w + z * other.x,
+                w * other.z + x * other.y - y * other.x + z * other.w,
+            };
+        }
+
+        constexpr void operator*=(const Quaternion<T>& other)
+        {
+            *this = *this * other;
+        }
 
         // Other
-        Quaternion operator-() const;
-        float length() const;
+        constexpr Quaternion<T> operator-() const
+        {
+			return { -w, -x, -y, -z };
+        }
+
+        constexpr T length() const
+        {
+			return (T) std::sqrt(w * w + x * x + y * y + z * z);
+        }
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const Quaternion& num);
+    template<typename T>
+    std::ostream& operator<<(std::ostream& stream, const Quaternion<T>& quat)
+    {
+        stream << std::setprecision(2);
+        stream << "(" << quat.w << " + " << quat.x << "i + " << quat.y << "j + " << quat.z << "k)";
+        return stream;
+    }
 }

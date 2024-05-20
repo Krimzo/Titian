@@ -4,8 +4,11 @@
 
 
 namespace kl {
-    class Float3;
-    class Float4;
+    template<typename T>
+    class Vector3;
+
+    template<typename T>
+    class Vector4;
 }
 
 namespace kl {
@@ -22,8 +25,8 @@ namespace kl {
         Color(byte r, byte g, byte b, byte a = 255);
 
         // Get
-        operator kl::Float3() const;
-        operator kl::Float4() const;
+        operator Vector3<float>() const;
+        operator Vector4<float>() const;
 
         // Compare
         bool operator==(const Color& other) const;

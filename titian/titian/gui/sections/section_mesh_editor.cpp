@@ -258,7 +258,7 @@ void titian::GUISectionMeshEditor::render_gizmos(Mesh* mesh)
     if (m_selected_vertex_index < 0 || m_selected_vertex_index >= mesh_data.size()) {
         return;
     }
-    kl::Vertex* selected_vertex = &mesh_data[m_selected_vertex_index];
+    kl::Vertex<float>* selected_vertex = &mesh_data[m_selected_vertex_index];
 
     const float viewport_tab_height = ImGui::GetWindowContentRegionMin().y;
     const kl::Float2 viewport_position = { ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + viewport_tab_height };
@@ -342,7 +342,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
 
             int change_counter = 0;
             for (int i = m_starting_vertex_index; i < (m_starting_vertex_index + m_vertex_display_count) && i < vertex_count; i++) {
-                kl::Vertex& vertex = mesh->data_buffer[i];
+                kl::Vertex<float>& vertex = mesh->data_buffer[i];
 
                 const std::string vertex_name = kl::format(i + 1, ". Vertex");
                 if (ImGui::Selectable(vertex_name.c_str(), m_selected_vertex_index == i)) {

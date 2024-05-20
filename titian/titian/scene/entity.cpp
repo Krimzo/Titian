@@ -101,7 +101,7 @@ void titian::Entity::set_rotation(const kl::Float3& rotation)
 kl::Float3 titian::Entity::rotation() const
 {
     const physx::PxTransform transform = m_actor->getGlobalPose();
-    return kl::to_euler((const kl::Float4&)transform.q);
+    return kl::to_euler<float>((const kl::Float4&) transform.q);
 }
 
 void titian::Entity::set_position(const kl::Float3& position)

@@ -88,10 +88,10 @@ namespace kl {
         void set_draw_type(D3D_PRIMITIVE_TOPOLOGY draw_type) const;
 
         void draw(UINT vertex_count, UINT start_index) const;
-        void draw(const dx::Buffer& vertex_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(Vertex)) const;
+        void draw(const dx::Buffer& vertex_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(Vertex<float>)) const;
 
         void draw_indexed(UINT index_count, UINT start_index, INT base_vertex) const;
-        void draw_indexed(const dx::Buffer& vertex_buffer, const dx::Buffer& index_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(Vertex)) const;
+        void draw_indexed(const dx::Buffer& vertex_buffer, const dx::Buffer& index_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(Vertex<float>)) const;
 
         // Views
         void clear_target_view(const dx::TargetView& view, const Float4& color = {}) const;

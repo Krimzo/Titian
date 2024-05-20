@@ -9,7 +9,7 @@ titian::EditorPass::EditorPass(GameLayer* game_layer, EditorLayer* editor_layer,
     kl::GPU* gpu = &game_layer->app_layer->gpu;
 
     // Generate frustum mesh
-    const kl::Vertex frustum_vertices[8] = {
+    const kl::Vertex<float> frustum_vertices[8] = {
         { {  1.0f,  1.0f, -1.0f } },
         { { -1.0f,  1.0f, -1.0f } },
         { {  1.0f, -1.0f, -1.0f } },
@@ -19,7 +19,7 @@ titian::EditorPass::EditorPass(GameLayer* game_layer, EditorLayer* editor_layer,
         { {  1.0f, -1.0f,  1.0f } },
         { { -1.0f, -1.0f,  1.0f } },
     };
-    const std::vector<kl::Vertex> frustum_data = {
+    const std::vector<kl::Vertex<float>> frustum_data = {
         frustum_vertices[0], frustum_vertices[1],
         frustum_vertices[0], frustum_vertices[2],
         frustum_vertices[3], frustum_vertices[1],

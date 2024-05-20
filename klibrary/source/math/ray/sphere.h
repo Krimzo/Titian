@@ -1,20 +1,30 @@
 #pragma once
 
-#include "math/vector/float4.h"
+#include "math/vector/vector4.h"
 
 
 namespace kl {
+    template<typename T = float>
     class Sphere
     {
     public:
-        Float3 origin = {};
-        float radius = 0.0f;
+        Vector3<T> origin;
+        T radius = {};
 
-        Sphere();
-        Sphere(const Float3& origin, float radius);
+        constexpr Sphere()
+        {}
+
+        constexpr Sphere(const Vector3<T>& origin, T radius)
+			: origin(origin) , radius(radius)
+        {}
     };
 }
 
 namespace kl {
-    std::ostream& operator<<(std::ostream& os, const Sphere& obj);
+    template<typename T>
+    std::ostream& operator<<(std::ostream& stream, const Sphere<T>& sphere)
+    {
+        stream << "{" << sphere.origin << ", " << sphere.radius << "}";
+        return stream;
+    }
 }

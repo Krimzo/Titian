@@ -4,6 +4,19 @@
 
 
 namespace kl {
+    struct Address : public sockaddr_in
+    {
+        Address();
+        
+        std::string address() const;
+        int set_address(const std::string_view& address);
+
+        int port() const;
+        void set_port(int port);
+    };
+}
+
+namespace kl {
     class Socket
     {
     public:
@@ -11,13 +24,11 @@ namespace kl {
         static const std::string SELF;
 
     private:
-        sockaddr_in m_address = {};
+        Address m_address = {};
         ID m_socket = {};
 
     public:
-        Socket();
-        Socket(int port);
-        Socket(const std::string_view& address, int port);
+        Socket(bool udp);
         ~Socket();
 
         Socket(const Socket&) = delete;
@@ -28,6 +39,7 @@ namespace kl {
 
         // Properties
         ID id() const;
+        operator bool() const;
 
         std::string address() const;
         int set_address(const std::string_view& address);
@@ -36,28 +48,25 @@ namespace kl {
         void set_port(int port);
 
         // Connection
+        int bind();
         int listen(int queue_size);
         void accept(Socket* socket);
         int connect();
-        int close();
 
-        // Data transfer
+        // TCP transfer
         int send(const void* data, int byte_size) const;
         int receive(void* buff, int byte_size) const;
-        int exhaust(std::vector<byte>* output, int buffer_size = 16384) const;
 
         template <typename T>
         bool send(const T& obj) const
         {
-            const int sent_size = send(&obj, sizeof(T));
-            return sent_size == sizeof(T);
+            return send(&obj, sizeof(T)) == sizeof(T);
         }
 
         template <typename T>
         bool receive(T* obj) const
         {
-            const int received_size = receive(obj, sizeof(T));
-            return received_size == sizeof(T);
+            return receive(obj, sizeof(T)) == sizeof(T);
         }
 
         template <typename T>
@@ -67,5 +76,32 @@ namespace kl {
             receive(&t);
             return t;
         }
+
+        // UDP transfer
+        int send_to(const void* data, int byte_size, const Address& address) const;
+        int receive_from(void* buff, int byte_size, Address* address) const;
+
+        template <typename T>
+        bool send_to(const T& obj, const Address& address) const
+        {
+            return send_to(&obj, sizeof(T), address) == sizeof(T);
+        }
+
+        template <typename T>
+        bool receive_from(T* obj, Address* address) const
+        {
+            return receive_from(obj, sizeof(T), address) == sizeof(T);
+        }
+
+        template <typename T>
+        T receive_from(Address* address) const
+        {
+            T t{};
+            receive_from(&t, address);
+            return t;
+        }
+
+        // Helper
+        int exhaust(std::vector<byte>* output, int buffer_size = 16384) const;
     };
 }

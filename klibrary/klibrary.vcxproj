@@ -37,22 +37,21 @@
     <ClInclude Include="source\graphics\shaders\shader_holder.h" />
     <ClInclude Include="source\graphics\text\text_raster.h" />
     <ClInclude Include="source\klibrary.h" />
-    <ClInclude Include="source\math\helper\constants.h" />
+    <ClInclude Include="source\math\helper\helper.h" />
     <ClInclude Include="source\math\imaginary\complex.h" />
     <ClInclude Include="source\math\imaginary\quaternion.h" />
     <ClInclude Include="source\math\math.h" />
-    <ClInclude Include="source\math\matrix\float2x2.h" />
-    <ClInclude Include="source\math\matrix\float3x3.h" />
-    <ClInclude Include="source\math\matrix\float4x4.h" />
+    <ClInclude Include="source\math\matrix\matrix2x2.h" />
+    <ClInclude Include="source\math\matrix\matrix3x3.h" />
+    <ClInclude Include="source\math\matrix\matrix4x4.h" />
     <ClInclude Include="source\math\ray\plane.h" />
     <ClInclude Include="source\math\ray\ray.h" />
     <ClInclude Include="source\math\ray\sphere.h" />
     <ClInclude Include="source\math\triangle\triangle.h" />
     <ClInclude Include="source\math\triangle\vertex.h" />
-    <ClInclude Include="source\math\vector\float2.h" />
-    <ClInclude Include="source\math\vector\float3.h" />
-    <ClInclude Include="source\math\vector\float4.h" />
-    <ClInclude Include="source\math\vector\int2.h" />
+    <ClInclude Include="source\math\vector\vector2.h" />
+    <ClInclude Include="source\math\vector\vector3.h" />
+    <ClInclude Include="source\math\vector\vector4.h" />
     <ClInclude Include="source\media\audio\audio.h" />
     <ClInclude Include="source\media\image\color.h" />
     <ClInclude Include="source\media\image\image.h" />
@@ -111,21 +110,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\math\imaginary\complex.cpp" />
-    <ClCompile Include="source\math\imaginary\quaternion.cpp" />
-    <ClCompile Include="source\math\math.cpp" />
-    <ClCompile Include="source\math\matrix\float2x2.cpp" />
-    <ClCompile Include="source\math\matrix\float3x3.cpp" />
-    <ClCompile Include="source\math\matrix\float4x4.cpp" />
-    <ClCompile Include="source\math\ray\plane.cpp" />
-    <ClCompile Include="source\math\ray\ray.cpp" />
-    <ClCompile Include="source\math\ray\sphere.cpp" />
-    <ClCompile Include="source\math\triangle\triangle.cpp" />
-    <ClCompile Include="source\math\triangle\vertex.cpp" />
-    <ClCompile Include="source\math\vector\float2.cpp" />
-    <ClCompile Include="source\math\vector\float3.cpp" />
-    <ClCompile Include="source\math\vector\float4.cpp" />
-    <ClCompile Include="source\math\vector\int2.cpp" />
     <ClCompile Include="source\media\audio\audio.cpp" />
     <ClCompile Include="source\media\image\color.cpp" />
     <ClCompile Include="source\media\image\image.cpp" />

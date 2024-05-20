@@ -12,8 +12,8 @@ namespace kl {
 }
 
 namespace kl {
-    template<int W, int H>
-    std::string format_matrix(const float* data)
+    template<int W, int H, typename T>
+    constexpr std::string format_matrix(const T* data)
     {
         std::string output_data[W * H] = {};
         int max_lengths[W] = {};
@@ -21,11 +21,11 @@ namespace kl {
         for (int x = 0; x < W; x++) {
             for (int y = 0; y < H; y++) {
                 output_data[y * W + x] = std::format("{:.2f}", data[y * W + x]);
-                max_lengths[x] = max(max_lengths[x], (int) output_data[y * W + x].size());
+                max_lengths[x] = std::max(max_lengths[x], (int) output_data[y * W + x].size());
             }
         }
 
-        std::stringstream stream = {};
+        std::stringstream stream;
         for (int y = 0; y < H; y++) {
             stream << ((y == 0) ? (char) 218 : (y == (H - 1) ? (char) 192 : (char) 179));
             for (int x = 0; x < (W - 1); x++) {

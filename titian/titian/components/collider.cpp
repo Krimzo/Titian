@@ -181,7 +181,7 @@ void titian::Collider::set_rotation(const kl::Float3& rotation)
 kl::Float3 titian::Collider::rotation() const
 {
     const physx::PxTransform transform = m_shape->getLocalPose();
-    return kl::to_euler((const kl::Float4&)transform.q);
+    return kl::to_euler<float>((const kl::Float4&) transform.q);
 }
 
 void titian::Collider::set_offset(const kl::Float3& position)
@@ -194,7 +194,7 @@ void titian::Collider::set_offset(const kl::Float3& position)
 kl::Float3 titian::Collider::offset() const
 {
     const physx::PxTransform transform = m_shape->getLocalPose();
-    return (const kl::Float3&)transform.p;
+    return (const kl::Float3&) transform.p;
 }
 
 // Material

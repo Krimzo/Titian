@@ -132,7 +132,7 @@ namespace kl {
 		dx12::AccelerationStructure create_acceleration_structure(const dx12::AccelerationInputs& inputs, UINT64* update_scratch_size = nullptr);
 		dx12::AccelerationStructure create_tlas(const dx12::Resource& instances, UINT instance_count, UINT64* update_scratch_size = nullptr);
 		dx12::AccelerationStructure create_blas(const D3D12_RAYTRACING_GEOMETRY_DESC* geometry_descriptor, UINT64* update_scratch_size = nullptr);
-		dx12::AccelerationStructure create_triangle_blas(const dx12::Resource& vertex_buffer, const dx12::Resource& index_buffer = nullptr, UINT vertex_stride = sizeof(kl::Vertex), UINT index_stride = sizeof(uint16_t));
+		dx12::AccelerationStructure create_triangle_blas(const dx12::Resource& vertex_buffer, const dx12::Resource& index_buffer = nullptr, UINT vertex_stride = sizeof(kl::Vertex<float>), UINT index_stride = sizeof(uint16_t));
 
 		void dispatch_rays(D3D12_GPU_VIRTUAL_ADDRESS shader_address, UINT width, UINT height);
 
@@ -152,7 +152,7 @@ namespace kl {
 			const std::vector<byte>& compiled_shaders,
 			const dx12::RootSignature& root_signature,
 			UINT max_recursion_depth = 5,
-			UINT max_attribute_size = sizeof(kl::Vertex),
+			UINT max_attribute_size = sizeof(kl::Vertex<float>),
 			UINT max_payload_size = 16
 		) const;
 	};
