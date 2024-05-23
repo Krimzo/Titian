@@ -114,6 +114,12 @@
     </ClCompile>
     <ClCompile Include="packager\packager.cpp" />
     <ClCompile Include="packager\packager_entry.cpp" />
+    <ClInclude Include="external\chaiscript\chaiscript.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\function_params.hpp" />
+    <ClInclude Include="external\chaiscript\dispatchkit\function_signature.hpp" />
+    <ClInclude Include="external\chaiscript\utility\hash.hpp" />
+    <ClInclude Include="external\chaiscript\utility\quick_flat_map.hpp" />
+    <ClInclude Include="external\chaiscript\utility\stack_vector.hpp" />
     <ClInclude Include="sandbox\pieces\piece_prepare.h">
       <FileType>Document</FileType>
     </ClInclude>
@@ -471,7 +477,6 @@
     <ClInclude Include="titian\utility\time_util.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="external\chaiscript\chaiscript.h" />
     <ClInclude Include="external\chaiscript\chaiscript_basic.hpp" />
     <ClInclude Include="external\chaiscript\chaiscript_defines.hpp" />
     <ClInclude Include="external\chaiscript\chaiscript_stdlib.hpp" />

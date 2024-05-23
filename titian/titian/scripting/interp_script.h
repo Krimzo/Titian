@@ -2,7 +2,7 @@
 
 #include "scripting/script.h"
 #include "scene/scene.h"
-#include "chaiscript.h"
+#include "chaiscript.hpp"
 
 
 namespace titian {

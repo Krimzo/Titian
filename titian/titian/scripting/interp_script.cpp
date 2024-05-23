@@ -1,5 +1,7 @@
 #include "main.h"
 
+namespace cs = chaiscript;
+
 
 /* Inter script */
 titian::InterpScript::InterpScript()
@@ -32,7 +34,7 @@ void titian::InterpScript::reload()
 {
 	m_start_function = {};
 	m_update_function = {};
-	m_engine = new chaiscript::ChaiScript();
+	m_engine = new cs::ChaiScript();
 
 	try {
 		m_engine->add(INTERP_SCRIPT_MODULE);
@@ -63,47 +65,53 @@ void titian::InterpScript::reload()
 
 void titian::InterpScript::call_start(Scene* scene)
 {
-	if (m_start_function) {
-		try {
-			m_start_function(scene);
-		}
-		catch (std::exception& e) {
-			Logger::log(e.what());
-		}
+	if (!m_start_function) {
+		return;
+	}
+
+	try {
+		m_start_function(scene);
+	}
+	catch (std::exception& e) {
+		Logger::log(e.what());
 	}
 }
 
 void titian::InterpScript::call_update(Scene* scene)
 {
-	if (m_update_function) {
-		try {
-			m_update_function(scene);
-		}
-		catch (std::exception& e) {
-			Logger::log(e.what());
-		}
+	if (!m_update_function) {
+		return;
+	}
+
+	try {
+		m_update_function(scene);
+	}
+	catch (std::exception& e) {
+		Logger::log(e.what());
 	}
 }
 
 void titian::InterpScript::call_collision(Scene* scene, Entity* first, Entity* second)
 {
-	if (m_collision_function) {
-		try {
-			m_collision_function(scene, first, second);
-		}
-		catch (std::exception& e) {
-			Logger::log(e.what());
-		}
+	if (!m_collision_function) {
+		return;
+	}
+
+	try {
+		m_collision_function(scene, first, second);
+	}
+	catch (std::exception& e) {
+		Logger::log(e.what());
 	}
 }
 
-std::map<std::string, chaiscript::Boxed_Value> titian::InterpScript::get_parameters()
+std::map<std::string, cs::Boxed_Value> titian::InterpScript::get_parameters()
 {
 	if (!m_engine) {
 		return {};
 	}
 
-	std::map<std::string, chaiscript::Boxed_Value> result;
+	std::map<std::string, cs::Boxed_Value> result;
 	for (auto& [name, value] : m_engine->get_state().engine_state.m_global_objects) {
 		if (name.starts_with("p_")) {
 			result[name] = value;
@@ -118,450 +126,458 @@ const int load_types = [&]
 	using namespace titian;
 	
 	// Bootstrap
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<kl::Vertex<float>>>("MeshData", *INTERP_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<kl::Color>>("TextureData", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<std::vector<kl::Vertex<float>>>("MeshData", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<std::vector<kl::Color>>("TextureData", *INTERP_SCRIPT_MODULE);
 
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<Mesh*>>("MeshVector", *INTERP_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<Texture*>>("TextureVector", *INTERP_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<Material*>>("MaterialVector", *INTERP_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::vector_type<std::vector<Entity*>>("EntityVector", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<std::vector<Mesh*>>("MeshVector", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<std::vector<Texture*>>("TextureVector", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<std::vector<Material*>>("MaterialVector", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<std::vector<Entity*>>("EntityVector", *INTERP_SCRIPT_MODULE);
 
-	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Mesh*>>("MeshMap", *INTERP_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Texture*>>("TextureMap", *INTERP_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Material*>>("MaterialMap", *INTERP_SCRIPT_MODULE);
-	chaiscript::bootstrap::standard_library::map_type<std::map<std::string, Entity*>>("EntityMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<std::map<std::string, Mesh*>>("MeshMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<std::map<std::string, Texture*>>("TextureMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<std::map<std::string, Material*>>("MaterialMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<std::map<std::string, Entity*>>("EntityMap", *INTERP_SCRIPT_MODULE);
 
 	// Derived
-	INTERP_SCRIPT_MODULE->add(chaiscript::base_class<Entity, Camera>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::base_class<Entity, Light>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::base_class<Light, AmbientLight>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::base_class<Light, PointLight>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::base_class<Light, DirectionalLight>());
+	INTERP_SCRIPT_MODULE->add(cs::base_class<Entity, Camera>());
+	INTERP_SCRIPT_MODULE->add(cs::base_class<Entity, Light>());
+	INTERP_SCRIPT_MODULE->add(cs::base_class<Light, AmbientLight>());
+	INTERP_SCRIPT_MODULE->add(cs::base_class<Light, PointLight>());
+	INTERP_SCRIPT_MODULE->add(cs::base_class<Light, DirectionalLight>());
 
 	// Casts
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Int2, kl::Float2>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float2, kl::Int2>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float2, kl::Complex<float>>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float3, kl::Color>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float3, kl::Quaternion<float>>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float4, kl::Color>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Float4, kl::Quaternion<float>>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Complex<float>, kl::Float2>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Quaternion<float>, kl::Float3>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Quaternion<float>, kl::Float4>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Color, kl::Float3>());
-	INTERP_SCRIPT_MODULE->add(chaiscript::type_conversion<kl::Color, kl::Float4>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Int2, kl::Float2>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float2, kl::Int2>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float2, kl::Complex<float>>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float3, kl::Color>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float3, kl::Quaternion<float>>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float4, kl::Color>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float4, kl::Quaternion<float>>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Complex<float>, kl::Float2>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Quaternion<float>, kl::Float3>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Quaternion<float>, kl::Float4>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Color, kl::Float3>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Color, kl::Float4>());
 
 	// Int2
-	chaiscript::utility::add_class<kl::Int2>(*INTERP_SCRIPT_MODULE, "Int2",
+	cs::utility::add_class<kl::Int2>(*INTERP_SCRIPT_MODULE, "Int2",
 	{
-		chaiscript::constructor<kl::Int2()>(),
-		chaiscript::constructor<kl::Int2(const kl::Int2&)>(),
+		cs::constructor<kl::Int2()>(),
+		cs::constructor<kl::Int2(const kl::Int2&)>(),
 
-		chaiscript::constructor<kl::Int2(int)>(),
-		chaiscript::constructor<kl::Int2(int, int)>(),
+		cs::constructor<kl::Int2(int)>(),
+		cs::constructor<kl::Int2(int, int)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Int2::x), "x" },
-		{ chaiscript::fun(&kl::Int2::y), "y" },
+		{ cs::fun(&kl::Int2::x), "x" },
+		{ cs::fun(&kl::Int2::y), "y" },
 
-		{ chaiscript::fun(static_cast<kl::Int2& (kl::Int2::*)(const kl::Int2&)>(&kl::Int2::operator=)), "=" },
+		{ cs::fun<kl::Int2 & (kl::Int2::*)(const kl::Int2&)>(&kl::Int2::operator=), "=" },
 
-		{ chaiscript::fun<int&, kl::Int2, int>(&kl::Int2::operator[]), "[]" },
+		{ cs::fun<int& (kl::Int2::*)(int)>(&kl::Int2::operator[]), "[]"},
 
-		{ chaiscript::fun(&kl::Int2::operator==), "==" },
-		{ chaiscript::fun(&kl::Int2::operator!=), "!=" },
+		{ cs::fun(&kl::Int2::operator==), "==" },
+		{ cs::fun(&kl::Int2::operator!=), "!=" },
 
-		{ chaiscript::fun(&kl::Int2::operator+), "+" },
-		{ chaiscript::fun(&kl::Int2::operator+=), "+=" },
+		{ cs::fun(&kl::Int2::operator+), "+" },
+		{ cs::fun(&kl::Int2::operator+=), "+=" },
 
-		{ chaiscript::fun<kl::Int2, kl::Int2, const kl::Int2&>(&kl::Int2::operator-), "-" },
-		{ chaiscript::fun(&kl::Int2::operator-=), "-=" },
+		{ cs::fun<kl::Int2(kl::Int2::*)(const kl::Int2&) const>(&kl::Int2::operator-), "-"},
+		{ cs::fun(&kl::Int2::operator-=), "-=" },
 
-		{ chaiscript::fun<kl::Int2, kl::Int2, int>(&kl::Int2::operator*), "*" },
-		{ chaiscript::fun<void, kl::Int2, int>(&kl::Int2::operator*=), "*=" },
+		{ cs::fun<kl::Int2 (kl::Int2::*)(int) const>(&kl::Int2::operator*), "*" },
+		{ cs::fun<void (kl::Int2::*)(int)>(&kl::Int2::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Int2, kl::Int2, const kl::Int2&>(&kl::Int2::operator*), "*" },
-		{ chaiscript::fun<void, kl::Int2, const kl::Int2&>(&kl::Int2::operator*=), "*=" },
+		{ cs::fun<kl::Int2 (kl::Int2::*)(const kl::Int2&) const>(&kl::Int2::operator*), "*" },
+		{ cs::fun<void (kl::Int2::*)(const kl::Int2&)>(&kl::Int2::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Int2, kl::Int2, int>(&kl::Int2::operator/), "/" },
-		{ chaiscript::fun<void, kl::Int2, int>(&kl::Int2::operator/=), "/=" },
+		{ cs::fun<kl::Int2 (kl::Int2::*)(int) const>(&kl::Int2::operator/), "/" },
+		{ cs::fun<void (kl::Int2::*)(int)>(&kl::Int2::operator/=), "/=" },
 
-		{ chaiscript::fun<kl::Int2, kl::Int2, const kl::Int2&>(&kl::Int2::operator/), "/" },
-		{ chaiscript::fun<void, kl::Int2, const kl::Int2&>(&kl::Int2::operator/=), "/=" },
+		{ cs::fun<kl::Int2 (kl::Int2::*)(const kl::Int2&) const>(&kl::Int2::operator/), "/" },
+		{ cs::fun<void (kl::Int2::*)(const kl::Int2&)>(&kl::Int2::operator/=), "/=" },
 
-		{ chaiscript::fun<kl::Int2, kl::Int2>(&kl::Int2::operator-), "-" },
+		{ cs::fun<kl::Int2(kl::Int2::*)() const>(&kl::Int2::operator-), "-" },
 
-		{ chaiscript::fun([](const kl::Int2& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Int2& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Int2"] = "Two component integer vector.";
 	INTERP_SCRIPT_MEMBERS["x"] = "x";
 	INTERP_SCRIPT_MEMBERS["x"] = "y";
 
 	// Float2
-	chaiscript::utility::add_class<kl::Float2>(*INTERP_SCRIPT_MODULE, "Float2",
+	cs::utility::add_class<kl::Float2>(*INTERP_SCRIPT_MODULE, "Float2",
 	{
-		chaiscript::constructor<kl::Float2()>(),
-		chaiscript::constructor<kl::Float2(const kl::Float2&)>(),
+		cs::constructor<kl::Float2()>(),
+		cs::constructor<kl::Float2(const kl::Float2&)>(),
 
-		chaiscript::constructor<kl::Float2(float)>(),
-		chaiscript::constructor<kl::Float2(float, float)>(),
+		cs::constructor<kl::Float2(float)>(),
+		cs::constructor<kl::Float2(float, float)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Float2::x), "x" },
-		{ chaiscript::fun(&kl::Float2::y), "y" },
+		{ cs::fun(&kl::Float2::x), "x" },
+		{ cs::fun(&kl::Float2::y), "y" },
 
-		{ chaiscript::fun(static_cast<kl::Float2& (kl::Float2::*)(const kl::Float2&)>(&kl::Float2::operator=)), "=" },
+		{ cs::fun<kl::Float2& (kl::Float2::*)(const kl::Float2&)>(&kl::Float2::operator=), "=" },
 
-		{ chaiscript::fun<float&, kl::Float2, int>(&kl::Float2::operator[]), "[]"},
+		{ cs::fun<float& (kl::Float2::*)(int)>(&kl::Float2::operator[]), "[]"},
 
-		{ chaiscript::fun(&kl::Float2::operator==), "==" },
-		{ chaiscript::fun(&kl::Float2::operator!=), "!=" },
+		{ cs::fun(&kl::Float2::operator==), "==" },
+		{ cs::fun(&kl::Float2::operator!=), "!=" },
 
-		{ chaiscript::fun(&kl::Float2::operator+), "+" },
-		{ chaiscript::fun(&kl::Float2::operator+=), "+=" },
+		{ cs::fun(&kl::Float2::operator+), "+" },
+		{ cs::fun(&kl::Float2::operator+=), "+=" },
 
-		{ chaiscript::fun<kl::Float2, kl::Float2, const kl::Float2&>(&kl::Float2::operator-), "-" },
-		{ chaiscript::fun(&kl::Float2::operator-=), "-=" },
+		{ cs::fun<kl::Float2 (kl::Float2::*)(const kl::Float2&) const>(&kl::Float2::operator-), "-"},
+		{ cs::fun(&kl::Float2::operator-=), "-=" },
 
-		{ chaiscript::fun<kl::Float2, kl::Float2, float>(&kl::Float2::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float2, float>(&kl::Float2::operator*=), "*=" },
+		{ cs::fun<kl::Float2 (kl::Float2::*)(float) const>(&kl::Float2::operator*), "*" },
+		{ cs::fun<void (kl::Float2::*)(float)>(&kl::Float2::operator*=), "*="},
 
-		{ chaiscript::fun<kl::Float2, kl::Float2, const kl::Float2&>(&kl::Float2::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float2, const kl::Float2&>(&kl::Float2::operator*=), "*=" },
+		{ cs::fun<kl::Float2 (kl::Float2::*)(const kl::Float2&) const>(&kl::Float2::operator*), "*" },
+		{ cs::fun<void (kl::Float2::*)(const kl::Float2&)>(&kl::Float2::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Float2, kl::Float2, float>(&kl::Float2::operator/), "/" },
-		{ chaiscript::fun<void, kl::Float2, float>(&kl::Float2::operator/=), "/=" },
+		{ cs::fun<kl::Float2 (kl::Float2::*)(float) const>(&kl::Float2::operator/), "/" },
+		{ cs::fun<void (kl::Float2::*)(float)>(&kl::Float2::operator/=), "/=" },
 
-		{ chaiscript::fun<kl::Float2, kl::Float2, const kl::Float2&>(&kl::Float2::operator/), "/" },
-		{ chaiscript::fun<void, kl::Float2, const kl::Float2&>(&kl::Float2::operator/=), "/=" },
+		{ cs::fun<kl::Float2 (kl::Float2::*)(const kl::Float2&) const>(&kl::Float2::operator/), "/" },
+		{ cs::fun<void (kl::Float2::*)(const kl::Float2&)>(&kl::Float2::operator/=), "/=" },
 
-		{ chaiscript::fun<kl::Float2, kl::Float2>(&kl::Float2::operator-), "-"},
-		{ chaiscript::fun(&kl::Float2::length), "length" },
+		{ cs::fun<kl::Float2 (kl::Float2::*)() const>(&kl::Float2::operator-), "-"},
+		{ cs::fun(&kl::Float2::length), "length" },
 
-		{ chaiscript::fun([](const kl::Float2& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Float2& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float2"] = "Two component float vector.";
 	INTERP_SCRIPT_IDENTIFIERS["length"] = "Returns length of this vector.";
 
 	// Float3
-	chaiscript::utility::add_class<kl::Float3>(*INTERP_SCRIPT_MODULE, "Float3",
+	cs::utility::add_class<kl::Float3>(*INTERP_SCRIPT_MODULE, "Float3",
 	{
-		chaiscript::constructor<kl::Float3()>(),
-		chaiscript::constructor<kl::Float3(const kl::Float3&)>(),
+		cs::constructor<kl::Float3()>(),
+		cs::constructor<kl::Float3(const kl::Float3&)>(),
 
-		chaiscript::constructor<kl::Float3(float)>(),
-		chaiscript::constructor<kl::Float3(float, float, float)>(),
+		cs::constructor<kl::Float3(float)>(),
+		cs::constructor<kl::Float3(float, float, float)>(),
 
-		chaiscript::constructor<kl::Float3(kl::Float2, float)>(),
-		chaiscript::constructor<kl::Float3(float, kl::Float2)>(),
+		cs::constructor<kl::Float3(kl::Float2, float)>(),
+		cs::constructor<kl::Float3(float, kl::Float2)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Float3::x), "x" },
-		{ chaiscript::fun(&kl::Float3::y), "y" },
-		{ chaiscript::fun(&kl::Float3::z), "z" },
+		{ cs::fun(&kl::Float3::x), "x" },
+		{ cs::fun(&kl::Float3::y), "y" },
+		{ cs::fun(&kl::Float3::z), "z" },
 
-		{ chaiscript::fun(static_cast<kl::Float3& (kl::Float3::*)(const kl::Float3&)>(&kl::Float3::operator=)), "=" },
+		{ cs::fun<kl::Float3& (kl::Float3::*)(const kl::Float3&)>(&kl::Float3::operator=), "=" },
 
-		{ chaiscript::fun<kl::Float2&, kl::Float3>(&kl::Float3::xy), "xy" },
+		{ cs::fun<kl::Float2 & (kl::Float3::*)()>(&kl::Float3::xy), "xy"},
+		{ cs::fun<kl::Float2& (kl::Float3::*)()>(&kl::Float3::yz), "yz" },
 
-		{ chaiscript::fun<float&, kl::Float3, int>(&kl::Float3::operator[]), "[]"},
+		{ cs::fun<float& (kl::Float3::*)(int)>(&kl::Float3::operator[]), "[]"},
 
-		{ chaiscript::fun(&kl::Float3::operator==), "==" },
-		{ chaiscript::fun(&kl::Float3::operator!=), "!=" },
+		{ cs::fun(&kl::Float3::operator==), "==" },
+		{ cs::fun(&kl::Float3::operator!=), "!=" },
 
-		{ chaiscript::fun(&kl::Float3::operator+), "+" },
-		{ chaiscript::fun(&kl::Float3::operator+=), "+=" },
+		{ cs::fun(&kl::Float3::operator+), "+" },
+		{ cs::fun(&kl::Float3::operator+=), "+=" },
 
-		{ chaiscript::fun<kl::Float3, kl::Float3, const kl::Float3&>(&kl::Float3::operator-), "-" },
-		{ chaiscript::fun(&kl::Float3::operator-=), "-=" },
+		{ cs::fun<kl::Float3 (kl::Float3::*)(const kl::Float3&) const>(&kl::Float3::operator-), "-" },
+		{ cs::fun(&kl::Float3::operator-=), "-=" },
 
-		{ chaiscript::fun<kl::Float3, kl::Float3, float>(&kl::Float3::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float3, float>(&kl::Float3::operator*=), "*=" },
+		{ cs::fun<kl::Float3 (kl::Float3::*)(float) const>(&kl::Float3::operator*), "*" },
+		{ cs::fun<void (kl::Float3::*)(float)>(&kl::Float3::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Float3, kl::Float3, const kl::Float3&>(&kl::Float3::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float3, const kl::Float3&>(&kl::Float3::operator*=), "*=" },
+		{ cs::fun<kl::Float3 (kl::Float3::*)(const kl::Float3&) const>(&kl::Float3::operator*), "*" },
+		{ cs::fun<void (kl::Float3::*)(const kl::Float3&)>(&kl::Float3::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Float3, kl::Float3, float>(&kl::Float3::operator/), "/" },
-		{ chaiscript::fun<void, kl::Float3, float>(&kl::Float3::operator/=), "/=" },
+		{ cs::fun<kl::Float3 (kl::Float3::*)(float) const>(&kl::Float3::operator/), "/" },
+		{ cs::fun<void (kl::Float3::*)(float)>(&kl::Float3::operator/=), "/=" },
 
-		{ chaiscript::fun<kl::Float3, kl::Float3, const kl::Float3&>(&kl::Float3::operator/), "/" },
-		{ chaiscript::fun<void, kl::Float3, const kl::Float3&>(&kl::Float3::operator/=), "/=" },
+		{ cs::fun<kl::Float3 (kl::Float3::*)(const kl::Float3&) const>(&kl::Float3::operator/), "/" },
+		{ cs::fun<void (kl::Float3::*)(const kl::Float3&)>(&kl::Float3::operator/=), "/=" },
 
-		{ chaiscript::fun<kl::Float3, kl::Float3>(&kl::Float3::operator-), "-"},
-		{ chaiscript::fun(&kl::Float3::length), "length" },
+		{ cs::fun<kl::Float3 (kl::Float3::*)() const>(&kl::Float3::operator-), "-"},
+		{ cs::fun(&kl::Float3::length), "length" },
 
-		{ chaiscript::fun([](const kl::Float3& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Float3& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float3"] = "Three component float vector.";
 	INTERP_SCRIPT_MEMBERS["z"] = "z";
-	INTERP_SCRIPT_IDENTIFIERS["xy"] = "Returns x and y as a Float2.";
+	INTERP_SCRIPT_IDENTIFIERS["xy"] = "Returns x and y as a Float2&.";
+	INTERP_SCRIPT_IDENTIFIERS["yz"] = "Returns y and z as a Float2&.";
 
 	// Float4
-	chaiscript::utility::add_class<kl::Float4>(*INTERP_SCRIPT_MODULE, "Float4",
+	cs::utility::add_class<kl::Float4>(*INTERP_SCRIPT_MODULE, "Float4",
 	{
-		chaiscript::constructor<kl::Float4()>(),
-		chaiscript::constructor<kl::Float4(const kl::Float4&)>(),
+		cs::constructor<kl::Float4()>(),
+		cs::constructor<kl::Float4(const kl::Float4&)>(),
 
-		chaiscript::constructor<kl::Float4(float)>(),
-		chaiscript::constructor<kl::Float4(float, float, float, float)>(),
+		cs::constructor<kl::Float4(float)>(),
+		cs::constructor<kl::Float4(float, float, float, float)>(),
 
-		chaiscript::constructor<kl::Float4(kl::Float2, float, float)>(),
-		chaiscript::constructor<kl::Float4(float, kl::Float2, float)>(),
-		chaiscript::constructor<kl::Float4(float, float, kl::Float2)>(),
-		chaiscript::constructor<kl::Float4(kl::Float2, kl::Float2)>(),
+		cs::constructor<kl::Float4(kl::Float2, float, float)>(),
+		cs::constructor<kl::Float4(float, kl::Float2, float)>(),
+		cs::constructor<kl::Float4(float, float, kl::Float2)>(),
+		cs::constructor<kl::Float4(kl::Float2, kl::Float2)>(),
 
-		chaiscript::constructor<kl::Float4(kl::Float3, float)>(),
-		chaiscript::constructor<kl::Float4(float, kl::Float3)>(),
+		cs::constructor<kl::Float4(kl::Float3, float)>(),
+		cs::constructor<kl::Float4(float, kl::Float3)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Float4::x), "x" },
-		{ chaiscript::fun(&kl::Float4::y), "y" },
-		{ chaiscript::fun(&kl::Float4::z), "z" },
-		{ chaiscript::fun(&kl::Float4::w), "w" },
+		{ cs::fun(&kl::Float4::x), "x" },
+		{ cs::fun(&kl::Float4::y), "y" },
+		{ cs::fun(&kl::Float4::z), "z" },
+		{ cs::fun(&kl::Float4::w), "w" },
 
-		{ chaiscript::fun(static_cast<kl::Float4& (kl::Float4::*)(const kl::Float4&)>(&kl::Float4::operator=)), "=" },
+		{ cs::fun<kl::Float4& (kl::Float4::*)(const kl::Float4&)>(&kl::Float4::operator=), "=" },
 
-		{ chaiscript::fun<kl::Float2&, kl::Float4>(&kl::Float4::xy), "xy" },
-		{ chaiscript::fun<kl::Float3&, kl::Float4>(&kl::Float4::xyz), "xyz" },
+		{ cs::fun<kl::Float2& (kl::Float4::*)()>(&kl::Float4::xy), "xy" },
+		{ cs::fun<kl::Float2& (kl::Float4::*)()>(&kl::Float4::yz), "yz" },
+		{ cs::fun<kl::Float2& (kl::Float4::*)()>(&kl::Float4::zw), "zw" },
 
-		{ chaiscript::fun<float&, kl::Float4, int>(&kl::Float4::operator[]), "[]"},
+		{ cs::fun<kl::Float3& (kl::Float4::*)()>(&kl::Float4::xyz), "xyz" },
+		{ cs::fun<kl::Float3& (kl::Float4::*)()>(&kl::Float4::yzw), "yzw" },
 
-		{ chaiscript::fun(&kl::Float4::operator==), "==" },
-		{ chaiscript::fun(&kl::Float4::operator!=), "!=" },
+		{ cs::fun<float& (kl::Float4::*)(int)>(&kl::Float4::operator[]), "[]"},
 
-		{ chaiscript::fun(&kl::Float4::operator+), "+" },
-		{ chaiscript::fun(&kl::Float4::operator+=), "+=" },
+		{ cs::fun(&kl::Float4::operator==), "==" },
+		{ cs::fun(&kl::Float4::operator!=), "!=" },
 
-		{ chaiscript::fun<kl::Float4, kl::Float4, const kl::Float4&>(&kl::Float4::operator-), "-" },
-		{ chaiscript::fun(&kl::Float4::operator-=), "-=" },
+		{ cs::fun(&kl::Float4::operator+), "+" },
+		{ cs::fun(&kl::Float4::operator+=), "+=" },
 
-		{ chaiscript::fun<kl::Float4, kl::Float4, float>(&kl::Float4::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float4, float>(&kl::Float4::operator*=), "*=" },
+		{ cs::fun<kl::Float4 (kl::Float4::*)(const kl::Float4&) const>(&kl::Float4::operator-), "-"},
+		{ cs::fun(&kl::Float4::operator-=), "-=" },
 
-		{ chaiscript::fun<kl::Float4, kl::Float4, const kl::Float4&>(&kl::Float4::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float4, const kl::Float4&>(&kl::Float4::operator*=), "*=" },
+		{ cs::fun<kl::Float4 (kl::Float4::*)(float) const>(&kl::Float4::operator*), "*" },
+		{ cs::fun<void (kl::Float4::*)(float)>(&kl::Float4::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Float4, kl::Float4, float>(&kl::Float4::operator/), "/" },
-		{ chaiscript::fun<void, kl::Float4, float>(&kl::Float4::operator/=), "/=" },
+		{ cs::fun<kl::Float4 (kl::Float4::*)(const kl::Float4&) const>(&kl::Float4::operator*), "*" },
+		{ cs::fun<void (kl::Float4::*)(const kl::Float4&)>(&kl::Float4::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Float4, kl::Float4, const kl::Float4&>(&kl::Float4::operator/), "/" },
-		{ chaiscript::fun<void, kl::Float4, const kl::Float4&>(&kl::Float4::operator/=), "/=" },
+		{ cs::fun<kl::Float4 (kl::Float4::*)(float) const>(&kl::Float4::operator/), "/" },
+		{ cs::fun<void (kl::Float4::*)(float)>(&kl::Float4::operator/=), "/=" },
 
-		{ chaiscript::fun<kl::Float4, kl::Float4>(&kl::Float4::operator-), "-"},
-		{ chaiscript::fun(&kl::Float4::length), "length" },
+		{ cs::fun<kl::Float4 (kl::Float4::*)(const kl::Float4&) const>(&kl::Float4::operator/), "/" },
+		{ cs::fun<void (kl::Float4::*)(const kl::Float4&)>(&kl::Float4::operator/=), "/="},
+
+		{ cs::fun<kl::Float4 (kl::Float4::*)() const>(&kl::Float4::operator-), "-"},
+		{ cs::fun(&kl::Float4::length), "length" },
 		
-		{ chaiscript::fun([](const kl::Float4& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Float4& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float4"] = "Four component float vector.";
 	INTERP_SCRIPT_MEMBERS["w"] = "w";
-	INTERP_SCRIPT_IDENTIFIERS["xyz"] = "Returns x, y and z as a Float3.";
+	INTERP_SCRIPT_IDENTIFIERS["zw"] = "Returns z and w as a Float2&.";
+	INTERP_SCRIPT_IDENTIFIERS["xyz"] = "Returns x, y and z as a Float3&.";
+	INTERP_SCRIPT_IDENTIFIERS["yzw"] = "Returns y, z and w as a Float3&.";
 
 	// Float2x2
-	chaiscript::utility::add_class<kl::Float2x2>(*INTERP_SCRIPT_MODULE, "Float2x2",
+	cs::utility::add_class<kl::Float2x2>(*INTERP_SCRIPT_MODULE, "Float2x2",
 	{
-		chaiscript::constructor<kl::Float2x2()>(),
-		chaiscript::constructor<kl::Float2x2(const kl::Float2x2&)>(),
+		cs::constructor<kl::Float2x2()>(),
+		cs::constructor<kl::Float2x2(const kl::Float2x2&)>(),
 	},
 	{
-		{ chaiscript::fun(static_cast<kl::Float2x2& (kl::Float2x2::*)(const kl::Float2x2&)>(&kl::Float2x2::operator=)), "=" },
+		{ cs::fun<kl::Float2x2& (kl::Float2x2::*)(const kl::Float2x2&)>(&kl::Float2x2::operator=), "=" },
 
-		{ chaiscript::fun<float&, kl::Float2x2, int>(&kl::Float2x2::operator[]), "[]"},
+		{ cs::fun<float& (kl::Float2x2::*)(int)>(&kl::Float2x2::operator[]), "[]"},
 
-		{ chaiscript::fun(&kl::Float2x2::operator==), "==" },
-		{ chaiscript::fun(&kl::Float2x2::operator!=), "!=" },
+		{ cs::fun(&kl::Float2x2::operator==), "==" },
+		{ cs::fun(&kl::Float2x2::operator!=), "!=" },
 
-		{ chaiscript::fun(&kl::Float2x2::operator+), "+" },
-		{ chaiscript::fun(&kl::Float2x2::operator+=), "+=" },
+		{ cs::fun(&kl::Float2x2::operator+), "+" },
+		{ cs::fun(&kl::Float2x2::operator+=), "+=" },
 
-		{ chaiscript::fun(&kl::Float2x2::operator-), "-" },
-		{ chaiscript::fun(&kl::Float2x2::operator-=), "-=" },
+		{ cs::fun(&kl::Float2x2::operator-), "-" },
+		{ cs::fun(&kl::Float2x2::operator-=), "-=" },
 
-		{ chaiscript::fun<kl::Float2x2, kl::Float2x2, float>(&kl::Float2x2::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float2x2, float>(&kl::Float2x2::operator*=), "*=" },
+		{ cs::fun<kl::Float2x2 (kl::Float2x2::*)(float) const>(&kl::Float2x2::operator*), "*" },
+		{ cs::fun<void (kl::Float2x2::*)(float)>(&kl::Float2x2::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Float2x2, kl::Float2x2, const kl::Float2x2&>(&kl::Float2x2::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float2x2, const kl::Float2x2&>(&kl::Float2x2::operator*=), "*=" },
+		{ cs::fun<kl::Float2x2 (kl::Float2x2::*)(const kl::Float2x2&) const>(&kl::Float2x2::operator*), "*" },
+		{ cs::fun<void (kl::Float2x2::*)(const kl::Float2x2&)>(&kl::Float2x2::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Float2, kl::Float2x2, const kl::Float2&>(&kl::Float2x2::operator*), "*"},
+		{ cs::fun<kl::Float2 (kl::Float2x2::*)(const kl::Float2&) const>(&kl::Float2x2::operator*), "*"},
 
-		{ chaiscript::fun(&kl::Float2x2::determinant), "determinant" },
+		{ cs::fun(&kl::Float2x2::determinant), "determinant" },
 
-		{ chaiscript::fun([](const kl::Float2x2& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Float2x2& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float2x2"] = "Two float wide square matrix.";
 	INTERP_SCRIPT_IDENTIFIERS["determinant"] = "Returns the determinant of this matrix.";
 
 	// Float3x3
-	chaiscript::utility::add_class<kl::Float3x3>(*INTERP_SCRIPT_MODULE, "Float3x3",
+	cs::utility::add_class<kl::Float3x3>(*INTERP_SCRIPT_MODULE, "Float3x3",
 	{
-		chaiscript::constructor<kl::Float3x3()>(),
-		chaiscript::constructor<kl::Float3x3(const kl::Float3x3&)>(),
+		cs::constructor<kl::Float3x3()>(),
+		cs::constructor<kl::Float3x3(const kl::Float3x3&)>(),
 	},
 	{
-		{ chaiscript::fun(static_cast<kl::Float3x3& (kl::Float3x3::*)(const kl::Float3x3&)>(&kl::Float3x3::operator=)), "=" },
+		{ cs::fun<kl::Float3x3& (kl::Float3x3::*)(const kl::Float3x3&)>(&kl::Float3x3::operator=), "=" },
 
-		{ chaiscript::fun<float&, kl::Float3x3, int>(&kl::Float3x3::operator[]), "[]"},
+		{ cs::fun<float& (kl::Float3x3::*)(int)>(&kl::Float3x3::operator[]), "[]"},
 
-		{ chaiscript::fun(&kl::Float3x3::operator==), "==" },
-		{ chaiscript::fun(&kl::Float3x3::operator!=), "!=" },
+		{ cs::fun(&kl::Float3x3::operator==), "==" },
+		{ cs::fun(&kl::Float3x3::operator!=), "!=" },
 
-		{ chaiscript::fun(&kl::Float3x3::operator+), "+" },
-		{ chaiscript::fun(&kl::Float3x3::operator+=), "+=" },
+		{ cs::fun(&kl::Float3x3::operator+), "+" },
+		{ cs::fun(&kl::Float3x3::operator+=), "+=" },
 
-		{ chaiscript::fun(&kl::Float3x3::operator-), "-" },
-		{ chaiscript::fun(&kl::Float3x3::operator-=), "-=" },
+		{ cs::fun(&kl::Float3x3::operator-), "-" },
+		{ cs::fun(&kl::Float3x3::operator-=), "-=" },
 
-		{ chaiscript::fun<kl::Float3x3, kl::Float3x3, float>(&kl::Float3x3::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float3x3, float>(&kl::Float3x3::operator*=), "*=" },
+		{ cs::fun<kl::Float3x3 (kl::Float3x3::*)(float) const>(&kl::Float3x3::operator*), "*" },
+		{ cs::fun<void (kl::Float3x3::*)(float)>(&kl::Float3x3::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Float3x3, kl::Float3x3, const kl::Float3x3&>(&kl::Float3x3::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float3x3, const kl::Float3x3&>(&kl::Float3x3::operator*=), "*=" },
+		{ cs::fun<kl::Float3x3 (kl::Float3x3::*)(const kl::Float3x3&) const>(&kl::Float3x3::operator*), "*" },
+		{ cs::fun<void (kl::Float3x3::*)(const kl::Float3x3&)>(&kl::Float3x3::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Float3, kl::Float3x3, const kl::Float3&>(&kl::Float3x3::operator*), "*"},
+		{ cs::fun<kl::Float3 (kl::Float3x3::*)(const kl::Float3&) const>(&kl::Float3x3::operator*), "*"},
 
-		{ chaiscript::fun(&kl::Float3x3::determinant), "determinant" },
+		{ cs::fun(&kl::Float3x3::determinant), "determinant" },
 
-		{ chaiscript::fun([](const kl::Float3x3& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Float3x3& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float3x3"] = "Three float wide square matrix.";
 
 	// Float4x4
-	chaiscript::utility::add_class<kl::Float4x4>(*INTERP_SCRIPT_MODULE, "Float4x4",
+	cs::utility::add_class<kl::Float4x4>(*INTERP_SCRIPT_MODULE, "Float4x4",
 	{
-		chaiscript::constructor<kl::Float4x4()>(),
-		chaiscript::constructor<kl::Float4x4(const kl::Float4x4&)>(),
+		cs::constructor<kl::Float4x4()>(),
+		cs::constructor<kl::Float4x4(const kl::Float4x4&)>(),
 	},
 	{
-		{ chaiscript::fun(static_cast<kl::Float4x4& (kl::Float4x4::*)(const kl::Float4x4&)>(&kl::Float4x4::operator=)), "=" },
+		{ cs::fun<kl::Float4x4& (kl::Float4x4::*)(const kl::Float4x4&)>(&kl::Float4x4::operator=), "=" },
 
-		{ chaiscript::fun<float&, kl::Float4x4, int>(&kl::Float4x4::operator[]), "[]"},
+		{ cs::fun<float& (kl::Float4x4::*)(int)>(&kl::Float4x4::operator[]), "[]"},
 
-		{ chaiscript::fun(&kl::Float4x4::operator==), "==" },
-		{ chaiscript::fun(&kl::Float4x4::operator!=), "!=" },
+		{ cs::fun(&kl::Float4x4::operator==), "==" },
+		{ cs::fun(&kl::Float4x4::operator!=), "!=" },
 
-		{ chaiscript::fun(&kl::Float4x4::operator+), "+" },
-		{ chaiscript::fun(&kl::Float4x4::operator+=), "+=" },
+		{ cs::fun(&kl::Float4x4::operator+), "+" },
+		{ cs::fun(&kl::Float4x4::operator+=), "+=" },
 
-		{ chaiscript::fun(&kl::Float4x4::operator-), "-" },
-		{ chaiscript::fun(&kl::Float4x4::operator-=), "-=" },
+		{ cs::fun(&kl::Float4x4::operator-), "-" },
+		{ cs::fun(&kl::Float4x4::operator-=), "-=" },
 
-		{ chaiscript::fun<kl::Float4x4, kl::Float4x4, float>(&kl::Float4x4::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float4x4, float>(&kl::Float4x4::operator*=), "*=" },
+		{ cs::fun<kl::Float4x4 (kl::Float4x4::*)(float) const>(&kl::Float4x4::operator*), "*" },
+		{ cs::fun<void (kl::Float4x4::*)(float)>(&kl::Float4x4::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Float4x4, kl::Float4x4, const kl::Float4x4&>(&kl::Float4x4::operator*), "*" },
-		{ chaiscript::fun<void, kl::Float4x4, const kl::Float4x4&>(&kl::Float4x4::operator*=), "*=" },
+		{ cs::fun<kl::Float4x4 (kl::Float4x4::*)(const kl::Float4x4&) const>(&kl::Float4x4::operator*), "*" },
+		{ cs::fun<void (kl::Float4x4::*)(const kl::Float4x4&)>(&kl::Float4x4::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Float4, kl::Float4x4, const kl::Float4&>(&kl::Float4x4::operator*), "*"},
+		{ cs::fun<kl::Float4 (kl::Float4x4::*)(const kl::Float4&) const>(&kl::Float4x4::operator*), "*"},
 
-		{ chaiscript::fun(&kl::Float4x4::determinant), "determinant" },
+		{ cs::fun(&kl::Float4x4::determinant), "determinant" },
 
-		{ chaiscript::fun([](const kl::Float4x4& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Float4x4& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float4x4"] = "Four float wide square matrix.";
 
 	// Complex
-	chaiscript::utility::add_class<kl::Complex<float>>(*INTERP_SCRIPT_MODULE, "Complex",
+	cs::utility::add_class<kl::Complex<float>>(*INTERP_SCRIPT_MODULE, "Complex",
 	{
-		chaiscript::constructor<kl::Complex<float>()>(),
-		chaiscript::constructor<kl::Complex<float>(const kl::Complex<float>&)>(),
+		cs::constructor<kl::Complex<float>()>(),
+		cs::constructor<kl::Complex<float>(const kl::Complex<float>&)>(),
 
-		chaiscript::constructor<kl::Complex<float>(float, float)>(),
-		chaiscript::constructor<kl::Complex<float>(float)>(),
+		cs::constructor<kl::Complex<float>(float, float)>(),
+		cs::constructor<kl::Complex<float>(float)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Complex<float>::r), "r" },
-		{ chaiscript::fun(&kl::Complex<float>::i), "i" },
+		{ cs::fun(&kl::Complex<float>::r), "r" },
+		{ cs::fun(&kl::Complex<float>::i), "i" },
 
-		{ chaiscript::fun(static_cast<kl::Complex<float>& (kl::Complex<float>::*)(const kl::Complex<float>&)>(&kl::Complex<float>::operator=)), "=" },
+		{ cs::fun<kl::Complex<float>& (kl::Complex<float>::*)(const kl::Complex<float>&)>(&kl::Complex<float>::operator=), "=" },
 
-		{ chaiscript::fun<float&, kl::Complex<float>, int>(&kl::Complex<float>::operator[]), "[]"},
+		{ cs::fun<float& (kl::Complex<float>::*)(int)>(&kl::Complex<float>::operator[]), "[]"},
 
-		{ chaiscript::fun(&kl::Complex<float>::operator==), "==" },
-		{ chaiscript::fun(&kl::Complex<float>::operator!=), "!=" },
+		{ cs::fun(&kl::Complex<float>::operator==), "==" },
+		{ cs::fun(&kl::Complex<float>::operator!=), "!=" },
 
-		{ chaiscript::fun(&kl::Complex<float>::operator+), "+" },
-		{ chaiscript::fun(&kl::Complex<float>::operator+=), "+=" },
+		{ cs::fun(&kl::Complex<float>::operator+), "+" },
+		{ cs::fun(&kl::Complex<float>::operator+=), "+=" },
 
-		{ chaiscript::fun<kl::Complex<float>, kl::Complex<float>, const kl::Complex<float>&>(&kl::Complex<float>::operator-), "-" },
-		{ chaiscript::fun(&kl::Complex<float>::operator-=), "-=" },
+		{ cs::fun<kl::Complex<float> (kl::Complex<float>::*)(const kl::Complex<float>&) const>(&kl::Complex<float>::operator-), "-" },
+		{ cs::fun(&kl::Complex<float>::operator-=), "-=" },
 
-		{ chaiscript::fun<kl::Complex<float>, kl::Complex<float>, float>(&kl::Complex<float>::operator*), "*" },
-		{ chaiscript::fun<void, kl::Complex<float>, float>(&kl::Complex<float>::operator*=), "*=" },
+		{ cs::fun<kl::Complex<float> (kl::Complex<float>::*)(float) const>(&kl::Complex<float>::operator*), "*" },
+		{ cs::fun<void (kl::Complex<float>::*)(float)>(&kl::Complex<float>::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Complex<float>, kl::Complex<float>, const kl::Complex<float>&>(&kl::Complex<float>::operator*), "*" },
-		{ chaiscript::fun<void, kl::Complex<float>, const kl::Complex<float>&>(&kl::Complex<float>::operator*=), "*=" },
+		{ cs::fun<kl::Complex<float> (kl::Complex<float>::*)(const kl::Complex<float>&) const>(&kl::Complex<float>::operator*), "*" },
+		{ cs::fun<void (kl::Complex<float>::*)(const kl::Complex<float>&)>(&kl::Complex<float>::operator*=), "*="},
 
-		{ chaiscript::fun<kl::Complex<float>, kl::Complex<float>>(&kl::Complex<float>::operator-), "-" },
-		{ chaiscript::fun(&kl::Complex<float>::length), "length" },
+		{ cs::fun<kl::Complex<float> (kl::Complex<float>::*)() const>(&kl::Complex<float>::operator-), "-" },
+		{ cs::fun(&kl::Complex<float>::length), "length" },
 
-		{ chaiscript::fun([](const kl::Complex<float>& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Complex<float>& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Complex"] = "Two component imaginary number.";
 	INTERP_SCRIPT_MEMBERS["r"] = "r";
 	INTERP_SCRIPT_MEMBERS["i"] = "i";
 
 	// Quaternion
-	chaiscript::utility::add_class<kl::Quaternion<float>>(*INTERP_SCRIPT_MODULE, "Quaternion",
+	cs::utility::add_class<kl::Quaternion<float>>(*INTERP_SCRIPT_MODULE, "Quaternion",
 	{
-		chaiscript::constructor<kl::Quaternion<float>()>(),
-		chaiscript::constructor<kl::Quaternion<float>(const kl::Quaternion<float>&)>(),
+		cs::constructor<kl::Quaternion<float>()>(),
+		cs::constructor<kl::Quaternion<float>(const kl::Quaternion<float>&)>(),
 
-		chaiscript::constructor<kl::Quaternion<float>(float, float, float)>(),
-		chaiscript::constructor<kl::Quaternion<float>(float, float, float, float)>(),
-		chaiscript::constructor<kl::Quaternion<float>(kl::Float3, float)>(),
+		cs::constructor<kl::Quaternion<float>(float, float, float)>(),
+		cs::constructor<kl::Quaternion<float>(float, float, float, float)>(),
+		cs::constructor<kl::Quaternion<float>(kl::Float3, float)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Quaternion<float>::w), "w" },
-		{ chaiscript::fun(&kl::Quaternion<float>::x), "x" },
-		{ chaiscript::fun(&kl::Quaternion<float>::y), "y" },
-		{ chaiscript::fun(&kl::Quaternion<float>::z), "z" },
+		{ cs::fun(&kl::Quaternion<float>::w), "w" },
+		{ cs::fun(&kl::Quaternion<float>::x), "x" },
+		{ cs::fun(&kl::Quaternion<float>::y), "y" },
+		{ cs::fun(&kl::Quaternion<float>::z), "z" },
 
-		{ chaiscript::fun(static_cast<kl::Quaternion<float>& (kl::Quaternion<float>::*)(const kl::Quaternion<float>&)>(&kl::Quaternion<float>::operator=)), "=" },
+		{ cs::fun<kl::Quaternion<float>& (kl::Quaternion<float>::*)(const kl::Quaternion<float>&)>(&kl::Quaternion<float>::operator=), "=" },
 
-		{ chaiscript::fun<float&, kl::Quaternion<float>, int>(&kl::Quaternion<float>::operator[]), "[]"},
+		{ cs::fun<float& (kl::Quaternion<float>::*)(int)>(&kl::Quaternion<float>::operator[]), "[]"},
 
-		{ chaiscript::fun(&kl::Quaternion<float>::operator==), "==" },
-		{ chaiscript::fun(&kl::Quaternion<float>::operator!=), "!=" },
+		{ cs::fun(&kl::Quaternion<float>::operator==), "==" },
+		{ cs::fun(&kl::Quaternion<float>::operator!=), "!=" },
 
-		{ chaiscript::fun(&kl::Quaternion<float>::operator+), "+" },
-		{ chaiscript::fun(&kl::Quaternion<float>::operator+=), "+=" },
+		{ cs::fun(&kl::Quaternion<float>::operator+), "+" },
+		{ cs::fun(&kl::Quaternion<float>::operator+=), "+=" },
 
-		{ chaiscript::fun<kl::Quaternion<float>, kl::Quaternion<float>, const kl::Quaternion<float>&>(&kl::Quaternion<float>::operator-), "-" },
-		{ chaiscript::fun(&kl::Quaternion<float>::operator-=), "-=" },
+		{ cs::fun<kl::Quaternion<float>(kl::Quaternion<float>::*)(const kl::Quaternion<float>&) const>(&kl::Quaternion<float>::operator-), "-" },
+		{ cs::fun(&kl::Quaternion<float>::operator-=), "-=" },
 
-		{ chaiscript::fun<kl::Quaternion<float>, kl::Quaternion<float>, float>(&kl::Quaternion<float>::operator*), "*" },
-		{ chaiscript::fun<void, kl::Quaternion<float>, float>(&kl::Quaternion<float>::operator*=), "*=" },
+		{ cs::fun<kl::Quaternion<float>(kl::Quaternion<float>::*)(float) const>(&kl::Quaternion<float>::operator*), "*" },
+		{ cs::fun<void (kl::Quaternion<float>::*)(float)>(&kl::Quaternion<float>::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Quaternion<float>, kl::Quaternion<float>, const kl::Quaternion<float>&>(&kl::Quaternion<float>::operator*), "*" },
-		{ chaiscript::fun<void, kl::Quaternion<float>, const kl::Quaternion<float>&>(&kl::Quaternion<float>::operator*=), "*=" },
+		{ cs::fun<kl::Quaternion<float> (kl::Quaternion<float>::*)(const kl::Quaternion<float>&) const>(&kl::Quaternion<float>::operator*), "*" },
+		{ cs::fun<void (kl::Quaternion<float>::*)(const kl::Quaternion<float>&)>(&kl::Quaternion<float>::operator*=), "*=" },
 
-		{ chaiscript::fun<kl::Quaternion<float>, kl::Quaternion<float>>(&kl::Quaternion<float>::operator-), "-" },
-		{ chaiscript::fun(&kl::Quaternion<float>::length), "length" },
+		{ cs::fun<kl::Quaternion<float> (kl::Quaternion<float>::*)() const>(&kl::Quaternion<float>::operator-), "-" },
+		{ cs::fun(&kl::Quaternion<float>::length), "length" },
 
-		{ chaiscript::fun([](const kl::Quaternion<float>& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Quaternion<float>& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Quaternion"] = "Four component imaginary number.";
 
 	// Vertex
-	chaiscript::utility::add_class<kl::Vertex<float>>(*INTERP_SCRIPT_MODULE, "Vertex",
+	cs::utility::add_class<kl::Vertex<float>>(*INTERP_SCRIPT_MODULE, "Vertex",
 	{
-		chaiscript::constructor<kl::Vertex<float>()>(),
-		chaiscript::constructor<kl::Vertex<float>(const kl::Vertex<float>&)>(),
+		cs::constructor<kl::Vertex<float>()>(),
+		cs::constructor<kl::Vertex<float>(const kl::Vertex<float>&)>(),
 
-		chaiscript::constructor<kl::Vertex<float>(kl::Float3)>(),
-		chaiscript::constructor<kl::Vertex<float>(kl::Float3, kl::Float2)>(),
-		chaiscript::constructor<kl::Vertex<float>(kl::Float3, kl::Float3)>(),
-		chaiscript::constructor<kl::Vertex<float>(kl::Float3, kl::Float2, kl::Float3)>(),
+		cs::constructor<kl::Vertex<float>(kl::Float3)>(),
+		cs::constructor<kl::Vertex<float>(kl::Float3, kl::Float2)>(),
+		cs::constructor<kl::Vertex<float>(kl::Float3, kl::Float3)>(),
+		cs::constructor<kl::Vertex<float>(kl::Float3, kl::Float2, kl::Float3)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Vertex<float>::world), "world" },
-		{ chaiscript::fun(&kl::Vertex<float>::normal), "normal" },
-		{ chaiscript::fun(&kl::Vertex<float>::texture), "texture" },
+		{ cs::fun(&kl::Vertex<float>::world), "world" },
+		{ cs::fun(&kl::Vertex<float>::normal), "normal" },
+		{ cs::fun(&kl::Vertex<float>::texture), "texture" },
 
-		{ chaiscript::fun(static_cast<kl::Vertex<float>& (kl::Vertex<float>::*)(const kl::Vertex<float>&)>(&kl::Vertex<float>::operator=)), "=" },
+		{ cs::fun<kl::Vertex<float>& (kl::Vertex<float>::*)(const kl::Vertex<float>&)>(&kl::Vertex<float>::operator=), "=" },
 
-		{ chaiscript::fun([](const kl::Vertex<float>& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Vertex<float>& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Vertex"] = "A 3D point of a mesh.";
 	INTERP_SCRIPT_MEMBERS["world"] = "world";
@@ -569,21 +585,21 @@ const int load_types = [&]
 	INTERP_SCRIPT_MEMBERS["texture"] = "texture";
 
 	// Triangle
-	chaiscript::utility::add_class<kl::Triangle<float>>(*INTERP_SCRIPT_MODULE, "Triangle",
+	cs::utility::add_class<kl::Triangle<float>>(*INTERP_SCRIPT_MODULE, "Triangle",
 	{
-		chaiscript::constructor<kl::Triangle<float>()>(),
-		chaiscript::constructor<kl::Triangle<float>(const kl::Triangle<float>&)>(),
+		cs::constructor<kl::Triangle<float>()>(),
+		cs::constructor<kl::Triangle<float>(const kl::Triangle<float>&)>(),
 
-		chaiscript::constructor<kl::Triangle<float>(kl::Vertex<float>, kl::Vertex<float>, kl::Vertex<float>)>(),
+		cs::constructor<kl::Triangle<float>(kl::Vertex<float>, kl::Vertex<float>, kl::Vertex<float>)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Triangle<float>::a), "a" },
-		{ chaiscript::fun(&kl::Triangle<float>::b), "b" },
-		{ chaiscript::fun(&kl::Triangle<float>::c), "c" },
+		{ cs::fun(&kl::Triangle<float>::a), "a" },
+		{ cs::fun(&kl::Triangle<float>::b), "b" },
+		{ cs::fun(&kl::Triangle<float>::c), "c" },
 
-		{ chaiscript::fun(static_cast<kl::Triangle<float>& (kl::Triangle<float>::*)(const kl::Triangle<float>&)>(&kl::Triangle<float>::operator=)), "=" },
+		{ cs::fun<kl::Triangle<float>& (kl::Triangle<float>::*)(const kl::Triangle<float>&)>(&kl::Triangle<float>::operator=), "=" },
 
-		{ chaiscript::fun([](const kl::Triangle<float>& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Triangle<float>& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Triangle"] = "A 3D triangle in space.";
 	INTERP_SCRIPT_MEMBERS["a"] = "a";
@@ -591,24 +607,24 @@ const int load_types = [&]
 	INTERP_SCRIPT_MEMBERS["c"] = "c";
 
 	// Plane
-	chaiscript::utility::add_class<kl::Plane<float>>(*INTERP_SCRIPT_MODULE, "Plane",
+	cs::utility::add_class<kl::Plane<float>>(*INTERP_SCRIPT_MODULE, "Plane",
 	{
-		chaiscript::constructor<kl::Plane<float>()>(),
-		chaiscript::constructor<kl::Plane<float>(const kl::Plane<float>&)>(),
+		cs::constructor<kl::Plane<float>()>(),
+		cs::constructor<kl::Plane<float>(const kl::Plane<float>&)>(),
 
-		chaiscript::constructor<kl::Plane<float>(kl::Float3, kl::Float3)>(),
+		cs::constructor<kl::Plane<float>(kl::Float3, kl::Float3)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Plane<float>::origin), "origin" },
+		{ cs::fun(&kl::Plane<float>::origin), "origin" },
 
-		{ chaiscript::fun(static_cast<kl::Plane<float>& (kl::Plane<float>::*)(const kl::Plane<float>&)>(&kl::Plane<float>::operator=)), "=" },
+		{ cs::fun<kl::Plane<float>& (kl::Plane<float>::*)(const kl::Plane<float>&)>(&kl::Plane<float>::operator=), "=" },
 
-		{ chaiscript::fun(&kl::Plane<float>::set_normal), "set_normal" },
-		{ chaiscript::fun(&kl::Plane<float>::normal), "normal" },
+		{ cs::fun(&kl::Plane<float>::set_normal), "set_normal" },
+		{ cs::fun(&kl::Plane<float>::normal), "normal" },
 
-		{ chaiscript::fun(&kl::Plane<float>::in_front), "in_front" },
+		{ cs::fun(&kl::Plane<float>::in_front), "in_front" },
 
-		{ chaiscript::fun([](const kl::Plane<float>& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Plane<float>& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Plane"] = "A 3D plane in space.";
 	INTERP_SCRIPT_MEMBERS["origin"] = "origin";
@@ -617,48 +633,48 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["in_front"] = "Checks if a 3D point is in front of the plane.";
 
 	// Sphere
-	chaiscript::utility::add_class<kl::Sphere<float>>(*INTERP_SCRIPT_MODULE, "Sphere",
+	cs::utility::add_class<kl::Sphere<float>>(*INTERP_SCRIPT_MODULE, "Sphere",
 	{
-		chaiscript::constructor<kl::Sphere<float>()>(),
-		chaiscript::constructor<kl::Sphere<float>(const kl::Sphere<float>&)>(),
+		cs::constructor<kl::Sphere<float>()>(),
+		cs::constructor<kl::Sphere<float>(const kl::Sphere<float>&)>(),
 
-		chaiscript::constructor<kl::Sphere<float>(kl::Float3, float)>(),
+		cs::constructor<kl::Sphere<float>(kl::Float3, float)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Sphere<float>::origin), "origin" },
-		{ chaiscript::fun(&kl::Sphere<float>::radius), "radius" },
+		{ cs::fun(&kl::Sphere<float>::origin), "origin" },
+		{ cs::fun(&kl::Sphere<float>::radius), "radius" },
 
-		{ chaiscript::fun(static_cast<kl::Sphere<float>& (kl::Sphere<float>::*)(const kl::Sphere<float>&)>(&kl::Sphere<float>::operator=)), "=" },
+		{ cs::fun<kl::Sphere<float>& (kl::Sphere<float>::*)(const kl::Sphere<float>&)>(&kl::Sphere<float>::operator=), "=" },
 
-		{ chaiscript::fun([](const kl::Sphere<float>& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Sphere<float>& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Sphere"] = "A 3D sphere in space.";
 	INTERP_SCRIPT_MEMBERS["radius"] = "radius";
 
 	// Ray
-	chaiscript::utility::add_class<kl::Ray<float>>(*INTERP_SCRIPT_MODULE, "Ray",
+	cs::utility::add_class<kl::Ray<float>>(*INTERP_SCRIPT_MODULE, "Ray",
 	{
-		chaiscript::constructor<kl::Ray<float>()>(),
-		chaiscript::constructor<kl::Ray<float>(const kl::Ray<float>&)>(),
+		cs::constructor<kl::Ray<float>()>(),
+		cs::constructor<kl::Ray<float>(const kl::Ray<float>&)>(),
 
-		chaiscript::constructor<kl::Ray<float>(kl::Float3, kl::Float3)>(),
-		chaiscript::constructor<kl::Ray<float>(kl::Float3, kl::Float4x4, kl::Float2)>(),
+		cs::constructor<kl::Ray<float>(kl::Float3, kl::Float3)>(),
+		cs::constructor<kl::Ray<float>(kl::Float3, kl::Float4x4, kl::Float2)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Ray<float>::origin), "origin" },
+		{ cs::fun(&kl::Ray<float>::origin), "origin" },
 
-		{ chaiscript::fun(static_cast<kl::Ray<float>& (kl::Ray<float>::*)(const kl::Ray<float>&)>(&kl::Ray<float>::operator=)), "=" },
+		{ cs::fun<kl::Ray<float>& (kl::Ray<float>::*)(const kl::Ray<float>&)>(&kl::Ray<float>::operator=), "=" },
 
-		{ chaiscript::fun(&kl::Ray<float>::set_direction), "set_direction" },
-		{ chaiscript::fun(&kl::Ray<float>::direction), "direction" },
+		{ cs::fun(&kl::Ray<float>::set_direction), "set_direction" },
+		{ cs::fun(&kl::Ray<float>::direction), "direction" },
 
-		{ chaiscript::fun(&kl::Ray<float>::intersect_plane), "intersect_plane" },
-		{ chaiscript::fun(&kl::Ray<float>::intersect_triangle), "intersect_triangle" },
+		{ cs::fun(&kl::Ray<float>::intersect_plane), "intersect_plane" },
+		{ cs::fun(&kl::Ray<float>::intersect_triangle), "intersect_triangle" },
 
-		{ chaiscript::fun(&kl::Ray<float>::can_intersect_sphere), "can_intersect_sphere" },
-		{ chaiscript::fun(&kl::Ray<float>::intersect_sphere), "intersect_sphere" },
+		{ cs::fun(&kl::Ray<float>::can_intersect_sphere), "can_intersect_sphere" },
+		{ cs::fun(&kl::Ray<float>::intersect_sphere), "intersect_sphere" },
 
-		{ chaiscript::fun([](const kl::Ray<float>& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const kl::Ray<float>& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Ray"] = "A 3D ray in space.";
 	INTERP_SCRIPT_IDENTIFIERS["set_direction"] = "Sets the normalized direction.";
@@ -669,37 +685,37 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["intersect_sphere"] = "Ray interesects sphere.";
 
 	// Color
-	chaiscript::utility::add_class<kl::Color>(*INTERP_SCRIPT_MODULE, "Color",
+	cs::utility::add_class<kl::Color>(*INTERP_SCRIPT_MODULE, "Color",
 	{
-		chaiscript::constructor<kl::Color()>(),
-		chaiscript::constructor<kl::Color(const kl::Color&)>(),
+		cs::constructor<kl::Color()>(),
+		cs::constructor<kl::Color(const kl::Color&)>(),
 
-		chaiscript::constructor<kl::Color(byte, byte, byte)>(),
-		chaiscript::constructor<kl::Color(byte, byte, byte, byte)>(),
+		cs::constructor<kl::Color(byte, byte, byte)>(),
+		cs::constructor<kl::Color(byte, byte, byte, byte)>(),
 	},
 	{
-		{ chaiscript::fun(&kl::Color::r), "r" },
-		{ chaiscript::fun(&kl::Color::g), "g" },
-		{ chaiscript::fun(&kl::Color::b), "b" },
-		{ chaiscript::fun(&kl::Color::a), "a" },
+		{ cs::fun(&kl::Color::r), "r" },
+		{ cs::fun(&kl::Color::g), "g" },
+		{ cs::fun(&kl::Color::b), "b" },
+		{ cs::fun(&kl::Color::a), "a" },
 
-		{ chaiscript::fun(static_cast<kl::Color& (kl::Color::*)(const kl::Color&)>(&kl::Color::operator=)), "=" },
+		{ cs::fun<kl::Color& (kl::Color::*)(const kl::Color&)>(&kl::Color::operator=), "=" },
 
-		{ chaiscript::fun(&kl::Color::operator==), "==" },
-		{ chaiscript::fun(&kl::Color::operator!=), "!=" },
+		{ cs::fun(&kl::Color::operator==), "==" },
+		{ cs::fun(&kl::Color::operator!=), "!=" },
 
-		{ chaiscript::fun(&kl::Color::gray), "gray" },
-		{ chaiscript::fun(&kl::Color::inverted), "inverted" },
-		{ chaiscript::fun(&kl::Color::as_ascii), "as_ascii" },
+		{ cs::fun(&kl::Color::gray), "gray" },
+		{ cs::fun(&kl::Color::inverted), "inverted" },
+		{ cs::fun(&kl::Color::as_ascii), "as_ascii" },
 
-		{ chaiscript::fun<kl::Color, kl::Color, const kl::Color&, float>(&kl::Color::mix), "mix" },
-		{ chaiscript::fun<kl::Color, kl::Color, const kl::Color&>(&kl::Color::mix), "mix" },
+		{ cs::fun<kl::Color (kl::Color::*)(const kl::Color&, float) const>(&kl::Color::mix), "mix" },
+		{ cs::fun<kl::Color (kl::Color::*)(const kl::Color&) const>(&kl::Color::mix), "mix" },
 
-		{ chaiscript::fun([](const kl::Color& object) {
-			return kl::format('(', static_cast<int>(object.r),
-				", ", static_cast<int>(object.g),
-				", ", static_cast<int>(object.b),
-				", ", static_cast<int>(object.a), ')');
+		{ cs::fun([](const kl::Color& object) {
+			return kl::format('(', int(object.r),
+				", ", int(object.g),
+				", ", int(object.b),
+				", ", int(object.a), ')');
 		}), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Color"] = "Four component byte[0, 255] color.";
@@ -713,15 +729,15 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["mix"] = "Mixes two colors.";
 
 	// Mesh
-	chaiscript::utility::add_class<Mesh>(*INTERP_SCRIPT_MODULE, "Mesh",
+	cs::utility::add_class<Mesh>(*INTERP_SCRIPT_MODULE, "Mesh",
 	{},
 	{
-		{ chaiscript::fun(&Mesh::data_buffer), "data_buffer" },
+		{ cs::fun(&Mesh::data_buffer), "data_buffer" },
 
-		{ chaiscript::fun(&Mesh::topology), "topology"},
-		{ chaiscript::fun(&Mesh::render_wireframe), "render_wireframe" },
+		{ cs::fun(&Mesh::topology), "topology"},
+		{ cs::fun(&Mesh::render_wireframe), "render_wireframe" },
 
-		{ chaiscript::fun(&Mesh::reload), "reload" },
+		{ cs::fun(&Mesh::reload), "reload" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Mesh"] = "Object that contains triangle data.";
 	INTERP_SCRIPT_MEMBERS["data_buffer"] = "data_buffer";
@@ -730,18 +746,18 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["reload"] = "Reloads the self.";
 
 	// Texture
-	chaiscript::utility::add_class<Texture>(*INTERP_SCRIPT_MODULE, "Texture",
+	cs::utility::add_class<Texture>(*INTERP_SCRIPT_MODULE, "Texture",
 	{},
 	{
-		{ chaiscript::fun(&Texture::data_buffer), "data_buffer" },
+		{ cs::fun(&Texture::data_buffer), "data_buffer" },
 
-		{ chaiscript::fun(&Texture::load_as_2D), "load_as_2D" },
-		{ chaiscript::fun(&Texture::load_as_cube), "load_as_cube" },
+		{ cs::fun(&Texture::load_as_2D), "load_as_2D" },
+		{ cs::fun(&Texture::load_as_cube), "load_as_cube" },
 
-		{ chaiscript::fun(&Texture::create_target_view), "create_target_view" },
-		{ chaiscript::fun(&Texture::create_depth_view), "create_depth_view" },
-		{ chaiscript::fun(&Texture::create_shader_view), "create_shader_view" },
-		{ chaiscript::fun(&Texture::create_access_view), "create_access_view" },
+		{ cs::fun(&Texture::create_target_view), "create_target_view" },
+		{ cs::fun(&Texture::create_depth_view), "create_depth_view" },
+		{ cs::fun(&Texture::create_shader_view), "create_shader_view" },
+		{ cs::fun(&Texture::create_access_view), "create_access_view" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Texture"] = "Object that contains pixel data.";
 	INTERP_SCRIPT_IDENTIFIERS["load_as_2D"] = "Reloads the texture as 2D.";
@@ -752,23 +768,23 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["create_access_view"] = "Creates access view for this texture.";
 
 	// Material
-	chaiscript::utility::add_class<Material>(*INTERP_SCRIPT_MODULE, "Material",
+	cs::utility::add_class<Material>(*INTERP_SCRIPT_MODULE, "Material",
 	{},
 	{
-		{ chaiscript::fun(&Material::color), "color" },
-		{ chaiscript::fun(&Material::texture_blend), "texture_blend" },
+		{ cs::fun(&Material::color), "color" },
+		{ cs::fun(&Material::texture_blend), "texture_blend" },
 
-		{ chaiscript::fun(&Material::reflection_factor), "reflection_factor" },
-		{ chaiscript::fun(&Material::refraction_factor), "refraction_factor" },
-		{ chaiscript::fun(&Material::refraction_index), "refraction_index" },
+		{ cs::fun(&Material::reflection_factor), "reflection_factor" },
+		{ cs::fun(&Material::refraction_factor), "refraction_factor" },
+		{ cs::fun(&Material::refraction_index), "refraction_index" },
 
-		{ chaiscript::fun(&Material::custom_data), "custom_data" },
+		{ cs::fun(&Material::custom_data), "custom_data" },
 
-		{ chaiscript::fun(&Material::color_map_name), "color_map_name" },
-		{ chaiscript::fun(&Material::normal_map_name), "normal_map_name" },
-		{ chaiscript::fun(&Material::roughness_map_name), "roughness_map_name" },
+		{ cs::fun(&Material::color_map_name), "color_map_name" },
+		{ cs::fun(&Material::normal_map_name), "normal_map_name" },
+		{ cs::fun(&Material::roughness_map_name), "roughness_map_name" },
 
-		{ chaiscript::fun(&Material::shader_name), "shader_name" },
+		{ cs::fun(&Material::shader_name), "shader_name" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Material"] = "Object that defines the look of the entity.";
 	INTERP_SCRIPT_MEMBERS["color"] = "color";
@@ -783,46 +799,46 @@ const int load_types = [&]
 	INTERP_SCRIPT_MEMBERS["shader_name"] = "shader_name";
 
 	// Shader
-	chaiscript::utility::add_class<Shader>(*INTERP_SCRIPT_MODULE, "Shader",
+	cs::utility::add_class<Shader>(*INTERP_SCRIPT_MODULE, "Shader",
 	{},
 	{
-		{ chaiscript::fun(&Shader::data_buffer), "data_buffer" },
+		{ cs::fun(&Shader::data_buffer), "data_buffer" },
 
-		{ chaiscript::fun(&Shader::reload), "reload" },
+		{ cs::fun(&Shader::reload), "reload" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Shader"] = "Custom shader override for a material.";
 
 	// Entity
-	chaiscript::utility::add_class<Entity>(*INTERP_SCRIPT_MODULE, "Entity",
+	cs::utility::add_class<Entity>(*INTERP_SCRIPT_MODULE, "Entity",
 	{},
 	{
-		{ chaiscript::fun(&Entity::scale), "scale" },
-		{ chaiscript::fun(&Entity::mesh_name), "mesh_name" },
-		{ chaiscript::fun(&Entity::material_name), "material_name" },
+		{ cs::fun(&Entity::scale), "scale" },
+		{ cs::fun(&Entity::mesh_name), "mesh_name" },
+		{ cs::fun(&Entity::material_name), "material_name" },
 
-		{ chaiscript::fun(&Entity::model_matrix), "model_matrix" },
-		{ chaiscript::fun(&Entity::collider_matrix), "collider_matrix" },
+		{ cs::fun(&Entity::model_matrix), "model_matrix" },
+		{ cs::fun(&Entity::collider_matrix), "collider_matrix" },
 
-		{ chaiscript::fun(&Entity::set_rotation), "set_rotation" },
-		{ chaiscript::fun(&Entity::rotation), "rotation" },
+		{ cs::fun(&Entity::set_rotation), "set_rotation" },
+		{ cs::fun(&Entity::rotation), "rotation" },
 
-		{ chaiscript::fun(&Entity::set_position), "set_position" },
-		{ chaiscript::fun(&Entity::position), "position" },
+		{ cs::fun(&Entity::set_position), "set_position" },
+		{ cs::fun(&Entity::position), "position" },
 
-		{ chaiscript::fun(&Entity::set_dynamic), "set_dynamic" },
-		{ chaiscript::fun(&Entity::is_dynamic), "is_dynamic" },
+		{ cs::fun(&Entity::set_dynamic), "set_dynamic" },
+		{ cs::fun(&Entity::is_dynamic), "is_dynamic" },
 
-		{ chaiscript::fun(&Entity::set_gravity), "set_gravity" },
-		{ chaiscript::fun(&Entity::has_gravity), "has_gravity" },
+		{ cs::fun(&Entity::set_gravity), "set_gravity" },
+		{ cs::fun(&Entity::has_gravity), "has_gravity" },
 
-		{ chaiscript::fun(&Entity::set_mass), "set_mass" },
-		{ chaiscript::fun(&Entity::mass), "mass" },
+		{ cs::fun(&Entity::set_mass), "set_mass" },
+		{ cs::fun(&Entity::mass), "mass" },
 
-		{ chaiscript::fun(&Entity::set_velocity), "set_velocity" },
-		{ chaiscript::fun(&Entity::velocity), "velocity" },
+		{ cs::fun(&Entity::set_velocity), "set_velocity" },
+		{ cs::fun(&Entity::velocity), "velocity" },
 
-		{ chaiscript::fun(&Entity::set_angular), "set_angular" },
-		{ chaiscript::fun(&Entity::angular), "angular" },
+		{ cs::fun(&Entity::set_angular), "set_angular" },
+		{ cs::fun(&Entity::angular), "angular" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Entity"] = "Base entity that's a part of a scene.";
 	INTERP_SCRIPT_MEMBERS["scale"] = "scale";
@@ -846,40 +862,40 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["angular"] = "Returns the angular velocity of entity.";
 
 	// Camera
-	chaiscript::utility::add_class<Camera>(*INTERP_SCRIPT_MODULE, "Camera",
+	cs::utility::add_class<Camera>(*INTERP_SCRIPT_MODULE, "Camera",
 	{},
 	{
-		{ chaiscript::fun(&Camera::aspect_ratio), "aspect_ratio" },
-		{ chaiscript::fun(&Camera::field_of_view), "field_of_view" },
-		{ chaiscript::fun(&Camera::near_plane), "near_plane" },
-		{ chaiscript::fun(&Camera::far_plane), "far_plane" },
-		{ chaiscript::fun(&Camera::sensitivity), "sensitivity" },
-		{ chaiscript::fun(&Camera::speed), "speed" },
-		{ chaiscript::fun(&Camera::background), "background" },
-		{ chaiscript::fun(&Camera::skybox_name), "skybox_name" },
+		{ cs::fun(&Camera::aspect_ratio), "aspect_ratio" },
+		{ cs::fun(&Camera::field_of_view), "field_of_view" },
+		{ cs::fun(&Camera::near_plane), "near_plane" },
+		{ cs::fun(&Camera::far_plane), "far_plane" },
+		{ cs::fun(&Camera::sensitivity), "sensitivity" },
+		{ cs::fun(&Camera::speed), "speed" },
+		{ cs::fun(&Camera::background), "background" },
+		{ cs::fun(&Camera::skybox_name), "skybox_name" },
 
-		{ chaiscript::fun(&Camera::update_aspect_ratio), "update_aspect_ratio" },
+		{ cs::fun(&Camera::update_aspect_ratio), "update_aspect_ratio" },
 
-		{ chaiscript::fun(&Camera::set_forward), "set_forward" },
-		{ chaiscript::fun(&Camera::forward), "forward" },
+		{ cs::fun(&Camera::set_forward), "set_forward" },
+		{ cs::fun(&Camera::forward), "forward" },
 
-		{ chaiscript::fun(&Camera::set_up), "set_up" },
-		{ chaiscript::fun(&Camera::up), "up" },
+		{ cs::fun(&Camera::set_up), "set_up" },
+		{ cs::fun(&Camera::up), "up" },
 
-		{ chaiscript::fun(&Camera::right), "right" },
+		{ cs::fun(&Camera::right), "right" },
 
-		{ chaiscript::fun(&Camera::move_forward), "move_forward" },
-		{ chaiscript::fun(&Camera::move_back), "move_back" },
-		{ chaiscript::fun(&Camera::move_right), "move_right" },
-		{ chaiscript::fun(&Camera::move_left), "move_left" },
-		{ chaiscript::fun(&Camera::move_up), "move_up" },
-		{ chaiscript::fun(&Camera::move_down), "move_down" },
+		{ cs::fun(&Camera::move_forward), "move_forward" },
+		{ cs::fun(&Camera::move_back), "move_back" },
+		{ cs::fun(&Camera::move_right), "move_right" },
+		{ cs::fun(&Camera::move_left), "move_left" },
+		{ cs::fun(&Camera::move_up), "move_up" },
+		{ cs::fun(&Camera::move_down), "move_down" },
 
-		{ chaiscript::fun(&Camera::rotate), "rotate" },
+		{ cs::fun(&Camera::rotate), "rotate" },
 
-		{ chaiscript::fun(&Camera::view_matrix), "view_matrix" },
-		{ chaiscript::fun(&Camera::projection_matrix), "projection_matrix" },
-		{ chaiscript::fun(&Camera::camera_matrix), "camera_matrix" },
+		{ cs::fun(&Camera::view_matrix), "view_matrix" },
+		{ cs::fun(&Camera::projection_matrix), "projection_matrix" },
+		{ cs::fun(&Camera::camera_matrix), "camera_matrix" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Camera"] = "Entity that has a view of the scene.";
 	INTERP_SCRIPT_MEMBERS["aspect_ratio"] = "aspect_ratio";
@@ -908,46 +924,46 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["camera_matrix"] = "Returns the camera's matrix.";
 
 	// Light
-	chaiscript::utility::add_class<Light>(*INTERP_SCRIPT_MODULE, "Light",
+	cs::utility::add_class<Light>(*INTERP_SCRIPT_MODULE, "Light",
 	{},
 	{
-		{ chaiscript::fun(&Light::light_at_point), "light_at_point" },
+		{ cs::fun(&Light::light_at_point), "light_at_point" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Light"] = "Base class of every light class.";
 	INTERP_SCRIPT_IDENTIFIERS["light_at_point"] = "Returns the lights intensity at some 3D point.";
 
 	// Ambient light
-	chaiscript::utility::add_class<AmbientLight>(*INTERP_SCRIPT_MODULE, "AmbientLight",
+	cs::utility::add_class<AmbientLight>(*INTERP_SCRIPT_MODULE, "AmbientLight",
 	{},
 	{
-		{ chaiscript::fun(&AmbientLight::color), "color" },
-		{ chaiscript::fun(&AmbientLight::intensity), "intensity" },
+		{ cs::fun(&AmbientLight::color), "color" },
+		{ cs::fun(&AmbientLight::intensity), "intensity" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["AmbientLight"] = "Non directional light at shines at all points.";
 	INTERP_SCRIPT_MEMBERS["color"] = "color";
 	INTERP_SCRIPT_MEMBERS["intensity"] = "intensity";
 
 	// Point light
-	chaiscript::utility::add_class<PointLight>(*INTERP_SCRIPT_MODULE, "PointLight",
+	cs::utility::add_class<PointLight>(*INTERP_SCRIPT_MODULE, "PointLight",
 	{},
 	{
-		{ chaiscript::fun(&PointLight::color), "color" },
+		{ cs::fun(&PointLight::color), "color" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["PointLight"] = "Light that shines in all directions.";
 
 	// Directional light
-	chaiscript::utility::add_class<DirectionalLight>(*INTERP_SCRIPT_MODULE, "DirectionalLight",
+	cs::utility::add_class<DirectionalLight>(*INTERP_SCRIPT_MODULE, "DirectionalLight",
 	{},
 	{
-		{ chaiscript::fun(&DirectionalLight::point_size), "point_size" },
-		{ chaiscript::fun(&DirectionalLight::color), "color" },
+		{ cs::fun(&DirectionalLight::point_size), "point_size" },
+		{ cs::fun(&DirectionalLight::color), "color" },
 
-		{ chaiscript::fun(&DirectionalLight::map_resolution), "map_resolution" },
+		{ cs::fun(&DirectionalLight::map_resolution), "map_resolution" },
 
-		{ chaiscript::fun(&DirectionalLight::set_direction), "set_direction" },
-		{ chaiscript::fun(&DirectionalLight::direction), "direction" },
+		{ cs::fun(&DirectionalLight::set_direction), "set_direction" },
+		{ cs::fun(&DirectionalLight::direction), "direction" },
 
-		{ chaiscript::fun(&DirectionalLight::light_matrix), "light_matrix" },
+		{ cs::fun(&DirectionalLight::light_matrix), "light_matrix" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["DirectionalLight"] = "Light that shines in a single direction and is infinitely far away.";
 	INTERP_SCRIPT_MEMBERS["point_size"] = "point_size";
@@ -955,57 +971,57 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["light_matrix"] = "Returns the light matrix.";
 
 	// Scene
-	chaiscript::utility::add_class<Scene>(*INTERP_SCRIPT_MODULE, "Scene",
+	cs::utility::add_class<Scene>(*INTERP_SCRIPT_MODULE, "Scene",
 	{},
 	{
-		{ chaiscript::fun(&Scene::main_camera_name), "main_camera_name" },
-		{ chaiscript::fun(&Scene::main_ambient_light_name), "main_ambient_light_name" },
-		{ chaiscript::fun(&Scene::main_directional_light_name), "main_directional_light_name" },
+		{ cs::fun(&Scene::main_camera_name), "main_camera_name" },
+		{ cs::fun(&Scene::main_ambient_light_name), "main_ambient_light_name" },
+		{ cs::fun(&Scene::main_directional_light_name), "main_directional_light_name" },
 
-		{ chaiscript::fun(&Scene::set_gravity), "set_gravity" },
-		{ chaiscript::fun(&Scene::gravity), "gravity" },
+		{ cs::fun(&Scene::set_gravity), "set_gravity" },
+		{ cs::fun(&Scene::gravity), "gravity" },
 
-		{ chaiscript::fun(&Scene::helper_new_mesh), "new_mesh" },
-		{ chaiscript::fun(&Scene::helper_new_texture), "new_texture" },
-		{ chaiscript::fun(&Scene::helper_new_material), "new_material" },
-		{ chaiscript::fun(&Scene::helper_new_shader), "new_shader" },
-		{ chaiscript::fun(&Scene::helper_new_entity), "new_entity" },
+		{ cs::fun(&Scene::helper_new_mesh), "new_mesh" },
+		{ cs::fun(&Scene::helper_new_texture), "new_texture" },
+		{ cs::fun(&Scene::helper_new_material), "new_material" },
+		{ cs::fun(&Scene::helper_new_shader), "new_shader" },
+		{ cs::fun(&Scene::helper_new_entity), "new_entity" },
 
-		{ chaiscript::fun(&Scene::helper_get_mesh), "get_mesh" },
-		{ chaiscript::fun(&Scene::helper_get_texture), "get_texture" },
-		{ chaiscript::fun(&Scene::helper_get_material), "get_material" },
-		{ chaiscript::fun(&Scene::helper_get_shader), "get_shader" },
-		{ chaiscript::fun(&Scene::helper_get_entity), "get_entity" },
+		{ cs::fun(&Scene::helper_get_mesh), "get_mesh" },
+		{ cs::fun(&Scene::helper_get_texture), "get_texture" },
+		{ cs::fun(&Scene::helper_get_material), "get_material" },
+		{ cs::fun(&Scene::helper_get_shader), "get_shader" },
+		{ cs::fun(&Scene::helper_get_entity), "get_entity" },
 
-		{ chaiscript::fun(&Scene::helper_remove_mesh), "remove_mesh" },
-		{ chaiscript::fun(&Scene::helper_remove_texture), "remove_texture" },
-		{ chaiscript::fun(&Scene::helper_remove_material), "remove_material" },
-		{ chaiscript::fun(&Scene::helper_remove_shader), "remove_shader" },
-		{ chaiscript::fun(&Scene::helper_remove_entity), "remove_entity" },
+		{ cs::fun(&Scene::helper_remove_mesh), "remove_mesh" },
+		{ cs::fun(&Scene::helper_remove_texture), "remove_texture" },
+		{ cs::fun(&Scene::helper_remove_material), "remove_material" },
+		{ cs::fun(&Scene::helper_remove_shader), "remove_shader" },
+		{ cs::fun(&Scene::helper_remove_entity), "remove_entity" },
 
-		{ chaiscript::fun(&Scene::helper_contains_mesh), "contains_mesh" },
-		{ chaiscript::fun(&Scene::helper_contains_texture), "contains_texture" },
-		{ chaiscript::fun(&Scene::helper_contains_material), "contains_material" },
-		{ chaiscript::fun(&Scene::helper_contains_shader), "contains_shader" },
-		{ chaiscript::fun(&Scene::helper_contains_entity), "contains_entity" },
+		{ cs::fun(&Scene::helper_contains_mesh), "contains_mesh" },
+		{ cs::fun(&Scene::helper_contains_texture), "contains_texture" },
+		{ cs::fun(&Scene::helper_contains_material), "contains_material" },
+		{ cs::fun(&Scene::helper_contains_shader), "contains_shader" },
+		{ cs::fun(&Scene::helper_contains_entity), "contains_entity" },
 
-		{ chaiscript::fun(&Scene::helper_mesh_count), "mesh_count" },
-		{ chaiscript::fun(&Scene::helper_texture_count), "texture_count" },
-		{ chaiscript::fun(&Scene::helper_material_count), "material_count" },
-		{ chaiscript::fun(&Scene::helper_shader_count), "shader_count" },
-		{ chaiscript::fun(&Scene::helper_entity_count), "entity_count" },
+		{ cs::fun(&Scene::helper_mesh_count), "mesh_count" },
+		{ cs::fun(&Scene::helper_texture_count), "texture_count" },
+		{ cs::fun(&Scene::helper_material_count), "material_count" },
+		{ cs::fun(&Scene::helper_shader_count), "shader_count" },
+		{ cs::fun(&Scene::helper_entity_count), "entity_count" },
 
-		{ chaiscript::fun(&Scene::helper_get_all_meshes), "get_all_meshes" },
-		{ chaiscript::fun(&Scene::helper_get_all_textures), "get_all_textures" },
-		{ chaiscript::fun(&Scene::helper_get_all_materials), "get_all_materials" },
-		{ chaiscript::fun(&Scene::helper_get_all_shaders), "get_all_shaders" },
-		{ chaiscript::fun(&Scene::helper_get_all_entities), "get_all_entities" },
+		{ cs::fun(&Scene::helper_get_all_meshes), "get_all_meshes" },
+		{ cs::fun(&Scene::helper_get_all_textures), "get_all_textures" },
+		{ cs::fun(&Scene::helper_get_all_materials), "get_all_materials" },
+		{ cs::fun(&Scene::helper_get_all_shaders), "get_all_shaders" },
+		{ cs::fun(&Scene::helper_get_all_entities), "get_all_entities" },
 
-		{ chaiscript::fun<Camera*>(&Scene::get_casted<Camera>), "get_camera" },
-		{ chaiscript::fun<Light*>(&Scene::get_casted<Light>), "get_light" },
-		{ chaiscript::fun<AmbientLight*>(&Scene::get_casted<AmbientLight>), "get_ambient_light" },
-		{ chaiscript::fun<PointLight*>(&Scene::get_casted<PointLight>), "get_point_light" },
-		{ chaiscript::fun<DirectionalLight*>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
+		{ cs::fun<Camera* (Scene::*)(const std::string&)>(&Scene::get_casted<Camera>), "get_camera"},
+		{ cs::fun<Light* (Scene::*)(const std::string&)>(&Scene::get_casted<Light>), "get_light" },
+		{ cs::fun<AmbientLight* (Scene::*)(const std::string&)>(&Scene::get_casted<AmbientLight>), "get_ambient_light" },
+		{ cs::fun<PointLight* (Scene::*)(const std::string&)>(&Scene::get_casted<PointLight>), "get_point_light" },
+		{ cs::fun<DirectionalLight* (Scene::*)(const std::string&)>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Scene"] = "Collection of meshes, textures, materials, scripts and entities.";
 	INTERP_SCRIPT_MEMBERS["main_camera_name"] = "main_camera_name";
@@ -1048,89 +1064,89 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["get_directional_light"] = "Returns a scene directional light.";
 
 	// Key
-	chaiscript::utility::add_class<kl::Key>(*INTERP_SCRIPT_MODULE, "Key",
+	cs::utility::add_class<kl::Key>(*INTERP_SCRIPT_MODULE, "Key",
 	{},
 	{
-		{ chaiscript::fun(&kl::Key::is_down), "is_down" },
+		{ cs::fun(&kl::Key::is_down), "is_down" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Key"] = "Class representing a single keyboard or a mouse button.";
 	INTERP_SCRIPT_IDENTIFIERS["is_down"] = "Returns the down state of key.";
 
 	// Keyboard
-	chaiscript::utility::add_class<kl::Keyboard>(*INTERP_SCRIPT_MODULE, "Keyboard",
+	cs::utility::add_class<kl::Keyboard>(*INTERP_SCRIPT_MODULE, "Keyboard",
 	{},
 	{
-		{ chaiscript::fun(&kl::Keyboard::q), "q" },
-		{ chaiscript::fun(&kl::Keyboard::w), "w" },
-		{ chaiscript::fun(&kl::Keyboard::e), "e" },
-		{ chaiscript::fun(&kl::Keyboard::r), "r" },
-		{ chaiscript::fun(&kl::Keyboard::t), "t" },
-		{ chaiscript::fun(&kl::Keyboard::z), "z" },
-		{ chaiscript::fun(&kl::Keyboard::u), "u" },
-		{ chaiscript::fun(&kl::Keyboard::i), "i" },
-		{ chaiscript::fun(&kl::Keyboard::o), "o" },
-		{ chaiscript::fun(&kl::Keyboard::p), "p" },
-		{ chaiscript::fun(&kl::Keyboard::a), "a" },
-		{ chaiscript::fun(&kl::Keyboard::s), "s" },
-		{ chaiscript::fun(&kl::Keyboard::d), "d" },
-		{ chaiscript::fun(&kl::Keyboard::f), "f" },
-		{ chaiscript::fun(&kl::Keyboard::g), "g" },
-		{ chaiscript::fun(&kl::Keyboard::h), "h" },
-		{ chaiscript::fun(&kl::Keyboard::j), "j" },
-		{ chaiscript::fun(&kl::Keyboard::k), "k" },
-		{ chaiscript::fun(&kl::Keyboard::l), "l" },
-		{ chaiscript::fun(&kl::Keyboard::y), "y" },
-		{ chaiscript::fun(&kl::Keyboard::x), "x" },
-		{ chaiscript::fun(&kl::Keyboard::c), "c" },
-		{ chaiscript::fun(&kl::Keyboard::v), "v" },
-		{ chaiscript::fun(&kl::Keyboard::b), "b" },
-		{ chaiscript::fun(&kl::Keyboard::n), "n" },
-		{ chaiscript::fun(&kl::Keyboard::m), "m" },
+		{ cs::fun(&kl::Keyboard::q), "q" },
+		{ cs::fun(&kl::Keyboard::w), "w" },
+		{ cs::fun(&kl::Keyboard::e), "e" },
+		{ cs::fun(&kl::Keyboard::r), "r" },
+		{ cs::fun(&kl::Keyboard::t), "t" },
+		{ cs::fun(&kl::Keyboard::z), "z" },
+		{ cs::fun(&kl::Keyboard::u), "u" },
+		{ cs::fun(&kl::Keyboard::i), "i" },
+		{ cs::fun(&kl::Keyboard::o), "o" },
+		{ cs::fun(&kl::Keyboard::p), "p" },
+		{ cs::fun(&kl::Keyboard::a), "a" },
+		{ cs::fun(&kl::Keyboard::s), "s" },
+		{ cs::fun(&kl::Keyboard::d), "d" },
+		{ cs::fun(&kl::Keyboard::f), "f" },
+		{ cs::fun(&kl::Keyboard::g), "g" },
+		{ cs::fun(&kl::Keyboard::h), "h" },
+		{ cs::fun(&kl::Keyboard::j), "j" },
+		{ cs::fun(&kl::Keyboard::k), "k" },
+		{ cs::fun(&kl::Keyboard::l), "l" },
+		{ cs::fun(&kl::Keyboard::y), "y" },
+		{ cs::fun(&kl::Keyboard::x), "x" },
+		{ cs::fun(&kl::Keyboard::c), "c" },
+		{ cs::fun(&kl::Keyboard::v), "v" },
+		{ cs::fun(&kl::Keyboard::b), "b" },
+		{ cs::fun(&kl::Keyboard::n), "n" },
+		{ cs::fun(&kl::Keyboard::m), "m" },
 
-		{ chaiscript::fun(&kl::Keyboard::num0), "num0" },
-		{ chaiscript::fun(&kl::Keyboard::num1), "num1" },
-		{ chaiscript::fun(&kl::Keyboard::num2), "num2" },
-		{ chaiscript::fun(&kl::Keyboard::num3), "num3" },
-		{ chaiscript::fun(&kl::Keyboard::num4), "num4" },
-		{ chaiscript::fun(&kl::Keyboard::num5), "num5" },
-		{ chaiscript::fun(&kl::Keyboard::num6), "num6" },
-		{ chaiscript::fun(&kl::Keyboard::num7), "num7" },
-		{ chaiscript::fun(&kl::Keyboard::num8), "num8" },
-		{ chaiscript::fun(&kl::Keyboard::num9), "num9" },
+		{ cs::fun(&kl::Keyboard::num0), "num0" },
+		{ cs::fun(&kl::Keyboard::num1), "num1" },
+		{ cs::fun(&kl::Keyboard::num2), "num2" },
+		{ cs::fun(&kl::Keyboard::num3), "num3" },
+		{ cs::fun(&kl::Keyboard::num4), "num4" },
+		{ cs::fun(&kl::Keyboard::num5), "num5" },
+		{ cs::fun(&kl::Keyboard::num6), "num6" },
+		{ cs::fun(&kl::Keyboard::num7), "num7" },
+		{ cs::fun(&kl::Keyboard::num8), "num8" },
+		{ cs::fun(&kl::Keyboard::num9), "num9" },
 
-		{ chaiscript::fun(&kl::Keyboard::period), "period" },
-		{ chaiscript::fun(&kl::Keyboard::comma), "comma" },
-		{ chaiscript::fun(&kl::Keyboard::plus), "plus" },
-		{ chaiscript::fun(&kl::Keyboard::minus), "minus" },
+		{ cs::fun(&kl::Keyboard::period), "period" },
+		{ cs::fun(&kl::Keyboard::comma), "comma" },
+		{ cs::fun(&kl::Keyboard::plus), "plus" },
+		{ cs::fun(&kl::Keyboard::minus), "minus" },
 
-		{ chaiscript::fun(&kl::Keyboard::esc), "esc" },
-		{ chaiscript::fun(&kl::Keyboard::tab), "tab" },
-		{ chaiscript::fun(&kl::Keyboard::caps), "caps" },
-		{ chaiscript::fun(&kl::Keyboard::shift), "shift" },
-		{ chaiscript::fun(&kl::Keyboard::ctrl), "ctrl" },
-		{ chaiscript::fun(&kl::Keyboard::alt), "alt" },
-		{ chaiscript::fun(&kl::Keyboard::space), "space" },
-		{ chaiscript::fun(&kl::Keyboard::enter), "enter" },
-		{ chaiscript::fun(&kl::Keyboard::insert), "insert" },
-		{ chaiscript::fun(&kl::Keyboard::delet), "delete" },
+		{ cs::fun(&kl::Keyboard::esc), "esc" },
+		{ cs::fun(&kl::Keyboard::tab), "tab" },
+		{ cs::fun(&kl::Keyboard::caps), "caps" },
+		{ cs::fun(&kl::Keyboard::shift), "shift" },
+		{ cs::fun(&kl::Keyboard::ctrl), "ctrl" },
+		{ cs::fun(&kl::Keyboard::alt), "alt" },
+		{ cs::fun(&kl::Keyboard::space), "space" },
+		{ cs::fun(&kl::Keyboard::enter), "enter" },
+		{ cs::fun(&kl::Keyboard::insert), "insert" },
+		{ cs::fun(&kl::Keyboard::delet), "delete" },
 
-		{ chaiscript::fun(&kl::Keyboard::up), "up" },
-		{ chaiscript::fun(&kl::Keyboard::left), "left" },
-		{ chaiscript::fun(&kl::Keyboard::down), "down" },
-		{ chaiscript::fun(&kl::Keyboard::right), "right" },
+		{ cs::fun(&kl::Keyboard::up), "up" },
+		{ cs::fun(&kl::Keyboard::left), "left" },
+		{ cs::fun(&kl::Keyboard::down), "down" },
+		{ cs::fun(&kl::Keyboard::right), "right" },
 
-		{ chaiscript::fun(&kl::Keyboard::f1), "f1" },
-		{ chaiscript::fun(&kl::Keyboard::f2), "f2" },
-		{ chaiscript::fun(&kl::Keyboard::f3), "f3" },
-		{ chaiscript::fun(&kl::Keyboard::f4), "f4" },
-		{ chaiscript::fun(&kl::Keyboard::f5), "f5" },
-		{ chaiscript::fun(&kl::Keyboard::f6), "f6" },
-		{ chaiscript::fun(&kl::Keyboard::f7), "f7" },
-		{ chaiscript::fun(&kl::Keyboard::f8), "f8" },
-		{ chaiscript::fun(&kl::Keyboard::f9), "f9" },
-		{ chaiscript::fun(&kl::Keyboard::f10), "f10" },
-		{ chaiscript::fun(&kl::Keyboard::f11), "f11" },
-		{ chaiscript::fun(&kl::Keyboard::f12), "f12" },
+		{ cs::fun(&kl::Keyboard::f1), "f1" },
+		{ cs::fun(&kl::Keyboard::f2), "f2" },
+		{ cs::fun(&kl::Keyboard::f3), "f3" },
+		{ cs::fun(&kl::Keyboard::f4), "f4" },
+		{ cs::fun(&kl::Keyboard::f5), "f5" },
+		{ cs::fun(&kl::Keyboard::f6), "f6" },
+		{ cs::fun(&kl::Keyboard::f7), "f7" },
+		{ cs::fun(&kl::Keyboard::f8), "f8" },
+		{ cs::fun(&kl::Keyboard::f9), "f9" },
+		{ cs::fun(&kl::Keyboard::f10), "f10" },
+		{ cs::fun(&kl::Keyboard::f11), "f11" },
+		{ cs::fun(&kl::Keyboard::f12), "f12" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Keyboard"] = "Class representing a physical keyboard.";
 	INTERP_SCRIPT_MEMBERS["q"] = "q";
@@ -1201,21 +1217,21 @@ const int load_types = [&]
 	INTERP_SCRIPT_MEMBERS["f12"] = "f12";
 
 	// Mouse
-	chaiscript::utility::add_class<kl::Mouse>(*INTERP_SCRIPT_MODULE, "Mouse",
+	cs::utility::add_class<kl::Mouse>(*INTERP_SCRIPT_MODULE, "Mouse",
 	{},
 	{
-		{ chaiscript::fun(&kl::Mouse::left), "left" },
-		{ chaiscript::fun(&kl::Mouse::middle), "middle" },
-		{ chaiscript::fun(&kl::Mouse::right), "right" },
+		{ cs::fun(&kl::Mouse::left), "left" },
+		{ cs::fun(&kl::Mouse::middle), "middle" },
+		{ cs::fun(&kl::Mouse::right), "right" },
 
-		{ chaiscript::fun(&kl::Mouse::set_hidden), "set_hiden" },
-		{ chaiscript::fun(&kl::Mouse::is_hidden), "is_hidden" },
+		{ cs::fun(&kl::Mouse::set_hidden), "set_hiden" },
+		{ cs::fun(&kl::Mouse::is_hidden), "is_hidden" },
 
-		{ chaiscript::fun(&kl::Mouse::set_position), "set_position" },
-		{ chaiscript::fun(&kl::Mouse::position), "position" },
+		{ cs::fun(&kl::Mouse::set_position), "set_position" },
+		{ cs::fun(&kl::Mouse::position), "position" },
 
-		{ chaiscript::fun(&kl::Mouse::normalized_position), "normalized_position" },
-		{ chaiscript::fun(&kl::Mouse::scroll), "scroll" },
+		{ cs::fun(&kl::Mouse::normalized_position), "normalized_position" },
+		{ cs::fun(&kl::Mouse::scroll), "scroll" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Mouse"] = "Class representing a physical mouse.";
 	INTERP_SCRIPT_MEMBERS["left"] = "left";
@@ -1227,30 +1243,30 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["scroll"] = "Returns the mouse scroll value.";
 
 	// Window
-	chaiscript::utility::add_class<kl::Window>(*INTERP_SCRIPT_MODULE, "Window",
+	cs::utility::add_class<kl::Window>(*INTERP_SCRIPT_MODULE, "Window",
 	{},
 	{
-		{ chaiscript::fun(&kl::Window::is_open), "is_open" },
-		{ chaiscript::fun(&kl::Window::close), "close" },
-		{ chaiscript::fun(&kl::Window::is_resizeable), "is_resizeable" },
-		{ chaiscript::fun(&kl::Window::set_resizeable), "set_resizeable" },
-		{ chaiscript::fun(&kl::Window::maximize), "maximize" },
-		{ chaiscript::fun(&kl::Window::minimize), "minimize" },
-		{ chaiscript::fun(&kl::Window::restore), "restore" },
-		{ chaiscript::fun(&kl::Window::in_fullscreen), "in_fullscreen" },
-		{ chaiscript::fun(&kl::Window::set_fullscreen), "set_fullscreen" },
-		{ chaiscript::fun(&kl::Window::position), "position" },
-		{ chaiscript::fun(&kl::Window::set_position), "set_position" },
-		{ chaiscript::fun(&kl::Window::width), "width" },
-		{ chaiscript::fun(&kl::Window::set_width), "set_width" },
-		{ chaiscript::fun(&kl::Window::height), "height" },
-		{ chaiscript::fun(&kl::Window::set_height), "set_height" },
-		{ chaiscript::fun(&kl::Window::size), "size" },
-		{ chaiscript::fun(&kl::Window::resize), "resize" },
-		{ chaiscript::fun(&kl::Window::aspect_ratio), "aspect_ratio" },
-		{ chaiscript::fun(&kl::Window::frame_center), "frame_center" },
-		{ chaiscript::fun(&kl::Window::set_title), "set_title" },
-		{ chaiscript::fun(&kl::Window::set_icon), "set_icon" },
+		{ cs::fun(&kl::Window::is_open), "is_open" },
+		{ cs::fun(&kl::Window::close), "close" },
+		{ cs::fun(&kl::Window::is_resizeable), "is_resizeable" },
+		{ cs::fun(&kl::Window::set_resizeable), "set_resizeable" },
+		{ cs::fun(&kl::Window::maximize), "maximize" },
+		{ cs::fun(&kl::Window::minimize), "minimize" },
+		{ cs::fun(&kl::Window::restore), "restore" },
+		{ cs::fun(&kl::Window::in_fullscreen), "in_fullscreen" },
+		{ cs::fun(&kl::Window::set_fullscreen), "set_fullscreen" },
+		{ cs::fun(&kl::Window::position), "position" },
+		{ cs::fun(&kl::Window::set_position), "set_position" },
+		{ cs::fun(&kl::Window::width), "width" },
+		{ cs::fun(&kl::Window::set_width), "set_width" },
+		{ cs::fun(&kl::Window::height), "height" },
+		{ cs::fun(&kl::Window::set_height), "set_height" },
+		{ cs::fun(&kl::Window::size), "size" },
+		{ cs::fun(&kl::Window::resize), "resize" },
+		{ cs::fun(&kl::Window::aspect_ratio), "aspect_ratio" },
+		{ cs::fun(&kl::Window::frame_center), "frame_center" },
+		{ cs::fun(&kl::Window::set_title), "set_title" },
+		{ cs::fun(&kl::Window::set_icon), "set_icon" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["is_open"] = "Returns true if the window is open, false otherwise.";
 	INTERP_SCRIPT_IDENTIFIERS["close"] = "Closes the window.";
@@ -1282,11 +1298,11 @@ const int load_constants = [&]
 	using namespace titian;
 
 	// Numbers
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((float) kl::PI), "PI");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((float) kl::TO_RADIANS), "TO_RADIANS");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((float) kl::TO_DEGREES), "TO_DEGREES");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((float) kl::TO_FLOAT_COLOR), "TO_FLOAT_COLOR");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((float) kl::TO_BYTE_COLOR), "TO_BYTE_COLOR");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((float) kl::PI), "PI");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((float) kl::TO_RADIANS), "TO_RADIANS");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((float) kl::TO_DEGREES), "TO_DEGREES");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((float) kl::TO_FLOAT_COLOR), "TO_FLOAT_COLOR");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((float) kl::TO_BYTE_COLOR), "TO_BYTE_COLOR");
 	INTERP_SCRIPT_IDENTIFIERS["PI"] = "Constant of a number PI (3.1415...).";
 	INTERP_SCRIPT_IDENTIFIERS["TO_RADIANS"] = "Constant for converting degrees to radians (PI / 180).";
 	INTERP_SCRIPT_IDENTIFIERS["TO_DEGREES"] = "Constant for converting degrees to radians (180 / PI).";
@@ -1294,21 +1310,21 @@ const int load_constants = [&]
 	INTERP_SCRIPT_IDENTIFIERS["TO_BYTE_COLOR"] = "Constant for converting float color to byte color (255 / 1).";
 
 	// Colors
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::CONSOLE), "CONSOLE");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::BLACK), "BLACK");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::WHITE), "WHITE");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::GRAY), "GRAY");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::RED), "RED");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::GREEN), "GREEN");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::BLUE), "BLUE");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::CYAN), "CYAN");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::PURPLE), "PURPLE");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::YELLOW), "YELLOW");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::ORANGE), "ORANGE");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::MAGENTA), "MAGENTA");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::CRIMSON), "CRIMSON");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::WHEAT), "WHEAT");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((kl::Color) kl::colors::SKY), "SKY");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::CONSOLE), "CONSOLE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::BLACK), "BLACK");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::WHITE), "WHITE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::GRAY), "GRAY");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::RED), "RED");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::GREEN), "GREEN");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::BLUE), "BLUE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::CYAN), "CYAN");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::PURPLE), "PURPLE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::YELLOW), "YELLOW");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::ORANGE), "ORANGE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::MAGENTA), "MAGENTA");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::CRIMSON), "CRIMSON");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::WHEAT), "WHEAT");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::SKY), "SKY");
 	INTERP_SCRIPT_IDENTIFIERS["CONSOLE"] = "Constant color (204, 204, 204).";
 	INTERP_SCRIPT_IDENTIFIERS["BLACK"] = "Constant color (0, 0, 0).";
 	INTERP_SCRIPT_IDENTIFIERS["WHITE"] = "Constant color (255, 255, 255).";
@@ -1326,9 +1342,9 @@ const int load_constants = [&]
 	INTERP_SCRIPT_IDENTIFIERS["SKY"] = "Constant color (190, 245, 255).";
 
 	// Mesh
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((int) D3D_PRIMITIVE_TOPOLOGY_POINTLIST), "TOPOLOGY_POINTS");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((int) D3D_PRIMITIVE_TOPOLOGY_LINELIST), "TOPOLOGY_LINES");
-	INTERP_SCRIPT_MODULE->add_global_const(chaiscript::const_var((int) D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST), "TOPOLOGY_TRIANGLES");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) D3D_PRIMITIVE_TOPOLOGY_POINTLIST), "TOPOLOGY_POINTS");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) D3D_PRIMITIVE_TOPOLOGY_LINELIST), "TOPOLOGY_LINES");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST), "TOPOLOGY_TRIANGLES");
 	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_POINTS"] = "Makes the rasterizer render this mesh as an array of POINTS.";
 	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_LINES"] = "Makes the rasterizer render this mesh as an array of LINES.";
 	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_TRIANGLES"] = "Makes the rasterizer render this mesh as an array of TRIANGLES.";
@@ -1359,40 +1375,40 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["on_collision"] = "Called every time a collision happens.";
 
 	// Logging
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&Logger::log<const std::string&>), "log");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Logger::log<const std::string&>), "log");
 	INTERP_SCRIPT_MODULE->eval("global print = fun(object) { return log(to_string(object)); }");
 	INTERP_SCRIPT_IDENTIFIERS["log"] = "Outputs the given string to the log window.";
 	INTERP_SCRIPT_IDENTIFIERS["print"] = "Converts the given object to a string and logs it.";
 
 	// Time
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->elapsed(); }), "get_elapsed_t");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->delta(); }), "get_delta_t");
+	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->elapsed(); }), "get_elapsed_t");
+	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->delta(); }), "get_delta_t");
 	INTERP_SCRIPT_IDENTIFIERS["get_elapsed_t"] = "Returns the elapsed time since the game start.";
 	INTERP_SCRIPT_IDENTIFIERS["get_delta_t"] = "Returns the time since the last frame.";
 
 	// Input
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Keyboard* { return &GameLayer::BOUND_SELF->app_layer->window->keyboard; }), "get_keyboard");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Mouse* { return &GameLayer::BOUND_SELF->app_layer->window->mouse; }), "get_mouse");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun([&]() -> kl::Window* { return &GameLayer::BOUND_SELF->app_layer->window; }), "get_window");
+	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Keyboard* { return &GameLayer::BOUND_SELF->app_layer->window->keyboard; }), "get_keyboard");
+	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Mouse* { return &GameLayer::BOUND_SELF->app_layer->window->mouse; }), "get_mouse");
+	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Window* { return &GameLayer::BOUND_SELF->app_layer->window; }), "get_window");
 	INTERP_SCRIPT_IDENTIFIERS["get_keyboard"] = "Returns a reference to the game keyboard.";
 	INTERP_SCRIPT_IDENTIFIERS["get_mouse"] = "Returns a reference to the game mouse.";
 	INTERP_SCRIPT_IDENTIFIERS["get_window"] = "Returns a reference to the game window.";
 
 	// Float3x3
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::translation), "Float3x3_translation");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::rotation), "Float3x3_rotation");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float3x3::scaling), "Float3x3_scaling");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float3x3::translation), "Float3x3_translation");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float3x3::rotation), "Float3x3_rotation");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float3x3::scaling), "Float3x3_scaling");
 	INTERP_SCRIPT_IDENTIFIERS["Float3x3_translation"] = "Creates a 3x3 translation matrix.";
 	INTERP_SCRIPT_IDENTIFIERS["Float3x3_rotation"] = "Creates a 3x3 rotation matrix.";
 	INTERP_SCRIPT_IDENTIFIERS["Float3x3_scaling"] = "Creates a 3x3 scaling matrix.";
 
 	// Float4x4
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::translation), "Float4x4_translation");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::rotation), "Float4x4_rotation");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::scaling), "Float4x4_scaling");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::look_at), "Float4x4_look_at");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::perspective), "Float4x4_perspective");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::Float4x4::orthographic), "Float4x4_orthographic");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::translation), "Float4x4_translation");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::rotation), "Float4x4_rotation");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::scaling), "Float4x4_scaling");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::look_at), "Float4x4_look_at");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::perspective), "Float4x4_perspective");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::orthographic), "Float4x4_orthographic");
 	INTERP_SCRIPT_IDENTIFIERS["Float4x4_translation"] = "Creates a 4x4 translation matrix.";
 	INTERP_SCRIPT_IDENTIFIERS["Float4x4_rotation"] = "Creates a 4x4 rotation matrix.";
 	INTERP_SCRIPT_IDENTIFIERS["Float4x4_scaling"] = "Creates a 4x4 scaling matrix.";
@@ -1401,122 +1417,123 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["Float4x4_orthographic"] = "Creates a 4x4 orthographic matrix.";
 
 	// Math
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<int, int>(&std::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<int (*)(int)>(&std::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::abs), "abs");
 	INTERP_SCRIPT_IDENTIFIERS["abs"] = "Returns absolute value of the given value.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::sin), "sin");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::cos), "cos");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::tan), "tan");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::sin), "sin");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::cos), "cos");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::tan), "tan");
 	INTERP_SCRIPT_IDENTIFIERS["sin"] = "Returns sin of the given angle in radians.";
 	INTERP_SCRIPT_IDENTIFIERS["cos"] = "Returns cos of the given angle in radians.";
 	INTERP_SCRIPT_IDENTIFIERS["tan"] = "Returns tan of the given angle in radians.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::asin), "asin");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::acos), "acos");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float>(&std::atan), "atan");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::asin), "asin");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::acos), "acos");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::atan), "atan");
 	INTERP_SCRIPT_IDENTIFIERS["asin"] = "Returns angle in radians of the given sin.";
 	INTERP_SCRIPT_IDENTIFIERS["acos"] = "Returns angle in radians of the given cos.";
 	INTERP_SCRIPT_IDENTIFIERS["atan"] = "Returns angle in radians of the given tan.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::sin_deg<float>), "sin_deg");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::cos_deg<float>), "cos_deg");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::tan_deg<float>), "tan_deg");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::sin_deg<float>), "sin_deg");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::cos_deg<float>), "cos_deg");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::tan_deg<float>), "tan_deg");
 	INTERP_SCRIPT_IDENTIFIERS["sin_deg"] = "Returns sin of the given angle in degrees.";
 	INTERP_SCRIPT_IDENTIFIERS["cos_deg"] = "Returns cos of the given angle in degrees.";
 	INTERP_SCRIPT_IDENTIFIERS["tan_deg"] = "Returns tan of the given angle in degrees.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::asin_deg<float>), "asin_deg");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::acos_deg<float>), "acos_deg");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::atan_deg<float>), "atan_deg");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::asin_deg<float>), "asin_deg");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::acos_deg<float>), "acos_deg");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::atan_deg<float>), "atan_deg");
 	INTERP_SCRIPT_IDENTIFIERS["asin_deg"] = "Returns angle in degrees of the given sin.";
 	INTERP_SCRIPT_IDENTIFIERS["acos_deg"] = "Returns angle in degrees of the given cos.";
 	INTERP_SCRIPT_IDENTIFIERS["atan_deg"] = "Returns angle in degrees of the given tan.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::calc_ndc<float>), "calc_ndc");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::calc_ndc_ar<float>), "calc_ndc_ar");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::calc_ndc<float>), "calc_ndc");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::calc_ndc_ar<float>), "calc_ndc_ar");
 	INTERP_SCRIPT_IDENTIFIERS["calc_ndc"] = "Converts coorinates into ndc.";
 	INTERP_SCRIPT_IDENTIFIERS["calc_ndc_ar"] = "Converts coorinates into ndc and applies aspect ratio.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::line_x<float>), "line_x");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::line_y<float>), "line_y");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::line_x<float>), "line_x");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::line_y<float>), "line_y");
 	INTERP_SCRIPT_IDENTIFIERS["line_x"] = "Calculates line x.";
 	INTERP_SCRIPT_IDENTIFIERS["line_y"] = "Calculates line y.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::wrap<float>), "wrap");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::unwrap<float>), "unwrap");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::clamp<float>), "clamp");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::wrap<float>), "wrap");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::unwrap<float>), "unwrap");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::clamp<float>), "clamp");
 	INTERP_SCRIPT_IDENTIFIERS["wrap"] = "Wraps the given value to the range [0, 1].";
 	INTERP_SCRIPT_IDENTIFIERS["unwrap"] = "Unwraps the given value to the defined range.";
 	INTERP_SCRIPT_IDENTIFIERS["clamp"] = "Clamps the given value between the given min and max.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion<float>, const kl::Float3&>(&kl::to_quaternion<float>), "to_quaternion");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion<float>, const kl::Float3&, const kl::Float3&>(&kl::to_quaternion<float>), "to_quaternion");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Quaternion<float>&>(&kl::to_euler<float>), "to_euler");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&, const kl::Float3&>(&kl::to_euler<float>), "to_euler");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Quaternion<float> (*)(const kl::Float3&)>(&kl::to_quaternion<float>), "to_quaternion");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Quaternion<float> (*)(const kl::Float3&, const kl::Float3&)>(&kl::to_quaternion<float>), "to_quaternion");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Quaternion<float>&)>(&kl::to_euler<float>), "to_euler");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&, const kl::Float3&)>(&kl::to_euler<float>), "to_euler");
 	INTERP_SCRIPT_IDENTIFIERS["to_quaternion"] = "Converts the given euler angles to a quaternion.";
 	INTERP_SCRIPT_IDENTIFIERS["to_euler"] = "Converts the given quaternion to euler angles.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex<float>, const kl::Complex<float>&>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex<float>, const kl::Complex<float>&>(&kl::normalize), "normalize");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Complex<float>, const kl::Complex<float>&>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Complex<float> (*)(const kl::Complex<float>&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Complex<float> (*)(const kl::Complex<float>&)>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Complex<float> (*)(const kl::Complex<float>&)>(&kl::inverse), "inverse");
 	INTERP_SCRIPT_IDENTIFIERS["abs"] = "Returns the absolute value.";
 	INTERP_SCRIPT_IDENTIFIERS["normalize"] = "Normalizes the given vector.";
 	INTERP_SCRIPT_IDENTIFIERS["inverse"] = "Returns the inverse of the given math object.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion<float>, const kl::Quaternion<float>&>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion<float>, const kl::Quaternion<float>&>(&kl::normalize), "normalize");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Quaternion<float>, const kl::Quaternion<float>&>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Quaternion<float> (*)(const kl::Quaternion<float>&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Quaternion<float> (*)(const kl::Quaternion<float>&)>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Quaternion<float> (*)(const kl::Quaternion<float>&)>(&kl::inverse), "inverse");
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Int2, const kl::Int2&>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Int2 (*)(const kl::Int2&)>(&kl::abs), "abs");
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::normalize), "normalize");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float2&>(&kl::dot<float>), "dot");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, kl::Float2, kl::Float2, bool>(&kl::angle), "angle");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::rotate<float>), "rotate");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, const kl::Float2&>(&kl::reflect<float>), "reflect");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2 (*)(const kl::Float2&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2 (*)(const kl::Float2&)>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const kl::Float2&, const kl::Float2&)>(&kl::dot<float>), "dot");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(kl::Float2, kl::Float2, bool)>(&kl::angle), "angle");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2 (*)(const kl::Float2&, float)>(&kl::rotate<float>), "rotate");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2 (*)(const kl::Float2&, const kl::Float2&)>(&kl::reflect<float>), "reflect");
 	INTERP_SCRIPT_IDENTIFIERS["dot"] = "Returns the dot product of two vectors.";
 	INTERP_SCRIPT_IDENTIFIERS["angle"] = "Returns the angle in degrees between two vectors.";
 	INTERP_SCRIPT_IDENTIFIERS["rotate"] = "Returns the rotated vector.";
 	INTERP_SCRIPT_IDENTIFIERS["reflect"] = "Returns the reflected vector.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::normalize), "normalize");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float3&>(&kl::dot<float>), "dot");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float3&, const kl::Float3&>(&kl::angle), "angle");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::rotate<float>), "rotate");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::reflect<float>), "reflect");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, const kl::Float3&>(&kl::cross<float>), "cross");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&)>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const kl::Float3&, const kl::Float3&)>(&kl::dot<float>), "dot");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const kl::Float3&, const kl::Float3&)>(&kl::angle), "angle");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&, const kl::Float3&, float)>(&kl::rotate<float>), "rotate");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&, kl::Float3)>(&kl::reflect<float>), "reflect");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&, const kl::Float3&)>(&kl::cross<float>), "cross");
 	INTERP_SCRIPT_IDENTIFIERS["cross"] = "Returns the cross product of two vectors.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4, const kl::Float4&>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4, const kl::Float4&>(&kl::normalize), "normalize");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float4&>(&kl::dot<float>), "dot");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, const kl::Float4&, const kl::Float4&>(&kl::angle), "angle");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4 (*)(const kl::Float4&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4 (*)(const kl::Float4&)>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const kl::Float4&, const kl::Float4&)>(&kl::dot<float>), "dot");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const kl::Float4&, const kl::Float4&)>(&kl::angle), "angle");
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::inverse), "inverse");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2x2, const kl::Float2x2&>(&kl::transpose), "transpose");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2x2 (*)(const kl::Float2x2&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2x2 (*)(const kl::Float2x2&)>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2x2 (*)(const kl::Float2x2&)>(&kl::transpose), "transpose");
 	INTERP_SCRIPT_IDENTIFIERS["transpose"] = "Returns the transposed matrix.";
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3x3, const kl::Float3x3&>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3x3, const kl::Float3x3&>(&kl::inverse), "inverse");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3x3, const kl::Float3x3&>(&kl::transpose), "transpose");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3x3 (*)(const kl::Float3x3&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3x3 (*)(const kl::Float3x3&)>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3x3 (*)(const kl::Float3x3&)>(&kl::transpose), "transpose");
 
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::inverse), "inverse");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4x4, const kl::Float4x4&>(&kl::transpose), "transpose");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4x4 (*)(const kl::Float4x4&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4x4 (*)(const kl::Float4x4&)>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4x4 (*)(const kl::Float4x4&)>(&kl::transpose), "transpose");
 
 	// Random
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<bool>(&kl::random::gen_bool), "gen_random_bool");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<int, int, int>(&kl::random::gen_int), "gen_random_int");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<float, float, float>(&kl::random::gen_float), "gen_random_float");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float2, float, float>(&kl::random::gen_float2), "gen_random_float2");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float3, float, float>(&kl::random::gen_float3), "gen_random_float3");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun<kl::Float4, float, float>(&kl::random::gen_float4), "gen_random_float4");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::random::gen_char), "gen_random_char");
-	INTERP_SCRIPT_MODULE->add(chaiscript::fun(&kl::random::gen_string), "gen_random_string");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_bool), "gen_random_bool");
+	INTERP_SCRIPT_MODULE->add(cs::fun<int (*)(int, int)>(&kl::random::gen_int), "gen_random_int");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Int2 (*)(int, int)>(&kl::random::gen_int2), "gen_random_int2");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float, float)>(&kl::random::gen_float), "gen_random_float");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2 (*)(float, float)>(&kl::random::gen_float2), "gen_random_float2");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(float, float)>(&kl::random::gen_float3), "gen_random_float3");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4 (*)(float, float)>(&kl::random::gen_float4), "gen_random_float4");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_char), "gen_random_char");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_string), "gen_random_string");
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_bool"] = "Generates a random bool.";
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_int"] = "Generates a random integer (start_inclusive, end_exclusive).";
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_float"] = "Generates a random float (start_inclusive, end_inclusive).";
