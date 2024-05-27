@@ -63,6 +63,14 @@
     <ClInclude Include="source\memory\memory.h" />
     <ClInclude Include="source\memory\safety\array.h" />
     <ClInclude Include="source\memory\safety\object.h" />
+    <ClInclude Include="source\ots\container\array_container.h" />
+    <ClInclude Include="source\ots\container\data_container.h" />
+    <ClInclude Include="source\ots\container\literal_container.h" />
+    <ClInclude Include="source\ots\container\map_container.h" />
+    <ClInclude Include="source\ots\language\parser.h" />
+    <ClInclude Include="source\ots\language\preprocessor.h" />
+    <ClInclude Include="source\ots\language\standard.h" />
+    <ClInclude Include="source\ots\ots.h" />
     <ClInclude Include="source\render\components\collider.h" />
     <ClInclude Include="source\render\components\material.h" />
     <ClInclude Include="source\render\components\mesh.h" />
@@ -118,6 +126,11 @@
     <ClCompile Include="source\media\video\video_writer.cpp" />
     <ClCompile Include="source\memory\files\file.cpp" />
     <ClCompile Include="source\memory\linking\dll.cpp" />
+    <ClCompile Include="source\ots\container\array_container.cpp" />
+    <ClCompile Include="source\ots\container\literal_container.cpp" />
+    <ClCompile Include="source\ots\container\map_container.cpp" />
+    <ClCompile Include="source\ots\language\parser.cpp" />
+    <ClCompile Include="source\ots\language\preprocessor.cpp" />
     <ClCompile Include="source\render\components\collider.cpp" />
     <ClCompile Include="source\render\components\material.cpp" />
     <ClCompile Include="source\render\components\mesh.cpp" />

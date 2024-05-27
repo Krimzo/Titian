@@ -43,19 +43,22 @@ namespace kl {
         return std::cin.get();
     }
 
-    inline constexpr bool verify(const bool value, const std::string_view& message)
+    template<typename... Args>
+    constexpr bool verify(const bool value, const Args&... args)
     {
         if (!value) {
-            VERIFICATION_LOGGER(message);
+            VERIFICATION_LOGGER(format(args...));
         }
         return value;
     }
 
-    inline constexpr void assert(const bool value, const std::string_view& message, const int exit_code = 1)
+    template<typename... Args>
+    constexpr void assert(const bool value, const Args&... args)
     {
         if (!value) {
-            MessageBoxA(nullptr, message.data(), "Assertion failed!", MB_ICONERROR | MB_OK);
-            exit(exit_code);
+            const std::string message = format(args...);
+            MessageBoxA(nullptr, message.c_str(), "Assertion failed!", MB_ICONERROR | MB_OK);
+            exit(EXIT_FAILURE);
         }
     }
 }

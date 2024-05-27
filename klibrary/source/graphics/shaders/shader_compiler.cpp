@@ -6,7 +6,7 @@ kl::CompiledShader kl::ShaderCompiler::compile(const std::string& name, const st
 {
     CompiledShader compiled_shader = {};
     D3DCompile(source.c_str(), source.size(), nullptr, nullptr, nullptr, name.c_str(), version.c_str(), NULL, NULL, &compiled_shader.data, &compiled_shader.error);
-    verify(compiled_shader, kl::format(name, ": ", compiled_shader.error_val()));
+    verify(compiled_shader, name, ": ", compiled_shader.error_val());
     return compiled_shader;
 }
 

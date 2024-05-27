@@ -164,7 +164,7 @@ void kl::GPU12::execute_and_wait()
 	wait();
 }
 
-void kl::GPU12::resize(const kl::Int2& size)
+void kl::GPU12::resize(const Int2& size)
 {
 	// Reset
 	wait();
@@ -282,8 +282,8 @@ kl::dx12::AccelerationStructure kl::GPU12::create_acceleration_structure(const d
 		*update_scratch_size = prebuild_info.UpdateScratchDataSizeInBytes;
 	}
 
-	const kl::dx12::Resource scratch = create_commited_resource(prebuild_info.ScratchDataSizeInBytes, D3D12_RESOURCE_STATE_COMMON);
-	const kl::dx12::Resource acceleration_structure = create_commited_resource(prebuild_info.ResultDataMaxSizeInBytes, D3D12_RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+	const dx12::Resource scratch = create_commited_resource(prebuild_info.ScratchDataSizeInBytes, D3D12_RESOURCE_STATE_COMMON);
+	const dx12::Resource acceleration_structure = create_commited_resource(prebuild_info.ResultDataMaxSizeInBytes, D3D12_RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
 
 	const D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC acceleration_descriptor{
 		.DestAccelerationStructureData = acceleration_structure->GetGPUVirtualAddress(),
@@ -297,7 +297,7 @@ kl::dx12::AccelerationStructure kl::GPU12::create_acceleration_structure(const d
 	return acceleration_structure;
 }
 
-kl::dx12::AccelerationStructure kl::GPU12::create_tlas(const kl::dx12::Resource& instances, const UINT instance_count, UINT64* update_scratch_size)
+kl::dx12::AccelerationStructure kl::GPU12::create_tlas(const dx12::Resource& instances, const UINT instance_count, UINT64* update_scratch_size)
 {
 	const D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs{
 		.Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL,
@@ -431,7 +431,7 @@ kl::dx12::StateObject kl::GPU12::create_default_raytracing_pipeline(const std::v
 		.pSubobjects = subobjects,
 	};
 
-	kl::dx12::StateObject pipeline_state{};
-	m_device->CreateStateObject(&object_descriptor, IID_PPV_ARGS(&pipeline_state)) >> kl::verify_result;
+	dx12::StateObject pipeline_state{};
+	m_device->CreateStateObject(&object_descriptor, IID_PPV_ARGS(&pipeline_state)) >> verify_result;
 	return pipeline_state;
 }

@@ -9,6 +9,12 @@ namespace kl {
 
     std::vector<std::string> split_string(const std::string& data, char delimiter);
     std::vector<std::wstring> split_string(const std::wstring& data, wchar_t delimiter);
+
+    void replace_all(std::string& str, const std::string_view& from, const std::string_view& to);
+    void replace_all(std::wstring& str, const std::wstring_view& from, const std::wstring_view& to);
+
+    std::optional<int64_t> parse_int(const std::string_view& data);
+    std::optional<double> parse_float(const std::string_view& data);
 }
 
 namespace kl {

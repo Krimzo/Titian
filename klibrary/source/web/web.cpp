@@ -9,7 +9,7 @@ std::string kl::download_website(const std::string& url, const int buffer_size)
     }
 
     const HINTERNET address = InternetOpenUrlA(connection, url.c_str(), nullptr, 0, INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_KEEP_CONNECTION, 0);
-    if (!verify(address, format("Failed to open url \"", url, "\""))) {
+    if (!verify(address, "Failed to open url \"", url, "\"")) {
         InternetCloseHandle(connection);
         return {};
     }

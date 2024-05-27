@@ -12,6 +12,9 @@
 // Memory
 #include "memory/memory.h"
 
+// Object text serialization
+#include "ots/ots.h"
+
 // Media
 #include "media/media.h"
 

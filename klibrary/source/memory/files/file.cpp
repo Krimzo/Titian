@@ -221,7 +221,7 @@ void kl::File::open(const std::string_view& filepath, bool clear)
 {
     close();
     errno_t error = fopen_s(&m_file, filepath.data(), clear ? "wb+" : "ab+");
-    verify(error == NULL, kl::format("Failed to open file \"", filepath, "\""));
+    verify(error == NULL, "Failed to open file \"", filepath, "\"");
 }
 
 void kl::File::close()

@@ -18,19 +18,19 @@ namespace kl {
     template<typename T>
     constexpr T sin_deg(T angle_in_deg)
     {
-        return T(std::sin(angle_in_deg * TO_RADIANS));
+        return (T) std::sin(angle_in_deg * TO_RADIANS);
     }
 
     template<typename T>
     constexpr T cos_deg(T angle_in_deg)
     {
-        return T(std::cos(angle_in_deg * TO_RADIANS));
+        return (T) std::cos(angle_in_deg * TO_RADIANS);
     }
 
     template<typename T>
     constexpr T tan_deg(T angle_in_deg)
     {
-        return T(std::tan(angle_in_deg * TO_RADIANS));
+        return (T) std::tan(angle_in_deg * TO_RADIANS);
     }
 
     template<typename T>
