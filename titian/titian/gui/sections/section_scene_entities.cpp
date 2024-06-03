@@ -55,16 +55,16 @@ void titian::GUISectionSceneEntities::render_gui()
 			}
 
 			// Entity type
-			if (dynamic_cast<Camera*>(&entity)) {
+			if (entity.is<Camera>()) {
 				ImGui::Button("CAMERA");
 			}
-			else if (dynamic_cast<AmbientLight*>(&entity)) {
+			else if (entity.is<AmbientLight>()) {
 				ImGui::Button("AMBIENT");
 			}
-			else if (dynamic_cast<PointLight*>(&entity)) {
+			else if (entity.is<PointLight>()) {
 				ImGui::Button("POINT");
 			}
-			else if (dynamic_cast<DirectionalLight*>(&entity)) {
+			else if (entity.is<DirectionalLight>()) {
 				ImGui::Button("DIRECTIONAL");
 			}
 			else {

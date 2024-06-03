@@ -44,7 +44,7 @@ void titian::GUISectionSceneInfo::main_camera_info(Scene* scene)
             bound_camera = "/";
         }
         for (const auto& [entity_name, entity] : *scene) {
-            if (!dynamic_cast<const Camera*>(&entity)) {
+            if (!entity.is<const Camera>()) {
                 continue;
             }
             if (!filter.empty() && entity_name.find(filter) == -1) {
@@ -69,7 +69,7 @@ void titian::GUISectionSceneInfo::main_ambient_info(Scene* scene)
             bound_light = "/";
         }
         for (const auto& [entity_name, entity] : *scene) {
-            if (!dynamic_cast<const AmbientLight*>(&entity)) {
+            if (!entity.is<const AmbientLight>()) {
                 continue;
             }
             if (!filter.empty() && entity_name.find(filter) == -1) {
@@ -94,7 +94,7 @@ void titian::GUISectionSceneInfo::main_directional_info(Scene* scene)
             bound_light = "/";
         }
         for (const auto& [entity_name, entity] : *scene) {
-            if (!dynamic_cast<const DirectionalLight*>(&entity)) {
+            if (!entity.is<const DirectionalLight>()) {
                 continue;
             }
             if (!filter.empty() && entity_name.find(filter) == -1) {

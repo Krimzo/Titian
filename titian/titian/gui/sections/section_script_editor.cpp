@@ -88,13 +88,13 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 		}
 
 		// Script type
-		if (dynamic_cast<const NativeScript*>(&script)) {
+		if (script.is<const NativeScript>()) {
 			ImGui::Button("NATIVE");
 		}
-		else if (dynamic_cast<const InterpScript*>(&script)) {
+		else if (script.is<const InterpScript>()) {
 			ImGui::Button("INTERP");
 		}
-		else if (dynamic_cast<const NodeScript*>(&script)) {
+		else if (script.is<const NodeScript>()) {
 			ImGui::Button("NODE");
 		}
 		else {
@@ -158,13 +158,13 @@ void titian::GUISectionScriptEditor::show_script_properties(Script* script) cons
 
 		ImGui::Text("Type: ");
 		ImGui::SameLine();
-		if (NativeScript* native_script = dynamic_cast<NativeScript*>(script)) {
+		if (dynamic_cast<NativeScript*>(script)) {
 			ImGui::Text("NATIVE");
 		}
-		else if (InterpScript* interp_script = dynamic_cast<InterpScript*>(script)) {
+		else if (dynamic_cast<InterpScript*>(script)) {
 			ImGui::Text("INTERP");
 		}
-		else if (NodeScript* node_script = dynamic_cast<NodeScript*>(script)) {
+		else if (dynamic_cast<NodeScript*>(script)) {
 			ImGui::Text("NODE");
 		}
 	}

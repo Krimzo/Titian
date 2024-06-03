@@ -29,7 +29,7 @@ bool titian::GUILayer::update()
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
 
-	ImGui::DockSpaceOverViewport(nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGui::DockSpaceOverViewport(0, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 
 	for (auto& section : sections) {
 		section->render_gui();

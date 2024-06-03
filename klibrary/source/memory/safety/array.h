@@ -4,41 +4,56 @@
 
 
 namespace kl {
-    template<typename T, typename C = std::atomic<uint64_t>>
+    /* NOT THREAD SAFE */
+    template<typename T, typename C = uint32_t>
     class Array
     {
         T* m_data = nullptr;
         C* m_count = nullptr;
-        uint64_t m_size = 0;
+        size_t m_size = 0;
 
         inline void increase_count() const
         {
             if (m_count) {
-                *m_count += 1;
+                ++(*m_count);
             }
         }
 
-        inline uint64_t decrease_count() const
+        inline uint32_t decrease_count() const
         {
-            return m_count ? (*m_count -= 1) : 0;
+            if (m_count) {
+                return --(*m_count);
+            }
+            return -1;
         }
 
         inline void allocate()
         {
             // Data
             m_data = new T[m_size]();
-            if (!m_data) throw std::runtime_error("Could not allocate memory for array data.");
+            if (!m_data) {
+                throw std::exception("Could not allocate memory for array data.");
+            }
 
             // Counter
             m_count = new C();
-            if (!m_count) throw std::runtime_error("Could not allocate memory for reference counter.");
+            if (!m_count) {
+                throw std::exception("Could not allocate memory for reference counter.");
+            }
             *m_count = 1;
         }
 
-        inline void deallocate() const
+        inline void deallocate()
         {
-            if (m_data) delete[] m_data;
-            if (m_count) delete m_count;
+            if (m_data) {
+                delete[] m_data;
+                m_data = nullptr;
+            }
+            if (m_count) {
+                delete m_count;
+                m_count = nullptr;
+            }
+            m_size = 0;
         }
 
         inline void clear()
@@ -53,7 +68,7 @@ namespace kl {
         Array()
         {}
 
-        Array(const uint64_t size)
+        Array(size_t size)
             : m_size(size)
         {
             allocate();
@@ -70,7 +85,9 @@ namespace kl {
             if (decrease_count() == 0) {
                 deallocate();
             }
-            clear();
+            else {
+                clear();
+            }
         }
 
         // Create copy
@@ -80,7 +97,7 @@ namespace kl {
             increase_count();
         }
 
-        Array(const Array&& other) noexcept
+        Array(Array&& other) noexcept
             : Array(other)
         {}
 
@@ -108,24 +125,28 @@ namespace kl {
             return static_cast<bool>(m_data);
         }
 
-        uint64_t count() const
+        template<typename T = uint32_t>
+        T count() const
         {
-            return m_count ? m_count->load() : 0;
+            if (m_count) {
+                return static_cast<T>(*m_count);
+            }
+            return static_cast<T>(0);
         }
 
-        uint64_t size() const
+        size_t size() const
         {
             return m_size;
         }
 
-        uint64_t byte_size() const
+        size_t byte_size() const
         {
             return m_size * sizeof(T);
         }
 
         bool empty() const
         {
-            return (m_size == 0);
+            return m_size == 0;
         }
 
         // Iterate
@@ -160,7 +181,7 @@ namespace kl {
             return !(*this == other);
         }
 
-        // Address
+        // Access
         T* operator&()
         {
             return m_data;
@@ -171,37 +192,21 @@ namespace kl {
             return m_data;
         }
 
-        // Access
-        T& operator*()
-        {
-            return *m_data;
-        }
-
-        const T& operator*() const
-        {
-            return *m_data;
-        }
-
-        T* operator->()
-        {
-            return m_data;
-        }
-
-        const T* operator->() const
-        {
-            return m_data;
-        }
-
-        T& operator[](const uint64_t index)
+        T& operator[](size_t index)
         {
             return m_data[index];
         }
 
-        const T& operator[](const uint64_t index) const
+        const T& operator[](size_t index) const
         {
             return m_data[index];
         }
     };
+}
+
+namespace kl {
+    template<typename T>
+    using SafeArray = Array<T, std::atomic<uint32_t>>;
 }
 
 namespace kl {
@@ -220,7 +225,7 @@ namespace kl {
         }
         else {
             stream << "[";
-            for (uint64_t i = 0; i < array.size() - 1; i++) {
+            for (size_t i = 0; i < array.size() - 1; i++) {
                 stream << array[i] << ", ";
             }
             stream << array[array.size() - 1] << "]";

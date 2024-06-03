@@ -4,7 +4,8 @@
 
 
 namespace kl {
-    template<typename T, typename C = std::atomic<uint64_t>>
+    /* NOT THREAD SAFE */
+    template<typename T, typename C = uint32_t>
     class Object
     {
         template<typename, typename>
@@ -16,26 +17,37 @@ namespace kl {
         inline void increase_count() const
         {
             if (m_count) {
-                *m_count += 1;
+                ++(*m_count);
             }
         }
 
-        inline uint64_t decrease_count() const
+        inline uint32_t decrease_count() const
         {
-            return m_count ? (*m_count -= 1) : 0;
+            if (m_count) {
+                return --(*m_count);
+            }
+            return -1;
         }
 
         inline void allocate()
         {
             m_count = new C();
-            if (!m_count) throw std::runtime_error("Could not allocate memory for reference counter.");
+            if (!m_count) {
+                throw std::exception("Could not allocate memory for reference counter.");
+            }
             *m_count = 1;
         }
 
-        inline void deallocate() const
+        inline void deallocate()
         {
-            if (m_instance) delete m_instance;
-            if (m_count) delete m_count;
+            if (m_instance) {
+                delete m_instance;
+                m_instance = nullptr;
+            }
+            if (m_count) {
+                delete m_count;
+                m_count = nullptr;
+            }
         }
 
         inline void clear()
@@ -68,7 +80,9 @@ namespace kl {
             if (decrease_count() == 0) {
                 deallocate();
             }
-            clear();
+            else {
+                clear();
+            }
         }
 
         // Create copy
@@ -78,7 +92,7 @@ namespace kl {
             increase_count();
         }
 
-        Object(const Object&& other) noexcept
+        Object(Object&& other) noexcept
             : Object(other)
         {}
 
@@ -99,12 +113,29 @@ namespace kl {
             return (*this = other);
         }
 
-        // Derived cast
-        template<typename B> requires std::is_base_of_v<B, T>
+        // Cast
+        template<typename B>
+            requires (not std::is_same_v<B, T> and std::is_base_of_v<B, T>)
         operator Object<B, C> ()
         {
-            Object<B, C> result{};
+            Object<B, C> result;
             result.m_instance = m_instance;
+            result.m_count = m_count;
+            increase_count();
+            return result;
+        }
+
+        template<typename D>
+            requires (not std::is_same_v<D, T>)
+        Object<D, C> as() const
+        {
+            D* derived = dynamic_cast<D*>(m_instance);
+            if (!derived) {
+                return {};
+            }
+
+            Object<D, C> result;
+            result.m_instance = derived;
             result.m_count = m_count;
             increase_count();
             return result;
@@ -116,9 +147,20 @@ namespace kl {
             return static_cast<bool>(m_instance);
         }
 
-        uint64_t count() const
+        template<typename T = uint32_t>
+        T count() const
         {
-            return m_count ? m_count->load() : 0;
+            if (m_count) {
+                return static_cast<T>(*m_count);
+            }
+            return static_cast<T>(0);
+        }
+
+        template<typename T>
+        bool is() const
+        {
+			return static_cast<bool>(
+                dynamic_cast<T*>(m_instance));
         }
 
         // Compare
@@ -126,7 +168,7 @@ namespace kl {
         {
             const void* first = m_instance;
             const void* second = other.m_instance;
-            return (first == second);
+            return first == second;
         }
 
         bool operator!=(const Object& other) const
@@ -134,7 +176,7 @@ namespace kl {
             return !(*this == other);
         }
 
-        // Address
+        // Access
         T* operator&()
         {
             return m_instance;
@@ -145,7 +187,6 @@ namespace kl {
             return m_instance;
         }
 
-        // Access
         T& operator*()
         {
             return *m_instance;
@@ -166,6 +207,11 @@ namespace kl {
             return m_instance;
         }
     };
+}
+
+namespace kl {
+    template<typename T>
+    using SafeObject = Object<T, std::atomic<uint32_t>>;
 }
 
 namespace kl {

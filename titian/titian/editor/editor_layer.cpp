@@ -39,6 +39,9 @@ bool titian::EditorLayer::update()
     if (window->keyboard.shift) {
         camera->speed = 5.0f;
     }
+    else if (window->keyboard.ctrl) {
+        camera->speed = 1.0f;
+    }
     else {
         camera->speed = 2.0f;
     }
