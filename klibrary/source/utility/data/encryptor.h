@@ -5,32 +5,25 @@
 
 // Class
 namespace kl {
-    inline static constexpr int ENCRYPTOR_KEY_COUNT = 5;
     using EncryptionKey = std::vector<byte>;
 }
 
 namespace kl {
-    class Encryptor : public std::array<EncryptionKey, ENCRYPTOR_KEY_COUNT>
+    class Encryptor : public std::vector<EncryptionKey>
     {
-        bool key_size_exists(size_t size) const;
-
     public:
-        Encryptor();
+        Encryptor(int key_count = 5);
 
-        void encrypt(void* data, size_t byte_size) const;
-        void decrypt(void* data, size_t byte_size) const;
+        void run_pass(void* data, uint64_t byte_size) const;
 
-        template <typename T>
-        void encrypt(T& obj) const
+        template<typename T>
+        void run_pass(T* object) const
         {
-            encrypt(&obj, sizeof(T));
+            run_pass(object, sizeof(T));
         }
 
-        template <typename T>
-        void decrypt(T& obj) const
-        {
-            decrypt(&obj, sizeof(T));
-        }
+    private:
+        bool key_size_exists(uint64_t size) const;
     };
 }
 

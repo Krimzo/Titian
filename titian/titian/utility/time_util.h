@@ -6,12 +6,11 @@
 namespace titian {
 	class TimeBomb
 	{
-		const std::function<void(float)> m_callback{};
+		const std::function<void(float)> m_callback;
 		uint64_t m_start_time = 0;
 
 	public:
-		template<typename T = void(float)>
-		TimeBomb(const T& callback)
+		inline TimeBomb(auto callback)
 			: m_callback(callback)
 		{
 			m_start_time = kl::time::now();
@@ -20,8 +19,8 @@ namespace titian {
 		inline ~TimeBomb() noexcept
 		{
 			const uint64_t end_time = kl::time::now();
-			const float elapsed_time = kl::time::calculate(m_start_time, end_time);
-			m_callback(elapsed_time);
+			const float time = kl::time::calculate(m_start_time, end_time);
+			m_callback(time);
 		}
 	};
 }
@@ -39,7 +38,7 @@ namespace titian {
 
 		inline TimeBomb time_it() noexcept
 		{
-			return TimeBomb([&](const float time) { this->benchmark_time = time; });
+			return [&](float time) { this->benchmark_time = time; };
 		}
 	};
 }

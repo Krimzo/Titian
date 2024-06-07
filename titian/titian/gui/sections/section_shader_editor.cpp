@@ -69,6 +69,11 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 			if (std::optional opt_name = gui_input_waited("##RenameShaderInput", shader_name)) {
 				const std::string& name = opt_name.value();
 				if (!name.empty() && !scene->helper_contains_shader(name)) {
+					for (auto& [_, material] : scene->materials) {
+						if (material->shader_name == shader_name) {
+							material->shader_name = name;
+						}
+					}
 					if (this->selected_shader == shader_name) {
 						this->selected_shader = name;
 					}

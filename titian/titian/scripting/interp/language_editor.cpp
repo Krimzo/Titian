@@ -18,6 +18,7 @@ titian::LanguageEditor::LanguageEditor()
 		// hlsl
 		std::unordered_map<std::string, std::string> HLSL_IDENTIFIERS;
 		HLSL_IDENTIFIERS["VS_OUT"] = "Computed vertex data.";
+		HLSL_IDENTIFIERS["PS_OUT"] = "Computed pixel data.";
 
 		HLSL_IDENTIFIERS["_vertex_pre"] = "Alter the vertex before the transforms.";
 		HLSL_IDENTIFIERS["_vertex_post"] = "Alter the vertex data after the computed transforms.";
@@ -56,6 +57,18 @@ titian::LanguageEditor::LanguageEditor()
 		HLSL_IDENTIFIERS["SHADOW_CASCADES"] = "Directional light shadow coverage zones.";
 		HLSL_IDENTIFIERS["LIGHT_VPs"] = "Directional light VP matrices.";
 		HLSL_IDENTIFIERS["CUSTOM_DATA"] = "Custom user data of a material.";
+
+		HLSL_IDENTIFIERS["SKYBOX_SAMPLER"] = "Skybox sampler.";
+		HLSL_IDENTIFIERS["SKYBOX_TEXTURE"] = "Main skybox texture.";
+		HLSL_IDENTIFIERS["SHADOW_SAMPLER"] = "Shadow sampler.";
+		HLSL_IDENTIFIERS["SHADOW_TEXTURE_0"] = "Shadow cascade texture 0.";
+		HLSL_IDENTIFIERS["SHADOW_TEXTURE_1"] = "Shadow cascade texture 1.";
+		HLSL_IDENTIFIERS["SHADOW_TEXTURE_2"] = "Shadow cascade texture 2.";
+		HLSL_IDENTIFIERS["SHADOW_TEXTURE_3"] = "Shadow cascade texture 3.";
+		HLSL_IDENTIFIERS["MATERIAL_SAMPLER"] = "Main map sampler.";
+		HLSL_IDENTIFIERS["COLOR_MAP"] = "Material color map.";
+		HLSL_IDENTIFIERS["NORMAL_MAP"] = "Material normal map.";
+		HLSL_IDENTIFIERS["ROUGHNESS_MAP"] = "Material roughness map.";
 
 		TextEditor::LanguageDefinition* hlsl = TextEditor::LanguageDefinition::Hlsl();
 		for (const auto& [name, info] : HLSL_IDENTIFIERS) {

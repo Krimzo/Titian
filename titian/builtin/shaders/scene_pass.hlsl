@@ -98,10 +98,10 @@ Texture2D SHADOW_TEXTURE_1 : register(t2);
 Texture2D SHADOW_TEXTURE_2 : register(t3);
 Texture2D SHADOW_TEXTURE_3 : register(t4);
 
-SamplerState ENTITY_SAMPLER : register(s2);
-Texture2D ENTITY_TEXTURE : register(t5);
-Texture2D NORMAL_TEXTURE : register(t6);
-Texture2D ROUGHNESS_TEXTURE : register(t7);
+SamplerState MATERIAL_SAMPLER : register(s2);
+Texture2D COLOR_MAP : register(t5);
+Texture2D NORMAL_MAP : register(t6);
+Texture2D ROUGHNESS_MAP : register(t7);
 
 float3 get_pixel_normal(const float3 world_position, const float3 interpolated_normal, const float2 texture_coords)
 {
@@ -116,7 +116,7 @@ float3 get_pixel_normal(const float3 world_position, const float3 interpolated_n
     const float3 T = normalize(Q1 * st2.x - Q2 * st1.x);
     const float3 B = normalize(-Q1 * st2.y + Q2 * st1.y);
     const float3x3 TBN = float3x3(T, B, interpolated_normal);
-    const float3 result_normal = normalize(NORMAL_TEXTURE.Sample(ENTITY_SAMPLER, texture_coords).xyz * 2.0f - 1.0f);
+    const float3 result_normal = normalize(NORMAL_MAP.Sample(MATERIAL_SAMPLER, texture_coords).xyz * 2.0f - 1.0f);
     return normalize(mul(result_normal, TBN));
 }
 
@@ -125,7 +125,7 @@ float get_pixel_reflectivity(const float reflectivity, const float2 texture_coor
     if (!HAS_ROUGHNESS_MAP) {
         return reflectivity;
     }
-    const float roughness = ROUGHNESS_TEXTURE.Sample(ENTITY_SAMPLER, texture_coords).r;
+    const float roughness = ROUGHNESS_MAP.Sample(MATERIAL_SAMPLER, texture_coords).r;
     return 1.0f - roughness;
 }
 
@@ -225,7 +225,7 @@ PS_OUT p_shader(VS_OUT data)
     const float3 light_intensity = ambient_factor + diffuse_factor + specular_factor;
 
     // Color calculations
-    const float4 texture_color = ENTITY_TEXTURE.Sample(ENTITY_SAMPLER, data.textur);
+    const float4 texture_color = COLOR_MAP.Sample(MATERIAL_SAMPLER, data.textur);
     const float4 unlit_color = lerp(MATERIAL_COLOR, texture_color, TEXTURE_BLEND);
     const float4 lit_color = unlit_color * float4(light_intensity, 1.0f);
     

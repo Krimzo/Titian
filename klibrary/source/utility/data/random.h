@@ -43,5 +43,5 @@ namespace kl::random {
 
     // Char
     char gen_char(bool upper = false);
-    std::string gen_string(int length);
+    std::string gen_string(int length, bool upper = false);
 }
