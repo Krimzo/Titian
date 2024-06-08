@@ -12,7 +12,7 @@ void sandbox::SandboxPieceSkybox::setup_self()
 
 	kl::Object<Texture> sky = new Texture(gpu);
 	sky->data_buffer = kl::Image("preview/skyboxes/clouds.png");
-	sky->load_as_cube();
+	sky->reload_as_cube();
 	sky->create_shader_view(nullptr);
 	scene->textures["sky"] = sky;
 }

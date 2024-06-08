@@ -25,8 +25,8 @@ namespace titian {
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;
 
-		void load_as_2D(bool has_unordered_access = false, bool is_target = false);
-		bool load_as_cube();
+		void reload_as_2D(bool has_unordered_access = false, bool is_target = false);
+		bool reload_as_cube();
 
 		void create_target_view(const kl::dx::TargetViewDescriptor* descriptor = nullptr);
 		void create_depth_view(const kl::dx::DepthViewDescriptor* descriptor = nullptr);

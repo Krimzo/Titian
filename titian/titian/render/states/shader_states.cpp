@@ -16,6 +16,6 @@ titian::ShaderStates::ShaderStates(kl::GPU* gpu)
     {
         const std::string source = kl::read_file_string(kl::format("builtin/shaders/", entry.second));
         entry.first = gpu->create_render_shaders(source);
-        kl::assert(entry.first, kl::format("Failed to init [", entry.second, "] shaders."));
+        kl::assert(entry.first, "Failed to init [", entry.second, "] shaders.");
     });
 }

@@ -26,21 +26,21 @@ void titian::Texture::deserialize(const Serializer* serializer, const void* help
 
 	serializer->read_object<bool>(m_is_cube);
 	if (m_is_cube) {
-		load_as_cube();
+		reload_as_cube();
 	}
 	else {
-		load_as_2D(false, false);
+		reload_as_2D(false, false);
 	}
 	create_shader_view(nullptr);
 }
 
-void titian::Texture::load_as_2D(bool has_unordered_access, bool is_target)
+void titian::Texture::reload_as_2D(bool has_unordered_access, bool is_target)
 {
 	graphics_buffer = m_gpu->create_texture(data_buffer, has_unordered_access, is_target);
 	m_is_cube = false;
 }
 
-bool titian::Texture::load_as_cube()
+bool titian::Texture::reload_as_cube()
 {
 	if (data_buffer.width() % 4 || data_buffer.height() % 3) {
 		return false;

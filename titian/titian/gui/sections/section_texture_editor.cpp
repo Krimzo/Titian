@@ -42,7 +42,7 @@ void titian::GUISectionTextureEditor::render_gui()
             if (texture && classify_file(file.value()) == FileType::TEXTURE) {
                 const std::filesystem::path path = file.value();
                 texture->data_buffer.load_from_file(path.string());
-                texture->load_as_2D(false, false);
+                texture->reload_as_2D(false, false);
                 texture->create_shader_view(nullptr);
             }
         }
@@ -169,12 +169,12 @@ void titian::GUISectionTextureEditor::show_texture_properties(Texture* texture)
         bool cube_map = texture->is_cube();
         if (ImGui::Checkbox("Cube Map", &cube_map)) {
             if (cube_map) {
-                if (texture->load_as_cube()) {
+                if (texture->reload_as_cube()) {
                     texture->create_shader_view(nullptr);
                 }
             }
             else {
-                texture->load_as_2D(false, false);
+                texture->reload_as_2D(false, false);
                 texture->create_shader_view(nullptr);
             }
         }

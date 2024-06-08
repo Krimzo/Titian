@@ -9,16 +9,18 @@ titian::EditorLayer::EditorLayer(GameLayer* game_layer)
 bool titian::EditorLayer::update()
 {
     const TimeBomb _ = this->time_it();
-
-    Camera* camera = game_layer->scene->get_casted<Camera>(game_layer->scene->main_camera_name);
-    if (!camera) { return true; }
-
-    kl::Window* window = &game_layer->app_layer->window;
-    const float delta_time = game_layer->app_layer->timer->delta();
-
+    
     if (!is_viewport_focused || !is_over_viewport) {
         return true;
     }
+
+    Camera* camera = game_layer->scene->get_casted<Camera>(game_layer->scene->main_camera_name);
+    if (!camera) {
+        return true;
+    }
+    
+    kl::Window* window = &game_layer->app_layer->window;
+    const float delta_time = game_layer->app_layer->timer->delta();
 
     // Rotation
     if (window->mouse.right) {

@@ -751,8 +751,8 @@ const int load_types = [&]
 	{
 		{ cs::fun(&Texture::data_buffer), "data_buffer" },
 
-		{ cs::fun(&Texture::load_as_2D), "load_as_2D" },
-		{ cs::fun(&Texture::load_as_cube), "load_as_cube" },
+		{ cs::fun(&Texture::reload_as_2D), "reload_as_2D" },
+		{ cs::fun(&Texture::reload_as_cube), "reload_as_cube" },
 
 		{ cs::fun(&Texture::create_target_view), "create_target_view" },
 		{ cs::fun(&Texture::create_depth_view), "create_depth_view" },
@@ -760,8 +760,8 @@ const int load_types = [&]
 		{ cs::fun(&Texture::create_access_view), "create_access_view" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Texture"] = "Object that contains pixel data.";
-	INTERP_SCRIPT_IDENTIFIERS["load_as_2D"] = "Reloads the texture as 2D.";
-	INTERP_SCRIPT_IDENTIFIERS["load_as_cube"] = "Reloads the texture as a cube map.";
+	INTERP_SCRIPT_IDENTIFIERS["reload_as_2D"] = "Reloads the texture as 2D.";
+	INTERP_SCRIPT_IDENTIFIERS["reload_as_cube"] = "Reloads the texture as a cube map.";
 	INTERP_SCRIPT_IDENTIFIERS["create_target_view"] = "Creates target view for this texture.";
 	INTERP_SCRIPT_IDENTIFIERS["create_depth_view"] = "Creates depth view for this texture.";
 	INTERP_SCRIPT_IDENTIFIERS["create_shader_view"] = "Creates shader view for this texture.";

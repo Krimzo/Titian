@@ -6,25 +6,25 @@ titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer, GUILayer* gu
     , app_layer(app_layer)
     , gui_layer(gui_layer)
 {
-    kl::GPU* gpu = &app_layer->gpu;
-
-    const std::initializer_list<std::pair<kl::Object<Texture>&, const char*>> icons = {
-        { default_file_texture, "builtin/textures/default_file.png" },
-        { mesh_file_texture, "builtin/textures/mesh_file.png" },
-        { texture_file_texture, "builtin/textures/texture_file.png" },
-        { script_file_texture, "builtin/textures/script_file.png" },
-        { shader_file_texture, "builtin/textures/shader_file.png" },
-        { scene_file_texture, "builtin/textures/scene_file.png" },
-        { default_dir_texture, "builtin/textures/default_dir.png" },
-        { parent_dir_texture, "builtin/textures/parent_dir.png" },
-    };
-    std::for_each(std::execution::par, icons.begin(), icons.end(), [&](auto entry)
+    auto create_texture = [&](kl::Object<Texture>& texture, const char* filename)
     {
-        entry.first = new Texture(gpu);
-        entry.first->graphics_buffer = gpu->create_texture(kl::Image(entry.second));
-        entry.first->create_shader_view(nullptr);
-        kl::assert(entry.first->shader_view, kl::format("Failed to init ", entry.second, " file texture"));
-    });
+        texture = new Texture(&app_layer->gpu);
+        texture->data_buffer.load_from_file(filename);
+        texture->reload_as_2D(false, false);
+        texture->create_shader_view(nullptr);
+        kl::assert(texture->shader_view, "Failed to init texture: ", filename);
+    };
+
+    WorkQueue queue;
+    queue.add_task([&] { create_texture(default_file_texture, "builtin/textures/default_file.png"); });
+    queue.add_task([&] { create_texture(mesh_file_texture, "builtin/textures/mesh_file.png"); });
+    queue.add_task([&] { create_texture(texture_file_texture, "builtin/textures/texture_file.png"); });
+    queue.add_task([&] { create_texture(script_file_texture, "builtin/textures/script_file.png"); });
+    queue.add_task([&] { create_texture(shader_file_texture, "builtin/textures/shader_file.png"); });
+    queue.add_task([&] { create_texture(scene_file_texture, "builtin/textures/scene_file.png"); });
+    queue.add_task([&] { create_texture(default_dir_texture, "builtin/textures/default_dir.png"); });
+    queue.add_task([&] { create_texture(parent_dir_texture, "builtin/textures/parent_dir.png"); });
+    queue.finalize();
 }
 
 void titian::GUISectionExplorer::render_gui()

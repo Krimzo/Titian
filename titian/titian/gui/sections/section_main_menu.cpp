@@ -6,27 +6,20 @@ titian::GUISectionMainMenu::GUISectionMainMenu(EditorLayer* editor_layer, GUILay
     , editor_layer(editor_layer)
     , gui_layer(gui_layer)
 {
-    kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
+    auto create_texture = [&](kl::Object<Texture>& texture, const char* filename)
+    {
+        texture = new Texture(&editor_layer->game_layer->app_layer->gpu);
+        texture->data_buffer.load_from_file(filename);
+        texture->reload_as_2D(false, false);
+        texture->create_shader_view(nullptr);
+        kl::assert(texture->shader_view, "Failed to init texture: ", filename);
+    };
 
-    m_start_button_texture = new Texture(gpu);
-    m_pause_button_texture = new Texture(gpu);
-    m_stop_button_texture = new Texture(gpu);
-
-    m_start_button_texture->data_buffer.load_from_file("builtin/textures/start_button.png");
-    m_pause_button_texture->data_buffer.load_from_file("builtin/textures/pause_button.png");
-    m_stop_button_texture->data_buffer.load_from_file("builtin/textures/stop_button.png");
-
-    m_start_button_texture->load_as_2D();
-    m_pause_button_texture->load_as_2D();
-    m_stop_button_texture->load_as_2D();
-
-    m_start_button_texture->create_shader_view();
-    m_pause_button_texture->create_shader_view();
-    m_stop_button_texture->create_shader_view();
-
-    kl::assert(m_start_button_texture->shader_view, "Failed to init start_button texture.");
-    kl::assert(m_pause_button_texture->shader_view, "Failed to init pause_button texture.");
-    kl::assert(m_stop_button_texture->shader_view, "Failed to init stop_button texture.");
+    WorkQueue queue;
+    queue.add_task([&] { create_texture(m_start_button_texture, "builtin/textures/start_button.png"); });
+    queue.add_task([&] { create_texture(m_pause_button_texture, "builtin/textures/pause_button.png"); });
+    queue.add_task([&] { create_texture(m_stop_button_texture, "builtin/textures/stop_button.png"); });
+    queue.finalize();
 }
 
 void titian::GUISectionMainMenu::render_gui()

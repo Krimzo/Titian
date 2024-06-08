@@ -50,6 +50,9 @@ void titian::GUISectionScriptingParameters::display_parameter_editor(const int s
 {
 	const chaiscript::Type_Info& type = parameter.get_type_info();
 	void* ptr = parameter.get_ptr();
+	if (!ptr) {
+		return;
+	}
 	
 	if (type == typeid(bool)) {
 		const std::string identifier = kl::format(name, "##", script_id);

@@ -51,18 +51,22 @@ void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
     const std::string color_map = "dogo";
     const std::string normal_map = "concrete_normal";
 
-    kl::GPU* gpu = &editor->app_layer->gpu;
-    kl::Object color_map_tex = new Texture(gpu);
-    kl::Object normal_map_tex = new Texture(gpu);
+    kl::Object<Texture> color_map_tex;
+    kl::Object<Texture> normal_map_tex;
 
-    color_map_tex->data_buffer = kl::Image("preview/textures/dogo.png");
-    normal_map_tex->data_buffer = kl::Image("preview/textures/concrete_normal.png");
+    auto create_texture = [&](kl::Object<Texture>& texture, const char* filename)
+    {
+        texture = new Texture(&editor->app_layer->gpu);
+        texture->data_buffer.load_from_file(filename);
+        texture->reload_as_2D(false, false);
+        texture->create_shader_view(nullptr);
+        kl::assert(texture->shader_view, "Failed to init texture: ", filename);
+    };
 
-    color_map_tex->load_as_2D(false, false);
-    normal_map_tex->load_as_2D(false, false);
-
-    color_map_tex->create_shader_view(nullptr);
-    normal_map_tex->create_shader_view(nullptr);
+    WorkQueue queue;
+    queue.add_task([&] { create_texture(color_map_tex, "preview/textures/dogo.png"); });
+    queue.add_task([&] { create_texture(normal_map_tex, "preview/textures/concrete_normal.png"); });
+    queue.finalize();
 
     scene->textures[color_map] = color_map_tex;
     scene->textures[normal_map] = normal_map_tex;
