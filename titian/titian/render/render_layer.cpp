@@ -5,15 +5,17 @@ titian::RenderLayer::RenderLayer(GameLayer* game_layer)
 	: Layer("RenderLayer")
 	, game_layer(game_layer)
 {
+	kl::GPU* gpu = &game_layer->app_layer->gpu;
+
 	// Textures
-	states = new RenderStates(&game_layer->app_layer->gpu);
-	render_texture = new Texture(&game_layer->app_layer->gpu);
-	picking_texture = new Texture(&game_layer->app_layer->gpu);
-	staging_texture = new Texture(&game_layer->app_layer->gpu);
-	depth_texture = new Texture(&game_layer->app_layer->gpu);
+	states = new RenderStates(gpu);
+	render_texture = new Texture(gpu);
+	picking_texture = new Texture(gpu);
+	staging_texture = new Texture(gpu);
+	depth_texture = new Texture(gpu);
 
 	// Meshes
-	screen_mesh = game_layer->app_layer->gpu->create_screen_mesh();
+	screen_mesh = gpu->create_screen_mesh();
 
 	// Generate first texture
 	resize({ 1, 1 });
@@ -29,7 +31,7 @@ bool titian::RenderLayer::update()
 	// Clear targets
 	Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
 	gpu->clear_internal(background);
-	gpu->clear_target_view(render_texture->target_view, camera ? (kl::Float4)camera->background : background);
+	gpu->clear_target_view(render_texture->target_view, camera ? kl::Float4(camera->background) : background);
 	gpu->clear_target_view(picking_texture->target_view, {});
 	gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
 	if (!camera) { return true; }

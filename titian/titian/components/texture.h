@@ -7,7 +7,7 @@ namespace titian {
 	class Texture : public Serializable
 	{
 	public:
-		// jpg has a really good compression but isn't lossless
+		// jpg has really good compression but isn't lossless
 		// png is lossless but the compression isn't as good
 		static constexpr const char* COMPRESSION_TYPE = "jpg";
 		using Data = kl::Image;

@@ -10,7 +10,7 @@ titian::OutlinePass::OutlinePass(GameLayer* game_layer, EditorLayer* editor_laye
 bool titian::OutlinePass::is_renderable() const
 {
     const Scene* scene = &game_layer->scene;
-    return scene->get_entity(editor_layer->selected_entity);
+    return (bool) scene->get_entity(editor_layer->selected_entity);
 }
 
 titian::StatePackage titian::OutlinePass::get_state_package()
@@ -57,4 +57,5 @@ void titian::OutlinePass::render_self(StatePackage& package)
     package.shader_state.pixel_shader.update_cbuffer(ps_cb);
 
     gpu->draw(render_layer->screen_mesh);
+    gpu->unbind_shader_view_for_pixel_shader(0);
 }

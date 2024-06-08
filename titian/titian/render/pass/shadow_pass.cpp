@@ -4,7 +4,9 @@
 titian::ShadowPass::ShadowPass(GameLayer* game_layer, RenderLayer* render_layer)
     : RenderPass("ShadowPass", game_layer)
     , render_layer(render_layer)
-{}
+{
+    m_ignored_texture = new Texture(&game_layer->app_layer->gpu);
+}
 
 bool titian::ShadowPass::is_renderable() const
 {
@@ -39,7 +41,8 @@ void titian::ShadowPass::render_self(StatePackage& package)
     DirectionalLight* dir_light = scene->get_casted<DirectionalLight>(scene->main_directional_light_name);
     if (!dir_light) { return; }
 
-    // Update viewport
+    // Update target view/viewport
+    this->resize_target(dir_light->map_resolution());
     gpu->set_viewport_size(kl::Int2{ (int) dir_light->map_resolution() });
 
     // Render shadows
@@ -49,7 +52,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
         const kl::dx::DepthView shadow_map = dir_light->depth_view(i);
 
         // Clear
-        gpu->bind_target_depth_views({}, shadow_map);
+        gpu->bind_target_depth_views({ m_ignored_texture->target_view }, shadow_map);
         gpu->clear_depth_view(shadow_map, 1.0f, 0xFF);
 
         // Draw
@@ -81,4 +84,29 @@ void titian::ShadowPass::render_self(StatePackage& package)
             gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
         }
     }
+}
+
+void titian::ShadowPass::resize_target(const uint32_t size)
+{
+    if (m_ignored_texture->graphics_buffer) {
+        kl::dx::TextureDescriptor desc{};
+        m_ignored_texture->graphics_buffer->GetDesc(&desc);
+        if (desc.Width == size) {
+            return;
+        }
+    }
+
+    kl::dx::TextureDescriptor descriptor{};
+    descriptor.Width = size;
+    descriptor.Height = size;
+    descriptor.MipLevels = 1;
+    descriptor.ArraySize = 1;
+    descriptor.Format = DXGI_FORMAT_R8_UNORM;
+    descriptor.SampleDesc.Count = 1;
+    descriptor.Usage = D3D11_USAGE_DEFAULT;
+    descriptor.BindFlags = D3D11_BIND_RENDER_TARGET;
+    m_ignored_texture->graphics_buffer = game_layer->app_layer->gpu->create_texture(&descriptor, nullptr);
+
+    m_ignored_texture->create_target_view();
+    kl::assert(m_ignored_texture->target_view, "Failed to create ShadowPass target view");
 }
