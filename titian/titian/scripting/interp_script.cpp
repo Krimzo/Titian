@@ -5,7 +5,7 @@ namespace cs = chaiscript;
 
 /* Inter script */
 titian::InterpScript::InterpScript()
-	: Script(Type::INTERP)
+	: Script(ScriptType::INTERP)
 {
 	this->source = get_default_script();
 }
@@ -813,6 +813,8 @@ const int load_types = [&]
 	{},
 	{
 		{ cs::fun(&Entity::scale), "scale" },
+		{ cs::fun(&Entity::casts_shadows), "casts_shadows" },
+
 		{ cs::fun(&Entity::mesh_name), "mesh_name" },
 		{ cs::fun(&Entity::material_name), "material_name" },
 
@@ -842,6 +844,7 @@ const int load_types = [&]
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Entity"] = "Base entity that's a part of a scene.";
 	INTERP_SCRIPT_MEMBERS["scale"] = "scale";
+	INTERP_SCRIPT_MEMBERS["casts_shadows"] = "casts_shadows";
 	INTERP_SCRIPT_MEMBERS["mesh_name"] = "mesh_name";
 	INTERP_SCRIPT_MEMBERS["material_name"] = "material_name";
 	INTERP_SCRIPT_IDENTIFIERS["model_matrix"] = "Returns the model matrix of entity.";

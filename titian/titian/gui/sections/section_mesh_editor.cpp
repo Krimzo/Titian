@@ -13,6 +13,8 @@ titian::GUISectionMeshEditor::GUISectionMeshEditor(EditorLayer* editor_layer, GU
     render_texture = new Texture(gpu);
     depth_texture = new Texture(gpu);
 
+    sun_direction = kl::normalize(kl::Float3(-0.5f, -0.75f, 1.0f));
+
     camera->background = kl::Color{ 30, 30, 30 };
     camera->set_position({ -0.34f, 0.18f, -0.94f });
     camera->speed = 3.1f;
@@ -224,7 +226,7 @@ void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh
     struct VS_CB
     {
         kl::Float4x4 W;
-        kl::Float4x4 WVP;
+        alignas(16) kl::Float4x4 WVP;
     };
 
     const VS_CB vs_cb{
@@ -235,10 +237,12 @@ void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh
     struct PS_CB
     {
         kl::Float4 OBJECT_COLOR;
+        alignas(16) kl::Float3 SUN_DIRECTION;
     };
 
     const PS_CB ps_cb{
         .OBJECT_COLOR = line_color,
+        .SUN_DIRECTION = sun_direction,
     };
 
     render_shaders.vertex_shader.update_cbuffer(vs_cb);
@@ -299,8 +303,14 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
     const int current_scroll = window->mouse.scroll();
 
     if (ImGui::Begin("Mesh Properties") && mesh) {
-        ImGui::Text("Info");
+        /*-*/
+        ImGui::Text("Global");
+        if (ImGui::DragFloat3("Sun Direction", sun_direction, 0.01f)) {
+            sun_direction = kl::normalize(sun_direction);
+        }
 
+        /*-*/
+        ImGui::Text("Info");
         ImGui::Text("Name: ");
         ImGui::SameLine();
         gui_colored_text(selected_mesh, gui_layer->special_color);

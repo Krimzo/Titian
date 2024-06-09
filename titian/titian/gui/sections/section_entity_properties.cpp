@@ -21,6 +21,7 @@ void titian::GUISectionEntityProperties::render_gui()
         edit_entity_material(scene, &entity);
         edit_entity_physics(scene, entity);
         edit_entity_collider(scene, &entity);
+        edit_entity_other(scene, &entity);
     }
     ImGui::End();
 }
@@ -361,4 +362,12 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
             collider_shape->setGeometry(mesh_geometry);
         }
     }
+}
+
+void titian::GUISectionEntityProperties::edit_entity_other(Scene* scene, Entity* entity)
+{
+    ImGui::Separator();
+    ImGui::Text("Other Properties");
+
+    ImGui::Checkbox("Casts Shadows", &entity->casts_shadows);
 }

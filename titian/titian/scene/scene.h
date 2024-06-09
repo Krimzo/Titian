@@ -32,10 +32,10 @@ namespace titian {
         ~Scene() override;
 
         Scene(const Scene&) = delete;
-        Scene(const Scene&&) = delete;
+        Scene(Scene&&) = delete;
 
         void operator=(const Scene&) = delete;
-        void operator=(const Scene&&) = delete;
+        void operator=(Scene&&) = delete;
 
         // Overrides
         void serialize(Serializer* serializer, const void* helper_data) const override;

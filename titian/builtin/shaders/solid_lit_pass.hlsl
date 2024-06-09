@@ -23,13 +23,12 @@ VS_OUT v_shader(const float3 position : KL_Position, const float3 normal : KL_No
 cbuffer PS_CB : register(b0)
 {
     float4 OBJECT_COLOR;
+    float3 SUN_DIRECTION;
 }
 
-float4 p_shader(const VS_OUT data) : SV_Target
+float4 p_shader(const VS_OUT data) : SV_Target0
 {
-    static const float3 sun_direction = normalize(float3(-0.5f, -0.75f, 1.0f));
-    
     const float3 normal = normalize(data.normal);
-    const float diffuse = max(dot(normal, -sun_direction), 0.0f);
+    const float diffuse = max(dot(normal, -SUN_DIRECTION), 0.0f);
     return OBJECT_COLOR * diffuse;
 }

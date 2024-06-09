@@ -125,19 +125,21 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
         const uint64_t size = serializer->read_object<uint64_t>();
         for (uint64_t i = 0; i < size; i++) {
             const std::string name = serializer->read_string();
-            const Script::Type type = serializer->read_object<Script::Type>();
+            const ScriptType type = serializer->read_object<ScriptType>();
 
             kl::Object<Script> object = nullptr;
             switch (type) {
-            case Script::Type::NATIVE:
+            case ScriptType::NATIVE:
                 object = new NativeScript();
                 break;
-            case Script::Type::INTERP:
+            case ScriptType::INTERP:
                 object = new InterpScript();
                 break;
-            case Script::Type::NODE:
+            case ScriptType::NODE:
                 object = new NodeScript();
                 break;
+            default:
+                kl::assert(false, "Unknown script type: ", (int) type);
             }
             object->deserialize(serializer, nullptr);
             scripts[name] = object;
@@ -149,25 +151,27 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
         const uint64_t size = serializer->read_object<uint64_t>();
         for (uint64_t i = 0; i < size; i++) {
             const std::string name = serializer->read_string();
-            const Entity::Type type = serializer->read_object<Entity::Type>();
+            const EntityType type = serializer->read_object<EntityType>();
 
             kl::Object<Entity> entity = nullptr;
             switch (type) {
-            case Entity::Type::BASIC:
-                entity = new Entity(Entity::Type::BASIC, m_physics, false);
+            case EntityType::BASIC:
+                entity = new Entity(EntityType::BASIC, m_physics, false);
                 break;
-            case Entity::Type::CAMERA:
+            case EntityType::CAMERA:
                 entity = new Camera(m_physics, false);
                 break;
-            case Entity::Type::AMBIENT_LIGHT:
+            case EntityType::AMBIENT_LIGHT:
                 entity = new AmbientLight(m_physics, false);
                 break;
-            case Entity::Type::POINT_LIGHT:
+            case EntityType::POINT_LIGHT:
                 entity = new PointLight(m_physics, false);
                 break;
-            case Entity::Type::DIRECTIONAL_LIGHT:
+            case EntityType::DIRECTIONAL_LIGHT:
                 entity = new DirectionalLight(m_physics, false, m_gpu, 4096);
                 break;
+            default:
+                kl::assert(false, "Unknown entity type: ", (int) type);
             }
 
             entity->deserialize(serializer, &meshes);
@@ -242,7 +246,7 @@ void titian::Scene::update_scripts()
 // Entity
 kl::Object<titian::Entity> titian::Scene::new_entity(const bool dynamic) const
 {
-    return new Entity(Entity::Type::BASIC, m_physics, dynamic);
+    return new Entity(EntityType::BASIC, m_physics, dynamic);
 }
 
 void titian::Scene::add_entity(const std::string& name, const kl::Object<Entity>& entity)

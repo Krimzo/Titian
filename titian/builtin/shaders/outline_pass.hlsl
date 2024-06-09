@@ -8,25 +8,23 @@ float4 v_shader(const float3 position : KL_Position) : SV_Position
 cbuffer PS_CB : register(b0)
 {
     float SELECTED_INDEX;
-    float3 OUTLINE_COLOR;
+    int OUTLINE_SIZE;
+    float4 OUTLINE_COLOR;
 };
 
 Texture2D INDEX_TEXTURE : register(t0);
 
-float4 p_shader(const float4 position : SV_Position) : SV_Target
+float4 p_shader(const float4 position : SV_Position) : SV_Target0
 {
-    static const int outline_thickness = 1;
-    
-    const float pixel_index = INDEX_TEXTURE[position.xy].x;
+    const float pixel_index = INDEX_TEXTURE[position.xy].r;
     if (pixel_index == SELECTED_INDEX) {
         discard;
     }
 
-    for (int y = -outline_thickness; y <= outline_thickness; y++) {
-        for (int x = -outline_thickness; x <= outline_thickness; x++) {
-            const float index = INDEX_TEXTURE[position.xy + int2(x, y)].x;
-            if (index == SELECTED_INDEX) {
-                return float4(OUTLINE_COLOR, 1.0f);
+    for (int2 offset = -OUTLINE_SIZE; offset.y <= OUTLINE_SIZE; offset.y++) {
+        for (offset.x = -OUTLINE_SIZE; offset.x <= OUTLINE_SIZE; offset.x++) {
+            if (INDEX_TEXTURE[position.xy + offset].r == SELECTED_INDEX) {
+                return OUTLINE_COLOR;
             }
         }
     }

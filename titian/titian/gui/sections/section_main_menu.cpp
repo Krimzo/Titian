@@ -105,8 +105,25 @@ void titian::GUISectionMainMenu::render_gui()
         // View
         if (ImGui::BeginMenu("View")) {
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
-            ImGui::Checkbox("Wireframe", &render_layer->render_wireframe);
-            ImGui::Checkbox("vSync", &render_layer->v_sync);
+
+            if (ImGui::BeginMenu("Features")) {
+                ImGui::Checkbox("Wireframe", &render_layer->render_wireframe);
+                ImGui::Checkbox("vSync", &render_layer->v_sync);
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Values")) {
+                ImGui::SetNextItemWidth(75.0f);
+                ImGui::DragInt("Outline Size", &editor_layer->outline_size);
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Colors")) {
+                ImGui::SetNextItemWidth(250.0f);
+                ImGui::ColorEdit3("Special", gui_layer->special_color);
+                ImGui::SetNextItemWidth(250.0f);
+                ImGui::ColorEdit3("Alternate", gui_layer->alternate_color);
+                ImGui::EndMenu();
+            }
+
             ImGui::PopStyleVar();
             ImGui::EndMenu();
         }
@@ -115,6 +132,7 @@ void titian::GUISectionMainMenu::render_gui()
         if (ImGui::BeginMenu("About")) {
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             ImGui::Text("Titian 0.64v");
+            ImGui::Text(kl::format("Serial ", SERIAL_VERSION_FORMAT).c_str());
             ImGui::PopStyleVar();
             ImGui::EndMenu();
         }
@@ -165,8 +183,8 @@ void titian::GUISectionMainMenu::render_gui()
         ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !is_stop_enabled);
         if (ImGui::ImageButton(m_stop_button_texture->shader_view.Get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), -1, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), stop_tint_color)) {
             game_layer->stop_game();
-            game_layer->reset_scene();
             if (const Serializer serializer = { m_temp_path, false }) {
+                game_layer->reset_scene();
                 game_layer->scene->deserialize(&serializer, nullptr);
             }
         }

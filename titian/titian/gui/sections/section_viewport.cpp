@@ -19,7 +19,7 @@ void titian::GUISectionViewport::render_gui()
     if (ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
         // Pre-display
         const ImVec2 content_region = ImGui::GetContentRegionAvail();
-        render_layer->resize({ (int)content_region.x, (int)content_region.y });
+        render_layer->resize({ (int) content_region.x, (int) content_region.y });
         editor_layer->is_viewport_focused = ImGui::IsWindowFocused();
 
         const ImVec2 win_content_min = ImGui::GetWindowPos() + ImGui::GetWindowContentRegionMin();
@@ -32,9 +32,12 @@ void titian::GUISectionViewport::render_gui()
         // Scene loading
         if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
             if (classify_file(file.value()) == FileType::SCENE) {
-                scene = new Scene(gpu);
                 if (const Serializer serializer = { file.value(), false }) {
+                    render_layer->game_layer->reset_scene();
                     scene->deserialize(&serializer, nullptr);
+                }
+                else {
+                    Logger::log("Failed to load scene: ", file.value());
                 }
             }
         }

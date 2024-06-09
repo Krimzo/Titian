@@ -2,7 +2,7 @@
 
 
 titian::NodeScript::NodeScript()
-	: Script(Type::NODE)
+	: Script(ScriptType::NODE)
 {
 	start_node.title = "on_start";
 	start_node.flow_output = Pin("flow out", PinType::FLOW, nullptr);

@@ -3,7 +3,10 @@
 
 std::string titian::format_serial_version(const uint32_t version)
 {
-	return kl::format("0x", std::hex, version);
+	std::string result = kl::format(std::hex, std::setfill('0'), std::setw(8), version);
+	result.insert(result.begin() + 2, '\'');
+	result.insert(result.begin() + 5, '\'');
+	return result;
 }
 
 titian::Serializer::Serializer(const std::string& path, const bool write)

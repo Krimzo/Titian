@@ -47,12 +47,14 @@ void titian::OutlinePass::render_self(StatePackage& package)
     struct PS_CB
     {
         float SELECTED_INDEX;
-        kl::Float3 OUTLINE_COLOR;
+        int32_t OUTLINE_SIZE;
+        alignas(16) kl::Float4 OUTLINE_COLOR;
     };
 
-	const PS_CB ps_cb{
+    const PS_CB ps_cb{
         .SELECTED_INDEX = static_cast<float>(counter_id),
-        .OUTLINE_COLOR = gui_layer->special_color.xyz(),
+        .OUTLINE_SIZE = editor_layer->outline_size,
+        .OUTLINE_COLOR = gui_layer->special_color,
     };
     package.shader_state.pixel_shader.update_cbuffer(ps_cb);
 

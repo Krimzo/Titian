@@ -15,7 +15,7 @@ cbuffer PS_CB : register(b0)
     float4 SOLID_COLOR;
 }
 
-float4 p_shader(const float4 position : SV_Position) : SV_Target
+float4 p_shader(const float4 position : SV_Position) : SV_Target0
 {
     return SOLID_COLOR;
 }

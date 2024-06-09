@@ -2,7 +2,7 @@
 
 
 titian::Camera::Camera(physx::PxPhysics* physics, const bool dynamic)
-    : Entity(Type::CAMERA, physics, dynamic)
+    : Entity(EntityType::CAMERA, physics, dynamic)
 {}
 
 void titian::Camera::serialize(Serializer* serializer, const void* helper_data) const

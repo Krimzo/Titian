@@ -8,23 +8,27 @@ namespace titian {
 }
 
 namespace titian {
+	enum class ScriptType : int32_t
+	{
+		NATIVE,
+		INTERP,
+		NODE,
+	};
+}
+
+namespace titian {
 	class Script : public Serializable
 	{
 	public:
-		enum class Type
-		{
-			NATIVE,
-			INTERP,
-			NODE,
-		} const type;
+		const ScriptType type;
 
-		Script(Type type);
+		Script(ScriptType type);
 
 		Script(const Script&) = delete;
-		Script(const Script&&) = delete;
+		Script(Script&&) = delete;
 
 		void operator=(const Script&) = delete;
-		void operator=(const Script&&) = delete;
+		void operator=(Script&&) = delete;
 
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;

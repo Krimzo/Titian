@@ -3,19 +3,20 @@
 
 titian::ShaderStates::ShaderStates(kl::GPU* gpu)
 {
-    const std::initializer_list<std::pair<kl::RenderShaders&, const char*>> shaders = {
-        { solid_pass, "solid_pass.hlsl" },
-        { solid_lit_pass, "solid_lit_pass.hlsl" },
-        { shadow_pass, "shadow_pass.hlsl" },
-        { skybox_pass, "skybox_pass.hlsl" },
-        { scene_pass, "scene_pass.hlsl" },
-        { outline_pass, "outline_pass.hlsl" },
-        { display_pass, "display_pass.hlsl" },
-    };
-    std::for_each(std::execution::par, shaders.begin(), shaders.end(), [&](auto entry)
-    {
-        const std::string source = kl::read_file_string(kl::format("builtin/shaders/", entry.second));
-        entry.first = gpu->create_render_shaders(source);
-        kl::assert(entry.first, "Failed to init [", entry.second, "] shaders.");
-    });
+    auto load_shader = [&](kl::RenderShaders& shader, const char* filename)
+	{
+        const std::string source = kl::read_file_string(kl::format("builtin/shaders/", filename));
+        shader = gpu->create_render_shaders(source);
+        kl::assert(shader, "Failed to init [", filename, "] shaders");
+	};
+
+    WorkQueue queue;
+    queue.add_task([&] { load_shader(solid_pass, "solid_pass.hlsl"); });
+    queue.add_task([&] { load_shader(solid_lit_pass, "solid_lit_pass.hlsl"); });
+    queue.add_task([&] { load_shader(shadow_pass, "shadow_pass.hlsl"); });
+    queue.add_task([&] { load_shader(skybox_pass, "skybox_pass.hlsl"); });
+    queue.add_task([&] { load_shader(scene_pass, "scene_pass.hlsl"); });
+    queue.add_task([&] { load_shader(outline_pass, "outline_pass.hlsl"); });
+    queue.add_task([&] { load_shader(display_pass, "display_pass.hlsl"); });
+    queue.finalize();
 }

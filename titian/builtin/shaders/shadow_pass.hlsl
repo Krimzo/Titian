@@ -10,7 +10,5 @@ float4 v_shader(const float3 position : KL_Position) : SV_Position
 }
 
 // Pixel shader
-float4 p_shader(const float4 position : SV_Position) : SV_Target
-{
-	return 0.0f;
-}
+void p_shader()
+{}

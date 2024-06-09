@@ -4,31 +4,37 @@
 
 
 namespace titian {
+    enum class EntityType : int32_t
+    {
+        BASIC,
+        CAMERA,
+        AMBIENT_LIGHT,
+        POINT_LIGHT,
+        DIRECTIONAL_LIGHT,
+    };
+}
+
+namespace titian {
     class Entity : public Serializable
     {
     public:
-        enum class Type
-        {
-            BASIC,
-            CAMERA,
-            AMBIENT_LIGHT,
-            POINT_LIGHT,
-            DIRECTIONAL_LIGHT,
-        } const type;
+        const EntityType type;
 
         kl::Float3 scale{ 1.0f };
+        bool casts_shadows = true;
+
         std::string mesh_name = "/";
         std::string material_name = "/";
 
         // Creation
-        Entity(Type type, physx::PxPhysics* physics, bool dynamic);
+        Entity(EntityType type, physx::PxPhysics* physics, bool dynamic);
         ~Entity() override;
 
         Entity(const Entity&) = delete;
-        Entity(const Entity&&) = delete;
+        Entity(Entity&&) = delete;
 
         void operator=(const Entity&) = delete;
-        void operator=(const Entity&&) = delete;
+        void operator=(Entity&&) = delete;
 
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;

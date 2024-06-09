@@ -2,7 +2,7 @@
 
 
 titian::NativeScript::NativeScript()
-	: Script(Type::NATIVE)
+	: Script(ScriptType::NATIVE)
 {}
 
 void titian::NativeScript::serialize(Serializer* serializer, const void* helper_data) const

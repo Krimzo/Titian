@@ -33,5 +33,6 @@ namespace titian {
         void edit_entity_material(Scene* scene, Entity* entity);
         void edit_entity_physics(Scene* scene, kl::Object<Entity>& entity);
         void edit_entity_collider(Scene* scene, Entity* entity);
+        void edit_entity_other(Scene* scene, Entity* entity);
     };
 }

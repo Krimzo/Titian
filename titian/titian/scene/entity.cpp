@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-titian::Entity::Entity(const Type type, physx::PxPhysics* physics, const bool dynamic)
+titian::Entity::Entity(const EntityType type, physx::PxPhysics* physics, const bool dynamic)
     : type(type), m_physics(physics)
 {
     physx::PxTransform transform = {};
@@ -17,10 +17,11 @@ titian::Entity::~Entity()
 
 void titian::Entity::serialize(Serializer* serializer, const void* helper_data) const
 {
-    serializer->write_object<Type>(type);
+    serializer->write_object<EntityType>(type);
 
     serializer->write_object<bool>(is_dynamic());
     serializer->write_object<bool>(has_gravity());
+    serializer->write_object<bool>(casts_shadows);
 
     serializer->write_object<float>(mass());
 
@@ -44,6 +45,7 @@ void titian::Entity::deserialize(const Serializer* serializer, const void* helpe
 {
     set_dynamic(serializer->read_object<bool>());
     set_gravity(serializer->read_object<bool>());
+    serializer->read_object<bool>(casts_shadows);
 
     set_mass(serializer->read_object<float>());
 
