@@ -48,7 +48,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
         const kl::Float4x4 VP = dir_light->light_matrix(camera, i);
         const kl::dx::DepthView shadow_map = dir_light->depth_view(i);
 
-        // Clear
+        // Target
         gpu->bind_target_depth_views({}, shadow_map);
         gpu->clear_depth_view(shadow_map, 1.0f, 0xFF);
 

@@ -11,28 +11,30 @@ void titian::GUISectionEntityProperties::render_gui()
 {
     const TimeBomb _ = this->time_it();
 
-    Scene* scene = &editor_layer->game_layer->scene;
-    kl::Object<Entity> entity = scene->get_entity(editor_layer->selected_entity);
-
-    if (ImGui::Begin("Entity properties") && entity) {
-        display_entity_info(scene, &entity);
-        edit_entity_transform(scene, &entity);
-        edit_entity_mesh(scene, &entity);
-        edit_entity_material(scene, &entity);
-        edit_entity_physics(scene, entity);
-        edit_entity_collider(scene, &entity);
-        edit_entity_other(scene, &entity);
+    if (ImGui::Begin("Entity properties") && !editor_layer->selected_entities.empty()) {
+        Scene* scene = &editor_layer->game_layer->scene;
+        const std::string entity_name = *--editor_layer->selected_entities.end();
+        kl::Object<Entity> entity = scene->get_entity(entity_name);
+        if (entity) {
+            display_entity_info(scene, entity_name, &entity);
+            edit_entity_transform(scene, &entity);
+            edit_entity_mesh(scene, &entity);
+            edit_entity_material(scene, &entity);
+            edit_entity_physics(scene, entity_name, entity);
+            edit_entity_collider(scene, &entity);
+            edit_entity_other(scene, &entity);
+        }
     }
     ImGui::End();
 }
 
-void titian::GUISectionEntityProperties::display_entity_info(Scene* scene, Entity* entity)
+void titian::GUISectionEntityProperties::display_entity_info(Scene* scene, const std::string& entity_name, Entity* entity)
 {
     ImGui::Text("Entity Info");
 
     ImGui::Text("Name: ");
     ImGui::SameLine();
-    gui_colored_text(editor_layer->selected_entity, gui_layer->special_color);
+    gui_colored_text(entity_name, gui_layer->special_color);
 
     if (Camera* camera = dynamic_cast<Camera*>(entity)) {
         ImGui::Separator();
@@ -211,17 +213,16 @@ void titian::GUISectionEntityProperties::edit_entity_material(Scene* scene, Enti
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, kl::Object<Entity>& entity)
+void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const std::string& entity_name, kl::Object<Entity>& entity)
 {
     ImGui::Separator();
     ImGui::Text("Physics");
 
     bool dynamic = entity->is_dynamic();
     if (ImGui::Checkbox("Dynamic", &dynamic)) {
-        const std::string& name = editor_layer->selected_entity;
-        scene->remove_entity(name);
+        scene->remove_entity(entity_name);
         entity->set_dynamic(dynamic);
-        scene->add_entity(name, entity);
+        scene->add_entity(entity_name, entity);
     }
 
     if (dynamic) {

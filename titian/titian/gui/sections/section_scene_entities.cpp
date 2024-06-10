@@ -73,8 +73,39 @@ void titian::GUISectionSceneEntities::render_gui()
 			ImGui::SameLine();
 
 			// Entity name
-			if (ImGui::Selectable(entity_name.c_str(), entity_name == editor_layer->selected_entity)) {
-				editor_layer->selected_entity = entity_name;
+			if (ImGui::Selectable(entity_name.c_str(), editor_layer->selected_entities.contains(entity_name))) {
+				if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
+					if (editor_layer->selected_entities.contains(entity_name)) {
+						editor_layer->selected_entities.erase(entity_name);
+					}
+					else {
+						editor_layer->selected_entities.insert(entity_name);
+					}
+				}
+				else if (ImGui::IsKeyDown(ImGuiKey_LeftShift)) {
+					if (editor_layer->selected_entities.empty()) {
+						editor_layer->selected_entities.insert(entity_name);
+					}
+					else {
+						int find_counter = 0;
+						std::vector<std::string> needed_entities;
+						for (const auto& [name, _] : *scene) {
+							if (name == entity_name || name == *--editor_layer->selected_entities.end()) {
+								find_counter += 1;
+							}
+							if (find_counter > 0) {
+								needed_entities.push_back(name);
+							}
+							if (find_counter >= 2) {
+								break;
+							}
+						}
+						editor_layer->selected_entities.insert(needed_entities.begin(), needed_entities.end());
+					}
+				}
+				else {
+					editor_layer->selected_entities = { entity_name };
+				}
 			}
 
 			// Item popup
