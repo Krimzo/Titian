@@ -30,6 +30,7 @@ void titian::DisplayPass::render_self(StatePackage& package)
     const kl::Int2 window_size = window->size();
     render_layer->resize(window_size);
 
+    // Target
     gpu->bind_internal_views();
     gpu->set_viewport_size(window_size);
 

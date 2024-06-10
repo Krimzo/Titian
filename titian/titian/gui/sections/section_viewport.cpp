@@ -44,21 +44,68 @@ void titian::GUISectionViewport::render_gui()
 
         // Handle entity picking
         const ImVec2 viewport_max = ImGui::GetWindowPos() + ImGui::GetWindowSize();
-        if (ImGui::IsWindowFocused() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), viewport_max) && !ImGuizmo::IsOver()) {
-            const kl::Int2 pixel_coords = window_mouse_position();
-            const uint32_t entity_id = read_entity_id(pixel_coords);
-
-            if (entity_id == 0) {
-                editor_layer->selected_entity = "/";
+        if (ImGui::IsWindowFocused() && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), viewport_max)) {
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGuizmo::IsOver()) {
+                m_rect_selection_first = window_mouse_position();
             }
-            else {
-                uint32_t counter = 0;
-                for (const auto& [name, _] : *scene) {
-                    if (++counter == entity_id) {
-                        editor_layer->selected_entity = name;
-                        break;
+            if (m_rect_selection_first) {
+                const kl::Int2 rect_selection_first = m_rect_selection_first.value();
+                if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                    const kl::Int2 rect_selection_last = window_mouse_position();
+                    kl::Float2 min_coords = kl::min(rect_selection_first, rect_selection_last);
+                    kl::Float2 max_coords = kl::max(rect_selection_first, rect_selection_last);
+                    min_coords += { win_content_min.x, win_content_min.y };
+                    max_coords += { win_content_min.x, win_content_min.y };
+                    if (max_coords.x == min_coords.x) {
+                        max_coords.x += 1.0f;
+                    }
+                    if (max_coords.y == min_coords.y) {
+                        max_coords.y += 1.0f;
+                    }
+
+                    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+                    draw_list->AddRectFilled({ min_coords.x, min_coords.y }, { max_coords.x, max_coords.y }, ImColor(255, 255, 255, 50));
+                    draw_list->AddRect({ min_coords.x, min_coords.y }, { max_coords.x, max_coords.y }, ImColor(255, 255, 255, 200));
+                }
+                if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+                    const kl::Int2 rect_selection_last = window_mouse_position();
+                    const std::unordered_set<uint32_t> entity_ids = read_entity_ids(rect_selection_first, rect_selection_last);
+
+                    if (!ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && !ImGui::IsKeyDown(ImGuiKey_LeftShift)) {
+                        editor_layer->selected_entities.clear();
+                    }
+                    
+                    if (entity_ids.size() == 1) {
+                        uint32_t counter = 0;
+                        for (const auto& [name, _] : *scene) {
+                            counter += 1;
+                            if (!entity_ids.contains(counter)) {
+                                continue;
+                            }
+
+                            if (editor_layer->selected_entities.contains(name)) {
+                                editor_layer->selected_entities.erase(name);
+                            }
+                            else {
+                                editor_layer->selected_entities.insert(name);
+                            }
+                            break;
+                        }
+                    }
+                    else if (entity_ids.size() > 1) {
+                        uint32_t counter = 0;
+                        for (const auto& [name, _] : *scene) {
+                            counter += 1;
+                            if (!entity_ids.contains(counter)) {
+                                continue;
+                            }
+                            editor_layer->selected_entities.insert(name);
+                        }
                     }
                 }
+            }
+            if (!ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                m_rect_selection_first = std::nullopt;
             }
         }
 
@@ -68,8 +115,14 @@ void titian::GUISectionViewport::render_gui()
             handle_gizmo_operation_change(ImGuizmo::OPERATION::ROTATE, ImGuiKey_2);
             handle_gizmo_operation_change(ImGuizmo::OPERATION::TRANSLATE, ImGuiKey_3);
         }
-        if (Entity* entity = &scene->get_entity(editor_layer->selected_entity)) {
-            render_gizmos(entity);
+        std::unordered_set<Entity*> entities;
+        for (const auto& sel_ent : editor_layer->selected_entities) {
+            if (Entity* entity = &scene->get_entity(sel_ent)) {
+				entities.insert(entity);
+            }
+        }
+        if (!entities.empty()) {
+            render_gizmos(entities);
         }
     }
     else {
@@ -91,25 +144,50 @@ kl::Int2 titian::GUISectionViewport::window_mouse_position()
     };
 }
 
-uint32_t titian::GUISectionViewport::read_entity_id(const kl::Int2& pixel_coords)
+std::unordered_set<uint32_t> titian::GUISectionViewport::read_entity_ids(const kl::Int2& first_coords, const kl::Int2& last_coords)
 {
-    if (pixel_coords.x < 0 || pixel_coords.y < 0) { return 0; }
+    kl::Int2 min_coords = kl::min(first_coords, last_coords);
+	kl::Int2 max_coords = kl::max(first_coords, last_coords);
+    if (max_coords.x == min_coords.x) {
+        max_coords.x += 1;
+    }
+    if (max_coords.y == min_coords.y) {
+        max_coords.y += 1;
+    }
+    if (min_coords.x < 0 || min_coords.y < 0) {
+        return {};
+    }
+
+    const kl::Int2 size = max_coords - min_coords;
     const kl::GPU* gpu = &render_layer->game_layer->app_layer->gpu;
+    render_layer->resize_staging(size);
 
     D3D11_BOX source_box = {};
-    source_box.left = pixel_coords.x;
-    source_box.right = source_box.left + 1;
-    source_box.top = pixel_coords.y;
-    source_box.bottom = source_box.top + 1;
+    source_box.left = min_coords.x;
+    source_box.top = min_coords.y;
+    source_box.right = max_coords.x;
+    source_box.bottom = max_coords.y;
     source_box.front = 0;
     source_box.back = 1;
     gpu->context()->CopySubresourceRegion(render_layer->staging_texture->graphics_buffer.Get(),
         0, 0, 0, 0, render_layer->picking_texture->graphics_buffer.Get(), 0, &source_box);
 
-    float result = 0.0f;
-    gpu->read_from_resource(&result, render_layer->staging_texture->graphics_buffer.Get(), sizeof(float));
+    kl::dx::TextureDescriptor tex_desc = {};
+    render_layer->staging_texture->graphics_buffer->GetDesc(&tex_desc);
 
-    return static_cast<uint32_t>(result);
+    std::unordered_set<uint32_t> results;
+    kl::dx::MappedSubresourceDescriptor mapped_subresource{};
+    gpu->context()->Map(render_layer->staging_texture->graphics_buffer.Get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource) >> kl::verify_result;
+    const BYTE* mapped_data = (const BYTE*) mapped_subresource.pData;
+    for (int y = 0; y < size.y; y++) {
+        for (int x = 0; x < size.x; x++) {
+            const BYTE* value_addr = mapped_data + x * sizeof(float) + y * mapped_subresource.RowPitch;
+            const float value_flt = *reinterpret_cast<const float*>(value_addr);
+            results.insert(static_cast<uint32_t>(value_flt));
+        }
+    }
+    gpu->context()->Unmap(render_layer->staging_texture->graphics_buffer.Get(), 0);
+    return results;
 }
 
 void titian::GUISectionViewport::handle_gizmo_operation_change(const int operation, const ImGuiKey switch_key)
@@ -125,15 +203,17 @@ void titian::GUISectionViewport::handle_gizmo_operation_change(const int operati
     }
 }
 
-void titian::GUISectionViewport::render_gizmos(Entity* entity)
+void titian::GUISectionViewport::render_gizmos(const std::unordered_set<Entity*>& entities)
 {
-    if (editor_layer->gizmo_operation == 0) { return; }
+    if (editor_layer->gizmo_operation == 0)
+        return;
 
     kl::Window* window = &editor_layer->game_layer->app_layer->window;
     Scene* scene = &editor_layer->game_layer->scene;
 
     Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
-    if (!camera) { return; }
+    if (!camera)
+        return;
 
     const float viewport_tab_height = ImGui::GetWindowContentRegionMin().y;
     const kl::Float2 viewport_position = { ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + viewport_tab_height };
@@ -165,10 +245,23 @@ void titian::GUISectionViewport::render_gizmos(Entity* entity)
 
     const kl::Float4x4 view_matrix = kl::transpose(camera->view_matrix());
     const kl::Float4x4 projection_matrix = kl::transpose(camera->projection_matrix());
-    kl::Float4x4 transform_matrix = kl::transpose(entity->model_matrix());
+
+    kl::Float3 collective_center;
+    kl::Float4x4 transform_matrix;
+    if (entities.size() == 1) {
+        Entity* entity = *entities.begin();
+        transform_matrix = kl::transpose(entity->model_matrix());
+    }
+    else {
+        for (Entity* entity : entities) {
+            collective_center += entity->position();
+        }
+        collective_center /= static_cast<float>(entities.size());
+        transform_matrix = kl::transpose(kl::Float4x4::translation(collective_center));
+    }
 
     ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
-        (ImGuizmo::OPERATION)editor_layer->gizmo_operation, (ImGuizmo::MODE)editor_layer->gizmo_mode,
+        (ImGuizmo::OPERATION) editor_layer->gizmo_operation, (ImGuizmo::MODE) editor_layer->gizmo_mode,
         transform_matrix.data, nullptr,
         selected_snap);
 
@@ -177,8 +270,17 @@ void titian::GUISectionViewport::render_gizmos(Entity* entity)
         ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
             decomposed_parts[2], decomposed_parts[1], decomposed_parts[0]);
 
-        entity->scale = decomposed_parts[0];
-        entity->set_rotation(decomposed_parts[1]);
-        entity->set_position(decomposed_parts[2]);
+        if (entities.size() == 1) {
+            Entity* entity = *entities.begin();
+            entity->scale = decomposed_parts[0];
+            entity->set_rotation(decomposed_parts[1]);
+            entity->set_position(decomposed_parts[2]);
+        }
+        else {
+            const kl::Float3 position_delta = decomposed_parts[2] - collective_center;
+            for (Entity* entity : entities) {
+                entity->set_position(entity->position() + position_delta);
+            }
+        }
     }
 }

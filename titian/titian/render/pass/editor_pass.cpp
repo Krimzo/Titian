@@ -38,9 +38,7 @@ titian::EditorPass::EditorPass(GameLayer* game_layer, EditorLayer* editor_layer,
 
 bool titian::EditorPass::is_renderable() const
 {
-    const Scene* scene = &game_layer->scene;
-    const Entity* entity = &scene->get_entity(editor_layer->selected_entity);
-    return static_cast<bool>(entity);
+    return !editor_layer->selected_entities.empty();
 }
 
 titian::StatePackage titian::EditorPass::get_state_package()
@@ -64,65 +62,70 @@ void titian::EditorPass::render_self(StatePackage& package)
         return;
     }
 
-    Entity* selected_entity = scene->get_casted<Entity>(editor_layer->selected_entity);
-    if (!selected_entity) {
-        return;
-    }
+    // Target
+    RenderLayer* render_layer = gui_layer->render_layer;
+    gpu->bind_target_depth_views({ render_layer->render_texture->target_view }, render_layer->depth_texture->depth_view);
 
-    struct VS_CB
-    {
-        kl::Float4x4 WVP;
-    };
-    struct PS_CB
-    {
-        kl::Float4 SOLID_COLOR;
-    };
+    for (auto& sel_name : editor_layer->selected_entities) {
+        Entity* selected_entity = scene->get_casted<Entity>(sel_name);
+        if (!selected_entity)
+            continue;
 
-    // Collider
-    if (Collider* collider = &selected_entity->collider()) {
-        const auto& default_meshes = scene->default_meshes;
-
-        const VS_CB vs_cb{
-            .WVP = main_camera->camera_matrix() * selected_entity->collider_matrix(),
+        struct VS_CB
+        {
+            kl::Float4x4 WVP;
         };
-        const PS_CB ps_cb{
-            .SOLID_COLOR = gui_layer->alternate_color,
+        struct PS_CB
+        {
+            kl::Float4 SOLID_COLOR;
         };
-        package.shader_state.vertex_shader.update_cbuffer(vs_cb);
-        package.shader_state.pixel_shader.update_cbuffer(ps_cb);
 
-        switch (collider->type()) {
-        case physx::PxGeometryType::Enum::eBOX:
-            gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology());
-            break;
+        // Collider
+        if (Collider* collider = &selected_entity->collider()) {
+            const auto& default_meshes = scene->default_meshes;
 
-        case physx::PxGeometryType::Enum::eSPHERE:
-            gpu->draw(default_meshes->sphere->graphics_buffer, default_meshes->sphere->casted_topology());
-            break;
+            const VS_CB vs_cb{
+                .WVP = main_camera->camera_matrix() * selected_entity->collider_matrix(),
+            };
+            const PS_CB ps_cb{
+                .SOLID_COLOR = gui_layer->alternate_color,
+            };
+            package.shader_state.vertex_shader.update_cbuffer(vs_cb);
+            package.shader_state.pixel_shader.update_cbuffer(ps_cb);
 
-        case physx::PxGeometryType::Enum::eCAPSULE:
-            gpu->draw(default_meshes->capsule->graphics_buffer, default_meshes->capsule->casted_topology());
-            break;
+            switch (collider->type()) {
+            case physx::PxGeometryType::Enum::eBOX:
+                gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology());
+                break;
 
-        case physx::PxGeometryType::Enum::eTRIANGLEMESH:
-            if (Mesh* mesh = &scene->get_mesh(selected_entity->mesh_name)) {
-                gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
+            case physx::PxGeometryType::Enum::eSPHERE:
+                gpu->draw(default_meshes->sphere->graphics_buffer, default_meshes->sphere->casted_topology());
+                break;
+
+            case physx::PxGeometryType::Enum::eCAPSULE:
+                gpu->draw(default_meshes->capsule->graphics_buffer, default_meshes->capsule->casted_topology());
+                break;
+
+            case physx::PxGeometryType::Enum::eTRIANGLEMESH:
+                if (Mesh* mesh = &scene->get_mesh(selected_entity->mesh_name)) {
+                    gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
+                }
+                break;
             }
-            break;
         }
-    }
 
-    // Camera frustum
-    if (Camera* selected_camera = dynamic_cast<Camera*>(selected_entity)) {
-        const VS_CB vs_cb{
-            .WVP = main_camera->camera_matrix() * kl::inverse(selected_camera->camera_matrix()),
-        };
-        const PS_CB ps_cb{
-            .SOLID_COLOR = kl::colors::WHITE,
-        };
-        package.shader_state.vertex_shader.update_cbuffer(vs_cb);
-        package.shader_state.pixel_shader.update_cbuffer(ps_cb);
+        // Camera frustum
+        if (Camera* selected_camera = dynamic_cast<Camera*>(selected_entity)) {
+            const VS_CB vs_cb{
+                .WVP = main_camera->camera_matrix() * kl::inverse(selected_camera->camera_matrix()),
+            };
+            const PS_CB ps_cb{
+                .SOLID_COLOR = kl::colors::WHITE,
+            };
+            package.shader_state.vertex_shader.update_cbuffer(vs_cb);
+            package.shader_state.pixel_shader.update_cbuffer(ps_cb);
 
-        gpu->draw(frustum_mesh, D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+            gpu->draw(frustum_mesh, D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+        }
     }
 }

@@ -32,10 +32,15 @@ void titian::SkyboxPass::render_self(StatePackage& package)
     Scene* scene = &game_layer->scene;
 
     Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
-    if (!camera) { return; }
+    if (!camera)
+        return;
 
     Texture* skybox = &scene->get_texture(camera->skybox_name);
-    if (!skybox) { return; }
+    if (!skybox)
+        return;
+
+    // Target
+	gpu->bind_target_depth_views({ render_layer->render_texture->target_view }, render_layer->depth_texture->depth_view);
 
     // Set cb data
     struct VS_CB

@@ -19,11 +19,12 @@ namespace titian {
 
     private:
         std::map<ImGuiKey, bool> m_last_key_states = {};
+        std::optional<kl::Int2> m_rect_selection_first = {};
 
         kl::Int2 window_mouse_position();
-        uint32_t read_entity_id(const kl::Int2& pixel_coords);
+        std::unordered_set<uint32_t> read_entity_ids(const kl::Int2& first_coords, const kl::Int2& second_coords);
 
         void handle_gizmo_operation_change(int operation, ImGuiKey switch_key);
-        void render_gizmos(Entity* entity);
+        void render_gizmos(const std::unordered_set<Entity*>& entities);
 	};
 }

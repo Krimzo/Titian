@@ -32,6 +32,7 @@ namespace titian {
 
 		void present() const;
 		void resize(const kl::Int2& new_size);
+		void resize_staging(const kl::Int2& new_size);
 
 	private:
 		kl::Int2 get_render_texture_size() const;

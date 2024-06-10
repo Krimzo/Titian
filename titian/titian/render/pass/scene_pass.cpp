@@ -32,7 +32,11 @@ void titian::ScenePass::render_self(StatePackage& package)
 
     // Skip if no camera
     Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
-    if (!camera) { return; }
+    if (!camera)
+        return;
+
+    // Target
+    gpu->bind_target_depth_views({ render_layer->render_texture->target_view, render_layer->picking_texture->target_view }, render_layer->depth_texture->depth_view);
 
     // Bind shader views
     gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);

@@ -17,7 +17,7 @@ namespace titian {
         int32_t gizmo_operation = 0;
         int32_t outline_size = 1;
 
-        std::string selected_entity = "/";
+        std::set<std::string> selected_entities;
 
         EditorLayer(GameLayer* game_layer);
 
