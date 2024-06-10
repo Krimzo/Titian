@@ -68,11 +68,11 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
     ImGui::DragFloat("Speed", &camera->speed);
 
     kl::Float3 camera_forward = camera->forward();
-    ImGui::DragFloat3("Forward", camera_forward);
+    ImGui::DragFloat3("Forward", camera_forward, 0.01f);
     camera->set_forward(camera_forward);
 
     kl::Float3 camera_up = camera->up();
-    ImGui::DragFloat3("Up", camera_up);
+    ImGui::DragFloat3("Up", camera_up, 0.01f);
     camera->set_up(camera_up);
 
     // Skybox
@@ -130,7 +130,7 @@ void titian::GUISectionEntityProperties::edit_entity_transform(Scene* scene, Ent
     ImGui::Separator();
     ImGui::Text("Transform");
 
-    ImGui::DragFloat3("Scale", entity->scale);
+    ImGui::DragFloat3("Scale", entity->scale, 0.1f);
 
     kl::Float3 rotation = entity->rotation();
     if (ImGui::DragFloat3("Rotation", rotation)) {
