@@ -1,12 +1,14 @@
 #include "main.h"
 
 
-titian::GUILayer::GUILayer(RenderLayer* render_layer)
+titian::GUILayer::GUILayer()
 	: Layer("GUILayer")
-	, render_layer(render_layer)
+{}
+
+void titian::GUILayer::init()
 {
-	kl::Window* window = &render_layer->game_layer->app_layer->window;
-	kl::GPU* gpu = &render_layer->game_layer->app_layer->gpu;
+	kl::Window* window = &app_layer->window;
+	kl::GPU* gpu = &app_layer->gpu;
 
 	ImGui::CreateContext();
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;

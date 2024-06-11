@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-void titian::LayerStack::push_layer(const kl::Object<Layer>& layer)
+void titian::LayerStack::push_layer(Layer* layer)
 {
 	layers.push_back(layer);
 }

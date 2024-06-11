@@ -11,17 +11,14 @@ namespace titian {
     class GUISectionShaderEditor : public GUISection
     {
     public:
-        EditorLayer* editor_layer = nullptr;
-        GUILayer* gui_layer = nullptr;
-
         std::string selected_shader = {};
 
-        GUISectionShaderEditor(EditorLayer* editor_layer, GUILayer* gui_layer);
+        GUISectionShaderEditor(const LayerPackage& package);
 
         void render_gui() override;
 
     private:
-        LanguageEditor m_editor;
+        LanguageEditor m_editor{};
         Shader* m_last_shader = nullptr;
 
         void display_shaders(Scene* scene);

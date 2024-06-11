@@ -1,17 +1,16 @@
 #include "main.h"
 
 
-titian::GUISectionSceneEntities::GUISectionSceneEntities(EditorLayer* editor_layer)
-	: GUISection("GUISectionSceneEntities")
-	, editor_layer(editor_layer)
+titian::GUISectionSceneEntities::GUISectionSceneEntities(const LayerPackage& package)
+	: GUISection("GUISectionSceneEntities", package)
 {}
 
 void titian::GUISectionSceneEntities::render_gui()
 {
 	const TimeBomb _ = this->time_it();
 
-	kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
-	Scene* scene = &editor_layer->game_layer->scene;
+	kl::GPU* gpu = &app_layer->gpu;
+	Scene* scene = &game_layer->scene;
 
 	if (ImGui::Begin("Scene Entities")) {
 		// Window popup

@@ -1,8 +1,8 @@
 #include "main.h"
 
 
-titian::GUISectionTimeInfo::GUISectionTimeInfo(void* editor)
-    : GUISection("GUISectionTimeInfo")
+titian::GUISectionTimeInfo::GUISectionTimeInfo(const LayerPackage& package, void* editor)
+    : GUISection("GUISectionTimeInfo", package)
     , editor(editor)
 {}
 
@@ -11,10 +11,7 @@ void titian::GUISectionTimeInfo::render_gui()
     const TimeBomb _ = this->time_it();
 
     TitianEditor* editor = static_cast<TitianEditor*>(this->editor);
-    GameLayer* game_layer = &editor->game_layer;
-    RenderLayer* render_layer = &editor->render_layer;
-    GUILayer* gui_layer = &editor->gui_layer;
-    kl::Timer* timer = &game_layer->app_layer->timer;
+    kl::Timer* timer = &app_layer->timer;
 
     static auto display_time = [](const std::string_view& name, const float time, const float multi = 1000.0f)
     {

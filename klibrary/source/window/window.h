@@ -93,8 +93,8 @@ namespace kl {
         float aspect_ratio() const;
         Int2 frame_center() const;
 
-        void set_title(const std::string& data) const;
-        bool set_icon(const std::string& filepath) const;
+        void set_title(const std::string_view& data) const;
+        bool set_icon(const std::string_view& filepath) const;
 
         void draw_pixel_data(const Color* data, const Int2& size, const Int2& position = {}) const;
         void draw_image(const Image& image, const Int2& position = {}) const;

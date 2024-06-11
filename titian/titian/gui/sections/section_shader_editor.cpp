@@ -1,11 +1,8 @@
 #include "main.h"
 
 
-titian::GUISectionShaderEditor::GUISectionShaderEditor(EditorLayer* editor_layer, GUILayer* gui_layer)
-	: GUISection("GUISectionShaderEditor")
-	, editor_layer(editor_layer)
-	, gui_layer(gui_layer)
-	, m_editor()
+titian::GUISectionShaderEditor::GUISectionShaderEditor(const LayerPackage& package)
+	: GUISection("GUISectionShaderEditor", package)
 {
 	m_editor.load_hlsl_standard();
 }
@@ -14,8 +11,8 @@ void titian::GUISectionShaderEditor::render_gui()
 {
 	const TimeBomb _ = this->time_it();
 
-	kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
-	Scene* scene = &editor_layer->game_layer->scene;
+	kl::GPU* gpu = &app_layer->gpu;
+	Scene* scene = &game_layer->scene;
 
 	if (ImGui::Begin("Shader Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const float available_width = ImGui::GetContentRegionAvail().x;

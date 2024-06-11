@@ -1384,15 +1384,15 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["print"] = "Converts the given object to a string and logs it.";
 
 	// Time
-	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->elapsed(); }), "get_elapsed_t");
-	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> float { return GameLayer::BOUND_SELF->app_layer->timer->delta(); }), "get_delta_t");
+	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> float { return BOUND_LAYERS::app_layer->timer.elapsed(); }), "get_elapsed_t");
+	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> float { return BOUND_LAYERS::app_layer->timer.delta(); }), "get_delta_t");
 	INTERP_SCRIPT_IDENTIFIERS["get_elapsed_t"] = "Returns the elapsed time since the game start.";
 	INTERP_SCRIPT_IDENTIFIERS["get_delta_t"] = "Returns the time since the last frame.";
 
 	// Input
-	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Keyboard* { return &GameLayer::BOUND_SELF->app_layer->window->keyboard; }), "get_keyboard");
-	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Mouse* { return &GameLayer::BOUND_SELF->app_layer->window->mouse; }), "get_mouse");
-	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Window* { return &GameLayer::BOUND_SELF->app_layer->window; }), "get_window");
+	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Keyboard* { return &BOUND_LAYERS::app_layer->window.keyboard; }), "get_keyboard");
+	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Mouse* { return &BOUND_LAYERS::app_layer->window.mouse; }), "get_mouse");
+	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Window* { return &BOUND_LAYERS::app_layer->window; }), "get_window");
 	INTERP_SCRIPT_IDENTIFIERS["get_keyboard"] = "Returns a reference to the game keyboard.";
 	INTERP_SCRIPT_IDENTIFIERS["get_mouse"] = "Returns a reference to the game mouse.";
 	INTERP_SCRIPT_IDENTIFIERS["get_window"] = "Returns a reference to the game window.";

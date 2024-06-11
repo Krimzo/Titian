@@ -8,8 +8,6 @@ namespace titian {
     class EditorLayer : public Layer
     {
     public:
-        GameLayer* game_layer = nullptr;
-        
         bool is_viewport_focused = false;
         bool is_over_viewport = false;
 
@@ -19,8 +17,9 @@ namespace titian {
 
         std::set<std::string> selected_entities;
 
-        EditorLayer(GameLayer* game_layer);
+        EditorLayer();
 
+        void init();
         bool update() override;
     };
 }

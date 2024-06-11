@@ -1,10 +1,8 @@
 #include "main.h"
 
 
-titian::GUISectionEntityProperties::GUISectionEntityProperties(EditorLayer* editor_layer, GUILayer* gui_layer)
-    : GUISection("GUISectionEntityProperties")
-    , editor_layer(editor_layer)
-    , gui_layer(gui_layer)
+titian::GUISectionEntityProperties::GUISectionEntityProperties(const LayerPackage& package)
+    : GUISection("GUISectionEntityProperties", package)
 {}
 
 void titian::GUISectionEntityProperties::render_gui()
@@ -12,7 +10,7 @@ void titian::GUISectionEntityProperties::render_gui()
     const TimeBomb _ = this->time_it();
 
     if (ImGui::Begin("Entity properties") && !editor_layer->selected_entities.empty()) {
-        Scene* scene = &editor_layer->game_layer->scene;
+        Scene* scene = &game_layer->scene;
         const std::string entity_name = *--editor_layer->selected_entities.end();
         kl::Object<Entity> entity = scene->get_entity(entity_name);
         if (entity) {

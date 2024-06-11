@@ -1,9 +1,8 @@
 #include "main.h"
 
 
-titian::ShadowPass::ShadowPass(GameLayer* game_layer, RenderLayer* render_layer)
-    : RenderPass("ShadowPass", game_layer)
-    , render_layer(render_layer)
+titian::ShadowPass::ShadowPass(const LayerPackage& package)
+    : RenderPass("ShadowPass", package)
 {}
 
 bool titian::ShadowPass::is_renderable() const
@@ -28,7 +27,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
 {
     // Helper
     RenderStates* render_states = &render_layer->states;
-    kl::GPU* gpu = &game_layer->app_layer->gpu;
+    kl::GPU* gpu = &app_layer->gpu;
     Scene* scene = &game_layer->scene;
 
     // Skip if no camera

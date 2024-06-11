@@ -8,9 +8,7 @@ namespace titian {
     class SkyboxPass : public RenderPass
     {
     public:
-        RenderLayer* render_layer = nullptr;
-
-        SkyboxPass(GameLayer* game_layer, RenderLayer* render_layer);
+        SkyboxPass(const LayerPackage& package);
 
         bool is_renderable() const override;
         StatePackage get_state_package() override;

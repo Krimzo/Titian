@@ -9,8 +9,8 @@ sandbox::SandboxPieceCubes::SandboxPieceCubes(TitianEditor* editor, const int si
 
 void sandbox::SandboxPieceCubes::setup_self()
 {
-    Scene* scene = &editor->game_layer->scene;
-    kl::GPU* gpu = &editor->app_layer->gpu;
+    Scene* scene = &editor->game_layer.scene;
+    kl::GPU* gpu = &editor->app_layer.gpu;
 
     const int half_size = size / 2;
     int cube_counter = 0;

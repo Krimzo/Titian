@@ -13,9 +13,7 @@ namespace titian {
     class ScenePass : public RenderPass
     {
     public:
-        RenderLayer* render_layer = nullptr;
-        
-        ScenePass(GameLayer* game_layer, RenderLayer* render_layer);
+        ScenePass(const LayerPackage& package);
 
         bool is_renderable() const override;
         StatePackage get_state_package() override;

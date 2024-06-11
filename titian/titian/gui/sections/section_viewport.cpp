@@ -1,10 +1,8 @@
 #include "main.h"
 
 
-titian::GUISectionViewport::GUISectionViewport(EditorLayer* editor_layer, RenderLayer* render_layer)
-    : GUISection("GUISectionViewport")
-    , editor_layer(editor_layer)
-    , render_layer(render_layer)
+titian::GUISectionViewport::GUISectionViewport(const LayerPackage& package)
+    : GUISection("GUISectionViewport", package)
 {}
 
 void titian::GUISectionViewport::render_gui()
@@ -13,8 +11,8 @@ void titian::GUISectionViewport::render_gui()
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 
-    kl::GPU* gpu = &render_layer->game_layer->app_layer->gpu;
-    kl::Object<Scene>& scene = render_layer->game_layer->scene;
+    kl::GPU* gpu = &app_layer->gpu;
+    kl::Object<Scene>& scene = game_layer->scene;
 
     if (ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
         // Pre-display
@@ -33,7 +31,7 @@ void titian::GUISectionViewport::render_gui()
         if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
             if (classify_file(file.value()) == FileType::SCENE) {
                 if (const Serializer serializer = { file.value(), false }) {
-                    render_layer->game_layer->reset_scene();
+                    game_layer->reset_scene();
                     scene->deserialize(&serializer, nullptr);
                 }
                 else {
@@ -159,7 +157,7 @@ std::unordered_set<uint32_t> titian::GUISectionViewport::read_entity_ids(const k
     }
 
     const kl::Int2 size = max_coords - min_coords;
-    const kl::GPU* gpu = &render_layer->game_layer->app_layer->gpu;
+    const kl::GPU* gpu = &app_layer->gpu;
 
     render_layer->resize_staging(size);
     gpu->copy_resource_region(render_layer->staging_texture->graphics_buffer.Get(), render_layer->picking_texture->graphics_buffer.Get(), min_coords, max_coords);
@@ -192,8 +190,8 @@ void titian::GUISectionViewport::render_gizmos(const std::unordered_set<Entity*>
     if (editor_layer->gizmo_operation == 0)
         return;
 
-    kl::Window* window = &editor_layer->game_layer->app_layer->window;
-    Scene* scene = &editor_layer->game_layer->scene;
+    kl::Window* window = &app_layer->window;
+    Scene* scene = &game_layer->scene;
 
     Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
     if (!camera)

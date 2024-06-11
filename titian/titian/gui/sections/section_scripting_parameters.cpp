@@ -1,10 +1,8 @@
 #include "main.h"
 
 
-titian::GUISectionScriptingParameters::GUISectionScriptingParameters(GameLayer* game_layer, GUILayer* gui_layer)
-	: GUISection("GUISectionScriptingParameters")
-	, game_layer(game_layer)
-	, gui_layer(gui_layer)
+titian::GUISectionScriptingParameters::GUISectionScriptingParameters(const LayerPackage& package)
+	: GUISection("GUISectionScriptingParameters", package)
 {}
 
 void titian::GUISectionScriptingParameters::render_gui()

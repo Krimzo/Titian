@@ -17,20 +17,17 @@ namespace titian {
 	class GUISectionScriptEditor : public GUISection
 	{
 	public:
-		EditorLayer* editor_layer = nullptr;
-		GUILayer* gui_layer = nullptr;
-
 		std::string selected_script = "/";
 
-		GUISectionScriptEditor(EditorLayer* editor_layer, GUILayer* gui_layer);
+		GUISectionScriptEditor(const LayerPackage& package);
 		~GUISectionScriptEditor() override;
 
 		void render_gui() override;
 
 	private:
-		MemoryEditor m_native_editor;
-		LanguageEditor m_interp_editor;
-		ed::EditorContext* m_node_editor;
+		MemoryEditor m_native_editor{};
+		LanguageEditor m_interp_editor{};
+		ed::EditorContext* m_node_editor = nullptr;
 		Script* m_last_script = nullptr;
 
 		void display_scripts(Scene* scene);

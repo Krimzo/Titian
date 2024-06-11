@@ -35,11 +35,11 @@ namespace titian {
     class TitianEditor : public LayerStack
     {
     public:
-        kl::Object<AppLayer> app_layer = nullptr;
-        kl::Object<GameLayer> game_layer = nullptr;
-        kl::Object<EditorLayer> editor_layer = nullptr;
-        kl::Object<RenderLayer> render_layer = nullptr;
-        kl::Object<GUILayer> gui_layer = nullptr;
+        AppLayer app_layer = {};
+        GameLayer game_layer = {};
+        EditorLayer editor_layer = {};
+        RenderLayer render_layer = {};
+        GUILayer gui_layer = {};
 
         TitianEditor();
         ~TitianEditor() override;

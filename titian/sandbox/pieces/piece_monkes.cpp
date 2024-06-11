@@ -9,8 +9,8 @@ sandbox::SandboxPieceMonkes::SandboxPieceMonkes(TitianEditor* editor, const int 
 
 void sandbox::SandboxPieceMonkes::setup_self()
 {
-    Scene* scene = &editor->game_layer->scene;
-    kl::GPU* gpu = &editor->app_layer->gpu;
+    Scene* scene = &editor->game_layer.scene;
+    kl::GPU* gpu = &editor->app_layer.gpu;
 
     const int entity_count = size * size;
     const int half_size = size / 2;
@@ -25,7 +25,7 @@ void sandbox::SandboxPieceMonkes::setup_self()
         const std::string entity_name = kl::format("Monke", counter_id);
 
         // Mesh
-        scene->meshes[mesh_name] = editor->game_layer->scene->default_meshes->monke;
+        scene->meshes[mesh_name] = scene->default_meshes->monke;
 
         // Material
         const float percentage = (i + 1.0f) / entity_count;

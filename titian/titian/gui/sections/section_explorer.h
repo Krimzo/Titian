@@ -11,9 +11,6 @@ namespace titian {
 	class GUISectionExplorer : public GUISection
 	{
 	public:
-        AppLayer* app_layer = nullptr;
-        GUILayer* gui_layer = nullptr;
-
         kl::Object<Texture> default_file_texture = nullptr;
         kl::Object<Texture> mesh_file_texture = nullptr;
         kl::Object<Texture> texture_file_texture = nullptr;
@@ -23,7 +20,7 @@ namespace titian {
         kl::Object<Texture> default_dir_texture = nullptr;
         kl::Object<Texture> parent_dir_texture = nullptr;
 
-        GUISectionExplorer(AppLayer* app_layer, GUILayer* gui_layer);
+        GUISectionExplorer(const LayerPackage& package);
 
         void render_gui() override;
 

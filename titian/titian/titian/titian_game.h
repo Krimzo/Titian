@@ -17,17 +17,18 @@
 namespace titian {
 	class TitianGame : public LayerStack
 	{
-        bool m_is_valid = true;
-
 	public:
-        kl::Object<AppLayer> app_layer = nullptr;
-        kl::Object<GameLayer> game_layer = nullptr;
-        kl::Object<RenderLayer> render_layer = nullptr;
-        kl::Object<GUILayer> gui_layer = nullptr;
+        AppLayer app_layer = {};
+        GameLayer game_layer = {};
+        RenderLayer render_layer = {};
+        GUILayer gui_layer = {};
 
         TitianGame(const std::string& entry_scene);
         ~TitianGame() override;
 
         bool is_valid() const;
+
+    private:
+        bool m_is_valid = true;
 	};
 }

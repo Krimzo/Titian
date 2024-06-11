@@ -1,12 +1,10 @@
 #include "main.h"
 
 
-titian::EditorPass::EditorPass(GameLayer* game_layer, EditorLayer* editor_layer, GUILayer* gui_layer)
-    : RenderPass("EditorPass", game_layer)
-    , editor_layer(editor_layer)
-    , gui_layer(gui_layer)
+titian::EditorPass::EditorPass(const LayerPackage& package)
+    : RenderPass("EditorPass", package)
 {
-    kl::GPU* gpu = &game_layer->app_layer->gpu;
+    kl::GPU* gpu = &app_layer->gpu;
 
     // Generate frustum mesh
     const kl::Vertex<float> frustum_vertices[8] = {
@@ -43,7 +41,7 @@ bool titian::EditorPass::is_renderable() const
 
 titian::StatePackage titian::EditorPass::get_state_package()
 {
-    RenderStates* render_states = &gui_layer->render_layer->states;
+    RenderStates* render_states = &render_layer->states;
 
     StatePackage package = {};
     package.raster_state = render_states->raster_states->wireframe;
@@ -54,7 +52,7 @@ titian::StatePackage titian::EditorPass::get_state_package()
 
 void titian::EditorPass::render_self(StatePackage& package)
 {
-    kl::GPU* gpu = &game_layer->app_layer->gpu;
+    kl::GPU* gpu = &app_layer->gpu;
     Scene* scene = &game_layer->scene;
 
     Camera* main_camera = scene->get_casted<Camera>(scene->main_camera_name);
@@ -63,7 +61,6 @@ void titian::EditorPass::render_self(StatePackage& package)
     }
 
     // Target
-    RenderLayer* render_layer = gui_layer->render_layer;
     gpu->bind_target_depth_views({ render_layer->render_texture->target_view }, render_layer->depth_texture->depth_view);
 
     for (auto& sel_name : editor_layer->selected_entities) {

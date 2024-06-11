@@ -1,10 +1,8 @@
 #include "main.h"
 
 
-titian::GUISectionExplorer::GUISectionExplorer(AppLayer* app_layer, GUILayer* gui_layer)
-    : GUISection("GUISectionExplorer")
-    , app_layer(app_layer)
-    , gui_layer(gui_layer)
+titian::GUISectionExplorer::GUISectionExplorer(const LayerPackage& package)
+    : GUISection("GUISectionExplorer", package)
 {
     auto create_texture = [&](kl::Object<Texture>& texture, const char* filename)
     {

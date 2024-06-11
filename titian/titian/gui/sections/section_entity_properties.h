@@ -14,10 +14,7 @@ namespace titian {
     class GUISectionEntityProperties : public GUISection
     {
     public:
-        EditorLayer* editor_layer = nullptr;
-        GUILayer* gui_layer = nullptr;
-
-        GUISectionEntityProperties(EditorLayer* editor_layer, GUILayer* gui_layer);
+        GUISectionEntityProperties(const LayerPackage& package);
 
         void render_gui() override;
 

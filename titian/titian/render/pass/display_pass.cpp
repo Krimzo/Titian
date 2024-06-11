@@ -1,9 +1,8 @@
 #include "main.h"
 
 
-titian::DisplayPass::DisplayPass(GameLayer* game_layer, RenderLayer* render_layer)
-    : RenderPass("DisplayPass", game_layer)
-    , render_layer(render_layer)
+titian::DisplayPass::DisplayPass(const LayerPackage& package)
+    : RenderPass("DisplayPass", package)
 {}
 
 bool titian::DisplayPass::is_renderable() const
@@ -24,8 +23,8 @@ titian::StatePackage titian::DisplayPass::get_state_package()
 
 void titian::DisplayPass::render_self(StatePackage& package)
 {
-    kl::Window* window = &game_layer->app_layer->window;
-    kl::GPU* gpu = &game_layer->app_layer->gpu;
+    kl::Window* window = &app_layer->window;
+    kl::GPU* gpu = &app_layer->gpu;
 
     const kl::Int2 window_size = window->size();
     render_layer->resize(window_size);

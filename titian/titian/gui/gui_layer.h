@@ -8,8 +8,6 @@ namespace titian {
 	class GUILayer : public Layer
 	{
 	public:
-		RenderLayer* render_layer = nullptr;
-
 		std::vector<kl::Object<GUISection>> sections = {};
 		float dpi_scaling = 1.0f;
 
@@ -19,8 +17,9 @@ namespace titian {
 		ImFont* roboto_font_small = nullptr;
 		ImFont* roboto_font_large = nullptr;
 		
-		GUILayer(RenderLayer* render_layer);
+		GUILayer();
 
+		void init();
 		bool update() override;
 
 	private:

@@ -1,14 +1,12 @@
 #include "main.h"
 
 
-titian::GUISectionMainMenu::GUISectionMainMenu(EditorLayer* editor_layer, GUILayer* gui_layer)
-    : GUISection("GUISectionMainMenu")
-    , editor_layer(editor_layer)
-    , gui_layer(gui_layer)
+titian::GUISectionMainMenu::GUISectionMainMenu(const LayerPackage& package)
+    : GUISection("GUISectionMainMenu", package)
 {
     auto create_texture = [&](kl::Object<Texture>& texture, const char* filename)
     {
-        texture = new Texture(&editor_layer->game_layer->app_layer->gpu);
+        texture = new Texture(&app_layer->gpu);
         texture->data_buffer.load_from_file(filename);
         texture->reload_as_2D(false, false);
         texture->create_shader_view(nullptr);
@@ -25,10 +23,6 @@ titian::GUISectionMainMenu::GUISectionMainMenu(EditorLayer* editor_layer, GUILay
 void titian::GUISectionMainMenu::render_gui()
 {
     const TimeBomb _ = this->time_it();
-
-    RenderLayer* render_layer = gui_layer->render_layer;
-    GameLayer* game_layer = editor_layer->game_layer;
-    AppLayer* app_layer = game_layer->app_layer;
 
     kl::Object<Scene>& scene = game_layer->scene;
     kl::Window* window = &app_layer->window;
@@ -61,7 +55,7 @@ void titian::GUISectionMainMenu::render_gui()
             }
             ImGui::SameLine();
             if (ImGui::Button("Yes", ImVec2(40.0f, 0.0f))) {
-                app_layer->window->close();
+                app_layer->window.close();
             }
         }
         ImGui::End();

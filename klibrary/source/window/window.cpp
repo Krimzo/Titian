@@ -275,14 +275,14 @@ kl::Int2 kl::Window::frame_center() const
     return (size() / 2);
 }
 
-void kl::Window::set_title(const std::string& data) const
+void kl::Window::set_title(const std::string_view& data) const
 {
-    SetWindowTextA(m_window, data.c_str());
+    SetWindowTextA(m_window, data.data());
 }
 
-bool kl::Window::set_icon(const std::string& filepath) const
+bool kl::Window::set_icon(const std::string_view& filepath) const
 {
-    HICON loaded_icon = ExtractIconA(nullptr, filepath.c_str(), NULL);
+    HICON loaded_icon = ExtractIconA(nullptr, filepath.data(), NULL);
     if (!loaded_icon) {
         return false;
     }

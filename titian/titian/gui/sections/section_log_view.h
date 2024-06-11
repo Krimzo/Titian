@@ -9,10 +9,9 @@ namespace titian {
 	class GUISectionLogView : public GUISection
 	{
 	public:
-        GUILayer* gui_layer = nullptr;
         uint64_t last_log_index = 0;
 
-		GUISectionLogView(GUILayer* gui_layer);
+		GUISectionLogView(const LayerPackage& package);
 
 		void render_gui() override;
 	};

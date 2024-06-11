@@ -1,9 +1,8 @@
 #include "main.h"
 
 
-titian::GUISectionSceneInfo::GUISectionSceneInfo(EditorLayer* editor_layer)
-    : GUISection("GUISectionSceneInfo")
-    , editor_layer(editor_layer)
+titian::GUISectionSceneInfo::GUISectionSceneInfo(const LayerPackage& package)
+    : GUISection("GUISectionSceneInfo", package)
 {}
 
 void titian::GUISectionSceneInfo::render_gui()
@@ -11,7 +10,7 @@ void titian::GUISectionSceneInfo::render_gui()
     const TimeBomb _ = this->time_it();
 
     if (ImGui::Begin("Scene Info")) {
-        Scene* scene = &editor_layer->game_layer->scene;
+        Scene* scene = &game_layer->scene;
 
         int entity_count = static_cast<int>(scene->entity_count());
         ImGui::DragInt("Entity count", &entity_count, 0.0f);

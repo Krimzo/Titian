@@ -9,12 +9,9 @@ namespace titian {
     class GUISectionTextureEditor : public GUISection
     {
     public:
-        EditorLayer* editor_layer = nullptr;
-        GUILayer* gui_layer = nullptr;
-
         std::string selected_texture = {};
 
-        GUISectionTextureEditor(EditorLayer* editor_layer, GUILayer* gui_layer);
+        GUISectionTextureEditor(const LayerPackage& package);
 
         void render_gui() override;
 

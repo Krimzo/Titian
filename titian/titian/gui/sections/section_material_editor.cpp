@@ -1,13 +1,11 @@
 #include "main.h"
 
 
-titian::GUISectionMaterialEditor::GUISectionMaterialEditor(EditorLayer* editor_layer, GUILayer* gui_layer)
-    : GUISection("GUISectionMaterialEditor")
-    , editor_layer(editor_layer)
-    , gui_layer(gui_layer)
+titian::GUISectionMaterialEditor::GUISectionMaterialEditor(const LayerPackage& package)
+    : GUISection("GUISectionMaterialEditor", package)
 {
-    kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
-    Scene* scene = &editor_layer->game_layer->scene;
+    kl::GPU* gpu = &app_layer->gpu;
+    Scene* scene = &game_layer->scene;
 
     camera = new Camera(scene->physics(), true);
     render_texture = new Texture(gpu);
@@ -22,8 +20,8 @@ void titian::GUISectionMaterialEditor::render_gui()
 {
     const TimeBomb _ = this->time_it();
 
-    kl::GPU* gpu = &editor_layer->game_layer->app_layer->gpu;
-    Scene* scene = &editor_layer->game_layer->scene;
+    kl::GPU* gpu = &app_layer->gpu;
+    Scene* scene = &game_layer->scene;
     Material* material = &scene->get_material(this->selected_material);
 
     if (ImGui::Begin("Material Editor")) {
@@ -174,7 +172,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     gpu->set_viewport_size(viewport_size);
 
     // Bind states
-    RenderStates* states = &gui_layer->render_layer->states;
+    RenderStates* states = &render_layer->states;
     gpu->bind_raster_state(states->raster_states->solid);
     gpu->bind_depth_state(material->is_transparent() ? states->depth_states->only_compare : states->depth_states->enabled);
     gpu->bind_blend_state(states->blend_states->enabled);
@@ -232,7 +230,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     };
     GLOBAL_CB global_cb{};
 
-    const kl::Timer* timer = &editor_layer->game_layer->app_layer->timer;
+    const kl::Timer* timer = &app_layer->timer;
     global_cb.ELAPSED_TIME = timer->elapsed();
     global_cb.DELTA_TIME = timer->delta();
 
@@ -306,7 +304,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         gpu->bind_render_shaders(*render_shaders);
 
         // Draw
-        DefaultMeshes* default_meshes = &editor_layer->game_layer->scene->default_meshes;
+        DefaultMeshes* default_meshes = &game_layer->scene->default_meshes;
         Mesh* material_mesh = &default_meshes->sphere;
         gpu->draw(material_mesh->graphics_buffer, material_mesh->casted_topology());
     }
@@ -389,7 +387,7 @@ void titian::GUISectionMaterialEditor::update_material_camera()
         initial_camera_info = camera_info;
     }
 
-    const int scroll = editor_layer->game_layer->app_layer->window->mouse.scroll();
+    const int scroll = app_layer->window.mouse.scroll();
     if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;

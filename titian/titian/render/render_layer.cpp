@@ -1,11 +1,13 @@
 #include "main.h"
 
 
-titian::RenderLayer::RenderLayer(GameLayer* game_layer)
+titian::RenderLayer::RenderLayer()
 	: Layer("RenderLayer")
-	, game_layer(game_layer)
+{}
+
+void titian::RenderLayer::init()
 {
-	kl::GPU* gpu = &game_layer->app_layer->gpu;
+	kl::GPU* gpu = &app_layer->gpu;
 
 	// Meshes
 	screen_mesh = gpu->create_screen_mesh();
@@ -25,7 +27,7 @@ bool titian::RenderLayer::update()
 {
 	const TimeBomb _ = this->time_it();
 
-	kl::GPU* gpu = &game_layer->app_layer->gpu;
+	kl::GPU* gpu = &app_layer->gpu;
 	Scene* scene = &game_layer->scene;
 
 	// Clear targets
@@ -46,7 +48,7 @@ bool titian::RenderLayer::update()
 	}
 
 	// Cleanup
-	const kl::Int2 window_size = game_layer->app_layer->window->size();
+	const kl::Int2 window_size = app_layer->window.size();
 	gpu->bind_internal_views();
 	gpu->set_viewport_size(window_size);
 	return true;
@@ -54,7 +56,7 @@ bool titian::RenderLayer::update()
 
 void titian::RenderLayer::present() const
 {
-	const kl::GPU* gpu = &game_layer->app_layer->gpu;
+	const kl::GPU* gpu = &app_layer->gpu;
 	gpu->swap_buffers(v_sync);
 }
 
@@ -66,7 +68,7 @@ void titian::RenderLayer::resize(const kl::Int2& new_size)
 	if (new_size == get_render_texture_size()) {
 		return;
 	}
-	kl::GPU* gpu = &game_layer->app_layer->gpu;
+	kl::GPU* gpu = &app_layer->gpu;
 
 	// Create render texture
 	kl::dx::TextureDescriptor render_descriptor = {};
@@ -116,7 +118,7 @@ void titian::RenderLayer::resize_staging(const kl::Int2& new_size)
 	if (current_size.x == new_size.x && current_size.y == new_size.y) {
 		return;
 	}
-	kl::GPU* gpu = &game_layer->app_layer->gpu;
+	kl::GPU* gpu = &app_layer->gpu;
 	staging_texture->graphics_buffer = gpu->create_staging_texture(picking_texture->graphics_buffer, new_size);
 }
 

@@ -9,7 +9,7 @@ sandbox::SandboxPiecePhysicsTest::SandboxPiecePhysicsTest(TitianEditor* editor, 
 
 void sandbox::SandboxPiecePhysicsTest::setup_self()
 {
-    Scene* scene = &editor->game_layer->scene;
+    Scene* scene = &editor->game_layer.scene;
     setup_platform(scene);
     setup_objects(scene);
 }
@@ -56,7 +56,7 @@ void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
 
     auto create_texture = [&](kl::Object<Texture>& texture, const char* filename)
     {
-        texture = new Texture(&editor->app_layer->gpu);
+        texture = new Texture(&editor->app_layer.gpu);
         texture->data_buffer.load_from_file(filename);
         texture->reload_as_2D(false, false);
         texture->create_shader_view(nullptr);

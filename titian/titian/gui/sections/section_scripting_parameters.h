@@ -8,10 +8,7 @@ namespace titian {
     class GUISectionScriptingParameters : public GUISection
     {
     public:
-        GameLayer* game_layer = nullptr;
-        GUILayer* gui_layer = nullptr;
-
-        GUISectionScriptingParameters(GameLayer* game_layer, GUILayer* gui_layer);
+        GUISectionScriptingParameters(const LayerPackage& package);
 
         void render_gui() override;
 

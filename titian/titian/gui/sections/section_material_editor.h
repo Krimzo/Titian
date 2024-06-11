@@ -9,9 +9,6 @@ namespace titian {
     class GUISectionMaterialEditor : public GUISection
     {
     public:
-        EditorLayer* editor_layer = nullptr;
-        GUILayer* gui_layer = nullptr;
-
         kl::Object<Camera> camera = nullptr;
         kl::Object<Texture> render_texture = nullptr;
         kl::Object<Texture> depth_texture = nullptr;
@@ -23,7 +20,7 @@ namespace titian {
 
         std::string selected_material = {};
 
-        GUISectionMaterialEditor(EditorLayer* editor_layer, GUILayer* gui_layer);
+        GUISectionMaterialEditor(const LayerPackage& package);
 
         void render_gui() override;
 

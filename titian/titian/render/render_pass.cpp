@@ -1,9 +1,9 @@
 #include "main.h"
 
 
-titian::RenderPass::RenderPass(const std::string& name, GameLayer* game_layer)
+titian::RenderPass::RenderPass(const std::string& name, const LayerPackage& package)
 	: BenchmarkInfo(name)
-	, game_layer(game_layer)
+	, LayerHolder(package)
 {}
 
 void titian::RenderPass::process()
@@ -22,7 +22,7 @@ void titian::RenderPass::process()
 
 void titian::RenderPass::bind_states(const StatePackage& package)
 {
-	const kl::GPU* gpu = &game_layer->app_layer->gpu;
+	const kl::GPU* gpu = &app_layer->gpu;
 
 	gpu->bind_raster_state(package.raster_state);
 	gpu->bind_depth_state(package.depth_state);
@@ -32,7 +32,7 @@ void titian::RenderPass::bind_states(const StatePackage& package)
 
 void titian::RenderPass::unbind_states()
 {
-	const kl::GPU* gpu = &game_layer->app_layer->gpu;
+	const kl::GPU* gpu = &app_layer->gpu;
 
 	gpu->unbind_raster_state();
 	gpu->unbind_depth_state();

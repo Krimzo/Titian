@@ -7,8 +7,8 @@ sandbox::SandboxPieceSkybox::SandboxPieceSkybox(TitianEditor* editor)
 
 void sandbox::SandboxPieceSkybox::setup_self()
 {
-	kl::GPU* gpu = &editor->app_layer->gpu;
-	Scene* scene = &editor->game_layer->scene;
+	kl::GPU* gpu = &editor->app_layer.gpu;
+	Scene* scene = &editor->game_layer.scene;
 
 	kl::Object<Texture> sky = new Texture(gpu);
 	sky->data_buffer = kl::Image("preview/skyboxes/clouds.png");

@@ -1,9 +1,8 @@
 #include "main.h"
 
 
-titian::SkyboxPass::SkyboxPass(GameLayer* game_layer, RenderLayer* render_layer)
-    : RenderPass("SkyboxPass", game_layer)
-    , render_layer(render_layer)
+titian::SkyboxPass::SkyboxPass(const LayerPackage& package)
+    : RenderPass("SkyboxPass", package)
 {}
 
 bool titian::SkyboxPass::is_renderable() const
@@ -28,7 +27,7 @@ void titian::SkyboxPass::render_self(StatePackage& package)
 {
     // Helper
     RenderStates* render_states = &render_layer->states;
-    kl::GPU* gpu = &game_layer->app_layer->gpu;
+    kl::GPU* gpu = &app_layer->gpu;
     Scene* scene = &game_layer->scene;
 
     Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);

@@ -7,12 +7,12 @@ namespace titian {
 	class LayerStack
 	{
 	public:
-		std::vector<kl::Object<Layer>> layers = {};
+		std::vector<Layer*> layers = {};
 
 		LayerStack() = default;
 		virtual ~LayerStack() = default;
 
-		void push_layer(const kl::Object<Layer>& layer);
+		void push_layer(Layer* layer);
 		bool process_layers();
 	};
 }

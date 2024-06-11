@@ -1,9 +1,11 @@
 #include "main.h"
 
 
-titian::EditorLayer::EditorLayer(GameLayer* game_layer)
+titian::EditorLayer::EditorLayer()
     : Layer("EditorLayer")
-    , game_layer(game_layer)
+{}
+
+void titian::EditorLayer::init()
 {}
 
 bool titian::EditorLayer::update()
@@ -18,9 +20,9 @@ bool titian::EditorLayer::update()
     if (!camera) {
         return true;
     }
-    
-    kl::Window* window = &game_layer->app_layer->window;
-    const float delta_time = game_layer->app_layer->timer->delta();
+
+    kl::Window* window = &app_layer->window;
+    const float delta_time = app_layer->timer.delta();
 
     // Rotation
     if (window->mouse.right) {

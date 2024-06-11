@@ -10,8 +10,6 @@ namespace titian {
 	class RenderLayer : public Layer
 	{
 	public:
-		GameLayer* game_layer = nullptr;
-
 		std::vector<kl::Object<RenderPass>> passes = {};
 		kl::Object<RenderStates> states = nullptr;
 
@@ -26,8 +24,9 @@ namespace titian {
 		bool render_wireframe = false;
 		bool v_sync = false;
 
-		RenderLayer(GameLayer* game_layer);
+		RenderLayer();
 
+		void init();
 		bool update() override;
 
 		void present() const;

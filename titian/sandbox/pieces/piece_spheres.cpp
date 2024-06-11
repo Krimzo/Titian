@@ -9,8 +9,8 @@ sandbox::SandboxPieceSpheres::SandboxPieceSpheres(TitianEditor* editor, const in
 
 void sandbox::SandboxPieceSpheres::setup_self()
 {
-    Scene* scene = &editor->game_layer->scene;
-    kl::GPU* gpu = &editor->app_layer->gpu;
+    Scene* scene = &editor->game_layer.scene;
+    kl::GPU* gpu = &editor->app_layer.gpu;
 
     const int half_size = size / 2;
     int sphere_counter = 0;

@@ -13,9 +13,7 @@ namespace titian {
 	class GUISectionSceneEntities : public GUISection
 	{
 	public:
-		EditorLayer* editor_layer = nullptr;
-
-		GUISectionSceneEntities(EditorLayer* editor_layer);
+		GUISectionSceneEntities(const LayerPackage& package);
 
 		void render_gui() override;
 	};

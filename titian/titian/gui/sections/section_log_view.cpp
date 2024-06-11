@@ -1,9 +1,8 @@
 #include "main.h"
 
 
-titian::GUISectionLogView::GUISectionLogView(GUILayer* gui_layer)
-    : GUISection("GUISectionLogView")
-    , gui_layer(gui_layer)
+titian::GUISectionLogView::GUISectionLogView(const LayerPackage& package)
+    : GUISection("GUISectionLogView", package)
 {}
 
 void titian::GUISectionLogView::render_gui()

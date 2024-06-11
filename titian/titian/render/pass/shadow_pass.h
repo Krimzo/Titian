@@ -11,9 +11,7 @@ namespace titian {
     class ShadowPass : public RenderPass
     {
     public:
-        RenderLayer* render_layer = nullptr;
-
-        ShadowPass(GameLayer* game_layer, RenderLayer* render_layer);
+        ShadowPass(const LayerPackage& package);
 
         bool is_renderable() const override;
         StatePackage get_state_package() override;

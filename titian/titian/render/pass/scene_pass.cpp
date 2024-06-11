@@ -1,9 +1,8 @@
 #include "main.h"
 
 
-titian::ScenePass::ScenePass(GameLayer* game_layer, RenderLayer* render_layer)
-    : RenderPass("ScenePass", game_layer)
-    , render_layer(render_layer)
+titian::ScenePass::ScenePass(const LayerPackage& package)
+    : RenderPass("ScenePass", package)
 {}
 
 bool titian::ScenePass::is_renderable() const
@@ -27,7 +26,7 @@ void titian::ScenePass::render_self(StatePackage& package)
 {
     // Helper
     RenderStates* render_states = &render_layer->states;
-    kl::GPU* gpu = &game_layer->app_layer->gpu;
+    kl::GPU* gpu = &app_layer->gpu;
     Scene* scene = &game_layer->scene;
 
     // Skip if no camera
@@ -134,7 +133,7 @@ void titian::ScenePass::render_self(StatePackage& package)
     global_cb.RECEIVES_SHADOWS = true;
 
     // Set cb time data
-    const kl::Timer* timer = &game_layer->app_layer->timer;
+    const kl::Timer* timer = &app_layer->timer;
     global_cb.ELAPSED_TIME = timer->elapsed();
     global_cb.DELTA_TIME = timer->delta();
 

@@ -7,8 +7,8 @@ sandbox::SandboxPiecePrepare::SandboxPiecePrepare(TitianEditor* editor)
 
 void sandbox::SandboxPiecePrepare::setup_self()
 {
-    Scene* scene = &editor->game_layer->scene;
-    kl::GPU* gpu = &editor->app_layer->gpu;
+    Scene* scene = &editor->game_layer.scene;
+    kl::GPU* gpu = &editor->app_layer.gpu;
 
     // Camera
     kl::Object camera = new Camera(scene->physics(), false);
