@@ -39,7 +39,7 @@ void kl::ShaderHolder<S>::update_cbuffer(const void* data, UINT byte_size)
     }
 
     // Write data
-    gpu->write_to_resource(cbuffer, data, byte_size);
+    gpu->write_to_buffer(cbuffer, data, byte_size);
 
     // Rebind cbuffer
     if constexpr (std::is_same<S, dx::VertexShader>::value) {

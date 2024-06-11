@@ -160,33 +160,17 @@ std::unordered_set<uint32_t> titian::GUISectionViewport::read_entity_ids(const k
 
     const kl::Int2 size = max_coords - min_coords;
     const kl::GPU* gpu = &render_layer->game_layer->app_layer->gpu;
+
     render_layer->resize_staging(size);
+    gpu->copy_resource_region(render_layer->staging_texture->graphics_buffer.Get(), render_layer->picking_texture->graphics_buffer.Get(), min_coords, max_coords);
 
-    D3D11_BOX source_box = {};
-    source_box.left = min_coords.x;
-    source_box.top = min_coords.y;
-    source_box.right = max_coords.x;
-    source_box.bottom = max_coords.y;
-    source_box.front = 0;
-    source_box.back = 1;
-    gpu->context()->CopySubresourceRegion(render_layer->staging_texture->graphics_buffer.Get(),
-        0, 0, 0, 0, render_layer->picking_texture->graphics_buffer.Get(), 0, &source_box);
-
-    kl::dx::TextureDescriptor tex_desc = {};
-    render_layer->staging_texture->graphics_buffer->GetDesc(&tex_desc);
+    std::vector<float> values(size.x * size.y);
+    gpu->read_from_texture(values.data(), render_layer->staging_texture->graphics_buffer.Get(), size, sizeof(float));
 
     std::unordered_set<uint32_t> results;
-    kl::dx::MappedSubresourceDescriptor mapped_subresource{};
-    gpu->context()->Map(render_layer->staging_texture->graphics_buffer.Get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource) >> kl::verify_result;
-    const BYTE* mapped_data = (const BYTE*) mapped_subresource.pData;
-    for (int y = 0; y < size.y; y++) {
-        for (int x = 0; x < size.x; x++) {
-            const BYTE* value_addr = mapped_data + x * sizeof(float) + y * mapped_subresource.RowPitch;
-            const float value_flt = *reinterpret_cast<const float*>(value_addr);
-            results.insert(static_cast<uint32_t>(value_flt));
-        }
+    for (float value : values) {
+        results.insert(static_cast<uint32_t>(value));
     }
-    gpu->context()->Unmap(render_layer->staging_texture->graphics_buffer.Get(), 0);
     return results;
 }
 

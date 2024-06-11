@@ -89,6 +89,6 @@ void titian::OutlinePass::load_selected_entities(const std::vector<float>& entit
         }
     }
     else {
-        gpu->write_to_resource(m_selected_entities_buff, entitiy_indices.data(), entitiy_indices.size() * sizeof(float));
+        gpu->write_to_buffer(m_selected_entities_buff, entitiy_indices.data(), entitiy_indices.size() * sizeof(float));
     }
 }

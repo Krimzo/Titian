@@ -47,8 +47,13 @@ namespace kl {
 
         // Resources
         void copy_resource(const dx::Resource& destination, const dx::Resource& source) const;
-        void read_from_resource(void* cpu_buffer, const dx::Resource& gpu_buffer, SIZE_T byte_size) const;
-        void write_to_resource(const dx::Resource& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard = true) const;
+        void copy_resource_region(const dx::Resource& destination, const dx::Resource& source, const kl::Int2& src_min, const kl::Int2& src_max, const kl::Int2& dst = { 0, 0 }) const;
+
+        void read_from_buffer(void* cpu_buffer, const dx::Buffer& gpu_buffer, SIZE_T byte_size) const;
+        void write_to_buffer(const dx::Buffer& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard = true) const;
+
+        void read_from_texture(void* cpu_buffer, const dx::Texture& gpu_buffer, const kl::Int2& size, UINT element_size) const;
+        void write_to_texture(const dx::Texture& gpu_buffer, const void* cpu_buffer, const kl::Int2& size, UINT element_size, bool discard = true) const;
 
         // Buffers
         UINT buffer_size(const dx::Buffer& buffer) const;
