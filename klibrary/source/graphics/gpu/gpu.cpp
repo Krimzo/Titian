@@ -46,7 +46,7 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
     chain_descriptor.SampleDesc.Count = 1;
     chain_descriptor.Windowed = true;
     chain_descriptor.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-    chain_descriptor.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH | DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
+    chain_descriptor.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
 
     UINT creation_flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
     if (debug) {
@@ -127,20 +127,16 @@ kl::dx::Texture kl::GPU::back_buffer() const
 
 void kl::GPU::swap_buffers(const bool v_sync) const
 {
-    if (v_sync) {
-        m_chain->Present(1, NULL) >> verify_result;
-    }
-    else {
-        m_chain->Present(0, DXGI_PRESENT_ALLOW_TEARING) >> verify_result;
-    }
+    const UINT interval = v_sync ? 1 : 0;
+    const UINT flags = (!v_sync && !in_fullscreen()) ? DXGI_PRESENT_ALLOW_TEARING : NULL;
+    m_chain->Present(interval, flags) >> verify_result;
     bind_internal_views();
 }
 
 bool kl::GPU::in_fullscreen() const
 {
     BOOL result = false;
-    IDXGIOutput* ignored = nullptr;
-    m_chain->GetFullscreenState(&result, &ignored);
+    m_chain->GetFullscreenState(&result, nullptr);
     return static_cast<bool>(result);
 }
 

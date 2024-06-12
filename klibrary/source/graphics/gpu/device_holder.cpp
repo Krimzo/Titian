@@ -339,10 +339,10 @@ kl::dx::Texture kl::DeviceHolder::create_staging_texture(const dx::Texture& text
 
 kl::dx::Texture kl::DeviceHolder::create_target_texture(const kl::Int2& size) const
 {
-    kl::dx::TextureDescriptor descriptor{};
+    dx::TextureDescriptor descriptor{};
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    descriptor.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    descriptor.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     descriptor.Width = (UINT) size.x;
     descriptor.Height = (UINT) size.y;
     descriptor.ArraySize = 1;
