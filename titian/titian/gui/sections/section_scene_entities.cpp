@@ -46,6 +46,15 @@ void titian::GUISectionSceneEntities::render_gui()
 			ImGui::EndPopup();
 		}
 
+		if (ImGui::IsWindowFocused() && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), ImGui::GetWindowPos() + ImGui::GetWindowSize())) {
+			if (ImGui::IsKeyPressed(ImGuiKey_Delete)) {
+				for (auto& name : editor_layer->selected_entities) {
+					scene->remove_entity(name);
+				}
+				editor_layer->selected_entities.clear();
+			}
+		}
+
 		// Entities
 		const std::string filter = gui_input_continuous("Search###SceneEntities");
 		for (auto& [entity_name, entity] : *scene) {

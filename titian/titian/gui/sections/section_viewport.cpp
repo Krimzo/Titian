@@ -43,6 +43,12 @@ void titian::GUISectionViewport::render_gui()
         // Handle entity picking
         const ImVec2 viewport_max = ImGui::GetWindowPos() + ImGui::GetWindowSize();
         if (ImGui::IsWindowFocused() && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), viewport_max)) {
+            if (ImGui::IsKeyPressed(ImGuiKey_Delete)) {
+                for (auto& name : editor_layer->selected_entities) {
+					scene->remove_entity(name);
+                }
+                editor_layer->selected_entities.clear();
+            }
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGuizmo::IsOver()) {
                 m_rect_selection_first = window_mouse_position();
             }
