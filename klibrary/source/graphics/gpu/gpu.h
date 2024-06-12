@@ -18,13 +18,10 @@ namespace kl {
 namespace kl {
     class GPU : public DeviceHolder, public ContextHolder, public ShaderCompiler, public TextRaster
     {
-    public:
-        static inline constexpr UINT BUFFER_COUNT = 2;
-
-    private:
         dx::Chain m_chain = nullptr;
-        dx::TargetView m_target_views[BUFFER_COUNT] = {};
-        dx::DepthView m_depth_views[BUFFER_COUNT] = {};
+        dx::Texture m_depth_textures[GPU_BUFFER_COUNT] = {};
+        dx::TargetView m_target_views[GPU_BUFFER_COUNT] = {};
+        dx::DepthView m_depth_views[GPU_BUFFER_COUNT] = {};
 
     public:
         const GPUCreationType creation_type = GPUCreationType::NONE;
@@ -45,13 +42,20 @@ namespace kl {
         dx::Context context() const;
         dx::Chain chain() const;
 
-        dx::TargetView internal_target() const;
-        dx::DepthView internal_depth() const;
+        UINT back_index() const;
+
+        dx::Texture target_buffer(UINT index) const;
+        dx::Texture depth_buffer(UINT index) const;
+        dx::TargetView target_view(UINT index) const;
+        dx::DepthView depth_view(UINT index) const;
+
+        dx::Texture back_target_buffer() const;
+        dx::Texture back_depth_buffer() const;
+        dx::TargetView back_target_view() const;
+        dx::DepthView back_depth_view() const;
 
         // Chain
-        dx::Texture back_buffer() const;
         void swap_buffers(bool v_sync) const;
-
         void set_fullscreen(bool enabled) const;
         bool in_fullscreen() const;
 

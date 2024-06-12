@@ -37,7 +37,7 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
     GetClientRect(window, &window_client_area);
 
     DXGI_SWAP_CHAIN_DESC chain_descriptor{};
-    chain_descriptor.BufferCount = BUFFER_COUNT;
+    chain_descriptor.BufferCount = GPU_BUFFER_COUNT;
     chain_descriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     chain_descriptor.BufferDesc.Width = window_client_area.right;
     chain_descriptor.BufferDesc.Height = window_client_area.bottom;
@@ -105,26 +105,54 @@ kl::dx::Chain kl::GPU::chain() const
     return m_chain;
 }
 
-kl::dx::TargetView kl::GPU::internal_target() const
+UINT kl::GPU::back_index() const
 {
-    const UINT index = m_chain->GetCurrentBackBufferIndex();
-    return m_target_views[index];
+    return m_chain->GetCurrentBackBufferIndex();
 }
 
-kl::dx::DepthView kl::GPU::internal_depth() const
-{
-    const UINT index = m_chain->GetCurrentBackBufferIndex();
-    return m_depth_views[index];
-}
-
-// Chain
-kl::dx::Texture kl::GPU::back_buffer() const
+kl::dx::Texture kl::GPU::target_buffer(const UINT index) const
 {
     dx::Texture buffer = nullptr;
-    m_chain->GetBuffer(0, IID_PPV_ARGS(&buffer)) >> verify_result;
+    m_chain->GetBuffer(index, IID_PPV_ARGS(&buffer)) >> verify_result;
     return buffer;
 }
 
+kl::dx::Texture kl::GPU::depth_buffer(const UINT index) const
+{
+    return m_depth_textures[index];
+}
+
+kl::dx::TargetView kl::GPU::target_view(UINT index) const
+{
+    return m_target_views[index];
+}
+
+kl::dx::DepthView kl::GPU::depth_view(UINT index) const
+{
+	return m_depth_views[index];
+}
+
+kl::dx::Texture kl::GPU::back_target_buffer() const
+{
+	return target_buffer(back_index());
+}
+
+kl::dx::Texture kl::GPU::back_depth_buffer() const
+{
+	return depth_buffer(back_index());
+}
+
+kl::dx::TargetView kl::GPU::back_target_view() const
+{
+	return target_view(back_index());
+}
+
+kl::dx::DepthView kl::GPU::back_depth_view() const
+{
+	return depth_view(back_index());
+}
+
+// Chain
 void kl::GPU::swap_buffers(const bool v_sync) const
 {
     const UINT interval = v_sync ? 1 : 0;
@@ -148,13 +176,13 @@ void kl::GPU::set_fullscreen(const bool enabled) const
 // Internal buffers
 void kl::GPU::clear_internal_color(const Float4& color) const
 {
-    m_context->ClearRenderTargetView(internal_target().Get(), color);
+    m_context->ClearRenderTargetView(back_target_view().Get(), color);
 }
 
 void kl::GPU::clear_internal_depth(const float depth, const UINT8 stencil) const
 {
     static constexpr UINT clear_type = (D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL);
-    m_context->ClearDepthStencilView(internal_depth().Get(), clear_type, depth, stencil);
+    m_context->ClearDepthStencilView(back_depth_view().Get(), clear_type, depth, stencil);
 }
 
 void kl::GPU::clear_internal(const Float4& color) const
@@ -179,9 +207,9 @@ void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
     m_chain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING) >> verify_result;
 
     // Target buffers
-    for (int i = 0; i < BUFFER_COUNT; i++) {
+    for (int i = 0; i < GPU_BUFFER_COUNT; i++) {
         // Render target
-        const dx::Texture texture = back_buffer();
+        const dx::Texture texture = back_target_buffer();
         m_target_views[i] = create_target_view(texture, nullptr);
 
         // Surface
@@ -209,9 +237,9 @@ void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
     descriptor.SampleDesc.Count = 1;
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    for (auto& view : m_depth_views) {
-        const dx::Texture texture = create_texture(&descriptor, nullptr);
-        view = create_depth_view(texture, nullptr);
+    for (int i = 0; i < GPU_BUFFER_COUNT; i++) {
+        m_depth_textures[i] = create_texture(&descriptor, nullptr);
+        m_depth_views[i] = create_depth_view(m_depth_textures[i], nullptr);
     }
 
     // Rebind
@@ -228,7 +256,7 @@ void kl::GPU::resize_to_window(const HWND window)
 
 void kl::GPU::bind_internal_views() const
 {
-    bind_target_depth_views({ internal_target() }, internal_depth());
+    bind_target_depth_views({ back_target_view() }, back_depth_view());
 }
 
 // Shader helper
@@ -270,6 +298,5 @@ kl::RenderShaders kl::GPU::create_render_shaders(const std::string& shader_sourc
 
 void kl::GPU::draw_text() const
 {
-    const UINT index = m_chain->GetCurrentBackBufferIndex();
-    TextRaster::draw_text(index);
+    TextRaster::draw_text(back_index());
 }

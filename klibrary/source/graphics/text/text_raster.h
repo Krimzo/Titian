@@ -4,6 +4,10 @@
 
 
 namespace kl {
+	inline constexpr UINT GPU_BUFFER_COUNT = 2;
+}
+
+namespace kl {
 	struct Text
 	{
 		TextFormat format{};
@@ -17,13 +21,10 @@ namespace kl {
 namespace kl {
 	class TextRaster
 	{
-	public:
-		static inline constexpr UINT BUFFER_COUNT = 2;
-
 	protected:
 		ComPtr<ID2D1Factory> m_d2d1_factory{};
 		ComPtr<IDWriteFactory> m_write_factory{};
-		ComPtr<ID2D1RenderTarget> m_d2d1_targets[BUFFER_COUNT] = {};
+		ComPtr<ID2D1RenderTarget> m_d2d1_targets[GPU_BUFFER_COUNT] = {};
 
 	public:
 		std::vector<Text> text_data{};
