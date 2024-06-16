@@ -61,7 +61,7 @@ void titian::EditorPass::render_self(StatePackage& package)
     }
 
     // Target
-    gpu->bind_target_depth_views({ render_layer->render_texture->target_view }, render_layer->depth_texture->depth_view);
+    gpu->bind_target_depth_view(render_layer->render_texture->target_view, render_layer->depth_texture->depth_view);
 
     for (auto& sel_name : editor_layer->selected_entities) {
         Entity* selected_entity = scene->get_casted<Entity>(sel_name);

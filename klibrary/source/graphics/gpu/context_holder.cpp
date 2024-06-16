@@ -328,13 +328,15 @@ void kl::ContextHolder::clear_depth_view(const dx::DepthView& view, const float 
     m_context->ClearDepthStencilView(view.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
 }
 
-void kl::ContextHolder::bind_target_depth_views(const std::vector<dx::TargetView>& target_views, const dx::DepthView& depth_view) const
+void kl::ContextHolder::bind_target_depth_view(const dx::TargetView& target_view, const dx::DepthView& depth_view) const
 {
-    std::vector<ID3D11RenderTargetView*> list_of_targets(target_views.size());
-    for (size_t i = 0; i < list_of_targets.size(); i++) {
-        list_of_targets[i] = target_views[i].Get();
-    }
-    m_context->OMSetRenderTargets((UINT) target_views.size(), list_of_targets.data(), depth_view.Get());
+    ID3D11RenderTargetView* target_views[1] = { target_view.Get() };
+    m_context->OMSetRenderTargets(1, target_views, depth_view.Get());
+}
+
+void kl::ContextHolder::bind_target_depth_views(const std::initializer_list<ID3D11RenderTargetView*>& target_views, const dx::DepthView& depth_view) const
+{
+    m_context->OMSetRenderTargets((UINT) target_views.size(), target_views.begin(), depth_view.Get());
 }
 
 void kl::ContextHolder::unbind_target_depth_views() const

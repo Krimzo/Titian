@@ -39,7 +39,7 @@ void titian::SkyboxPass::render_self(StatePackage& package)
         return;
 
     // Target
-	gpu->bind_target_depth_views({ render_layer->render_texture->target_view }, render_layer->depth_texture->depth_view);
+    gpu->bind_target_depth_view(render_layer->render_texture->target_view, render_layer->depth_texture->depth_view);
 
     // Set cb data
     struct VS_CB

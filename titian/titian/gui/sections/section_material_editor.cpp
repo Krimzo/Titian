@@ -163,7 +163,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     }
 
     // Bind render target
-    gpu->bind_target_depth_views({ render_texture->target_view }, depth_texture->depth_view);
+    gpu->bind_target_depth_view(render_texture->target_view, depth_texture->depth_view);
     gpu->clear_target_view(render_texture->target_view, camera->background);
     gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
 

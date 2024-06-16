@@ -256,7 +256,7 @@ void kl::GPU::resize_to_window(const HWND window)
 
 void kl::GPU::bind_internal_views() const
 {
-    bind_target_depth_views({ back_target_view() }, back_depth_view());
+    bind_target_depth_view(back_target_view(), back_depth_view());
 }
 
 // Shader helper

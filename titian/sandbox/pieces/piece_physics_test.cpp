@@ -93,7 +93,7 @@ void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
             kl::Object box = scene->new_entity(true);
             box->scale = scale;
             box->set_rotation(kl::random::gen_float3(360.0f));
-            box->set_position({ (half_size - x) * 2.25f, 15.0f, -25.0f + (half_size - z) * 2.25f });
+            box->set_position({ (half_size - x) * 2.25f, 15.0f + (z - size / 2) * 1.5f, -25.0f + (half_size - z) * 2.25f});
             box->set_collider(scene->new_box_collider(scale));
 
             box->set_mass(2.5f);

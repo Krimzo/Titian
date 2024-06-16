@@ -102,7 +102,8 @@ namespace kl {
         void clear_target_view(const dx::TargetView& view, const Float4& color = {}) const;
         void clear_depth_view(const dx::DepthView& view, float depth = 1.0f, UINT8 stencil = 0xFF) const;
 
-        void bind_target_depth_views(const std::vector<dx::TargetView>& target_views, const dx::DepthView& depth_view) const;
+        void bind_target_depth_view(const dx::TargetView& target_view, const dx::DepthView& depth_view) const;
+        void bind_target_depth_views(const std::initializer_list<ID3D11RenderTargetView*>& target_views, const dx::DepthView& depth_view) const;
         void unbind_target_depth_views() const;
 
         void bind_shader_view_for_pixel_shader(const dx::ShaderView& view, UINT slot) const;
