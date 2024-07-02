@@ -36,6 +36,9 @@ bool titian::GUILayer::update()
 	for (auto& section : sections) {
 		section->render_gui();
 	}
+	if (game_layer->game_running) {
+		game_layer->scene->update_ui();
+	}
 
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

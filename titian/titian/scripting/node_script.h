@@ -12,6 +12,7 @@ namespace titian {
 		Node start_node;
 		Node update_node;
 		Node collision_node;
+		Node ui_node;
 		std::vector<Node> nodes;
 
 		NodeScript();
@@ -25,5 +26,6 @@ namespace titian {
 		void call_start(Scene* scene) override;
 		void call_update(Scene* scene) override;
 		void call_collision(Scene* scene, Entity* first, Entity* second) override;
+		void call_ui(Scene* scene) override;
 	};
 }

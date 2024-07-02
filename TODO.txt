@@ -1,5 +1,8 @@
 # scripting
-1. add code suggestions
+1. add more UI features
+
+# shaders
+1. add shader types: material_shader, camera_shader
 
 # editor features
 2. undo and redo

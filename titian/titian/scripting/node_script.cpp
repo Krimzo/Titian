@@ -48,3 +48,8 @@ void titian::NodeScript::call_collision(Scene* scene, Entity* first, Entity* sec
 {
 	collision_node.call();
 }
+
+void titian::NodeScript::call_ui(Scene* scene)
+{
+	ui_node.call();
+}

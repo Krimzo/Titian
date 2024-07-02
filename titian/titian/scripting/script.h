@@ -39,5 +39,6 @@ namespace titian {
 		virtual void call_start(Scene* scene) = 0;
 		virtual void call_update(Scene* scene) = 0;
 		virtual void call_collision(Scene* scene, Entity* first, Entity* second) = 0;
+		virtual void call_ui(Scene* scene) = 0;
 	};
 }

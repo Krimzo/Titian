@@ -61,6 +61,12 @@ void titian::InterpScript::reload()
 	}
 	catch (std::exception&)
 	{}
+
+	try {
+		m_ui_function = m_engine->eval<std::function<void(Scene*)>>("on_ui");
+	}
+	catch (std::exception&)
+	{}
 }
 
 void titian::InterpScript::call_start(Scene* scene)
@@ -99,6 +105,20 @@ void titian::InterpScript::call_collision(Scene* scene, Entity* first, Entity* s
 
 	try {
 		m_collision_function(scene, first, second);
+	}
+	catch (std::exception& e) {
+		Logger::log(e.what());
+	}
+}
+
+void titian::InterpScript::call_ui(Scene* scene)
+{
+	if (!m_ui_function) {
+		return;
+	}
+
+	try {
+		m_ui_function(scene);
 	}
 	catch (std::exception& e) {
 		Logger::log(e.what());
@@ -1376,6 +1396,7 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["on_start"] = "Called once at the start of the game.";
 	INTERP_SCRIPT_IDENTIFIERS["on_update"] = "Called every frame of the game.";
 	INTERP_SCRIPT_IDENTIFIERS["on_collision"] = "Called every time a collision happens.";
+	INTERP_SCRIPT_IDENTIFIERS["on_ui"] = "Called every frame of the UI.";
 
 	// Logging
 	INTERP_SCRIPT_MODULE->add(cs::fun(&Logger::log<const std::string&>), "log");
@@ -1534,7 +1555,8 @@ const int load_functions = [&]
 	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float, float)>(&kl::random::gen_float), "gen_random_float");
 	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2 (*)(float, float)>(&kl::random::gen_float2), "gen_random_float2");
 	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(float, float)>(&kl::random::gen_float3), "gen_random_float3");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4 (*)(float, float)>(&kl::random::gen_float4), "gen_random_float4");
+	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4(*)(float, float)>(&kl::random::gen_float4), "gen_random_float4");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_color), "gen_random_color");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_char), "gen_random_char");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_string), "gen_random_string");
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_bool"] = "Generates a random bool.";
@@ -1543,8 +1565,63 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_float2"] = "Generates a random float2 (start_inclusive, end_inclusive).";
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_float3"] = "Generates a random float3 (start_inclusive, end_inclusive).";
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_float4"] = "Generates a random float4 (start_inclusive, end_inclusive).";
+	INTERP_SCRIPT_IDENTIFIERS["gen_random_color"] = "Generates a random color (is_grayscale).";
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_char"] = "Generates a random char (can_be_upper).";
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_string"] = "Generates a random string (length).";
+
+	// UI
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_separator), "ui_separator");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_same_line), "ui_same_line");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_set_next_width), "ui_set_next_width");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_cursor_pos), "ui_cursor_pos");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_set_cursor_pos), "ui_set_cursor_pos");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_window), "ui_window");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_button), "ui_button");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_checkbox), "ui_checkbox");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_text), "ui_text");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_colored_text), "ui_colored_text");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_input_int), "ui_input_int");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_input_float), "ui_input_float");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_input_float2), "ui_input_float2");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_input_float3), "ui_input_float3");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_input_float4), "ui_input_float4");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_input_text), "ui_input_text");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_input_text_multiline), "ui_input_text_multiline");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_edit_color3), "ui_edit_color3");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_edit_color4), "ui_edit_color4");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_drag_int), "ui_drag_int");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_drag_float), "ui_drag_float");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_drag_float2), "ui_drag_float2");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_drag_float3), "ui_drag_float3");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_drag_float4), "ui_drag_float4");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_slide_int), "ui_slide_int");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_slide_float), "ui_slide_float");
+	INTERP_SCRIPT_IDENTIFIERS["ui_separator"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_same_line"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_set_next_width"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_cursor_pos"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_set_cursor_pos"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_window"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_button"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_checkbox"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_text"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_colored_text"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_input_int"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_input_float"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_input_float2"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_input_float3"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_input_float4"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_input_text"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_input_text_multiline"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_edit_color3"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_edit_color4"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_drag_int"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_drag_float"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_drag_float2"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_drag_float3"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_drag_float4"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_slide_int"] = "...";
+	INTERP_SCRIPT_IDENTIFIERS["ui_slide_float"] = "...";
 
 	return 0;
 }();

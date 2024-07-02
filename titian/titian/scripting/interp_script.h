@@ -52,6 +52,7 @@ namespace titian {
 		void call_start(Scene* scene) override;
 		void call_update(Scene* scene) override;
 		void call_collision(Scene* scene, Entity* first, Entity* second) override;
+		void call_ui(Scene* scene) override;
 
 		std::map<std::string, chaiscript::Boxed_Value> get_parameters();
 
@@ -60,5 +61,6 @@ namespace titian {
 		std::function<void(Scene*)> m_start_function = {};
 		std::function<void(Scene*)> m_update_function = {};
 		std::function<void(Scene*, Entity*, Entity*)> m_collision_function = {};
+		std::function<void(Scene*)> m_ui_function = {};
 	};
 }

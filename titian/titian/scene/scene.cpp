@@ -243,6 +243,13 @@ void titian::Scene::update_scripts()
     }
 }
 
+void titian::Scene::update_ui()
+{
+    for (auto& [_, script] : scripts) {
+        script->call_ui(this);
+    }
+}
+
 // Entity
 kl::Object<titian::Entity> titian::Scene::new_entity(const bool dynamic) const
 {

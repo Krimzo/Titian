@@ -37,6 +37,7 @@ void titian::NativeScript::reload()
 	m_start_function = read_function<void, Scene*>("on_start");
 	m_update_function = read_function<void, Scene*>("on_update");
 	m_collision_function = read_function<void, Scene*, Entity*, Entity*>("on_collision");
+	m_ui_function = read_function<void, Scene*>("on_ui");
 }
 
 void titian::NativeScript::call_start(Scene* scene)
@@ -57,6 +58,13 @@ void titian::NativeScript::call_collision(Scene* scene, Entity* first, Entity* s
 {
 	if (m_collision_function) {
 		m_collision_function(scene, first, second);
+	}
+}
+
+void titian::NativeScript::call_ui(Scene* scene)
+{
+	if (m_ui_function) {
+		m_ui_function(scene);
 	}
 }
 

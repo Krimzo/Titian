@@ -59,6 +59,7 @@ namespace titian {
         // Update
         void update_physics(float delta_t);
         void update_scripts();
+        void update_ui();
 
         // Entity
         kl::Object<Entity> new_entity(bool dynamic) const;
