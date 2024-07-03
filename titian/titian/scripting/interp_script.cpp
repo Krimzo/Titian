@@ -822,11 +822,13 @@ const int load_types = [&]
 	cs::utility::add_class<Shader>(*INTERP_SCRIPT_MODULE, "Shader",
 	{},
 	{
+		{ cs::fun(&Shader::type), "type" },
 		{ cs::fun(&Shader::data_buffer), "data_buffer" },
 
 		{ cs::fun(&Shader::reload), "reload" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Shader"] = "Custom shader override for a material.";
+	INTERP_SCRIPT_MEMBERS["type"] = "Type of the object.";
 
 	// Entity
 	cs::utility::add_class<Entity>(*INTERP_SCRIPT_MODULE, "Entity",
@@ -895,7 +897,9 @@ const int load_types = [&]
 		{ cs::fun(&Camera::sensitivity), "sensitivity" },
 		{ cs::fun(&Camera::speed), "speed" },
 		{ cs::fun(&Camera::background), "background" },
+		{ cs::fun(&Camera::custom_data), "custom_data" },
 		{ cs::fun(&Camera::skybox_name), "skybox_name" },
+		{ cs::fun(&Camera::shader_name), "shader_name" },
 
 		{ cs::fun(&Camera::update_aspect_ratio), "update_aspect_ratio" },
 
@@ -928,7 +932,9 @@ const int load_types = [&]
 	INTERP_SCRIPT_MEMBERS["sensitivity"] = "sensitivity";
 	INTERP_SCRIPT_MEMBERS["speed"] = "speed";
 	INTERP_SCRIPT_MEMBERS["background"] = "background";
+	INTERP_SCRIPT_MEMBERS["custom_data"] = "custom_data";
 	INTERP_SCRIPT_MEMBERS["skybox_name"] = "skybox_name";
+	INTERP_SCRIPT_MEMBERS["shader_name"] = "shader_name";
 	INTERP_SCRIPT_IDENTIFIERS["update_aspect_ratio"] = "Sets the camera's aspect ratio.";
 	INTERP_SCRIPT_IDENTIFIERS["set_forward"] = "Sets the normalized forward vector of camera.";
 	INTERP_SCRIPT_IDENTIFIERS["forward"] = "Returns the normalized forward vector of camera.";

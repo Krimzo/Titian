@@ -9,9 +9,14 @@ namespace titian {
 		return kl::read_file_string("builtin/defaults/default_script.chai");
 	}
 
-	inline std::string get_default_shader()
+	inline std::string get_default_material_shader()
 	{
-		return kl::read_file_string("builtin/defaults/default_shader.hlsl");
+		return kl::read_file_string("builtin/defaults/default_material_shader.hlsl");
+	}
+
+	inline std::string get_default_camera_shader()
+	{
+		return kl::read_file_string("builtin/defaults/default_camera_shader.hlsl");
 	}
 
 	inline std::string format_byte_size(uint64_t byte_size)

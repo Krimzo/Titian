@@ -117,7 +117,7 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     std::function material_provider = [&] { return kl::Object{ new Material() }; };
     read_map(materials, material_provider, nullptr);
 
-    std::function shader_provider = [&] { return kl::Object{ new Shader(m_gpu) }; };
+    std::function shader_provider = [&] { return kl::Object{ new Shader(ShaderType::NONE, m_gpu) }; };
     read_map(shaders, shader_provider, nullptr);
 
     /* SCRIPTS */
@@ -417,7 +417,7 @@ titian::Material* titian::Scene::helper_new_material(const std::string& id)
 
 titian::Shader* titian::Scene::helper_new_shader(const std::string& id)
 {
-    Shader* shader = new Shader(m_gpu);
+    Shader* shader = new Shader(ShaderType::NONE, m_gpu);
     shaders[id] = shader;
     return shader;
 }

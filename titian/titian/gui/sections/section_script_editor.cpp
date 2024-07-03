@@ -57,18 +57,18 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 {
 	if (ImGui::BeginPopupContextWindow("NewScript", ImGuiPopupFlags_MouseButtonMiddle)) {
 		const std::string name = gui_input_continuous("##CreateScriptInput");
-		if (!name.empty()) {
-			if (ImGui::MenuItem("New Interp Script") && !scene->scripts.contains(name)) {
+		if (!name.empty() && !scene->scripts.contains(name)) {
+			if (ImGui::MenuItem("New Interp Script")) {
 				scene->scripts[name] = new InterpScript();
 				ImGui::CloseCurrentPopup();
 			}
-#if 0
-			if (ImGui::MenuItem("New Node Script") && !scene->scripts.contains(name)) {
+#if false
+			if (ImGui::MenuItem("New Node Script")) {
 				scene->scripts[name] = new NodeScript();
 				ImGui::CloseCurrentPopup();
 			}
 #endif
-			if (ImGui::MenuItem("New Native Script") && !scene->scripts.contains(name)) {
+			if (ImGui::MenuItem("New Native Script")) {
 				scene->scripts[name] = new NativeScript();
 				ImGui::CloseCurrentPopup();
 			}

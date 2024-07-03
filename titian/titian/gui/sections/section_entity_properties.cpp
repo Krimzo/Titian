@@ -86,6 +86,22 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
         ImGui::EndCombo();
     }
 
+    // Shader
+    if (ImGui::BeginCombo("Bound Shader", camera->shader_name.c_str())) {
+        if (ImGui::Selectable("/", camera->shader_name == "/")) {
+            camera->shader_name = "/";
+        }
+        for (auto& [shader_name, shader] : scene->shaders) {
+            if (shader->type != ShaderType::CAMERA) {
+                continue;
+            }
+            if (ImGui::Selectable(shader_name.c_str(), shader_name == camera->shader_name)) {
+                camera->shader_name = shader_name;
+            }
+        }
+        ImGui::EndCombo();
+    }
+
     // Background
     if (!scene->textures.contains(camera->skybox_name)) {
         kl::Float4 background = camera->background;

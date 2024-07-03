@@ -16,28 +16,28 @@ void titian::GUISectionSceneEntities::render_gui()
 		// Window popup
 		if (ImGui::BeginPopupContextWindow("NewEntity", ImGuiPopupFlags_MouseButtonMiddle)) {
 			const std::string name = gui_input_continuous("##CreateEntityInput");
-			if (!name.empty()) {
-				if (ImGui::MenuItem("New Entity") && !scene->contains_entity(name)) {
+			if (!name.empty() && !scene->contains_entity(name)) {
+				if (ImGui::MenuItem("New Entity")) {
 					kl::Object entity = scene->new_entity(false);
 					scene->add_entity(name, entity);
 					ImGui::CloseCurrentPopup();
 				}
-				if (ImGui::MenuItem("New Camera") && !scene->contains_entity(name)) {
+				if (ImGui::MenuItem("New Camera")) {
 					kl::Object entity = scene->new_casted<Camera>(false);
 					scene->add_entity(name, entity);
 					ImGui::CloseCurrentPopup();
 				}
-				if (ImGui::MenuItem("New Ambient Light") && !scene->contains_entity(name)) {
+				if (ImGui::MenuItem("New Ambient Light")) {
 					kl::Object entity = scene->new_casted<AmbientLight>(false);
 					scene->add_entity(name, entity);
 					ImGui::CloseCurrentPopup();
 				}
-				if (ImGui::MenuItem("New Point Light") && !scene->contains_entity(name)) {
+				if (ImGui::MenuItem("New Point Light")) {
 					kl::Object entity = scene->new_casted<PointLight>(false);
 					scene->add_entity(name, entity);
 					ImGui::CloseCurrentPopup();
 				}
-				if (ImGui::MenuItem("New Directional Light") && !scene->contains_entity(name)) {
+				if (ImGui::MenuItem("New Directional Light")) {
 					kl::Object entity = scene->new_casted<DirectionalLight>(false, gpu, 4096);
 					scene->add_entity(name, entity);
 					ImGui::CloseCurrentPopup();

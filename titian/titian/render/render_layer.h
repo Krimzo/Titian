@@ -13,10 +13,11 @@ namespace titian {
 		std::vector<kl::Object<RenderPass>> passes = {};
 		kl::Object<RenderStates> states = nullptr;
 
-		kl::Object<Texture> render_texture = nullptr;
-		kl::Object<Texture> depth_texture = nullptr;
-		kl::Object<Texture> picking_texture = nullptr;
-		kl::Object<Texture> staging_texture = nullptr;
+		kl::Object<Texture> screen_texture = nullptr;
+		kl::Object<Texture> game_color_texture = nullptr;
+		kl::Object<Texture> game_depth_texture = nullptr;
+		kl::Object<Texture> editor_picking_texture = nullptr;
+		kl::Object<Texture> editor_staging_texture = nullptr;
 
 		kl::dx::Buffer screen_mesh = nullptr;
 
@@ -33,7 +34,6 @@ namespace titian {
 		void resize(const kl::Int2& new_size);
 		void resize_staging(const kl::Int2& new_size);
 
-	private:
 		kl::Int2 get_render_texture_size() const;
 	};
 }

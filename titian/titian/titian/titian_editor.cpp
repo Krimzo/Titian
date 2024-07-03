@@ -29,6 +29,7 @@ titian::TitianEditor::TitianEditor()
     render_layer.passes.emplace_back(new ShadowPass(layer_package));
     render_layer.passes.emplace_back(new SkyboxPass(layer_package));
     render_layer.passes.emplace_back(new ScenePass(layer_package));
+    render_layer.passes.emplace_back(new PostPass(layer_package));
     render_layer.passes.emplace_back(new EditorPass(layer_package));
     render_layer.passes.emplace_back(new OutlinePass(layer_package));
 

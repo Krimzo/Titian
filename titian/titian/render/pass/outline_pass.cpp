@@ -36,10 +36,10 @@ void titian::OutlinePass::render_self(StatePackage& package)
     kl::GPU* gpu = &app_layer->gpu;
 
     // Target
-    gpu->bind_target_depth_view(render_layer->render_texture->target_view, render_layer->depth_texture->depth_view);
+    gpu->bind_target_depth_view(render_layer->screen_texture->target_view, render_layer->game_depth_texture->depth_view);
 
     load_selected_entities(entitiy_indices);
-    gpu->bind_shader_view_for_pixel_shader(render_layer->picking_texture->shader_view, 0);
+    gpu->bind_shader_view_for_pixel_shader(render_layer->editor_picking_texture->shader_view, 0);
     gpu->bind_shader_view_for_pixel_shader(m_selected_entities_view, 1);
 
     struct PS_CB

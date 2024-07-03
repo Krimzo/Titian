@@ -25,7 +25,7 @@ void titian::GUISectionViewport::render_gui()
         editor_layer->is_over_viewport = ImGui::IsMouseHoveringRect(win_content_min, win_content_max);
 
         // Display rendered texture
-        ImGui::Image(render_layer->render_texture->shader_view.Get(), content_region);
+        ImGui::Image(render_layer->screen_texture->shader_view.Get(), content_region);
 
         // Scene loading
         if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
@@ -166,10 +166,10 @@ std::unordered_set<uint32_t> titian::GUISectionViewport::read_entity_ids(const k
     const kl::GPU* gpu = &app_layer->gpu;
 
     render_layer->resize_staging(size);
-    gpu->copy_resource_region(render_layer->staging_texture->graphics_buffer.Get(), render_layer->picking_texture->graphics_buffer.Get(), min_coords, max_coords);
+    gpu->copy_resource_region(render_layer->editor_staging_texture->graphics_buffer.Get(), render_layer->editor_picking_texture->graphics_buffer.Get(), min_coords, max_coords);
 
     std::vector<float> values(size.x * size.y);
-    gpu->read_from_texture(values.data(), render_layer->staging_texture->graphics_buffer.Get(), size, sizeof(float));
+    gpu->read_from_texture(values.data(), render_layer->editor_staging_texture->graphics_buffer.Get(), size, sizeof(float));
 
     std::unordered_set<uint32_t> results;
     for (float value : values) {

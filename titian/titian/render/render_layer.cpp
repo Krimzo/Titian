@@ -14,10 +14,11 @@ void titian::RenderLayer::init()
 
 	// Textures
 	states = new RenderStates(gpu);
-	render_texture = new Texture(gpu);
-	picking_texture = new Texture(gpu);
-	staging_texture = new Texture(gpu);
-	depth_texture = new Texture(gpu);
+	screen_texture = new Texture(gpu);
+	game_color_texture = new Texture(gpu);
+	game_depth_texture = new Texture(gpu);
+	editor_picking_texture = new Texture(gpu);
+	editor_staging_texture = new Texture(gpu);
 
 	resize({ 1, 1 });
 	resize_staging({ 1, 1 });
@@ -33,9 +34,10 @@ bool titian::RenderLayer::update()
 	// Clear targets
 	Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
 	gpu->clear_internal(background);
-	gpu->clear_target_view(render_texture->target_view, camera ? kl::Float4(camera->background) : background);
-	gpu->clear_target_view(picking_texture->target_view, {});
-	gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
+	gpu->clear_target_view(screen_texture->target_view, background);
+	gpu->clear_target_view(game_color_texture->target_view, camera ? kl::Float4(camera->background) : background);
+	gpu->clear_depth_view(game_depth_texture->depth_view, 1.0f, 0xFF);
+	gpu->clear_target_view(editor_picking_texture->target_view, {});
 	if (!camera)
 		return true;
 
@@ -56,8 +58,7 @@ bool titian::RenderLayer::update()
 
 void titian::RenderLayer::present() const
 {
-	const kl::GPU* gpu = &app_layer->gpu;
-	gpu->swap_buffers(v_sync);
+	app_layer->gpu.swap_buffers(v_sync);
 }
 
 void titian::RenderLayer::resize(const kl::Int2& new_size)
@@ -70,43 +71,49 @@ void titian::RenderLayer::resize(const kl::Int2& new_size)
 	}
 	kl::GPU* gpu = &app_layer->gpu;
 
-	// Create render texture
-	kl::dx::TextureDescriptor render_descriptor = {};
-	render_descriptor.Width = new_size.x;
-	render_descriptor.Height = new_size.y;
-	render_descriptor.MipLevels = 1;
-	render_descriptor.ArraySize = 1;
-	render_descriptor.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	render_descriptor.SampleDesc.Count = 1;
-	render_descriptor.Usage = D3D11_USAGE_DEFAULT;
-	render_descriptor.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	render_texture->graphics_buffer = gpu->create_texture(&render_descriptor, nullptr);
-	render_texture->create_target_view(nullptr);
-	render_texture->create_shader_view(nullptr);
+	// Screen texture
+	kl::dx::TextureDescriptor screen_tex_descriptor{};
+	screen_tex_descriptor.Width = new_size.x;
+	screen_tex_descriptor.Height = new_size.y;
+	screen_tex_descriptor.MipLevels = 1;
+	screen_tex_descriptor.ArraySize = 1;
+	screen_tex_descriptor.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	screen_tex_descriptor.SampleDesc.Count = 1;
+	screen_tex_descriptor.Usage = D3D11_USAGE_DEFAULT;
+	screen_tex_descriptor.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	screen_texture->graphics_buffer = gpu->create_texture(&screen_tex_descriptor, nullptr);
+	screen_texture->create_target_view(nullptr);
+	screen_texture->create_shader_view(nullptr);
 
-	// Create picking texture
-	kl::dx::TextureDescriptor picking_descriptor = render_descriptor;
-	picking_descriptor.Format = DXGI_FORMAT_R32_FLOAT;
-	picking_texture->graphics_buffer = gpu->create_texture(&picking_descriptor, nullptr);
-	picking_texture->create_target_view(nullptr);
-	picking_texture->create_shader_view(nullptr);
+	// Game color texture
+	kl::dx::TextureDescriptor game_col_descriptor = screen_tex_descriptor;
+	game_color_texture->graphics_buffer = gpu->create_texture(&game_col_descriptor, nullptr);
+	game_color_texture->create_target_view(nullptr);
+	game_color_texture->create_shader_view(nullptr);
 
-	// Create depth texture
-	kl::dx::TextureDescriptor depth_descriptor = render_descriptor;
-	depth_descriptor.Format = DXGI_FORMAT_R32_TYPELESS;
-	depth_descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-	depth_texture->graphics_buffer = gpu->create_texture(&depth_descriptor, nullptr);
+	// Game depth texture
+	kl::dx::TextureDescriptor  game_depth_descriptor = game_col_descriptor;
+	game_depth_descriptor.Format = DXGI_FORMAT_R32_TYPELESS;
+	game_depth_descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	game_depth_texture->graphics_buffer = gpu->create_texture(&game_depth_descriptor, nullptr);
 
-	kl::dx::DepthViewDescriptor depth_depth_view_descriptor = {};
-	depth_depth_view_descriptor.Format = DXGI_FORMAT_D32_FLOAT;
-	depth_depth_view_descriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	depth_texture->create_depth_view(&depth_depth_view_descriptor);
+	kl::dx::DepthViewDescriptor game_depth_dv_descriptor{};
+	game_depth_dv_descriptor.Format = DXGI_FORMAT_D32_FLOAT;
+	game_depth_dv_descriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	game_depth_texture->create_depth_view(&game_depth_dv_descriptor);
 
-	kl::dx::ShaderViewDescriptor depth_shader_view_descriptor = {};
-	depth_shader_view_descriptor.Format = DXGI_FORMAT_R32_FLOAT;
-	depth_shader_view_descriptor.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	depth_shader_view_descriptor.Texture2D.MipLevels = 1;
-	depth_texture->create_shader_view(&depth_shader_view_descriptor);
+	kl::dx::ShaderViewDescriptor game_depth_sv_descriptor{};
+	game_depth_sv_descriptor.Format = DXGI_FORMAT_R32_FLOAT;
+	game_depth_sv_descriptor.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	game_depth_sv_descriptor.Texture2D.MipLevels = 1;
+	game_depth_texture->create_shader_view(&game_depth_sv_descriptor);
+
+	// Editor picking texture
+	kl::dx::TextureDescriptor editor_picking_descriptor = screen_tex_descriptor;
+	editor_picking_descriptor.Format = DXGI_FORMAT_R32_FLOAT;
+	editor_picking_texture->graphics_buffer = gpu->create_texture(&editor_picking_descriptor, nullptr);
+	editor_picking_texture->create_target_view(nullptr);
+	editor_picking_texture->create_shader_view(nullptr);
 }
 
 void titian::RenderLayer::resize_staging(const kl::Int2& new_size)
@@ -114,18 +121,18 @@ void titian::RenderLayer::resize_staging(const kl::Int2& new_size)
 	if (new_size.x <= 0 || new_size.y <= 0) {
 		return;
 	}
-	const kl::Int2 current_size = staging_texture->graphics_buffer_size();
+	const kl::Int2 current_size = editor_staging_texture->graphics_buffer_size();
 	if (current_size.x == new_size.x && current_size.y == new_size.y) {
 		return;
 	}
 	kl::GPU* gpu = &app_layer->gpu;
-	staging_texture->graphics_buffer = gpu->create_staging_texture(picking_texture->graphics_buffer, new_size);
+	editor_staging_texture->graphics_buffer = gpu->create_staging_texture(editor_picking_texture->graphics_buffer, new_size);
 }
 
 kl::Int2 titian::RenderLayer::get_render_texture_size() const
 {
-	if (render_texture) {
-		return render_texture->graphics_buffer_size();
+	if (screen_texture) {
+		return screen_texture->graphics_buffer_size();
 	}
 	return {};
 }

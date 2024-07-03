@@ -20,8 +20,10 @@ void titian::Camera::serialize(Serializer* serializer, const void* helper_data) 
     serializer->write_object<kl::Float3>(m_up);
 
     serializer->write_object<kl::Color>(background);
+    serializer->write_object<kl::Float4x4>(custom_data);
 
     serializer->write_string(skybox_name);
+    serializer->write_string(shader_name);
 }
 
 void titian::Camera::deserialize(const Serializer* serializer, const void* helper_data)
@@ -39,8 +41,10 @@ void titian::Camera::deserialize(const Serializer* serializer, const void* helpe
     serializer->read_object<kl::Float3>(m_up);
 
     serializer->read_object<kl::Color>(background);
+    serializer->read_object<kl::Float4x4>(custom_data);
 
     serializer->read_string(skybox_name);
+    serializer->read_string(shader_name);
 }
 
 void titian::Camera::update_aspect_ratio(const kl::Int2& size)

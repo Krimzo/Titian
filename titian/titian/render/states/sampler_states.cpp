@@ -14,8 +14,10 @@ titian::SamplerStates::SamplerStates(kl::GPU* gpu)
     shadow_sampler_descriptor.ComparisonFunc = D3D11_COMPARISON_LESS;
 
     linear = gpu->create_sampler_state(true, false);
+    non_linear = gpu->create_sampler_state(false, false);
     shadow = gpu->create_sampler_state(&shadow_sampler_descriptor);
 
     kl::assert(linear, "Failed to init LINEAR sampler state");
+    kl::assert(non_linear, "Failed to init NON_LINEAR sampler state");
     kl::assert(shadow, "Failed to init SHADOW sampler state");
 }

@@ -23,9 +23,13 @@ void titian::GUISectionShaderEditor::render_gui()
 			// Create shader
 			if (ImGui::BeginPopupContextWindow("NewShader", ImGuiPopupFlags_MouseButtonMiddle)) {
 				const std::string name = gui_input_continuous("##CreateShaderInput");
-				if (!name.empty()) {
-					if (ImGui::MenuItem("New Shader") && !scene->helper_contains_shader(name)) {
-						scene->helper_new_shader(name);
+				if (!name.empty() && !scene->helper_contains_shader(name)) {
+					if (ImGui::MenuItem("New Material Shader")) {
+						scene->shaders[name] = new Shader(ShaderType::MATERIAL, gpu);
+						ImGui::CloseCurrentPopup();
+					}
+					if (ImGui::MenuItem("New Camera Shader")) {
+						scene->shaders[name] = new Shader(ShaderType::CAMERA, gpu);
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -54,6 +58,18 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 		if (!filter.empty() && shader_name.find(filter) == -1) {
 			continue;
 		}
+
+		// Type
+		if (shader->type == ShaderType::MATERIAL) {
+			ImGui::Button("MATERIAL");
+		}
+		else if (shader->type == ShaderType::CAMERA) {
+			ImGui::Button("CAMERA");
+		}
+		else {
+			ImGui::Button("NONE");
+		}
+		ImGui::SameLine();
 
 		if (ImGui::Selectable(shader_name.c_str(), shader_name == this->selected_shader)) {
 			this->selected_shader = shader_name;

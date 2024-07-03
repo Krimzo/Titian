@@ -370,7 +370,10 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
             if (ImGui::Selectable("/", material->shader_name == "/")) {
                 material->shader_name = "/";
             }
-            for (auto& [shader_name, _] : scene->shaders) {
+            for (auto& [shader_name, shader] : scene->shaders) {
+                if (shader->type != ShaderType::MATERIAL) {
+                    continue;
+                }
                 if (ImGui::Selectable(shader_name.c_str(), material->shader_name == shader_name)) {
                     material->shader_name = shader_name;
                 }

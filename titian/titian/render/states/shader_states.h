@@ -13,6 +13,7 @@ namespace titian {
         kl::RenderShaders shadow_pass;
         kl::RenderShaders skybox_pass;
         kl::RenderShaders scene_pass;
+        kl::RenderShaders post_pass;
         kl::RenderShaders outline_pass;
         kl::RenderShaders display_pass;
 

@@ -27,6 +27,7 @@ titian::TitianGame::TitianGame(const std::string& entry_scene)
     render_layer.passes.emplace_back(new ShadowPass(layer_package));
     render_layer.passes.emplace_back(new SkyboxPass(layer_package));
     render_layer.passes.emplace_back(new ScenePass(layer_package));
+    render_layer.passes.emplace_back(new PostPass(layer_package));
     render_layer.passes.emplace_back(new DisplayPass(layer_package));
 
     // Push layers

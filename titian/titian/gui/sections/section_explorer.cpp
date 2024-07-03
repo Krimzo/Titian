@@ -77,7 +77,7 @@ void titian::GUISectionExplorer::render_gui()
                         ImGui::CloseCurrentPopup();
                     }
                 }
-                if (ImGui::MenuItem("Shader File")) {
+                if (ImGui::MenuItem("Material Shader File")) {
                     std::stringstream stream{};
                     stream << m_path << "/" << name_input;
                     if (name_input.find(FILE_EXTENSION_SHADER) == -1) {
@@ -86,7 +86,20 @@ void titian::GUISectionExplorer::render_gui()
                     const std::string full_path = stream.str();
                     if (!std::filesystem::exists(full_path)) {
                         std::ofstream file{ full_path };
-                        file << get_default_shader();
+                        file << get_default_material_shader();
+                        ImGui::CloseCurrentPopup();
+                    }
+                }
+                if (ImGui::MenuItem("Camera Shader File")) {
+                    std::stringstream stream{};
+                    stream << m_path << "/" << name_input;
+                    if (name_input.find(FILE_EXTENSION_SHADER) == -1) {
+                        stream << FILE_EXTENSION_SHADER;
+                    }
+                    const std::string full_path = stream.str();
+                    if (!std::filesystem::exists(full_path)) {
+                        std::ofstream file{ full_path };
+                        file << get_default_camera_shader();
                         ImGui::CloseCurrentPopup();
                     }
                 }

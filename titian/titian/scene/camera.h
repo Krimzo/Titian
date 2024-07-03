@@ -17,7 +17,10 @@ namespace titian {
         float speed = 2.0f;
 
         kl::Color background = {};
+        kl::Float4x4 custom_data = {};
+
         std::string skybox_name = "/";
+        std::string shader_name = "/";
 
         Camera(physx::PxPhysics* physics, bool dynamic);
 

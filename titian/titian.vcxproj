@@ -114,6 +114,7 @@
     </ClCompile>
     <ClCompile Include="packager\packager.cpp" />
     <ClCompile Include="packager\packager_entry.cpp" />
+    <ClCompile Include="titian\render\pass\post_pass.cpp" />
     <ClCompile Include="titian\ui\ui_funcs.cpp" />
     <ClInclude Include="external\chaiscript\chaiscript.hpp" />
     <ClInclude Include="external\chaiscript\dispatchkit\function_params.hpp" />
@@ -400,6 +401,7 @@
     <ClInclude Include="titian\gui\sections\section_shader_editor.h" />
     <ClInclude Include="titian\gui\sections\section_texture_editor.h" />
     <ClInclude Include="titian\gui\sections\section_viewport.h" />
+    <ClInclude Include="titian\render\pass\post_pass.h" />
     <ClInclude Include="titian\scripting\interp\language_editor.h" />
     <ClInclude Include="titian\scripting\nodes\scripting_nodes.h" />
     <ClInclude Include="titian\scripting\node_script.h" />

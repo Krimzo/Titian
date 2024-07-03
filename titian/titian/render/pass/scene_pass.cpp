@@ -35,7 +35,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         return;
 
     // Target
-    gpu->bind_target_depth_views({ render_layer->render_texture->target_view.Get(), render_layer->picking_texture->target_view.Get() }, render_layer->depth_texture->depth_view);
+    gpu->bind_target_depth_views({ render_layer->game_color_texture->target_view.Get(), render_layer->editor_picking_texture->target_view.Get() }, render_layer->game_depth_texture->depth_view);
 
     // Bind shader views
     gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);

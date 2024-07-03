@@ -12,6 +12,7 @@
 #include "render/pass/shadow_pass.h"
 #include "render/pass/skybox_pass.h"
 #include "render/pass/scene_pass.h"
+#include "render/pass/post_pass.h"
 #include "render/pass/editor_pass.h"
 #include "render/pass/outline_pass.h"
 

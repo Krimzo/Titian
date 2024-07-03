@@ -16,6 +16,7 @@ titian::ShaderStates::ShaderStates(kl::GPU* gpu)
     queue.add_task([&] { load_shader(shadow_pass, "shadow_pass.hlsl"); });
     queue.add_task([&] { load_shader(skybox_pass, "skybox_pass.hlsl"); });
     queue.add_task([&] { load_shader(scene_pass, "scene_pass.hlsl"); });
+	queue.add_task([&] { load_shader(post_pass, "post_pass.hlsl"); });
     queue.add_task([&] { load_shader(outline_pass, "outline_pass.hlsl"); });
     queue.add_task([&] { load_shader(display_pass, "display_pass.hlsl"); });
     queue.finalize();
