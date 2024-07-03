@@ -96,6 +96,8 @@
     <ClInclude Include="source\web\socket\socket.h" />
     <ClInclude Include="source\web\web.h" />
     <ClInclude Include="source\window\draw\frame_buffer.h" />
+    <ClInclude Include="source\window\hooks\keyboard_hook.h" />
+    <ClInclude Include="source\window\hooks\mouse_hook.h" />
     <ClInclude Include="source\window\input\key.h" />
     <ClInclude Include="source\window\input\keyboard.h" />
     <ClInclude Include="source\window\input\mouse.h" />
@@ -151,6 +153,8 @@
     <ClCompile Include="source\web\socket\socket.cpp" />
     <ClCompile Include="source\web\web.cpp" />
     <ClCompile Include="source\window\draw\frame_buffer.cpp" />
+    <ClCompile Include="source\window\hooks\keyboard_hook.cpp" />
+    <ClCompile Include="source\window\hooks\mouse_hook.cpp" />
     <ClCompile Include="source\window\input\key.cpp" />
     <ClCompile Include="source\window\input\keyboard.cpp" />
     <ClCompile Include="source\window\input\mouse.cpp" />

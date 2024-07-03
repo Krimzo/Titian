@@ -5,7 +5,7 @@
 kl::Hash::Hash()
 {}
 
-kl::Hash::Hash(const std::string& hash)
+kl::Hash::Hash(const std::string_view& hash)
 {
     if (hash.size() < 64) {
         return;
@@ -17,7 +17,7 @@ kl::Hash::Hash(const std::string& hash)
 
         uint32_t result = 0;
         stream >> result;
-        buffer[i] = (uint8_t) result;
+        buffer[i] = static_cast<uint8_t>(result);
     }
 }
 
@@ -33,7 +33,7 @@ const uint8_t& kl::Hash::operator[](const size_t index) const
 
 bool kl::Hash::operator==(const Hash& other) const
 {
-    for (uint64_t i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; i++) {
         if (buffer[i] != other[i]) {
             return false;
         }
@@ -50,8 +50,8 @@ bool kl::Hash::operator!=(const Hash& other) const
 std::ostream& kl::operator<<(std::ostream& stream, const Hash& hash)
 {
     stream << std::hex << std::setfill('0');
-    for (auto& value : hash.buffer) {
-        stream << std::setw(2) << (int32_t) value;
+    for (uint8_t value : hash.buffer) {
+        stream << std::setw(2) << static_cast<int>(value);
     }
     return stream;
 }

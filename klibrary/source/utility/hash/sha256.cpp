@@ -1,7 +1,6 @@
 #include "klibrary.h"
 
 
-// Defines
 #define CH(x, y, z) (((x) & (y)) ^ (~(x) & (z)))
 #define MAJ(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
 #define ROTRIGHT(a, b) (((a) >> (b)) | ((a) << (32 - (b))))
@@ -12,7 +11,6 @@
 #define SIG0(x) (ROTRIGHT(x, 7) ^ ROTRIGHT(x, 18) ^ ((x) >> 3))
 #define SIG1(x) (ROTRIGHT(x, 17) ^ ROTRIGHT(x, 19) ^ ((x) >> 10))
 
-// Contexts
 class SHA256Context
 {
 public:
@@ -144,14 +142,9 @@ static kl::Hash finalize_context(SHA256Context* context)
 	return result;
 }
 
-// Hashing
-kl::Hash kl::hash(const void* data, const uint64_t data_size) {
-	SHA256Context context{};
-	update_context(&context, (uint8_t*) data, data_size);
-	return finalize_context(&context);
-}
-
-kl::Hash kl::hash(const std::string& data)
+kl::Hash kl::hash(const void* data, const uint64_t data_size)
 {
-	return hash(data.data(), data.size());
+	SHA256Context context{};
+	update_context(&context, reinterpret_cast<const uint8_t*>(data), data_size);
+	return finalize_context(&context);
 }

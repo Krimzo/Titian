@@ -7,6 +7,7 @@
 namespace kl {
     class Mouse
     {
+    protected:
         HWND m_window = nullptr;
         Int2 m_position = {};
         bool m_hidden = false;
@@ -16,7 +17,11 @@ namespace kl {
         void process() const;
 
     public:
+        friend class MouseHook;
         friend class Window;
+
+        std::vector<std::function<void(Int2)>> on_move;
+        std::vector<std::function<void(int)>> on_scroll;
 
         Key left = {};
         Key middle = {};

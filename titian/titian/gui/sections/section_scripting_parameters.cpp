@@ -12,6 +12,7 @@ void titian::GUISectionScriptingParameters::render_gui()
 	Scene* scene = &game_layer->scene;
 
 	std::vector<std::pair<std::string, std::map<std::string, chaiscript::Boxed_Value>>> scripts;
+	scripts.reserve(scene->scripts.size());
 	for (auto& [name, script] : scene->scripts) {
 		InterpScript* interp_script = dynamic_cast<InterpScript*>(&script);
 		if (!interp_script) {

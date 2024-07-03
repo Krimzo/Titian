@@ -5,6 +5,10 @@
 #include "window/input/keyboard.h"
 #include "window/input/mouse.h"
 
+// Hooks
+#include "window/hooks/keyboard_hook.h"
+#include "window/hooks/mouse_hook.h"
+
 // Draw
 #include "window/draw/frame_buffer.h"
 
@@ -92,6 +96,10 @@ namespace kl {
 
         float aspect_ratio() const;
         Int2 frame_center() const;
+
+        float dpi() const;
+        float pixels_to_dips(float value) const;
+        float dips_to_pixels(float value) const;
 
         void set_title(const std::string_view& data) const;
         bool set_icon(const std::string_view& filepath) const;

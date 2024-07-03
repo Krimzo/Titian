@@ -11,7 +11,7 @@ namespace kl {
         uint8_t buffer[32] = {};
 
         Hash();
-        Hash(const std::string& hash);
+        Hash(const std::string_view& hash);
 
         uint8_t& operator[](size_t index);
         const uint8_t& operator[](size_t index) const;

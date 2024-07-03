@@ -6,6 +6,7 @@
 namespace kl {
     class Key
     {
+    protected:
         bool m_state = false;
 
         void update(bool new_state);
@@ -16,9 +17,11 @@ namespace kl {
         void call_on_release() const;
 
     public:
-        friend class Window;
         friend class Keyboard;
         friend class Mouse;
+        friend class KeyboardHook;
+        friend class MouseHook;
+        friend class Window;
 
         std::vector<std::function<void()>> on_press = {};
         std::vector<std::function<void()>> on_down = {};

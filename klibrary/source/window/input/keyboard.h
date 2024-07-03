@@ -6,10 +6,12 @@
 namespace kl {
     class Keyboard
     {
+    protected:
         void update(WPARAM type, bool new_state);
         void process() const;
 
     public:
+        friend class KeyboardHook;
         friend class Window;
 
         Key q = {};
