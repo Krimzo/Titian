@@ -890,8 +890,12 @@ const int load_types = [&]
 	cs::utility::add_class<Camera>(*INTERP_SCRIPT_MODULE, "Camera",
 	{},
 	{
+		{ cs::fun(&Camera::type), "type" },
+
 		{ cs::fun(&Camera::aspect_ratio), "aspect_ratio" },
 		{ cs::fun(&Camera::field_of_view), "field_of_view" },
+		{ cs::fun(&Camera::width), "width" },
+		{ cs::fun(&Camera::height), "height" },
 		{ cs::fun(&Camera::near_plane), "near_plane" },
 		{ cs::fun(&Camera::far_plane), "far_plane" },
 		{ cs::fun(&Camera::sensitivity), "sensitivity" },
@@ -927,6 +931,8 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["Camera"] = "Entity that has a view of the scene.";
 	INTERP_SCRIPT_MEMBERS["aspect_ratio"] = "aspect_ratio";
 	INTERP_SCRIPT_MEMBERS["field_of_view"] = "field_of_view";
+	INTERP_SCRIPT_MEMBERS["width"] = "width";
+	INTERP_SCRIPT_MEMBERS["height"] = "height";
 	INTERP_SCRIPT_MEMBERS["near_plane"] = "near_plane";
 	INTERP_SCRIPT_MEMBERS["far_plane"] = "far_plane";
 	INTERP_SCRIPT_MEMBERS["sensitivity"] = "sensitivity";
@@ -1377,6 +1383,12 @@ const int load_constants = [&]
 	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_POINTS"] = "Makes the rasterizer render this mesh as an array of POINTS.";
 	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_LINES"] = "Makes the rasterizer render this mesh as an array of LINES.";
 	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_TRIANGLES"] = "Makes the rasterizer render this mesh as an array of TRIANGLES.";
+
+	// Camera
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) CameraType::PERSPECTIVE), "CAMERA_PERSPECTIVE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) CameraType::ORTHOGRAPHIC), "CAMERA_ORTHOGRAPHIC");
+	INTERP_SCRIPT_IDENTIFIERS["CAMERA_PERSPECTIVE"] = "Camera that has a perspective view of the scene.";
+	INTERP_SCRIPT_IDENTIFIERS["CAMERA_ORTHOGRAPHIC"] = "Camera that has an orthographic view of the scene.";
 
 	return 0;
 }();

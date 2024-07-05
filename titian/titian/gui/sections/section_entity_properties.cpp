@@ -12,8 +12,7 @@ void titian::GUISectionEntityProperties::render_gui()
     if (ImGui::Begin("Entity properties") && !editor_layer->selected_entities.empty()) {
         Scene* scene = &game_layer->scene;
         const std::string entity_name = *--editor_layer->selected_entities.end();
-        kl::Object<Entity> entity = scene->get_entity(entity_name);
-        if (entity) {
+        if (kl::Object entity = scene->get_entity(entity_name)) {
             display_entity_info(scene, entity_name, &entity);
             edit_entity_transform(scene, &entity);
             edit_entity_mesh(scene, &entity);
@@ -56,8 +55,24 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
 {
     ImGui::Text("Camera Special Info");
 
-    ImGui::DragFloat("Aspect Ratio", &camera->aspect_ratio);
-    ImGui::DragFloat("FOV", &camera->field_of_view);
+    if (ImGui::BeginCombo("Camera Type", camera->type == CameraType::ORTHOGRAPHIC ? "Orthographic" : "Perspective")) {
+        if (ImGui::Selectable("Perspective", camera->type == CameraType::PERSPECTIVE)) {
+            camera->type = (int) CameraType::PERSPECTIVE;
+        }
+        if (ImGui::Selectable("Orthographic", camera->type == CameraType::ORTHOGRAPHIC)) {
+            camera->type = (int) CameraType::ORTHOGRAPHIC;
+        }
+        ImGui::EndCombo();
+    }
+
+    if (camera->type == CameraType::ORTHOGRAPHIC) {
+        ImGui::DragFloat("Width", &camera->width);
+        ImGui::DragFloat("Height", &camera->height);
+    }
+    else {
+        ImGui::DragFloat("Aspect Ratio", &camera->aspect_ratio);
+        ImGui::DragFloat("FOV", &camera->field_of_view);
+    }
 
     ImGui::DragFloat("Near Plane", &camera->near_plane);
     ImGui::DragFloat("Far Plane", &camera->far_plane);

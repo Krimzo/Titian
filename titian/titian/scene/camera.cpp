@@ -9,8 +9,12 @@ void titian::Camera::serialize(Serializer* serializer, const void* helper_data) 
 {
     Entity::serialize(serializer, helper_data);
 
+    serializer->write_object<int>(type);
+
     serializer->write_object<float>(aspect_ratio);
     serializer->write_object<float>(field_of_view);
+    serializer->write_object<float>(width);
+    serializer->write_object<float>(height);
     serializer->write_object<float>(near_plane);
     serializer->write_object<float>(far_plane);
     serializer->write_object<float>(sensitivity);
@@ -30,8 +34,12 @@ void titian::Camera::deserialize(const Serializer* serializer, const void* helpe
 {
     Entity::deserialize(serializer, helper_data);
 
+    serializer->read_object<int>(type);
+
     serializer->read_object<float>(aspect_ratio);
     serializer->read_object<float>(field_of_view);
+    serializer->read_object<float>(width);
+    serializer->read_object<float>(height);
     serializer->read_object<float>(near_plane);
     serializer->read_object<float>(far_plane);
     serializer->read_object<float>(sensitivity);
@@ -125,6 +133,9 @@ kl::Float4x4 titian::Camera::view_matrix() const
 
 kl::Float4x4 titian::Camera::projection_matrix() const
 {
+    if (type == CameraType::ORTHOGRAPHIC) {
+        return kl::Float4x4::orthographic(-width * 0.5f, width * 0.5f, -height * 0.5f, height * 0.5f, near_plane, far_plane);
+    }
     return kl::Float4x4::perspective(field_of_view, aspect_ratio, near_plane, far_plane);
 }
 
