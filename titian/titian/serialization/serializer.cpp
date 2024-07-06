@@ -36,7 +36,7 @@ titian::Serializer::Serializer(const std::string& path, const bool write)
 
 titian::Serializer::~Serializer()
 {
-	if (*this) {
+	if (static_cast<bool>(*this)) {
 		Logger::log("Closed ", m_writing ? "serialization" : "deserialization", " file [", m_path, "]");
 	}
 }
@@ -48,14 +48,14 @@ titian::Serializer::operator bool() const
 
 void titian::Serializer::write_string(const std::string& data)
 {
-	const uint64_t size = data.size();
-	m_file.write<uint64_t>(size);
+	const uint32_t size = (uint32_t) data.size();
+	m_file.write<uint32_t>(size);
 	m_file.write<char>(data.data(), size);
 }
 
 void titian::Serializer::read_string(std::string& data) const
 {
-	const uint64_t size = m_file.read<uint64_t>();
+	const uint32_t size = m_file.read<uint32_t>();
 	data.resize(size);
 	m_file.read<char>(data.data(), size);
 }
