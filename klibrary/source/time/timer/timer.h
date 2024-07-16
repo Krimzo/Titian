@@ -11,12 +11,10 @@ namespace kl {
         uint64_t m_elapsed_start;
 
         float m_old_elapsed = 0.0f;
-        bool m_is_paused = false;
+        bool m_is_running = true;
 
     public:
         Timer();
-
-        void reset();
 
         void update_delta();
         float delta() const;
@@ -24,8 +22,12 @@ namespace kl {
         void reset_elapsed();
         float elapsed() const;
 
-        bool is_paused() const;
+        void stop();
+        void restart();
+
         void pause();
         void resume();
+
+        bool is_running() const;
     };
 }

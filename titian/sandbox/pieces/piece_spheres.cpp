@@ -18,12 +18,13 @@ void sandbox::SandboxPieceSpheres::setup_self()
     for (int y = 0; y < size; y++) {
         for (int x = 0; x < size; x++) {
             const std::string mesh_name = "sphere";
+            const std::string animation_name = "sphere";
             const std::string counter_id = kl::format(std::setw(3), std::setfill('0'), sphere_counter);
             const std::string material_name = kl::format("sphere_mat_", counter_id);
             const std::string entity_name = kl::format("Sphere", counter_id);
 
-            // Mesh
             scene->meshes[mesh_name] = scene->default_meshes->sphere;
+			scene->animations[animation_name] = scene->default_animations->sphere;
 
             // Material
             kl::Object material = new Material();
@@ -37,7 +38,7 @@ void sandbox::SandboxPieceSpheres::setup_self()
             kl::Object sphere = scene->new_entity(false);
             sphere->set_position({ (x - half_size) * 2.25f + x_offset, (y - half_size) * 2.25f, 5.0f });
 
-            sphere->mesh_name = mesh_name;
+            sphere->animation_name = animation_name;
             sphere->material_name = material_name;
 
             scene->add_entity(entity_name, sphere);

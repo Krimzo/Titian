@@ -31,8 +31,9 @@ void titian::Entity::serialize(Serializer* serializer, const void* helper_data) 
     serializer->write_object<kl::Float3>(velocity());
     serializer->write_object<kl::Float3>(angular());
 
-    serializer->write_string(mesh_name);
+    serializer->write_string(animation_name);
     serializer->write_string(material_name);
+    serializer->write_string(collider_mesh_name);
 
     const bool has_collider = static_cast<bool>(m_collider);
     serializer->write_object<bool>(has_collider);
@@ -55,8 +56,9 @@ void titian::Entity::deserialize(const Serializer* serializer, const void* helpe
     set_velocity(serializer->read_object<kl::Float3>());
     set_angular(serializer->read_object<kl::Float3>());
 
-    serializer->read_string(mesh_name);
+    serializer->read_string(animation_name);
     serializer->read_string(material_name);
+    serializer->read_string(collider_mesh_name);
 
     const bool has_collider = serializer->read_object<bool>();
     if (has_collider) {

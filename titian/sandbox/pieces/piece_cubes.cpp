@@ -18,11 +18,12 @@ void sandbox::SandboxPieceCubes::setup_self()
     for (int y = 0; y < size; y++) {
         for (int x = 0; x < size; x++) {
             const std::string mesh_name = "cube";
+            const std::string animation_name = "cube";
             const std::string material_name = kl::format("cube_mat_", cube_counter);
             const std::string entity_name = kl::format("Cube", cube_counter);
 
-            // Mesh
             scene->meshes[mesh_name] = scene->default_meshes->cube;
+			scene->animations[animation_name] = scene->default_animations->cube;
 
             // Material
             kl::Object material = new Material();
@@ -37,9 +38,9 @@ void sandbox::SandboxPieceCubes::setup_self()
                 (float)(x - half_size) + x_offset,
                 (float)(y - half_size),
                 5.0f,
-                });
+            });
 
-            cube->mesh_name = mesh_name;
+            cube->animation_name = animation_name;
             cube->material_name = material_name;
 
             scene->add_entity(entity_name, cube);

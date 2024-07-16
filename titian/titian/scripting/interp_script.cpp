@@ -146,15 +146,18 @@ const int load_types = [&]
 	using namespace titian;
 	
 	// Bootstrap
+	cs::bootstrap::standard_library::vector_type<std::vector<std::string>>("StringData", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::vector_type<std::vector<kl::Vertex<float>>>("MeshData", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::vector_type<std::vector<kl::Color>>("TextureData", *INTERP_SCRIPT_MODULE);
 
 	cs::bootstrap::standard_library::vector_type<std::vector<Mesh*>>("MeshVector", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<std::vector<Animation*>>("AnimationVector", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::vector_type<std::vector<Texture*>>("TextureVector", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::vector_type<std::vector<Material*>>("MaterialVector", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::vector_type<std::vector<Entity*>>("EntityVector", *INTERP_SCRIPT_MODULE);
 
 	cs::bootstrap::standard_library::map_type<std::map<std::string, Mesh*>>("MeshMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<std::map<std::string, Animation*>>("AnimationMap", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::map_type<std::map<std::string, Texture*>>("TextureMap", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::map_type<std::map<std::string, Material*>>("MaterialMap", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::map_type<std::map<std::string, Entity*>>("EntityMap", *INTERP_SCRIPT_MODULE);
@@ -765,6 +768,20 @@ const int load_types = [&]
 	INTERP_SCRIPT_MEMBERS["render_wireframe"] = "render_wireframe";
 	INTERP_SCRIPT_IDENTIFIERS["reload"] = "Reloads the self.";
 
+	// Animation
+	cs::utility::add_class<Animation>(*INTERP_SCRIPT_MODULE, "Animation",
+	{},
+	{
+		{ cs::fun(&Animation::meshes), "meshes" },
+		{ cs::fun(&Animation::fps), "fps" },
+
+		{ cs::fun(&Animation::get_mesh), "get_mesh" },
+	});
+	INTERP_SCRIPT_IDENTIFIERS["Animation"] = "Mesh animation descriptor.";
+	INTERP_SCRIPT_MEMBERS["meshes"] = "meshes";
+	INTERP_SCRIPT_MEMBERS["fps"] = "fps";
+	INTERP_SCRIPT_MEMBERS["get_mesh"] = "Returns an animation mesh for the given time.";
+
 	// Texture
 	cs::utility::add_class<Texture>(*INTERP_SCRIPT_MODULE, "Texture",
 	{},
@@ -837,8 +854,9 @@ const int load_types = [&]
 		{ cs::fun(&Entity::scale), "scale" },
 		{ cs::fun(&Entity::casts_shadows), "casts_shadows" },
 
-		{ cs::fun(&Entity::mesh_name), "mesh_name" },
+		{ cs::fun(&Entity::animation_name), "animation_name" },
 		{ cs::fun(&Entity::material_name), "material_name" },
+		{ cs::fun(&Entity::collider_mesh_name), "collider_mesh_name" },
 
 		{ cs::fun(&Entity::model_matrix), "model_matrix" },
 		{ cs::fun(&Entity::collider_matrix), "collider_matrix" },
@@ -867,8 +885,9 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["Entity"] = "Base entity that's a part of a scene.";
 	INTERP_SCRIPT_MEMBERS["scale"] = "scale";
 	INTERP_SCRIPT_MEMBERS["casts_shadows"] = "casts_shadows";
-	INTERP_SCRIPT_MEMBERS["mesh_name"] = "mesh_name";
+	INTERP_SCRIPT_MEMBERS["animation_name"] = "animation_name";
 	INTERP_SCRIPT_MEMBERS["material_name"] = "material_name";
+	INTERP_SCRIPT_MEMBERS["collider_mesh_name"] = "collider_mesh_name";
 	INTERP_SCRIPT_IDENTIFIERS["model_matrix"] = "Returns the model matrix of entity.";
 	INTERP_SCRIPT_IDENTIFIERS["collider_matrix"] = "Returns the collider matrix of entity.";
 	INTERP_SCRIPT_IDENTIFIERS["set_rotation"] = "Sets the entity rotation.";
@@ -1017,36 +1036,42 @@ const int load_types = [&]
 		{ cs::fun(&Scene::gravity), "gravity" },
 
 		{ cs::fun(&Scene::helper_new_mesh), "new_mesh" },
+		{ cs::fun(&Scene::helper_new_animation), "new_animation" },
 		{ cs::fun(&Scene::helper_new_texture), "new_texture" },
 		{ cs::fun(&Scene::helper_new_material), "new_material" },
 		{ cs::fun(&Scene::helper_new_shader), "new_shader" },
 		{ cs::fun(&Scene::helper_new_entity), "new_entity" },
 
 		{ cs::fun(&Scene::helper_get_mesh), "get_mesh" },
+		{ cs::fun(&Scene::helper_get_animation), "get_animation" },
 		{ cs::fun(&Scene::helper_get_texture), "get_texture" },
 		{ cs::fun(&Scene::helper_get_material), "get_material" },
 		{ cs::fun(&Scene::helper_get_shader), "get_shader" },
 		{ cs::fun(&Scene::helper_get_entity), "get_entity" },
 
 		{ cs::fun(&Scene::helper_remove_mesh), "remove_mesh" },
+		{ cs::fun(&Scene::helper_remove_animation), "remove_animation" },
 		{ cs::fun(&Scene::helper_remove_texture), "remove_texture" },
 		{ cs::fun(&Scene::helper_remove_material), "remove_material" },
 		{ cs::fun(&Scene::helper_remove_shader), "remove_shader" },
 		{ cs::fun(&Scene::helper_remove_entity), "remove_entity" },
 
 		{ cs::fun(&Scene::helper_contains_mesh), "contains_mesh" },
+		{ cs::fun(&Scene::helper_contains_animation), "contains_animation" },
 		{ cs::fun(&Scene::helper_contains_texture), "contains_texture" },
 		{ cs::fun(&Scene::helper_contains_material), "contains_material" },
 		{ cs::fun(&Scene::helper_contains_shader), "contains_shader" },
 		{ cs::fun(&Scene::helper_contains_entity), "contains_entity" },
 
 		{ cs::fun(&Scene::helper_mesh_count), "mesh_count" },
+		{ cs::fun(&Scene::helper_animation_count), "animation_count" },
 		{ cs::fun(&Scene::helper_texture_count), "texture_count" },
 		{ cs::fun(&Scene::helper_material_count), "material_count" },
 		{ cs::fun(&Scene::helper_shader_count), "shader_count" },
 		{ cs::fun(&Scene::helper_entity_count), "entity_count" },
 
 		{ cs::fun(&Scene::helper_get_all_meshes), "get_all_meshes" },
+		{ cs::fun(&Scene::helper_get_all_animations), "get_all_animations" },
 		{ cs::fun(&Scene::helper_get_all_textures), "get_all_textures" },
 		{ cs::fun(&Scene::helper_get_all_materials), "get_all_materials" },
 		{ cs::fun(&Scene::helper_get_all_shaders), "get_all_shaders" },
@@ -1063,31 +1088,37 @@ const int load_types = [&]
 	INTERP_SCRIPT_MEMBERS["main_ambient_light_name"] = "main_ambient_light_name";
 	INTERP_SCRIPT_MEMBERS["main_directional_light_name"] = "main_directional_light_name";
 	INTERP_SCRIPT_IDENTIFIERS["new_mesh"] = "Creates a new mesh in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["new_animation"] = "Creates a new animation in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["new_texture"] = "Creates a new texture in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["new_material"] = "Creates a new material in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["new_shader"] = "Creates a new shader in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["new_entity"] = "Creates a new entity in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["get_mesh"] = "Returns a scene mesh.";
+	INTERP_SCRIPT_IDENTIFIERS["get_animation"] = "Returns a scene animation.";
 	INTERP_SCRIPT_IDENTIFIERS["get_texture"] = "Returns a scene texture.";
 	INTERP_SCRIPT_IDENTIFIERS["get_material"] = "Returns a scene material.";
 	INTERP_SCRIPT_IDENTIFIERS["get_shader"] = "Returns a scene shader.";
 	INTERP_SCRIPT_IDENTIFIERS["get_entity"] = "Returns a scene entity.";
 	INTERP_SCRIPT_IDENTIFIERS["remove_mesh"] = "Removes a mesh from scene.";
+	INTERP_SCRIPT_IDENTIFIERS["remove_animation"] = "Removes an animation from scene.";
 	INTERP_SCRIPT_IDENTIFIERS["remove_texture"] = "Removes a texture from scene.";
 	INTERP_SCRIPT_IDENTIFIERS["remove_material"] = "Removes a material from scene.";
 	INTERP_SCRIPT_IDENTIFIERS["remove_shader"] = "Removes a shader from scene.";
 	INTERP_SCRIPT_IDENTIFIERS["remove_entity"] = "Removes an entity from scene.";
-	INTERP_SCRIPT_IDENTIFIERS["contains_mesh"] = "Returns true if scene contains mesh.";
-	INTERP_SCRIPT_IDENTIFIERS["contains_texture"] = "Returns true if scene contains texture.";
-	INTERP_SCRIPT_IDENTIFIERS["contains_material"] = "Returns true if scene contains material.";
-	INTERP_SCRIPT_IDENTIFIERS["contains_shader"] = "Returns true if scene contains shader.";
-	INTERP_SCRIPT_IDENTIFIERS["contains_entity"] = "Returns true if scene contains entity.";
-	INTERP_SCRIPT_IDENTIFIERS["mesh_count"] = "Returns the integer count of meshes in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["texture_count"] = "Returns the integer count of texture in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["material_count"] = "Returns the integer count of materials in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["shader_count"] = "Returns the integer count of shaders in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["entity_count"] = "Returns the integer count of entities in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["contains_mesh"] = "Returns true if scene contains the mesh.";
+	INTERP_SCRIPT_IDENTIFIERS["contains_animation"] = "Returns true if scene contains the animation.";
+	INTERP_SCRIPT_IDENTIFIERS["contains_texture"] = "Returns true if scene contains the texture.";
+	INTERP_SCRIPT_IDENTIFIERS["contains_material"] = "Returns true if scene contains the material.";
+	INTERP_SCRIPT_IDENTIFIERS["contains_shader"] = "Returns true if scene contains the shader.";
+	INTERP_SCRIPT_IDENTIFIERS["contains_entity"] = "Returns true if scene contains the entity.";
+	INTERP_SCRIPT_IDENTIFIERS["mesh_count"] = "Returns an integer count of meshes in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["animation_count"] = "Returns an integer count of animations in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["texture_count"] = "Returns an integer count of texture in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["material_count"] = "Returns an integer count of materials in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["shader_count"] = "Returns an integer count of shaders in scene.";
+	INTERP_SCRIPT_IDENTIFIERS["entity_count"] = "Returns an integer count of entities in scene.";
 	INTERP_SCRIPT_IDENTIFIERS["get_all_meshes"] = "Returns a map of all scene meshes.";
+	INTERP_SCRIPT_IDENTIFIERS["get_all_animations"] = "Returns a map of all scene animations.";
 	INTERP_SCRIPT_IDENTIFIERS["get_all_textures"] = "Returns a map of all scene textures.";
 	INTERP_SCRIPT_IDENTIFIERS["get_all_materials"] = "Returns a map of all scene materials.";
 	INTERP_SCRIPT_IDENTIFIERS["get_all_shaders"] = "Returns a map of all scene shaders.";
@@ -1586,6 +1617,18 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_color"] = "Generates a random color (is_grayscale).";
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_char"] = "Generates a random char (can_be_upper).";
 	INTERP_SCRIPT_IDENTIFIERS["gen_random_string"] = "Generates a random string (length).";
+
+	// Files
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::read_file), "read_file");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::read_file_string), "read_file_string");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::parse_obj_file), "parse_obj_file");
+	INTERP_SCRIPT_IDENTIFIERS["read_file"] = "Reads a file and returns a vector<byte>.";
+	INTERP_SCRIPT_IDENTIFIERS["read_file_string"] = "Reads a file and returns a string.";
+	INTERP_SCRIPT_IDENTIFIERS["parse_obj_file"] = "Parses the 3D data file and returns vector<Vertex<float>>.";
+
+	// Threading
+	INTERP_SCRIPT_MODULE->add(cs::fun<void (*)(int, int, const std::function<void(int)>&)>(&kl::async_for), "async_for");
+	INTERP_SCRIPT_IDENTIFIERS["async_for"] = "Async for.";
 
 	// UI
 	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_separator), "ui_separator");

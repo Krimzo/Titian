@@ -23,8 +23,9 @@ namespace titian {
         kl::Float3 scale{ 1.0f };
         bool casts_shadows = true;
 
-        std::string mesh_name = "/";
+        std::string animation_name = "/";
         std::string material_name = "/";
+        std::string collider_mesh_name = "/";
 
         // Creation
         Entity(EntityType type, physx::PxPhysics* physics, bool dynamic);

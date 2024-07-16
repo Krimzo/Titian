@@ -29,7 +29,6 @@ void titian::GameLayer::reset_scene()
 
 void titian::GameLayer::start_game()
 {
-	// Reload
 	for (auto& [_, shader] : scene->shaders) {
 		shader->reload();
 	}
@@ -37,17 +36,15 @@ void titian::GameLayer::start_game()
 		script->reload();
 	}
 
-	// Start
-	app_layer->timer.reset();
+	app_layer->timer.restart();
 	for (auto& [_, script] : scene->scripts) {
 		script->call_start(&scene);
 	}
 
-	// Change state
 	game_running = true;
 	game_paused = false;
 	Logger::log("Game started.");
-	app_layer->timer.reset();
+	app_layer->timer.restart();
 }
 
 void titian::GameLayer::pause_game()
@@ -64,7 +61,7 @@ void titian::GameLayer::resume_game()
 
 void titian::GameLayer::stop_game()
 {
-	// Change state
+	app_layer->timer.stop();
 	game_running = false;
 	game_paused = false;
 	Logger::log("Game stopped.");

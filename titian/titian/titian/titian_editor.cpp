@@ -38,6 +38,7 @@ titian::TitianEditor::TitianEditor()
     gui_layer.sections.emplace_back(new GUISectionSceneEntities(layer_package));
     gui_layer.sections.emplace_back(new GUISectionSceneInfo(layer_package));
     gui_layer.sections.emplace_back(new GUISectionMeshEditor(layer_package));
+    gui_layer.sections.emplace_back(new GUISectionAnimationEditor(layer_package));
     gui_layer.sections.emplace_back(new GUISectionTextureEditor(layer_package));
     gui_layer.sections.emplace_back(new GUISectionMaterialEditor(layer_package));
     gui_layer.sections.emplace_back(new GUISectionShaderEditor(layer_package));
@@ -59,6 +60,7 @@ titian::TitianEditor::TitianEditor()
     // Logger
     Logger::set_ready();
     kl::VERIFICATION_LOGGER = Logger::log<std::string_view>;
+    app_layer.timer.stop();
 }
 
 titian::TitianEditor::~TitianEditor()

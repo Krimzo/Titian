@@ -108,11 +108,6 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
             if (std::optional opt_name = gui_input_waited("##RenameMeshInput", mesh_name)) {
                 const std::string& name = opt_name.value();
                 if (!name.empty() && !scene->meshes.contains(name)) {
-                    for (auto& [_, entity] : *scene) {
-                        if (entity->mesh_name == mesh_name) {
-                            entity->mesh_name = name;
-                        }
-                    }
                     if (this->selected_mesh == mesh_name) {
                         this->selected_mesh = name;
                     }
@@ -130,11 +125,6 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
             }
 
             if (imgui::Button("Delete", { -1.0f, 0.0f })) {
-                for (auto& [_, entity] : *scene) {
-                    if (entity->mesh_name == mesh_name) {
-                        entity->mesh_name = "/";
-                    }
-                }
                 if (this->selected_mesh == mesh_name) {
                     this->selected_mesh = "/";
                 }
@@ -302,7 +292,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
 
     if (imgui::Begin("Mesh Properties") && mesh) {
         /*-*/
-        imgui::Text("Global");
+        imgui::Text("Mesh Editor");
         if (imgui::DragFloat3("Sun Direction", sun_direction, 0.01f)) {
             sun_direction = kl::normalize(sun_direction);
         }

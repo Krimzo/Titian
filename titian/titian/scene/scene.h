@@ -1,14 +1,16 @@
 ﻿#pragma once
 
 #include "components/mesh.h"
+#include "components/animation.h"
 #include "components/texture.h"
 #include "components/material.h"
 #include "components/shader.h"
 #include "scripting/script.h"
 #include "scene/entity.h"
 
-#include "scene/default_meshes.h"
-#include "scene/default_materials.h"
+#include "scene/default/default_meshes.h"
+#include "scene/default/default_animations.h"
+#include "scene/default/default_materials.h"
 
 
 namespace titian {
@@ -16,12 +18,14 @@ namespace titian {
     {
     public:
         std::map<std::string, kl::Object<Mesh>> meshes = {};
+        std::map<std::string, kl::Object<Animation>> animations = {};
         std::map<std::string, kl::Object<Texture>> textures = {};
         std::map<std::string, kl::Object<Material>> materials = {};
         std::map<std::string, kl::Object<Shader>> shaders = {};
         std::map<std::string, kl::Object<Script>> scripts = {};
 
         kl::Object<DefaultMeshes> default_meshes = nullptr;
+        kl::Object<DefaultAnimations> default_animations = nullptr;
         kl::Object<DefaultMaterials> default_materials = nullptr;
 
         std::string main_camera_name = "/";
@@ -75,6 +79,7 @@ namespace titian {
 
         // Get types
         kl::Object<Mesh> get_mesh(const std::string& id) const;
+        kl::Object<Animation> get_animation(const std::string& id) const;
         kl::Object<Texture> get_texture(const std::string& id) const;
         kl::Object<Material> get_material(const std::string& id) const;
         kl::Object<Shader> get_shader(const std::string& id) const;
@@ -115,6 +120,7 @@ namespace titian {
 
         // Helper new
         Mesh* helper_new_mesh(const std::string& id);
+        Animation* helper_new_animation(const std::string& id);
         Texture* helper_new_texture(const std::string& id);
         Material* helper_new_material(const std::string& id);
         Shader* helper_new_shader(const std::string& id);
@@ -122,6 +128,7 @@ namespace titian {
 
         // Helper get
         Mesh* helper_get_mesh(const std::string& id);
+        Animation* helper_get_animation(const std::string& id);
         Texture* helper_get_texture(const std::string& id);
         Material* helper_get_material(const std::string& id);
         Shader* helper_get_shader(const std::string& id);
@@ -129,6 +136,7 @@ namespace titian {
 
         // Helper remove
         void helper_remove_mesh(const std::string& id);
+        void helper_remove_animation(const std::string& id);
         void helper_remove_texture(const std::string& id);
         void helper_remove_material(const std::string& id);
         void helper_remove_shader(const std::string& id);
@@ -136,6 +144,7 @@ namespace titian {
 
         // Helper contains
         bool helper_contains_mesh(const std::string& id) const;
+        bool helper_contains_animation(const std::string& id) const;
         bool helper_contains_texture(const std::string& id) const;
         bool helper_contains_material(const std::string& id) const;
         bool helper_contains_shader(const std::string& id) const;
@@ -143,6 +152,7 @@ namespace titian {
 
         // Helper count
         int helper_mesh_count() const;
+        int helper_animation_count() const;
         int helper_texture_count() const;
         int helper_material_count() const;
         int helper_shader_count() const;
@@ -150,6 +160,7 @@ namespace titian {
 
         // Helper get all
         std::map<std::string, Mesh*> helper_get_all_meshes();
+        std::map<std::string, Animation*> helper_get_all_animations();
         std::map<std::string, Texture*> helper_get_all_textures();
         std::map<std::string, Material*> helper_get_all_materials();
         std::map<std::string, Shader*> helper_get_all_shaders();

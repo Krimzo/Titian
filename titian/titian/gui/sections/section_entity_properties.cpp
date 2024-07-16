@@ -15,7 +15,7 @@ void titian::GUISectionEntityProperties::render_gui()
         if (kl::Object entity = scene->get_entity(entity_name)) {
             display_entity_info(scene, entity_name, &entity);
             edit_entity_transform(scene, &entity);
-            edit_entity_mesh(scene, &entity);
+            edit_entity_animation(scene, &entity);
             edit_entity_material(scene, &entity);
             edit_entity_physics(scene, entity_name, entity);
             edit_entity_collider(scene, &entity);
@@ -172,46 +172,46 @@ void titian::GUISectionEntityProperties::edit_entity_transform(Scene* scene, Ent
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_mesh(Scene* scene, Entity* entity)
+void titian::GUISectionEntityProperties::edit_entity_animation(Scene* scene, Entity* entity)
 {
     imgui::Separator();
-    imgui::Text("Mesh");
+    imgui::Text("Animation");
 
     // Selector
-    std::string& bound_mesh = entity->mesh_name;
-    if (imgui::BeginCombo("Bound Mesh", bound_mesh.c_str())) {
+    auto& bound_animation = entity->animation_name;
+    if (imgui::BeginCombo("Bound Animation", bound_animation.c_str())) {
         const std::string filter = gui_input_continuous("Search###EntityPropsMesh");
-        if (imgui::Selectable("/", bound_mesh == "/")) {
-            bound_mesh = "/";
+        if (imgui::Selectable("/", bound_animation == "/")) {
+            bound_animation = "/";
 
-            if (Collider* collider = &entity->collider()) {
-                const physx::PxGeometryType::Enum type = collider->type();
-                if (type == physx::PxGeometryType::Enum::eTRIANGLEMESH) {
-                    entity->set_collider(nullptr);
-                }
-            }
+            //if (Collider* collider = &entity->collider()) {
+            //    const physx::PxGeometryType::Enum type = collider->type();
+            //    if (type == physx::PxGeometryType::Enum::eTRIANGLEMESH) {
+            //        entity->set_collider(nullptr);
+            //    }
+            //}
         }
-        for (const auto& [mesh_name, mesh] : scene->meshes) {
-            if (!filter.empty() && mesh_name.find(filter) == -1) {
+        for (const auto& [name, animation] : scene->animations) {
+            if (!filter.empty() && name.find(filter) == -1) {
                 continue;
             }
-            if (imgui::Selectable(mesh_name.c_str(), mesh_name == bound_mesh)) {
-                bound_mesh = mesh_name;
+            if (imgui::Selectable(name.c_str(), name == bound_animation)) {
+                bound_animation = name;
 
-                if (Collider* collider = &entity->collider()) {
-                    const physx::PxGeometryType::Enum type = collider->type();
-                    if (type == physx::PxGeometryType::Enum::eTRIANGLEMESH) {
-                        physx::PxTriangleMesh* possible_collider_mesh = mesh->physics_buffer;
-                        if (possible_collider_mesh) {
-                            physx::PxTriangleMeshGeometry triangle_geometry(possible_collider_mesh, physx::PxVec3(1.0f));
-                            kl::Object collider = new Collider(scene->physics(), triangle_geometry);
-                            entity->set_collider(collider);
-                        }
-                        else {
-                            entity->set_collider(nullptr);
-                        }
-                    }
-                }
+                //if (Collider* collider = &entity->collider()) {
+                //    const physx::PxGeometryType::Enum type = collider->type();
+                //    if (type == physx::PxGeometryType::Enum::eTRIANGLEMESH) {
+                //        physx::PxTriangleMesh* possible_collider_mesh = mesh->physics_buffer;
+                //        if (possible_collider_mesh) {
+                //            physx::PxTriangleMeshGeometry triangle_geometry(possible_collider_mesh, physx::PxVec3(1.0f));
+                //            kl::Object collider = new Collider(scene->physics(), triangle_geometry);
+                //            entity->set_collider(collider);
+                //        }
+                //        else {
+                //            entity->set_collider(nullptr);
+                //        }
+                //    }
+                //}
             }
         }
         imgui::EndCombo();
@@ -280,13 +280,10 @@ void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const
 void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Entity* entity)
 {
     static const std::unordered_map<physx::PxGeometryType::Enum, std::string> possible_colliders = {
-        {     physx::PxGeometryType::Enum::eINVALID, "/" },
-
-        {     physx::PxGeometryType::Enum::eBOX,     "box" },
-        {  physx::PxGeometryType::Enum::eSPHERE,  "sphere" },
+        { physx::PxGeometryType::Enum::eINVALID, "/" },
+        { physx::PxGeometryType::Enum::eBOX, "box" },
+        { physx::PxGeometryType::Enum::eSPHERE, "sphere" },
         { physx::PxGeometryType::Enum::eCAPSULE, "capsule" },
-
-        { physx::PxGeometryType::Enum::eTRIANGLEMESH,  "mesh" },
     };
 
     imgui::Separator();
@@ -294,20 +291,27 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
 
     kl::Object collider = entity->collider();
     physx::PxGeometryType::Enum collider_type = collider ? collider->type() : physx::PxGeometryType::Enum::eINVALID;
-    std::string collider_name = possible_colliders.at(collider_type);
+    std::string collider_name = possible_colliders.contains(collider_type) ? possible_colliders.at(collider_type) : ("mesh_" + entity->collider_mesh_name);
 
     // Choose type
     if (imgui::BeginCombo("Bound Collider", collider_name.c_str())) {
         for (auto& [type, name] : possible_colliders) {
             if (imgui::Selectable(name.c_str(), type == collider_type)) {
-                Mesh* mesh = &scene->get_mesh(entity->mesh_name);
-                collider = scene->new_default_collider(type, mesh);
+                collider = scene->new_default_collider(type, nullptr);
                 collider_type = (collider ? collider->type() : physx::PxGeometryType::Enum::eINVALID);
-                collider_name = possible_colliders.at(collider_type);
                 entity->set_collider(collider);
             }
         }
+        for (auto& [name, mesh] : scene->meshes) {
+            if (imgui::Selectable(("mesh_" + name).c_str(), entity->collider_mesh_name == name)) {
+                entity->collider_mesh_name = name;
 
+                Mesh* mesh = &scene->get_mesh(entity->collider_mesh_name);
+                collider = scene->new_default_collider(physx::PxGeometryType::Enum::eTRIANGLEMESH, mesh);
+                collider_type = (collider ? collider->type() : physx::PxGeometryType::Enum::eINVALID);
+                entity->set_collider(collider);
+            }
+        }
         imgui::EndCombo();
     }
     if (!collider) {

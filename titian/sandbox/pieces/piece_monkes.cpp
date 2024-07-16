@@ -20,12 +20,13 @@ void sandbox::SandboxPieceMonkes::setup_self()
         const int y = i / size;
 
         const std::string mesh_name = "monke";
+        const std::string animation_name = "monke";
         const std::string counter_id = kl::format(std::setw(3), std::setfill('0'), i);
         const std::string material_name = kl::format("monke_mat_", counter_id);
         const std::string entity_name = kl::format("Monke", counter_id);
 
-        // Mesh
         scene->meshes[mesh_name] = scene->default_meshes->monke;
+		scene->animations[animation_name] = scene->default_animations->monke;
 
         // Material
         const float percentage = (i + 1.0f) / entity_count;
@@ -44,7 +45,7 @@ void sandbox::SandboxPieceMonkes::setup_self()
             5.0f,
         });
 
-        monke->mesh_name = mesh_name;
+        monke->animation_name = animation_name;
         monke->material_name = material_name;
 
         scene->add_entity(entity_name, monke);

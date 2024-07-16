@@ -20,7 +20,7 @@ void titian::GUISectionTimeInfo::render_gui()
     };
 
     if (imgui::Begin("Time Info")) {
-        display_time("GameTime", game_layer->game_running ? timer->elapsed() : 0.0f, 1.0f);
+        display_time("GameTime", timer->elapsed(), 1.0f);
         display_time("FrameTime", timer->delta());
 
         imgui::Separator();

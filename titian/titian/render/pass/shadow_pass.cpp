@@ -27,6 +27,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
 {
     // Helper
     RenderStates* render_states = &render_layer->states;
+    kl::Timer* timer = &app_layer->timer;
     kl::GPU* gpu = &app_layer->gpu;
     Scene* scene = &game_layer->scene;
 
@@ -58,7 +59,12 @@ void titian::ShadowPass::render_self(StatePackage& package)
 				continue;
 			}
 
-            Mesh* mesh = &scene->get_mesh(entity->mesh_name);
+            Animation* animation = &scene->get_animation(entity->animation_name);
+			if (!animation) {
+				continue;
+			}
+
+            Mesh* mesh = animation->get_mesh(timer->elapsed());
             Material* material = &scene->get_material(entity->material_name);
             if (!mesh || !material || material->is_transparent()) {
                 continue;

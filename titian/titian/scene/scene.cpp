@@ -43,6 +43,9 @@ titian::Scene::Scene(kl::GPU* gpu)
     default_meshes = new DefaultMeshes(gpu, m_physics, m_cooking);
     kl::assert(default_meshes, "Failed to init default meshes");
 
+    default_animations = new DefaultAnimations(this);
+    kl::assert(default_animations, "Failed to init default animations");
+
     default_materials = new DefaultMaterials(gpu);
     kl::assert(default_materials, "Failed to init default materials");
 }
@@ -74,7 +77,7 @@ void titian::Scene::serialize(Serializer* serializer, const void* helper_data) c
     serializer->write_string(main_ambient_light_name);
     serializer->write_string(main_directional_light_name);
 
-    auto write_map = [&]<typename T>(const std::map<std::string, kl::Object<T>>&data, const void* helper_data)
+    auto write_map = [&]<typename T>(const std::map<std::string, kl::Object<T>>& data, const void* helper_data)
     {
         serializer->write_object<uint64_t>(data.size());
         for (auto& [name, object] : data) {
@@ -84,6 +87,7 @@ void titian::Scene::serialize(Serializer* serializer, const void* helper_data) c
     };
 
     write_map(meshes, nullptr);
+    write_map(animations, nullptr);
     write_map(textures, nullptr);
     write_map(materials, nullptr);
     write_map(shaders, nullptr);
@@ -97,27 +101,30 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     serializer->read_string(main_ambient_light_name);
     serializer->read_string(main_directional_light_name);
 
-    auto read_map = [&]<typename T>(std::map<std::string, T>& data, const std::function<T()>& provider, const void* helper_data)
+    auto read_map = [&]<typename T>(std::map<std::string, kl::Object<T>>& data, const std::function<T*()>& provider, const void* helper_data)
     {
         const uint64_t size = serializer->read_object<uint64_t>();
         for (uint64_t i = 0; i < size; i++) {
             const std::string name = serializer->read_string();
-            kl::Object object = provider();
+            kl::Object<T> object = provider();
             object->deserialize(serializer, helper_data);
             data[name] = object;
         }
     };
 
-    std::function mesh_provider = [&] { return kl::Object{ new Mesh(m_gpu, m_physics, m_cooking) }; };
+    std::function mesh_provider = [&] { return new Mesh(m_gpu, m_physics, m_cooking); };
     read_map(meshes, mesh_provider, nullptr);
 
-    std::function texture_provider = [&] { return kl::Object{ new Texture(m_gpu) }; };
+    std::function animation_provider = [&] { return new Animation(this); };
+    read_map(animations, animation_provider, nullptr);
+
+    std::function texture_provider = [&] { return new Texture(m_gpu); };
     read_map(textures, texture_provider, nullptr);
 
-    std::function material_provider = [&] { return kl::Object{ new Material() }; };
+    std::function material_provider = [&] { return new Material(); };
     read_map(materials, material_provider, nullptr);
 
-    std::function shader_provider = [&] { return kl::Object{ new Shader(ShaderType::NONE, m_gpu) }; };
+    std::function shader_provider = [&] { return new Shader(ShaderType::NONE, m_gpu); };
     read_map(shaders, shader_provider, nullptr);
 
     /* SCRIPTS */
@@ -309,6 +316,14 @@ kl::Object<titian::Mesh> titian::Scene::get_mesh(const std::string& id) const
     return nullptr;
 }
 
+kl::Object<titian::Animation> titian::Scene::get_animation(const std::string& id) const
+{
+    if (animations.contains(id)) {
+        return animations.at(id);
+    }
+    return nullptr;
+}
+
 kl::Object<titian::Texture> titian::Scene::get_texture(const std::string& id) const
 {
     if (textures.contains(id)) {
@@ -388,7 +403,9 @@ kl::Object<titian::Collider> titian::Scene::new_default_collider(const physx::Px
 
         // Static
     case physx::PxGeometryType::Enum::eTRIANGLEMESH:
-        return new_mesh_collider(*optional_mesh, kl::Float3{ 1.0f });
+        if (optional_mesh) {
+            return new_mesh_collider(*optional_mesh, kl::Float3{ 1.0f });
+        }
     }
     return nullptr;
 }
@@ -399,6 +416,13 @@ titian::Mesh* titian::Scene::helper_new_mesh(const std::string& id)
     Mesh* mesh = new Mesh(m_gpu, m_physics, m_cooking);
     meshes[id] = mesh;
     return mesh;
+}
+
+titian::Animation* titian::Scene::helper_new_animation(const std::string& id)
+{
+    Animation* animation = new Animation(this);
+    animations[id] = animation;
+    return animation;
 }
 
 titian::Texture* titian::Scene::helper_new_texture(const std::string& id)
@@ -438,6 +462,14 @@ titian::Mesh* titian::Scene::helper_get_mesh(const std::string& id)
     return nullptr;
 }
 
+titian::Animation* titian::Scene::helper_get_animation(const std::string& id)
+{
+    if (animations.contains(id)) {
+        return &animations.at(id);
+    }
+    return nullptr;
+}
+
 titian::Texture* titian::Scene::helper_get_texture(const std::string& id)
 {
     if (textures.contains(id)) {
@@ -473,6 +505,11 @@ void titian::Scene::helper_remove_mesh(const std::string& id)
     meshes.erase(id);
 }
 
+void titian::Scene::helper_remove_animation(const std::string& id)
+{
+    animations.erase(id);
+}
+
 void titian::Scene::helper_remove_texture(const std::string& id)
 {
     textures.erase(id);
@@ -497,6 +534,11 @@ void titian::Scene::helper_remove_entity(const std::string& id)
 bool titian::Scene::helper_contains_mesh(const std::string& id) const
 {
     return meshes.contains(id);
+}
+
+bool titian::Scene::helper_contains_animation(const std::string& id) const
+{
+    return animations.contains(id);
 }
 
 bool titian::Scene::helper_contains_texture(const std::string& id) const
@@ -525,6 +567,11 @@ int titian::Scene::helper_mesh_count() const
     return static_cast<int>(meshes.size());
 }
 
+int titian::Scene::helper_animation_count() const
+{
+    return static_cast<int>(animations.size());
+}
+
 int titian::Scene::helper_texture_count() const
 {
     return static_cast<int>(textures.size());
@@ -551,6 +598,15 @@ std::map<std::string, titian::Mesh*> titian::Scene::helper_get_all_meshes()
     std::map<std::string, Mesh*> result = {};
     for (auto& [name, mesh] : meshes) {
         result[name] = &mesh;
+    }
+    return result;
+}
+
+std::map<std::string, titian::Animation*> titian::Scene::helper_get_all_animations()
+{
+    std::map<std::string, Animation*> result = {};
+    for (auto& [name, animation] : animations) {
+        result[name] = &animation;
     }
     return result;
 }

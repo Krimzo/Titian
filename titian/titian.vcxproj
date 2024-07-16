@@ -53,7 +53,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;CHAISCRIPT_NO_THREADS;CHAISCRIPT_NO_THREADS_WARNING;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(ProjectDir)external\zep\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
@@ -78,7 +78,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;CHAISCRIPT_NO_THREADS;CHAISCRIPT_NO_THREADS_WARNING;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(ProjectDir)external\zep\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
@@ -114,7 +114,10 @@
     </ClCompile>
     <ClCompile Include="packager\packager.cpp" />
     <ClCompile Include="packager\packager_entry.cpp" />
+    <ClCompile Include="titian\components\animation.cpp" />
+    <ClCompile Include="titian\gui\sections\section_animation_editor.cpp" />
     <ClCompile Include="titian\render\pass\post_pass.cpp" />
+    <ClCompile Include="titian\scene\default\default_animations.cpp" />
     <ClCompile Include="titian\ui\ui_funcs.cpp" />
     <ClInclude Include="external\chaiscript\chaiscript.hpp" />
     <ClInclude Include="external\chaiscript\dispatchkit\function_params.hpp" />
@@ -352,6 +355,7 @@
     <ClCompile Include="titian\application\logger.cpp" />
     <ClCompile Include="titian\application\log_info.cpp" />
     <ClCompile Include="titian\components\collider.cpp" />
+    <ClInclude Include="titian\components\animation.h" />
     <ClInclude Include="titian\components\collider.h" />
     <ClCompile Include="titian\components\material.cpp" />
     <ClInclude Include="titian\components\material.h" />
@@ -374,6 +378,7 @@
     <ClCompile Include="titian\gui\sections\section_log_view.cpp" />
     <ClCompile Include="titian\gui\sections\section_main_menu.cpp" />
     <ClCompile Include="titian\gui\sections\section_material_editor.cpp" />
+    <ClInclude Include="titian\gui\sections\section_animation_editor.h" />
     <ClInclude Include="titian\gui\sections\section_material_editor.h" />
     <ClCompile Include="titian\gui\sections\section_mesh_editor.cpp" />
     <ClInclude Include="titian\gui\sections\section_mesh_editor.h" />
@@ -402,6 +407,7 @@
     <ClInclude Include="titian\gui\sections\section_texture_editor.h" />
     <ClInclude Include="titian\gui\sections\section_viewport.h" />
     <ClInclude Include="titian\render\pass\post_pass.h" />
+    <ClInclude Include="titian\scene\default\default_animations.h" />
     <ClInclude Include="titian\scripting\interp\language_editor.h" />
     <ClInclude Include="titian\scripting\nodes\scripting_nodes.h" />
     <ClInclude Include="titian\scripting\node_script.h" />
@@ -451,10 +457,10 @@
     <ClInclude Include="titian\render\state_package.h" />
     <ClCompile Include="titian\scene\camera.cpp" />
     <ClInclude Include="titian\scene\camera.h" />
-    <ClCompile Include="titian\scene\default_materials.cpp" />
-    <ClInclude Include="titian\scene\default_materials.h" />
-    <ClInclude Include="titian\scene\default_meshes.h" />
-    <ClCompile Include="titian\scene\default_meshes.cpp" />
+    <ClCompile Include="titian\scene\default\default_materials.cpp" />
+    <ClInclude Include="titian\scene\default\default_materials.h" />
+    <ClInclude Include="titian\scene\default\default_meshes.h" />
+    <ClCompile Include="titian\scene\default\default_meshes.cpp" />
     <ClCompile Include="titian\scene\entity.cpp" />
     <ClInclude Include="titian\scene\entity.h" />
     <ClInclude Include="titian\scene\scene.h" />

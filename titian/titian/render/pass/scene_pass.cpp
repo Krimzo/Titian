@@ -145,8 +145,13 @@ void titian::ScenePass::render_self(StatePackage& package)
     for (auto& [_, entity] : *scene) {
         id_counter += 1;
 
-        // Skip invisible objects
-        Mesh* mesh = &scene->get_mesh(entity->mesh_name);
+        // Skip
+        Animation* animation = &scene->get_animation(entity->animation_name);
+		if (!animation) {
+			continue;
+		}
+
+        Mesh* mesh = animation->get_mesh(timer->elapsed());
         Material* material = &scene->get_material(entity->material_name);
         if (!mesh || !material) {
             continue;

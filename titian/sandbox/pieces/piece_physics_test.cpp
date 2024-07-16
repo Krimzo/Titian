@@ -17,16 +17,14 @@ void sandbox::SandboxPiecePhysicsTest::setup_self()
 void sandbox::SandboxPiecePhysicsTest::setup_platform(Scene* scene)
 {
     const std::string mesh_name = "cube";
+    const std::string animation_name = "cube";
     const std::string material_name = "white";
     const std::string entity_name = "PhysicsTestPlatform";
 
-    // Mesh
     scene->meshes[mesh_name] = scene->default_meshes->cube;
-
-    // Material
+    scene->animations[animation_name] = scene->default_animations->cube;
     scene->materials[material_name] = scene->default_materials->white;
 
-    // Entity
     kl::Object platform = scene->new_entity(false);
 
     const kl::Float3 scale = { 15.0f, 0.1f, 15.0f };
@@ -36,7 +34,7 @@ void sandbox::SandboxPiecePhysicsTest::setup_platform(Scene* scene)
     platform->set_position({ 0.0f, -7.0f, -25.0f });
     platform->set_collider(scene->new_box_collider(scale));
 
-    platform->mesh_name = mesh_name;
+    platform->animation_name = animation_name;
     platform->material_name = material_name;
 
     scene->add_entity(entity_name, platform);
@@ -74,12 +72,13 @@ void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
     for (int z = 0; z < size; z++) {
         for (int x = 0; x < size; x++) {
             const std::string mesh_name = "cube";
+            const std::string animation_name = "cube";
             const std::string counter_id = kl::format(std::setw(3), std::setfill('0'), box_counter);
             const std::string material_name = kl::format("box_mat_", counter_id);
             const std::string entity_name = kl::format("Box", counter_id);
 
-            // Mesh
             scene->meshes[mesh_name] = scene->default_meshes->cube;
+			scene->animations[animation_name] = scene->default_animations->cube;
 
             // Material
             kl::Object material = new Material();
@@ -99,7 +98,7 @@ void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
             box->set_mass(2.5f);
             box->set_gravity(true);
 
-            box->mesh_name = mesh_name;
+            box->animation_name = animation_name;
             box->material_name = material_name;
 
             scene->add_entity(entity_name, box);
