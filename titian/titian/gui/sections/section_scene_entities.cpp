@@ -12,42 +12,42 @@ void titian::GUISectionSceneEntities::render_gui()
 	kl::GPU* gpu = &app_layer->gpu;
 	Scene* scene = &game_layer->scene;
 
-	if (ImGui::Begin("Scene Entities")) {
+	if (imgui::Begin("Scene Entities")) {
 		// Window popup
-		if (ImGui::BeginPopupContextWindow("NewEntity", ImGuiPopupFlags_MouseButtonMiddle)) {
+		if (imgui::BeginPopupContextWindow("NewEntity", ImGuiPopupFlags_MouseButtonMiddle)) {
 			const std::string name = gui_input_continuous("##CreateEntityInput");
 			if (!name.empty() && !scene->contains_entity(name)) {
-				if (ImGui::MenuItem("New Entity")) {
+				if (imgui::MenuItem("New Entity")) {
 					kl::Object entity = scene->new_entity(false);
 					scene->add_entity(name, entity);
-					ImGui::CloseCurrentPopup();
+					imgui::CloseCurrentPopup();
 				}
-				if (ImGui::MenuItem("New Camera")) {
+				if (imgui::MenuItem("New Camera")) {
 					kl::Object entity = scene->new_casted<Camera>(false);
 					scene->add_entity(name, entity);
-					ImGui::CloseCurrentPopup();
+					imgui::CloseCurrentPopup();
 				}
-				if (ImGui::MenuItem("New Ambient Light")) {
+				if (imgui::MenuItem("New Ambient Light")) {
 					kl::Object entity = scene->new_casted<AmbientLight>(false);
 					scene->add_entity(name, entity);
-					ImGui::CloseCurrentPopup();
+					imgui::CloseCurrentPopup();
 				}
-				if (ImGui::MenuItem("New Point Light")) {
+				if (imgui::MenuItem("New Point Light")) {
 					kl::Object entity = scene->new_casted<PointLight>(false);
 					scene->add_entity(name, entity);
-					ImGui::CloseCurrentPopup();
+					imgui::CloseCurrentPopup();
 				}
-				if (ImGui::MenuItem("New Directional Light")) {
+				if (imgui::MenuItem("New Directional Light")) {
 					kl::Object entity = scene->new_casted<DirectionalLight>(false, gpu, 4096);
 					scene->add_entity(name, entity);
-					ImGui::CloseCurrentPopup();
+					imgui::CloseCurrentPopup();
 				}
 			}
-			ImGui::EndPopup();
+			imgui::EndPopup();
 		}
 
-		if (ImGui::IsWindowFocused() && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), ImGui::GetWindowPos() + ImGui::GetWindowSize())) {
-			if (ImGui::IsKeyPressed(ImGuiKey_Delete)) {
+		if (imgui::IsWindowFocused() && imgui::IsMouseHoveringRect(imgui::GetWindowPos(), imgui::GetWindowPos() + imgui::GetWindowSize())) {
+			if (imgui::IsKeyPressed(ImGuiKey_Delete)) {
 				for (auto& name : editor_layer->selected_entities) {
 					scene->remove_entity(name);
 				}
@@ -64,25 +64,25 @@ void titian::GUISectionSceneEntities::render_gui()
 
 			// Entity type
 			if (entity.is<Camera>()) {
-				ImGui::Button("CAMERA");
+				imgui::Button("CAMERA");
 			}
 			else if (entity.is<AmbientLight>()) {
-				ImGui::Button("AMBIENT");
+				imgui::Button("AMBIENT");
 			}
 			else if (entity.is<PointLight>()) {
-				ImGui::Button("POINT");
+				imgui::Button("POINT");
 			}
 			else if (entity.is<DirectionalLight>()) {
-				ImGui::Button("DIRECTIONAL");
+				imgui::Button("DIRECTIONAL");
 			}
 			else {
-				ImGui::Button("ENTITY");
+				imgui::Button("ENTITY");
 			}
-			ImGui::SameLine();
+			imgui::SameLine();
 
 			// Entity name
-			if (ImGui::Selectable(entity_name.c_str(), editor_layer->selected_entities.contains(entity_name))) {
-				if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
+			if (imgui::Selectable(entity_name.c_str(), editor_layer->selected_entities.contains(entity_name))) {
+				if (imgui::IsKeyDown(ImGuiKey_LeftCtrl)) {
 					if (editor_layer->selected_entities.contains(entity_name)) {
 						editor_layer->selected_entities.erase(entity_name);
 					}
@@ -90,7 +90,7 @@ void titian::GUISectionSceneEntities::render_gui()
 						editor_layer->selected_entities.insert(entity_name);
 					}
 				}
-				else if (ImGui::IsKeyDown(ImGuiKey_LeftShift)) {
+				else if (imgui::IsKeyDown(ImGuiKey_LeftShift)) {
 					if (editor_layer->selected_entities.empty()) {
 						editor_layer->selected_entities.insert(entity_name);
 					}
@@ -117,9 +117,9 @@ void titian::GUISectionSceneEntities::render_gui()
 			}
 
 			// Item popup
-			if (ImGui::BeginPopupContextItem(entity_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+			if (imgui::BeginPopupContextItem(entity_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
 				bool should_break = false;
-				ImGui::Text("Edit Entity");
+				imgui::Text("Edit Entity");
 
 				if (std::optional opt_name = gui_input_waited("##RenameEntityInput", entity_name)) {
 					const std::string& name = opt_name.value();
@@ -129,23 +129,23 @@ void titian::GUISectionSceneEntities::render_gui()
 						scene->add_entity(name, temp_holder);
 
 						should_break = true;
-						ImGui::CloseCurrentPopup();
+						imgui::CloseCurrentPopup();
 					}
 				}
 
-				if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+				if (imgui::Button("Delete", { -1.0f, 0.0f })) {
 					scene->remove_entity(entity_name);
 
 					should_break = true;
-					ImGui::CloseCurrentPopup();
+					imgui::CloseCurrentPopup();
 				}
 
-				ImGui::EndPopup();
+				imgui::EndPopup();
 				if (should_break) {
 					break;
 				}
 			}
 		}
 	}
-	ImGui::End();
+	imgui::End();
 }

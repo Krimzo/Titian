@@ -14,33 +14,33 @@ void titian::GUISectionShaderEditor::render_gui()
 	kl::GPU* gpu = &app_layer->gpu;
 	Scene* scene = &game_layer->scene;
 
-	if (ImGui::Begin("Shader Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-		const float available_width = ImGui::GetContentRegionAvail().x;
-		ImGui::Columns(2, "ShaderEditorColumns", false);
+	if (imgui::Begin("Shader Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+		const float available_width = imgui::GetContentRegionAvail().x;
+		imgui::Columns(2, "ShaderEditorColumns", false);
 
-		ImGui::SetColumnWidth(ImGui::GetColumnIndex(), available_width * 0.25f);
-		if (ImGui::BeginChild("ShaderListChild")) {
+		imgui::SetColumnWidth(imgui::GetColumnIndex(), available_width * 0.25f);
+		if (imgui::BeginChild("ShaderListChild")) {
 			// Create shader
-			if (ImGui::BeginPopupContextWindow("NewShader", ImGuiPopupFlags_MouseButtonMiddle)) {
+			if (imgui::BeginPopupContextWindow("NewShader", ImGuiPopupFlags_MouseButtonMiddle)) {
 				const std::string name = gui_input_continuous("##CreateShaderInput");
 				if (!name.empty() && !scene->helper_contains_shader(name)) {
-					if (ImGui::MenuItem("New Material Shader")) {
+					if (imgui::MenuItem("New Material Shader")) {
 						scene->shaders[name] = new Shader(ShaderType::MATERIAL, gpu);
-						ImGui::CloseCurrentPopup();
+						imgui::CloseCurrentPopup();
 					}
-					if (ImGui::MenuItem("New Camera Shader")) {
+					if (imgui::MenuItem("New Camera Shader")) {
 						scene->shaders[name] = new Shader(ShaderType::CAMERA, gpu);
-						ImGui::CloseCurrentPopup();
+						imgui::CloseCurrentPopup();
 					}
 				}
-				ImGui::EndPopup();
+				imgui::EndPopup();
 			}
 
 			// Shaders
 			display_shaders(scene);
 		}
-		ImGui::EndChild();
-		ImGui::NextColumn();
+		imgui::EndChild();
+		imgui::NextColumn();
 
 		Shader* shader = &scene->get_shader(selected_shader);
 		if (shader) {
@@ -48,7 +48,7 @@ void titian::GUISectionShaderEditor::render_gui()
 		}
 		show_shader_properties(shader);
 	}
-	ImGui::End();
+	imgui::End();
 }
 
 void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
@@ -61,23 +61,23 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 
 		// Type
 		if (shader->type == ShaderType::MATERIAL) {
-			ImGui::Button("MATERIAL");
+			imgui::Button("MATERIAL");
 		}
 		else if (shader->type == ShaderType::CAMERA) {
-			ImGui::Button("CAMERA");
+			imgui::Button("CAMERA");
 		}
 		else {
-			ImGui::Button("NONE");
+			imgui::Button("NONE");
 		}
-		ImGui::SameLine();
+		imgui::SameLine();
 
-		if (ImGui::Selectable(shader_name.c_str(), shader_name == this->selected_shader)) {
+		if (imgui::Selectable(shader_name.c_str(), shader_name == this->selected_shader)) {
 			this->selected_shader = shader_name;
 		}
 
-		if (ImGui::BeginPopupContextItem(shader_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+		if (imgui::BeginPopupContextItem(shader_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
 			bool should_break = false;
-			ImGui::Text("Edit Shader");
+			imgui::Text("Edit Shader");
 
 			if (std::optional opt_name = gui_input_waited("##RenameShaderInput", shader_name)) {
 				const std::string& name = opt_name.value();
@@ -93,17 +93,17 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 					scene->shaders[name] = shader;
 					scene->shaders.erase(shader_name);
 					should_break = true;
-					ImGui::CloseCurrentPopup();
+					imgui::CloseCurrentPopup();
 				}
 			}
 
-			if (ImGui::Button("Reload", { -1.0f, 0.0f })) {
+			if (imgui::Button("Reload", { -1.0f, 0.0f })) {
 				shader->reload();
 				should_break = true;
-				ImGui::CloseCurrentPopup();
+				imgui::CloseCurrentPopup();
 			}
 
-			if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+			if (imgui::Button("Delete", { -1.0f, 0.0f })) {
 				if (this->selected_shader == shader_name) {
 					this->selected_shader = "/";
 				}
@@ -114,10 +114,10 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 				}
 				scene->shaders.erase(shader_name);
 				should_break = true;
-				ImGui::CloseCurrentPopup();
+				imgui::CloseCurrentPopup();
 			}
 
-			ImGui::EndPopup();
+			imgui::EndPopup();
 			if (should_break) {
 				break;
 			}
@@ -127,18 +127,18 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 
 void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) const
 {
-	if (ImGui::Begin("Shader Properties") && shader) {
-		ImGui::Text("Info");
+	if (imgui::Begin("Shader Properties") && shader) {
+		imgui::Text("Info");
 
-		ImGui::Text("Name: ");
-		ImGui::SameLine();
+		imgui::Text("Name: ");
+		imgui::SameLine();
 		gui_colored_text(selected_shader, gui_layer->special_color);
 
-		ImGui::Text("Type: ");
-		ImGui::SameLine();
-		ImGui::Text("HLSL");
+		imgui::Text("Type: ");
+		imgui::SameLine();
+		imgui::Text("HLSL");
 	}
-	ImGui::End();
+	imgui::End();
 }
 
 void titian::GUISectionShaderEditor::edit_shader(Shader* shader)
@@ -148,35 +148,35 @@ void titian::GUISectionShaderEditor::edit_shader(Shader* shader)
 		m_editor.load(shader->data_buffer);
 	}
 
-	ImGui::PushFont(gui_layer->roboto_font_large);
+	imgui::PushFont(gui_layer->roboto_font_large);
 	m_editor.edit(&shader->data_buffer);
 
-	if (ImGui::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+	if (imgui::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const TextEditor::LanguageDefinition* definition = m_editor.get_definition();
 		const std::string current_word = m_editor.get_word_at_cursor();
 		if (definition && !current_word.empty()) {
 			const TextEditor::Palette& palette = *m_editor.get_palette();
-			ImGui::PushStyleColor(ImGuiCol_Text, palette[1]);
+			imgui::PushStyleColor(ImGuiCol_Text, palette[1]);
 			for (const auto& keyword : definition->mKeywords) {
 				if (keyword.find(current_word) != -1) {
-					if (ImGui::MenuItem(keyword.c_str())) {
+					if (imgui::MenuItem(keyword.c_str())) {
 						m_editor.replace_word_at_cursor(keyword);
 					}
 				}
 			}
-			ImGui::PushStyleColor(ImGuiCol_Text, palette[8]);
+			imgui::PushStyleColor(ImGuiCol_Text, palette[8]);
 			for (const auto& [identifier, _] : definition->mIdentifiers) {
 				if (identifier.find(current_word) != -1) {
-					if (ImGui::MenuItem(identifier.c_str())) {
+					if (imgui::MenuItem(identifier.c_str())) {
 						m_editor.replace_word_at_cursor(identifier);
 					}
 				}
 			}
-			ImGui::PopStyleColor(2);
+			imgui::PopStyleColor(2);
 		}
 	}
-	ImGui::End();
-	ImGui::PopFont();
+	imgui::End();
+	imgui::PopFont();
 
 	if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
 		const std::filesystem::path path = file.value();

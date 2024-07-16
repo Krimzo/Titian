@@ -380,7 +380,7 @@ void kl::Window::handle_message(const MSG& message)
 #ifdef KL_USING_IMGUI
     case WM_CHAR:
         if (*((short*) &message.lParam) > 1) {
-            ImGui::GetIO().AddInputCharacter((int) message.wParam);
+            imgui::GetIO().AddInputCharacter((int) message.wParam);
         }
         break;
 #endif

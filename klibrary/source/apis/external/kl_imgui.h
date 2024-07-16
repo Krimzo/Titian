@@ -16,4 +16,6 @@
 #include <imgui_text_editor.h>
 #include <imgui_node_editor.h>
 
+namespace imgui = ImGui;
+
 #endif

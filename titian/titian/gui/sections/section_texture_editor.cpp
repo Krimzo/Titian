@@ -13,28 +13,28 @@ void titian::GUISectionTextureEditor::render_gui()
     Scene* scene = &game_layer->scene;
     Texture* texture = &scene->get_texture(this->selected_texture);
 
-    if (ImGui::Begin("Texture Editor")) {
-        const float available_width = ImGui::GetContentRegionAvail().x;
-        ImGui::Columns(2, "TextureEditorColumns", false);
+    if (imgui::Begin("Texture Editor")) {
+        const float available_width = imgui::GetContentRegionAvail().x;
+        imgui::Columns(2, "TextureEditorColumns", false);
 
-        ImGui::SetColumnWidth(ImGui::GetColumnIndex(), available_width * 0.25f);
-        if (ImGui::BeginChild("Textures")) {
+        imgui::SetColumnWidth(imgui::GetColumnIndex(), available_width * 0.25f);
+        if (imgui::BeginChild("Textures")) {
             display_textures(gpu, scene);
         }
-        ImGui::EndChild();
-        ImGui::NextColumn();
+        imgui::EndChild();
+        imgui::NextColumn();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
+        imgui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
+        imgui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+        imgui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
 
-        if (ImGui::BeginChild("Texture View", {})) {
-            const kl::Int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
+        if (imgui::BeginChild("Texture View", {})) {
+            const kl::Int2 viewport_size = { (int) imgui::GetContentRegionAvail().x, (int) imgui::GetContentRegionAvail().y };
             if (texture) {
                 render_selected_texture(texture, viewport_size);
             }
         }
-        ImGui::EndChild();
+        imgui::EndChild();
 
         if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
             if (texture && classify_file(file.value()) == FileType::TEXTURE) {
@@ -45,31 +45,31 @@ void titian::GUISectionTextureEditor::render_gui()
             }
         }
 
-        ImGui::PopStyleColor();
-        ImGui::PopStyleVar(2);
+        imgui::PopStyleColor();
+        imgui::PopStyleVar(2);
 
         if (texture) {
             show_texture_properties(texture);
         }
     }
-    ImGui::End();
+    imgui::End();
 }
 
 void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scene)
 {
     // New texture
-    if (ImGui::BeginPopupContextWindow("NewTexture", ImGuiPopupFlags_MouseButtonMiddle)) {
-        ImGui::Text("New Texture");
+    if (imgui::BeginPopupContextWindow("NewTexture", ImGuiPopupFlags_MouseButtonMiddle)) {
+        imgui::Text("New Texture");
 
         if (std::optional opt_name = gui_input_waited("##CreateTextureInput", {})) {
             const std::string& name = opt_name.value();
             if (!name.empty() && !scene->textures.contains(name)) {
                 kl::Object texture = new Texture(gpu);
                 scene->textures[name] = texture;
-                ImGui::CloseCurrentPopup();
+                imgui::CloseCurrentPopup();
             }
         }
-        ImGui::EndPopup();
+        imgui::EndPopup();
     }
 
     // Textures
@@ -79,13 +79,13 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
             continue;
         }
 
-        if (ImGui::Selectable(texture_name.c_str(), texture_name == this->selected_texture)) {
+        if (imgui::Selectable(texture_name.c_str(), texture_name == this->selected_texture)) {
             this->selected_texture = texture_name;
         }
 
-        if (ImGui::BeginPopupContextItem(texture_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+        if (imgui::BeginPopupContextItem(texture_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
             bool should_break = false;
-            ImGui::Text("Edit Texture");
+            imgui::Text("Edit Texture");
 
             if (std::optional opt_name = gui_input_waited("##RenameTextureInput", texture_name)) {
                 const std::string& name = opt_name.value();
@@ -107,11 +107,11 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
                     scene->textures[name] = texture;
                     scene->textures.erase(texture_name);
                     should_break = true;
-                    ImGui::CloseCurrentPopup();
+                    imgui::CloseCurrentPopup();
                 }
             }
 
-            if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+            if (imgui::Button("Delete", { -1.0f, 0.0f })) {
                 for (auto& [_, material] : scene->materials) {
                     if (material->color_map_name == texture_name) {
                         material->color_map_name = "/";
@@ -128,10 +128,10 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
                 }
                 scene->textures.erase(texture_name);
                 should_break = true;
-                ImGui::CloseCurrentPopup();
+                imgui::CloseCurrentPopup();
             }
 
-            ImGui::EndPopup();
+            imgui::EndPopup();
             if (should_break) {
                 break;
             }
@@ -142,30 +142,30 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
 void titian::GUISectionTextureEditor::render_selected_texture(Texture* texture, const kl::Int2 viewport_size)
 {
     const float min_size = static_cast<float>(std::min(viewport_size.x, viewport_size.y));
-    ImGui::SetCursorPos(ImVec2{
-        (ImGui::GetWindowWidth() - min_size) * 0.5f,
-        (ImGui::GetWindowHeight() - min_size) * 0.5f,
+    imgui::SetCursorPos(ImVec2{
+        (imgui::GetWindowWidth() - min_size) * 0.5f,
+        (imgui::GetWindowHeight() - min_size) * 0.5f,
     });
-    ImGui::Image(texture->shader_view.Get(), { min_size, min_size }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+    imgui::Image(texture->shader_view.Get(), { min_size, min_size }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 }
 
 void titian::GUISectionTextureEditor::show_texture_properties(Texture* texture)
 {
-    if (ImGui::Begin("Texture Properties") && texture) {
-        ImGui::Text("Info");
+    if (imgui::Begin("Texture Properties") && texture) {
+        imgui::Text("Info");
 
-        ImGui::Text("Name: ");
-        ImGui::SameLine();
+        imgui::Text("Name: ");
+        imgui::SameLine();
         gui_colored_text(selected_texture, gui_layer->special_color);
 
         kl::Int2 size = texture->data_buffer.size();
-        ImGui::DragInt2("Size", size, 0.0f);
+        imgui::DragInt2("Size", size, 0.0f);
 
         int pixel_count = texture->data_buffer.pixel_count();
-        ImGui::DragInt("Pixel Count", &pixel_count, 0.0f);
+        imgui::DragInt("Pixel Count", &pixel_count, 0.0f);
 
         bool cube_map = texture->is_cube();
-        if (ImGui::Checkbox("Cube Map", &cube_map)) {
+        if (imgui::Checkbox("Cube Map", &cube_map)) {
             if (cube_map) {
                 if (texture->reload_as_cube()) {
                     texture->create_shader_view(nullptr);
@@ -177,5 +177,5 @@ void titian::GUISectionTextureEditor::show_texture_properties(Texture* texture)
             }
         }
     }
-    ImGui::End();
+    imgui::End();
 }

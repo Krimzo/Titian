@@ -28,16 +28,16 @@ void titian::GUISectionScriptEditor::render_gui()
 	InterpScript* interp_script = dynamic_cast<InterpScript*>(script);
 	NodeScript* node_script = dynamic_cast<NodeScript*>(script);
 
-	if (ImGui::Begin("Script Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-		const float available_width = ImGui::GetContentRegionAvail().x;
-		ImGui::Columns(2, "ScriptEditorColumns", false);
+	if (imgui::Begin("Script Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+		const float available_width = imgui::GetContentRegionAvail().x;
+		imgui::Columns(2, "ScriptEditorColumns", false);
 
-		ImGui::SetColumnWidth(ImGui::GetColumnIndex(), available_width * 0.25f);
-		if (ImGui::BeginChild("ScriptListChild")) {
+		imgui::SetColumnWidth(imgui::GetColumnIndex(), available_width * 0.25f);
+		if (imgui::BeginChild("ScriptListChild")) {
 			display_scripts(scene);
 		}
-		ImGui::EndChild();
-		ImGui::NextColumn();
+		imgui::EndChild();
+		imgui::NextColumn();
 
 		if (native_script) {
 			edit_native_script(native_script);
@@ -50,30 +50,30 @@ void titian::GUISectionScriptEditor::render_gui()
 		}
 		show_script_properties(script);
 	}
-	ImGui::End();
+	imgui::End();
 }
 
 void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 {
-	if (ImGui::BeginPopupContextWindow("NewScript", ImGuiPopupFlags_MouseButtonMiddle)) {
+	if (imgui::BeginPopupContextWindow("NewScript", ImGuiPopupFlags_MouseButtonMiddle)) {
 		const std::string name = gui_input_continuous("##CreateScriptInput");
 		if (!name.empty() && !scene->scripts.contains(name)) {
-			if (ImGui::MenuItem("New Interp Script")) {
+			if (imgui::MenuItem("New Interp Script")) {
 				scene->scripts[name] = new InterpScript();
-				ImGui::CloseCurrentPopup();
+				imgui::CloseCurrentPopup();
 			}
 #if false
-			if (ImGui::MenuItem("New Node Script")) {
+			if (imgui::MenuItem("New Node Script")) {
 				scene->scripts[name] = new NodeScript();
-				ImGui::CloseCurrentPopup();
+				imgui::CloseCurrentPopup();
 			}
 #endif
-			if (ImGui::MenuItem("New Native Script")) {
+			if (imgui::MenuItem("New Native Script")) {
 				scene->scripts[name] = new NativeScript();
-				ImGui::CloseCurrentPopup();
+				imgui::CloseCurrentPopup();
 			}
 		}
-		ImGui::EndPopup();
+		imgui::EndPopup();
 	}
 
 	const std::string filter = gui_input_continuous("Search###ScriptEditor");
@@ -84,27 +84,27 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 
 		// Script type
 		if (script.is<const NativeScript>()) {
-			ImGui::Button("NATIVE");
+			imgui::Button("NATIVE");
 		}
 		else if (script.is<const InterpScript>()) {
-			ImGui::Button("INTERP");
+			imgui::Button("INTERP");
 		}
 		else if (script.is<const NodeScript>()) {
-			ImGui::Button("NODE");
+			imgui::Button("NODE");
 		}
 		else {
-			ImGui::Button("SCRIPT");
+			imgui::Button("SCRIPT");
 		}
-		ImGui::SameLine();
+		imgui::SameLine();
 
 		// Script name
-		if (ImGui::Selectable(script_name.c_str(), script_name == this->selected_script)) {
+		if (imgui::Selectable(script_name.c_str(), script_name == this->selected_script)) {
 			this->selected_script = script_name;
 		}
 
-		if (ImGui::BeginPopupContextItem(script_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+		if (imgui::BeginPopupContextItem(script_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
 			bool should_break = false;
-			ImGui::Text("Edit Script");
+			imgui::Text("Edit Script");
 
 			if (std::optional opt_name = gui_input_waited("##RenameScriptInput", script_name)) {
 				const std::string& name = opt_name.value();
@@ -115,26 +115,26 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 					scene->scripts[name] = script;
 					scene->scripts.erase(script_name);
 					should_break = true;
-					ImGui::CloseCurrentPopup();
+					imgui::CloseCurrentPopup();
 				}
 			}
 
-			if (ImGui::Button("Reload", { -1.0f, 0.0f })) {
+			if (imgui::Button("Reload", { -1.0f, 0.0f })) {
 				script->reload();
 				should_break = true;
-				ImGui::CloseCurrentPopup();
+				imgui::CloseCurrentPopup();
 			}
 
-			if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+			if (imgui::Button("Delete", { -1.0f, 0.0f })) {
 				if (this->selected_script == script_name) {
 					this->selected_script = "/";
 				}
 				scene->scripts.erase(script_name);
 				should_break = true;
-				ImGui::CloseCurrentPopup();
+				imgui::CloseCurrentPopup();
 			}
 
-			ImGui::EndPopup();
+			imgui::EndPopup();
 			if (should_break) {
 				break;
 			}
@@ -144,26 +144,26 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 
 void titian::GUISectionScriptEditor::show_script_properties(Script* script) const
 {
-	if (ImGui::Begin("Script Properties") && script) {
-		ImGui::Text("Info");
+	if (imgui::Begin("Script Properties") && script) {
+		imgui::Text("Info");
 
-		ImGui::Text("Name: ");
-		ImGui::SameLine();
+		imgui::Text("Name: ");
+		imgui::SameLine();
 		gui_colored_text(selected_script, gui_layer->special_color);
 
-		ImGui::Text("Type: ");
-		ImGui::SameLine();
+		imgui::Text("Type: ");
+		imgui::SameLine();
 		if (dynamic_cast<NativeScript*>(script)) {
-			ImGui::Text("NATIVE");
+			imgui::Text("NATIVE");
 		}
 		else if (dynamic_cast<InterpScript*>(script)) {
-			ImGui::Text("INTERP");
+			imgui::Text("INTERP");
 		}
 		else if (dynamic_cast<NodeScript*>(script)) {
-			ImGui::Text("NODE");
+			imgui::Text("NODE");
 		}
 	}
-	ImGui::End();
+	imgui::End();
 }
 
 void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
@@ -188,43 +188,43 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 		m_interp_editor.load(script->source);
 	}
 
-	ImGui::PushFont(gui_layer->roboto_font_large);
+	imgui::PushFont(gui_layer->roboto_font_large);
 	m_interp_editor.edit(&script->source);
 
-	if (ImGui::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+	if (imgui::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const TextEditor::LanguageDefinition* definition = m_interp_editor.get_definition();
 		const std::string current_word = m_interp_editor.get_word_at_cursor();
 		if (definition && !current_word.empty()) {
 			const TextEditor::Palette& palette = *m_interp_editor.get_palette();
-			ImGui::PushStyleColor(ImGuiCol_Text, (ImU32) ImColor(220, 206, 125, 255));
+			imgui::PushStyleColor(ImGuiCol_Text, (ImU32) ImColor(220, 206, 125, 255));
 			for (const auto& [member, _] : INTERP_SCRIPT_MEMBERS) {
 				if (member.find(current_word) != -1) {
-					if (ImGui::MenuItem(member.c_str())) {
+					if (imgui::MenuItem(member.c_str())) {
 						m_interp_editor.replace_word_at_cursor(member);
 					}
 				}
 			}
-			ImGui::PushStyleColor(ImGuiCol_Text, palette[1]);
+			imgui::PushStyleColor(ImGuiCol_Text, palette[1]);
 			for (const auto& keyword : definition->mKeywords) {
 				if (keyword.find(current_word) != -1) {
-					if (ImGui::MenuItem(keyword.c_str())) {
+					if (imgui::MenuItem(keyword.c_str())) {
 						m_interp_editor.replace_word_at_cursor(keyword);
 					}
 				}
 			}
-			ImGui::PushStyleColor(ImGuiCol_Text, palette[8]);
+			imgui::PushStyleColor(ImGuiCol_Text, palette[8]);
 			for (const auto& [identifier, _] : definition->mIdentifiers) {
 				if (identifier.find(current_word) != -1) {
-					if (ImGui::MenuItem(identifier.c_str())) {
+					if (imgui::MenuItem(identifier.c_str())) {
 						m_interp_editor.replace_word_at_cursor(identifier);
 					}
 				}
 			}
-			ImGui::PopStyleColor(3);
+			imgui::PopStyleColor(3);
 		}
 	}
-	ImGui::End();
-	ImGui::PopFont();
+	imgui::End();
+	imgui::PopFont();
 
 	if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
 		const std::filesystem::path path = file.value();
@@ -239,8 +239,8 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 
 void titian::GUISectionScriptEditor::edit_node_script(NodeScript* script)
 {
-	ImGui::Text("Node Editor");
-	ImGui::Separator();
+	imgui::Text("Node Editor");
+	imgui::Separator();
 
 	ed::SetCurrentEditor(m_node_editor);
 	ed::Begin("Node Editor", ImVec2(-1.0f, -1.0f));
@@ -250,31 +250,31 @@ void titian::GUISectionScriptEditor::edit_node_script(NodeScript* script)
 		auto display_pin = [&](const Pin& pin, PinKind kind)
 		{
 			ed::BeginPin(pin.id, kind);
-			ImGui::Text(pin.title.c_str());
+			imgui::Text(pin.title.c_str());
 			ed::EndPin();
 		};
 
 		ed::BeginNode(node.id);
-		ImGui::Text(node.title.c_str());
+		imgui::Text(node.title.c_str());
 
-		ImGui::BeginGroup();
+		imgui::BeginGroup();
 		if (node.flow_input) {
 			display_pin(node.flow_input.value(), PinKind::Input);
 		}
 		for (auto& pin : node.input_pins) {
 			display_pin(pin, PinKind::Input);
 		}
-		ImGui::EndGroup();
-		ImGui::SameLine();
+		imgui::EndGroup();
+		imgui::SameLine();
 
-		ImGui::BeginGroup();
+		imgui::BeginGroup();
 		if (node.flow_output) {
 			display_pin(node.flow_output.value(), PinKind::Output);
 		}
 		for (auto& pin : node.output_pins) {
 			display_pin(pin, PinKind::Output);
 		}
-		ImGui::EndGroup();
+		imgui::EndGroup();
 
 		ed::EndNode();
 	};

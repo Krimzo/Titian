@@ -40,31 +40,31 @@ void titian::GUISectionExplorer::render_gui()
     catch (std::exception) {
     }
 
-    if (ImGui::Begin("Explorer", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+    if (imgui::Begin("Explorer", nullptr, ImGuiWindowFlags_NoScrollbar)) {
         // New file
-        if (ImGui::BeginPopupContextWindow("NewFile", ImGuiPopupFlags_MouseButtonMiddle)) {
-            ImGui::Text("Create");
+        if (imgui::BeginPopupContextWindow("NewFile", ImGuiPopupFlags_MouseButtonMiddle)) {
+            imgui::Text("Create");
             const std::string name_input = gui_input_continuous("##CreateFileInput");
             if (!name_input.empty()) {
-                if (ImGui::MenuItem("Directory")) {
+                if (imgui::MenuItem("Directory")) {
                     std::stringstream stream{};
                     stream << m_path << "/" << name_input;
                     const std::string full_path = stream.str();
                     if (!std::filesystem::exists(full_path)) {
                         std::filesystem::create_directory(full_path);
-                        ImGui::CloseCurrentPopup();
+                        imgui::CloseCurrentPopup();
                     }
                 }
-                if (ImGui::MenuItem("Text File")) {
+                if (imgui::MenuItem("Text File")) {
                     std::stringstream stream{};
                     stream << m_path << "/" << name_input;
                     const std::string full_path = stream.str();
                     if (!std::filesystem::exists(full_path)) {
                         std::ofstream _{ full_path };
-                        ImGui::CloseCurrentPopup();
+                        imgui::CloseCurrentPopup();
                     }
                 }
-                if (ImGui::MenuItem("Script File")) {
+                if (imgui::MenuItem("Script File")) {
                     std::stringstream stream{};
                     stream << m_path << "/" << name_input;
                     if (name_input.find(FILE_EXTENSION_INTERP_SCRIPT) == -1) {
@@ -74,10 +74,10 @@ void titian::GUISectionExplorer::render_gui()
                     if (!std::filesystem::exists(full_path)) {
                         std::ofstream file{ full_path };
                         file << get_default_script();
-                        ImGui::CloseCurrentPopup();
+                        imgui::CloseCurrentPopup();
                     }
                 }
-                if (ImGui::MenuItem("Material Shader File")) {
+                if (imgui::MenuItem("Material Shader File")) {
                     std::stringstream stream{};
                     stream << m_path << "/" << name_input;
                     if (name_input.find(FILE_EXTENSION_SHADER) == -1) {
@@ -87,10 +87,10 @@ void titian::GUISectionExplorer::render_gui()
                     if (!std::filesystem::exists(full_path)) {
                         std::ofstream file{ full_path };
                         file << get_default_material_shader();
-                        ImGui::CloseCurrentPopup();
+                        imgui::CloseCurrentPopup();
                     }
                 }
-                if (ImGui::MenuItem("Camera Shader File")) {
+                if (imgui::MenuItem("Camera Shader File")) {
                     std::stringstream stream{};
                     stream << m_path << "/" << name_input;
                     if (name_input.find(FILE_EXTENSION_SHADER) == -1) {
@@ -100,48 +100,48 @@ void titian::GUISectionExplorer::render_gui()
                     if (!std::filesystem::exists(full_path)) {
                         std::ofstream file{ full_path };
                         file << get_default_camera_shader();
-                        ImGui::CloseCurrentPopup();
+                        imgui::CloseCurrentPopup();
                     }
                 }
             }
-            ImGui::EndPopup();
+            imgui::EndPopup();
         }
 
         const float icon_size = m_icon_size * gui_layer->dpi_scaling;
-        const float window_width = ImGui::GetWindowWidth() - ImGui::GetStyle().WindowPadding.x * 2.0f;
-        const float icon_width = icon_size + ImGui::GetStyle().CellPadding.x * 2.0f;
+        const float window_width = imgui::GetWindowWidth() - imgui::GetStyle().WindowPadding.x * 2.0f;
+        const float icon_width = icon_size + imgui::GetStyle().CellPadding.x * 2.0f;
         const int column_count = std::max((int) (window_width / icon_width), 1);
 
-        ImGui::Text(m_path.c_str());
-        ImGui::Separator();
+        imgui::Text(m_path.c_str());
+        imgui::Separator();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2{ 0.0f, 4.0f });
+        imgui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2{ 0.0f, 4.0f });
 
-        if (ImGui::BeginTable("##ExplorerTable", column_count)) {
+        if (imgui::BeginTable("##ExplorerTable", column_count)) {
             const std::filesystem::path current_path = { m_path };
             if (current_path.has_parent_path()) {
-                ImGui::TableNextColumn();
+                imgui::TableNextColumn();
                 handle_directory_entry(current_path.parent_path(), true);
             }
             for (auto& dir : directories) {
-                ImGui::TableNextColumn();
+                imgui::TableNextColumn();
                 handle_directory_entry(dir, false);
             }
             for (auto& file : files) {
-                ImGui::TableNextColumn();
+                imgui::TableNextColumn();
                 handle_file_entry(file);
             }
-            ImGui::EndTable();
+            imgui::EndTable();
         }
 
-        ImGui::PopStyleVar();
+        imgui::PopStyleVar();
 
-        if (ImGui::IsKeyDown(ImGuiKey_LeftShift) && ImGui::BeginPopupContextWindow()) {
-            ImGui::SliderFloat("Icon Size", &m_icon_size, 25.0f, 250.0f);
-            ImGui::EndPopup();
+        if (imgui::IsKeyDown(ImGuiKey_LeftShift) && imgui::BeginPopupContextWindow()) {
+            imgui::SliderFloat("Icon Size", &m_icon_size, 25.0f, 250.0f);
+            imgui::EndPopup();
         }
     }
-    ImGui::End();
+    imgui::End();
 }
 
 void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& file)
@@ -151,27 +151,27 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
     const kl::dx::ShaderView icon = file_icon(file_type);
 
     constexpr float padding = 5.0f;
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
+    imgui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
+    imgui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
     const float icon_size = m_icon_size * gui_layer->dpi_scaling;
-    const float text_height = ImGui::CalcTextSize(path.c_str()).y;
+    const float text_height = imgui::CalcTextSize(path.c_str()).y;
 
-    if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
-        const ImVec2 cursor_pos = ImGui::GetCursorPos();
-        if (ImGui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+    if (imgui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
+        const ImVec2 cursor_pos = imgui::GetCursorPos();
+        if (imgui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
             ShellExecuteA(nullptr, nullptr, path.c_str(), nullptr, nullptr, 5);
         }
         gui_set_drag_drop<std::string>(DRAG_FILE_ID, path, icon);
 
-        ImGui::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
-        ImGui::Text(file.filename().string().c_str());
+        imgui::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
+        imgui::Text(file.filename().string().c_str());
     }
-    ImGui::EndChild();
+    imgui::EndChild();
 
-    ImGui::PopStyleVar(2);
+    imgui::PopStyleVar(2);
 
-    if (ImGui::BeginPopupContextItem(file.string().c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+    if (imgui::BeginPopupContextItem(file.string().c_str(), ImGuiPopupFlags_MouseButtonRight)) {
         if (std::optional opt_name = gui_input_waited("##RenameFileInput", file.filename().string())) {
             const std::string& name = opt_name.value();
             if (!name.empty()) {
@@ -181,23 +181,23 @@ void titian::GUISectionExplorer::handle_file_entry(const std::filesystem::path& 
 				if (!std::filesystem::exists(new_file)) {
                     std::filesystem::rename(file, new_file);
                     Logger::log("Renamed file ", format_path(file), " to ", format_path(new_file));
-					ImGui::CloseCurrentPopup();
+					imgui::CloseCurrentPopup();
 				}
                 else {
                     Logger::log("Failed to rename file ", format_path(file), " to ", format_path(new_file));
                 }
             }
         }
-        if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+        if (imgui::Button("Delete", { -1.0f, 0.0f })) {
             Logger::log("Deleted file ", format_path(file));
             std::filesystem::remove(file);
-            ImGui::CloseCurrentPopup();
+            imgui::CloseCurrentPopup();
         }
         else {
             std::error_code ignored{};
-            ImGui::Text(format_byte_size(std::filesystem::file_size(file, ignored)).c_str());
+            imgui::Text(format_byte_size(std::filesystem::file_size(file, ignored)).c_str());
         }
-        ImGui::EndPopup();
+        imgui::EndPopup();
     }
 }
 
@@ -207,15 +207,15 @@ void titian::GUISectionExplorer::handle_directory_entry(const std::filesystem::p
     const kl::dx::ShaderView icon = is_parent_dir ? parent_dir_texture->shader_view : default_dir_texture->shader_view;
 
     constexpr float padding = 5.0f;
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
+    imgui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
+    imgui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
     const float icon_size = m_icon_size * gui_layer->dpi_scaling;
-    const float text_height = ImGui::CalcTextSize(path.c_str()).y;
+    const float text_height = imgui::CalcTextSize(path.c_str()).y;
 
-    if (ImGui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
-        const ImVec2 cursor_pos = ImGui::GetCursorPos();
-        if (ImGui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+    if (imgui::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
+        const ImVec2 cursor_pos = imgui::GetCursorPos();
+        if (imgui::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
             this->m_path = path;
         }
 
@@ -229,14 +229,14 @@ void titian::GUISectionExplorer::handle_directory_entry(const std::filesystem::p
             gui_set_drag_drop<std::string>(DRAG_DIR_ID, path, icon);
         }
 
-        ImGui::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
-        ImGui::Text(dir.filename().string().c_str());
+        imgui::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
+        imgui::Text(dir.filename().string().c_str());
     }
-    ImGui::EndChild();
+    imgui::EndChild();
 
-    ImGui::PopStyleVar(2);
+    imgui::PopStyleVar(2);
 
-    if (!is_parent_dir && ImGui::BeginPopupContextItem(dir.string().c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+    if (!is_parent_dir && imgui::BeginPopupContextItem(dir.string().c_str(), ImGuiPopupFlags_MouseButtonRight)) {
         if (std::optional opt_name = gui_input_waited("##RenameDirInput", dir.filename().string())) {
             const std::string& name = opt_name.value();
             if (!name.empty()) {
@@ -246,19 +246,19 @@ void titian::GUISectionExplorer::handle_directory_entry(const std::filesystem::p
                 if (!std::filesystem::exists(new_dir)) {
                     std::filesystem::rename(dir, new_dir);
                     Logger::log("Renamed directory ", format_path(dir), " to ", format_path(new_dir));
-                    ImGui::CloseCurrentPopup();
+                    imgui::CloseCurrentPopup();
                 }
                 else {
                     Logger::log("Failed to rename directory ", format_path(dir), " to ", format_path(new_dir));
                 }
             }
         }
-        if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+        if (imgui::Button("Delete", { -1.0f, 0.0f })) {
             Logger::log("Deleted directory ", format_path(dir));
 			std::filesystem::remove_all(dir);
-            ImGui::CloseCurrentPopup();
+            imgui::CloseCurrentPopup();
         }
-        ImGui::EndPopup();
+        imgui::EndPopup();
     }
 }
 

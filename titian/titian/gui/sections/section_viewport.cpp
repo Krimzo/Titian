@@ -9,23 +9,23 @@ void titian::GUISectionViewport::render_gui()
 {
     const TimeBomb _ = this->time_it();
 
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
+    imgui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 
     kl::GPU* gpu = &app_layer->gpu;
     kl::Object<Scene>& scene = game_layer->scene;
 
-    if (ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+    if (imgui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
         // Pre-display
-        const ImVec2 content_region = ImGui::GetContentRegionAvail();
+        const ImVec2 content_region = imgui::GetContentRegionAvail();
         render_layer->resize({ (int) content_region.x, (int) content_region.y });
-        editor_layer->is_viewport_focused = ImGui::IsWindowFocused();
+        editor_layer->is_viewport_focused = imgui::IsWindowFocused();
 
-        const ImVec2 win_content_min = ImGui::GetWindowPos() + ImGui::GetWindowContentRegionMin();
+        const ImVec2 win_content_min = imgui::GetWindowPos() + imgui::GetWindowContentRegionMin();
         const ImVec2 win_content_max = win_content_min + content_region;
-        editor_layer->is_over_viewport = ImGui::IsMouseHoveringRect(win_content_min, win_content_max);
+        editor_layer->is_over_viewport = imgui::IsMouseHoveringRect(win_content_min, win_content_max);
 
         // Display rendered texture
-        ImGui::Image(render_layer->screen_texture->shader_view.Get(), content_region);
+        imgui::Image(render_layer->screen_texture->shader_view.Get(), content_region);
 
         // Scene loading
         if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
@@ -41,20 +41,20 @@ void titian::GUISectionViewport::render_gui()
         }
 
         // Handle entity picking
-        const ImVec2 viewport_max = ImGui::GetWindowPos() + ImGui::GetWindowSize();
-        if (ImGui::IsWindowFocused() && ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), viewport_max)) {
-            if (ImGui::IsKeyPressed(ImGuiKey_Delete)) {
+        const ImVec2 viewport_max = imgui::GetWindowPos() + imgui::GetWindowSize();
+        if (imgui::IsWindowFocused() && imgui::IsMouseHoveringRect(imgui::GetWindowPos(), viewport_max)) {
+            if (imgui::IsKeyPressed(ImGuiKey_Delete)) {
                 for (auto& name : editor_layer->selected_entities) {
 					scene->remove_entity(name);
                 }
                 editor_layer->selected_entities.clear();
             }
-            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGuizmo::IsOver()) {
+            if (imgui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGuizmo::IsOver()) {
                 m_rect_selection_first = window_mouse_position();
             }
             if (m_rect_selection_first) {
                 const kl::Int2 rect_selection_first = m_rect_selection_first.value();
-                if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                if (imgui::IsMouseDown(ImGuiMouseButton_Left)) {
                     const kl::Int2 rect_selection_last = window_mouse_position();
                     kl::Float2 min_coords = kl::min(rect_selection_first, rect_selection_last);
                     kl::Float2 max_coords = kl::max(rect_selection_first, rect_selection_last);
@@ -67,15 +67,15 @@ void titian::GUISectionViewport::render_gui()
                         max_coords.y += 1.0f;
                     }
 
-                    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+                    ImDrawList* draw_list = imgui::GetWindowDrawList();
                     draw_list->AddRectFilled({ min_coords.x, min_coords.y }, { max_coords.x, max_coords.y }, ImColor(255, 255, 255, 50));
                     draw_list->AddRect({ min_coords.x, min_coords.y }, { max_coords.x, max_coords.y }, ImColor(255, 255, 255, 200));
                 }
-                if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+                if (imgui::IsMouseReleased(ImGuiMouseButton_Left)) {
                     const kl::Int2 rect_selection_last = window_mouse_position();
                     const std::unordered_set<uint32_t> entity_ids = read_entity_ids(rect_selection_first, rect_selection_last);
 
-                    if (!ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && !ImGui::IsKeyDown(ImGuiKey_LeftShift)) {
+                    if (!imgui::IsKeyDown(ImGuiKey_LeftCtrl) && !imgui::IsKeyDown(ImGuiKey_LeftShift)) {
                         editor_layer->selected_entities.clear();
                     }
                     
@@ -108,13 +108,13 @@ void titian::GUISectionViewport::render_gui()
                     }
                 }
             }
-            if (!ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+            if (!imgui::IsMouseDown(ImGuiMouseButton_Left)) {
                 m_rect_selection_first = std::nullopt;
             }
         }
 
         // Handle gizmos
-        if (ImGui::IsWindowFocused()) {
+        if (imgui::IsWindowFocused()) {
             handle_gizmo_operation_change(ImGuizmo::OPERATION::SCALE, ImGuiKey_1);
             handle_gizmo_operation_change(ImGuizmo::OPERATION::ROTATE, ImGuiKey_2);
             handle_gizmo_operation_change(ImGuizmo::OPERATION::TRANSLATE, ImGuiKey_3);
@@ -132,16 +132,16 @@ void titian::GUISectionViewport::render_gui()
     else {
         editor_layer->is_viewport_focused = false;
     }
-    ImGui::End();
+    imgui::End();
 
-    ImGui::PopStyleVar();
+    imgui::PopStyleVar();
 }
 
 kl::Int2 titian::GUISectionViewport::window_mouse_position()
 {
-    const float tab_size = ImGui::GetWindowContentRegionMin().y;
-    const ImVec2 window_position = ImGui::GetWindowPos();
-    const ImVec2 mouse_position = ImGui::GetMousePos();
+    const float tab_size = imgui::GetWindowContentRegionMin().y;
+    const ImVec2 window_position = imgui::GetWindowPos();
+    const ImVec2 mouse_position = imgui::GetMousePos();
     return {
         static_cast<int>(mouse_position.x - window_position.x - 0.0f),
         static_cast<int>(mouse_position.y - window_position.y - tab_size),
@@ -180,7 +180,7 @@ std::unordered_set<uint32_t> titian::GUISectionViewport::read_entity_ids(const k
 
 void titian::GUISectionViewport::handle_gizmo_operation_change(const int operation, const ImGuiKey switch_key)
 {
-    if (ImGui::IsKeyDown(switch_key)) {
+    if (imgui::IsKeyDown(switch_key)) {
         if (!m_last_key_states[switch_key]) {
             editor_layer->gizmo_operation = editor_layer->gizmo_operation != operation ? operation : 0;
         }
@@ -203,9 +203,9 @@ void titian::GUISectionViewport::render_gizmos(const std::unordered_set<Entity*>
     if (!camera)
         return;
 
-    const float viewport_tab_height = ImGui::GetWindowContentRegionMin().y;
-    const kl::Float2 viewport_position = { ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + viewport_tab_height };
-    const kl::Float2 viewport_size = { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() };
+    const float viewport_tab_height = imgui::GetWindowContentRegionMin().y;
+    const kl::Float2 viewport_position = { imgui::GetWindowPos().x, imgui::GetWindowPos().y + viewport_tab_height };
+    const kl::Float2 viewport_size = { imgui::GetWindowWidth(), imgui::GetWindowHeight() };
 
     ImGuizmo::Enable(true);
     ImGuizmo::SetDrawlist();

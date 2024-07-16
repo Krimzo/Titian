@@ -25,24 +25,24 @@ void titian::GUISectionScriptingParameters::render_gui()
 		scripts.emplace_back(name, parameters);
 	}
 
-	ImGui::PushFont(gui_layer->roboto_font_small);
+	imgui::PushFont(gui_layer->roboto_font_small);
 
-	if (ImGui::Begin("Scripting Parameters")) {
+	if (imgui::Begin("Scripting Parameters")) {
 		int script_counter = 1;
 		for (auto& [name, parameters] : scripts) {
 			if (script_counter > 1) {
-				ImGui::Separator();
+				imgui::Separator();
 			}
-			ImGui::Text(kl::format("Script ", name).c_str());
+			imgui::Text(kl::format("Script ", name).c_str());
 			for (auto& [name, parameter] : parameters) {
 				display_parameter_editor(script_counter, name, parameter);
 			}
 			script_counter += 1;
 		}
 	}
-	ImGui::End();
+	imgui::End();
 
-	ImGui::PopFont();
+	imgui::PopFont();
 }
 
 void titian::GUISectionScriptingParameters::display_parameter_editor(const int script_id, const std::string& name, const chaiscript::Boxed_Value& parameter)
@@ -55,37 +55,37 @@ void titian::GUISectionScriptingParameters::display_parameter_editor(const int s
 	
 	if (type == typeid(bool)) {
 		const std::string identifier = kl::format(name, "##", script_id);
-		ImGui::Checkbox(identifier.c_str(), (bool*) ptr);
+		imgui::Checkbox(identifier.c_str(), (bool*) ptr);
 	}
 	else if (type == typeid(int)) {
 		const std::string identifier = kl::format(name, "##", script_id);
-		ImGui::DragInt(identifier.c_str(), (int*) ptr);
+		imgui::DragInt(identifier.c_str(), (int*) ptr);
 	}
 	else if (type == typeid(float)) {
 		const std::string identifier = kl::format(name, "##", script_id);
-		ImGui::DragFloat(identifier.c_str(), (float*) ptr);
+		imgui::DragFloat(identifier.c_str(), (float*) ptr);
 	}
 	else if (type == typeid(kl::Int2)) {
 		const std::string identifier = kl::format(name, "##", script_id);
-		ImGui::DragInt2(identifier.c_str(), (int*) ptr);
+		imgui::DragInt2(identifier.c_str(), (int*) ptr);
 	}
 	else if (type == typeid(kl::Float2)) {
 		const std::string identifier = kl::format(name, "##", script_id);
-		ImGui::DragFloat2(identifier.c_str(), (float*) ptr);
+		imgui::DragFloat2(identifier.c_str(), (float*) ptr);
 	}
 	else if (type == typeid(kl::Float3)) {
 		const std::string identifier = kl::format(name, "##", script_id);
-		ImGui::DragFloat3(identifier.c_str(), (float*) ptr);
+		imgui::DragFloat3(identifier.c_str(), (float*) ptr);
 	}
 	else if (type == typeid(kl::Float4)) {
 		const std::string identifier = kl::format(name, "##", script_id);
-		ImGui::DragFloat4(identifier.c_str(), (float*) ptr);
+		imgui::DragFloat4(identifier.c_str(), (float*) ptr);
 	}
 	else if (type == typeid(kl::Color)) {
 		kl::Color* color_ptr = (kl::Color*) ptr;
 		kl::Float4 color_as_float = *color_ptr;
 		const std::string identifier = kl::format(name, "##", script_id);
-		if (ImGui::ColorEdit4(identifier.c_str(), color_as_float)) {
+		if (imgui::ColorEdit4(identifier.c_str(), color_as_float)) {
 			*color_ptr = color_as_float;
 		}
 	}
@@ -93,16 +93,16 @@ void titian::GUISectionScriptingParameters::display_parameter_editor(const int s
 		char* char_ptr = (char*) ptr;
 		char buffer[2] = { *char_ptr, 0 };
 		const std::string identifier = kl::format(name, "##", script_id);
-		if (ImGui::InputText(identifier.c_str(), buffer, 2)) {
+		if (imgui::InputText(identifier.c_str(), buffer, 2)) {
 			*char_ptr = buffer[0];
 		}
 	}
 	else if (type == typeid(std::string)) {
 		const std::string identifier = kl::format(name, "##", script_id);
-		ImGui::InputText(identifier.c_str(), (std::string*) ptr);
+		imgui::InputText(identifier.c_str(), (std::string*) ptr);
 	}
 	else {
 		const std::string identifier = kl::format(name, " [unknown]");
-		ImGui::Text(identifier.c_str());
+		imgui::Text(identifier.c_str());
 	}
 }

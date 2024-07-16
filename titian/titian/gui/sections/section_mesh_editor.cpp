@@ -26,35 +26,35 @@ void titian::GUISectionMeshEditor::render_gui()
     Scene* scene = &game_layer->scene;
     Mesh* mesh = &scene->get_mesh(this->selected_mesh);
 
-    if (ImGui::Begin("Mesh Editor")) {
-        const float available_width = ImGui::GetContentRegionAvail().x;
-        ImGui::Columns(2, "MeshEditorColumns", false);
+    if (imgui::Begin("Mesh Editor")) {
+        const float available_width = imgui::GetContentRegionAvail().x;
+        imgui::Columns(2, "MeshEditorColumns", false);
 
-        ImGui::SetColumnWidth(ImGui::GetColumnIndex(), available_width * 0.25f);
-        if (ImGui::BeginChild("Meshes")) {
+        imgui::SetColumnWidth(imgui::GetColumnIndex(), available_width * 0.25f);
+        if (imgui::BeginChild("Meshes")) {
             display_meshes(gpu, scene);
         }
-        ImGui::EndChild();
-        ImGui::NextColumn();
+        imgui::EndChild();
+        imgui::NextColumn();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
+        imgui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
+        imgui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+        imgui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
 
-        if (ImGui::BeginChild("Mesh View", {}, was_focused)) {
-            const kl::Int2 viewport_size = { (int)ImGui::GetContentRegionAvail().x, (int)ImGui::GetContentRegionAvail().y };
+        if (imgui::BeginChild("Mesh View", {}, was_focused)) {
+            const kl::Int2 viewport_size = { (int)imgui::GetContentRegionAvail().x, (int)imgui::GetContentRegionAvail().y };
             if (was_focused) {
                 update_mesh_camera();
             }
             if (mesh) {
                 render_selected_mesh(gpu, mesh, viewport_size);
                 const kl::dx::ShaderView& shader_view = render_texture->shader_view;
-                ImGui::Image(render_texture->shader_view.Get(), { (float)viewport_size.x, (float)viewport_size.y });
+                imgui::Image(render_texture->shader_view.Get(), { (float)viewport_size.x, (float)viewport_size.y });
                 render_gizmos(mesh);
             }
-            was_focused = ImGui::IsWindowFocused();
+            was_focused = imgui::IsWindowFocused();
         }
-        ImGui::EndChild();
+        imgui::EndChild();
 
         if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
             if (mesh && classify_file(file.value()) == FileType::MESH) {
@@ -64,19 +64,19 @@ void titian::GUISectionMeshEditor::render_gui()
             }
         }
 
-        ImGui::PopStyleColor();
-        ImGui::PopStyleVar(2);
+        imgui::PopStyleColor();
+        imgui::PopStyleVar(2);
 
         show_mesh_properties(mesh);
     }
-    ImGui::End();
+    imgui::End();
 }
 
 void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
 {
     // New mesh
-    if (ImGui::BeginPopupContextWindow("NewMesh", ImGuiPopupFlags_MouseButtonMiddle)) {
-        ImGui::Text("New Mesh");
+    if (imgui::BeginPopupContextWindow("NewMesh", ImGuiPopupFlags_MouseButtonMiddle)) {
+        imgui::Text("New Mesh");
 
         if (std::optional opt_name = gui_input_waited("##CreateMeshInput", {})) {
             const std::string& name = opt_name.value();
@@ -84,10 +84,10 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
                 kl::Object mesh = new Mesh(gpu, scene->physics(), scene->cooking());
                 mesh->reload();
                 scene->meshes[name] = mesh;
-                ImGui::CloseCurrentPopup();
+                imgui::CloseCurrentPopup();
             }
         }
-        ImGui::EndPopup();
+        imgui::EndPopup();
     }
 
     // Meshes
@@ -97,13 +97,13 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
             continue;
         }
 
-        if (ImGui::Selectable(mesh_name.c_str(), mesh_name == this->selected_mesh)) {
+        if (imgui::Selectable(mesh_name.c_str(), mesh_name == this->selected_mesh)) {
             this->selected_mesh = mesh_name;
         }
 
-        if (ImGui::BeginPopupContextItem(mesh_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+        if (imgui::BeginPopupContextItem(mesh_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
             bool should_break = false;
-            ImGui::Text("Edit Mesh");
+            imgui::Text("Edit Mesh");
 
             if (std::optional opt_name = gui_input_waited("##RenameMeshInput", mesh_name)) {
                 const std::string& name = opt_name.value();
@@ -119,17 +119,17 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
                     scene->meshes[name] = mesh;
                     scene->meshes.erase(mesh_name);
                     should_break = true;
-                    ImGui::CloseCurrentPopup();
+                    imgui::CloseCurrentPopup();
                 }
             }
 
-            if (ImGui::Button("Reload", { -1.0f, 0.0f })) {
+            if (imgui::Button("Reload", { -1.0f, 0.0f })) {
                 mesh->reload();
                 should_break = true;
-                ImGui::CloseCurrentPopup();
+                imgui::CloseCurrentPopup();
             }
 
-            if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+            if (imgui::Button("Delete", { -1.0f, 0.0f })) {
                 for (auto& [_, entity] : *scene) {
                     if (entity->mesh_name == mesh_name) {
                         entity->mesh_name = "/";
@@ -140,10 +140,10 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
                 }
                 scene->meshes.erase(mesh_name);
                 should_break = true;
-                ImGui::CloseCurrentPopup();
+                imgui::CloseCurrentPopup();
             }
 
-            ImGui::EndPopup();
+            imgui::EndPopup();
             if (should_break) {
                 break;
             }
@@ -153,13 +153,13 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
 
 void titian::GUISectionMeshEditor::update_mesh_camera()
 {
-    if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+    if (imgui::IsMouseClicked(ImGuiMouseButton_Right)) {
         initial_camera_info = camera_info;
     }
 
     const int scroll = app_layer->window.mouse.scroll();
-    if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
-        const ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+    if (imgui::IsMouseDown(ImGuiMouseButton_Right)) {
+        const ImVec2 drag_delta = imgui::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;
         camera_info.y = initial_camera_info.y + drag_delta.y * camera->sensitivity;
         camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
@@ -262,9 +262,9 @@ void titian::GUISectionMeshEditor::render_gizmos(Mesh* mesh)
     }
     kl::Vertex<float>* selected_vertex = &mesh_data[m_selected_vertex_index];
 
-    const float viewport_tab_height = ImGui::GetWindowContentRegionMin().y;
-    const kl::Float2 viewport_position = { ImGui::GetWindowPos().x, ImGui::GetWindowPos().y + viewport_tab_height };
-    const kl::Float2 viewport_size = { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() };
+    const float viewport_tab_height = imgui::GetWindowContentRegionMin().y;
+    const kl::Float2 viewport_position = { imgui::GetWindowPos().x, imgui::GetWindowPos().y + viewport_tab_height };
+    const kl::Float2 viewport_size = { imgui::GetWindowWidth(), imgui::GetWindowHeight() };
 
     ImGuizmo::Enable(true);
     ImGuizmo::SetDrawlist();
@@ -300,21 +300,21 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
 
     const int current_scroll = window->mouse.scroll();
 
-    if (ImGui::Begin("Mesh Properties") && mesh) {
+    if (imgui::Begin("Mesh Properties") && mesh) {
         /*-*/
-        ImGui::Text("Global");
-        if (ImGui::DragFloat3("Sun Direction", sun_direction, 0.01f)) {
+        imgui::Text("Global");
+        if (imgui::DragFloat3("Sun Direction", sun_direction, 0.01f)) {
             sun_direction = kl::normalize(sun_direction);
         }
 
         /*-*/
-        ImGui::Text("Info");
-        ImGui::Text("Name: ");
-        ImGui::SameLine();
+        imgui::Text("Info");
+        imgui::Text("Name: ");
+        imgui::SameLine();
         gui_colored_text(selected_mesh, gui_layer->special_color);
 
         int vertex_count = static_cast<int>(mesh->data_buffer.size());
-        ImGui::DragInt("Vertex Count", &vertex_count, 0);
+        imgui::DragInt("Vertex Count", &vertex_count, 0);
 
         std::string topology_name = "Point";
         if (mesh->topology == D3D_PRIMITIVE_TOPOLOGY_LINELIST) {
@@ -324,26 +324,26 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
             topology_name = "Triangle";
         }
 
-        if (ImGui::BeginCombo("Topology", topology_name.c_str())) {
-            if (ImGui::Selectable("Point", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_POINTLIST)) {
+        if (imgui::BeginCombo("Topology", topology_name.c_str())) {
+            if (imgui::Selectable("Point", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_POINTLIST)) {
                 mesh->topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
             }
-            if (ImGui::Selectable("Line", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_LINELIST)) {
+            if (imgui::Selectable("Line", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_LINELIST)) {
                 mesh->topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
             }
-            if (ImGui::Selectable("Triangle", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)) {
+            if (imgui::Selectable("Triangle", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)) {
                 mesh->topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
             }
-            ImGui::EndCombo();
+            imgui::EndCombo();
         }
 
-        ImGui::Checkbox("Render Wireframe", &mesh->render_wireframe);
+        imgui::Checkbox("Render Wireframe", &mesh->render_wireframe);
 
-        ImGui::Separator();
+        imgui::Separator();
 
         if (vertex_count > 0) {
             const std::pair window_rect = gui_window_rect();
-            if (ImGui::IsMouseHoveringRect(window_rect.first, window_rect.second)) {
+            if (imgui::IsMouseHoveringRect(window_rect.first, window_rect.second)) {
                 m_starting_vertex_index += m_last_scroll - current_scroll;
             }
             m_starting_vertex_index = std::clamp(m_starting_vertex_index, 0, vertex_count - 1);
@@ -353,22 +353,22 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
                 kl::Vertex<float>& vertex = mesh->data_buffer[i];
 
                 const std::string vertex_name = kl::format(i + 1, ". Vertex");
-                if (ImGui::Selectable(vertex_name.c_str(), m_selected_vertex_index == i)) {
+                if (imgui::Selectable(vertex_name.c_str(), m_selected_vertex_index == i)) {
                     m_selected_vertex_index = (m_selected_vertex_index != i) ? i : -1;
                 }
 
-                if (ImGui::BeginPopupContextItem(vertex_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
-                    if (ImGui::Button("Delete")) {
+                if (imgui::BeginPopupContextItem(vertex_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+                    if (imgui::Button("Delete")) {
                         mesh->data_buffer.erase(mesh->data_buffer.begin() + i);
                         mesh->reload();
-                        ImGui::CloseCurrentPopup();
+                        imgui::CloseCurrentPopup();
                     }
-                    ImGui::EndPopup();
+                    imgui::EndPopup();
                 }
 
-                const bool world_edited = ImGui::DragFloat3(kl::format("World##MeshEditor", i).c_str(), vertex.world, 0.1f);
-                const bool texture_edited = ImGui::DragFloat2(kl::format("Texture##MeshEditor", i).c_str(), vertex.texture, 0.1f);
-                const bool normal_edited = ImGui::DragFloat3(kl::format("Normal##MeshEditor", i).c_str(), vertex.normal, 0.1f);
+                const bool world_edited = imgui::DragFloat3(kl::format("World##MeshEditor", i).c_str(), vertex.world, 0.1f);
+                const bool texture_edited = imgui::DragFloat2(kl::format("Texture##MeshEditor", i).c_str(), vertex.texture, 0.1f);
+                const bool normal_edited = imgui::DragFloat3(kl::format("Normal##MeshEditor", i).c_str(), vertex.normal, 0.1f);
 
                 if (normal_edited) {
                     vertex.normal = kl::normalize(vertex.normal);
@@ -383,25 +383,25 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
             }
         }
 
-        if (ImGui::BeginPopupContextWindow("EditDisplay", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
-            ImGui::SliderInt("Display Count", &m_vertex_display_count, 1, 25);
-            ImGui::EndPopup();
+        if (imgui::BeginPopupContextWindow("EditDisplay", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
+            imgui::SliderInt("Display Count", &m_vertex_display_count, 1, 25);
+            imgui::EndPopup();
         }
 
-        if (ImGui::BeginPopupContextWindow("NewVertex", ImGuiPopupFlags_MouseButtonMiddle)) {
-            ImGui::Text("New Vertex");
-            ImGui::SliderInt("Index", &m_new_vertex_index, 0, vertex_count);
-            if (ImGui::Button("Create New")) {
+        if (imgui::BeginPopupContextWindow("NewVertex", ImGuiPopupFlags_MouseButtonMiddle)) {
+            imgui::Text("New Vertex");
+            imgui::SliderInt("Index", &m_new_vertex_index, 0, vertex_count);
+            if (imgui::Button("Create New")) {
                 if (m_new_vertex_index >= 0 && m_new_vertex_index <= vertex_count /* This works dw */) {
                     mesh->data_buffer.insert(mesh->data_buffer.begin() + m_new_vertex_index, kl::Vertex());
                     mesh->reload();
-                    ImGui::CloseCurrentPopup();
+                    imgui::CloseCurrentPopup();
                 }
             }
-            ImGui::EndPopup();
+            imgui::EndPopup();
         }
     }
-    ImGui::End();
+    imgui::End();
 
     m_last_scroll = current_scroll;
 }

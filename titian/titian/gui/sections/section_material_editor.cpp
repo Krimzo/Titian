@@ -24,60 +24,60 @@ void titian::GUISectionMaterialEditor::render_gui()
     Scene* scene = &game_layer->scene;
     Material* material = &scene->get_material(this->selected_material);
 
-    if (ImGui::Begin("Material Editor")) {
-        const float available_width = ImGui::GetContentRegionAvail().x;
-        ImGui::Columns(2, "MaterialEditorColumns", false);
+    if (imgui::Begin("Material Editor")) {
+        const float available_width = imgui::GetContentRegionAvail().x;
+        imgui::Columns(2, "MaterialEditorColumns", false);
 
-        ImGui::SetColumnWidth(ImGui::GetColumnIndex(), available_width * 0.25f);
-        if (ImGui::BeginChild("Materials")) {
+        imgui::SetColumnWidth(imgui::GetColumnIndex(), available_width * 0.25f);
+        if (imgui::BeginChild("Materials")) {
             display_materials(gpu, scene);
         }
-        ImGui::EndChild();
-        ImGui::NextColumn();
+        imgui::EndChild();
+        imgui::NextColumn();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
+        imgui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
+        imgui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+        imgui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
 
         const bool should_rotate_cam = was_focused;
-        if (ImGui::BeginChild("Material View", {}, should_rotate_cam)) {
-            const kl::Int2 viewport_size = { (int) ImGui::GetContentRegionAvail().x, (int) ImGui::GetContentRegionAvail().y };
+        if (imgui::BeginChild("Material View", {}, should_rotate_cam)) {
+            const kl::Int2 viewport_size = { (int) imgui::GetContentRegionAvail().x, (int) imgui::GetContentRegionAvail().y };
             if (should_rotate_cam) {
                 update_material_camera();
             }
             if (material) {
                 render_selected_material(scene, gpu, material, viewport_size);
-                ImGui::Image(render_texture->shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
+                imgui::Image(render_texture->shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
-            was_focused = ImGui::IsWindowFocused();
+            was_focused = imgui::IsWindowFocused();
         }
-        ImGui::EndChild();
+        imgui::EndChild();
 
-        ImGui::PopStyleColor();
-        ImGui::PopStyleVar(2);
+        imgui::PopStyleColor();
+        imgui::PopStyleVar(2);
 
         if (material) {
             show_material_properties(scene, material);
         }
     }
-    ImGui::End();
+    imgui::End();
 }
 
 void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* scene)
 {
     // New material
-    if (ImGui::BeginPopupContextWindow("NewMaterial", ImGuiPopupFlags_MouseButtonMiddle)) {
-        ImGui::Text("New Material");
+    if (imgui::BeginPopupContextWindow("NewMaterial", ImGuiPopupFlags_MouseButtonMiddle)) {
+        imgui::Text("New Material");
 
         if (std::optional opt_name = gui_input_waited("##CreateMaterialInput", {})) {
             const std::string& name = opt_name.value();
             if (!name.empty() && !scene->materials.contains(name)) {
                 kl::Object material = new Material();
                 scene->materials[name] = material;
-                ImGui::CloseCurrentPopup();
+                imgui::CloseCurrentPopup();
             }
         }
-        ImGui::EndPopup();
+        imgui::EndPopup();
     }
 
     // Materials
@@ -87,13 +87,13 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
             continue;
         }
 
-        if (ImGui::Selectable(material_name.c_str(), material_name == this->selected_material)) {
+        if (imgui::Selectable(material_name.c_str(), material_name == this->selected_material)) {
             this->selected_material = material_name;
         }
 
-        if (ImGui::BeginPopupContextItem(material_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+        if (imgui::BeginPopupContextItem(material_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
             bool should_break = false;
-            ImGui::Text("Edit Material");
+            imgui::Text("Edit Material");
 
             if (std::optional opt_name = gui_input_waited("##RenameMaterialInput", material_name)) {
                 const std::string& name = opt_name.value();
@@ -109,11 +109,11 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
                     scene->materials[name] = material;
                     scene->materials.erase(material_name);
                     should_break = true;
-                    ImGui::CloseCurrentPopup();
+                    imgui::CloseCurrentPopup();
                 }
             }
 
-            if (ImGui::Button("Delete", { -1.0f, 0.0f })) {
+            if (imgui::Button("Delete", { -1.0f, 0.0f })) {
                 for (auto& [_, entity] : *scene) {
                     if (entity->material_name == material_name) {
                         entity->material_name = "/";
@@ -124,10 +124,10 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
                 }
                 scene->materials.erase(material_name);
                 should_break = true;
-                ImGui::CloseCurrentPopup();
+                imgui::CloseCurrentPopup();
             }
 
-            ImGui::EndPopup();
+            imgui::EndPopup();
             if (should_break) {
                 break;
             }
@@ -316,83 +316,83 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
 
 void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Material* material)
 {
-    if (ImGui::Begin("Material Properties") && material) {
-        ImGui::Text("Info");
+    if (imgui::Begin("Material Properties") && material) {
+        imgui::Text("Info");
 
-        ImGui::Text("Name: ");
-        ImGui::SameLine();
+        imgui::Text("Name: ");
+        imgui::SameLine();
         gui_colored_text(selected_material, gui_layer->special_color);
 
-        ImGui::ColorEdit4("Base Color", material->color);
-        ImGui::DragFloat("Texture Blend", &material->texture_blend, 0.05f, 0.0f, 1.0f);
+        imgui::ColorEdit4("Base Color", material->color);
+        imgui::DragFloat("Texture Blend", &material->texture_blend, 0.05f, 0.0f, 1.0f);
 
-        ImGui::DragFloat("Reflection Factor", &material->reflection_factor, 0.05f, 0.0f, 1.0f);
-        ImGui::DragFloat("Refraction Factor", &material->refraction_factor, 0.05f, 0.0f, 1.0f);
-        ImGui::DragFloat("Refraction Index", &material->refraction_index, 0.05f, 0.0f, 1.0f);
+        imgui::DragFloat("Reflection Factor", &material->reflection_factor, 0.05f, 0.0f, 1.0f);
+        imgui::DragFloat("Refraction Factor", &material->refraction_factor, 0.05f, 0.0f, 1.0f);
+        imgui::DragFloat("Refraction Index", &material->refraction_index, 0.05f, 0.0f, 1.0f);
 
-        if (ImGui::BeginCombo("Color Map", material->color_map_name.c_str())) {
-            if (ImGui::Selectable("/", material->color_map_name == "/")) {
+        if (imgui::BeginCombo("Color Map", material->color_map_name.c_str())) {
+            if (imgui::Selectable("/", material->color_map_name == "/")) {
                 material->color_map_name = "/";
             }
             for (auto& [texture_name, _] : scene->textures) {
-                if (ImGui::Selectable(texture_name.c_str(), texture_name == material->color_map_name)) {
+                if (imgui::Selectable(texture_name.c_str(), texture_name == material->color_map_name)) {
                     material->color_map_name = texture_name;
                 }
             }
-            ImGui::EndCombo();
+            imgui::EndCombo();
         }
 
-        if (ImGui::BeginCombo("Normal Map", material->normal_map_name.c_str())) {
-            if (ImGui::Selectable("/", material->normal_map_name == "/")) {
+        if (imgui::BeginCombo("Normal Map", material->normal_map_name.c_str())) {
+            if (imgui::Selectable("/", material->normal_map_name == "/")) {
                 material->normal_map_name = "/";
             }
             for (auto& [texture_name, _] : scene->textures) {
-                if (ImGui::Selectable(texture_name.c_str(), texture_name == material->normal_map_name)) {
+                if (imgui::Selectable(texture_name.c_str(), texture_name == material->normal_map_name)) {
                     material->normal_map_name = texture_name;
                 }
             }
-            ImGui::EndCombo();
+            imgui::EndCombo();
         }
 
-        if (ImGui::BeginCombo("Roughness Map", material->roughness_map_name.c_str())) {
-            if (ImGui::Selectable("/", material->roughness_map_name == "/")) {
+        if (imgui::BeginCombo("Roughness Map", material->roughness_map_name.c_str())) {
+            if (imgui::Selectable("/", material->roughness_map_name == "/")) {
                 material->roughness_map_name = "/";
             }
             for (auto& [texture_name, _] : scene->textures) {
-                if (ImGui::Selectable(texture_name.c_str(), material->roughness_map_name == texture_name)) {
+                if (imgui::Selectable(texture_name.c_str(), material->roughness_map_name == texture_name)) {
                     material->roughness_map_name = texture_name;
                 }
             }
-            ImGui::EndCombo();
+            imgui::EndCombo();
         }
 
-        if (ImGui::BeginCombo("Shader", material->shader_name.c_str())) {
-            if (ImGui::Selectable("/", material->shader_name == "/")) {
+        if (imgui::BeginCombo("Shader", material->shader_name.c_str())) {
+            if (imgui::Selectable("/", material->shader_name == "/")) {
                 material->shader_name = "/";
             }
             for (auto& [shader_name, shader] : scene->shaders) {
                 if (shader->type != ShaderType::MATERIAL) {
                     continue;
                 }
-                if (ImGui::Selectable(shader_name.c_str(), material->shader_name == shader_name)) {
+                if (imgui::Selectable(shader_name.c_str(), material->shader_name == shader_name)) {
                     material->shader_name = shader_name;
                 }
             }
-            ImGui::EndCombo();
+            imgui::EndCombo();
         }
     }
-    ImGui::End();
+    imgui::End();
 }
 
 void titian::GUISectionMaterialEditor::update_material_camera()
 {
-    if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+    if (imgui::IsMouseClicked(ImGuiMouseButton_Right)) {
         initial_camera_info = camera_info;
     }
 
     const int scroll = app_layer->window.mouse.scroll();
-    if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
-        const ImVec2 drag_delta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+    if (imgui::IsMouseDown(ImGuiMouseButton_Right)) {
+        const ImVec2 drag_delta = imgui::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;
         camera_info.y = initial_camera_info.y + drag_delta.y * camera->sensitivity;
         camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
