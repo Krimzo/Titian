@@ -59,7 +59,7 @@ void titian::GUISectionMeshEditor::render_gui()
         if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
             if (mesh && classify_file(file.value()) == FileType::MESH) {
                 const std::filesystem::path path = file.value();
-                mesh->data_buffer = kl::parse_obj_file(path.string());
+                mesh->load(kl::parse_obj_file(path.string()));
                 mesh->reload();
             }
         }
@@ -236,7 +236,7 @@ void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh
     render_shaders.vertex_shader.update_cbuffer(vs_cb);
     render_shaders.pixel_shader.update_cbuffer(ps_cb);
 
-    gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
+    gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
 
     gpu->bind_internal_views();
     gpu->set_viewport_size(old_viewport_size);
@@ -250,7 +250,7 @@ void titian::GUISectionMeshEditor::render_gizmos(Mesh* mesh)
     if (m_selected_vertex_index < 0 || m_selected_vertex_index >= mesh_data.size()) {
         return;
     }
-    kl::Vertex<float>* selected_vertex = &mesh_data[m_selected_vertex_index];
+    Vertex* selected_vertex = &mesh_data[m_selected_vertex_index];
 
     const float viewport_tab_height = imgui::GetWindowContentRegionMin().y;
     const kl::Float2 viewport_position = { imgui::GetWindowPos().x, imgui::GetWindowPos().y + viewport_tab_height };
@@ -340,7 +340,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
 
             int change_counter = 0;
             for (int i = m_starting_vertex_index; i < (m_starting_vertex_index + m_vertex_display_count) && i < vertex_count; i++) {
-                kl::Vertex<float>& vertex = mesh->data_buffer[i];
+                Vertex& vertex = mesh->data_buffer[i];
 
                 const std::string vertex_name = kl::format(i + 1, ". Vertex");
                 if (imgui::Selectable(vertex_name.c_str(), m_selected_vertex_index == i)) {
@@ -359,6 +359,14 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
                 const bool world_edited = imgui::DragFloat3(kl::format("World##MeshEditor", i).c_str(), vertex.world, 0.1f);
                 const bool texture_edited = imgui::DragFloat2(kl::format("Texture##MeshEditor", i).c_str(), vertex.texture, 0.1f);
                 const bool normal_edited = imgui::DragFloat3(kl::format("Normal##MeshEditor", i).c_str(), vertex.normal, 0.1f);
+
+                for (int j = 0; j < MAX_BONE_REFS; j++) {
+                    int bone_index = vertex.bone_indices[j];
+                    if (imgui::SliderInt(kl::format("BoneIndex##MeshEditor", i, "_", j).c_str(), &bone_index, 0, 255)) {
+                        vertex.bone_indices[j] = (uint8_t) bone_index;
+                    }
+                    imgui::DragFloat(kl::format("BoneWeight##MeshEditor", i, "_", j).c_str(), &vertex.bone_weights[j], 0.01f, 0.0f, 1.0f);
+                }
 
                 if (normal_edited) {
                     vertex.normal = kl::normalize(vertex.normal);
@@ -383,7 +391,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
             imgui::SliderInt("Index", &m_new_vertex_index, 0, vertex_count);
             if (imgui::Button("Create New")) {
                 if (m_new_vertex_index >= 0 && m_new_vertex_index <= vertex_count /* This works dw */) {
-                    mesh->data_buffer.insert(mesh->data_buffer.begin() + m_new_vertex_index, kl::Vertex());
+                    mesh->data_buffer.insert(mesh->data_buffer.begin() + m_new_vertex_index, Vertex());
                     mesh->reload();
                     imgui::CloseCurrentPopup();
                 }

@@ -77,7 +77,7 @@ void titian::GUISectionMainMenu::render_gui()
                         const std::string stem_name = std::filesystem::path(file.value()).stem().string();
 
                         Mesh* mesh = scene->helper_new_mesh(stem_name);
-                        mesh->data_buffer = kl::parse_obj_file(file.value());
+                        mesh->load(kl::parse_obj_file(file.value()));
                         mesh->reload();
                     }
                 }

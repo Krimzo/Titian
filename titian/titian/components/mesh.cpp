@@ -36,6 +36,16 @@ void titian::Mesh::deserialize(const Serializer* serializer, const void* helper_
     this->reload();
 }
 
+void titian::Mesh::load(const std::vector<kl::Vertex<float>>& vertices)
+{
+	data_buffer.resize(vertices.size());
+    for (size_t i = 0; i < vertices.size(); i++) {
+        data_buffer[i].world = vertices[i].world;
+        data_buffer[i].texture = vertices[i].texture;
+		data_buffer[i].normal = vertices[i].normal;
+    }
+}
+
 void titian::Mesh::reload()
 {
     // Empty check
@@ -44,7 +54,7 @@ void titian::Mesh::reload()
     }
 
     // Graphics
-    graphics_buffer = m_gpu->create_vertex_buffer(data_buffer);
+    graphics_buffer = m_gpu->create_vertex_buffer(data_buffer.data(), (UINT) (data_buffer.size() * sizeof(Data::value_type)));
 
     // Physics
     free_physics_buffer();

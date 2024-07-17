@@ -6,7 +6,7 @@ titian::DefaultMeshes::DefaultMeshes(kl::GPU* gpu, physx::PxPhysics* physics, ph
     auto create_mesh = [&](kl::Object<Mesh>& mesh, const char* filename)
     {
         mesh = new Mesh(gpu, physics, cooking);
-        mesh->data_buffer = kl::parse_obj_file(filename);
+        mesh->load(kl::parse_obj_file(filename));
         mesh->reload();
         kl::assert(mesh->graphics_buffer, "Failed to init mesh: ", filename);
     };

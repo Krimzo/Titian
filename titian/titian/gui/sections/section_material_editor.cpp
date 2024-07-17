@@ -142,6 +142,13 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         return;
     }
 
+    // Bind camera
+    camera->update_aspect_ratio(viewport_size);
+    Camera* scene_camera = scene->get_casted<Camera>(scene->main_camera_name);
+    if (!scene_camera) {
+        return;
+    }
+
     // Create render texture if needed
     if (render_texture->graphics_buffer_size() != viewport_size) {
         render_texture->graphics_buffer = gpu->create_target_texture(viewport_size);
@@ -176,13 +183,6 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     gpu->bind_raster_state(states->raster_states->solid);
     gpu->bind_depth_state(material->is_transparent() ? states->depth_states->only_compare : states->depth_states->enabled);
     gpu->bind_blend_state(states->blend_states->enabled);
-
-    // Bind camera
-    camera->update_aspect_ratio(viewport_size);
-    Camera* scene_camera = scene->get_casted<Camera>(scene->main_camera_name);
-    if (!scene_camera) {
-        return;
-    }
 
     // Set global constants
     struct GLOBAL_CB
@@ -303,10 +303,11 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         render_shaders->pixel_shader.update_cbuffer(global_cb);
         gpu->bind_render_shaders(*render_shaders);
 
-        // Draw
         DefaultMeshes* default_meshes = &game_layer->scene->default_meshes;
         Mesh* material_mesh = &default_meshes->sphere;
-        gpu->draw(material_mesh->graphics_buffer, material_mesh->casted_topology());
+
+        /* NOTE: shaders expect a bound target at index 1 (entity indices), we can discard these here */
+        gpu->draw(material_mesh->graphics_buffer, material_mesh->casted_topology(), sizeof(Vertex));
     }
 
     // Restore

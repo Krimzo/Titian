@@ -232,7 +232,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
     render_shaders.vertex_shader.update_cbuffer(vs_cb);
     render_shaders.pixel_shader.update_cbuffer(ps_cb);
 
-    gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
+    gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
 
     gpu->bind_internal_views();
     gpu->set_viewport_size(old_viewport_size);

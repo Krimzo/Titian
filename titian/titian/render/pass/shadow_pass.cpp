@@ -87,7 +87,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
             package.shader_state.vertex_shader.update_cbuffer(vs_cb);
 
             // Draw
-            gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
+            gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
         }
     }
 }

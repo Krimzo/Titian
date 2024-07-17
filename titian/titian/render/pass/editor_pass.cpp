@@ -5,8 +5,6 @@ titian::EditorPass::EditorPass(const LayerPackage& package)
     : RenderPass("EditorPass", package)
 {
     kl::GPU* gpu = &app_layer->gpu;
-
-    // Generate frustum mesh
     const kl::Vertex<float> frustum_vertices[8] = {
         { {  1.0f,  1.0f, -1.0f } },
         { { -1.0f,  1.0f, -1.0f } },

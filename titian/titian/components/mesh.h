@@ -6,10 +6,26 @@
 
 
 namespace titian {
+    inline constexpr int MAX_BONE_COUNT = 256;
+    inline constexpr int MAX_BONE_REFS = 4;
+}
+
+namespace titian {
+    struct Vertex
+    {
+        kl::Float3 world;
+        kl::Float2 texture;
+        kl::Float3 normal;
+        kl::Vector4<uint8_t> bone_indices;
+        kl::Float4 bone_weights;
+    };
+}
+
+namespace titian {
     class Mesh : public Serializable
     {
     public:
-        using Data = std::vector<kl::Vertex<float>>;
+        using Data = std::vector<Vertex>;
 
         Data data_buffer = {};
         kl::dx::Buffer graphics_buffer = nullptr;
@@ -24,6 +40,7 @@ namespace titian {
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;
 
+        void load(const std::vector<kl::Vertex<float>>& vertices);
         void reload();
         D3D_PRIMITIVE_TOPOLOGY casted_topology() const;
 

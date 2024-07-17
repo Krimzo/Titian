@@ -222,7 +222,7 @@ void titian::ScenePass::render_self(StatePackage& package)
             gpu->bind_render_shaders(*render_shaders);
 
             // Draw
-            gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
+            gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
         }
     }
 
@@ -291,7 +291,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         gpu->bind_render_shaders(*render_shaders);
 
         // Draw
-        gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
+        gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
     }
 
     // Unbind shadow maps
