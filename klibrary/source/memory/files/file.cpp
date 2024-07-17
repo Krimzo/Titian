@@ -172,15 +172,16 @@ std::vector<kl::Vertex<float>> kl::parse_obj_file(const std::string& filepath, c
     return vertex_data;
 }
 
-std::optional<std::string> kl::choose_file(const bool save, const std::vector<std::string>& filters)
+std::optional<std::string> kl::choose_file(const bool save, const std::vector<std::pair<std::string, std::string>>& filters)
 {
     std::stringstream filter_buffer = {};
     for (const auto& filter : filters) {
-        filter_buffer << filter << '\0';
+        const std::string desc = filter.first + " (*" + filter.second + ")";
+        filter_buffer << desc << '\0' << '*' << filter.second << '\0';
     }
     const std::string filter_data = filter_buffer.str();
 
-    char file_buffer[250] = {};
+    char file_buffer[256] = {};
     OPENFILENAMEA dialog_info = {};
     dialog_info.lStructSize = sizeof(dialog_info);
     dialog_info.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
