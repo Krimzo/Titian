@@ -6,34 +6,19 @@
 
 // Audio
 #include "media/audio/audio.h"
+#include "media/audio/audio_device.h"
 
 // Video
 #include "media/video/video_reader.h"
 #include "media/video/video_writer.h"
 
 
-namespace kl {
-    class HRChecker {};
-
-    class HRPackage {
-    public:
-        const HRESULT result = {};
-        const std::source_location location = {};
-
-        HRPackage(const HRESULT result, std::source_location location = std::source_location::current())
-            : result(result), location(location)
-        {}
-    };
-
-    inline void operator>>(const HRPackage& package, const HRChecker& _)
+namespace kl_ignored {
+    [[maybe_unused]] inline static const int MEDIA_DONT_CARE = []()
     {
-        if (FAILED(package.result)) {
-            const std::string message = std::format("{}:{}:{}: HRESULT failed with error code: {}",
-                package.location.file_name(), package.location.line(), package.location.column(),
-                package.result);
-            throw std::runtime_error(message);
-        }
-    }
-
-    inline const HRChecker hr_checker = {};
+        constexpr DWORD init_args = (COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY);
+        CoInitializeEx(nullptr, init_args) >> kl::verify_result;
+        MFStartup(MF_VERSION) >> kl::verify_result;
+        return 0;
+    }();
 }

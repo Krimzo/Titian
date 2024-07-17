@@ -71,6 +71,155 @@ void titian::GUISectionMainMenu::render_gui()
         // File
         if (imgui::BeginMenu("File")) {
             imgui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
+            if (imgui::BeginMenu("Import")) {
+                if (imgui::MenuItem("Mesh")) {
+                    if (std::optional file = kl::choose_file(false, { { "Mesh File",  FILE_EXTENSION_MESH } })) {
+                        const std::string stem_name = std::filesystem::path(file.value()).stem().string();
+
+                        Mesh* mesh = scene->helper_new_mesh(stem_name);
+                        mesh->data_buffer = kl::parse_obj_file(file.value());
+                        mesh->reload();
+                    }
+                }
+                if (imgui::MenuItem("Texture")) {
+                    if (std::optional file = kl::choose_file(false, { { "Texture File", FILE_EXTENSION_JPG }, { "Texture File", FILE_EXTENSION_PNG } })) {
+                        const std::string stem_name = std::filesystem::path(file.value()).stem().string();
+
+                        Texture* texture = scene->helper_new_texture(stem_name);
+                        texture->data_buffer.load_from_file(file.value());
+                        texture->reload_as_2D();
+                        texture->create_shader_view();
+                    }
+                }
+                if (imgui::MenuItem("Script")) {
+                    int type_index = 0;
+                    if (std::optional file = kl::choose_file(false, { { "Script File", FILE_EXTENSION_INTERP_SCRIPT }, { "Script File", FILE_EXTENSION_NATIVE_SCRIPT } }, &type_index)) {
+                        const std::string stem_name = std::filesystem::path(file.value()).stem().string();
+
+                        if (type_index == 0) {
+                            kl::Object<NativeScript> script = new NativeScript();
+                            script->data = kl::read_file(file.value());
+							script->reload();
+                            scene->scripts[stem_name] = script;
+                        }
+                        else if (type_index == 1) {
+                            kl::Object<InterpScript> script = new InterpScript();
+                            script->source = kl::read_file_string(file.value());
+                            script->reload();
+                            scene->scripts[stem_name] = script;
+                        }
+                    }
+                }
+                if (imgui::MenuItem("Shader")) {
+                    if (std::optional file = kl::choose_file(false, { { "Shader File", FILE_EXTENSION_SHADER } })) {
+                        const std::string stem_name = std::filesystem::path(file.value()).stem().string();
+
+                        Shader* shader = scene->helper_new_shader(stem_name);
+                        shader->data_buffer = kl::read_file_string(file.value());
+                    }
+                }
+                if (imgui::MenuItem("Scene")) {
+                    if (std::optional file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_SCENE } })) {
+                        const std::string stem_name = std::filesystem::path(file.value()).stem().string();
+
+                        Serializer serializer{ file.value(), false };
+                        if (serializer) {
+                            kl::Object scene = new Scene(&app_layer->gpu);
+                            scene->deserialize(&serializer, nullptr);
+                            game_layer->scene = scene;
+                        }
+                    }
+                }
+                imgui::EndMenu();
+            }
+            if (imgui::BeginMenu("Export")) {
+                if (imgui::BeginMenu("Texture")) {
+                    const std::string filter = gui_input_continuous("Search###MenuExportTexture");
+                    for (auto& [name, texture] : scene->textures) {
+                        if (!filter.empty() && name.find(filter) == -1) {
+                            continue;
+                        }
+                        if (imgui::MenuItem(name.c_str())) {
+                            int type_index = 0;
+                            if (std::optional file = kl::choose_file(true, { { "Texture File",  FILE_EXTENSION_JPG }, { "Texture File",  FILE_EXTENSION_PNG } }, &type_index)) {
+                                const std::string extension = std::filesystem::path(file.value()).extension().string();
+                                if (type_index == 0) {
+                                    if (extension.empty()) {
+										file.value() += FILE_EXTENSION_JPG;
+                                    }
+                                    texture->data_buffer.save_to_file(file.value(), kl::ImageType::JPG);
+                                }
+                                else if (type_index == 1) {
+                                    if (extension.empty()) {
+                                        file.value() += FILE_EXTENSION_PNG;
+                                    }
+                                    texture->data_buffer.save_to_file(file.value(), kl::ImageType::PNG);
+                                }
+                            }
+                        }
+                    }
+                    imgui::EndMenu();
+                }
+                if (imgui::BeginMenu("Script")) {
+                    const std::string filter = gui_input_continuous("Search###MenuExportScript");
+                    for (auto& [name, script] : scene->scripts) {
+                        if (!filter.empty() && name.find(filter) == -1) {
+                            continue;
+                        }
+                        if (imgui::MenuItem(name.c_str())) {
+                            const std::pair<std::string, std::string> type_info = script.is<InterpScript>() ? std::pair{ "Interp Script", FILE_EXTENSION_INTERP_SCRIPT } : std::pair{ "Native Script", FILE_EXTENSION_NATIVE_SCRIPT };
+                            if (std::optional file = kl::choose_file(true, { type_info })) {
+                                const std::string extension = std::filesystem::path(file.value()).extension().string();
+                                if (InterpScript* interp_script = &script.as<InterpScript>()) {
+                                    if (extension.empty()) {
+                                        file.value() += FILE_EXTENSION_INTERP_SCRIPT;
+                                    }
+                                    kl::write_file_string(file.value(), interp_script->source);
+                                }
+                                else if (NativeScript* native_script = &script.as<NativeScript>()) {
+                                    if (extension.empty()) {
+                                        file.value() += FILE_EXTENSION_NATIVE_SCRIPT;
+                                    }
+									kl::write_file(file.value(), native_script->data);
+                                }
+                            }
+                        }
+                    }
+                    imgui::EndMenu();
+                }
+                if (imgui::BeginMenu("Shader")) {
+                    const std::string filter = gui_input_continuous("Search###MenuExportShader");
+                    for (auto& [name, shader] : scene->shaders) {
+                        if (!filter.empty() && name.find(filter) == -1) {
+                            continue;
+                        }
+                        if (imgui::MenuItem(name.c_str())) {
+                            if (std::optional file = kl::choose_file(true, { { "Shader File", FILE_EXTENSION_SHADER } })) {
+                                const std::string extension = std::filesystem::path(file.value()).extension().string();
+                                if (extension.empty()) {
+                                    file.value() += FILE_EXTENSION_SHADER;
+                                }
+                                kl::write_file_string(file.value(), shader->data_buffer);
+                            }
+                        }
+                    }
+                    imgui::EndMenu();
+                }
+                if (imgui::MenuItem("Scene")) {
+                    if (std::optional file = kl::choose_file(true, { { "Scene File", FILE_EXTENSION_SCENE } })) {
+                        const std::string extension = std::filesystem::path(file.value()).extension().string();
+                        if (extension.empty()) {
+                            file.value() += FILE_EXTENSION_SCENE;
+                        }
+                        Serializer serializer{ file.value(), true };
+                        if (serializer) {
+                            scene->serialize(&serializer, nullptr);
+                        }
+                    }
+                }
+                imgui::EndMenu();
+            }
+            imgui::Separator();
             if (imgui::MenuItem("New Scene")) {
                 scene = new Scene(&app_layer->gpu);
             }

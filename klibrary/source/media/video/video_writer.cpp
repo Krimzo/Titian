@@ -1,52 +1,74 @@
 #include "klibrary.h"
 
 
-kl::VideoWriter::VideoWriter(const std::string& filepath, const kl::Int2& frame_size, const int fps, const int bit_rate, const GUID& encoding_format)
-    : m_width(frame_size.x), m_height(frame_size.y), m_fps(fps), m_bit_rate(bit_rate), m_encoding_format(encoding_format),
-    m_pixel_count(m_width * m_height), m_frame_duration(10'000'000 / m_fps),
-    m_frame_byte_width(4 * m_width), m_frame_byte_size(m_frame_byte_width * m_height)
+kl::VideoWriter::VideoWriter(const std::string& filepath, const GUID& output_format, const Int2& frame_size, const int fps, const int video_bit_rate, const int audio_sample_rate)
+    : m_output_format(output_format)
+    , m_width(frame_size.x)
+    , m_height(frame_size.y)
+    , m_fps(fps)
+    , m_bit_rate(video_bit_rate)
+    , m_sample_rate(audio_sample_rate)
+    , m_frame_duration(10'000'000 / m_fps)
 {
-    // Sink-Writer
     const std::wstring converted_path = convert_string(filepath);
-    MFCreateSinkWriterFromURL(converted_path.c_str(), nullptr, nullptr, &m_sink_writer) >> hr_checker;
+    MFCreateSinkWriterFromURL(converted_path.c_str(), nullptr, nullptr, &m_writer) >> verify_result;
 
-    // Output media type
-    ComPtr<IMFMediaType> media_type_out = nullptr;
-    MFCreateMediaType(&media_type_out) >> hr_checker;
+    // Video
+    ComPtr<IMFMediaType> video_out_type;
+    MFCreateMediaType(&video_out_type) >> verify_result;
 
-    // Output media type info
-    media_type_out->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video) >> hr_checker;
-    media_type_out->SetGUID(MF_MT_SUBTYPE, m_encoding_format) >> hr_checker;
-    media_type_out->SetUINT32(MF_MT_AVG_BITRATE, m_bit_rate) >> hr_checker;
-    media_type_out->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive) >> hr_checker;
-    MFSetAttributeSize(media_type_out.Get(), MF_MT_FRAME_SIZE, m_width, m_height) >> hr_checker;
-    MFSetAttributeRatio(media_type_out.Get(), MF_MT_FRAME_RATE, m_fps, 1) >> hr_checker;
-    MFSetAttributeRatio(media_type_out.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1) >> hr_checker;
-    m_sink_writer->AddStream(media_type_out.Get(), &m_stream_index) >> hr_checker;
+    video_out_type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video) >> verify_result;
+    video_out_type->SetGUID(MF_MT_SUBTYPE, m_output_format) >> verify_result;
+    video_out_type->SetUINT32(MF_MT_AVG_BITRATE, m_bit_rate) >> verify_result;
+    video_out_type->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive) >> verify_result;
+    MFSetAttributeSize(video_out_type.Get(), MF_MT_FRAME_SIZE, m_width, m_height) >> verify_result;
+    MFSetAttributeRatio(video_out_type.Get(), MF_MT_FRAME_RATE, m_fps, 1) >> verify_result;
+    MFSetAttributeRatio(video_out_type.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1) >> verify_result;
+    m_writer->AddStream(video_out_type.Get(), &m_video_index) >> verify_result;
 
-    // Input media type
-    ComPtr<IMFMediaType> media_type_in = nullptr;
-    MFCreateMediaType(&media_type_in) >> hr_checker;
+    ComPtr<IMFMediaType> video_in_type;
+    MFCreateMediaType(&video_in_type) >> verify_result;
 
-    // Input media type info
-    media_type_in->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video) >> hr_checker;
-    media_type_in->SetGUID(MF_MT_SUBTYPE, m_input_format) >> hr_checker;
-    media_type_in->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive) >> hr_checker;
-    MFSetAttributeSize(media_type_in.Get(), MF_MT_FRAME_SIZE, m_width, m_height) >> hr_checker;
-    MFSetAttributeRatio(media_type_in.Get(), MF_MT_FRAME_RATE, m_fps, 1) >> hr_checker;
-    MFSetAttributeRatio(media_type_in.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1) >> hr_checker;
-    m_sink_writer->SetInputMediaType(m_stream_index, media_type_in.Get(), nullptr) >> hr_checker;
+    video_in_type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video) >> verify_result;
+    video_in_type->SetGUID(MF_MT_SUBTYPE, m_input_format) >> verify_result;
+    video_in_type->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive) >> verify_result;
+    MFSetAttributeSize(video_in_type.Get(), MF_MT_FRAME_SIZE, m_width, m_height) >> verify_result;
+    MFSetAttributeRatio(video_in_type.Get(), MF_MT_FRAME_RATE, m_fps, 1) >> verify_result;
+    MFSetAttributeRatio(video_in_type.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1) >> verify_result;
+    m_writer->SetInputMediaType(m_video_index, video_in_type.Get(), nullptr) >> verify_result;
 
-    // Setup buffers
-    MFCreateMemoryBuffer(m_frame_byte_size, &m_media_buffer) >> hr_checker;
-    m_media_buffer->SetCurrentLength(m_frame_byte_size) >> hr_checker;
+    // Audio
+    if (m_sample_rate > 0) {
+        ComPtr<IMFMediaType> audio_out_type;
+        MFCreateMediaType(&audio_out_type) >> verify_result;
 
-    MFCreateSample(&m_media_sample) >> hr_checker;
-    m_media_sample->AddBuffer(m_media_buffer.Get()) >> hr_checker;
-    m_media_sample->SetSampleDuration((LONGLONG) m_frame_duration) >> hr_checker;
+        audio_out_type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio) >> verify_result;
+        audio_out_type->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_AAC) >> verify_result;
+        audio_out_type->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, 1) >> verify_result;
+        audio_out_type->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 16) >> verify_result;
+        audio_out_type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, m_sample_rate) >> verify_result;
+        m_writer->AddStream(audio_out_type.Get(), &m_audio_index) >> verify_result;
 
-    // Start accepting data
-    m_sink_writer->BeginWriting() >> hr_checker;
+        ComPtr<IMFMediaType> audio_in_type;
+        MFCreateMediaType(&audio_in_type) >> verify_result;
+
+        audio_in_type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio) >> verify_result;
+        audio_in_type->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_Float) >> verify_result;
+        audio_in_type->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, 1) >> verify_result;
+        audio_in_type->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 32) >> verify_result;
+        audio_in_type->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, 4) >> verify_result;
+        audio_in_type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, m_sample_rate) >> verify_result;
+        audio_in_type->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, m_sample_rate * 4) >> verify_result;
+        m_writer->SetInputMediaType(m_audio_index, audio_in_type.Get(), nullptr) >> verify_result;
+    }
+
+    // Start
+    m_writer->BeginWriting() >> verify_result;
+}
+
+GUID kl::VideoWriter::output_format() const
+{
+    return m_output_format;
 }
 
 kl::Int2 kl::VideoWriter::frame_size() const
@@ -59,61 +81,111 @@ int kl::VideoWriter::fps() const
     return (int) m_fps;
 }
 
-int kl::VideoWriter::bit_rate() const
+int kl::VideoWriter::frame_count() const
+{
+    return (int) (m_video_time / m_frame_duration);
+}
+
+int kl::VideoWriter::video_bit_rate() const
 {
     return (int) m_bit_rate;
 }
 
-GUID kl::VideoWriter::format() const
-{
-    return m_encoding_format;
-}
-
 bool kl::VideoWriter::add_frame(const Image& frame)
 {
-    const Int2 frame_size = this->frame_size();
-    if (frame.width() != frame_size.x || frame.height() != frame_size.y) {
+    if (frame.width() != m_width || frame.height() != m_height) {
         return false;
     }
 
-    const kl::Color* in_buffer = frame;
-    kl::Color* out_buffer = nullptr;
+    const int frame_byte_width = m_width * 4;
+    const int frame_byte_size = frame_byte_width * m_height;
 
-    m_media_buffer->Lock((BYTE**) &out_buffer, nullptr, nullptr) >> hr_checker;
+    ComPtr<IMFMediaBuffer> media_buffer;
+    MFCreateMemoryBuffer(frame_byte_size, &media_buffer) >> verify_result;
+    media_buffer->SetCurrentLength(frame_byte_size) >> verify_result;
+
+    ComPtr<IMFSample> media_sample;
+    MFCreateSample(&media_sample) >> verify_result;
+    media_sample->AddBuffer(media_buffer.Get()) >> verify_result;
+    media_sample->SetSampleDuration((LONGLONG) m_frame_duration) >> verify_result;
+
+    Color* out_buffer = nullptr;
+    const Color* in_buffer = frame;
+    media_buffer->Lock((BYTE**) &out_buffer, nullptr, nullptr) >> verify_result;
     for (uint32_t y = 0; y < m_height; y++) {
-        memcpy(out_buffer + (m_height - 1 - y) * m_width, in_buffer + y * m_width, m_frame_byte_width);
+        memcpy(out_buffer + (m_height - 1 - y) * m_width, in_buffer + y * m_width, frame_byte_width);
     }
-    m_media_buffer->Unlock() >> hr_checker;
+    media_buffer->Unlock() >> verify_result;
 
-    if (FAILED(m_media_sample->SetSampleTime((LONGLONG) duration_100ns()))) {
+    if (FAILED(media_sample->SetSampleTime((LONGLONG) video_duration_100ns()))) {
         return false;
     }
-
-    if (FAILED(m_sink_writer->WriteSample(m_stream_index, m_media_sample.Get()))) {
+    if (FAILED(m_writer->WriteSample(m_video_index, media_sample.Get()))) {
         return false;
     }
-
-    m_frame_counter += 1;
+    m_video_time += m_frame_duration;
     return true;
 }
 
-int kl::VideoWriter::frame_count() const
+uint64_t kl::VideoWriter::video_duration_100ns() const
 {
-    return m_frame_counter;
+    return m_video_time;
 }
 
-uint64_t kl::VideoWriter::duration_100ns() const
-{
-    return m_frame_counter * m_frame_duration;
-}
-
-float kl::VideoWriter::duration_seconds() const
+float kl::VideoWriter::video_duration_seconds() const
 {
     static constexpr float diver = 1.0f / 1e7f;
-    return duration_100ns() * diver;
+    return video_duration_100ns() * diver;
 }
 
-bool kl::VideoWriter::finalize() const
+int kl::VideoWriter::audio_sample_rate() const
 {
-    return SUCCEEDED(m_sink_writer->Finalize());
+    return (int) m_sample_rate;
+}
+
+bool kl::VideoWriter::add_audio(const Audio& audio)
+{
+    if (m_sample_rate <= 0 || audio.sample_rate != m_sample_rate || audio.empty()) {
+        return false;
+    }
+
+    const int sample_byte_size = (int) audio.size() * sizeof(float);
+    ComPtr<IMFMediaBuffer> media_buffer;
+    MFCreateMemoryBuffer(sample_byte_size, &media_buffer) >> verify_result;
+    media_buffer->SetCurrentLength(sample_byte_size) >> verify_result;
+
+    ComPtr<IMFSample> media_sample;
+    MFCreateSample(&media_sample) >> verify_result;
+    media_sample->AddBuffer(media_buffer.Get()) >> verify_result;
+    media_sample->SetSampleDuration(audio.duration_100ns()) >> verify_result;
+
+    BYTE* out_buffer = nullptr;
+    media_buffer->Lock(&out_buffer, nullptr, nullptr) >> verify_result;
+    memcpy(out_buffer, audio.data(), sample_byte_size);
+    media_buffer->Unlock() >> verify_result;
+
+    if (FAILED(media_sample->SetSampleTime((LONGLONG) audio_duration_100ns()))) {
+        return false;
+    }
+    if (FAILED(m_writer->WriteSample(m_audio_index, media_sample.Get()))) {
+        return false;
+    }
+    m_audio_time += audio.duration_100ns();
+    return true;
+}
+
+uint64_t kl::VideoWriter::audio_duration_100ns() const
+{
+    return m_audio_time;
+}
+
+float kl::VideoWriter::audio_duration_seconds() const
+{
+    static constexpr float diver = 1.0f / 1e7f;
+    return audio_duration_100ns() * diver;
+}
+
+void kl::VideoWriter::finalize() const
+{
+    m_writer->Finalize() >> verify_result;
 }

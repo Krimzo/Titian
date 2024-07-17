@@ -30,17 +30,6 @@ void kl::Address::set_port(int port)
 }
 
 // Socket
-namespace kl_ignored {
-    [[maybe_unused]] static const int DONT_CARE = []()
-    {
-        WSADATA wsa_data{};
-        const int result = ::WSAStartup(MAKEWORD(2, 2), &wsa_data);
-        kl::assert(result == 0, "Failed to initialize WSA");
-        return result;
-    }();
-}
-
-// Static
 const std::string kl::Socket::SELF = "127.0.0.1";
 
 // Construct

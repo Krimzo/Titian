@@ -8,6 +8,7 @@ int sandbox_entry(const int argc, const char** argv)
 
     // Pieces
     std::vector<kl::Object<SandboxPiece>> pieces{
+        new SandboxPieceTest(&editor),
         new SandboxPiecePrepare(&editor),
         new SandboxPieceSkybox(&editor),
         new SandboxPieceMonkes(&editor, 15),

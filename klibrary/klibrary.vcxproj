@@ -53,6 +53,7 @@
     <ClInclude Include="source\math\vector\vector3.h" />
     <ClInclude Include="source\math\vector\vector4.h" />
     <ClInclude Include="source\media\audio\audio.h" />
+    <ClInclude Include="source\media\audio\audio_device.h" />
     <ClInclude Include="source\media\image\color.h" />
     <ClInclude Include="source\media\image\image.h" />
     <ClInclude Include="source\media\media.h" />
@@ -121,9 +122,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\media\audio\audio.cpp" />
+    <ClCompile Include="source\media\audio\audio_device.cpp" />
     <ClCompile Include="source\media\image\color.cpp" />
     <ClCompile Include="source\media\image\image.cpp" />
-    <ClCompile Include="source\media\media.cpp" />
     <ClCompile Include="source\media\video\video_reader.cpp" />
     <ClCompile Include="source\media\video\video_writer.cpp" />
     <ClCompile Include="source\memory\files\file.cpp" />

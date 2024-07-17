@@ -69,7 +69,7 @@ void kl::GPU12Commands::set_viewport(const dx12::Viewport& viewport) const
 	list->RSSetViewports(1, &viewport);
 }
 
-void kl::GPU12Commands::set_render_target(const kl::dx12::DescriptorHandle* render_target, const kl::dx12::DescriptorHandle* depth_target) const
+void kl::GPU12Commands::set_render_target(const dx12::DescriptorHandle* render_target, const dx12::DescriptorHandle* depth_target) const
 {
 	list->OMSetRenderTargets(1, render_target, true, depth_target);
 }

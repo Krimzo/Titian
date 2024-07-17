@@ -388,22 +388,22 @@ bool kl::Image::load_from_vector(const std::vector<byte>& buffer)
 
 bool kl::Image::load_from_file(const std::string_view& filepath)
 {
-    const std::vector file_data = kl::read_file(filepath);
+    const auto file_data = read_file(filepath);
     return load_from_vector(file_data);
 }
 
 // Encoding
-bool kl::Image::save_to_vector(std::vector<byte>* buffer, const std::string_view& type) const
+bool kl::Image::save_to_vector(std::vector<byte>* buffer, const ImageType type) const
 {
     const CLSID* format_to_use;
-    if (type == "bmp") {
+    if (type == ImageType::BMP) {
         format_to_use = &bmp_encoder_clsid;
     }
-    else if (type == "jpg") {
-        format_to_use = &jpg_encoder_clsid;
-    }
-    else if (type == "png") {
+    else if (type == ImageType::PNG) {
         format_to_use = &png_encoder_clsid;
+    }
+    else if (type == ImageType::JPG) {
+        format_to_use = &jpg_encoder_clsid;
     }
     else {
         return false;
@@ -435,9 +435,9 @@ bool kl::Image::save_to_vector(std::vector<byte>* buffer, const std::string_view
     return true;
 }
 
-bool kl::Image::save_to_file(const std::string_view& filepath, const std::string_view& type) const
+bool kl::Image::save_to_file(const std::string_view& filepath, ImageType type) const
 {
-    if (type == "txt") {
+    if (type == ImageType::TXT) {
         std::ofstream file(filepath.data());
         if (!file) {
             return false;
@@ -457,7 +457,7 @@ bool kl::Image::save_to_file(const std::string_view& filepath, const std::string
     if (!save_to_vector(&buffer, type)) {
         return false;
     }
-    return kl::write_file(filepath, buffer);
+    return write_file(filepath, buffer);
 }
 
 // Static

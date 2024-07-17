@@ -16,6 +16,10 @@
 #include <mfplay.h>
 #include <mfreadwrite.h>
 #include <propvarutil.h>
+#include <audioclient.h>
+#include <mmsystem.h>
+#include <mmdeviceapi.h>
+#include <functiondiscoverykeys_devpkey.h>
 
 #pragma comment(lib, "mf.lib")
 #pragma comment(lib, "mfplay.lib")
@@ -23,6 +27,9 @@
 #pragma comment(lib, "mfuuid.lib")
 #pragma comment(lib, "mfreadwrite.lib")
 #pragma comment(lib, "propsys.lib")
+#pragma comment(lib, "ole32.lib")
+#pragma comment(lib, "avrt.lib")
+#pragma comment(lib, "winmm.lib")
 
 // Windows
 #include <windows.h>

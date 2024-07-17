@@ -127,6 +127,12 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 
 void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) const
 {
+	static const std::unordered_map<ShaderType, std::string> shader_type_names = {
+		{ ShaderType::NONE, "None" },
+		{ ShaderType::MATERIAL, "Material" },
+		{ ShaderType::CAMERA, "Camera" },
+	};
+
 	if (imgui::Begin("Shader Properties") && shader) {
 		imgui::Text("Info");
 
@@ -134,9 +140,14 @@ void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) cons
 		imgui::SameLine();
 		gui_colored_text(selected_shader, gui_layer->special_color);
 
-		imgui::Text("Type: ");
-		imgui::SameLine();
-		imgui::Text("HLSL");
+		if (imgui::BeginCombo("Shader Type", shader_type_names.at(shader->type).c_str())) {
+			for (auto& [type, name] : shader_type_names) {
+				if (imgui::Selectable(name.c_str(), shader->type == type)) {
+					shader->type = type;
+				}
+			}
+			imgui::EndCombo();
+		}
 	}
 	imgui::End();
 }

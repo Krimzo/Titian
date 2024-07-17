@@ -56,7 +56,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(ProjectDir)external\zep\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(ProjectDir)external\tinygltf\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -81,7 +81,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(ProjectDir)external\zep\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(ProjectDir)external\tinygltf\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -112,8 +112,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="external\tinygltf\tiny_gltf.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="packager\packager.cpp" />
     <ClCompile Include="packager\packager_entry.cpp" />
+    <ClCompile Include="sandbox\pieces\piece_test.cpp" />
     <ClCompile Include="titian\components\animation.cpp" />
     <ClCompile Include="titian\gui\sections\section_animation_editor.cpp" />
     <ClCompile Include="titian\render\pass\post_pass.cpp" />
@@ -125,6 +130,10 @@
     <ClInclude Include="external\chaiscript\utility\hash.hpp" />
     <ClInclude Include="external\chaiscript\utility\quick_flat_map.hpp" />
     <ClInclude Include="external\chaiscript\utility\stack_vector.hpp" />
+    <ClInclude Include="external\tinygltf\json.hpp" />
+    <ClInclude Include="external\tinygltf\stb_image.h" />
+    <ClInclude Include="external\tinygltf\stb_image_write.h" />
+    <ClInclude Include="external\tinygltf\tiny_gltf.h" />
     <ClInclude Include="sandbox\pieces\piece_prepare.h">
       <FileType>Document</FileType>
     </ClInclude>
@@ -340,6 +349,7 @@
     <ClInclude Include="packager\packager.h" />
     <ClInclude Include="packager\packager_entry.h" />
     <ClCompile Include="sandbox\pieces\piece_cubes.cpp" />
+    <ClInclude Include="sandbox\pieces\piece_test.h" />
     <ClInclude Include="sandbox\sandbox_entry.h" />
     <ClInclude Include="sandbox\sandbox_piece.h" />
     <ClCompile Include="source\main.cpp" />

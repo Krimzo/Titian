@@ -172,7 +172,7 @@ std::vector<kl::Vertex<float>> kl::parse_obj_file(const std::string& filepath, c
     return vertex_data;
 }
 
-std::optional<std::string> kl::choose_file(const bool save, const std::vector<std::pair<std::string, std::string>>& filters)
+std::optional<std::string> kl::choose_file(const bool save, const std::vector<std::pair<std::string, std::string>>& filters, int* out_index)
 {
     std::stringstream filter_buffer = {};
     for (const auto& filter : filters) {
@@ -184,16 +184,22 @@ std::optional<std::string> kl::choose_file(const bool save, const std::vector<st
     char file_buffer[256] = {};
     OPENFILENAMEA dialog_info = {};
     dialog_info.lStructSize = sizeof(dialog_info);
-    dialog_info.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+    dialog_info.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
     dialog_info.lpstrFile = file_buffer;
     dialog_info.nMaxFile = sizeof(file_buffer);
     dialog_info.lpstrFilter = filter_data.c_str();
     dialog_info.nFilterIndex = 1;
 
     if (!save && GetOpenFileNameA(&dialog_info)) {
+		if (out_index) {
+			*out_index = dialog_info.nFilterIndex - 1;
+		}
         return { { file_buffer } };
     }
     if (save && GetSaveFileNameA(&dialog_info)) {
+		if (out_index) {
+			*out_index = dialog_info.nFilterIndex - 1;
+		}
         return { { file_buffer } };
     }
     return {};

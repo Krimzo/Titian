@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "serialization/serializable.h"
+#include "tiny_gltf.h"
 #include "physx.h"
 
 

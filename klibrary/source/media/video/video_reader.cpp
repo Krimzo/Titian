@@ -7,21 +7,21 @@ using kl::ComPtr;
 static void configure_reader(const ComPtr<IMFSourceReader>& reader)
 {
     ComPtr<IMFMediaType> media_type = nullptr;
-    reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &media_type) >> kl::hr_checker;
+    reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &media_type) >> kl::verify_result;
 
     GUID major_type = {};
-    media_type->GetGUID(MF_MT_MAJOR_TYPE, &major_type) >> kl::hr_checker;
+    media_type->GetGUID(MF_MT_MAJOR_TYPE, &major_type) >> kl::verify_result;
 
     ComPtr<IMFMediaType> new_type = nullptr;
-    MFCreateMediaType(&new_type) >> kl::hr_checker;
-    new_type->SetGUID(MF_MT_MAJOR_TYPE, major_type) >> kl::hr_checker;
-    new_type->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32) >> kl::hr_checker;
-    reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, new_type.Get()) >> kl::hr_checker;
+    MFCreateMediaType(&new_type) >> kl::verify_result;
+    new_type->SetGUID(MF_MT_MAJOR_TYPE, major_type) >> kl::verify_result;
+    new_type->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32) >> kl::verify_result;
+    reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, new_type.Get()) >> kl::verify_result;
 }
 
 static uint64_t video_byte_size(const ComPtr<IMFSourceReader>& reader)
 {
-    PROPVARIANT variant = {};
+    PROPVARIANT variant{};
     if (FAILED(reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_TOTAL_FILE_SIZE, &variant))) {
         return 0;
     }
@@ -77,12 +77,12 @@ kl::VideoReader::VideoReader(const std::string& filepath)
 {
     // Init
     ComPtr<IMFAttributes> attributes = nullptr;
-    MFCreateAttributes(&attributes, 1) >> hr_checker;
+    MFCreateAttributes(&attributes, 1) >> verify_result;
 
-    attributes->SetUINT32(MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, true) >> hr_checker;
+    attributes->SetUINT32(MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, true) >> verify_result;
 
     const std::wstring converted_path = convert_string(filepath);
-    MFCreateSourceReaderFromURL(converted_path.c_str(), attributes.Get(), &m_reader) >> hr_checker;
+    MFCreateSourceReaderFromURL(converted_path.c_str(), attributes.Get(), &m_reader) >> verify_result;
     configure_reader(m_reader);
 
     // Getting info
@@ -96,7 +96,7 @@ kl::VideoReader::VideoReader(const std::string& filepath)
     m_frame_count = (int) (duration_seconds() * m_fps);
 }
 
-size_t kl::VideoReader::byte_size() const
+uint64_t kl::VideoReader::byte_size() const
 {
     return m_byte_size;
 }
@@ -132,14 +132,13 @@ bool kl::VideoReader::next_frame(Image& out) const
     // Read sample
     DWORD flags = NULL;
     LONGLONG time_stamp = 0;
-    ComPtr<IMFSample> sample = nullptr;
-
+    ComPtr<IMFSample> sample;
     if (FAILED(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
         return false;
     }
 
     // Convert to array
-    ComPtr<IMFMediaBuffer> media_buffer = nullptr;
+    ComPtr<IMFMediaBuffer> media_buffer;
     if (FAILED(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
         return false;
     }
@@ -147,7 +146,7 @@ bool kl::VideoReader::next_frame(Image& out) const
     // Copy data
     BYTE* frame_data = nullptr;
     DWORD frame_byte_size = 0;
-    media_buffer->Lock(&frame_data, nullptr, &frame_byte_size) >> hr_checker;
+    media_buffer->Lock(&frame_data, nullptr, &frame_byte_size) >> verify_result;
 
     out.resize(m_frame_size);
     const size_t pixel_count = (size_t) out.width() * out.height();
@@ -160,7 +159,6 @@ bool kl::VideoReader::next_frame(Image& out) const
         frame_target[i].b = frame_source[i].b;
     }
 
-    // Cleanup
-    media_buffer->Unlock() >> hr_checker;
+    media_buffer->Unlock() >> verify_result;
     return true;
 }

@@ -8,6 +8,16 @@ namespace kl {
 }
 
 namespace kl {
+    enum class ImageType
+    {
+        BMP = 0,
+		PNG,
+		JPG,
+		TXT,
+    };
+}
+
+namespace kl {
     class Image : private PixelStorage
     {
         Int2 m_size = {};
@@ -69,8 +79,8 @@ namespace kl {
         bool load_from_file(const std::string_view& filepath);
 
         // Encoding
-        bool save_to_vector(std::vector<byte>* buffer, const std::string_view& type) const;
-        bool save_to_file(const std::string_view& filepath, const std::string_view& type) const;
+        bool save_to_vector(std::vector<byte>* buffer, ImageType type) const;
+        bool save_to_file(const std::string_view& filepath, ImageType type) const;
     };
 }
 

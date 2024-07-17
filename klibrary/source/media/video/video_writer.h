@@ -6,29 +6,24 @@
 namespace kl {
     class VideoWriter
     {
+        const GUID m_output_format;
+        const GUID m_input_format = MFVideoFormat_RGB32;
+
         const uint32_t m_width;
         const uint32_t m_height;
         const uint32_t m_fps;
         const uint32_t m_bit_rate;
-        const GUID     m_encoding_format;
-
-        const uint32_t m_pixel_count;
+        const uint32_t m_sample_rate;
         const uint64_t m_frame_duration;
-        const GUID     m_input_format = MFVideoFormat_RGB32;
 
-        ComPtr<IMFSinkWriter> m_sink_writer = nullptr;
-        DWORD m_stream_index = 0;
-
-        const int m_frame_byte_width;
-        const int m_frame_byte_size;
-
-        ComPtr<IMFMediaBuffer> m_media_buffer = nullptr;
-        ComPtr<IMFSample> m_media_sample = nullptr;
-
-        int m_frame_counter = 0;
+        ComPtr<IMFSinkWriter> m_writer = {};
+        DWORD m_video_index = 0;
+        DWORD m_audio_index = 0;
+        uint64_t m_video_time = 0;
+        uint64_t m_audio_time = 0;
 
     public:
-        VideoWriter(const std::string& filepath, const kl::Int2& frame_size, int fps, int bit_rate, const GUID& encoding_format);
+        VideoWriter(const std::string& filepath, const GUID& output_format, const Int2& frame_size, int fps, int video_bit_rate, int audio_sample_rate);
 
         VideoWriter(const VideoWriter&) = delete;
         VideoWriter(VideoWriter&&) = delete;
@@ -36,18 +31,21 @@ namespace kl {
         void operator=(const VideoWriter&) = delete;
         void operator=(VideoWriter&&) = delete;
 
+        GUID output_format() const;
         Int2 frame_size() const;
         int fps() const;
-
-        int bit_rate() const;
-        GUID format() const;
-
-        bool add_frame(const Image& frame);
         int frame_count() const;
 
-        uint64_t duration_100ns() const;
-        float duration_seconds() const;
+        int video_bit_rate() const;
+        bool add_frame(const Image& frame);
+        uint64_t video_duration_100ns() const;
+        float video_duration_seconds() const;
 
-        bool finalize() const;
+        int audio_sample_rate() const;
+        bool add_audio(const Audio& audio);
+        uint64_t audio_duration_100ns() const;
+        float audio_duration_seconds() const;
+
+        void finalize() const;
     };
 }

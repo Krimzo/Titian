@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pieces/piece_test.h"
 #include "pieces/piece_prepare.h"
 #include "pieces/piece_skybox.h"
 #include "pieces/piece_monkes.h"
