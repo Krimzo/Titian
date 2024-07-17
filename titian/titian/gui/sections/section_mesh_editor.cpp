@@ -24,7 +24,7 @@ void titian::GUISectionMeshEditor::render_gui()
 
     kl::GPU* gpu = &app_layer->gpu;
     Scene* scene = &game_layer->scene;
-    Mesh* mesh = &scene->get_mesh(this->selected_mesh);
+    kl::Object mesh = scene->get_mesh(this->selected_mesh);
 
     if (imgui::Begin("Mesh Editor")) {
         const float available_width = imgui::GetContentRegionAvail().x;
@@ -47,10 +47,10 @@ void titian::GUISectionMeshEditor::render_gui()
                 update_mesh_camera();
             }
             if (mesh) {
-                render_selected_mesh(gpu, mesh, viewport_size);
+                render_selected_mesh(gpu, &mesh, viewport_size);
                 const kl::dx::ShaderView& shader_view = render_texture->shader_view;
                 imgui::Image(render_texture->shader_view.Get(), { (float)viewport_size.x, (float)viewport_size.y });
-                render_gizmos(mesh);
+                render_gizmos(&mesh);
             }
             was_focused = imgui::IsWindowFocused();
         }
@@ -67,7 +67,7 @@ void titian::GUISectionMeshEditor::render_gui()
         imgui::PopStyleColor();
         imgui::PopStyleVar(2);
 
-        show_mesh_properties(mesh);
+        show_mesh_properties(&mesh);
     }
     imgui::End();
 }

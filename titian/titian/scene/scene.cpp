@@ -646,3 +646,203 @@ std::map<std::string, titian::Entity*> titian::Scene::helper_get_all_entities()
     }
     return result;
 }
+
+// Other
+void titian::Scene::load_gltf(const tinygltf::Model& model, const bool flip_z, const bool flip_v)
+{
+    auto get_buffer_data = [&]<typename T>(const tinygltf::Accessor& accessor, std::vector<T>& out_data)
+    {
+        const tinygltf::BufferView& buffer_view = model.bufferViews[accessor.bufferView];
+        const tinygltf::Buffer& buffer = model.buffers[buffer_view.buffer];
+        const T* data_start = reinterpret_cast<const T*>(buffer.data.data() + buffer_view.byteOffset + accessor.byteOffset);
+        const size_t count = accessor.count * tinygltf::GetNumComponentsInType(accessor.type);
+        out_data.insert(out_data.end(), data_start, data_start + count);
+    };
+
+    for (const auto& mesh : model.meshes) {
+        kl::Object mesh_obj = new Mesh(m_gpu, m_physics, m_cooking);
+		for (const auto& primitive : mesh.primitives) {
+            std::vector<float> positions;
+            if (primitive.attributes.contains("POSITION")) {
+                const tinygltf::Accessor& pos_accessor = model.accessors[primitive.attributes.at("POSITION")];
+                get_buffer_data(pos_accessor, positions);
+            }
+
+            std::vector<float> normals;
+            if (primitive.attributes.contains("NORMAL")) {
+				const tinygltf::Accessor& norm_accessor = model.accessors[primitive.attributes.at("NORMAL")];
+				get_buffer_data(norm_accessor, normals);
+			}
+
+            std::vector<float> texcoords;
+			if (primitive.attributes.contains("TEXCOORD_0")) {
+				const tinygltf::Accessor& texcoord_accessor = model.accessors[primitive.attributes.at("TEXCOORD_0")];
+				get_buffer_data(texcoord_accessor, texcoords);
+			}
+
+            std::vector<uint32_t> bone_indices;
+			if (primitive.attributes.contains("JOINTS_0")) {
+                const tinygltf::Accessor& joint_accessor = model.accessors[primitive.attributes.at("JOINTS_0")];
+                if (joint_accessor.componentType == TINYGLTF_COMPONENT_TYPE_BYTE || joint_accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
+                    std::vector<uint8_t> temp_bone_indices;
+                    get_buffer_data(joint_accessor, temp_bone_indices);
+                    bone_indices.insert(bone_indices.end(), temp_bone_indices.begin(), temp_bone_indices.end());
+                }
+                else if (joint_accessor.componentType == TINYGLTF_COMPONENT_TYPE_SHORT || joint_accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
+                    std::vector<uint16_t> temp_bone_indices;
+                    get_buffer_data(joint_accessor, temp_bone_indices);
+                    bone_indices.insert(bone_indices.end(), temp_bone_indices.begin(), temp_bone_indices.end());
+                }
+                else {
+                    get_buffer_data(joint_accessor, bone_indices);
+                }
+			}
+
+            std::vector<float> bone_weights;
+			if (primitive.attributes.contains("WEIGHTS_0")) {
+				const tinygltf::Accessor& weight_accessor = model.accessors[primitive.attributes.at("WEIGHTS_0")];
+				get_buffer_data(weight_accessor, bone_weights);
+			}
+
+            std::vector<Vertex> vertices(positions.size() / 3);
+            for (int i = 0; i < (int) vertices.size(); i++) {
+                Vertex& vertex = vertices[i];
+                for (int j = 0; j < 3; j++) {
+                    const int index = i * 3 + j;
+                    if (index < (int) positions.size()) {
+                        vertex.world[j] = positions[index];
+                    }
+                    if (index < (int) normals.size()) {
+                        vertex.normal[j] = normals[index];
+                    }
+                }
+                for (int j = 0; j < 2; j++) {
+                    const int index = i * 2 + j;
+                    if (index < (int) texcoords.size()) {
+                        vertex.texture[j] = texcoords[index];
+                    }
+                }
+                for (int j = 0; j < 4; j++) {
+					const int index = i * 4 + j;
+                    if (index < (int) bone_indices.size()) {
+                        vertex.bone_indices[j] = (uint8_t) bone_indices[index];
+                    }
+                    if (index < (int) bone_weights.size()) {
+                        vertex.bone_weights[j] = bone_weights[index];
+                    }
+                }
+                if (flip_z) {
+                    vertex.world.z *= -1.0f;
+                    vertex.normal.z *= -1.0f;
+                }
+                if (flip_v) {
+                    vertex.texture.y = 1.0f - vertex.texture.y;
+                }
+            }
+
+            std::vector<uint32_t> indices;
+            if (primitive.indices > -1) {
+                const tinygltf::Accessor& index_accessor = model.accessors[primitive.indices];
+                if (index_accessor.componentType == TINYGLTF_COMPONENT_TYPE_BYTE || index_accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
+					std::vector<uint8_t> temp_indices;
+					get_buffer_data(index_accessor, temp_indices);
+					indices.insert(indices.end(), temp_indices.begin(), temp_indices.end());
+				}
+				else if (index_accessor.componentType == TINYGLTF_COMPONENT_TYPE_SHORT || index_accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
+					std::vector<uint16_t> temp_indices;
+					get_buffer_data(index_accessor, temp_indices);
+					indices.insert(indices.end(), temp_indices.begin(), temp_indices.end());
+				}
+				else {
+					get_buffer_data(index_accessor, indices);
+				}
+            }
+
+            mesh_obj->data_buffer.resize(indices.size());
+            for (uint64_t i = 0; i < indices.size(); i++) {
+                mesh_obj->data_buffer[i] = vertices[indices[i]];
+            }
+        }
+        mesh_obj->reload();
+
+        const std::string name_templ = !mesh.name.empty() ? mesh.name : "unknown_mesh";
+        std::string name = name_templ;
+        for (int i = 0; meshes.contains(name); i++) {
+            name = kl::format(name_templ, '_', i);
+        }
+        meshes[name] = mesh_obj;
+    }
+
+    for (const auto& animation : model.animations) {
+        kl::Object animation_obj = new Animation(this);
+
+		for (const auto& channel : animation.channels) {
+
+		}
+		for (const auto& sampler : animation.samplers) {
+
+		}
+
+		const std::string name_templ = !animation.name.empty() ? animation.name : "unknown_animation";
+		std::string name = name_templ;
+		for (int i = 0; animations.contains(name); i++) {
+			name = kl::format(name_templ, '_', i);
+		}
+		animations[name] = animation_obj;
+    }
+
+    for (const auto& texture : model.textures) {
+        const int image_index = texture.source;
+        if (image_index < 0 || image_index >= model.images.size()) {
+            continue;
+        }
+
+        const tinygltf::Image& image_data = model.images[image_index];
+        if (image_data.image.empty()) {
+            continue;
+        }
+
+        kl::Object texture_obj = new Texture(m_gpu);
+        texture_obj->data_buffer.resize({ image_data.width, image_data.height });
+        kl::Color* color_data = texture_obj->data_buffer;
+        for (size_t i = 0; i < texture_obj->data_buffer.pixel_count(); ++i) {
+            color_data[i].r = image_data.image[i * 4 + 0];
+            color_data[i].g = image_data.image[i * 4 + 1];
+            color_data[i].b = image_data.image[i * 4 + 2];
+            color_data[i].a = image_data.image[i * 4 + 3];
+        }
+        texture_obj->reload_as_2D();
+        texture_obj->create_shader_view();
+
+		const std::string name_templ = !texture.name.empty() ? texture.name : "unknown_texture";
+		std::string name = name_templ;
+		for (int i = 0; textures.contains(name); i++) {
+			name = kl::format(name_templ, '_', i);
+		}
+		textures[name] = texture_obj;
+    }
+
+    for (const auto& material : model.materials) {
+        kl::Object material_obj = new Material();
+        material_obj->color = {
+            (float) material.pbrMetallicRoughness.baseColorFactor[0],
+            (float) material.pbrMetallicRoughness.baseColorFactor[1],
+            (float) material.pbrMetallicRoughness.baseColorFactor[2],
+            (float) material.pbrMetallicRoughness.baseColorFactor[3],
+        };
+		material_obj->reflection_factor = 1.0f - (float) material.pbrMetallicRoughness.roughnessFactor;
+        if (material.pbrMetallicRoughness.baseColorTexture.index >= 0) {
+            material_obj->color_map_name = model.textures[material.pbrMetallicRoughness.baseColorTexture.index].name;
+        }
+        if (material.normalTexture.index >= 0) {
+            material_obj->normal_map_name = model.textures[material.normalTexture.index].name;
+        }
+
+        const std::string name_templ = !material.name.empty() ? material.name : "unknown_material";
+        std::string name = name_templ;
+        for (int i = 0; materials.contains(name); i++) {
+            name = kl::format(name_templ, '_', i);
+        }
+        materials[name] = material_obj;
+    }
+}

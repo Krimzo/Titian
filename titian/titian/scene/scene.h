@@ -166,6 +166,9 @@ namespace titian {
         std::map<std::string, Shader*> helper_get_all_shaders();
         std::map<std::string, Entity*> helper_get_all_entities();
 
+        // Other
+        void load_gltf(const tinygltf::Model& model, bool flip_z = true, bool flip_v = true);
+
     private:
         static physx::PxDefaultAllocator m_allocator;
         static physx::PxDefaultErrorCallback m_error_callback;

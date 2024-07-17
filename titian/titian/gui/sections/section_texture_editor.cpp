@@ -11,7 +11,7 @@ void titian::GUISectionTextureEditor::render_gui()
 
     kl::GPU* gpu = &app_layer->gpu;
     Scene* scene = &game_layer->scene;
-    Texture* texture = &scene->get_texture(this->selected_texture);
+    kl::Object texture = scene->get_texture(this->selected_texture);
 
     if (imgui::Begin("Texture Editor")) {
         const float available_width = imgui::GetContentRegionAvail().x;
@@ -31,7 +31,7 @@ void titian::GUISectionTextureEditor::render_gui()
         if (imgui::BeginChild("Texture View", {})) {
             const kl::Int2 viewport_size = { (int) imgui::GetContentRegionAvail().x, (int) imgui::GetContentRegionAvail().y };
             if (texture) {
-                render_selected_texture(texture, viewport_size);
+                render_selected_texture(&texture, viewport_size);
             }
         }
         imgui::EndChild();
@@ -49,7 +49,7 @@ void titian::GUISectionTextureEditor::render_gui()
         imgui::PopStyleVar(2);
 
         if (texture) {
-            show_texture_properties(texture);
+            show_texture_properties(&texture);
         }
     }
     imgui::End();

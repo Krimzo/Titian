@@ -245,6 +245,86 @@ void titian::GUISectionMainMenu::render_gui()
             imgui::EndMenu();
         }
 
+        // Tools
+        static std::optional<tinygltf::Model> gltf_model = {};
+        if (imgui::BeginMenu("Tools")) {
+            imgui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
+            if (imgui::MenuItem("Import GLTF")) {
+                if (std::optional file_path = kl::choose_file(false, { { "GLTF File", ".glb" } })) {
+                    tinygltf::TinyGLTF loader;
+                    tinygltf::Model temp_model;
+                    std::string _error;
+                    std::string _warn;
+                    if (loader.LoadBinaryFromFile(&temp_model, &_error, &_warn, file_path.value())) {
+                        gltf_model = temp_model;
+                    }
+                }
+            }
+            imgui::PopStyleVar();
+            imgui::EndMenu();
+        }
+        if (gltf_model) {
+            imgui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4.0f, 4.0f));
+            if (imgui::Begin("GLTF Import")) {
+                imgui::Text("Meshes:");
+                for (size_t i = 0; i < gltf_model.value().meshes.size(); i++) {
+                    auto& mesh = gltf_model.value().meshes[i];
+                    std::string unknown_case;
+                    if (mesh.name.empty()) {
+                        unknown_case = " (will become unknown_mesh_?)";
+                    }
+                    imgui::Text(kl::format(i + 1, ". \"", mesh.name, "\"", unknown_case).c_str());
+                }
+                imgui::Separator();
+
+                imgui::Text("Animations:");
+				for (size_t i = 0; i < gltf_model.value().animations.size(); i++) {
+					auto& anim = gltf_model.value().animations[i];
+                    std::string unknown_case;
+                    if (anim.name.empty()) {
+                        unknown_case = " (will become unknown_animation_?)";
+                    }
+					imgui::Text(kl::format(i + 1, ". \"", anim.name, "\"", unknown_case).c_str());
+				}
+                imgui::Separator();
+
+                imgui::Text("Textures:");
+				for (size_t i = 0; i < gltf_model.value().textures.size(); i++) {
+					auto& texture = gltf_model.value().textures[i];
+                    std::string unknown_case;
+                    if (texture.name.empty()) {
+                        unknown_case = " (will become unknown_texture_?)";
+                    }
+					imgui::Text(kl::format(i + 1, ". \"", texture.name, "\"", unknown_case).c_str());
+				}
+                imgui::Separator();
+
+                imgui::Text("Materials:");
+				for (size_t i = 0; i < gltf_model.value().materials.size(); i++) {
+					auto& material = gltf_model.value().materials[i];
+                    std::string unknown_case;
+                    if (material.name.empty()) {
+                        unknown_case = " (will become unknown_material_?)";
+                    }
+					imgui::Text(kl::format(i + 1, ". \"", material.name, "\"", unknown_case).c_str());
+				}
+                imgui::Separator();
+
+                imgui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(7.5f, 7.5f));
+                if (imgui::Button("Cancel")) {
+                    gltf_model = std::nullopt;
+                }
+                imgui::SameLine();
+                if (imgui::Button("Import")) {
+                    scene->load_gltf(gltf_model.value());
+                    gltf_model = std::nullopt;
+                }
+                imgui::PopStyleVar();
+            }
+            imgui::End();
+            imgui::PopStyleVar();
+        }
+
         // View
         if (imgui::BeginMenu("View")) {
             imgui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));

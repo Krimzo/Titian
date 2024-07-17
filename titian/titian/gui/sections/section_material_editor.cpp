@@ -22,7 +22,7 @@ void titian::GUISectionMaterialEditor::render_gui()
 
     kl::GPU* gpu = &app_layer->gpu;
     Scene* scene = &game_layer->scene;
-    Material* material = &scene->get_material(this->selected_material);
+    kl::Object material = scene->get_material(this->selected_material);
 
     if (imgui::Begin("Material Editor")) {
         const float available_width = imgui::GetContentRegionAvail().x;
@@ -46,7 +46,7 @@ void titian::GUISectionMaterialEditor::render_gui()
                 update_material_camera();
             }
             if (material) {
-                render_selected_material(scene, gpu, material, viewport_size);
+                render_selected_material(scene, gpu, &material, viewport_size);
                 imgui::Image(render_texture->shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
             was_focused = imgui::IsWindowFocused();
@@ -57,7 +57,7 @@ void titian::GUISectionMaterialEditor::render_gui()
         imgui::PopStyleVar(2);
 
         if (material) {
-            show_material_properties(scene, material);
+            show_material_properties(scene, &material);
         }
     }
     imgui::End();

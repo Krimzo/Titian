@@ -24,7 +24,7 @@ void titian::GUISectionAnimationEditor::render_gui()
 
     kl::GPU* gpu = &app_layer->gpu;
     Scene* scene = &game_layer->scene;
-    Animation* animation = &scene->get_animation(this->selected_animation);
+    kl::Object animation = scene->get_animation(this->selected_animation);
 
     if (imgui::Begin("Animation Editor")) {
         const float available_width = imgui::GetContentRegionAvail().x;
@@ -47,7 +47,7 @@ void titian::GUISectionAnimationEditor::render_gui()
                 update_animation_camera();
             }
             if (animation) {
-                render_selected_animation(gpu, animation, viewport_size);
+                render_selected_animation(gpu, &animation, viewport_size);
                 const kl::dx::ShaderView& shader_view = render_texture->shader_view;
                 imgui::Image(render_texture->shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
@@ -58,7 +58,7 @@ void titian::GUISectionAnimationEditor::render_gui()
         imgui::PopStyleColor();
         imgui::PopStyleVar(2);
 
-        show_animation_properties(animation);
+        show_animation_properties(&animation);
     }
     imgui::End();
 }
@@ -97,7 +97,7 @@ void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* 
 
             if (std::optional opt_name = gui_input_waited("##RenameAnimationInput", animation_name)) {
                 const std::string& name = opt_name.value();
-                if (!name.empty() && !scene->meshes.contains(name)) {
+                if (!name.empty() && !scene->animations.contains(name)) {
                     if (this->selected_animation == animation_name) {
                         this->selected_animation = name;
                     }
