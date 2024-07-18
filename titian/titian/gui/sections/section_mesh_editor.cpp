@@ -57,10 +57,14 @@ void titian::GUISectionMeshEditor::render_gui()
         imgui::EndChild();
 
         if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-            if (mesh && classify_file(file.value()) == FileType::MESH) {
-                const std::filesystem::path path = file.value();
-                mesh->load(kl::parse_obj_file(path.string()));
-                mesh->reload();
+            if (classify_file(file.value()) == FileType::MESH) {
+                if (std::optional data = scene->get_assimp_data(file.value())) {
+                    const aiScene* ai_scene = data.value().importer->GetScene();
+                    for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
+                        kl::Object mesh = scene->load_assimp_mesh(ai_scene->mMeshes[i]);
+                        scene->meshes[data.value().meshes[i]] = mesh;
+                    }
+                }
             }
         }
 

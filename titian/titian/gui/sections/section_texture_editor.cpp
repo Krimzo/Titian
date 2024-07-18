@@ -37,11 +37,12 @@ void titian::GUISectionTextureEditor::render_gui()
         imgui::EndChild();
 
         if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-            if (texture && classify_file(file.value()) == FileType::TEXTURE) {
-                const std::filesystem::path path = file.value();
-                texture->data_buffer.load_from_file(path.string());
-                texture->reload_as_2D(false, false);
-                texture->create_shader_view(nullptr);
+            if (classify_file(file.value()) == FileType::TEXTURE) {
+                const std::string name = std::filesystem::path(file.value()).filename().string();
+                Texture* texture = scene->helper_new_texture(scene->generate_unique_name(name, scene->textures));
+                texture->data_buffer.load_from_file(file.value());
+                texture->reload_as_2D();
+                texture->create_shader_view();
             }
         }
 

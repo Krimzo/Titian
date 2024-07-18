@@ -48,6 +48,24 @@ void titian::GUISectionScriptEditor::render_gui()
 		else if (node_script) {
 			edit_node_script(node_script);
 		}
+
+		if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+			const std::filesystem::path path = file.value();
+			const std::string extension = path.extension().string();
+			if (extension == FILE_EXTENSION_CHAI) {
+				kl::Object script = new InterpScript();
+				script->source = kl::read_file_string(path.string());
+				script->reload();
+				scene->scripts[scene->generate_unique_name(path.filename().string(), scene->scripts)] = script;
+			}
+			else if (extension == FILE_EXTENSION_DLL) {
+				kl::Object script = new NativeScript();
+				script->data = kl::read_file(path.string());
+				script->reload();
+				scene->scripts[scene->generate_unique_name(path.filename().string(), scene->scripts)] = script;
+			}
+		}
+
 		show_script_properties(script);
 	}
 	imgui::End();
@@ -170,15 +188,6 @@ void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
 {
 	std::vector<byte>& data = script->data;
 	m_native_editor.DrawContents(data.data(), data.size());
-
-	if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-		const std::filesystem::path path = file.value();
-		const std::string extension = path.extension().string();
-		if (extension == FILE_EXTENSION_NATIVE_SCRIPT) {
-			script->data = kl::read_file(path.string());
-			script->reload();
-		}
-	}
 }
 
 void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
@@ -225,16 +234,6 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 	}
 	imgui::End();
 	imgui::PopFont();
-
-	if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-		const std::filesystem::path path = file.value();
-		const std::string extension = path.extension().string();
-		if (extension == FILE_EXTENSION_INTERP_SCRIPT) {
-			script->source = kl::read_file_string(path.string());
-			script->reload();
-			m_last_script = nullptr;
-		}
-	}
 }
 
 void titian::GUISectionScriptEditor::edit_node_script(NodeScript* script)

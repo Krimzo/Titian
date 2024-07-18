@@ -5,6 +5,10 @@
 
 
 namespace titian {
+    class Scene;
+}
+
+namespace titian {
 	class DefaultMeshes
 	{
 	public:
@@ -13,6 +17,6 @@ namespace titian {
         kl::Object<Mesh> capsule = nullptr;
         kl::Object<Mesh> monke = nullptr;
 
-        DefaultMeshes(kl::GPU* gpu, physx::PxPhysics* physics, physx::PxCooking* cooking);
+        DefaultMeshes(Scene* scene);
 	};
 }

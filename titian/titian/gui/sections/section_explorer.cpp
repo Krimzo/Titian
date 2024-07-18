@@ -67,8 +67,8 @@ void titian::GUISectionExplorer::render_gui()
                 if (imgui::MenuItem("Script File")) {
                     std::stringstream stream{};
                     stream << m_path << "/" << name_input;
-                    if (name_input.find(FILE_EXTENSION_INTERP_SCRIPT) == -1) {
-                        stream << FILE_EXTENSION_INTERP_SCRIPT;
+                    if (name_input.find(FILE_EXTENSION_CHAI) == -1) {
+                        stream << FILE_EXTENSION_CHAI;
                     }
                     const std::string full_path = stream.str();
                     if (!std::filesystem::exists(full_path)) {
@@ -80,8 +80,8 @@ void titian::GUISectionExplorer::render_gui()
                 if (imgui::MenuItem("Material Shader File")) {
                     std::stringstream stream{};
                     stream << m_path << "/" << name_input;
-                    if (name_input.find(FILE_EXTENSION_SHADER) == -1) {
-                        stream << FILE_EXTENSION_SHADER;
+                    if (name_input.find(FILE_EXTENSION_HLSL) == -1) {
+                        stream << FILE_EXTENSION_HLSL;
                     }
                     const std::string full_path = stream.str();
                     if (!std::filesystem::exists(full_path)) {
@@ -93,8 +93,8 @@ void titian::GUISectionExplorer::render_gui()
                 if (imgui::MenuItem("Camera Shader File")) {
                     std::stringstream stream{};
                     stream << m_path << "/" << name_input;
-                    if (name_input.find(FILE_EXTENSION_SHADER) == -1) {
-                        stream << FILE_EXTENSION_SHADER;
+                    if (name_input.find(FILE_EXTENSION_HLSL) == -1) {
+                        stream << FILE_EXTENSION_HLSL;
                     }
                     const std::string full_path = stream.str();
                     if (!std::filesystem::exists(full_path)) {

@@ -1,13 +1,17 @@
 #include "main.h"
 
 
-titian::DefaultMeshes::DefaultMeshes(kl::GPU* gpu, physx::PxPhysics* physics, physx::PxCooking* cooking)
+titian::DefaultMeshes::DefaultMeshes(Scene* scene)
 {
     auto create_mesh = [&](kl::Object<Mesh>& mesh, const char* filename)
     {
-        mesh = new Mesh(gpu, physics, cooking);
-        mesh->load(kl::parse_obj_file(filename));
-        mesh->reload();
+        if (std::optional data = scene->get_assimp_data(filename)) {
+            const aiScene* ai_scene = data.value().importer->GetScene();
+            for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
+                mesh = scene->load_assimp_mesh(ai_scene->mMeshes[i]);
+                break;
+            }
+        }
         kl::assert(mesh->graphics_buffer, "Failed to init mesh: ", filename);
     };
 

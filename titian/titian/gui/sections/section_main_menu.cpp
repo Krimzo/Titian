@@ -34,7 +34,7 @@ void titian::GUISectionMainMenu::render_gui()
             if (std::optional opt_name = gui_input_waited("##SaveSceneNameInput", {})) {
                 const std::string& name = opt_name.value();
                 if (!name.empty()) {
-                    const std::string save_path = kl::format(opt_name.value(), FILE_EXTENSION_SCENE);
+                    const std::string save_path = kl::format(opt_name.value(), FILE_EXTENSION_TITIAN);
                     if (Serializer serializer = { save_path, true }) {
                         scene->serialize(&serializer, nullptr);
                     }
@@ -73,12 +73,14 @@ void titian::GUISectionMainMenu::render_gui()
             imgui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (imgui::BeginMenu("Import")) {
                 if (imgui::MenuItem("Mesh")) {
-                    if (std::optional file = kl::choose_file(false, { { "Mesh File",  FILE_EXTENSION_MESH } })) {
-                        const std::string stem_name = std::filesystem::path(file.value()).stem().string();
-
-                        Mesh* mesh = scene->helper_new_mesh(stem_name);
-                        mesh->load(kl::parse_obj_file(file.value()));
-                        mesh->reload();
+                    if (std::optional file = kl::choose_file(false, { { "Mesh File",  FILE_EXTENSION_OBJ }, { "Mesh File",  FILE_EXTENSION_GLB }, { "Mesh File",  FILE_EXTENSION_FBX } })) {
+                        if (std::optional data = scene->get_assimp_data(file.value())) {
+                            const aiScene* ai_scene = data.value().importer->GetScene();
+                            for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
+                                kl::Object mesh = scene->load_assimp_mesh(ai_scene->mMeshes[i]);
+								scene->meshes[data.value().meshes[i]] = mesh;
+                            }
+                        }
                     }
                 }
                 if (imgui::MenuItem("Texture")) {
@@ -93,7 +95,7 @@ void titian::GUISectionMainMenu::render_gui()
                 }
                 if (imgui::MenuItem("Script")) {
                     int type_index = 0;
-                    if (std::optional file = kl::choose_file(false, { { "Script File", FILE_EXTENSION_INTERP_SCRIPT }, { "Script File", FILE_EXTENSION_NATIVE_SCRIPT } }, &type_index)) {
+                    if (std::optional file = kl::choose_file(false, { { "Script File", FILE_EXTENSION_CHAI }, { "Script File", FILE_EXTENSION_DLL } }, &type_index)) {
                         const std::string stem_name = std::filesystem::path(file.value()).stem().string();
 
                         if (type_index == 0) {
@@ -111,7 +113,7 @@ void titian::GUISectionMainMenu::render_gui()
                     }
                 }
                 if (imgui::MenuItem("Shader")) {
-                    if (std::optional file = kl::choose_file(false, { { "Shader File", FILE_EXTENSION_SHADER } })) {
+                    if (std::optional file = kl::choose_file(false, { { "Shader File", FILE_EXTENSION_HLSL } })) {
                         const std::string stem_name = std::filesystem::path(file.value()).stem().string();
 
                         Shader* shader = scene->helper_new_shader(stem_name);
@@ -119,7 +121,7 @@ void titian::GUISectionMainMenu::render_gui()
                     }
                 }
                 if (imgui::MenuItem("Scene")) {
-                    if (std::optional file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_SCENE } })) {
+                    if (std::optional file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
                         const std::string stem_name = std::filesystem::path(file.value()).stem().string();
 
                         Serializer serializer{ file.value(), false };
@@ -167,18 +169,18 @@ void titian::GUISectionMainMenu::render_gui()
                             continue;
                         }
                         if (imgui::MenuItem(name.c_str())) {
-                            const std::pair<std::string, std::string> type_info = script.is<InterpScript>() ? std::pair{ "Interp Script", FILE_EXTENSION_INTERP_SCRIPT } : std::pair{ "Native Script", FILE_EXTENSION_NATIVE_SCRIPT };
+                            const std::pair<std::string, std::string> type_info = script.is<InterpScript>() ? std::pair{ "Interp Script", FILE_EXTENSION_CHAI } : std::pair{ "Native Script", FILE_EXTENSION_DLL };
                             if (std::optional file = kl::choose_file(true, { type_info })) {
                                 const std::string extension = std::filesystem::path(file.value()).extension().string();
                                 if (InterpScript* interp_script = &script.as<InterpScript>()) {
                                     if (extension.empty()) {
-                                        file.value() += FILE_EXTENSION_INTERP_SCRIPT;
+                                        file.value() += FILE_EXTENSION_CHAI;
                                     }
                                     kl::write_file_string(file.value(), interp_script->source);
                                 }
                                 else if (NativeScript* native_script = &script.as<NativeScript>()) {
                                     if (extension.empty()) {
-                                        file.value() += FILE_EXTENSION_NATIVE_SCRIPT;
+                                        file.value() += FILE_EXTENSION_DLL;
                                     }
 									kl::write_file(file.value(), native_script->data);
                                 }
@@ -194,10 +196,10 @@ void titian::GUISectionMainMenu::render_gui()
                             continue;
                         }
                         if (imgui::MenuItem(name.c_str())) {
-                            if (std::optional file = kl::choose_file(true, { { "Shader File", FILE_EXTENSION_SHADER } })) {
+                            if (std::optional file = kl::choose_file(true, { { "Shader File", FILE_EXTENSION_HLSL } })) {
                                 const std::string extension = std::filesystem::path(file.value()).extension().string();
                                 if (extension.empty()) {
-                                    file.value() += FILE_EXTENSION_SHADER;
+                                    file.value() += FILE_EXTENSION_HLSL;
                                 }
                                 kl::write_file_string(file.value(), shader->data_buffer);
                             }
@@ -206,10 +208,10 @@ void titian::GUISectionMainMenu::render_gui()
                     imgui::EndMenu();
                 }
                 if (imgui::MenuItem("Scene")) {
-                    if (std::optional file = kl::choose_file(true, { { "Scene File", FILE_EXTENSION_SCENE } })) {
+                    if (std::optional file = kl::choose_file(true, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
                         const std::string extension = std::filesystem::path(file.value()).extension().string();
                         if (extension.empty()) {
-                            file.value() += FILE_EXTENSION_SCENE;
+                            file.value() += FILE_EXTENSION_TITIAN;
                         }
                         Serializer serializer{ file.value(), true };
                         if (serializer) {
@@ -246,53 +248,53 @@ void titian::GUISectionMainMenu::render_gui()
         }
 
         // Tools
-        static std::optional<GLTFInfo> opt_gltf_info;
+        static std::optional<AssimpData> opt_assimp_data;
         if (imgui::BeginMenu("Tools")) {
             imgui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (imgui::MenuItem("Import GLTF")) {
                 if (std::optional file_path = kl::choose_file(false, { { "GLTF File", ".glb" } })) {
-                    opt_gltf_info = scene->load_gltf_info(file_path.value());
+                    opt_assimp_data = scene->get_assimp_data(file_path.value());
                 }
             }
             imgui::PopStyleVar();
             imgui::EndMenu();
         }
-        if (opt_gltf_info) {
-            const auto& gltf_info = opt_gltf_info.value();
+        if (opt_assimp_data) {
+            const auto& assimp_data = opt_assimp_data.value();
             imgui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4.0f, 4.0f));
             if (imgui::Begin("GLTF Import")) {
                 imgui::Text("Meshes:");
-                for (size_t i = 0; i < gltf_info.meshes.size(); i++) {
-                    imgui::Text(kl::format(i + 1, ". \"", gltf_info.meshes[i], "\"").c_str());
+                for (size_t i = 0; i < assimp_data.meshes.size(); i++) {
+                    imgui::Text(kl::format(i + 1, ". \"", assimp_data.meshes[i], "\"").c_str());
                 }
                 imgui::Separator();
 
                 imgui::Text("Animations:");
-                for (size_t i = 0; i < gltf_info.animations.size(); i++) {
-                    imgui::Text(kl::format(i + 1, ". \"", gltf_info.animations[i], "\"").c_str());
+                for (size_t i = 0; i < assimp_data.animations.size(); i++) {
+                    imgui::Text(kl::format(i + 1, ". \"", assimp_data.animations[i], "\"").c_str());
                 }
                 imgui::Separator();
 
                 imgui::Text("Textures:");
-                for (size_t i = 0; i < gltf_info.textures.size(); i++) {
-                    imgui::Text(kl::format(i + 1, ". \"", gltf_info.textures[i], "\"").c_str());
+                for (size_t i = 0; i < assimp_data.textures.size(); i++) {
+                    imgui::Text(kl::format(i + 1, ". \"", assimp_data.textures[i], "\"").c_str());
                 }
                 imgui::Separator();
 
                 imgui::Text("Materials:");
-                for (size_t i = 0; i < gltf_info.materials.size(); i++) {
-                    imgui::Text(kl::format(i + 1, ". \"", gltf_info.materials[i], "\"").c_str());
+                for (size_t i = 0; i < assimp_data.materials.size(); i++) {
+                    imgui::Text(kl::format(i + 1, ". \"", assimp_data.materials[i], "\"").c_str());
                 }
                 imgui::Separator();
 
                 imgui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(7.5f, 7.5f));
                 if (imgui::Button("Cancel")) {
-                    opt_gltf_info = std::nullopt;
+                    opt_assimp_data = std::nullopt;
                 }
                 imgui::SameLine();
                 if (imgui::Button("Import")) {
-                    scene->load_gltf(gltf_info);
-                    opt_gltf_info = std::nullopt;
+                    scene->load_assimp_data(assimp_data);
+                    opt_assimp_data = std::nullopt;
                 }
                 imgui::PopStyleVar();
             }

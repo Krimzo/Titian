@@ -10,13 +10,19 @@ namespace titian {
         inline std::unordered_map<std::string, std::string> INPUT_WAITED_DATA = {};
     }
 
-    inline const std::string FILE_EXTENSION_MESH = ".obj";
+    inline const std::string FILE_EXTENSION_OBJ = ".obj";
+    inline const std::string FILE_EXTENSION_GLB = ".glb";
+    inline const std::string FILE_EXTENSION_FBX = ".fbx";
+
     inline const std::string FILE_EXTENSION_JPG = ".jpg";
     inline const std::string FILE_EXTENSION_PNG = ".png";
-    inline const std::string FILE_EXTENSION_NATIVE_SCRIPT = ".dll";
-    inline const std::string FILE_EXTENSION_INTERP_SCRIPT = ".chai";
-    inline const std::string FILE_EXTENSION_SHADER = ".hlsl";
-    inline const std::string FILE_EXTENSION_SCENE = ".titian";
+    inline const std::string FILE_EXTENSION_BMP = ".bmp";
+
+    inline const std::string FILE_EXTENSION_DLL = ".dll";
+    inline const std::string FILE_EXTENSION_CHAI = ".chai";
+
+    inline const std::string FILE_EXTENSION_HLSL = ".hlsl";
+    inline const std::string FILE_EXTENSION_TITIAN = ".titian";
 
     inline const std::string DRAG_FILE_ID = "DragFileID";
     inline const std::string DRAG_DIR_ID = "DragDirID";

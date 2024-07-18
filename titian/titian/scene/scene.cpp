@@ -40,7 +40,7 @@ titian::Scene::Scene(kl::GPU* gpu)
     m_scene = m_physics->createScene(scene_descriptor);
     kl::assert(m_scene, "Failed to create physics scene");
 
-    default_meshes = new DefaultMeshes(gpu, m_physics, m_cooking);
+    default_meshes = new DefaultMeshes(this);
     kl::assert(default_meshes, "Failed to init default meshes");
 
     default_animations = new DefaultAnimations(this);
@@ -647,20 +647,140 @@ std::map<std::string, titian::Entity*> titian::Scene::helper_get_all_entities()
     return result;
 }
 
-std::optional<titian::GLTFInfo> titian::Scene::load_gltf_info(const std::string& path)
+std::optional<titian::AssimpData> titian::Scene::get_assimp_data(const std::string& path) const
 {
-    Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_MakeLeftHanded);
+    kl::Object importer = new Assimp::Importer();
+    const aiScene* scene = importer->ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_MakeLeftHanded);
     if (!scene) {
         return std::nullopt;
     }
 
-
-
-    return std::nullopt;
+    AssimpData data{};
+    data.importer = importer;
+    for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
+        aiMesh* mesh = scene->mMeshes[i];
+        std::string name = mesh->mName.C_Str();
+        if (name.empty()) {
+            name = "unknown_mesh";
+        }
+        data.meshes.push_back(generate_unique_name(name, meshes));
+    }
+	for (uint32_t i = 0; i < scene->mNumAnimations; i++) {
+		aiAnimation* animation = scene->mAnimations[i];
+        std::string name = animation->mName.C_Str();
+        if (name.empty()) {
+            name = "unknown_animation";
+        }
+        data.animations.push_back(generate_unique_name(name, animations));
+	}
+	for (uint32_t i = 0; i < scene->mNumTextures; i++) {
+		aiTexture* texture = scene->mTextures[i];
+        std::string name = texture->mFilename.C_Str();
+		if (name.empty()) {
+			name = "unknown_texture";
+		}
+        data.textures.push_back(generate_unique_name(name, textures));
+	}
+    for (uint32_t i = 0; i < scene->mNumMaterials; i++) {
+        aiMaterial* material = scene->mMaterials[i];
+		std::string name = material->GetName().C_Str();
+		if (name.empty()) {
+			name = "unknown_material";
+		}
+        data.materials.push_back(generate_unique_name(name, materials));
+    }
+    return data;
 }
 
 // Other
-void titian::Scene::load_gltf(const GLTFInfo& info, const bool flip_z, const bool flip_v)
+void titian::Scene::load_assimp_data(const AssimpData& data)
 {
+    const aiScene* scene = data.importer->GetScene();
+    for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
+        meshes[data.meshes[i]] = load_assimp_mesh(scene->mMeshes[i]);
+    }
+    for (uint32_t i = 0; i < scene->mNumAnimations; i++) {
+        animations[data.animations[i]] = load_assimp_animation(scene->mAnimations[i]);
+    }
+    for (uint32_t i = 0; i < scene->mNumTextures; i++) {
+        textures[data.textures[i]] = load_assimp_texture(scene->mTextures[i]);
+    }
+    for (uint32_t i = 0; i < scene->mNumMaterials; i++) {
+		materials[data.materials[i]] = load_assimp_material(scene->mMaterials[i]);
+    }
+}
+
+kl::Object<titian::Mesh> titian::Scene::load_assimp_mesh(aiMesh* mesh)
+{
+    kl::Object mesh_object = new Mesh(m_gpu, m_physics, m_cooking);
+    
+    std::vector<Vertex> vertices(mesh->mNumVertices);
+    if (mesh->HasPositions()) {
+        for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
+            vertices[i].world = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z };
+        }
+    }
+    if (mesh->HasTextureCoords(0)) {
+        for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
+            vertices[i].texture = { mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y };
+        }
+    }
+    if (mesh->HasNormals()) {
+        if (mesh->mNumVertices > vertices.size()) {
+            vertices.resize(mesh->mNumVertices);
+        }
+        for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
+            vertices[i].normal = { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z };
+        }
+    }
+    mesh_object->data_buffer.reserve((size_t) mesh->mNumFaces * 3);
+    for (uint32_t i = 0; i < mesh->mNumFaces; i++) {
+        const auto& face = mesh->mFaces[i];
+        for (uint32_t j = 0; j < face.mNumIndices; j++) {
+            const uint32_t index = face.mIndices[j];
+            mesh_object->data_buffer.push_back(vertices[index]);
+        }
+    }
+
+    mesh_object->reload();
+    return mesh_object;
+}
+
+kl::Object<titian::Animation> titian::Scene::load_assimp_animation(aiAnimation* animation)
+{
+    kl::Object animation_object = new Animation(this);
+
+
+
+    return animation_object;
+}
+
+kl::Object<titian::Texture> titian::Scene::load_assimp_texture(aiTexture* texture)
+{
+    kl::Object texture_object = new Texture(m_gpu);
+
+    if (texture->mHeight == 0) {
+        texture_object->data_buffer.load_from_memory((byte*) texture->pcData, texture->mWidth);
+	}
+    else {
+        texture_object->data_buffer.resize({ (int) texture->mWidth, (int) texture->mHeight });
+        memcpy(texture_object->data_buffer, texture->pcData, (size_t) texture->mWidth * texture->mHeight * 4);
+    }
+
+    texture_object->reload_as_2D();
+    texture_object->create_shader_view();
+
+    return texture_object;
+}
+
+kl::Object<titian::Material> titian::Scene::load_assimp_material(aiMaterial* material)
+{
+	kl::Object material_object = new Material();
+
+    material->Get(AI_MATKEY_COLOR_DIFFUSE, material_object->color);
+	material->Get(AI_MATKEY_COLOR_TRANSPARENT, material_object->color.w);
+	material->Get(AI_MATKEY_REFLECTIVITY, material_object->reflection_factor);
+	material->Get(AI_MATKEY_REFRACTI, material_object->refraction_index);
+
+	return material_object;
 }

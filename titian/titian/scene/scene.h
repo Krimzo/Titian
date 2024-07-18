@@ -14,9 +14,9 @@
 
 
 namespace titian {
-    struct GLTFInfo
+    struct AssimpData
     {
-        std::string file_path;
+        kl::Object<Assimp::Importer> importer;
         std::vector<std::string> meshes;
         std::vector<std::string> animations;
         std::vector<std::string> textures;
@@ -177,9 +177,30 @@ namespace titian {
         std::map<std::string, Shader*> helper_get_all_shaders();
         std::map<std::string, Entity*> helper_get_all_entities();
 
-        // Other
-        std::optional<GLTFInfo> load_gltf_info(const std::string& path);
-        void load_gltf(const GLTFInfo& info, bool flip_z = true, bool flip_v = true);
+        // Loading
+        std::optional<AssimpData> get_assimp_data(const std::string& path) const;
+        void load_assimp_data(const AssimpData& data);
+
+        kl::Object<Mesh> load_assimp_mesh(aiMesh* mesh);
+		kl::Object<Animation> load_assimp_animation(aiAnimation* animation);
+		kl::Object<Texture> load_assimp_texture(aiTexture* texture);
+		kl::Object<Material> load_assimp_material(aiMaterial* material);
+
+        template<typename T>
+        static inline std::string generate_unique_name(const std::string& name, const std::map<std::string, T>& map)
+        {
+            if (!map.contains(name))
+                return name;
+
+            int i = 0;
+            std::string result;
+            do {
+                i += 1;
+                result = kl::format(name, '_', i);
+            }
+			while (map.contains(result));
+			return result;
+        }
 
     private:
         static physx::PxDefaultAllocator m_allocator;

@@ -42,6 +42,15 @@ void titian::GUISectionShaderEditor::render_gui()
 		imgui::EndChild();
 		imgui::NextColumn();
 
+		if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
+			if (classify_file(file.value()) == FileType::SHADER) {
+				const std::string name = std::filesystem::path(file.value()).filename().string();
+				Shader* shader = scene->helper_new_shader(scene->generate_unique_name(name, scene->shaders));
+				shader->data_buffer = kl::read_file_string(file.value());
+				shader->reload();
+			}
+		}
+
 		Shader* shader = &scene->get_shader(selected_shader);
 		if (shader) {
 			edit_shader(shader);
@@ -187,14 +196,4 @@ void titian::GUISectionShaderEditor::edit_shader(Shader* shader)
 	}
 	imgui::End();
 	imgui::PopFont();
-
-	if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-		const std::filesystem::path path = file.value();
-		const std::string extension = path.extension().string();
-		if (extension == FILE_EXTENSION_SHADER) {
-			shader->data_buffer = kl::read_file_string(path.string());
-			shader->reload();
-			m_last_shader = nullptr;
-		}
-	}
 }
