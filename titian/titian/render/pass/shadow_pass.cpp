@@ -42,6 +42,15 @@ void titian::ShadowPass::render_self(StatePackage& package)
     // Update target view/viewport
     gpu->set_viewport_size(kl::Int2{ (int) dir_light->map_resolution() });
 
+    struct VS_CB
+    {
+        alignas(16) kl::Float4x4 WVP;
+
+        kl::Float4x4 BONE_MATRICES[MAX_BONE_COUNT];
+        float IS_SKELETAL{};
+    };
+    VS_CB vs_cb{};
+
     // Render shadows
     for (int i = 0; i < kl::DirectionalLight::CASCADE_COUNT; i++) {
         // Helper
@@ -76,14 +85,14 @@ void titian::ShadowPass::render_self(StatePackage& package)
             }
 
             // Set cb data
-            struct VS_CB
-            {
-                kl::Float4x4 WVP;
-            };
-
-            const VS_CB vs_cb{
-                .WVP = VP * entity->model_matrix(),
-            };
+            vs_cb.WVP = VP * entity->model_matrix();
+            if (animation->type == AnimationType::SKELETAL) {
+                animation->load_matrices(vs_cb.BONE_MATRICES);
+                vs_cb.IS_SKELETAL = 1.0f;
+            }
+            else {
+                vs_cb.IS_SKELETAL = 0.0f;
+            }
             package.shader_state.vertex_shader.update_cbuffer(vs_cb);
 
             // Draw

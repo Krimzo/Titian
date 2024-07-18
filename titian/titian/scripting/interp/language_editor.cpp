@@ -26,6 +26,8 @@ titian::LanguageEditor::LanguageEditor()
 		HLSL_IDENTIFIERS["_pixel_post"] = "Alter the pixel data after the full pixel shader.";
 
 		HLSL_IDENTIFIERS["SHADOW_CASCADE_COUNT"] = "Directional light cascade count.";
+		HLSL_IDENTIFIERS["MAX_BONE_COUNT"] = "Max animation bone count.";
+
 		HLSL_IDENTIFIERS["ELAPSED_TIME"] = "Elapsed game time in seconds.";
 		HLSL_IDENTIFIERS["DELTA_TIME"] = "Frame time in seconds.";
 		HLSL_IDENTIFIERS["CAMERA_POSITION"] = "Camera 3D origin. (position)";
@@ -56,6 +58,8 @@ titian::LanguageEditor::LanguageEditor()
 		HLSL_IDENTIFIERS["SHADOW_MAP_TEXEL_SIZE"] = "Directional light shadow map texel size.";
 		HLSL_IDENTIFIERS["SHADOW_CASCADES"] = "Directional light shadow coverage zones.";
 		HLSL_IDENTIFIERS["LIGHT_VPs"] = "Directional light VP matrices.";
+		HLSL_IDENTIFIERS["BONE_MATRICES"] = "Array of animation bone matrices.";
+		HLSL_IDENTIFIERS["IS_SKELETAL"] = "Equals 1.0f if entity has a skinned mesh.";
 		HLSL_IDENTIFIERS["CUSTOM_DATA"] = "Custom user data of a material.";
 
 		HLSL_IDENTIFIERS["SKYBOX_SAMPLER"] = "Skybox sampler.";

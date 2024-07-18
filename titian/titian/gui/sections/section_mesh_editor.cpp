@@ -213,13 +213,17 @@ void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh
 
     struct VS_CB
     {
-        kl::Float4x4 W;
-        alignas(16) kl::Float4x4 WVP;
+        alignas(16) kl::Float4x4 W;
+        kl::Float4x4 WVP;
+
+        kl::Float4x4 BONE_MATRICES[MAX_BONE_COUNT];
+        float IS_SKELETAL{};
     };
 
     const VS_CB vs_cb{
         .W = {},
-		.WVP = camera->camera_matrix(),
+        .WVP = camera->camera_matrix(),
+        .IS_SKELETAL = 0.0f,
     };
 
     struct PS_CB
@@ -296,6 +300,8 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
         if (imgui::DragFloat3("Sun Direction", sun_direction, 0.01f)) {
             sun_direction = kl::normalize(sun_direction);
         }
+
+        imgui::Separator();
 
         /*-*/
         imgui::Text("Info");

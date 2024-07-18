@@ -41,6 +41,12 @@ bool titian::RenderLayer::update()
 	if (!camera)
 		return true;
 
+	// Update animations
+	const float animation_time = app_layer->timer.elapsed();
+	for (auto& [_, animation] : scene->animations) {
+		animation->update_matrices(animation_time);
+	}
+
 	// Process passes
 	const kl::Int2 render_size = get_render_texture_size();
 	for (auto& pass : passes) {

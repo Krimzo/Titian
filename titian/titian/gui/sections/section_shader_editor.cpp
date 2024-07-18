@@ -128,7 +128,6 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) const
 {
 	static const std::unordered_map<ShaderType, std::string> shader_type_names = {
-		{ ShaderType::NONE, "None" },
 		{ ShaderType::MATERIAL, "Material" },
 		{ ShaderType::CAMERA, "Camera" },
 	};

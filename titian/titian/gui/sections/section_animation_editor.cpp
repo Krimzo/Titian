@@ -183,11 +183,16 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
     gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
 
     Mesh* mesh = nullptr;
-    if (m_animating) {
-        m_frame_index = animation->get_index(m_timer.elapsed());
+    if (animation->type == AnimationType::SEQUENTIAL) {
+        if (m_animating) {
+            m_frame_index = animation->get_index(m_timer.elapsed());
+        }
+        if (m_frame_index >= 0 && m_frame_index < (int) animation->meshes.size()) {
+            mesh = game_layer->scene->helper_get_mesh(animation->meshes[m_frame_index]);
+        }
     }
-    if (m_frame_index >= 0 && m_frame_index < (int) animation->meshes.size()) {
-        mesh = game_layer->scene->helper_get_mesh(animation->meshes[m_frame_index]);
+    else {
+        mesh = animation->get_mesh(0.0f);
     }
     if (!mesh) {
         return;
@@ -209,14 +214,25 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
 
     struct VS_CB
     {
-        kl::Float4x4 W;
-        alignas(16) kl::Float4x4 WVP;
+        alignas(16) kl::Float4x4 W;
+        kl::Float4x4 WVP;
+
+        kl::Float4x4 BONE_MATRICES[MAX_BONE_COUNT];
+        float IS_SKELETAL{};
     };
 
-    const VS_CB vs_cb{
+    VS_CB vs_cb{
         .W = {},
         .WVP = camera->camera_matrix(),
     };
+
+    if (m_animating && animation->type == AnimationType::SKELETAL) {
+        animation->load_matrices(vs_cb.BONE_MATRICES);
+        vs_cb.IS_SKELETAL = 1.0f;
+    }
+    else {
+        vs_cb.IS_SKELETAL = 0.0f;
+    }
 
     struct PS_CB
     {
@@ -265,11 +281,27 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
             }
         }
 
+        imgui::Separator();
+
         /*-*/
         imgui::Text("Info");
         imgui::Text("Name: ");
         imgui::SameLine();
         gui_colored_text(selected_animation, gui_layer->special_color);
+
+        static const std::map<AnimationType, std::string> animation_type_names{
+            { AnimationType::SEQUENTIAL, "Sequential" },
+            { AnimationType::SKELETAL, "Skeletal" },
+		};
+
+        if (imgui::BeginCombo("Animation Type", animation_type_names.at(animation->type).c_str())) {
+            for (auto& [type, name] : animation_type_names) {
+				if (imgui::Selectable(name.c_str(), animation->type == type)) {
+					animation->type = type;
+				}
+			}
+			imgui::EndCombo();
+        }
 
         imgui::DragFloat("FPS", &animation->fps, 1.0f, 0.0f, 10'000.0f);
 

@@ -56,7 +56,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(ProjectDir)external\tinygltf\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\assimp\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -66,7 +66,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)external\physx\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)external\assimp\;$(ProjectDir)external\physx\</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
@@ -81,7 +81,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(ProjectDir)external\tinygltf\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\assimp\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -93,7 +93,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)external\physx\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)external\assimp\;$(ProjectDir)external\physx\</AdditionalLibraryDirectories>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
@@ -112,10 +112,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="external\tinygltf\tiny_gltf.cc">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="packager\packager.cpp" />
     <ClCompile Include="packager\packager_entry.cpp" />
     <ClCompile Include="sandbox\pieces\piece_test.cpp" />
@@ -124,16 +120,96 @@
     <ClCompile Include="titian\render\pass\post_pass.cpp" />
     <ClCompile Include="titian\scene\default\default_animations.cpp" />
     <ClCompile Include="titian\ui\ui_funcs.cpp" />
+    <ClInclude Include="external\assimp\assimp\aabb.h" />
+    <ClInclude Include="external\assimp\assimp\ai_assert.h" />
+    <ClInclude Include="external\assimp\assimp\anim.h" />
+    <ClInclude Include="external\assimp\assimp\AssertHandler.h" />
+    <ClInclude Include="external\assimp\assimp\Base64.hpp" />
+    <ClInclude Include="external\assimp\assimp\BaseImporter.h" />
+    <ClInclude Include="external\assimp\assimp\Bitmap.h" />
+    <ClInclude Include="external\assimp\assimp\BlobIOSystem.h" />
+    <ClInclude Include="external\assimp\assimp\ByteSwapper.h" />
+    <ClInclude Include="external\assimp\assimp\camera.h" />
+    <ClInclude Include="external\assimp\assimp\cexport.h" />
+    <ClInclude Include="external\assimp\assimp\cfileio.h" />
+    <ClInclude Include="external\assimp\assimp\cimport.h" />
+    <ClInclude Include="external\assimp\assimp\ColladaMetaData.h" />
+    <ClInclude Include="external\assimp\assimp\color4.h" />
+    <ClInclude Include="external\assimp\assimp\commonMetaData.h" />
+    <ClInclude Include="external\assimp\assimp\Compiler\poppack1.h" />
+    <ClInclude Include="external\assimp\assimp\Compiler\pstdint.h" />
+    <ClInclude Include="external\assimp\assimp\Compiler\pushpack1.h" />
+    <ClInclude Include="external\assimp\assimp\config.h" />
+    <ClInclude Include="external\assimp\assimp\CreateAnimMesh.h" />
+    <ClInclude Include="external\assimp\assimp\DefaultIOStream.h" />
+    <ClInclude Include="external\assimp\assimp\DefaultIOSystem.h" />
+    <ClInclude Include="external\assimp\assimp\DefaultLogger.hpp" />
+    <ClInclude Include="external\assimp\assimp\defs.h" />
+    <ClInclude Include="external\assimp\assimp\Exceptional.h" />
+    <ClInclude Include="external\assimp\assimp\Exporter.hpp" />
+    <ClInclude Include="external\assimp\assimp\fast_atof.h" />
+    <ClInclude Include="external\assimp\assimp\GenericProperty.h" />
+    <ClInclude Include="external\assimp\assimp\GltfMaterial.h" />
+    <ClInclude Include="external\assimp\assimp\Hash.h" />
+    <ClInclude Include="external\assimp\assimp\Importer.hpp" />
+    <ClInclude Include="external\assimp\assimp\importerdesc.h" />
+    <ClInclude Include="external\assimp\assimp\IOStream.hpp" />
+    <ClInclude Include="external\assimp\assimp\IOStreamBuffer.h" />
+    <ClInclude Include="external\assimp\assimp\IOSystem.hpp" />
+    <ClInclude Include="external\assimp\assimp\light.h" />
+    <ClInclude Include="external\assimp\assimp\LineSplitter.h" />
+    <ClInclude Include="external\assimp\assimp\LogAux.h" />
+    <ClInclude Include="external\assimp\assimp\Logger.hpp" />
+    <ClInclude Include="external\assimp\assimp\LogStream.hpp" />
+    <ClInclude Include="external\assimp\assimp\material.h" />
+    <ClInclude Include="external\assimp\assimp\MathFunctions.h" />
+    <ClInclude Include="external\assimp\assimp\matrix3x3.h" />
+    <ClInclude Include="external\assimp\assimp\matrix4x4.h" />
+    <ClInclude Include="external\assimp\assimp\MemoryIOWrapper.h" />
+    <ClInclude Include="external\assimp\assimp\mesh.h" />
+    <ClInclude Include="external\assimp\assimp\metadata.h" />
+    <ClInclude Include="external\assimp\assimp\NullLogger.hpp" />
+    <ClInclude Include="external\assimp\assimp\ObjMaterial.h" />
+    <ClInclude Include="external\assimp\assimp\ParsingUtils.h" />
+    <ClInclude Include="external\assimp\assimp\pbrmaterial.h" />
+    <ClInclude Include="external\assimp\assimp\port\AndroidJNI\AndroidJNIIOSystem.h" />
+    <ClInclude Include="external\assimp\assimp\port\AndroidJNI\BundledAssetIOSystem.h" />
+    <ClInclude Include="external\assimp\assimp\postprocess.h" />
+    <ClInclude Include="external\assimp\assimp\Profiler.h" />
+    <ClInclude Include="external\assimp\assimp\ProgressHandler.hpp" />
+    <ClInclude Include="external\assimp\assimp\qnan.h" />
+    <ClInclude Include="external\assimp\assimp\quaternion.h" />
+    <ClInclude Include="external\assimp\assimp\RemoveComments.h" />
+    <ClInclude Include="external\assimp\assimp\revision.h" />
+    <ClInclude Include="external\assimp\assimp\scene.h" />
+    <ClInclude Include="external\assimp\assimp\SceneCombiner.h" />
+    <ClInclude Include="external\assimp\assimp\SGSpatialSort.h" />
+    <ClInclude Include="external\assimp\assimp\SkeletonMeshBuilder.h" />
+    <ClInclude Include="external\assimp\assimp\SmallVector.h" />
+    <ClInclude Include="external\assimp\assimp\SmoothingGroups.h" />
+    <ClInclude Include="external\assimp\assimp\SpatialSort.h" />
+    <ClInclude Include="external\assimp\assimp\StandardShapes.h" />
+    <ClInclude Include="external\assimp\assimp\StreamReader.h" />
+    <ClInclude Include="external\assimp\assimp\StreamWriter.h" />
+    <ClInclude Include="external\assimp\assimp\StringComparison.h" />
+    <ClInclude Include="external\assimp\assimp\StringUtils.h" />
+    <ClInclude Include="external\assimp\assimp\Subdivision.h" />
+    <ClInclude Include="external\assimp\assimp\texture.h" />
+    <ClInclude Include="external\assimp\assimp\TinyFormatter.h" />
+    <ClInclude Include="external\assimp\assimp\types.h" />
+    <ClInclude Include="external\assimp\assimp\vector2.h" />
+    <ClInclude Include="external\assimp\assimp\vector3.h" />
+    <ClInclude Include="external\assimp\assimp\version.h" />
+    <ClInclude Include="external\assimp\assimp\Vertex.h" />
+    <ClInclude Include="external\assimp\assimp\XmlParser.h" />
+    <ClInclude Include="external\assimp\assimp\XMLTools.h" />
+    <ClInclude Include="external\assimp\assimp\ZipArchiveIOSystem.h" />
     <ClInclude Include="external\chaiscript\chaiscript.hpp" />
     <ClInclude Include="external\chaiscript\dispatchkit\function_params.hpp" />
     <ClInclude Include="external\chaiscript\dispatchkit\function_signature.hpp" />
     <ClInclude Include="external\chaiscript\utility\hash.hpp" />
     <ClInclude Include="external\chaiscript\utility\quick_flat_map.hpp" />
     <ClInclude Include="external\chaiscript\utility\stack_vector.hpp" />
-    <ClInclude Include="external\tinygltf\json.hpp" />
-    <ClInclude Include="external\tinygltf\stb_image.h" />
-    <ClInclude Include="external\tinygltf\stb_image_write.h" />
-    <ClInclude Include="external\tinygltf\tiny_gltf.h" />
     <ClInclude Include="sandbox\pieces\piece_prepare.h">
       <FileType>Document</FileType>
     </ClInclude>
@@ -547,6 +623,16 @@
     <ClInclude Include="external\mmodule\mmodule.h" />
     <ClInclude Include="source\main.h" />
     <ClInclude Include="titian\titian_entry.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="external\assimp\assimp\color4.inl" />
+    <None Include="external\assimp\assimp\material.inl" />
+    <None Include="external\assimp\assimp\matrix3x3.inl" />
+    <None Include="external\assimp\assimp\matrix4x4.inl" />
+    <None Include="external\assimp\assimp\quaternion.inl" />
+    <None Include="external\assimp\assimp\SmoothingGroups.inl" />
+    <None Include="external\assimp\assimp\vector2.inl" />
+    <None Include="external\assimp\assimp\vector3.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,15 +4,29 @@
 
 
 namespace titian {
+	inline constexpr int MAX_BONE_COUNT = 100;
+	inline constexpr int MAX_BONE_REFS = 4;
+}
+
+namespace titian {
 	class Mesh;
 	class Scene;
+}
+
+namespace titian {
+	enum AnimationType : int
+	{
+		SEQUENTIAL = 0,
+		SKELETAL = 1,
+	};
 }
 
 namespace titian {
 	class Animation : public Serializable
 	{
 	public:
-		std::vector<std::string> meshes = {};
+		AnimationType type = AnimationType::SEQUENTIAL;
+		std::vector<std::string> meshes;
 		float fps = 30.0f;
 
 		Animation(Scene* scene);
@@ -22,6 +36,9 @@ namespace titian {
 
 		int get_index(float index) const;
 		Mesh* get_mesh(float time) const;
+
+		void update_matrices(float current_time);
+		void load_matrices(kl::Float4x4* out_data) const;
 
 	private:
 		Scene* m_scene = nullptr;

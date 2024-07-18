@@ -4,11 +4,10 @@
 
 
 namespace titian {
-	enum class ShaderType
+	enum ShaderType : int
 	{
-		NONE,
-		MATERIAL,
-		CAMERA,
+		MATERIAL = 0,
+		CAMERA = 1,
 	};
 }
 
@@ -18,7 +17,7 @@ namespace titian {
 	public:
 		using Data = std::string;
 
-		ShaderType type = ShaderType::NONE;
+		ShaderType type = ShaderType::MATERIAL;
 		Data data_buffer = {};
 		kl::RenderShaders graphics_buffer = {};
 

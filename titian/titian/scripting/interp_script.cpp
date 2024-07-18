@@ -772,15 +772,24 @@ const int load_types = [&]
 	cs::utility::add_class<Animation>(*INTERP_SCRIPT_MODULE, "Animation",
 	{},
 	{
+		{ cs::fun(&Animation::type), "type" },
 		{ cs::fun(&Animation::meshes), "meshes" },
 		{ cs::fun(&Animation::fps), "fps" },
 
+		{ cs::fun(&Animation::get_index), "get_index" },
 		{ cs::fun(&Animation::get_mesh), "get_mesh" },
+
+		{ cs::fun(&Animation::update_matrices), "update_matrices" },
+		{ cs::fun(&Animation::load_matrices), "load_matrices" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Animation"] = "Mesh animation descriptor.";
+	INTERP_SCRIPT_MEMBERS["type"] = "type";
 	INTERP_SCRIPT_MEMBERS["meshes"] = "meshes";
 	INTERP_SCRIPT_MEMBERS["fps"] = "fps";
-	INTERP_SCRIPT_MEMBERS["get_mesh"] = "Returns an animation mesh for the given time.";
+	INTERP_SCRIPT_MEMBERS["get_index"] = "Returns the index for the given time.";
+	INTERP_SCRIPT_MEMBERS["get_mesh"] = "Returns the mesh for the given time.";
+	INTERP_SCRIPT_MEMBERS["update_matrices"] = "Updates the matrices from the animation.";
+	INTERP_SCRIPT_MEMBERS["load_matrices"] = "Loads the matrices from the animation.";
 
 	// Texture
 	cs::utility::add_class<Texture>(*INTERP_SCRIPT_MODULE, "Texture",
@@ -1414,6 +1423,18 @@ const int load_constants = [&]
 	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_POINTS"] = "Makes the rasterizer render this mesh as an array of POINTS.";
 	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_LINES"] = "Makes the rasterizer render this mesh as an array of LINES.";
 	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_TRIANGLES"] = "Makes the rasterizer render this mesh as an array of TRIANGLES.";
+
+	// Animation
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) AnimationType::SEQUENTIAL), "ANIMATION_SEQUENTIAL");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) AnimationType::SKELETAL), "ANIMATION_SKELETAL");
+	INTERP_SCRIPT_IDENTIFIERS["ANIMATION_SEQUENTIAL"] = "Sequential animation.";
+	INTERP_SCRIPT_IDENTIFIERS["ANIMATION_SKELETAL"] = "Skeletal animation.";
+
+	// Shader
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) ShaderType::MATERIAL), "SHADER_MATERIAL");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) ShaderType::CAMERA), "SHADER_CAMERA");
+	INTERP_SCRIPT_IDENTIFIERS["SHADER_MATERIAL"] = "Shader that can be applied to a mesh.";
+	INTERP_SCRIPT_IDENTIFIERS["SHADER_CAMERA"] = "Shader that can be applied to a camera.";
 
 	// Camera
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) CameraType::PERSPECTIVE), "CAMERA_PERSPECTIVE");

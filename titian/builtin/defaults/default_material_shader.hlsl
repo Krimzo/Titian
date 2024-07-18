@@ -17,8 +17,9 @@ void _pixel_post(inout VS_OUT data, inout float4 color)
 {
 }
 
-/*
+#if false
 static const uint SHADOW_CASCADE_COUNT = 4;
+static const uint MAX_BONE_COUNT = 100;
 
 cbuffer GLOBAL_CB : register(b0)
 {
@@ -61,6 +62,9 @@ cbuffer GLOBAL_CB : register(b0)
     float4 SHADOW_CASCADES;
     float4x4 LIGHT_VPs[SHADOW_CASCADE_COUNT];
 
+    float4x4 BONE_MATRICES[MAX_BONE_COUNT];
+    float IS_SKELETAL;
+
     float4x4 CUSTOM_DATA;
 };
 
@@ -86,4 +90,4 @@ SamplerState MATERIAL_SAMPLER : register(s2);
 Texture2D COLOR_MAP : register(t5);
 Texture2D NORMAL_MAP : register(t6);
 Texture2D ROUGHNESS_MAP : register(t7);
-*/
+#endif

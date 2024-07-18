@@ -1,5 +1,6 @@
 // Global
 static const uint SHADOW_CASCADE_COUNT = 4;
+static const uint MAX_BONE_COUNT = 100;
 
 cbuffer GLOBAL_CB : register(b0)
 {
@@ -42,6 +43,9 @@ cbuffer GLOBAL_CB : register(b0)
     float4 SHADOW_CASCADES;
     float4x4 LIGHT_VPs[SHADOW_CASCADE_COUNT];
     
+    float4x4 BONE_MATRICES[MAX_BONE_COUNT];
+    float IS_SKELETAL;
+    
     float4x4 CUSTOM_DATA;
 };
 
@@ -57,11 +61,20 @@ struct VS_OUT
 
 #define _CUSTOM_VERTEX_SHADER_PLACEHOLDER
 
-VS_OUT v_shader(float3 position : KL_Position, float2 textur : KL_Texture, float3 normal : KL_Normal)
+VS_OUT v_shader(float3 position : KL_Position, float2 textur : KL_Texture, float3 normal : KL_Normal, uint bone_indices : KL_BoneIndices, float4 bone_weights : KL_BoneWeights)
 {
 #ifdef _CUSTOM_VERTEX_SHADER
     _vertex_pre(position, textur, normal);
 #endif
+    
+    if (IS_SKELETAL) {
+        float4x4 bone_mat = 
+            BONE_MATRICES[(bone_indices >> 24) & 0xFF] * bone_weights.x +
+            BONE_MATRICES[(bone_indices >> 16) & 0xFF] * bone_weights.y +
+            BONE_MATRICES[(bone_indices >>  8) & 0xFF] * bone_weights.z +
+            BONE_MATRICES[(bone_indices >>  0) & 0xFF] * bone_weights.w;
+        position = mul(float4(position, 1.0f), bone_mat).xyz;
+    }
 
     VS_OUT data;
     data.world = mul(float4(position, 1.0f), W).xyz;

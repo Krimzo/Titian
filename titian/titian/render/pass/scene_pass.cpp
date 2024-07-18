@@ -92,7 +92,10 @@ void titian::ScenePass::render_self(StatePackage& package)
         alignas(16) kl::Float4 SHADOW_CASCADES;
         kl::Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
 
-        kl::Float4x4 CUSTOM_DATA;
+        kl::Float4x4 BONE_MATRICES[MAX_BONE_COUNT];
+        float IS_SKELETAL{};
+
+        alignas(16) kl::Float4x4 CUSTOM_DATA;
     };
     GLOBAL_CB global_cb{};
 
@@ -138,7 +141,7 @@ void titian::ScenePass::render_self(StatePackage& package)
     global_cb.DELTA_TIME = timer->delta();
 
     // Preapare opaque objects
-    std::vector<std::tuple<uint32_t, Entity*, Mesh*, Material*>> transparent_objects;
+    std::vector<std::tuple<uint32_t, Entity*, Animation*, Material*>> transparent_objects;
     uint32_t id_counter = 0;
 
     // Render opaque objects
@@ -159,7 +162,7 @@ void titian::ScenePass::render_self(StatePackage& package)
 
         // Cache transparent objects
         if (material->is_transparent()) {
-            transparent_objects.emplace_back(id_counter, &entity, mesh, material);
+            transparent_objects.emplace_back(id_counter, &entity, animation, material);
             continue;
         }
 
@@ -210,6 +213,14 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.REFRACTION_FACTOR = material->refraction_factor;
         global_cb.REFRACTION_INDEX = material->refraction_index;
 
+        if (animation->type == AnimationType::SKELETAL) {
+            animation->load_matrices(global_cb.BONE_MATRICES);
+            global_cb.IS_SKELETAL = 1.0f;
+        }
+        else {
+            global_cb.IS_SKELETAL = 0.0f;
+        }
+
         global_cb.CUSTOM_DATA = material->custom_data;
 
         kl::RenderShaders* render_shaders = &package.shader_state;
@@ -237,7 +248,12 @@ void titian::ScenePass::render_self(StatePackage& package)
     global_cb.RECEIVES_SHADOWS = false;
 
     // Render transparent objects
-    for (const auto& [object_id, entity, mesh, material] : transparent_objects) {
+    for (const auto& [object_id, entity, animation, material] : transparent_objects) {
+        Mesh* mesh = animation->get_mesh(timer->elapsed());
+		if (!mesh) {
+			continue;
+		}
+
         // Bind raster state
         if (!render_layer->render_wireframe) {
             gpu->bind_raster_state(mesh->render_wireframe ? render_states->raster_states->wireframe : render_states->raster_states->solid);
@@ -281,6 +297,14 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.REFLECTION_FACTOR = material->reflection_factor;
         global_cb.REFRACTION_FACTOR = material->refraction_factor;
         global_cb.REFRACTION_INDEX = material->refraction_index;
+
+        if (animation->type == AnimationType::SKELETAL) {
+            animation->load_matrices(global_cb.BONE_MATRICES);
+            global_cb.IS_SKELETAL = 1.0f;
+        }
+        else {
+            global_cb.IS_SKELETAL = 0.0f;
+        }
 
         kl::RenderShaders* render_shaders = &package.shader_state;
         if (Shader* shader = &scene->get_shader(material->shader_name)) {

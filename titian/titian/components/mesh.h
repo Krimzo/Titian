@@ -1,14 +1,18 @@
 ﻿#pragma once
 
 #include "serialization/serializable.h"
-#include "tiny_gltf.h"
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
 #include "physx.h"
 
+#ifdef _DEBUG
+#pragma comment(lib, "assimp-vc143-mtd.lib")
+#pragma comment(lib, "zlibstaticd.lib")
+#else
+#pragma comment(lib, "assimp-vc143-mt.lib")
+#pragma comment(lib, "zlibstatic.lib")
+#endif
 
-namespace titian {
-    inline constexpr int MAX_BONE_COUNT = 256;
-    inline constexpr int MAX_BONE_REFS = 4;
-}
 
 namespace titian {
     struct Vertex

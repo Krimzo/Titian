@@ -14,6 +14,17 @@
 
 
 namespace titian {
+    struct GLTFInfo
+    {
+        std::string file_path;
+        std::vector<std::string> meshes;
+        std::vector<std::string> animations;
+        std::vector<std::string> textures;
+        std::vector<std::string> materials;
+    };
+}
+
+namespace titian {
     class Scene : public Serializable, public physx::PxSimulationEventCallback
     {
     public:
@@ -167,7 +178,8 @@ namespace titian {
         std::map<std::string, Entity*> helper_get_all_entities();
 
         // Other
-        void load_gltf(const tinygltf::Model& model, bool flip_z = true, bool flip_v = true);
+        std::optional<GLTFInfo> load_gltf_info(const std::string& path);
+        void load_gltf(const GLTFInfo& info, bool flip_z = true, bool flip_v = true);
 
     private:
         static physx::PxDefaultAllocator m_allocator;
