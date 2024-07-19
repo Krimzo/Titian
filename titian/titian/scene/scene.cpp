@@ -650,7 +650,7 @@ std::map<std::string, titian::Entity*> titian::Scene::helper_get_all_entities()
 std::optional<titian::AssimpData> titian::Scene::get_assimp_data(const std::string& path) const
 {
     kl::Object importer = new Assimp::Importer();
-    const aiScene* scene = importer->ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_MakeLeftHanded);
+    const aiScene* scene = importer->ReadFile(path, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_MakeLeftHanded);
     if (!scene) {
         return std::nullopt;
     }
@@ -697,20 +697,20 @@ void titian::Scene::load_assimp_data(const AssimpData& data)
 {
     const aiScene* scene = data.importer->GetScene();
     for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
-        meshes[data.meshes[i]] = load_assimp_mesh(scene->mMeshes[i]);
+        meshes[data.meshes[i]] = load_assimp_mesh(scene, scene->mMeshes[i]);
     }
     for (uint32_t i = 0; i < scene->mNumAnimations; i++) {
-        animations[data.animations[i]] = load_assimp_animation(scene->mAnimations[i]);
+        animations[data.animations[i]] = load_assimp_animation(scene, scene->mAnimations[i]);
     }
     for (uint32_t i = 0; i < scene->mNumTextures; i++) {
-        textures[data.textures[i]] = load_assimp_texture(scene->mTextures[i]);
+        textures[data.textures[i]] = load_assimp_texture(scene, scene->mTextures[i]);
     }
     for (uint32_t i = 0; i < scene->mNumMaterials; i++) {
-		materials[data.materials[i]] = load_assimp_material(scene->mMaterials[i]);
+		materials[data.materials[i]] = load_assimp_material(scene, scene->mMaterials[i]);
     }
 }
 
-kl::Object<titian::Mesh> titian::Scene::load_assimp_mesh(aiMesh* mesh)
+kl::Object<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, const aiMesh* mesh)
 {
     kl::Object mesh_object = new Mesh(m_gpu, m_physics, m_cooking);
     
@@ -726,13 +726,70 @@ kl::Object<titian::Mesh> titian::Scene::load_assimp_mesh(aiMesh* mesh)
         }
     }
     if (mesh->HasNormals()) {
-        if (mesh->mNumVertices > vertices.size()) {
-            vertices.resize(mesh->mNumVertices);
-        }
         for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
             vertices[i].normal = { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z };
         }
     }
+    if (mesh->HasBones()) {
+        if (mesh->mNumBones > MAX_BONE_COUNT) {
+            Logger::log("Mesh has too many bones: ", mesh->mNumBones, " > ", MAX_BONE_COUNT);
+        }
+
+        // bone vertex data
+        for (uint32_t i = 0; i < mesh->mNumBones; i++) {
+            auto& bone = mesh->mBones[i];
+            for (uint32_t j = 0; j < bone->mNumWeights; j++) {
+                auto& weight = bone->mWeights[j];
+                auto& vertex = vertices[weight.mVertexId];
+                for (int k = 0; k < MAX_BONE_REFS; k++) {
+                    if (vertex.bone_weights[k] == 0.0f) {
+                        vertex.bone_weights[k] = (float) weight.mWeight;
+                        vertex.bone_indices[k] = (uint8_t) i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // bone data
+        mesh_object->bone_matrices.resize(mesh->mNumBones);
+        for (uint32_t i = 0; i < mesh->mNumBones; i++) {
+            auto& bone = mesh->mBones[i];
+            auto& offset_matrix = mesh_object->bone_matrices[i];
+            for (int j = 0; j < 4; j++) {
+                memcpy(&offset_matrix(0, j), bone->mOffsetMatrix[j], 4 * sizeof(float));
+            }
+        }
+
+        // bone nodes
+        std::function<kl::Object<SkeletonNode>(const aiNode*)> recur_helper;
+        recur_helper = [&](const aiNode* node)
+        {
+            kl::Object<SkeletonNode> skeleton_node = new SkeletonNode();
+            // bone index
+            skeleton_node->bone_index = -1;
+            for (uint32_t i = 0; i < mesh->mNumBones; i++) {
+				if (mesh->mBones[i]->mName == node->mName) {
+                    skeleton_node->bone_index = i;
+					break;
+				}
+            }
+
+            // transform
+            for (int i = 0; i < 4; i++) {
+                memcpy(&skeleton_node->transformation(0, i), node->mTransformation[i], 4 * sizeof(float));
+            }
+
+            // children
+            skeleton_node->children.resize(node->mNumChildren);
+			for (uint32_t i = 0; i < node->mNumChildren; i++) {
+                skeleton_node->children[i] = recur_helper(node->mChildren[i]);
+			}
+            return skeleton_node;
+        };
+        mesh_object->skeleton_root = recur_helper(scene->mRootNode);
+    }
+
     mesh_object->data_buffer.reserve((size_t) mesh->mNumFaces * 3);
     for (uint32_t i = 0; i < mesh->mNumFaces; i++) {
         const auto& face = mesh->mFaces[i];
@@ -746,16 +803,67 @@ kl::Object<titian::Mesh> titian::Scene::load_assimp_mesh(aiMesh* mesh)
     return mesh_object;
 }
 
-kl::Object<titian::Animation> titian::Scene::load_assimp_animation(aiAnimation* animation)
+kl::Object<titian::Animation> titian::Scene::load_assimp_animation(const aiScene* scene, const aiAnimation* animation)
 {
     kl::Object animation_object = new Animation(this);
 
+    animation_object->ticks_per_second = (float) animation->mTicksPerSecond;
+    animation_object->duration_in_ticks = (float) animation->mDuration;
 
+    animation_object->channels.resize(animation->mNumChannels);
+    for (uint32_t i = 0; i < animation->mNumChannels; i++) {
+        auto& channel = animation->mChannels[i];
+        auto& anim_channel = animation_object->channels[i];
+        
+        anim_channel.scalings.resize(channel->mNumScalingKeys);
+        for (uint32_t j = 0; j < channel->mNumScalingKeys; j++) {
+            auto& key = channel->mScalingKeys[j];
+            anim_channel.scalings[j].first = (float) key.mTime;
+            anim_channel.scalings[j].second = key.mValue;
+        }
+
+		anim_channel.rotations.resize(channel->mNumRotationKeys);
+        for (uint32_t j = 0; j < channel->mNumRotationKeys; j++) {
+            auto& key = channel->mRotationKeys[j];
+            anim_channel.rotations[j].first = (float) key.mTime;
+			anim_channel.rotations[j].second = key.mValue;
+        }
+
+		anim_channel.positions.resize(channel->mNumPositionKeys);
+		for (uint32_t j = 0; j < channel->mNumPositionKeys; j++) {
+			auto& key = channel->mPositionKeys[j];
+			anim_channel.positions[j].first = (float) key.mTime;
+			anim_channel.positions[j].second = key.mValue;
+		}
+	}
+
+    // animation nodes
+    std::function<kl::Object<AnimationNode>(const aiNode*)> recur_helper;
+    recur_helper = [&](const aiNode* node)
+    {
+        kl::Object<AnimationNode> animation_node = new AnimationNode();
+        // channel index
+        animation_node->channel_index = -1;
+        for (uint32_t i = 0; i < animation->mNumChannels; i++) {
+            if (animation->mChannels[i]->mNodeName == node->mName) {
+                animation_node->channel_index = i;
+                break;
+            }
+        }
+
+        // children
+        animation_node->children.resize(node->mNumChildren);
+        for (uint32_t i = 0; i < node->mNumChildren; i++) {
+            animation_node->children[i] = recur_helper(node->mChildren[i]);
+        }
+        return animation_node;
+    };
+    animation_object->animation_root = recur_helper(scene->mRootNode);
 
     return animation_object;
 }
 
-kl::Object<titian::Texture> titian::Scene::load_assimp_texture(aiTexture* texture)
+kl::Object<titian::Texture> titian::Scene::load_assimp_texture(const aiScene* scene, const aiTexture* texture)
 {
     kl::Object texture_object = new Texture(m_gpu);
 
@@ -773,7 +881,7 @@ kl::Object<titian::Texture> titian::Scene::load_assimp_texture(aiTexture* textur
     return texture_object;
 }
 
-kl::Object<titian::Material> titian::Scene::load_assimp_material(aiMaterial* material)
+kl::Object<titian::Material> titian::Scene::load_assimp_material(const aiScene* scene, const aiMaterial* material)
 {
 	kl::Object material_object = new Material();
 

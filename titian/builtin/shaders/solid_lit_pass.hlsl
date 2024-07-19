@@ -16,15 +16,15 @@ struct VS_OUT
     float3 normal : VS_Normal;
 };
 
-VS_OUT v_shader(float3 position : KL_Position, const float3 normal : KL_Normal, uint bone_indices : KL_BoneIndices, float4 bone_weights : KL_BoneWeights)
+VS_OUT v_shader(float3 position : KL_Position, float3 normal : KL_Normal, uint4 bone_indices : KL_BoneIndices, float4 bone_weights : KL_BoneWeights)
 {
     if (IS_SKELETAL) {
-        float4x4 bone_mat =
-            BONE_MATRICES[(bone_indices >> 24) & 0xFF] * bone_weights.x +
-            BONE_MATRICES[(bone_indices >> 16) & 0xFF] * bone_weights.y +
-            BONE_MATRICES[(bone_indices >> 8) & 0xFF] * bone_weights.z +
-            BONE_MATRICES[(bone_indices >> 0) & 0xFF] * bone_weights.w;
+        float4x4 bone_mat = BONE_MATRICES[bone_indices[0]] * bone_weights[0]
+                          + BONE_MATRICES[bone_indices[1]] * bone_weights[1]
+                          + BONE_MATRICES[bone_indices[2]] * bone_weights[2]
+                          + BONE_MATRICES[bone_indices[3]] * bone_weights[3];
         position = mul(float4(position, 1.0f), bone_mat).xyz;
+        normal = mul(float4(normal, 0.0f), bone_mat).xyz;
     }
     
     VS_OUT data;

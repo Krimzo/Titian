@@ -12,26 +12,67 @@ titian::Mesh::~Mesh()
 
 void titian::Mesh::serialize(Serializer* serializer, const void* helper_data) const
 {
-    const uint64_t size = data_buffer.size();
-    serializer->write_object<uint64_t>(size);
-
-    const Data::value_type* data = data_buffer.data();
-    serializer->write_array<Data::value_type>(data, size);
-
     serializer->write_object<int>(topology);
     serializer->write_object<bool>(render_wireframe);
+
+    serializer->write_object<uint64_t>(data_buffer.size());
+    for (auto& data : data_buffer) {
+		serializer->write_object(data);
+    }
+
+    serializer->write_object<uint64_t>(bone_matrices.size());
+    for (auto& mat : bone_matrices) {
+        serializer->write_object(mat);
+    }
+
+    std::function<void(const SkeletonNode*)> rec_helper;
+    rec_helper = [&](const SkeletonNode* node)
+    {
+        serializer->write_object<int>(node->bone_index);
+        serializer->write_object<kl::Float4x4>(node->transformation);
+        serializer->write_object<uint64_t>(node->children.size());
+        for (auto& child : node->children) {
+			rec_helper(&child);
+        }
+    };
+
+    serializer->write_object<bool>((bool) skeleton_root);
+    if (skeleton_root) {
+		rec_helper(&skeleton_root);
+	}
 }
 
 void titian::Mesh::deserialize(const Serializer* serializer, const void* helper_data)
 {
-    const uint64_t size = serializer->read_object<uint64_t>();
-    data_buffer.resize(size);
-
-    Data::value_type* data = data_buffer.data();
-    serializer->read_array<Data::value_type>(data, size);
-
     serializer->read_object<int>(topology);
     serializer->read_object<bool>(render_wireframe);
+
+    data_buffer.resize(serializer->read_object<uint64_t>());
+    for (auto& data : data_buffer) {
+        serializer->read_object(data);
+    }
+
+    bone_matrices.resize(serializer->read_object<uint64_t>());
+    for (auto& mat : bone_matrices) {
+        serializer->read_object(mat);
+    }
+
+    std::function<void(SkeletonNode*)> rec_helper;
+    rec_helper = [&](SkeletonNode* node)
+    {
+        serializer->read_object<int>(node->bone_index);
+        serializer->read_object<kl::Float4x4>(node->transformation);
+        node->children.resize(serializer->read_object<uint64_t>());
+        for (auto& child : node->children) {
+			child = new SkeletonNode();
+            rec_helper(&child);
+        }
+    };
+
+    if (serializer->read_object<bool>()) {
+		skeleton_root = new SkeletonNode();
+        rec_helper(&skeleton_root);
+    }
 
     this->reload();
 }

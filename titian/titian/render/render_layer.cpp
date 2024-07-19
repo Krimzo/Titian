@@ -42,9 +42,11 @@ bool titian::RenderLayer::update()
 		return true;
 
 	// Update animations
-	const float animation_time = app_layer->timer.elapsed();
-	for (auto& [_, animation] : scene->animations) {
-		animation->update_matrices(animation_time);
+	if (game_layer->game_running && !game_layer->game_paused) {
+		const float animation_time = app_layer->timer.elapsed();
+		for (auto& [_, animation] : scene->animations) {
+			animation->update(animation_time);
+		}
 	}
 
 	// Process passes

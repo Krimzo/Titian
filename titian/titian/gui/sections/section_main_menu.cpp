@@ -77,7 +77,7 @@ void titian::GUISectionMainMenu::render_gui()
                         if (std::optional data = scene->get_assimp_data(file.value())) {
                             const aiScene* ai_scene = data.value().importer->GetScene();
                             for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
-                                kl::Object mesh = scene->load_assimp_mesh(ai_scene->mMeshes[i]);
+                                kl::Object mesh = scene->load_assimp_mesh(ai_scene, ai_scene->mMeshes[i]);
 								scene->meshes[data.value().meshes[i]] = mesh;
                             }
                         }
@@ -251,8 +251,8 @@ void titian::GUISectionMainMenu::render_gui()
         static std::optional<AssimpData> opt_assimp_data;
         if (imgui::BeginMenu("Tools")) {
             imgui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
-            if (imgui::MenuItem("Import GLTF")) {
-                if (std::optional file_path = kl::choose_file(false, { { "GLTF File", ".glb" } })) {
+            if (imgui::MenuItem("Import Packed")) {
+                if (std::optional file_path = kl::choose_file(false, { { "GLTF File", FILE_EXTENSION_GLB }, { "FBX File", FILE_EXTENSION_FBX } })) {
                     opt_assimp_data = scene->get_assimp_data(file_path.value());
                 }
             }

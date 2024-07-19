@@ -61,7 +61,7 @@ void titian::GUISectionMeshEditor::render_gui()
                 if (std::optional data = scene->get_assimp_data(file.value())) {
                     const aiScene* ai_scene = data.value().importer->GetScene();
                     for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
-                        kl::Object mesh = scene->load_assimp_mesh(ai_scene->mMeshes[i]);
+                        kl::Object mesh = scene->load_assimp_mesh(ai_scene, ai_scene->mMeshes[i]);
                         scene->meshes[data.value().meshes[i]] = mesh;
                     }
                 }

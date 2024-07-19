@@ -16,6 +16,8 @@ titian::GUISectionAnimationEditor::GUISectionAnimationEditor(const LayerPackage&
     camera->background = kl::Color{ 30, 30, 30 };
     camera->set_position({ -0.34f, 0.18f, -0.94f });
     camera->speed = 3.1f;
+
+    m_timer.stop();
 }
 
 void titian::GUISectionAnimationEditor::render_gui()
@@ -154,7 +156,7 @@ void titian::GUISectionAnimationEditor::update_animation_camera()
     camera->set_forward(-camera->position());
 }
 
-void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, const Animation* animation, const kl::Int2 viewport_size)
+void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, Animation* animation, const kl::Int2 viewport_size)
 {
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
         return;
@@ -227,6 +229,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
     };
 
     if (m_animating && animation->type == AnimationType::SKELETAL) {
+        animation->update(m_timer.elapsed());
         animation->load_matrices(vs_cb.BONE_MATRICES);
         vs_cb.IS_SKELETAL = 1.0f;
     }
@@ -272,6 +275,11 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
             sun_direction = kl::normalize(sun_direction);
         }
         imgui::SliderInt("Frame", &m_frame_index, 0, std::max<int>((int) animation->meshes.size() - 1, 0));
+
+        const float duration_seconds = animation->duration_in_ticks / animation->ticks_per_second;
+        float temp_anim_time = fmod(m_timer.elapsed(), duration_seconds);
+		imgui::SliderFloat("Time", &temp_anim_time, 0.0f, duration_seconds);
+
         if (imgui::Checkbox("Animating?", &m_animating)) {
             if (m_animating) {
                 m_timer.restart();
@@ -303,7 +311,8 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
 			imgui::EndCombo();
         }
 
-        imgui::DragFloat("FPS", &animation->fps, 1.0f, 0.0f, 10'000.0f);
+        imgui::DragFloat("Ticks Per Second", &animation->ticks_per_second, 1.0f, 0.0f, 10'000.0f);
+        imgui::DragFloat("Duration in Ticks", &animation->duration_in_ticks, 1.0f, 0.0f, 10'000.0f);
 
         int mesh_count = (int) animation->meshes.size();
         if (imgui::DragInt("Mesh Count", &mesh_count, 1.0f, 0, 10'000)) {

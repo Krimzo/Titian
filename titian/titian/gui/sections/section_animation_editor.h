@@ -36,7 +36,7 @@ namespace titian {
 
         void display_animations(kl::GPU* gpu, Scene* scene);
         void update_animation_camera();
-        void render_selected_animation(kl::GPU* gpu, const Animation* animation, kl::Int2 viewport_size);
+        void render_selected_animation(kl::GPU* gpu, Animation* animation, kl::Int2 viewport_size);
         void show_animation_properties(Animation* animation);
     };
 }

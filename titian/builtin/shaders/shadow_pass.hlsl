@@ -9,14 +9,13 @@ cbuffer VS_CB : register(b0)
     float IS_SKELETAL;
 }
 
-float4 v_shader(float3 position : KL_Position, uint bone_indices : KL_BoneIndices, float4 bone_weights : KL_BoneWeights) : SV_Position
+float4 v_shader(float3 position : KL_Position, uint4 bone_indices : KL_BoneIndices, float4 bone_weights : KL_BoneWeights) : SV_Position
 {
     if (IS_SKELETAL) {
-        float4x4 bone_mat =
-            BONE_MATRICES[(bone_indices >> 24) & 0xFF] * bone_weights.x +
-            BONE_MATRICES[(bone_indices >> 16) & 0xFF] * bone_weights.y +
-            BONE_MATRICES[(bone_indices >> 8) & 0xFF] * bone_weights.z +
-            BONE_MATRICES[(bone_indices >> 0) & 0xFF] * bone_weights.w;
+        float4x4 bone_mat = BONE_MATRICES[bone_indices[0]] * bone_weights[0]
+                          + BONE_MATRICES[bone_indices[1]] * bone_weights[1]
+                          + BONE_MATRICES[bone_indices[2]] * bone_weights[2]
+                          + BONE_MATRICES[bone_indices[3]] * bone_weights[3];
         position = mul(float4(position, 1.0f), bone_mat).xyz;
     }
 	return mul(float4(position, 1.0f), WVP);

@@ -22,12 +22,34 @@ namespace titian {
 }
 
 namespace titian {
+	struct AnimationChannel
+	{
+		std::vector<std::pair<float, aiVector3f>> scalings;
+		std::vector<std::pair<float, aiQuaternion>> rotations;
+		std::vector<std::pair<float, aiVector3f>> positions;
+	};
+}
+
+namespace titian {
+	struct AnimationNode
+	{
+		int channel_index = -1;
+		std::vector<kl::Object<AnimationNode>> children;
+	};
+}
+
+namespace titian {
 	class Animation : public Serializable
 	{
 	public:
 		AnimationType type = AnimationType::SEQUENTIAL;
+		float ticks_per_second = 30.0f;
+		float duration_in_ticks = 0.0f;
+
 		std::vector<std::string> meshes;
-		float fps = 30.0f;
+
+		std::vector<AnimationChannel> channels;
+		kl::Object<AnimationNode> animation_root;
 
 		Animation(Scene* scene);
 
@@ -37,10 +59,20 @@ namespace titian {
 		int get_index(float index) const;
 		Mesh* get_mesh(float time) const;
 
-		void update_matrices(float current_time);
+		void update(float current_time);
 		void load_matrices(kl::Float4x4* out_data) const;
 
 	private:
 		Scene* m_scene = nullptr;
+		kl::Float4x4 m_global_inverse_transform;
+		std::vector<kl::Float4x4> m_final_matrices;
+
+		void update_node_hierarchy(float time_ticks, const Mesh* mesh, const SkeletonNode* skel_node, const AnimationNode* anim_node, const kl::Float4x4& parent_transform);
+
+		aiVector3f interpolate_translation(float time_ticks, int channel_index) const;
+		aiQuaternion interpolate_rotation(float time_ticks, int channel_index) const;
+		aiVector3f interpolate_scaling(float time_ticks, int channel_index) const;
+
+		kl::Float4x4 make_animation_matrix(const aiVector3f& translation, const aiQuaternion& rotation, const aiVector3f& scaling) const;
 	};
 }

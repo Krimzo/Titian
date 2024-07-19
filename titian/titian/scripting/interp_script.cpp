@@ -773,22 +773,25 @@ const int load_types = [&]
 	{},
 	{
 		{ cs::fun(&Animation::type), "type" },
+		{ cs::fun(&Animation::ticks_per_second), "ticks_per_second" },
+		{ cs::fun(&Animation::duration_in_ticks), "duration_in_ticks" },
+
 		{ cs::fun(&Animation::meshes), "meshes" },
-		{ cs::fun(&Animation::fps), "fps" },
 
 		{ cs::fun(&Animation::get_index), "get_index" },
 		{ cs::fun(&Animation::get_mesh), "get_mesh" },
 
-		{ cs::fun(&Animation::update_matrices), "update_matrices" },
+		{ cs::fun(&Animation::update), "update" },
 		{ cs::fun(&Animation::load_matrices), "load_matrices" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Animation"] = "Mesh animation descriptor.";
 	INTERP_SCRIPT_MEMBERS["type"] = "type";
+	INTERP_SCRIPT_MEMBERS["ticks_per_second"] = "ticks_per_second";
+	INTERP_SCRIPT_MEMBERS["duration_in_ticks"] = "duration_in_ticks";
 	INTERP_SCRIPT_MEMBERS["meshes"] = "meshes";
-	INTERP_SCRIPT_MEMBERS["fps"] = "fps";
 	INTERP_SCRIPT_MEMBERS["get_index"] = "Returns the index for the given time.";
 	INTERP_SCRIPT_MEMBERS["get_mesh"] = "Returns the mesh for the given time.";
-	INTERP_SCRIPT_MEMBERS["update_matrices"] = "Updates the matrices from the animation.";
+	INTERP_SCRIPT_MEMBERS["update"] = "Updates the matrices of the animation.";
 	INTERP_SCRIPT_MEMBERS["load_matrices"] = "Loads the matrices from the animation.";
 
 	// Texture

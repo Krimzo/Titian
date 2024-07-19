@@ -8,7 +8,7 @@ titian::DefaultMeshes::DefaultMeshes(Scene* scene)
         if (std::optional data = scene->get_assimp_data(filename)) {
             const aiScene* ai_scene = data.value().importer->GetScene();
             for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
-                mesh = scene->load_assimp_mesh(ai_scene->mMeshes[i]);
+                mesh = scene->load_assimp_mesh(ai_scene, ai_scene->mMeshes[i]);
                 break;
             }
         }

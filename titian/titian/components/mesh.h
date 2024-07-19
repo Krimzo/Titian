@@ -3,6 +3,8 @@
 #include "serialization/serializable.h"
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
+#include "assimp/matrix4x4.h"
+#include "assimp/quaternion.h"
 #include "assimp/scene.h"
 #include "physx.h"
 
@@ -27,17 +29,29 @@ namespace titian {
 }
 
 namespace titian {
+    struct SkeletonNode
+    {
+        int bone_index = -1;
+		kl::Float4x4 transformation;
+		std::vector<kl::Object<SkeletonNode>> children;
+    };
+}
+
+namespace titian {
     class Mesh : public Serializable
     {
     public:
         using Data = std::vector<Vertex>;
 
+        int topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        bool render_wireframe = false;
+
         Data data_buffer = {};
         kl::dx::Buffer graphics_buffer = nullptr;
         physx::PxTriangleMesh* physics_buffer = nullptr;
 
-        int topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-        bool render_wireframe = false;
+        std::vector<kl::Float4x4> bone_matrices;
+        kl::Object<SkeletonNode> skeleton_root;
 
         Mesh(kl::GPU* gpu, physx::PxPhysics* physics, physx::PxCooking* cooking);
         ~Mesh() override;
