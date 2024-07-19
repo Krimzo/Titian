@@ -4,10 +4,10 @@ static const uint MAX_BONE_COUNT = 100;
 cbuffer VS_CB : register(b0)
 {
 	float4x4 WVP;
-	
-    float4x4 BONE_MATRICES[MAX_BONE_COUNT];
     float IS_SKELETAL;
 }
+
+StructuredBuffer<float4x4> BONE_MATRICES : register(t0);
 
 float4 v_shader(float3 position : KL_Position, uint4 bone_indices : KL_BoneIndices, float4 bone_weights : KL_BoneWeights) : SV_Position
 {

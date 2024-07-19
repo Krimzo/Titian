@@ -215,12 +215,10 @@ void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh
 
     camera->update_aspect_ratio(viewport_size);
 
-    struct VS_CB
+    struct alignas(16) VS_CB
     {
-        alignas(16) kl::Float4x4 W;
+        kl::Float4x4 W;
         kl::Float4x4 WVP;
-
-        kl::Float4x4 BONE_MATRICES[MAX_BONE_COUNT];
         float IS_SKELETAL{};
     };
 
@@ -230,10 +228,10 @@ void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh
         .IS_SKELETAL = 0.0f,
     };
 
-    struct PS_CB
+    struct alignas(16) PS_CB
     {
         kl::Float4 OBJECT_COLOR;
-        alignas(16) kl::Float3 SUN_DIRECTION;
+        kl::Float3 SUN_DIRECTION;
     };
 
     const PS_CB ps_cb{

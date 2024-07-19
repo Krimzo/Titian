@@ -11,16 +11,16 @@ int packager_entry(const int argc, const char** argv, const bool package)
 			result = create_package(argv[2], argv[3]);
 		}
 		else {
-			Logger::log("Usage: ... <input_dir> <output_file>");
+			Logger::log("Usage: ... <input> <output_file>");
 		}
 	}
 	else {
-		if (argc >= 3) {
-			result = open_package(argv[2]);
+		if (argc >= 4) {
+			result = open_package(argv[2], argv[3]);
 		}
 		else {
-			Logger::log("Usage: ... <input_file>");
+			Logger::log("Usage: ... <input_file> <output_dir>");
 		}
 	}
-	return static_cast<int>(!result);
+	return result ? 0 : 1;
 }

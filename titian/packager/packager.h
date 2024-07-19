@@ -16,7 +16,7 @@ namespace packager {
 namespace packager {
 	using namespace titian;
 
-	std::set<std::string> list_files(const std::string_view& dir);
-	bool create_package(const std::string_view& input_dir, const std::string& output_file);
-	bool open_package(const std::string& input_file);
+	std::set<std::string> list_files(const std::string& input);
+	bool create_package(const std::string& input_dir, const std::string& output_file);
+	bool open_package(const std::string& input_file, const std::string& output_dir);
 }

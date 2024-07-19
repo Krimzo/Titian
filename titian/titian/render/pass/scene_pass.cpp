@@ -86,16 +86,15 @@ void titian::ScenePass::render_self(StatePackage& package)
         kl::Float4x4 V;
         kl::Float4x4 VP;
 
+        float IS_SKELETAL{};
+
         float RECEIVES_SHADOWS{};
         kl::Float2 SHADOW_MAP_SIZE;
-        alignas(16) kl::Float2 SHADOW_MAP_TEXEL_SIZE;
+        kl::Float2 SHADOW_MAP_TEXEL_SIZE;
         alignas(16) kl::Float4 SHADOW_CASCADES;
         kl::Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
 
-        kl::Float4x4 BONE_MATRICES[MAX_BONE_COUNT];
-        float IS_SKELETAL{};
-
-        alignas(16) kl::Float4x4 CUSTOM_DATA;
+        kl::Float4x4 CUSTOM_DATA;
     };
     GLOBAL_CB global_cb{};
 
@@ -214,7 +213,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.REFRACTION_INDEX = material->refraction_index;
 
         if (animation->type == AnimationType::SKELETAL) {
-            animation->load_matrices(global_cb.BONE_MATRICES);
+            animation->bind_matrices(0);
             global_cb.IS_SKELETAL = 1.0f;
         }
         else {
@@ -299,7 +298,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.REFRACTION_INDEX = material->refraction_index;
 
         if (animation->type == AnimationType::SKELETAL) {
-            animation->load_matrices(global_cb.BONE_MATRICES);
+            animation->bind_matrices(0);
             global_cb.IS_SKELETAL = 1.0f;
         }
         else {
@@ -318,9 +317,10 @@ void titian::ScenePass::render_self(StatePackage& package)
         gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
     }
 
-    // Unbind shadow maps
+    // Unbinds
     {
         ID3D11ShaderResourceView* dir_light_views[DirectionalLight::CASCADE_COUNT] = {};
         gpu->context()->PSSetShaderResources(1, DirectionalLight::CASCADE_COUNT, dir_light_views);
+        gpu->unbind_shader_view_for_vertex_shader(0);
     }
 }

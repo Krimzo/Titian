@@ -1,9 +1,22 @@
 #include "main.h"
 
 
-titian::Animation::Animation(Scene* scene)
-	: m_scene(scene)
-{}
+titian::Animation::Animation(kl::GPU* gpu, Scene* scene)
+	: m_gpu(gpu), m_scene(scene)
+{
+	kl::dx::BufferDescriptor descriptor{};
+	descriptor.Usage = D3D11_USAGE_DYNAMIC;
+	descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	descriptor.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	descriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	descriptor.StructureByteStride = sizeof(kl::Float4x4);
+	descriptor.ByteWidth = descriptor.StructureByteStride * MAX_BONE_COUNT;
+	m_matrices_buffer = gpu->create_buffer(&descriptor, nullptr);
+	kl::assert(m_matrices_buffer, "Failed to create animation matrices buffer");
+
+	m_matrices_view = gpu->create_shader_view(m_matrices_buffer, nullptr);
+	kl::assert(m_matrices_view, "Failed to create animation matrices shader view");
+}
 
 void titian::Animation::serialize(Serializer* serializer, const void* helper_data) const
 {
@@ -141,13 +154,21 @@ void titian::Animation::update(const float current_time)
 
 	kl::Float4x4 identity;
 	update_node_hierarchy(animation_time_in_ticks, mesh, &mesh->skeleton_root, &this->animation_root, identity);
+	upload_matrices();
 }
 
-void titian::Animation::load_matrices(kl::Float4x4* out_data) const
+void titian::Animation::bind_matrices(const int slot) const
 {
-	for (size_t i = 0; i < m_final_matrices.size() && i < MAX_BONE_COUNT; i++) {
-		out_data[i] = m_final_matrices[i];
+	m_gpu->bind_shader_view_for_vertex_shader(m_matrices_view, slot);
+}
+
+void titian::Animation::upload_matrices()
+{
+	if (m_final_matrices.empty()) {
+		return;
 	}
+	const size_t count = std::min(m_final_matrices.size(), (size_t) MAX_BONE_COUNT);
+	m_gpu->write_to_buffer(m_matrices_buffer, m_final_matrices.data(), count * sizeof(kl::Float4x4));
 }
 
 void titian::Animation::update_node_hierarchy(const float time_ticks, const Mesh* mesh, const SkeletonNode* skel_node, const AnimationNode* anim_node, const kl::Float4x4& parent_transform)

@@ -782,7 +782,6 @@ const int load_types = [&]
 		{ cs::fun(&Animation::get_mesh), "get_mesh" },
 
 		{ cs::fun(&Animation::update), "update" },
-		{ cs::fun(&Animation::load_matrices), "load_matrices" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Animation"] = "Mesh animation descriptor.";
 	INTERP_SCRIPT_MEMBERS["type"] = "type";
@@ -792,7 +791,6 @@ const int load_types = [&]
 	INTERP_SCRIPT_MEMBERS["get_index"] = "Returns the index for the given time.";
 	INTERP_SCRIPT_MEMBERS["get_mesh"] = "Returns the mesh for the given time.";
 	INTERP_SCRIPT_MEMBERS["update"] = "Updates the matrices of the animation.";
-	INTERP_SCRIPT_MEMBERS["load_matrices"] = "Loads the matrices from the animation.";
 
 	// Texture
 	cs::utility::add_class<Texture>(*INTERP_SCRIPT_MODULE, "Texture",

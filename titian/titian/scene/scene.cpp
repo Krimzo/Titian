@@ -43,7 +43,7 @@ titian::Scene::Scene(kl::GPU* gpu)
     default_meshes = new DefaultMeshes(this);
     kl::assert(default_meshes, "Failed to init default meshes");
 
-    default_animations = new DefaultAnimations(this);
+    default_animations = new DefaultAnimations(m_gpu, this);
     kl::assert(default_animations, "Failed to init default animations");
 
     default_materials = new DefaultMaterials(gpu);
@@ -115,7 +115,7 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     std::function mesh_provider = [&] { return new Mesh(m_gpu, m_physics, m_cooking); };
     read_map(meshes, mesh_provider, nullptr);
 
-    std::function animation_provider = [&] { return new Animation(this); };
+    std::function animation_provider = [&] { return new Animation(m_gpu, this); };
     read_map(animations, animation_provider, nullptr);
 
     std::function texture_provider = [&] { return new Texture(m_gpu); };
@@ -420,7 +420,7 @@ titian::Mesh* titian::Scene::helper_new_mesh(const std::string& id)
 
 titian::Animation* titian::Scene::helper_new_animation(const std::string& id)
 {
-    Animation* animation = new Animation(this);
+    Animation* animation = new Animation(m_gpu, this);
     animations[id] = animation;
     return animation;
 }
@@ -805,7 +805,7 @@ kl::Object<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, c
 
 kl::Object<titian::Animation> titian::Scene::load_assimp_animation(const aiScene* scene, const aiAnimation* animation)
 {
-    kl::Object animation_object = new Animation(this);
+    kl::Object animation_object = new Animation(m_gpu, this);
 
     animation_object->ticks_per_second = (float) animation->mTicksPerSecond;
     animation_object->duration_in_ticks = (float) animation->mDuration;

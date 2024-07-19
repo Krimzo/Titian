@@ -344,6 +344,16 @@ void kl::ContextHolder::unbind_target_depth_views() const
     m_context->OMSetRenderTargets(0, nullptr, nullptr);
 }
 
+void kl::ContextHolder::bind_shader_view_for_vertex_shader(const dx::ShaderView& view, UINT slot) const
+{
+    m_context->VSSetShaderResources(slot, 1, view.GetAddressOf());
+}
+
+void kl::ContextHolder::unbind_shader_view_for_vertex_shader(UINT slot) const
+{
+    bind_shader_view_for_vertex_shader(nullptr, slot);
+}
+
 void kl::ContextHolder::bind_shader_view_for_pixel_shader(const dx::ShaderView& view, const UINT slot) const
 {
     m_context->PSSetShaderResources(slot, 1, view.GetAddressOf());

@@ -9,3 +9,9 @@
 
 # serialization
 1. add scene key encryption
+
+# animtion
+1. display skeleton
+
+# optimizations
+1. use smaller cbuffers?

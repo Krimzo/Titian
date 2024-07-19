@@ -13,15 +13,16 @@ int titian_entry(const int argc, const char** argv, const std::unordered_map<std
 	}
 	else {
 		std::string entry_scene = "entry.titian";
-		if (ini_data.contains(inikey::ENTRY_SCENE)) {
-			entry_scene = ini_data.at(inikey::ENTRY_SCENE);
-		}
 		if (argc >= 3) {
 			entry_scene = argv[2];
+			Logger::log("Using argument entry scene: ", entry_scene);
+		}
+		else if (ini_data.contains(ini::ENTRY_SCENE)) {
+			entry_scene = ini_data.at(ini::ENTRY_SCENE);
+			Logger::log("Using .ini entry scene: ", entry_scene);
 		}
 		else {
-			Logger::log("Usage: ... <entry_scene>");
-			Logger::log("Defaulting to ", entry_scene);
+			Logger::log("Entry scene defaulting to ", entry_scene);
 		}
 
 		kl::Object game = new TitianGame(entry_scene);

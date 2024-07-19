@@ -106,6 +106,9 @@ namespace kl {
         void bind_target_depth_views(const std::initializer_list<ID3D11RenderTargetView*>& target_views, const dx::DepthView& depth_view) const;
         void unbind_target_depth_views() const;
 
+        void bind_shader_view_for_vertex_shader(const dx::ShaderView& view, UINT slot) const;
+        void unbind_shader_view_for_vertex_shader(UINT slot) const;
+
         void bind_shader_view_for_pixel_shader(const dx::ShaderView& view, UINT slot) const;
         void unbind_shader_view_for_pixel_shader(UINT slot) const;
 

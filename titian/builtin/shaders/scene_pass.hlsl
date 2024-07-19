@@ -1,6 +1,5 @@
 // Global
 static const uint SHADOW_CASCADE_COUNT = 4;
-static const uint MAX_BONE_COUNT = 100;
 
 cbuffer GLOBAL_CB : register(b0)
 {
@@ -36,15 +35,14 @@ cbuffer GLOBAL_CB : register(b0)
     float4x4 W;
     float4x4 V;
     float4x4 VP;
+    
+    float IS_SKELETAL;
 
     float RECEIVES_SHADOWS;
     float2 SHADOW_MAP_SIZE;
     float2 SHADOW_MAP_TEXEL_SIZE;
     float4 SHADOW_CASCADES;
     float4x4 LIGHT_VPs[SHADOW_CASCADE_COUNT];
-    
-    float4x4 BONE_MATRICES[MAX_BONE_COUNT];
-    float IS_SKELETAL;
     
     float4x4 CUSTOM_DATA;
 };
@@ -58,6 +56,8 @@ struct VS_OUT
     float3 normal : VS_Normal;
     float4 light_coords[SHADOW_CASCADE_COUNT] : VS_Light;
 };
+
+StructuredBuffer<float4x4> BONE_MATRICES : register(t0);
 
 #define _CUSTOM_VERTEX_SHADER_PLACEHOLDER
 

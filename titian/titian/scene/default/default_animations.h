@@ -16,6 +16,6 @@ namespace titian {
         kl::Object<Animation> capsule = nullptr;
         kl::Object<Animation> monke = nullptr;
 
-        DefaultAnimations(Scene* scene);
+        DefaultAnimations(kl::GPU* gpu, Scene* scene);
     };
 }

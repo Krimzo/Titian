@@ -74,7 +74,7 @@ void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* 
         if (std::optional opt_name = gui_input_waited("##CreateAnimationInput", {})) {
             const std::string& name = opt_name.value();
             if (!name.empty() && !scene->animations.contains(name)) {
-                kl::Object animation = new Animation(scene);
+                kl::Object animation = new Animation(gpu, scene);
                 scene->animations[name] = animation;
                 imgui::CloseCurrentPopup();
             }
@@ -214,12 +214,10 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
 
     camera->update_aspect_ratio(viewport_size);
 
-    struct VS_CB
+    struct alignas(16) VS_CB
     {
-        alignas(16) kl::Float4x4 W;
+        kl::Float4x4 W;
         kl::Float4x4 WVP;
-
-        kl::Float4x4 BONE_MATRICES[MAX_BONE_COUNT];
         float IS_SKELETAL{};
     };
 
@@ -230,17 +228,17 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
 
     if (m_animating && animation->type == AnimationType::SKELETAL) {
         animation->update(m_timer.elapsed());
-        animation->load_matrices(vs_cb.BONE_MATRICES);
+        animation->bind_matrices(0);
         vs_cb.IS_SKELETAL = 1.0f;
     }
     else {
         vs_cb.IS_SKELETAL = 0.0f;
     }
 
-    struct PS_CB
+    struct alignas(16) PS_CB
     {
         kl::Float4 OBJECT_COLOR;
-        alignas(16) kl::Float3 SUN_DIRECTION;
+        kl::Float3 SUN_DIRECTION;
     };
 
     const PS_CB ps_cb{
@@ -253,6 +251,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
 
     gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
 
+    gpu->unbind_shader_view_for_vertex_shader(0);
     gpu->bind_internal_views();
     gpu->set_viewport_size(old_viewport_size);
 }

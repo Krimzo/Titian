@@ -5,8 +5,6 @@ cbuffer VS_CB : register(b0)
 {
     float4x4 W;
 	float4x4 WVP;
-    
-    float4x4 BONE_MATRICES[MAX_BONE_COUNT];
     float IS_SKELETAL;
 }
 
@@ -15,6 +13,8 @@ struct VS_OUT
     float4 position : SV_Position;
     float3 normal : VS_Normal;
 };
+
+StructuredBuffer<float4x4> BONE_MATRICES : register(t0);
 
 VS_OUT v_shader(float3 position : KL_Position, float3 normal : KL_Normal, uint4 bone_indices : KL_BoneIndices, float4 bone_weights : KL_BoneWeights)
 {

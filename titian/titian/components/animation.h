@@ -4,7 +4,7 @@
 
 
 namespace titian {
-	inline constexpr int MAX_BONE_COUNT = 100;
+	inline constexpr int MAX_BONE_COUNT = 256;
 	inline constexpr int MAX_BONE_REFS = 4;
 }
 
@@ -51,7 +51,7 @@ namespace titian {
 		std::vector<AnimationChannel> channels;
 		kl::Object<AnimationNode> animation_root;
 
-		Animation(Scene* scene);
+		Animation(kl::GPU* gpu, Scene* scene);
 
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;
@@ -60,13 +60,19 @@ namespace titian {
 		Mesh* get_mesh(float time) const;
 
 		void update(float current_time);
-		void load_matrices(kl::Float4x4* out_data) const;
+		void bind_matrices(int slot) const;
 
 	private:
+		kl::GPU* m_gpu = nullptr;
 		Scene* m_scene = nullptr;
+
 		kl::Float4x4 m_global_inverse_transform;
 		std::vector<kl::Float4x4> m_final_matrices;
 
+		kl::dx::Buffer m_matrices_buffer;
+		kl::dx::ShaderView m_matrices_view;
+
+		void upload_matrices();
 		void update_node_hierarchy(float time_ticks, const Mesh* mesh, const SkeletonNode* skel_node, const AnimationNode* anim_node, const kl::Float4x4& parent_transform);
 
 		aiVector3f interpolate_translation(float time_ticks, int channel_index) const;

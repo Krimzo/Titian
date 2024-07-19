@@ -42,11 +42,9 @@ void titian::ShadowPass::render_self(StatePackage& package)
     // Update target view/viewport
     gpu->set_viewport_size(kl::Int2{ (int) dir_light->map_resolution() });
 
-    struct VS_CB
+    struct alignas(16) VS_CB
     {
-        alignas(16) kl::Float4x4 WVP;
-
-        kl::Float4x4 BONE_MATRICES[MAX_BONE_COUNT];
+        kl::Float4x4 WVP;
         float IS_SKELETAL{};
     };
     VS_CB vs_cb{};
@@ -87,7 +85,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
             // Set cb data
             vs_cb.WVP = VP * entity->model_matrix();
             if (animation->type == AnimationType::SKELETAL) {
-                animation->load_matrices(vs_cb.BONE_MATRICES);
+                animation->bind_matrices(0);
                 vs_cb.IS_SKELETAL = 1.0f;
             }
             else {
@@ -99,4 +97,6 @@ void titian::ShadowPass::render_self(StatePackage& package)
             gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
         }
     }
+
+    gpu->unbind_shader_view_for_vertex_shader(0);
 }
