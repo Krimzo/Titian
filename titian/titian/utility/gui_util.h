@@ -27,7 +27,7 @@ namespace titian {
     inline const String DRAG_FILE_ID = "DragFileID";
     inline const String DRAG_DIR_ID = "DragDirID";
 
-    inline void gui_colored_text(const String& message, const kl::Float4& color)
+    inline void gui_colored_text(const String& message, const Float4& color)
     {
         im::TextColored(reinterpret_cast<const ImVec4&>(color), message.c_str());
     }
@@ -75,7 +75,7 @@ namespace titian {
     }
 
     template<typename T>
-    void gui_set_drag_drop(const String& id, const T& data, const kl::dx::ShaderView& texture = nullptr)
+    void gui_set_drag_drop(const String& id, const T& data, const dx::ShaderView& texture = nullptr)
     {
         im::PushStyleColor(ImGuiCol_PopupBg, {});
         im::PushStyleColor(ImGuiCol_Border, {});

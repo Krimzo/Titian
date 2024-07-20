@@ -29,7 +29,7 @@ void titian::Mesh::serialize(Serializer* serializer, const void* helper_data) co
     rec_helper = [&](const SkeletonNode* node)
     {
         serializer->write_object<int>(node->bone_index);
-        serializer->write_object<kl::Float4x4>(node->transformation);
+        serializer->write_object<Float4x4>(node->transformation);
         serializer->write_object<uint64_t>(node->children.size());
         for (auto& child : node->children) {
 			rec_helper(&child);
@@ -61,7 +61,7 @@ void titian::Mesh::deserialize(const Serializer* serializer, const void* helper_
     rec_helper = [&](SkeletonNode* node)
     {
         serializer->read_object<int>(node->bone_index);
-        serializer->read_object<kl::Float4x4>(node->transformation);
+        serializer->read_object<Float4x4>(node->transformation);
         node->children.resize(serializer->read_object<uint64_t>());
         for (auto& child : node->children) {
 			child = new SkeletonNode();

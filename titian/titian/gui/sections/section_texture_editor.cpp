@@ -29,7 +29,7 @@ void titian::GUISectionTextureEditor::render_gui()
         im::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
 
         if (im::BeginChild("Texture View", {})) {
-            const kl::Int2 viewport_size = { (int) im::GetContentRegionAvail().x, (int) im::GetContentRegionAvail().y };
+            const Int2 viewport_size = { (int) im::GetContentRegionAvail().x, (int) im::GetContentRegionAvail().y };
             if (texture) {
                 render_selected_texture(&texture, viewport_size);
             }
@@ -140,7 +140,7 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
     }
 }
 
-void titian::GUISectionTextureEditor::render_selected_texture(Texture* texture, const kl::Int2 viewport_size)
+void titian::GUISectionTextureEditor::render_selected_texture(Texture* texture, const Int2 viewport_size)
 {
     const float min_size = static_cast<float>(std::min(viewport_size.x, viewport_size.y));
     im::SetCursorPos(ImVec2{
@@ -159,7 +159,7 @@ void titian::GUISectionTextureEditor::show_texture_properties(Texture* texture)
         im::SameLine();
         gui_colored_text(selected_texture, gui_layer->special_color);
 
-        kl::Int2 size = texture->data_buffer.size();
+        Int2 size = texture->data_buffer.size();
         im::DragInt2("Size", size, 0.0f);
 
         int pixel_count = texture->data_buffer.pixel_count();

@@ -10,8 +10,8 @@ namespace titian {
 	void ui_set_next_width(float width);
 
 	// cursor
-	kl::Float2 ui_cursor_pos();
-	void ui_set_cursor_pos(const kl::Float2& pos);
+	Float2 ui_cursor_pos();
+	void ui_set_cursor_pos(const Float2& pos);
 
 	// window
 	void ui_window(const String& name, const Function<void()>& func);
@@ -20,22 +20,22 @@ namespace titian {
 
 	// text
 	void ui_text(const String& data);
-	void ui_colored_text(const String& data, const kl::Float4& color);
+	void ui_colored_text(const String& data, const Float4& color);
 
 	// input
 	void ui_input_int(const String& name, int& value);
 	void ui_input_float(const String& name, float& value);
 
-	void ui_input_float2(const String& name, kl::Float2& value);
-	void ui_input_float3(const String& name, kl::Float3& value);
-	void ui_input_float4(const String& name, kl::Float4& value);
+	void ui_input_float2(const String& name, Float2& value);
+	void ui_input_float3(const String& name, Float3& value);
+	void ui_input_float4(const String& name, Float4& value);
 
 	void ui_input_text(const String& name, String& value);
 	void ui_input_text_multiline(const String& name, String& value);
 
 	// edit
-	void ui_edit_color3(const String& name, kl::Float3& value);
-	void ui_edit_color4(const String& name, kl::Float4& value);
+	void ui_edit_color3(const String& name, Float3& value);
+	void ui_edit_color4(const String& name, Float4& value);
 
 	// drag
 	void ui_drag_int(const String& name, int& value);

@@ -10,15 +10,15 @@ namespace titian {
 		// jpg has really good compression but isn't lossless
 		// png is lossless but the compression isn't as good
 		static constexpr kl::ImageType COMPRESSION_TYPE = kl::ImageType::JPG;
-		using Data = kl::Image;
+		using Data = Image;
 
 		Data data_buffer = {};
-		kl::dx::Texture graphics_buffer = nullptr;
+		dx::Texture graphics_buffer = nullptr;
 
-		kl::dx::TargetView target_view = nullptr;
-		kl::dx::DepthView depth_view = nullptr;
-		kl::dx::ShaderView shader_view = nullptr;
-		kl::dx::AccessView access_view = nullptr;
+		dx::TargetView target_view = nullptr;
+		dx::DepthView depth_view = nullptr;
+		dx::ShaderView shader_view = nullptr;
+		dx::AccessView access_view = nullptr;
 
 		Texture(kl::GPU* gpu);
 
@@ -28,13 +28,13 @@ namespace titian {
 		void reload_as_2D(bool has_unordered_access = false, bool is_target = false);
 		bool reload_as_cube();
 
-		void create_target_view(const kl::dx::TargetViewDescriptor* descriptor = nullptr);
-		void create_depth_view(const kl::dx::DepthViewDescriptor* descriptor = nullptr);
-		void create_shader_view(const kl::dx::ShaderViewDescriptor* descriptor = nullptr);
-		void create_access_view(const kl::dx::AccessViewDescriptor* descriptor = nullptr);
+		void create_target_view(const dx::TargetViewDescriptor* descriptor = nullptr);
+		void create_depth_view(const dx::DepthViewDescriptor* descriptor = nullptr);
+		void create_shader_view(const dx::ShaderViewDescriptor* descriptor = nullptr);
+		void create_access_view(const dx::AccessViewDescriptor* descriptor = nullptr);
 
 		bool is_cube() const;
-		kl::Int2 graphics_buffer_size() const;
+		Int2 graphics_buffer_size() const;
 
 	private:
 		kl::GPU* m_gpu = nullptr;

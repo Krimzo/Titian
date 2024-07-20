@@ -146,7 +146,7 @@ const int load_types = [&]
 	// Bootstrap
 	cs::bootstrap::standard_library::vector_type<Vector<String>>("StringData", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::vector_type<Vector<kl::Vertex<float>>>("MeshData", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::vector_type<Vector<kl::Color>>("TextureData", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<Vector<Color>>("TextureData", *INTERP_SCRIPT_MODULE);
 
 	cs::bootstrap::standard_library::vector_type<Vector<Mesh*>>("MeshVector", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::vector_type<Vector<Animation*>>("AnimationVector", *INTERP_SCRIPT_MODULE);
@@ -168,160 +168,160 @@ const int load_types = [&]
 	INTERP_SCRIPT_MODULE->add(cs::base_class<Light, DirectionalLight>());
 
 	// Casts
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Int2, kl::Float2>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float2, kl::Int2>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float2, kl::Complex<float>>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float3, kl::Color>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float3, kl::Quaternion<float>>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float4, kl::Color>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Float4, kl::Quaternion<float>>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Complex<float>, kl::Float2>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Quaternion<float>, kl::Float3>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Quaternion<float>, kl::Float4>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Color, kl::Float3>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Color, kl::Float4>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Int2, Float2>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float2, Int2>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float2, Complex>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float3, Color>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float3, Quaternion>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float4, Color>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float4, Quaternion>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Complex, Float2>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Quaternion, Float3>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Quaternion, Float4>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Color, Float3>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Color, Float4>());
 
 	// Int2
-	cs::utility::add_class<kl::Int2>(*INTERP_SCRIPT_MODULE, "Int2",
+	cs::utility::add_class<Int2>(*INTERP_SCRIPT_MODULE, "Int2",
 	{
-		cs::constructor<kl::Int2()>(),
-		cs::constructor<kl::Int2(const kl::Int2&)>(),
+		cs::constructor<Int2()>(),
+		cs::constructor<Int2(const Int2&)>(),
 
-		cs::constructor<kl::Int2(int)>(),
-		cs::constructor<kl::Int2(int, int)>(),
+		cs::constructor<Int2(int)>(),
+		cs::constructor<Int2(int, int)>(),
 	},
 	{
-		{ cs::fun(&kl::Int2::x), "x" },
-		{ cs::fun(&kl::Int2::y), "y" },
+		{ cs::fun(&Int2::x), "x" },
+		{ cs::fun(&Int2::y), "y" },
 
-		{ cs::fun<kl::Int2 & (kl::Int2::*)(const kl::Int2&)>(&kl::Int2::operator=), "=" },
+		{ cs::fun<Int2 & (Int2::*)(const Int2&)>(&Int2::operator=), "=" },
 
-		{ cs::fun<int& (kl::Int2::*)(int)>(&kl::Int2::operator[]), "[]"},
+		{ cs::fun<int& (Int2::*)(int)>(&Int2::operator[]), "[]"},
 
-		{ cs::fun(&kl::Int2::operator==), "==" },
-		{ cs::fun(&kl::Int2::operator!=), "!=" },
+		{ cs::fun(&Int2::operator==), "==" },
+		{ cs::fun(&Int2::operator!=), "!=" },
 
-		{ cs::fun(&kl::Int2::operator+), "+" },
-		{ cs::fun(&kl::Int2::operator+=), "+=" },
+		{ cs::fun(&Int2::operator+), "+" },
+		{ cs::fun(&Int2::operator+=), "+=" },
 
-		{ cs::fun<kl::Int2(kl::Int2::*)(const kl::Int2&) const>(&kl::Int2::operator-), "-"},
-		{ cs::fun(&kl::Int2::operator-=), "-=" },
+		{ cs::fun<Int2(Int2::*)(const Int2&) const>(&Int2::operator-), "-"},
+		{ cs::fun(&Int2::operator-=), "-=" },
 
-		{ cs::fun<kl::Int2 (kl::Int2::*)(int) const>(&kl::Int2::operator*), "*" },
-		{ cs::fun<void (kl::Int2::*)(int)>(&kl::Int2::operator*=), "*=" },
+		{ cs::fun<Int2 (Int2::*)(int) const>(&Int2::operator*), "*" },
+		{ cs::fun<void (Int2::*)(int)>(&Int2::operator*=), "*=" },
 
-		{ cs::fun<kl::Int2 (kl::Int2::*)(const kl::Int2&) const>(&kl::Int2::operator*), "*" },
-		{ cs::fun<void (kl::Int2::*)(const kl::Int2&)>(&kl::Int2::operator*=), "*=" },
+		{ cs::fun<Int2 (Int2::*)(const Int2&) const>(&Int2::operator*), "*" },
+		{ cs::fun<void (Int2::*)(const Int2&)>(&Int2::operator*=), "*=" },
 
-		{ cs::fun<kl::Int2 (kl::Int2::*)(int) const>(&kl::Int2::operator/), "/" },
-		{ cs::fun<void (kl::Int2::*)(int)>(&kl::Int2::operator/=), "/=" },
+		{ cs::fun<Int2 (Int2::*)(int) const>(&Int2::operator/), "/" },
+		{ cs::fun<void (Int2::*)(int)>(&Int2::operator/=), "/=" },
 
-		{ cs::fun<kl::Int2 (kl::Int2::*)(const kl::Int2&) const>(&kl::Int2::operator/), "/" },
-		{ cs::fun<void (kl::Int2::*)(const kl::Int2&)>(&kl::Int2::operator/=), "/=" },
+		{ cs::fun<Int2 (Int2::*)(const Int2&) const>(&Int2::operator/), "/" },
+		{ cs::fun<void (Int2::*)(const Int2&)>(&Int2::operator/=), "/=" },
 
-		{ cs::fun<kl::Int2(kl::Int2::*)() const>(&kl::Int2::operator-), "-" },
+		{ cs::fun<Int2(Int2::*)() const>(&Int2::operator-), "-" },
 
-		{ cs::fun([](const kl::Int2& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const Int2& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Int2"] = "Two component integer vector.";
 	INTERP_SCRIPT_MEMBERS["x"] = "x";
 	INTERP_SCRIPT_MEMBERS["x"] = "y";
 
 	// Float2
-	cs::utility::add_class<kl::Float2>(*INTERP_SCRIPT_MODULE, "Float2",
+	cs::utility::add_class<Float2>(*INTERP_SCRIPT_MODULE, "Float2",
 	{
-		cs::constructor<kl::Float2()>(),
-		cs::constructor<kl::Float2(const kl::Float2&)>(),
+		cs::constructor<Float2()>(),
+		cs::constructor<Float2(const Float2&)>(),
 
-		cs::constructor<kl::Float2(float)>(),
-		cs::constructor<kl::Float2(float, float)>(),
+		cs::constructor<Float2(float)>(),
+		cs::constructor<Float2(float, float)>(),
 	},
 	{
-		{ cs::fun(&kl::Float2::x), "x" },
-		{ cs::fun(&kl::Float2::y), "y" },
+		{ cs::fun(&Float2::x), "x" },
+		{ cs::fun(&Float2::y), "y" },
 
-		{ cs::fun<kl::Float2& (kl::Float2::*)(const kl::Float2&)>(&kl::Float2::operator=), "=" },
+		{ cs::fun<Float2& (Float2::*)(const Float2&)>(&Float2::operator=), "=" },
 
-		{ cs::fun<float& (kl::Float2::*)(int)>(&kl::Float2::operator[]), "[]"},
+		{ cs::fun<float& (Float2::*)(int)>(&Float2::operator[]), "[]"},
 
-		{ cs::fun(&kl::Float2::operator==), "==" },
-		{ cs::fun(&kl::Float2::operator!=), "!=" },
+		{ cs::fun(&Float2::operator==), "==" },
+		{ cs::fun(&Float2::operator!=), "!=" },
 
-		{ cs::fun(&kl::Float2::operator+), "+" },
-		{ cs::fun(&kl::Float2::operator+=), "+=" },
+		{ cs::fun(&Float2::operator+), "+" },
+		{ cs::fun(&Float2::operator+=), "+=" },
 
-		{ cs::fun<kl::Float2 (kl::Float2::*)(const kl::Float2&) const>(&kl::Float2::operator-), "-"},
-		{ cs::fun(&kl::Float2::operator-=), "-=" },
+		{ cs::fun<Float2 (Float2::*)(const Float2&) const>(&Float2::operator-), "-"},
+		{ cs::fun(&Float2::operator-=), "-=" },
 
-		{ cs::fun<kl::Float2 (kl::Float2::*)(float) const>(&kl::Float2::operator*), "*" },
-		{ cs::fun<void (kl::Float2::*)(float)>(&kl::Float2::operator*=), "*="},
+		{ cs::fun<Float2 (Float2::*)(float) const>(&Float2::operator*), "*" },
+		{ cs::fun<void (Float2::*)(float)>(&Float2::operator*=), "*="},
 
-		{ cs::fun<kl::Float2 (kl::Float2::*)(const kl::Float2&) const>(&kl::Float2::operator*), "*" },
-		{ cs::fun<void (kl::Float2::*)(const kl::Float2&)>(&kl::Float2::operator*=), "*=" },
+		{ cs::fun<Float2 (Float2::*)(const Float2&) const>(&Float2::operator*), "*" },
+		{ cs::fun<void (Float2::*)(const Float2&)>(&Float2::operator*=), "*=" },
 
-		{ cs::fun<kl::Float2 (kl::Float2::*)(float) const>(&kl::Float2::operator/), "/" },
-		{ cs::fun<void (kl::Float2::*)(float)>(&kl::Float2::operator/=), "/=" },
+		{ cs::fun<Float2 (Float2::*)(float) const>(&Float2::operator/), "/" },
+		{ cs::fun<void (Float2::*)(float)>(&Float2::operator/=), "/=" },
 
-		{ cs::fun<kl::Float2 (kl::Float2::*)(const kl::Float2&) const>(&kl::Float2::operator/), "/" },
-		{ cs::fun<void (kl::Float2::*)(const kl::Float2&)>(&kl::Float2::operator/=), "/=" },
+		{ cs::fun<Float2 (Float2::*)(const Float2&) const>(&Float2::operator/), "/" },
+		{ cs::fun<void (Float2::*)(const Float2&)>(&Float2::operator/=), "/=" },
 
-		{ cs::fun<kl::Float2 (kl::Float2::*)() const>(&kl::Float2::operator-), "-"},
-		{ cs::fun(&kl::Float2::length), "length" },
+		{ cs::fun<Float2 (Float2::*)() const>(&Float2::operator-), "-"},
+		{ cs::fun(&Float2::length), "length" },
 
-		{ cs::fun([](const kl::Float2& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const Float2& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float2"] = "Two component float vector.";
 	INTERP_SCRIPT_IDENTIFIERS["length"] = "Returns length of this vector.";
 
 	// Float3
-	cs::utility::add_class<kl::Float3>(*INTERP_SCRIPT_MODULE, "Float3",
+	cs::utility::add_class<Float3>(*INTERP_SCRIPT_MODULE, "Float3",
 	{
-		cs::constructor<kl::Float3()>(),
-		cs::constructor<kl::Float3(const kl::Float3&)>(),
+		cs::constructor<Float3()>(),
+		cs::constructor<Float3(const Float3&)>(),
 
-		cs::constructor<kl::Float3(float)>(),
-		cs::constructor<kl::Float3(float, float, float)>(),
+		cs::constructor<Float3(float)>(),
+		cs::constructor<Float3(float, float, float)>(),
 
-		cs::constructor<kl::Float3(kl::Float2, float)>(),
-		cs::constructor<kl::Float3(float, kl::Float2)>(),
+		cs::constructor<Float3(Float2, float)>(),
+		cs::constructor<Float3(float, Float2)>(),
 	},
 	{
-		{ cs::fun(&kl::Float3::x), "x" },
-		{ cs::fun(&kl::Float3::y), "y" },
-		{ cs::fun(&kl::Float3::z), "z" },
+		{ cs::fun(&Float3::x), "x" },
+		{ cs::fun(&Float3::y), "y" },
+		{ cs::fun(&Float3::z), "z" },
 
-		{ cs::fun<kl::Float3& (kl::Float3::*)(const kl::Float3&)>(&kl::Float3::operator=), "=" },
+		{ cs::fun<Float3& (Float3::*)(const Float3&)>(&Float3::operator=), "=" },
 
-		{ cs::fun<kl::Float2 & (kl::Float3::*)()>(&kl::Float3::xy), "xy"},
-		{ cs::fun<kl::Float2& (kl::Float3::*)()>(&kl::Float3::yz), "yz" },
+		{ cs::fun<Float2 & (Float3::*)()>(&Float3::xy), "xy"},
+		{ cs::fun<Float2& (Float3::*)()>(&Float3::yz), "yz" },
 
-		{ cs::fun<float& (kl::Float3::*)(int)>(&kl::Float3::operator[]), "[]"},
+		{ cs::fun<float& (Float3::*)(int)>(&Float3::operator[]), "[]"},
 
-		{ cs::fun(&kl::Float3::operator==), "==" },
-		{ cs::fun(&kl::Float3::operator!=), "!=" },
+		{ cs::fun(&Float3::operator==), "==" },
+		{ cs::fun(&Float3::operator!=), "!=" },
 
-		{ cs::fun(&kl::Float3::operator+), "+" },
-		{ cs::fun(&kl::Float3::operator+=), "+=" },
+		{ cs::fun(&Float3::operator+), "+" },
+		{ cs::fun(&Float3::operator+=), "+=" },
 
-		{ cs::fun<kl::Float3 (kl::Float3::*)(const kl::Float3&) const>(&kl::Float3::operator-), "-" },
-		{ cs::fun(&kl::Float3::operator-=), "-=" },
+		{ cs::fun<Float3 (Float3::*)(const Float3&) const>(&Float3::operator-), "-" },
+		{ cs::fun(&Float3::operator-=), "-=" },
 
-		{ cs::fun<kl::Float3 (kl::Float3::*)(float) const>(&kl::Float3::operator*), "*" },
-		{ cs::fun<void (kl::Float3::*)(float)>(&kl::Float3::operator*=), "*=" },
+		{ cs::fun<Float3 (Float3::*)(float) const>(&Float3::operator*), "*" },
+		{ cs::fun<void (Float3::*)(float)>(&Float3::operator*=), "*=" },
 
-		{ cs::fun<kl::Float3 (kl::Float3::*)(const kl::Float3&) const>(&kl::Float3::operator*), "*" },
-		{ cs::fun<void (kl::Float3::*)(const kl::Float3&)>(&kl::Float3::operator*=), "*=" },
+		{ cs::fun<Float3 (Float3::*)(const Float3&) const>(&Float3::operator*), "*" },
+		{ cs::fun<void (Float3::*)(const Float3&)>(&Float3::operator*=), "*=" },
 
-		{ cs::fun<kl::Float3 (kl::Float3::*)(float) const>(&kl::Float3::operator/), "/" },
-		{ cs::fun<void (kl::Float3::*)(float)>(&kl::Float3::operator/=), "/=" },
+		{ cs::fun<Float3 (Float3::*)(float) const>(&Float3::operator/), "/" },
+		{ cs::fun<void (Float3::*)(float)>(&Float3::operator/=), "/=" },
 
-		{ cs::fun<kl::Float3 (kl::Float3::*)(const kl::Float3&) const>(&kl::Float3::operator/), "/" },
-		{ cs::fun<void (kl::Float3::*)(const kl::Float3&)>(&kl::Float3::operator/=), "/=" },
+		{ cs::fun<Float3 (Float3::*)(const Float3&) const>(&Float3::operator/), "/" },
+		{ cs::fun<void (Float3::*)(const Float3&)>(&Float3::operator/=), "/=" },
 
-		{ cs::fun<kl::Float3 (kl::Float3::*)() const>(&kl::Float3::operator-), "-"},
-		{ cs::fun(&kl::Float3::length), "length" },
+		{ cs::fun<Float3 (Float3::*)() const>(&Float3::operator-), "-"},
+		{ cs::fun(&Float3::length), "length" },
 
-		{ cs::fun([](const kl::Float3& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const Float3& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float3"] = "Three component float vector.";
 	INTERP_SCRIPT_MEMBERS["z"] = "z";
@@ -329,64 +329,64 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["yz"] = "Returns y and z as a Float2&.";
 
 	// Float4
-	cs::utility::add_class<kl::Float4>(*INTERP_SCRIPT_MODULE, "Float4",
+	cs::utility::add_class<Float4>(*INTERP_SCRIPT_MODULE, "Float4",
 	{
-		cs::constructor<kl::Float4()>(),
-		cs::constructor<kl::Float4(const kl::Float4&)>(),
+		cs::constructor<Float4()>(),
+		cs::constructor<Float4(const Float4&)>(),
 
-		cs::constructor<kl::Float4(float)>(),
-		cs::constructor<kl::Float4(float, float, float, float)>(),
+		cs::constructor<Float4(float)>(),
+		cs::constructor<Float4(float, float, float, float)>(),
 
-		cs::constructor<kl::Float4(kl::Float2, float, float)>(),
-		cs::constructor<kl::Float4(float, kl::Float2, float)>(),
-		cs::constructor<kl::Float4(float, float, kl::Float2)>(),
-		cs::constructor<kl::Float4(kl::Float2, kl::Float2)>(),
+		cs::constructor<Float4(Float2, float, float)>(),
+		cs::constructor<Float4(float, Float2, float)>(),
+		cs::constructor<Float4(float, float, Float2)>(),
+		cs::constructor<Float4(Float2, Float2)>(),
 
-		cs::constructor<kl::Float4(kl::Float3, float)>(),
-		cs::constructor<kl::Float4(float, kl::Float3)>(),
+		cs::constructor<Float4(Float3, float)>(),
+		cs::constructor<Float4(float, Float3)>(),
 	},
 	{
-		{ cs::fun(&kl::Float4::x), "x" },
-		{ cs::fun(&kl::Float4::y), "y" },
-		{ cs::fun(&kl::Float4::z), "z" },
-		{ cs::fun(&kl::Float4::w), "w" },
+		{ cs::fun(&Float4::x), "x" },
+		{ cs::fun(&Float4::y), "y" },
+		{ cs::fun(&Float4::z), "z" },
+		{ cs::fun(&Float4::w), "w" },
 
-		{ cs::fun<kl::Float4& (kl::Float4::*)(const kl::Float4&)>(&kl::Float4::operator=), "=" },
+		{ cs::fun<Float4& (Float4::*)(const Float4&)>(&Float4::operator=), "=" },
 
-		{ cs::fun<kl::Float2& (kl::Float4::*)()>(&kl::Float4::xy), "xy" },
-		{ cs::fun<kl::Float2& (kl::Float4::*)()>(&kl::Float4::yz), "yz" },
-		{ cs::fun<kl::Float2& (kl::Float4::*)()>(&kl::Float4::zw), "zw" },
+		{ cs::fun<Float2& (Float4::*)()>(&Float4::xy), "xy" },
+		{ cs::fun<Float2& (Float4::*)()>(&Float4::yz), "yz" },
+		{ cs::fun<Float2& (Float4::*)()>(&Float4::zw), "zw" },
 
-		{ cs::fun<kl::Float3& (kl::Float4::*)()>(&kl::Float4::xyz), "xyz" },
-		{ cs::fun<kl::Float3& (kl::Float4::*)()>(&kl::Float4::yzw), "yzw" },
+		{ cs::fun<Float3& (Float4::*)()>(&Float4::xyz), "xyz" },
+		{ cs::fun<Float3& (Float4::*)()>(&Float4::yzw), "yzw" },
 
-		{ cs::fun<float& (kl::Float4::*)(int)>(&kl::Float4::operator[]), "[]"},
+		{ cs::fun<float& (Float4::*)(int)>(&Float4::operator[]), "[]"},
 
-		{ cs::fun(&kl::Float4::operator==), "==" },
-		{ cs::fun(&kl::Float4::operator!=), "!=" },
+		{ cs::fun(&Float4::operator==), "==" },
+		{ cs::fun(&Float4::operator!=), "!=" },
 
-		{ cs::fun(&kl::Float4::operator+), "+" },
-		{ cs::fun(&kl::Float4::operator+=), "+=" },
+		{ cs::fun(&Float4::operator+), "+" },
+		{ cs::fun(&Float4::operator+=), "+=" },
 
-		{ cs::fun<kl::Float4 (kl::Float4::*)(const kl::Float4&) const>(&kl::Float4::operator-), "-"},
-		{ cs::fun(&kl::Float4::operator-=), "-=" },
+		{ cs::fun<Float4 (Float4::*)(const Float4&) const>(&Float4::operator-), "-"},
+		{ cs::fun(&Float4::operator-=), "-=" },
 
-		{ cs::fun<kl::Float4 (kl::Float4::*)(float) const>(&kl::Float4::operator*), "*" },
-		{ cs::fun<void (kl::Float4::*)(float)>(&kl::Float4::operator*=), "*=" },
+		{ cs::fun<Float4 (Float4::*)(float) const>(&Float4::operator*), "*" },
+		{ cs::fun<void (Float4::*)(float)>(&Float4::operator*=), "*=" },
 
-		{ cs::fun<kl::Float4 (kl::Float4::*)(const kl::Float4&) const>(&kl::Float4::operator*), "*" },
-		{ cs::fun<void (kl::Float4::*)(const kl::Float4&)>(&kl::Float4::operator*=), "*=" },
+		{ cs::fun<Float4 (Float4::*)(const Float4&) const>(&Float4::operator*), "*" },
+		{ cs::fun<void (Float4::*)(const Float4&)>(&Float4::operator*=), "*=" },
 
-		{ cs::fun<kl::Float4 (kl::Float4::*)(float) const>(&kl::Float4::operator/), "/" },
-		{ cs::fun<void (kl::Float4::*)(float)>(&kl::Float4::operator/=), "/=" },
+		{ cs::fun<Float4 (Float4::*)(float) const>(&Float4::operator/), "/" },
+		{ cs::fun<void (Float4::*)(float)>(&Float4::operator/=), "/=" },
 
-		{ cs::fun<kl::Float4 (kl::Float4::*)(const kl::Float4&) const>(&kl::Float4::operator/), "/" },
-		{ cs::fun<void (kl::Float4::*)(const kl::Float4&)>(&kl::Float4::operator/=), "/="},
+		{ cs::fun<Float4 (Float4::*)(const Float4&) const>(&Float4::operator/), "/" },
+		{ cs::fun<void (Float4::*)(const Float4&)>(&Float4::operator/=), "/="},
 
-		{ cs::fun<kl::Float4 (kl::Float4::*)() const>(&kl::Float4::operator-), "-"},
-		{ cs::fun(&kl::Float4::length), "length" },
+		{ cs::fun<Float4 (Float4::*)() const>(&Float4::operator-), "-"},
+		{ cs::fun(&Float4::length), "length" },
 		
-		{ cs::fun([](const kl::Float4& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const Float4& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float4"] = "Four component float vector.";
 	INTERP_SCRIPT_MEMBERS["w"] = "w";
@@ -395,188 +395,188 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["yzw"] = "Returns y, z and w as a Float3&.";
 
 	// Float2x2
-	cs::utility::add_class<kl::Float2x2>(*INTERP_SCRIPT_MODULE, "Float2x2",
+	cs::utility::add_class<Float2x2>(*INTERP_SCRIPT_MODULE, "Float2x2",
 	{
-		cs::constructor<kl::Float2x2()>(),
-		cs::constructor<kl::Float2x2(const kl::Float2x2&)>(),
+		cs::constructor<Float2x2()>(),
+		cs::constructor<Float2x2(const Float2x2&)>(),
 	},
 	{
-		{ cs::fun<kl::Float2x2& (kl::Float2x2::*)(const kl::Float2x2&)>(&kl::Float2x2::operator=), "=" },
+		{ cs::fun<Float2x2& (Float2x2::*)(const Float2x2&)>(&Float2x2::operator=), "=" },
 
-		{ cs::fun<float& (kl::Float2x2::*)(int)>(&kl::Float2x2::operator[]), "[]"},
+		{ cs::fun<float& (Float2x2::*)(int)>(&Float2x2::operator[]), "[]"},
 
-		{ cs::fun(&kl::Float2x2::operator==), "==" },
-		{ cs::fun(&kl::Float2x2::operator!=), "!=" },
+		{ cs::fun(&Float2x2::operator==), "==" },
+		{ cs::fun(&Float2x2::operator!=), "!=" },
 
-		{ cs::fun(&kl::Float2x2::operator+), "+" },
-		{ cs::fun(&kl::Float2x2::operator+=), "+=" },
+		{ cs::fun(&Float2x2::operator+), "+" },
+		{ cs::fun(&Float2x2::operator+=), "+=" },
 
-		{ cs::fun(&kl::Float2x2::operator-), "-" },
-		{ cs::fun(&kl::Float2x2::operator-=), "-=" },
+		{ cs::fun(&Float2x2::operator-), "-" },
+		{ cs::fun(&Float2x2::operator-=), "-=" },
 
-		{ cs::fun<kl::Float2x2 (kl::Float2x2::*)(float) const>(&kl::Float2x2::operator*), "*" },
-		{ cs::fun<void (kl::Float2x2::*)(float)>(&kl::Float2x2::operator*=), "*=" },
+		{ cs::fun<Float2x2 (Float2x2::*)(float) const>(&Float2x2::operator*), "*" },
+		{ cs::fun<void (Float2x2::*)(float)>(&Float2x2::operator*=), "*=" },
 
-		{ cs::fun<kl::Float2x2 (kl::Float2x2::*)(const kl::Float2x2&) const>(&kl::Float2x2::operator*), "*" },
-		{ cs::fun<void (kl::Float2x2::*)(const kl::Float2x2&)>(&kl::Float2x2::operator*=), "*=" },
+		{ cs::fun<Float2x2 (Float2x2::*)(const Float2x2&) const>(&Float2x2::operator*), "*" },
+		{ cs::fun<void (Float2x2::*)(const Float2x2&)>(&Float2x2::operator*=), "*=" },
 
-		{ cs::fun<kl::Float2 (kl::Float2x2::*)(const kl::Float2&) const>(&kl::Float2x2::operator*), "*"},
+		{ cs::fun<Float2 (Float2x2::*)(const Float2&) const>(&Float2x2::operator*), "*"},
 
-		{ cs::fun(&kl::Float2x2::determinant), "determinant" },
+		{ cs::fun(&Float2x2::determinant), "determinant" },
 
-		{ cs::fun([](const kl::Float2x2& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const Float2x2& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float2x2"] = "Two float wide square matrix.";
 	INTERP_SCRIPT_IDENTIFIERS["determinant"] = "Returns the determinant of this matrix.";
 
 	// Float3x3
-	cs::utility::add_class<kl::Float3x3>(*INTERP_SCRIPT_MODULE, "Float3x3",
+	cs::utility::add_class<Float3x3>(*INTERP_SCRIPT_MODULE, "Float3x3",
 	{
-		cs::constructor<kl::Float3x3()>(),
-		cs::constructor<kl::Float3x3(const kl::Float3x3&)>(),
+		cs::constructor<Float3x3()>(),
+		cs::constructor<Float3x3(const Float3x3&)>(),
 	},
 	{
-		{ cs::fun<kl::Float3x3& (kl::Float3x3::*)(const kl::Float3x3&)>(&kl::Float3x3::operator=), "=" },
+		{ cs::fun<Float3x3& (Float3x3::*)(const Float3x3&)>(&Float3x3::operator=), "=" },
 
-		{ cs::fun<float& (kl::Float3x3::*)(int)>(&kl::Float3x3::operator[]), "[]"},
+		{ cs::fun<float& (Float3x3::*)(int)>(&Float3x3::operator[]), "[]"},
 
-		{ cs::fun(&kl::Float3x3::operator==), "==" },
-		{ cs::fun(&kl::Float3x3::operator!=), "!=" },
+		{ cs::fun(&Float3x3::operator==), "==" },
+		{ cs::fun(&Float3x3::operator!=), "!=" },
 
-		{ cs::fun(&kl::Float3x3::operator+), "+" },
-		{ cs::fun(&kl::Float3x3::operator+=), "+=" },
+		{ cs::fun(&Float3x3::operator+), "+" },
+		{ cs::fun(&Float3x3::operator+=), "+=" },
 
-		{ cs::fun(&kl::Float3x3::operator-), "-" },
-		{ cs::fun(&kl::Float3x3::operator-=), "-=" },
+		{ cs::fun(&Float3x3::operator-), "-" },
+		{ cs::fun(&Float3x3::operator-=), "-=" },
 
-		{ cs::fun<kl::Float3x3 (kl::Float3x3::*)(float) const>(&kl::Float3x3::operator*), "*" },
-		{ cs::fun<void (kl::Float3x3::*)(float)>(&kl::Float3x3::operator*=), "*=" },
+		{ cs::fun<Float3x3 (Float3x3::*)(float) const>(&Float3x3::operator*), "*" },
+		{ cs::fun<void (Float3x3::*)(float)>(&Float3x3::operator*=), "*=" },
 
-		{ cs::fun<kl::Float3x3 (kl::Float3x3::*)(const kl::Float3x3&) const>(&kl::Float3x3::operator*), "*" },
-		{ cs::fun<void (kl::Float3x3::*)(const kl::Float3x3&)>(&kl::Float3x3::operator*=), "*=" },
+		{ cs::fun<Float3x3 (Float3x3::*)(const Float3x3&) const>(&Float3x3::operator*), "*" },
+		{ cs::fun<void (Float3x3::*)(const Float3x3&)>(&Float3x3::operator*=), "*=" },
 
-		{ cs::fun<kl::Float3 (kl::Float3x3::*)(const kl::Float3&) const>(&kl::Float3x3::operator*), "*"},
+		{ cs::fun<Float3 (Float3x3::*)(const Float3&) const>(&Float3x3::operator*), "*"},
 
-		{ cs::fun(&kl::Float3x3::determinant), "determinant" },
+		{ cs::fun(&Float3x3::determinant), "determinant" },
 
-		{ cs::fun([](const kl::Float3x3& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const Float3x3& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float3x3"] = "Three float wide square matrix.";
 
 	// Float4x4
-	cs::utility::add_class<kl::Float4x4>(*INTERP_SCRIPT_MODULE, "Float4x4",
+	cs::utility::add_class<Float4x4>(*INTERP_SCRIPT_MODULE, "Float4x4",
 	{
-		cs::constructor<kl::Float4x4()>(),
-		cs::constructor<kl::Float4x4(const kl::Float4x4&)>(),
+		cs::constructor<Float4x4()>(),
+		cs::constructor<Float4x4(const Float4x4&)>(),
 	},
 	{
-		{ cs::fun<kl::Float4x4& (kl::Float4x4::*)(const kl::Float4x4&)>(&kl::Float4x4::operator=), "=" },
+		{ cs::fun<Float4x4& (Float4x4::*)(const Float4x4&)>(&Float4x4::operator=), "=" },
 
-		{ cs::fun<float& (kl::Float4x4::*)(int)>(&kl::Float4x4::operator[]), "[]"},
+		{ cs::fun<float& (Float4x4::*)(int)>(&Float4x4::operator[]), "[]"},
 
-		{ cs::fun(&kl::Float4x4::operator==), "==" },
-		{ cs::fun(&kl::Float4x4::operator!=), "!=" },
+		{ cs::fun(&Float4x4::operator==), "==" },
+		{ cs::fun(&Float4x4::operator!=), "!=" },
 
-		{ cs::fun(&kl::Float4x4::operator+), "+" },
-		{ cs::fun(&kl::Float4x4::operator+=), "+=" },
+		{ cs::fun(&Float4x4::operator+), "+" },
+		{ cs::fun(&Float4x4::operator+=), "+=" },
 
-		{ cs::fun(&kl::Float4x4::operator-), "-" },
-		{ cs::fun(&kl::Float4x4::operator-=), "-=" },
+		{ cs::fun(&Float4x4::operator-), "-" },
+		{ cs::fun(&Float4x4::operator-=), "-=" },
 
-		{ cs::fun<kl::Float4x4 (kl::Float4x4::*)(float) const>(&kl::Float4x4::operator*), "*" },
-		{ cs::fun<void (kl::Float4x4::*)(float)>(&kl::Float4x4::operator*=), "*=" },
+		{ cs::fun<Float4x4 (Float4x4::*)(float) const>(&Float4x4::operator*), "*" },
+		{ cs::fun<void (Float4x4::*)(float)>(&Float4x4::operator*=), "*=" },
 
-		{ cs::fun<kl::Float4x4 (kl::Float4x4::*)(const kl::Float4x4&) const>(&kl::Float4x4::operator*), "*" },
-		{ cs::fun<void (kl::Float4x4::*)(const kl::Float4x4&)>(&kl::Float4x4::operator*=), "*=" },
+		{ cs::fun<Float4x4 (Float4x4::*)(const Float4x4&) const>(&Float4x4::operator*), "*" },
+		{ cs::fun<void (Float4x4::*)(const Float4x4&)>(&Float4x4::operator*=), "*=" },
 
-		{ cs::fun<kl::Float4 (kl::Float4x4::*)(const kl::Float4&) const>(&kl::Float4x4::operator*), "*"},
+		{ cs::fun<Float4 (Float4x4::*)(const Float4&) const>(&Float4x4::operator*), "*"},
 
-		{ cs::fun(&kl::Float4x4::determinant), "determinant" },
+		{ cs::fun(&Float4x4::determinant), "determinant" },
 
-		{ cs::fun([](const kl::Float4x4& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const Float4x4& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Float4x4"] = "Four float wide square matrix.";
 
 	// Complex
-	cs::utility::add_class<kl::Complex<float>>(*INTERP_SCRIPT_MODULE, "Complex",
+	cs::utility::add_class<Complex>(*INTERP_SCRIPT_MODULE, "Complex",
 	{
-		cs::constructor<kl::Complex<float>()>(),
-		cs::constructor<kl::Complex<float>(const kl::Complex<float>&)>(),
+		cs::constructor<Complex()>(),
+		cs::constructor<Complex(const Complex&)>(),
 
-		cs::constructor<kl::Complex<float>(float, float)>(),
-		cs::constructor<kl::Complex<float>(float)>(),
+		cs::constructor<Complex(float, float)>(),
+		cs::constructor<Complex(float)>(),
 	},
 	{
-		{ cs::fun(&kl::Complex<float>::r), "r" },
-		{ cs::fun(&kl::Complex<float>::i), "i" },
+		{ cs::fun(&Complex::r), "r" },
+		{ cs::fun(&Complex::i), "i" },
 
-		{ cs::fun<kl::Complex<float>& (kl::Complex<float>::*)(const kl::Complex<float>&)>(&kl::Complex<float>::operator=), "=" },
+		{ cs::fun<Complex& (Complex::*)(const Complex&)>(&Complex::operator=), "=" },
 
-		{ cs::fun<float& (kl::Complex<float>::*)(int)>(&kl::Complex<float>::operator[]), "[]"},
+		{ cs::fun<float& (Complex::*)(int)>(&Complex::operator[]), "[]"},
 
-		{ cs::fun(&kl::Complex<float>::operator==), "==" },
-		{ cs::fun(&kl::Complex<float>::operator!=), "!=" },
+		{ cs::fun(&Complex::operator==), "==" },
+		{ cs::fun(&Complex::operator!=), "!=" },
 
-		{ cs::fun(&kl::Complex<float>::operator+), "+" },
-		{ cs::fun(&kl::Complex<float>::operator+=), "+=" },
+		{ cs::fun(&Complex::operator+), "+" },
+		{ cs::fun(&Complex::operator+=), "+=" },
 
-		{ cs::fun<kl::Complex<float> (kl::Complex<float>::*)(const kl::Complex<float>&) const>(&kl::Complex<float>::operator-), "-" },
-		{ cs::fun(&kl::Complex<float>::operator-=), "-=" },
+		{ cs::fun<Complex (Complex::*)(const Complex&) const>(&Complex::operator-), "-" },
+		{ cs::fun(&Complex::operator-=), "-=" },
 
-		{ cs::fun<kl::Complex<float> (kl::Complex<float>::*)(float) const>(&kl::Complex<float>::operator*), "*" },
-		{ cs::fun<void (kl::Complex<float>::*)(float)>(&kl::Complex<float>::operator*=), "*=" },
+		{ cs::fun<Complex (Complex::*)(float) const>(&Complex::operator*), "*" },
+		{ cs::fun<void (Complex::*)(float)>(&Complex::operator*=), "*=" },
 
-		{ cs::fun<kl::Complex<float> (kl::Complex<float>::*)(const kl::Complex<float>&) const>(&kl::Complex<float>::operator*), "*" },
-		{ cs::fun<void (kl::Complex<float>::*)(const kl::Complex<float>&)>(&kl::Complex<float>::operator*=), "*="},
+		{ cs::fun<Complex (Complex::*)(const Complex&) const>(&Complex::operator*), "*" },
+		{ cs::fun<void (Complex::*)(const Complex&)>(&Complex::operator*=), "*="},
 
-		{ cs::fun<kl::Complex<float> (kl::Complex<float>::*)() const>(&kl::Complex<float>::operator-), "-" },
-		{ cs::fun(&kl::Complex<float>::length), "length" },
+		{ cs::fun<Complex (Complex::*)() const>(&Complex::operator-), "-" },
+		{ cs::fun(&Complex::length), "length" },
 
-		{ cs::fun([](const kl::Complex<float>& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const Complex& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Complex"] = "Two component imaginary number.";
 	INTERP_SCRIPT_MEMBERS["r"] = "r";
 	INTERP_SCRIPT_MEMBERS["i"] = "i";
 
 	// Quaternion
-	cs::utility::add_class<kl::Quaternion<float>>(*INTERP_SCRIPT_MODULE, "Quaternion",
+	cs::utility::add_class<Quaternion>(*INTERP_SCRIPT_MODULE, "Quaternion",
 	{
-		cs::constructor<kl::Quaternion<float>()>(),
-		cs::constructor<kl::Quaternion<float>(const kl::Quaternion<float>&)>(),
+		cs::constructor<Quaternion()>(),
+		cs::constructor<Quaternion(const Quaternion&)>(),
 
-		cs::constructor<kl::Quaternion<float>(float, float, float)>(),
-		cs::constructor<kl::Quaternion<float>(float, float, float, float)>(),
-		cs::constructor<kl::Quaternion<float>(kl::Float3, float)>(),
+		cs::constructor<Quaternion(float, float, float)>(),
+		cs::constructor<Quaternion(float, float, float, float)>(),
+		cs::constructor<Quaternion(Float3, float)>(),
 	},
 	{
-		{ cs::fun(&kl::Quaternion<float>::w), "w" },
-		{ cs::fun(&kl::Quaternion<float>::x), "x" },
-		{ cs::fun(&kl::Quaternion<float>::y), "y" },
-		{ cs::fun(&kl::Quaternion<float>::z), "z" },
+		{ cs::fun(&Quaternion::w), "w" },
+		{ cs::fun(&Quaternion::x), "x" },
+		{ cs::fun(&Quaternion::y), "y" },
+		{ cs::fun(&Quaternion::z), "z" },
 
-		{ cs::fun<kl::Quaternion<float>& (kl::Quaternion<float>::*)(const kl::Quaternion<float>&)>(&kl::Quaternion<float>::operator=), "=" },
+		{ cs::fun<Quaternion& (Quaternion::*)(const Quaternion&)>(&Quaternion::operator=), "=" },
 
-		{ cs::fun<float& (kl::Quaternion<float>::*)(int)>(&kl::Quaternion<float>::operator[]), "[]"},
+		{ cs::fun<float& (Quaternion::*)(int)>(&Quaternion::operator[]), "[]"},
 
-		{ cs::fun(&kl::Quaternion<float>::operator==), "==" },
-		{ cs::fun(&kl::Quaternion<float>::operator!=), "!=" },
+		{ cs::fun(&Quaternion::operator==), "==" },
+		{ cs::fun(&Quaternion::operator!=), "!=" },
 
-		{ cs::fun(&kl::Quaternion<float>::operator+), "+" },
-		{ cs::fun(&kl::Quaternion<float>::operator+=), "+=" },
+		{ cs::fun(&Quaternion::operator+), "+" },
+		{ cs::fun(&Quaternion::operator+=), "+=" },
 
-		{ cs::fun<kl::Quaternion<float>(kl::Quaternion<float>::*)(const kl::Quaternion<float>&) const>(&kl::Quaternion<float>::operator-), "-" },
-		{ cs::fun(&kl::Quaternion<float>::operator-=), "-=" },
+		{ cs::fun<Quaternion(Quaternion::*)(const Quaternion&) const>(&Quaternion::operator-), "-" },
+		{ cs::fun(&Quaternion::operator-=), "-=" },
 
-		{ cs::fun<kl::Quaternion<float>(kl::Quaternion<float>::*)(float) const>(&kl::Quaternion<float>::operator*), "*" },
-		{ cs::fun<void (kl::Quaternion<float>::*)(float)>(&kl::Quaternion<float>::operator*=), "*=" },
+		{ cs::fun<Quaternion(Quaternion::*)(float) const>(&Quaternion::operator*), "*" },
+		{ cs::fun<void (Quaternion::*)(float)>(&Quaternion::operator*=), "*=" },
 
-		{ cs::fun<kl::Quaternion<float> (kl::Quaternion<float>::*)(const kl::Quaternion<float>&) const>(&kl::Quaternion<float>::operator*), "*" },
-		{ cs::fun<void (kl::Quaternion<float>::*)(const kl::Quaternion<float>&)>(&kl::Quaternion<float>::operator*=), "*=" },
+		{ cs::fun<Quaternion (Quaternion::*)(const Quaternion&) const>(&Quaternion::operator*), "*" },
+		{ cs::fun<void (Quaternion::*)(const Quaternion&)>(&Quaternion::operator*=), "*=" },
 
-		{ cs::fun<kl::Quaternion<float> (kl::Quaternion<float>::*)() const>(&kl::Quaternion<float>::operator-), "-" },
-		{ cs::fun(&kl::Quaternion<float>::length), "length" },
+		{ cs::fun<Quaternion (Quaternion::*)() const>(&Quaternion::operator-), "-" },
+		{ cs::fun(&Quaternion::length), "length" },
 
-		{ cs::fun([](const kl::Quaternion<float>& object) { return kl::format(object); }), "to_string" },
+		{ cs::fun([](const Quaternion& object) { return kl::format(object); }), "to_string" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Quaternion"] = "Four component imaginary number.";
 
@@ -586,10 +586,10 @@ const int load_types = [&]
 		cs::constructor<kl::Vertex<float>()>(),
 		cs::constructor<kl::Vertex<float>(const kl::Vertex<float>&)>(),
 
-		cs::constructor<kl::Vertex<float>(kl::Float3)>(),
-		cs::constructor<kl::Vertex<float>(kl::Float3, kl::Float2)>(),
-		cs::constructor<kl::Vertex<float>(kl::Float3, kl::Float3)>(),
-		cs::constructor<kl::Vertex<float>(kl::Float3, kl::Float2, kl::Float3)>(),
+		cs::constructor<kl::Vertex<float>(Float3)>(),
+		cs::constructor<kl::Vertex<float>(Float3, Float2)>(),
+		cs::constructor<kl::Vertex<float>(Float3, Float3)>(),
+		cs::constructor<kl::Vertex<float>(Float3, Float2, Float3)>(),
 	},
 	{
 		{ cs::fun(&kl::Vertex<float>::world), "world" },
@@ -633,7 +633,7 @@ const int load_types = [&]
 		cs::constructor<kl::Plane<float>()>(),
 		cs::constructor<kl::Plane<float>(const kl::Plane<float>&)>(),
 
-		cs::constructor<kl::Plane<float>(kl::Float3, kl::Float3)>(),
+		cs::constructor<kl::Plane<float>(Float3, Float3)>(),
 	},
 	{
 		{ cs::fun(&kl::Plane<float>::origin), "origin" },
@@ -659,7 +659,7 @@ const int load_types = [&]
 		cs::constructor<kl::Sphere<float>()>(),
 		cs::constructor<kl::Sphere<float>(const kl::Sphere<float>&)>(),
 
-		cs::constructor<kl::Sphere<float>(kl::Float3, float)>(),
+		cs::constructor<kl::Sphere<float>(Float3, float)>(),
 	},
 	{
 		{ cs::fun(&kl::Sphere<float>::origin), "origin" },
@@ -678,8 +678,8 @@ const int load_types = [&]
 		cs::constructor<kl::Ray<float>()>(),
 		cs::constructor<kl::Ray<float>(const kl::Ray<float>&)>(),
 
-		cs::constructor<kl::Ray<float>(kl::Float3, kl::Float3)>(),
-		cs::constructor<kl::Ray<float>(kl::Float3, kl::Float4x4, kl::Float2)>(),
+		cs::constructor<kl::Ray<float>(Float3, Float3)>(),
+		cs::constructor<kl::Ray<float>(Float3, Float4x4, Float2)>(),
 	},
 	{
 		{ cs::fun(&kl::Ray<float>::origin), "origin" },
@@ -706,33 +706,33 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["intersect_sphere"] = "Ray interesects sphere.";
 
 	// Color
-	cs::utility::add_class<kl::Color>(*INTERP_SCRIPT_MODULE, "Color",
+	cs::utility::add_class<Color>(*INTERP_SCRIPT_MODULE, "Color",
 	{
-		cs::constructor<kl::Color()>(),
-		cs::constructor<kl::Color(const kl::Color&)>(),
+		cs::constructor<Color()>(),
+		cs::constructor<Color(const Color&)>(),
 
-		cs::constructor<kl::Color(byte, byte, byte)>(),
-		cs::constructor<kl::Color(byte, byte, byte, byte)>(),
+		cs::constructor<Color(byte, byte, byte)>(),
+		cs::constructor<Color(byte, byte, byte, byte)>(),
 	},
 	{
-		{ cs::fun(&kl::Color::r), "r" },
-		{ cs::fun(&kl::Color::g), "g" },
-		{ cs::fun(&kl::Color::b), "b" },
-		{ cs::fun(&kl::Color::a), "a" },
+		{ cs::fun(&Color::r), "r" },
+		{ cs::fun(&Color::g), "g" },
+		{ cs::fun(&Color::b), "b" },
+		{ cs::fun(&Color::a), "a" },
 
-		{ cs::fun<kl::Color& (kl::Color::*)(const kl::Color&)>(&kl::Color::operator=), "=" },
+		{ cs::fun<Color& (Color::*)(const Color&)>(&Color::operator=), "=" },
 
-		{ cs::fun(&kl::Color::operator==), "==" },
-		{ cs::fun(&kl::Color::operator!=), "!=" },
+		{ cs::fun(&Color::operator==), "==" },
+		{ cs::fun(&Color::operator!=), "!=" },
 
-		{ cs::fun(&kl::Color::gray), "gray" },
-		{ cs::fun(&kl::Color::inverted), "inverted" },
-		{ cs::fun(&kl::Color::as_ascii), "as_ascii" },
+		{ cs::fun(&Color::gray), "gray" },
+		{ cs::fun(&Color::inverted), "inverted" },
+		{ cs::fun(&Color::as_ascii), "as_ascii" },
 
-		{ cs::fun<kl::Color (kl::Color::*)(const kl::Color&, float) const>(&kl::Color::mix), "mix" },
-		{ cs::fun<kl::Color (kl::Color::*)(const kl::Color&) const>(&kl::Color::mix), "mix" },
+		{ cs::fun<Color (Color::*)(const Color&, float) const>(&Color::mix), "mix" },
+		{ cs::fun<Color (Color::*)(const Color&) const>(&Color::mix), "mix" },
 
-		{ cs::fun([](const kl::Color& object) {
+		{ cs::fun([](const Color& object) {
 			return kl::format('(', int(object.r),
 				", ", int(object.g),
 				", ", int(object.b),
@@ -1384,21 +1384,21 @@ const int load_constants = [&]
 	INTERP_SCRIPT_IDENTIFIERS["TO_BYTE_COLOR"] = "Constant for converting float color to byte color (255 / 1).";
 
 	// Colors
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::CONSOLE), "CONSOLE");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::BLACK), "BLACK");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::WHITE), "WHITE");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::GRAY), "GRAY");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::RED), "RED");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::GREEN), "GREEN");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::BLUE), "BLUE");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::CYAN), "CYAN");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::PURPLE), "PURPLE");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::YELLOW), "YELLOW");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::ORANGE), "ORANGE");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::MAGENTA), "MAGENTA");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::CRIMSON), "CRIMSON");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::WHEAT), "WHEAT");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::SKY), "SKY");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::CONSOLE), "CONSOLE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::BLACK), "BLACK");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::WHITE), "WHITE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::GRAY), "GRAY");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::RED), "RED");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::GREEN), "GREEN");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::BLUE), "BLUE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::CYAN), "CYAN");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::PURPLE), "PURPLE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::YELLOW), "YELLOW");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::ORANGE), "ORANGE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::MAGENTA), "MAGENTA");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::CRIMSON), "CRIMSON");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::WHEAT), "WHEAT");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::SKY), "SKY");
 	INTERP_SCRIPT_IDENTIFIERS["CONSOLE"] = "Constant color (204, 204, 204).";
 	INTERP_SCRIPT_IDENTIFIERS["BLACK"] = "Constant color (0, 0, 0).";
 	INTERP_SCRIPT_IDENTIFIERS["WHITE"] = "Constant color (255, 255, 255).";
@@ -1488,20 +1488,20 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["get_window"] = "Returns a reference to the game window.";
 
 	// Float3x3
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float3x3::translation), "Float3x3_translation");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float3x3::rotation), "Float3x3_rotation");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float3x3::scaling), "Float3x3_scaling");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Float3x3::translation), "Float3x3_translation");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Float3x3::rotation), "Float3x3_rotation");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Float3x3::scaling), "Float3x3_scaling");
 	INTERP_SCRIPT_IDENTIFIERS["Float3x3_translation"] = "Creates a 3x3 translation matrix.";
 	INTERP_SCRIPT_IDENTIFIERS["Float3x3_rotation"] = "Creates a 3x3 rotation matrix.";
 	INTERP_SCRIPT_IDENTIFIERS["Float3x3_scaling"] = "Creates a 3x3 scaling matrix.";
 
 	// Float4x4
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::translation), "Float4x4_translation");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::rotation), "Float4x4_rotation");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::scaling), "Float4x4_scaling");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::look_at), "Float4x4_look_at");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::perspective), "Float4x4_perspective");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::Float4x4::orthographic), "Float4x4_orthographic");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Float4x4::translation), "Float4x4_translation");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Float4x4::rotation), "Float4x4_rotation");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Float4x4::scaling), "Float4x4_scaling");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Float4x4::look_at), "Float4x4_look_at");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Float4x4::perspective), "Float4x4_perspective");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Float4x4::orthographic), "Float4x4_orthographic");
 	INTERP_SCRIPT_IDENTIFIERS["Float4x4_translation"] = "Creates a 4x4 translation matrix.";
 	INTERP_SCRIPT_IDENTIFIERS["Float4x4_rotation"] = "Creates a 4x4 rotation matrix.";
 	INTERP_SCRIPT_IDENTIFIERS["Float4x4_scaling"] = "Creates a 4x4 scaling matrix.";
@@ -1559,72 +1559,72 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["unwrap"] = "Unwraps the given value to the defined range.";
 	INTERP_SCRIPT_IDENTIFIERS["clamp"] = "Clamps the given value between the given min and max.";
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Quaternion<float> (*)(const kl::Float3&)>(&kl::to_quaternion<float>), "to_quaternion");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Quaternion<float> (*)(const kl::Float3&, const kl::Float3&)>(&kl::to_quaternion<float>), "to_quaternion");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Quaternion<float>&)>(&kl::to_euler<float>), "to_euler");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&, const kl::Float3&)>(&kl::to_euler<float>), "to_euler");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Quaternion (*)(const Float3&)>(&kl::to_quaternion<float>), "to_quaternion");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Quaternion (*)(const Float3&, const Float3&)>(&kl::to_quaternion<float>), "to_quaternion");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Quaternion&)>(&kl::to_euler<float>), "to_euler");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&, const Float3&)>(&kl::to_euler<float>), "to_euler");
 	INTERP_SCRIPT_IDENTIFIERS["to_quaternion"] = "Converts the given euler angles to a quaternion.";
 	INTERP_SCRIPT_IDENTIFIERS["to_euler"] = "Converts the given quaternion to euler angles.";
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Complex<float> (*)(const kl::Complex<float>&)>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Complex<float> (*)(const kl::Complex<float>&)>(&kl::normalize), "normalize");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Complex<float> (*)(const kl::Complex<float>&)>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Complex (*)(const Complex&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Complex (*)(const Complex&)>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Complex (*)(const Complex&)>(&kl::inverse), "inverse");
 	INTERP_SCRIPT_IDENTIFIERS["abs"] = "Returns the absolute value.";
 	INTERP_SCRIPT_IDENTIFIERS["normalize"] = "Normalizes the given vector.";
 	INTERP_SCRIPT_IDENTIFIERS["inverse"] = "Returns the inverse of the given math object.";
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Quaternion<float> (*)(const kl::Quaternion<float>&)>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Quaternion<float> (*)(const kl::Quaternion<float>&)>(&kl::normalize), "normalize");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Quaternion<float> (*)(const kl::Quaternion<float>&)>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Quaternion (*)(const Quaternion&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Quaternion (*)(const Quaternion&)>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Quaternion (*)(const Quaternion&)>(&kl::inverse), "inverse");
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Int2 (*)(const kl::Int2&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Int2 (*)(const Int2&)>(&kl::abs), "abs");
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2 (*)(const kl::Float2&)>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2 (*)(const kl::Float2&)>(&kl::normalize), "normalize");
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const kl::Float2&, const kl::Float2&)>(&kl::dot<float>), "dot");
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(kl::Float2, kl::Float2, bool)>(&kl::angle), "angle");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2 (*)(const kl::Float2&, float)>(&kl::rotate<float>), "rotate");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2 (*)(const kl::Float2&, const kl::Float2&)>(&kl::reflect<float>), "reflect");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float2 (*)(const Float2&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float2 (*)(const Float2&)>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const Float2&, const Float2&)>(&kl::dot<float>), "dot");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(Float2, Float2, bool)>(&kl::angle), "angle");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float2 (*)(const Float2&, float)>(&kl::rotate<float>), "rotate");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float2 (*)(const Float2&, const Float2&)>(&kl::reflect<float>), "reflect");
 	INTERP_SCRIPT_IDENTIFIERS["dot"] = "Returns the dot product of two vectors.";
 	INTERP_SCRIPT_IDENTIFIERS["angle"] = "Returns the angle in degrees between two vectors.";
 	INTERP_SCRIPT_IDENTIFIERS["rotate"] = "Returns the rotated vector.";
 	INTERP_SCRIPT_IDENTIFIERS["reflect"] = "Returns the reflected vector.";
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&)>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&)>(&kl::normalize), "normalize");
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const kl::Float3&, const kl::Float3&)>(&kl::dot<float>), "dot");
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const kl::Float3&, const kl::Float3&)>(&kl::angle), "angle");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&, const kl::Float3&, float)>(&kl::rotate<float>), "rotate");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&, kl::Float3)>(&kl::reflect<float>), "reflect");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(const kl::Float3&, const kl::Float3&)>(&kl::cross<float>), "cross");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&)>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const Float3&, const Float3&)>(&kl::dot<float>), "dot");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const Float3&, const Float3&)>(&kl::angle), "angle");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&, const Float3&, float)>(&kl::rotate<float>), "rotate");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&, Float3)>(&kl::reflect<float>), "reflect");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&, const Float3&)>(&kl::cross<float>), "cross");
 	INTERP_SCRIPT_IDENTIFIERS["cross"] = "Returns the cross product of two vectors.";
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4 (*)(const kl::Float4&)>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4 (*)(const kl::Float4&)>(&kl::normalize), "normalize");
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const kl::Float4&, const kl::Float4&)>(&kl::dot<float>), "dot");
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const kl::Float4&, const kl::Float4&)>(&kl::angle), "angle");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float4 (*)(const Float4&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float4 (*)(const Float4&)>(&kl::normalize), "normalize");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const Float4&, const Float4&)>(&kl::dot<float>), "dot");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(const Float4&, const Float4&)>(&kl::angle), "angle");
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2x2 (*)(const kl::Float2x2&)>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2x2 (*)(const kl::Float2x2&)>(&kl::inverse), "inverse");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2x2 (*)(const kl::Float2x2&)>(&kl::transpose), "transpose");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float2x2 (*)(const Float2x2&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float2x2 (*)(const Float2x2&)>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float2x2 (*)(const Float2x2&)>(&kl::transpose), "transpose");
 	INTERP_SCRIPT_IDENTIFIERS["transpose"] = "Returns the transposed matrix.";
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3x3 (*)(const kl::Float3x3&)>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3x3 (*)(const kl::Float3x3&)>(&kl::inverse), "inverse");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3x3 (*)(const kl::Float3x3&)>(&kl::transpose), "transpose");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float3x3 (*)(const Float3x3&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float3x3 (*)(const Float3x3&)>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float3x3 (*)(const Float3x3&)>(&kl::transpose), "transpose");
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4x4 (*)(const kl::Float4x4&)>(&kl::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4x4 (*)(const kl::Float4x4&)>(&kl::inverse), "inverse");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4x4 (*)(const kl::Float4x4&)>(&kl::transpose), "transpose");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float4x4 (*)(const Float4x4&)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float4x4 (*)(const Float4x4&)>(&kl::inverse), "inverse");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float4x4 (*)(const Float4x4&)>(&kl::transpose), "transpose");
 
 	// Random
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_bool), "gen_random_bool");
 	INTERP_SCRIPT_MODULE->add(cs::fun<int (*)(int, int)>(&kl::random::gen_int), "gen_random_int");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Int2 (*)(int, int)>(&kl::random::gen_int2), "gen_random_int2");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Int2 (*)(int, int)>(&kl::random::gen_int2), "gen_random_int2");
 	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float, float)>(&kl::random::gen_float), "gen_random_float");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float2 (*)(float, float)>(&kl::random::gen_float2), "gen_random_float2");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float3 (*)(float, float)>(&kl::random::gen_float3), "gen_random_float3");
-	INTERP_SCRIPT_MODULE->add(cs::fun<kl::Float4(*)(float, float)>(&kl::random::gen_float4), "gen_random_float4");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float2 (*)(float, float)>(&kl::random::gen_float2), "gen_random_float2");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(float, float)>(&kl::random::gen_float3), "gen_random_float3");
+	INTERP_SCRIPT_MODULE->add(cs::fun<Float4(*)(float, float)>(&kl::random::gen_float4), "gen_random_float4");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_color), "gen_random_color");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_char), "gen_random_char");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_string), "gen_random_string");

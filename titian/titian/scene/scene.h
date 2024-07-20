@@ -68,8 +68,8 @@ namespace titian {
         px::PxCooking* cooking() const;
 
         // Gravity
-        void set_gravity(const kl::Float3& gravity);
-        kl::Float3 gravity() const;
+        void set_gravity(const Float3& gravity);
+        Float3 gravity() const;
 
         // Update
         void update_physics(float delta_t);
@@ -119,12 +119,12 @@ namespace titian {
         }
 
         // Dynamic colliders
-        Ref<Collider> new_box_collider(const kl::Float3& scale) const;
+        Ref<Collider> new_box_collider(const Float3& scale) const;
         Ref<Collider> new_sphere_collider(float radius) const;
         Ref<Collider> new_capsule_collider(float radius, float height) const;
 
         // Static colliders
-        Ref<Collider> new_mesh_collider(const Mesh& mesh, const kl::Float3& scale) const;
+        Ref<Collider> new_mesh_collider(const Mesh& mesh, const Float3& scale) const;
 
         // Default collider
         Ref<Collider> new_default_collider(px::PxGeometryType::Enum type, const Mesh* optional_mesh) const;

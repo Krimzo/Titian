@@ -4,7 +4,7 @@
 titian::DirectionalLight::DirectionalLight(px::PxPhysics* physics, const bool dynamic, kl::GPU* gpu, const uint32_t map_resolution)
     : Light(EntityType::DIRECTIONAL_LIGHT, physics, dynamic), m_map_resolution(map_resolution)
 {
-    kl::dx::TextureDescriptor shadow_map_descriptor = {};
+    dx::TextureDescriptor shadow_map_descriptor = {};
     shadow_map_descriptor.Width = map_resolution;
     shadow_map_descriptor.Height = map_resolution;
     shadow_map_descriptor.MipLevels = 1;
@@ -14,11 +14,11 @@ titian::DirectionalLight::DirectionalLight(px::PxPhysics* physics, const bool dy
     shadow_map_descriptor.Usage = D3D11_USAGE_DEFAULT;
     shadow_map_descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 
-    kl::dx::DepthViewDescriptor shadow_depth_view_descriptor = {};
+    dx::DepthViewDescriptor shadow_depth_view_descriptor = {};
     shadow_depth_view_descriptor.Format = DXGI_FORMAT_D32_FLOAT;
     shadow_depth_view_descriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
-    kl::dx::ShaderViewDescriptor shadow_shader_view_descriptor = {};
+    dx::ShaderViewDescriptor shadow_shader_view_descriptor = {};
     shadow_shader_view_descriptor.Format = DXGI_FORMAT_R32_FLOAT;
     shadow_shader_view_descriptor.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     shadow_shader_view_descriptor.Texture2D.MipLevels = 1;
@@ -36,10 +36,10 @@ void titian::DirectionalLight::serialize(Serializer* serializer, const void* hel
     Light::serialize(serializer, helper_data);
 
     serializer->write_object<uint32_t>(m_map_resolution);
-    serializer->write_object<kl::Float3>(m_direction);
+    serializer->write_object<Float3>(m_direction);
 
     serializer->write_object<float>(point_size);
-    serializer->write_object<kl::Float3>(color);
+    serializer->write_object<Float3>(color);
 }
 
 void titian::DirectionalLight::deserialize(const Serializer* serializer, const void* helper_data)
@@ -47,13 +47,13 @@ void titian::DirectionalLight::deserialize(const Serializer* serializer, const v
     Light::deserialize(serializer, helper_data);
 
     serializer->read_object<uint32_t>(m_map_resolution);
-    serializer->read_object<kl::Float3>(m_direction);
+    serializer->read_object<Float3>(m_direction);
 
     serializer->read_object<float>(point_size);
-    serializer->read_object<kl::Float3>(color);
+    serializer->read_object<Float3>(color);
 }
 
-kl::Float3 titian::DirectionalLight::light_at_point(const kl::Float3& point) const
+titian::Float3 titian::DirectionalLight::light_at_point(const Float3& point) const
 {
     return color; // Change later
 }
@@ -63,46 +63,46 @@ uint32_t titian::DirectionalLight::map_resolution() const
     return m_map_resolution;
 }
 
-void titian::DirectionalLight::set_direction(const kl::Float3& direction)
+void titian::DirectionalLight::set_direction(const Float3& direction)
 {
     m_direction = kl::normalize(direction);
 }
 
-kl::Float3 titian::DirectionalLight::direction() const
+titian::Float3 titian::DirectionalLight::direction() const
 {
     return m_direction;
 }
 
-kl::dx::DepthView titian::DirectionalLight::depth_view(const uint32_t cascade_index) const
+dx::DepthView titian::DirectionalLight::depth_view(const uint32_t cascade_index) const
 {
     return m_cascades[cascade_index]->depth_view;
 }
 
-kl::dx::ShaderView titian::DirectionalLight::shader_view(const uint32_t cascade_index) const
+dx::ShaderView titian::DirectionalLight::shader_view(const uint32_t cascade_index) const
 {
     return m_cascades[cascade_index]->shader_view;
 }
 
-kl::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const uint32_t cascade_index) const
+titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const uint32_t cascade_index) const
 {
-    const kl::Float2 old_camera_planes = { camera->near_plane, camera->far_plane };
+    const Float2 old_camera_planes = { camera->near_plane, camera->far_plane };
     camera->near_plane = kl::unwrap(CASCADE_SPLITS[cascade_index + 0], old_camera_planes.x, old_camera_planes.y);
     camera->far_plane = kl::unwrap(CASCADE_SPLITS[cascade_index + 1], old_camera_planes.x, old_camera_planes.y);
-    const kl::Float4x4 inverse_camera_matrix = kl::inverse(camera->camera_matrix());
+    const Float4x4 inverse_camera_matrix = kl::inverse(camera->camera_matrix());
     camera->near_plane = old_camera_planes.x;
     camera->far_plane = old_camera_planes.y;
 
     // Calculate 8 corners in world-space
-    kl::Float4 frustum_corners[8] = {
-        inverse_camera_matrix * kl::Float4(-1, -1, -1, 1),
-        inverse_camera_matrix * kl::Float4(1, -1, -1, 1),
-        inverse_camera_matrix * kl::Float4(-1,  1, -1, 1),
-        inverse_camera_matrix * kl::Float4(1,  1, -1, 1),
+    Float4 frustum_corners[8] = {
+        inverse_camera_matrix * Float4(-1, -1, -1, 1),
+        inverse_camera_matrix * Float4(1, -1, -1, 1),
+        inverse_camera_matrix * Float4(-1,  1, -1, 1),
+        inverse_camera_matrix * Float4(1,  1, -1, 1),
 
-        inverse_camera_matrix * kl::Float4(-1, -1,  1, 1),
-        inverse_camera_matrix * kl::Float4(1, -1,  1, 1),
-        inverse_camera_matrix * kl::Float4(-1,  1,  1, 1),
-        inverse_camera_matrix * kl::Float4(1,  1,  1, 1),
+        inverse_camera_matrix * Float4(-1, -1,  1, 1),
+        inverse_camera_matrix * Float4(1, -1,  1, 1),
+        inverse_camera_matrix * Float4(-1,  1,  1, 1),
+        inverse_camera_matrix * Float4(1,  1,  1, 1),
     };
 
     for (auto& corner : frustum_corners) {
@@ -110,14 +110,14 @@ kl::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const uint32
     }
 
     // Convert corners to temp light-view-space
-    const kl::Float4x4 temp_light_view_matrix = kl::Float4x4::look_at({}, m_direction, { 0, 1, 0 });
+    const Float4x4 temp_light_view_matrix = Float4x4::look_at({}, m_direction, { 0, 1, 0 });
     for (auto& corner : frustum_corners) {
         corner = temp_light_view_matrix * corner;
     }
 
     // Find min-max x and y in light-space
-    kl::Float2 min_xy = { std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() };
-    kl::Float2 max_xy = { -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
+    Float2 min_xy = { std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() };
+    Float2 max_xy = { -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
     float min_z = std::numeric_limits<float>::infinity();
     for (const auto& corner : frustum_corners) {
         min_xy.x = std::min(min_xy.x, corner.x);
@@ -130,28 +130,28 @@ kl::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const uint32
     }
 
     // Find center of near plane in light-space
-    kl::Float3 light_position = {
+    Float3 light_position = {
         (min_xy.x + max_xy.x) * 0.5f,
         (min_xy.y + max_xy.y) * 0.5f,
         min_z
     };
 
     // Convert temp light-space to world-space
-    const kl::Float4x4 temp_light_view_matrix_inverse = inverse(temp_light_view_matrix);
-    const kl::Float4 new_light_pos = temp_light_view_matrix_inverse * kl::Float4(light_position.x, light_position.y, light_position.z, 1.0f);
+    const Float4x4 temp_light_view_matrix_inverse = inverse(temp_light_view_matrix);
+    const Float4 new_light_pos = temp_light_view_matrix_inverse * Float4(light_position.x, light_position.y, light_position.z, 1.0f);
     light_position = { new_light_pos.x, new_light_pos.y, new_light_pos.z };
     for (auto& corner : frustum_corners) {
         corner = temp_light_view_matrix_inverse * corner;
     }
 
     // Convert corners to proper light-view-space
-    const kl::Float4x4 light_view_matrix = kl::Float4x4::look_at(light_position, light_position + m_direction, { 0, 1, 0 });
+    const Float4x4 light_view_matrix = Float4x4::look_at(light_position, light_position + m_direction, { 0, 1, 0 });
     for (auto& corner : frustum_corners) {
         corner = light_view_matrix * corner;
     }
 
     // Find proper coordinates of frustum in light-space
-    kl::Float3 max_xyz{ -std::numeric_limits<float>::infinity() };
+    Float3 max_xyz{ -std::numeric_limits<float>::infinity() };
     for (const auto& corner : frustum_corners) {
         max_xyz.x = std::max(max_xyz.x, corner.x);
         max_xyz.y = std::max(max_xyz.y, corner.y);
@@ -159,7 +159,7 @@ kl::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const uint32
     }
 
     // Calculate final orthographic projection
-    const kl::Float4x4 light_projection_matrix = kl::Float4x4::orthographic(
+    const Float4x4 light_projection_matrix = Float4x4::orthographic(
         -max_xyz.x, max_xyz.x,
         -max_xyz.x, max_xyz.x,
         -max_xyz.z, max_xyz.z

@@ -15,8 +15,8 @@ namespace titian {
 
         bool was_focused = true;
         int last_scroll = 0;
-        kl::Float2 initial_camera_info = { 40, 30 };
-        kl::Float2 camera_info = initial_camera_info;
+        Float2 initial_camera_info = { 40, 30 };
+        Float2 camera_info = initial_camera_info;
 
         String selected_material = {};
 
@@ -26,7 +26,7 @@ namespace titian {
 
     private:
         void display_materials(kl::GPU* gpu, Scene* scene);
-        void render_selected_material(Scene* scene, kl::GPU* gpu, Material* material, kl::Int2 viewport_size);
+        void render_selected_material(Scene* scene, kl::GPU* gpu, Material* material, Int2 viewport_size);
         void show_material_properties(Scene* scene, Material* material);
         void update_material_camera();
     };

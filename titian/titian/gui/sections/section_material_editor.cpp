@@ -11,7 +11,7 @@ titian::GUISectionMaterialEditor::GUISectionMaterialEditor(const LayerPackage& p
     render_texture = new Texture(gpu);
     depth_texture = new Texture(gpu);
 
-    camera->background = kl::Color{ 30, 30, 30 };
+    camera->background = Color{ 30, 30, 30 };
     camera->set_position({ 0.642787576f, 0.577350259f, 0.766044438f });
     camera->speed = 3.1f;
 }
@@ -41,7 +41,7 @@ void titian::GUISectionMaterialEditor::render_gui()
 
         const bool should_rotate_cam = was_focused;
         if (im::BeginChild("Material View", {}, should_rotate_cam)) {
-            const kl::Int2 viewport_size = { (int) im::GetContentRegionAvail().x, (int) im::GetContentRegionAvail().y };
+            const Int2 viewport_size = { (int) im::GetContentRegionAvail().x, (int) im::GetContentRegionAvail().y };
             if (should_rotate_cam) {
                 update_material_camera();
             }
@@ -135,7 +135,7 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
     }
 }
 
-void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl::GPU* gpu, Material* material, const kl::Int2 viewport_size)
+void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl::GPU* gpu, Material* material, const Int2 viewport_size)
 {
     // Don't render if the viewport is too small
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
@@ -156,7 +156,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         render_texture->create_shader_view(nullptr);
     }
     if (depth_texture->graphics_buffer_size() != viewport_size) {
-        kl::dx::TextureDescriptor descriptor = {};
+        dx::TextureDescriptor descriptor = {};
         descriptor.Width = viewport_size.x;
         descriptor.Height = viewport_size.y;
         descriptor.MipLevels = 1;
@@ -175,7 +175,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
 
     // Set viewport
-    const kl::Int2 old_viewport_size = gpu->viewport_size();
+    const Int2 old_viewport_size = gpu->viewport_size();
     gpu->set_viewport_size(viewport_size);
 
     // Bind states
@@ -190,23 +190,23 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         float ELAPSED_TIME{};
         float DELTA_TIME{};
 
-        alignas(16) kl::Float3 CAMERA_POSITION;
+        alignas(16) Float3 CAMERA_POSITION;
         float CAMERA_HAS_SKYBOX{};
-        kl::Float4 CAMERA_BACKGROUND;
+        Float4 CAMERA_BACKGROUND;
 
-        kl::Float3 AMBIENT_COLOR;
+        Float3 AMBIENT_COLOR;
         float AMBIENT_INTENSITY{};
 
-        kl::Float3 SUN_DIRECTION;
+        Float3 SUN_DIRECTION;
         float SUN_POINT_SIZE{};
-        kl::Float3 SUN_COLOR;
+        Float3 SUN_COLOR;
 
         float OBJECT_INDEX{};
-        kl::Float3 OBJECT_SCALE;
-        alignas(16) kl::Float3 OBJECT_ROTATION;
-        alignas(16) kl::Float3 OBJECT_POSITION;
+        Float3 OBJECT_SCALE;
+        alignas(16) Float3 OBJECT_ROTATION;
+        alignas(16) Float3 OBJECT_POSITION;
 
-        alignas(16) kl::Float4 OBJECT_COLOR;
+        alignas(16) Float4 OBJECT_COLOR;
         float TEXTURE_BLEND{};
 
         float REFLECTION_FACTOR{};
@@ -216,17 +216,17 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         float HAS_NORMAL_MAP{};
         float HAS_ROUGHNESS_MAP{};
 
-        alignas(16) kl::Float4x4 W;
-        kl::Float4x4 V;
-        kl::Float4x4 VP;
+        alignas(16) Float4x4 W;
+        Float4x4 V;
+        Float4x4 VP;
 
         float RECEIVES_SHADOWS{};
-        kl::Float2 SHADOW_MAP_SIZE;
-        alignas(16) kl::Float2 SHADOW_MAP_TEXEL_SIZE;
-        alignas(16) kl::Float4 SHADOW_CASCADES;
-        kl::Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
+        Float2 SHADOW_MAP_SIZE;
+        alignas(16) Float2 SHADOW_MAP_TEXEL_SIZE;
+        alignas(16) Float4 SHADOW_CASCADES;
+        Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
 
-        kl::Float4x4 CUSTOM_DATA;
+        Float4x4 CUSTOM_DATA;
     };
     GLOBAL_CB global_cb{};
 
@@ -277,10 +277,10 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     global_cb.CAMERA_HAS_SKYBOX = static_cast<float>(static_cast<bool>(skybox_texture));
     global_cb.CAMERA_BACKGROUND = camera->background;
 
-    global_cb.AMBIENT_COLOR = kl::Float3{ 1.0f };
+    global_cb.AMBIENT_COLOR = Float3{ 1.0f };
     global_cb.AMBIENT_INTENSITY = 0.1f;
 
-    global_cb.SUN_DIRECTION = kl::normalize(kl::Float3{ 0.0f, -1.0f, 1.0f });
+    global_cb.SUN_DIRECTION = kl::normalize(Float3{ 0.0f, -1.0f, 1.0f });
     global_cb.SUN_COLOR = kl::colors::WHITE;
 
     global_cb.OBJECT_COLOR = material->color;

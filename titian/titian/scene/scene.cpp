@@ -225,15 +225,15 @@ px::PxCooking* titian::Scene::cooking() const
 }
 
 // Gravity
-void titian::Scene::set_gravity(const kl::Float3& gravity)
+void titian::Scene::set_gravity(const Float3& gravity)
 {
     m_scene->setGravity(reinterpret_cast<const px::PxVec3&>(gravity));
 }
 
-kl::Float3 titian::Scene::gravity() const
+titian::Float3 titian::Scene::gravity() const
 {
     const px::PxVec3 gravity = m_scene->getGravity();
-    return reinterpret_cast<const kl::Float3&>(gravity);
+    return reinterpret_cast<const Float3&>(gravity);
 }
 
 // Update
@@ -365,7 +365,7 @@ titian::Ref<titian::Entity> titian::Scene::get_entity(const String& id) const
 }
 
 // Dynamic colliders
-titian::Ref<titian::Collider> titian::Scene::new_box_collider(const kl::Float3& scale) const
+titian::Ref<titian::Collider> titian::Scene::new_box_collider(const Float3& scale) const
 {
     return new Collider(m_physics, px::PxBoxGeometry(reinterpret_cast<const px::PxVec3&>(scale)));
 }
@@ -381,7 +381,7 @@ titian::Ref<titian::Collider> titian::Scene::new_capsule_collider(const float ra
 }
 
 // Static colliders
-titian::Ref<titian::Collider> titian::Scene::new_mesh_collider(const Mesh& mesh, const kl::Float3& scale) const
+titian::Ref<titian::Collider> titian::Scene::new_mesh_collider(const Mesh& mesh, const Float3& scale) const
 {
     if (mesh.physics_buffer) {
         return new Collider(m_physics, px::PxTriangleMeshGeometry(mesh.physics_buffer, reinterpret_cast<const px::PxVec3&>(scale)));
@@ -395,7 +395,7 @@ titian::Ref<titian::Collider> titian::Scene::new_default_collider(const px::PxGe
     switch (type) {
         // Dynamic
     case px::PxGeometryType::Enum::eBOX:
-        return new_box_collider(kl::Float3{ 1.0f });
+        return new_box_collider(Float3{ 1.0f });
     case px::PxGeometryType::Enum::eSPHERE:
         return new_sphere_collider(1.0f);
     case px::PxGeometryType::Enum::eCAPSULE:
@@ -404,7 +404,7 @@ titian::Ref<titian::Collider> titian::Scene::new_default_collider(const px::PxGe
         // Static
     case px::PxGeometryType::Enum::eTRIANGLEMESH:
         if (optional_mesh) {
-            return new_mesh_collider(*optional_mesh, kl::Float3{ 1.0f });
+            return new_mesh_collider(*optional_mesh, Float3{ 1.0f });
         }
     }
     return nullptr;

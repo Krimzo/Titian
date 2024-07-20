@@ -20,7 +20,7 @@ namespace titian {
     public:
         const EntityType type;
 
-        kl::Float3 scale{ 1.0f };
+        Float3 scale{ 1.0f };
         bool casts_shadows = true;
 
         String animation_name = "/";
@@ -42,15 +42,15 @@ namespace titian {
 
         // Get
         px::PxRigidActor* actor() const;
-        kl::Float4x4 model_matrix() const;
-        kl::Float4x4 collider_matrix() const;
+        Float4x4 model_matrix() const;
+        Float4x4 collider_matrix() const;
 
         // Geometry
-        void set_rotation(const kl::Float3& rotation);
-        kl::Float3 rotation() const;
+        void set_rotation(const Float3& rotation);
+        Float3 rotation() const;
 
-        void set_position(const kl::Float3& position);
-        kl::Float3 position() const;
+        void set_position(const Float3& position);
+        Float3 position() const;
 
         // Physics
         void set_dynamic(bool enabled);
@@ -62,11 +62,11 @@ namespace titian {
         void set_mass(float mass);
         float mass() const;
 
-        void set_velocity(const kl::Float3& velocity);
-        kl::Float3 velocity() const;
+        void set_velocity(const Float3& velocity);
+        Float3 velocity() const;
 
-        void set_angular(const kl::Float3& angular);
-        kl::Float3 angular() const;
+        void set_angular(const Float3& angular);
+        Float3 angular() const;
 
         // Collision
         void set_collider(const Ref<Collider>& collider);

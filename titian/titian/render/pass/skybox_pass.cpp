@@ -44,7 +44,7 @@ void titian::SkyboxPass::render_self(StatePackage& package)
     // Set cb data
     struct VS_CB
     {
-        kl::Float4x4 VP;
+        Float4x4 VP;
     };
 
     const VS_CB vs_cb{

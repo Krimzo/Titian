@@ -19,9 +19,9 @@ namespace titian {
 		Ref<Texture> editor_picking_texture = nullptr;
 		Ref<Texture> editor_staging_texture = nullptr;
 
-		kl::dx::Buffer screen_mesh = nullptr;
+		dx::Buffer screen_mesh = nullptr;
 
-		kl::Float4 background = kl::Color(30, 30, 30);
+		Float4 background = Color(30, 30, 30);
 		bool render_wireframe = false;
 		bool v_sync = false;
 
@@ -31,9 +31,9 @@ namespace titian {
 		bool update() override;
 
 		void present() const;
-		void resize(const kl::Int2& new_size);
-		void resize_staging(const kl::Int2& new_size);
+		void resize(const Int2& new_size);
+		void resize_staging(const Int2& new_size);
 
-		kl::Int2 get_render_texture_size() const;
+		Int2 get_render_texture_size() const;
 	};
 }

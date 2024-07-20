@@ -6,7 +6,7 @@ titian::DepthStates::DepthStates(kl::GPU* gpu)
     disabled = gpu->create_depth_state(false);
     enabled = gpu->create_depth_state(true);
 
-    kl::dx::DepthStateDescriptor descriptor = {};
+    dx::DepthStateDescriptor descriptor = {};
     descriptor.DepthEnable = true;
     descriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
     descriptor.DepthFunc = D3D11_COMPARISON_LESS;

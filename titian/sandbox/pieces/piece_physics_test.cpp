@@ -27,7 +27,7 @@ void sandbox::SandboxPiecePhysicsTest::setup_platform(Scene* scene)
 
     Ref platform = scene->new_entity(false);
 
-    const kl::Float3 scale = { 15.0f, 0.1f, 15.0f };
+    const Float3 scale = { 15.0f, 0.1f, 15.0f };
     platform->scale = scale;
 
     platform->set_rotation({ 1.0f, 0.0f, 0.0f });
@@ -43,7 +43,7 @@ void sandbox::SandboxPiecePhysicsTest::setup_platform(Scene* scene)
 void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
 {
     const int half_size = size / 2;
-    const kl::Float3 scale = { 0.5f, 0.5f, 0.5f };
+    const Float3 scale = { 0.5f, 0.5f, 0.5f };
     int box_counter = 0;
 
     const String color_map = "dogo";

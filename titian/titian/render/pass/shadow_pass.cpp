@@ -40,11 +40,11 @@ void titian::ShadowPass::render_self(StatePackage& package)
     if (!dir_light) { return; }
 
     // Update target view/viewport
-    gpu->set_viewport_size(kl::Int2{ (int) dir_light->map_resolution() });
+    gpu->set_viewport_size(Int2{ (int) dir_light->map_resolution() });
 
     struct alignas(16) VS_CB
     {
-        kl::Float4x4 WVP;
+        Float4x4 WVP;
         float IS_SKELETAL{};
     };
     VS_CB vs_cb{};
@@ -52,8 +52,8 @@ void titian::ShadowPass::render_self(StatePackage& package)
     // Render shadows
     for (int i = 0; i < kl::DirectionalLight::CASCADE_COUNT; i++) {
         // Helper
-        const kl::Float4x4 VP = dir_light->light_matrix(camera, i);
-        const kl::dx::DepthView shadow_map = dir_light->depth_view(i);
+        const Float4x4 VP = dir_light->light_matrix(camera, i);
+        const dx::DepthView shadow_map = dir_light->depth_view(i);
 
         // Target
         gpu->bind_target_depth_views({}, shadow_map);

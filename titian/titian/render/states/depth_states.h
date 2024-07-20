@@ -7,9 +7,9 @@ namespace titian {
     class DepthStates
     {
     public:
-        kl::dx::DepthState disabled = nullptr;
-        kl::dx::DepthState enabled = nullptr;
-        kl::dx::DepthState only_compare = nullptr;
+        dx::DepthState disabled = nullptr;
+        dx::DepthState enabled = nullptr;
+        dx::DepthState only_compare = nullptr;
         
         DepthStates(kl::GPU* gpu);
     };

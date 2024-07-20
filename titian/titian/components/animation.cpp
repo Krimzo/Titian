@@ -4,12 +4,12 @@
 titian::Animation::Animation(kl::GPU* gpu, Scene* scene)
 	: m_gpu(gpu), m_scene(scene)
 {
-	kl::dx::BufferDescriptor descriptor{};
+	dx::BufferDescriptor descriptor{};
 	descriptor.Usage = D3D11_USAGE_DYNAMIC;
 	descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	descriptor.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 	descriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	descriptor.StructureByteStride = sizeof(kl::Float4x4);
+	descriptor.StructureByteStride = sizeof(Float4x4);
 	descriptor.ByteWidth = descriptor.StructureByteStride * MAX_BONE_COUNT;
 	m_matrices_buffer = gpu->create_buffer(&descriptor, nullptr);
 	kl::assert(m_matrices_buffer, "Failed to create animation matrices buffer");
@@ -152,7 +152,7 @@ void titian::Animation::update(const float current_time)
 
 	m_global_inverse_transform = kl::inverse(mesh->skeleton_root->transformation);
 
-	kl::Float4x4 identity;
+	Float4x4 identity;
 	update_node_hierarchy(animation_time_in_ticks, mesh, &mesh->skeleton_root, &this->animation_root, identity);
 	upload_matrices();
 }
@@ -168,24 +168,24 @@ void titian::Animation::upload_matrices()
 		return;
 	}
 	const size_t count = std::min(m_final_matrices.size(), (size_t) MAX_BONE_COUNT);
-	m_gpu->write_to_buffer(m_matrices_buffer, m_final_matrices.data(), count * sizeof(kl::Float4x4));
+	m_gpu->write_to_buffer(m_matrices_buffer, m_final_matrices.data(), count * sizeof(Float4x4));
 }
 
-void titian::Animation::update_node_hierarchy(const float time_ticks, const Mesh* mesh, const SkeletonNode* skel_node, const AnimationNode* anim_node, const kl::Float4x4& parent_transform)
+void titian::Animation::update_node_hierarchy(const float time_ticks, const Mesh* mesh, const SkeletonNode* skel_node, const AnimationNode* anim_node, const Float4x4& parent_transform)
 {
 	if (skel_node->children.size() != anim_node->children.size()) {
 		Logger::log("Invalid animation and skeleton hierarchy");
 		return;
 	}
 
-	kl::Float4x4 node_transform = skel_node->transformation;
+	Float4x4 node_transform = skel_node->transformation;
 	if (anim_node->channel_index >= 0) {
 		const aiVector3f translation = interpolate_translation(time_ticks, anim_node->channel_index);
 		const aiQuaternion rotation = interpolate_rotation(time_ticks, anim_node->channel_index);
 		const aiVector3f scaling = interpolate_scaling(time_ticks, anim_node->channel_index);
 		node_transform = make_animation_matrix(translation, rotation, scaling);
 	}
-	kl::Float4x4 global_transformation = parent_transform * node_transform;
+	Float4x4 global_transformation = parent_transform * node_transform;
 
 	if (skel_node->bone_index >= 0) {
 		if (skel_node->bone_index >= m_final_matrices.size()) {
@@ -270,11 +270,11 @@ aiVector3f titian::Animation::interpolate_scaling(const float time_ticks, const 
 	return keys[key_index].second * (1.0f - t) + keys[next_key_index].second * t;
 }
 
-kl::Float4x4 titian::Animation::make_animation_matrix(const aiVector3f& translation, const aiQuaternion& rotation, const aiVector3f& scaling) const
+titian::Float4x4 titian::Animation::make_animation_matrix(const aiVector3f& translation, const aiQuaternion& rotation, const aiVector3f& scaling) const
 {
 	const aiMatrix4x4 matrix{ scaling, rotation, translation };
 
-	kl::Float4x4 result;
+	Float4x4 result;
 	for (int i = 0; i < 4; i++) {
 		memcpy(&result(0, i), matrix[i], sizeof(float) * 4);
 	}

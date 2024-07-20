@@ -17,7 +17,7 @@ namespace titian {
 
     private:
         void display_textures(kl::GPU* gpu, Scene* scene);
-        void render_selected_texture(Texture* texture, kl::Int2 viewport_size);
+        void render_selected_texture(Texture* texture, Int2 viewport_size);
         void show_texture_properties(Texture* texture);
     };
 }

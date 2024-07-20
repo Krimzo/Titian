@@ -26,7 +26,7 @@ bool titian::EditorLayer::update()
 
     // Rotation
     if (window->mouse.right) {
-        const kl::Int2 frame_center = window->frame_center();
+        const Int2 frame_center = window->frame_center();
         if (window->mouse.is_hidden()) {
             camera->rotate(window->mouse.position(), frame_center);
         }

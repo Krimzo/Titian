@@ -148,7 +148,7 @@ void titian::GUISectionExplorer::handle_file_entry(const fs::path& file)
 {
     const String path = fs::absolute(file).string();
     const FileType file_type = classify_file(file);
-    const kl::dx::ShaderView icon = file_icon(file_type);
+    const dx::ShaderView icon = file_icon(file_type);
 
     constexpr float padding = 5.0f;
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
@@ -204,7 +204,7 @@ void titian::GUISectionExplorer::handle_file_entry(const fs::path& file)
 void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, const bool is_parent_dir)
 {
     const String path = fs::absolute(dir).string();
-    const kl::dx::ShaderView icon = is_parent_dir ? parent_dir_texture->shader_view : default_dir_texture->shader_view;
+    const dx::ShaderView icon = is_parent_dir ? parent_dir_texture->shader_view : default_dir_texture->shader_view;
 
     constexpr float padding = 5.0f;
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
@@ -281,7 +281,7 @@ void titian::GUISectionExplorer::handle_item_transfer(const String& item, const 
 	Logger::log("Transferred file ", format_path(item_absolute), " to ", format_path(new_item_absolute));
 }
 
-kl::dx::ShaderView titian::GUISectionExplorer::file_icon(const FileType type)
+dx::ShaderView titian::GUISectionExplorer::file_icon(const FileType type)
 {
     switch (type) {
     case FileType::MESH:

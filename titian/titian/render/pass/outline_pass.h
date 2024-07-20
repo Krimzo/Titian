@@ -16,8 +16,8 @@ namespace titian {
         void render_self(StatePackage& package) override;
 
     private:
-        kl::dx::Buffer m_selected_entities_buff;
-        kl::dx::ShaderView m_selected_entities_view;
+        dx::Buffer m_selected_entities_buff;
+        dx::ShaderView m_selected_entities_view;
 
         void load_selected_entities(const Vector<float>& entitiy_indices);
     };

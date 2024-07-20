@@ -47,13 +47,13 @@ bool titian::Texture::reload_as_cube()
 	}
 
 	const int part_size = data_buffer.width() / 4;
-	const kl::Image box_sides[6] = {
-		data_buffer.rectangle(kl::Int2(1, 1) * part_size, kl::Int2(2, 2) * part_size),
-		data_buffer.rectangle(kl::Int2(3, 1) * part_size, kl::Int2(4, 2) * part_size),
-		data_buffer.rectangle(kl::Int2(0, 1) * part_size, kl::Int2(1, 2) * part_size),
-		data_buffer.rectangle(kl::Int2(2, 1) * part_size, kl::Int2(3, 2) * part_size),
-		data_buffer.rectangle(kl::Int2(1, 0) * part_size, kl::Int2(2, 1) * part_size),
-		data_buffer.rectangle(kl::Int2(1, 2) * part_size, kl::Int2(2, 3) * part_size),
+	const Image box_sides[6] = {
+		data_buffer.rectangle(Int2(1, 1) * part_size, Int2(2, 2) * part_size),
+		data_buffer.rectangle(Int2(3, 1) * part_size, Int2(4, 2) * part_size),
+		data_buffer.rectangle(Int2(0, 1) * part_size, Int2(1, 2) * part_size),
+		data_buffer.rectangle(Int2(2, 1) * part_size, Int2(3, 2) * part_size),
+		data_buffer.rectangle(Int2(1, 0) * part_size, Int2(2, 1) * part_size),
+		data_buffer.rectangle(Int2(1, 2) * part_size, Int2(2, 3) * part_size),
 	};
 
 	graphics_buffer = m_gpu->create_cube_texture(box_sides[0], box_sides[1], box_sides[2], box_sides[3], box_sides[4], box_sides[5]);
@@ -61,22 +61,22 @@ bool titian::Texture::reload_as_cube()
 	return true;
 }
 
-void titian::Texture::create_target_view(const kl::dx::TargetViewDescriptor* descriptor)
+void titian::Texture::create_target_view(const dx::TargetViewDescriptor* descriptor)
 {
 	target_view = m_gpu->create_target_view(graphics_buffer, descriptor);
 }
 
-void titian::Texture::create_depth_view(const kl::dx::DepthViewDescriptor* descriptor)
+void titian::Texture::create_depth_view(const dx::DepthViewDescriptor* descriptor)
 {
 	depth_view = m_gpu->create_depth_view(graphics_buffer, descriptor);
 }
 
-void titian::Texture::create_shader_view(const kl::dx::ShaderViewDescriptor* descriptor)
+void titian::Texture::create_shader_view(const dx::ShaderViewDescriptor* descriptor)
 {
 	shader_view = m_gpu->create_shader_view(graphics_buffer, descriptor);
 }
 
-void titian::Texture::create_access_view(const kl::dx::AccessViewDescriptor* descriptor)
+void titian::Texture::create_access_view(const dx::AccessViewDescriptor* descriptor)
 {
 	access_view = m_gpu->create_access_view(graphics_buffer, descriptor);
 }
@@ -86,13 +86,13 @@ bool titian::Texture::is_cube() const
 	return m_is_cube;
 }
 
-kl::Int2 titian::Texture::graphics_buffer_size() const
+titian::Int2 titian::Texture::graphics_buffer_size() const
 {
 	if (!graphics_buffer) {
 		return {};
 	}
 
-	kl::dx::TextureDescriptor descriptor = {};
+	dx::TextureDescriptor descriptor = {};
 	graphics_buffer->GetDesc(&descriptor);
 	return {
 		static_cast<int>(descriptor.Width),

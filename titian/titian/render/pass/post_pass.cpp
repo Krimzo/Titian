@@ -39,7 +39,7 @@ void titian::PostPass::render_self(StatePackage& package)
     gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->non_linear, 1);
 
     // Shaders
-    kl::Float4x4 custom_data;
+    Float4x4 custom_data;
     if (Camera* camera = scene->get_casted<Camera>(scene->main_camera_name)) {
         custom_data = camera->custom_data;
         if (Shader* shader = &scene->get_shader(camera->shader_name)) {
@@ -51,12 +51,12 @@ void titian::PostPass::render_self(StatePackage& package)
 
     struct PS_CB
     {
-        kl::Float2 FRAME_SIZE;
-        alignas(16) kl::Float4x4 CUSTOM_DATA;
+        Float2 FRAME_SIZE;
+        alignas(16) Float4x4 CUSTOM_DATA;
     };
 
 	PS_CB ps_cb{};
-    ps_cb.FRAME_SIZE = (kl::Float2) render_layer->get_render_texture_size();
+    ps_cb.FRAME_SIZE = (Float2) render_layer->get_render_texture_size();
     ps_cb.CUSTOM_DATA = custom_data;
 	package.shader_state.pixel_shader.update_cbuffer(ps_cb);
     

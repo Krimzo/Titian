@@ -19,6 +19,6 @@ namespace titian {
 		bool update() override;
 
 	private:
-		void handle_resize(kl::Int2 size);
+		void handle_resize(Int2 size);
 	};
 }

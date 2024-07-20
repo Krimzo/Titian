@@ -13,13 +13,13 @@ namespace titian {
         Ref<Texture> render_texture = nullptr;
         Ref<Texture> depth_texture = nullptr;
 
-        kl::Float4 line_color = kl::colors::WHITE;
-        kl::Float3 sun_direction = { 0.0f, -1.0f, 0.0f };
+        Float4 line_color = kl::colors::WHITE;
+        Float3 sun_direction = { 0.0f, -1.0f, 0.0f };
 
         bool was_focused = true;
         int last_scroll = 0;
-        kl::Float2 initial_camera_info = { 200.0f, 10.0f };
-        kl::Float2 camera_info = initial_camera_info;
+        Float2 initial_camera_info = { 200.0f, 10.0f };
+        Float2 camera_info = initial_camera_info;
 
         String selected_mesh = "/";
 
@@ -36,7 +36,7 @@ namespace titian {
 
         void display_meshes(kl::GPU* gpu, Scene* scene);
         void update_mesh_camera();
-        void render_selected_mesh(kl::GPU* gpu, const Mesh* mesh, kl::Int2 viewport_size);
+        void render_selected_mesh(kl::GPU* gpu, const Mesh* mesh, Int2 viewport_size);
         void render_gizmos(Mesh* mesh);
         void show_mesh_properties(Mesh* mesh);
     };

@@ -33,12 +33,12 @@ void sandbox::SandboxPieceMonkes::setup_self()
         const float normalized = kl::clamp(percentage, 0.0f, 1.0f);
 
         Ref material = new Material();
-        material->color = kl::Float4{ kl::Float3{ normalized }, 1.0f };
+        material->color = Float4{ Float3{ normalized }, 1.0f };
         scene->materials[material_name] = material;
 
         // Entity
         Ref monke = scene->new_entity(false);
-        monke->scale = kl::Float3{ 0.5f };
+        monke->scale = Float3{ 0.5f };
         monke->set_position({
             (float) (x - half_size) + x_offset,
             (float) (y - half_size),

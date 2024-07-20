@@ -6,11 +6,11 @@
 namespace titian {
     struct Vertex
     {
-        kl::Float3 world;
-        kl::Float2 texture;
-        kl::Float3 normal;
+        Float3 world;
+        Float2 texture;
+        Float3 normal;
         kl::Vector4<uint8_t> bone_indices;
-        kl::Float4 bone_weights;
+        Float4 bone_weights;
     };
 }
 
@@ -18,7 +18,7 @@ namespace titian {
     struct SkeletonNode
     {
         int bone_index = -1;
-		kl::Float4x4 transformation;
+		Float4x4 transformation;
 		Vector<Ref<SkeletonNode>> children;
     };
 }
@@ -33,10 +33,10 @@ namespace titian {
         bool render_wireframe = false;
 
         Data data_buffer = {};
-        kl::dx::Buffer graphics_buffer = nullptr;
+        dx::Buffer graphics_buffer = nullptr;
         px::PxTriangleMesh* physics_buffer = nullptr;
 
-        Vector<kl::Float4x4> bone_matrices;
+        Vector<Float4x4> bone_matrices;
         Ref<SkeletonNode> skeleton_root;
 
         Mesh(kl::GPU* gpu, px::PxPhysics* physics, px::PxCooking* cooking);

@@ -11,9 +11,9 @@ titian::GUISectionAnimationEditor::GUISectionAnimationEditor(const LayerPackage&
     render_texture = new Texture(gpu);
     depth_texture = new Texture(gpu);
 
-    sun_direction = kl::normalize(kl::Float3(-0.5f, -0.75f, 1.0f));
+    sun_direction = kl::normalize(Float3(-0.5f, -0.75f, 1.0f));
 
-    camera->background = kl::Color{ 30, 30, 30 };
+    camera->background = Color{ 30, 30, 30 };
     camera->set_position({ -0.34f, 0.18f, -0.94f });
     camera->speed = 3.1f;
 
@@ -44,13 +44,13 @@ void titian::GUISectionAnimationEditor::render_gui()
         im::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
 
         if (im::BeginChild("Animation View", {}, was_focused)) {
-            const kl::Int2 viewport_size = { (int) im::GetContentRegionAvail().x, (int) im::GetContentRegionAvail().y };
+            const Int2 viewport_size = { (int) im::GetContentRegionAvail().x, (int) im::GetContentRegionAvail().y };
             if (was_focused) {
                 update_animation_camera();
             }
             if (animation) {
                 render_selected_animation(gpu, &animation, viewport_size);
-                const kl::dx::ShaderView& shader_view = render_texture->shader_view;
+                const dx::ShaderView& shader_view = render_texture->shader_view;
                 im::Image(render_texture->shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
             was_focused = im::IsWindowFocused();
@@ -156,7 +156,7 @@ void titian::GUISectionAnimationEditor::update_animation_camera()
     camera->set_forward(-camera->position());
 }
 
-void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, Animation* animation, const kl::Int2 viewport_size)
+void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, Animation* animation, const Int2 viewport_size)
 {
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
         return;
@@ -168,7 +168,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
         render_texture->create_shader_view(nullptr);
     }
     if (depth_texture->graphics_buffer_size() != viewport_size) {
-        kl::dx::TextureDescriptor descriptor = {};
+        dx::TextureDescriptor descriptor = {};
         descriptor.Width = viewport_size.x;
         descriptor.Height = viewport_size.y;
         descriptor.MipLevels = 1;
@@ -202,7 +202,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
 
     gpu->bind_target_depth_view(render_texture->target_view, depth_texture->depth_view);
 
-    const kl::Int2 old_viewport_size = gpu->viewport_size();
+    const Int2 old_viewport_size = gpu->viewport_size();
     gpu->set_viewport_size(viewport_size);
 
     RenderStates* states = &render_layer->states;
@@ -216,8 +216,8 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
 
     struct alignas(16) VS_CB
     {
-        kl::Float4x4 W;
-        kl::Float4x4 WVP;
+        Float4x4 W;
+        Float4x4 WVP;
         float IS_SKELETAL{};
     };
 
@@ -237,8 +237,8 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
 
     struct alignas(16) PS_CB
     {
-        kl::Float4 OBJECT_COLOR;
-        kl::Float3 SUN_DIRECTION;
+        Float4 OBJECT_COLOR;
+        Float3 SUN_DIRECTION;
     };
 
     const PS_CB ps_cb{

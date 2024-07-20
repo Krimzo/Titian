@@ -16,10 +16,10 @@ namespace titian {
 
     private:
         Map<ImGuiKey, bool> m_last_key_states = {};
-        Optional<kl::Int2> m_rect_selection_first = {};
+        Optional<Int2> m_rect_selection_first = {};
 
-        kl::Int2 window_mouse_position();
-        Set<uint32_t> read_entity_ids(const kl::Int2& first_coords, const kl::Int2& second_coords);
+        Int2 window_mouse_position();
+        Set<uint32_t> read_entity_ids(const Int2& first_coords, const Int2& second_coords);
 
         void handle_gizmo_operation_change(int operation, ImGuiKey switch_key);
         void render_gizmos(const Set<Entity*>& entities);

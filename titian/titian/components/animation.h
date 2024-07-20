@@ -66,19 +66,19 @@ namespace titian {
 		kl::GPU* m_gpu = nullptr;
 		Scene* m_scene = nullptr;
 
-		kl::Float4x4 m_global_inverse_transform;
-		Vector<kl::Float4x4> m_final_matrices;
+		Float4x4 m_global_inverse_transform;
+		Vector<Float4x4> m_final_matrices;
 
-		kl::dx::Buffer m_matrices_buffer;
-		kl::dx::ShaderView m_matrices_view;
+		dx::Buffer m_matrices_buffer;
+		dx::ShaderView m_matrices_view;
 
 		void upload_matrices();
-		void update_node_hierarchy(float time_ticks, const Mesh* mesh, const SkeletonNode* skel_node, const AnimationNode* anim_node, const kl::Float4x4& parent_transform);
+		void update_node_hierarchy(float time_ticks, const Mesh* mesh, const SkeletonNode* skel_node, const AnimationNode* anim_node, const Float4x4& parent_transform);
 
 		aiVector3f interpolate_translation(float time_ticks, int channel_index) const;
 		aiQuaternion interpolate_rotation(float time_ticks, int channel_index) const;
 		aiVector3f interpolate_scaling(float time_ticks, int channel_index) const;
 
-		kl::Float4x4 make_animation_matrix(const aiVector3f& translation, const aiQuaternion& rotation, const aiVector3f& scaling) const;
+		Float4x4 make_animation_matrix(const aiVector3f& translation, const aiQuaternion& rotation, const aiVector3f& scaling) const;
 	};
 }

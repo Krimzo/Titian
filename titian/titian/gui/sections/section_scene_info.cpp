@@ -15,7 +15,7 @@ void titian::GUISectionSceneInfo::render_gui()
         int entity_count = static_cast<int>(scene->entity_count());
         im::DragInt("Entity count", &entity_count, 0.0f);
 
-        kl::Float3 gravity = scene->gravity();
+        Float3 gravity = scene->gravity();
         if (im::DragFloat3("Gravity", gravity)) {
             scene->set_gravity(gravity);
         }

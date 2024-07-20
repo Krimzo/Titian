@@ -7,9 +7,9 @@ namespace titian {
     class SamplerStates
     {
     public:
-        kl::dx::SamplerState linear = nullptr;
-        kl::dx::SamplerState non_linear = nullptr;
-        kl::dx::SamplerState shadow = nullptr;
+        dx::SamplerState linear = nullptr;
+        dx::SamplerState non_linear = nullptr;
+        dx::SamplerState shadow = nullptr;
         
         SamplerStates(kl::GPU* gpu);
     };

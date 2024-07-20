@@ -42,10 +42,10 @@ void titian::OutlinePass::render_self(StatePackage& package)
     gpu->bind_shader_view_for_pixel_shader(render_layer->editor_picking_texture->shader_view, 0);
     gpu->bind_shader_view_for_pixel_shader(m_selected_entities_view, 1);
 
-    struct PS_CB
+    struct alignas(16) PS_CB
     {
-        kl::Float4 OUTLINE_COLOR;
-        alignas(16) int32_t OUTLINE_SIZE;
+        Float4 OUTLINE_COLOR;
+        int32_t OUTLINE_SIZE;
         uint32_t SELECTED_COUNT;
     };
 
@@ -65,7 +65,7 @@ void titian::OutlinePass::load_selected_entities(const Vector<float>& entitiy_in
 {
 	kl::GPU* gpu = &app_layer->gpu;
     if (gpu->vertex_buffer_size(m_selected_entities_buff, sizeof(float)) < entitiy_indices.size()) {
-        kl::dx::BufferDescriptor descriptor{};
+        dx::BufferDescriptor descriptor{};
         descriptor.Usage = D3D11_USAGE_DYNAMIC;
         descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         descriptor.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
@@ -73,7 +73,7 @@ void titian::OutlinePass::load_selected_entities(const Vector<float>& entitiy_in
         descriptor.StructureByteStride = sizeof(float);
         descriptor.ByteWidth = (UINT) entitiy_indices.size() * sizeof(float);
 
-        kl::dx::SubresourceDescriptor subresource{};
+        dx::SubresourceDescriptor subresource{};
         subresource.pSysMem = entitiy_indices.data();
 
         m_selected_entities_buff = gpu->create_buffer(&descriptor, &subresource);

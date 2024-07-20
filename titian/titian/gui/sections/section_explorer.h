@@ -32,6 +32,6 @@ namespace titian {
         void handle_directory_entry(const fs::path& directory, bool is_parent_dir);
 
         void handle_item_transfer(const String& item, const String& destination);
-        kl::dx::ShaderView file_icon(FileType type);
+        dx::ShaderView file_icon(FileType type);
     };
 }

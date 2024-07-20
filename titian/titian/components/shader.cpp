@@ -68,7 +68,7 @@ void titian::Shader::reload_for_material()
 		}
 	}
 
-	const Vector<kl::dx::LayoutDescriptor> vertex_layout_descriptors = {
+	const Vector<dx::LayoutDescriptor> vertex_layout_descriptors = {
 		{    "KL_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{     "KL_Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{      "KL_Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },

@@ -18,12 +18,12 @@ void titian::ui_set_next_width(const float width)
 }
 
 // cursor
-kl::Float2 titian::ui_cursor_pos()
+titian::Float2 titian::ui_cursor_pos()
 {
 	return { im::GetCursorPosX(), im::GetCursorPosY() };
 }
 
-void titian::ui_set_cursor_pos(const kl::Float2& pos)
+void titian::ui_set_cursor_pos(const Float2& pos)
 {
 	im::SetCursorPos({ pos.x, pos.y });
 }
@@ -55,7 +55,7 @@ void titian::ui_text(const String& data)
 	im::Text(data.c_str());
 }
 
-void titian::ui_colored_text(const String& data, const kl::Float4& color)
+void titian::ui_colored_text(const String& data, const Float4& color)
 {
 	im::TextColored(ImVec4(color.x, color.y, color.z, color.w), data.c_str());
 }
@@ -71,17 +71,17 @@ void titian::ui_input_float(const String& name, float& value)
 	im::InputFloat(name.c_str(), &value);
 }
 
-void titian::ui_input_float2(const String& name, kl::Float2& value)
+void titian::ui_input_float2(const String& name, Float2& value)
 {
 	im::InputFloat2(name.c_str(), value);
 }
 
-void titian::ui_input_float3(const String& name, kl::Float3& value)
+void titian::ui_input_float3(const String& name, Float3& value)
 {
 	im::InputFloat3(name.c_str(), value);
 }
 
-void titian::ui_input_float4(const String& name, kl::Float4& value)
+void titian::ui_input_float4(const String& name, Float4& value)
 {
 	im::InputFloat4(name.c_str(), value);
 }
@@ -97,12 +97,12 @@ void titian::ui_input_text_multiline(const String& name, String& value)
 }
 
 // edit
-void titian::ui_edit_color3(const String& name, kl::Float3& value)
+void titian::ui_edit_color3(const String& name, Float3& value)
 {
 	im::ColorEdit3(name.c_str(), value);
 }
 
-void titian::ui_edit_color4(const String& name, kl::Float4& value)
+void titian::ui_edit_color4(const String& name, Float4& value)
 {
 	im::ColorEdit4(name.c_str(), value);
 }

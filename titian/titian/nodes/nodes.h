@@ -65,7 +65,7 @@ namespace titian {
 	{
 	public:
 		String title;
-		kl::Float2 screen_position;
+		Float2 screen_position;
 
 		Optional<Pin> flow_input;
 		Optional<Pin> flow_output;

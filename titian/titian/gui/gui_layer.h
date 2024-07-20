@@ -11,8 +11,8 @@ namespace titian {
 		Vector<Ref<GUISection>> sections = {};
 		float dpi_scaling = 1.0f;
 
-		kl::Float4 special_color = kl::colors::WHITE;
-		kl::Float4 alternate_color = kl::colors::BLACK;
+		Float4 special_color = kl::colors::WHITE;
+		Float4 alternate_color = kl::colors::BLACK;
 
 		ImFont* roboto_font_small = nullptr;
 		ImFont* roboto_font_large = nullptr;

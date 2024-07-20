@@ -26,7 +26,7 @@ void titian::DisplayPass::render_self(StatePackage& package)
     kl::Window* window = &app_layer->window;
     kl::GPU* gpu = &app_layer->gpu;
 
-    const kl::Int2 window_size = window->size();
+    const Int2 window_size = window->size();
     render_layer->resize(window_size);
 
     // Target

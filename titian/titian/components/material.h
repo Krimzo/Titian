@@ -7,14 +7,14 @@ namespace titian {
 	class Material : public Serializable
 	{
 	public:
-		kl::Float4 color = kl::colors::WHITE;
+		Float4 color = kl::colors::WHITE;
 		float texture_blend = 0.0f;
 
 		float reflection_factor = 0.0f;
 		float refraction_factor = 0.0f;
 		float refraction_index = 1.0f;
 
-		kl::Float4x4 custom_data = {};
+		Float4x4 custom_data = {};
 
 		String color_map_name = "/";
 		String normal_map_name = "/";

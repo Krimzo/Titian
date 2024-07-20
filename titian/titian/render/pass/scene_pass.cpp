@@ -56,23 +56,23 @@ void titian::ScenePass::render_self(StatePackage& package)
         float ELAPSED_TIME{};
         float DELTA_TIME{};
 
-        alignas(16) kl::Float3 CAMERA_POSITION;
+        alignas(16) Float3 CAMERA_POSITION;
         float CAMERA_HAS_SKYBOX{};
-        kl::Float4 CAMERA_BACKGROUND;
+        Float4 CAMERA_BACKGROUND;
 
-        kl::Float3 AMBIENT_COLOR;
+        Float3 AMBIENT_COLOR;
         float AMBIENT_INTENSITY{};
 
-        kl::Float3 SUN_DIRECTION;
+        Float3 SUN_DIRECTION;
         float SUN_POINT_SIZE{};
-        kl::Float3 SUN_COLOR;
+        Float3 SUN_COLOR;
 
         float OBJECT_INDEX{};
-        kl::Float3 OBJECT_SCALE;
-        alignas(16) kl::Float3 OBJECT_ROTATION;
-        alignas(16) kl::Float3 OBJECT_POSITION;
+        Float3 OBJECT_SCALE;
+        alignas(16) Float3 OBJECT_ROTATION;
+        alignas(16) Float3 OBJECT_POSITION;
 
-        alignas(16) kl::Float4 OBJECT_COLOR;
+        alignas(16) Float4 OBJECT_COLOR;
         float TEXTURE_BLEND{};
 
         float REFLECTION_FACTOR{};
@@ -82,19 +82,19 @@ void titian::ScenePass::render_self(StatePackage& package)
         float HAS_NORMAL_MAP{};
         float HAS_ROUGHNESS_MAP{};
 
-        alignas(16) kl::Float4x4 W;
-        kl::Float4x4 V;
-        kl::Float4x4 VP;
+        alignas(16) Float4x4 W;
+        Float4x4 V;
+        Float4x4 VP;
 
         float IS_SKELETAL{};
 
         float RECEIVES_SHADOWS{};
-        kl::Float2 SHADOW_MAP_SIZE;
-        kl::Float2 SHADOW_MAP_TEXEL_SIZE;
-        alignas(16) kl::Float4 SHADOW_CASCADES;
-        kl::Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
+        Float2 SHADOW_MAP_SIZE;
+        Float2 SHADOW_MAP_TEXEL_SIZE;
+        alignas(16) Float4 SHADOW_CASCADES;
+        Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
 
-        kl::Float4x4 CUSTOM_DATA;
+        Float4x4 CUSTOM_DATA;
     };
     GLOBAL_CB global_cb{};
 
@@ -126,8 +126,8 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.SUN_COLOR = directional_light->color;
         global_cb.SUN_POINT_SIZE = directional_light->point_size;
 
-        global_cb.SHADOW_MAP_SIZE = kl::Float2((float) directional_light->map_resolution());
-        global_cb.SHADOW_MAP_TEXEL_SIZE = kl::Float2(1.0f / directional_light->map_resolution());
+        global_cb.SHADOW_MAP_SIZE = Float2((float) directional_light->map_resolution());
+        global_cb.SHADOW_MAP_TEXEL_SIZE = Float2(1.0f / directional_light->map_resolution());
         for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
             global_cb.SHADOW_CASCADES[i] = kl::unwrap(directional_light->CASCADE_SPLITS[i + 1], camera->near_plane, camera->far_plane);
         }

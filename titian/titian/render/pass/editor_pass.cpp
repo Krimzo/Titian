@@ -68,11 +68,11 @@ void titian::EditorPass::render_self(StatePackage& package)
 
         struct VS_CB
         {
-            kl::Float4x4 WVP;
+            Float4x4 WVP;
         };
         struct PS_CB
         {
-            kl::Float4 SOLID_COLOR;
+            Float4 SOLID_COLOR;
         };
 
         // Collider
@@ -90,20 +90,20 @@ void titian::EditorPass::render_self(StatePackage& package)
 
             switch (collider->type()) {
             case px::PxGeometryType::Enum::eBOX:
-                gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology());
+                gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology(), sizeof(Vertex));
                 break;
 
             case px::PxGeometryType::Enum::eSPHERE:
-                gpu->draw(default_meshes->sphere->graphics_buffer, default_meshes->sphere->casted_topology());
+                gpu->draw(default_meshes->sphere->graphics_buffer, default_meshes->sphere->casted_topology(), sizeof(Vertex));
                 break;
 
             case px::PxGeometryType::Enum::eCAPSULE:
-                gpu->draw(default_meshes->capsule->graphics_buffer, default_meshes->capsule->casted_topology());
+                gpu->draw(default_meshes->capsule->graphics_buffer, default_meshes->capsule->casted_topology(), sizeof(Vertex));
                 break;
 
             case px::PxGeometryType::Enum::eTRIANGLEMESH:
                 if (Mesh* mesh = &scene->get_mesh(selected_entity->collider_mesh_name)) {
-                    gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
+                    gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
                 }
                 break;
             }

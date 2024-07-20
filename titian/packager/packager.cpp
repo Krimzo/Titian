@@ -1,14 +1,14 @@
 #include "main.h"
 
 
-std::set<std::string> packager::list_files(const std::string& input)
+titian::Set<titian::String> packager::list_files(const String& input)
 {
-	if (!std::filesystem::is_directory(input)) {
+	if (!fs::is_directory(input)) {
 		return { input };
 	}
 
-	std::set<std::string> found_files;
-	for (const auto& entry : std::filesystem::recursive_directory_iterator(input)) {
+	Set<String> found_files;
+	for (const auto& entry : fs::recursive_directory_iterator(input)) {
 		if (!entry.is_directory()) {
 			found_files.insert(entry.path().relative_path().string());
 		}
@@ -16,9 +16,9 @@ std::set<std::string> packager::list_files(const std::string& input)
 	return found_files;
 }
 
-bool packager::create_package(const std::string& input, const std::string& output_file)
+bool packager::create_package(const String& input, const String& output_file)
 {
-	if (!std::filesystem::exists(input)) {
+	if (!fs::exists(input)) {
 		Logger::log("Create package error. ", input, " doesn't exists.");
 		return false;
 	}
@@ -29,10 +29,10 @@ bool packager::create_package(const std::string& input, const std::string& outpu
 		return false;
 	}
 
-	const std::set<std::string> files = list_files(input);
+	const Set<String> files = list_files(input);
 	serializer.write_object<uint64_t>(files.size());
 	for (const auto& file : files) {
-		const std::vector<byte> file_data = kl::read_file(file);
+		const Vector<byte> file_data = kl::read_file(file);
 		serializer.write_string(file);
 		serializer.write_object<uint64_t>(file_data.size());
 		serializer.write_array(file_data.data(), file_data.size());
@@ -43,7 +43,7 @@ bool packager::create_package(const std::string& input, const std::string& outpu
 	return true;
 }
 
-bool packager::open_package(const std::string& input_file, const std::string& output_dir)
+bool packager::open_package(const String& input_file, const String& output_dir)
 {
 	const Serializer serializer = { input_file, false };
 	if (!serializer) {
@@ -53,17 +53,17 @@ bool packager::open_package(const std::string& input_file, const std::string& ou
 
 	const uint64_t file_count = serializer.read_object<uint64_t>();
 	for (uint64_t i = 0; i < file_count; i++) {
-		const std::string file = output_dir + "/" + serializer.read_string();
+		const String file = output_dir + "/" + serializer.read_string();
 		const uint64_t file_size = serializer.read_object<uint64_t>();
 
-		std::vector<byte> file_data;
+		Vector<byte> file_data;
 		file_data.resize(file_size);
 		serializer.read_array(file_data.data(), file_size);
 
-		const std::filesystem::path path(file);
+		const fs::path path(file);
 		if (path.has_parent_path()) {
-			const std::filesystem::path parent_dir = path.parent_path();
-			if (std::filesystem::create_directories(parent_dir)) {
+			const fs::path parent_dir = path.parent_path();
+			if (fs::create_directories(parent_dir)) {
 				Logger::log("Created parent directory ", parent_dir.string());
 			}
 

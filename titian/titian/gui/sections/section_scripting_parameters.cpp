@@ -65,25 +65,25 @@ void titian::GUISectionScriptingParameters::display_parameter_editor(const int s
 		const String identifier = kl::format(name, "##", script_id);
 		im::DragFloat(identifier.c_str(), (float*) ptr);
 	}
-	else if (type == typeid(kl::Int2)) {
+	else if (type == typeid(Int2)) {
 		const String identifier = kl::format(name, "##", script_id);
 		im::DragInt2(identifier.c_str(), (int*) ptr);
 	}
-	else if (type == typeid(kl::Float2)) {
+	else if (type == typeid(Float2)) {
 		const String identifier = kl::format(name, "##", script_id);
 		im::DragFloat2(identifier.c_str(), (float*) ptr);
 	}
-	else if (type == typeid(kl::Float3)) {
+	else if (type == typeid(Float3)) {
 		const String identifier = kl::format(name, "##", script_id);
 		im::DragFloat3(identifier.c_str(), (float*) ptr);
 	}
-	else if (type == typeid(kl::Float4)) {
+	else if (type == typeid(Float4)) {
 		const String identifier = kl::format(name, "##", script_id);
 		im::DragFloat4(identifier.c_str(), (float*) ptr);
 	}
-	else if (type == typeid(kl::Color)) {
-		kl::Color* color_ptr = (kl::Color*) ptr;
-		kl::Float4 color_as_float = *color_ptr;
+	else if (type == typeid(Color)) {
+		Color* color_ptr = (Color*) ptr;
+		Float4 color_as_float = *color_ptr;
 		const String identifier = kl::format(name, "##", script_id);
 		if (im::ColorEdit4(identifier.c_str(), color_as_float)) {
 			*color_ptr = color_as_float;

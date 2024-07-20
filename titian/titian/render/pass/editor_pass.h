@@ -9,7 +9,7 @@ namespace titian {
     class EditorPass : public RenderPass
     {
     public:
-        kl::dx::Buffer frustum_mesh = nullptr;
+        dx::Buffer frustum_mesh = nullptr;
 
         EditorPass(const LayerPackage& package);
 

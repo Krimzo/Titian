@@ -9,6 +9,6 @@ namespace titian {
 	public:
 		Light(EntityType type, px::PxPhysics* physics, bool dynamic);
 
-		virtual kl::Float3 light_at_point(const kl::Float3& point) const = 0;
+		virtual Float3 light_at_point(const Float3& point) const = 0;
 	};
 }

@@ -4,19 +4,19 @@
 
 
 namespace packager {
-	inline const std::string PACKAGE_EXTENSION = ".tipk";
+	using namespace titian;
 
-	inline const std::string BUILTIN_DIR = "builtin";
-	inline const std::string PREVIEW_DIR = "preview";
-
-	inline const std::string PACKAGED_BUILTIN_FILE = BUILTIN_DIR + PACKAGE_EXTENSION;
-	inline const std::string PACKAGED_PREVIEW_FILE = PREVIEW_DIR + PACKAGE_EXTENSION;
+	inline const String PACKAGE_EXTENSION = ".tipk";
+	inline const String BUILTIN_DIR = "builtin";
+	inline const String PREVIEW_DIR = "preview";
+	inline const String PACKAGED_BUILTIN_FILE = BUILTIN_DIR + PACKAGE_EXTENSION;
+	inline const String PACKAGED_PREVIEW_FILE = PREVIEW_DIR + PACKAGE_EXTENSION;
 }
 
 namespace packager {
 	using namespace titian;
 
-	std::set<std::string> list_files(const std::string& input);
-	bool create_package(const std::string& input_dir, const std::string& output_file);
-	bool open_package(const std::string& input_file, const std::string& output_dir);
+	Set<String> list_files(const String& input);
+	bool create_package(const String& input_dir, const String& output_file);
+	bool open_package(const String& input_file, const String& output_dir);
 }

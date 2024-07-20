@@ -17,16 +17,16 @@ namespace titian {
         // Get
         px::PxShape* shape() const;
         px::PxGeometryType::Enum type() const;
-        kl::Float4x4 scaling_matrix() const;
+        Float4x4 scaling_matrix() const;
 
         // Geometry
         void set_geometry(const px::PxGeometry& geometry);
 
-        void set_rotation(const kl::Float3& rotation);
-        kl::Float3 rotation() const;
+        void set_rotation(const Float3& rotation);
+        Float3 rotation() const;
 
-        void set_offset(const kl::Float3& position);
-        kl::Float3 offset() const;
+        void set_offset(const Float3& position);
+        Float3 offset() const;
 
         // Material
         void set_static_friction(float friction);

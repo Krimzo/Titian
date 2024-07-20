@@ -23,7 +23,7 @@ bool titian::AppLayer::update()
 	return window.process(false);
 }
 
-void titian::AppLayer::handle_resize(const kl::Int2 size)
+void titian::AppLayer::handle_resize(const Int2 size)
 {
 	if (size.x <= 0 || size.y <= 0) {
 		return;

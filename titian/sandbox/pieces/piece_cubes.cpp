@@ -27,13 +27,13 @@ void sandbox::SandboxPieceCubes::setup_self()
 
             // Material
             Ref material = new Material();
-            material->color = kl::Color(214, 156, 86);
+            material->color = Color(214, 156, 86);
             material->reflection_factor = cube_counter / static_cast<float>(size * size);
             scene->materials[material_name] = material;
 
             // Entity
             Ref cube = scene->new_entity(false);
-            cube->scale = kl::Float3{ 0.45f };
+            cube->scale = Float3{ 0.45f };
             cube->set_position({
                 (float)(x - half_size) + x_offset,
                 (float)(y - half_size),

@@ -53,11 +53,11 @@ void titian::GUISectionViewport::render_gui()
                 m_rect_selection_first = window_mouse_position();
             }
             if (m_rect_selection_first) {
-                const kl::Int2 rect_selection_first = m_rect_selection_first.value();
+                const Int2 rect_selection_first = m_rect_selection_first.value();
                 if (im::IsMouseDown(ImGuiMouseButton_Left)) {
-                    const kl::Int2 rect_selection_last = window_mouse_position();
-                    kl::Float2 min_coords = kl::min(rect_selection_first, rect_selection_last);
-                    kl::Float2 max_coords = kl::max(rect_selection_first, rect_selection_last);
+                    const Int2 rect_selection_last = window_mouse_position();
+                    Float2 min_coords = kl::min(rect_selection_first, rect_selection_last);
+                    Float2 max_coords = kl::max(rect_selection_first, rect_selection_last);
                     min_coords += { win_content_min.x, win_content_min.y };
                     max_coords += { win_content_min.x, win_content_min.y };
                     if (max_coords.x == min_coords.x) {
@@ -72,7 +72,7 @@ void titian::GUISectionViewport::render_gui()
                     draw_list->AddRect({ min_coords.x, min_coords.y }, { max_coords.x, max_coords.y }, ImColor(255, 255, 255, 200));
                 }
                 if (im::IsMouseReleased(ImGuiMouseButton_Left)) {
-                    const kl::Int2 rect_selection_last = window_mouse_position();
+                    const Int2 rect_selection_last = window_mouse_position();
                     const Set<uint32_t> entity_ids = read_entity_ids(rect_selection_first, rect_selection_last);
 
                     if (!im::IsKeyDown(ImGuiKey_LeftCtrl) && !im::IsKeyDown(ImGuiKey_LeftShift)) {
@@ -137,7 +137,7 @@ void titian::GUISectionViewport::render_gui()
     im::PopStyleVar();
 }
 
-kl::Int2 titian::GUISectionViewport::window_mouse_position()
+titian::Int2 titian::GUISectionViewport::window_mouse_position()
 {
     const float tab_size = im::GetWindowContentRegionMin().y;
     const ImVec2 window_position = im::GetWindowPos();
@@ -148,10 +148,10 @@ kl::Int2 titian::GUISectionViewport::window_mouse_position()
     };
 }
 
-titian::Set<uint32_t> titian::GUISectionViewport::read_entity_ids(const kl::Int2& first_coords, const kl::Int2& last_coords)
+titian::Set<uint32_t> titian::GUISectionViewport::read_entity_ids(const Int2& first_coords, const Int2& last_coords)
 {
-    kl::Int2 min_coords = kl::min(first_coords, last_coords);
-	kl::Int2 max_coords = kl::max(first_coords, last_coords);
+    Int2 min_coords = kl::min(first_coords, last_coords);
+	Int2 max_coords = kl::max(first_coords, last_coords);
     if (max_coords.x == min_coords.x) {
         max_coords.x += 1;
     }
@@ -162,7 +162,7 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_entity_ids(const kl::Int2
         return {};
     }
 
-    const kl::Int2 size = max_coords - min_coords;
+    const Int2 size = max_coords - min_coords;
     const kl::GPU* gpu = &app_layer->gpu;
 
     render_layer->resize_staging(size);
@@ -204,19 +204,19 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
         return;
 
     const float viewport_tab_height = im::GetWindowContentRegionMin().y;
-    const kl::Float2 viewport_position = { im::GetWindowPos().x, im::GetWindowPos().y + viewport_tab_height };
-    const kl::Float2 viewport_size = { im::GetWindowWidth(), im::GetWindowHeight() };
+    const Float2 viewport_position = { im::GetWindowPos().x, im::GetWindowPos().y + viewport_tab_height };
+    const Float2 viewport_size = { im::GetWindowWidth(), im::GetWindowHeight() };
 
     ImGuizmo::Enable(true);
     ImGuizmo::SetDrawlist();
     ImGuizmo::SetRect(viewport_position.x, viewport_position.y, viewport_size.x, viewport_size.y);
 
-    kl::Float3 selected_snap = {};
+    Float3 selected_snap = {};
     if (window->keyboard.shift) {
-        static kl::Float3 predefined_snaps[3] = {
-            kl::Float3(0.1f),
-            kl::Float3(30.0f),
-            kl::Float3(1.0f),
+        static Float3 predefined_snaps[3] = {
+            Float3(0.1f),
+            Float3(30.0f),
+            Float3(1.0f),
         };
 
         switch (editor_layer->gizmo_operation) {
@@ -231,11 +231,11 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
         }
     }
 
-    const kl::Float4x4 view_matrix = kl::transpose(camera->view_matrix());
-    const kl::Float4x4 projection_matrix = kl::transpose(camera->projection_matrix());
+    const Float4x4 view_matrix = kl::transpose(camera->view_matrix());
+    const Float4x4 projection_matrix = kl::transpose(camera->projection_matrix());
 
-    kl::Float3 collective_center;
-    kl::Float4x4 transform_matrix;
+    Float3 collective_center;
+    Float4x4 transform_matrix;
     if (entities.size() == 1) {
         Entity* entity = *entities.begin();
         transform_matrix = kl::transpose(entity->model_matrix());
@@ -245,7 +245,7 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
             collective_center += entity->position();
         }
         collective_center /= static_cast<float>(entities.size());
-        transform_matrix = kl::transpose(kl::Float4x4::translation(collective_center));
+        transform_matrix = kl::transpose(Float4x4::translation(collective_center));
     }
 
     ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
@@ -254,7 +254,7 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
         selected_snap);
 
     if (ImGuizmo::IsUsing()) {
-        kl::Float3 decomposed_parts[3] = {};
+        Float3 decomposed_parts[3] = {};
         ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
             decomposed_parts[2], decomposed_parts[1], decomposed_parts[0]);
 
@@ -265,7 +265,7 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
             entity->set_position(decomposed_parts[2]);
         }
         else {
-            const kl::Float3 position_delta = decomposed_parts[2] - collective_center;
+            const Float3 position_delta = decomposed_parts[2] - collective_center;
             for (Entity* entity : entities) {
                 entity->set_position(entity->position() + position_delta);
             }
