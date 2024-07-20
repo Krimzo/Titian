@@ -11,10 +11,10 @@ namespace titian {
     class DefaultAnimations
     {
     public:
-        kl::Object<Animation> cube = nullptr;
-        kl::Object<Animation> sphere = nullptr;
-        kl::Object<Animation> capsule = nullptr;
-        kl::Object<Animation> monke = nullptr;
+        Ref<Animation> cube = nullptr;
+        Ref<Animation> sphere = nullptr;
+        Ref<Animation> capsule = nullptr;
+        Ref<Animation> monke = nullptr;
 
         DefaultAnimations(kl::GPU* gpu, Scene* scene);
     };

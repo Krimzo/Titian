@@ -12,10 +12,10 @@ namespace titian {
 	class DefaultMeshes
 	{
 	public:
-        kl::Object<Mesh> cube = nullptr;
-        kl::Object<Mesh> sphere = nullptr;
-        kl::Object<Mesh> capsule = nullptr;
-        kl::Object<Mesh> monke = nullptr;
+        Ref<Mesh> cube = nullptr;
+        Ref<Mesh> sphere = nullptr;
+        Ref<Mesh> capsule = nullptr;
+        Ref<Mesh> monke = nullptr;
 
         DefaultMeshes(Scene* scene);
 	};

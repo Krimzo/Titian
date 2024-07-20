@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-titian::Camera::Camera(physx::PxPhysics* physics, const bool dynamic)
+titian::Camera::Camera(px::PxPhysics* physics, const bool dynamic)
     : Entity(EntityType::CAMERA, physics, dynamic)
 {}
 

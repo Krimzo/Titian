@@ -3,7 +3,7 @@
 
 titian::DefaultAnimations::DefaultAnimations(kl::GPU* gpu, Scene* scene)
 {
-    auto create_animation = [&](kl::Object<Animation>& animation, std::initializer_list<std::string> meshes)
+    auto create_animation = [&](Ref<Animation>& animation, std::initializer_list<String> meshes)
     {
         animation = new Animation(gpu, scene);
         animation->meshes.insert(animation->meshes.end(), meshes);

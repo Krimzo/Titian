@@ -9,16 +9,16 @@ namespace titian {
     class GUISectionMaterialEditor : public GUISection
     {
     public:
-        kl::Object<Camera> camera = nullptr;
-        kl::Object<Texture> render_texture = nullptr;
-        kl::Object<Texture> depth_texture = nullptr;
+        Ref<Camera> camera = nullptr;
+        Ref<Texture> render_texture = nullptr;
+        Ref<Texture> depth_texture = nullptr;
 
         bool was_focused = true;
         int last_scroll = 0;
         kl::Float2 initial_camera_info = { 40, 30 };
         kl::Float2 camera_info = initial_camera_info;
 
-        std::string selected_material = {};
+        String selected_material = {};
 
         GUISectionMaterialEditor(const LayerPackage& package);
 

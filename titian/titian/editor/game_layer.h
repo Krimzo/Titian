@@ -10,7 +10,7 @@ namespace titian {
 	public:
 		bool game_running = false;
 		bool game_paused = false;
-		kl::Object<Scene> scene = nullptr;
+		Ref<Scene> scene = nullptr;
 
 		GameLayer();
 

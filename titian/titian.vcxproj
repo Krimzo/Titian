@@ -494,9 +494,10 @@
     <ClInclude Include="titian\gui\sections\section_viewport.h" />
     <ClInclude Include="titian\render\pass\post_pass.h" />
     <ClInclude Include="titian\scene\default\default_animations.h" />
-    <ClInclude Include="titian\scripting\interp\language_editor.h" />
-    <ClInclude Include="titian\scripting\nodes\scripting_nodes.h" />
+    <ClInclude Include="titian\gui\editors\code_editor.h" />
+    <ClInclude Include="titian\nodes\nodes.h" />
     <ClInclude Include="titian\scripting\node_script.h" />
+    <ClInclude Include="titian\standard\standard.h" />
     <ClInclude Include="titian\ui\ui_funcs.h" />
     <ClInclude Include="titian\utility\async_util.h" />
     <ClInclude Include="titian\utility\gui_util.h" />
@@ -552,10 +553,10 @@
     <ClInclude Include="titian\scene\scene.h" />
     <ClCompile Include="titian\scene\scene.cpp" />
     <ClInclude Include="titian\scripting\interp_script.h" />
-    <ClCompile Include="titian\scripting\interp\language_editor.cpp" />
+    <ClCompile Include="titian\gui\editors\code_editor.cpp" />
     <ClCompile Include="titian\scripting\interp_script.cpp" />
     <ClCompile Include="titian\scripting\native_script.cpp" />
-    <ClCompile Include="titian\scripting\nodes\scripting_nodes.cpp" />
+    <ClCompile Include="titian\nodes\nodes.cpp" />
     <ClCompile Include="titian\scripting\node_script.cpp" />
     <ClCompile Include="titian\scripting\script.cpp" />
     <ClInclude Include="titian\scripting\script.h" />

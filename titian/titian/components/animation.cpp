@@ -50,7 +50,7 @@ void titian::Animation::serialize(Serializer* serializer, const void* helper_dat
 		}
 	}
 
-	std::function<void(const AnimationNode*)> rec_helper;
+	Function<void(const AnimationNode*)> rec_helper;
 	rec_helper = [&](const AnimationNode* node)
 	{
 		serializer->write_object<int>(node->channel_index);
@@ -98,7 +98,7 @@ void titian::Animation::deserialize(const Serializer* serializer, const void* he
 		}
 	}
 
-	std::function<void(AnimationNode*)> rec_helper;
+	Function<void(AnimationNode*)> rec_helper;
 	rec_helper = [&](AnimationNode* node)
 	{
 		serializer->read_object<int>(node->channel_index);

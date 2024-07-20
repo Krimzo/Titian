@@ -41,7 +41,7 @@ void titian::Shader::reload_for_material()
 		return;
 	}
 
-	std::stringstream shader_sources[2] = {};
+	StringStream shader_sources[2] = {};
 	int shader_process_type = -1;
 	for (const auto& line : kl::split_string(data_buffer, '\n')) {
 		if (line.find("#define _CUSTOM_VERTEX_SHADER") != -1) {
@@ -55,7 +55,7 @@ void titian::Shader::reload_for_material()
 		}
 	}
 
-	std::stringstream full_source{};
+	StringStream full_source{};
 	for (const auto& line : kl::split_string(kl::read_file_string("builtin/shaders/scene_pass.hlsl"), '\n')) {
 		if (line.find("#define _CUSTOM_VERTEX_SHADER_PLACEHOLDER") != -1) {
 			full_source << shader_sources[0].str() << '\n';
@@ -68,7 +68,7 @@ void titian::Shader::reload_for_material()
 		}
 	}
 
-	const std::vector<kl::dx::LayoutDescriptor> vertex_layout_descriptors = {
+	const Vector<kl::dx::LayoutDescriptor> vertex_layout_descriptors = {
 		{    "KL_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{     "KL_Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{      "KL_Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },

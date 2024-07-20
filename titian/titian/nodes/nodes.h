@@ -35,6 +35,7 @@ namespace titian {
 		TRIANGLE,
 
 		MESH,
+		ANIMATION,
 		TEXTURE,
 		MATERIAL,
 
@@ -53,40 +54,29 @@ namespace titian {
 	class Pin : public Unique
 	{
 	public:
-		std::string title;
+		String title;
 		PinType type;
 		Node* node;
 
-		inline Pin(const std::string& title, PinType type, Node* node)
-			: title(title), type(type), node(node)
-		{}
+		Pin(const String& title, PinType type, Node* node);
 	};
 
 	class Node : public Unique
 	{
 	public:
-		std::string title;
+		String title;
 		kl::Float2 screen_position;
 
-		std::optional<Pin> flow_input;
-		std::optional<Pin> flow_output;
+		Optional<Pin> flow_input;
+		Optional<Pin> flow_output;
 
-		std::vector<Pin> input_pins;
-		std::vector<Pin> output_pins;
+		Vector<Pin> input_pins;
+		Vector<Pin> output_pins;
 
-		std::function<void()> function;
+		Function<void()> function;
 
-		inline Node()
-		{}
+		Node();
 
-		inline void call()
-		{
-			if (function) {
-				function();
-			}
-			if (flow_output && flow_output.value().node) {
-				flow_output.value().node->call();
-			}
-		}
+		void call();
 	};
 }

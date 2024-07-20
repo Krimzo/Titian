@@ -1,7 +1,7 @@
 #pragma once
 
 #include "scripting/script.h"
-#include "scripting/nodes/scripting_nodes.h"
+#include "nodes/nodes.h"
 #include "scene/scene.h"
 
 
@@ -13,7 +13,7 @@ namespace titian {
 		Node update_node;
 		Node collision_node;
 		Node ui_node;
-		std::vector<Node> nodes;
+		Vector<Node> nodes;
 
 		NodeScript();
 

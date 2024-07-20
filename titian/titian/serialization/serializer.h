@@ -4,17 +4,17 @@
 
 
 namespace titian {
-	std::string format_serial_version(uint32_t version);
+	String format_serial_version(uint32_t version);
 
 	inline constexpr uint32_t SERIAL_VERSION = 0x19'07'2024;
-	inline const std::string SERIAL_VERSION_FORMAT = format_serial_version(SERIAL_VERSION);
+	inline const String SERIAL_VERSION_FORMAT = format_serial_version(SERIAL_VERSION);
 }
 
 namespace titian {
 	class Serializer
 	{
 	public:
-		Serializer(const std::string& path, bool write);
+		Serializer(const String& path, bool write);
 		~Serializer();
 
 		operator bool() const;
@@ -52,12 +52,12 @@ namespace titian {
 		}
 
 		// String
-		void write_string(const std::string& data);
-		void read_string(std::string& data) const;
-		std::string read_string() const;
+		void write_string(const String& data);
+		void read_string(String& data) const;
+		String read_string() const;
 
 	private:
-		const std::string m_path;
+		const String m_path;
 		const bool m_writing;
 
 		kl::File m_file = {};

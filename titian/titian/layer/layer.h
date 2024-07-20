@@ -82,7 +82,7 @@ namespace titian {
 	class Layer : public LayerPackage, public BenchmarkInfo
 	{
 	public:
-		Layer(const std::string& name);
+		Layer(const String& name);
 		virtual ~Layer() = default;
 
 		Layer(const Layer&) = delete;

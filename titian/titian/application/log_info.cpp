@@ -8,6 +8,6 @@ titian::LogInfo::LogInfo(const char* message)
     : message(message)
 {}
 
-titian::LogInfo::LogInfo(const std::string& message)
+titian::LogInfo::LogInfo(const String& message)
     : message(message)
 {}

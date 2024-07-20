@@ -16,16 +16,16 @@ void sandbox::SandboxPiecePhysicsTest::setup_self()
 
 void sandbox::SandboxPiecePhysicsTest::setup_platform(Scene* scene)
 {
-    const std::string mesh_name = "cube";
-    const std::string animation_name = "cube";
-    const std::string material_name = "white";
-    const std::string entity_name = "PhysicsTestPlatform";
+    const String mesh_name = "cube";
+    const String animation_name = "cube";
+    const String material_name = "white";
+    const String entity_name = "PhysicsTestPlatform";
 
     scene->meshes[mesh_name] = scene->default_meshes->cube;
     scene->animations[animation_name] = scene->default_animations->cube;
     scene->materials[material_name] = scene->default_materials->white;
 
-    kl::Object platform = scene->new_entity(false);
+    Ref platform = scene->new_entity(false);
 
     const kl::Float3 scale = { 15.0f, 0.1f, 15.0f };
     platform->scale = scale;
@@ -46,13 +46,13 @@ void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
     const kl::Float3 scale = { 0.5f, 0.5f, 0.5f };
     int box_counter = 0;
 
-    const std::string color_map = "dogo";
-    const std::string normal_map = "concrete_normal";
+    const String color_map = "dogo";
+    const String normal_map = "concrete_normal";
 
-    kl::Object<Texture> color_map_tex;
-    kl::Object<Texture> normal_map_tex;
+    Ref<Texture> color_map_tex;
+    Ref<Texture> normal_map_tex;
 
-    auto create_texture = [&](kl::Object<Texture>& texture, const char* filename)
+    auto create_texture = [&](Ref<Texture>& texture, const char* filename)
     {
         texture = new Texture(&editor->app_layer.gpu);
         texture->data_buffer.load_from_file(filename);
@@ -71,17 +71,17 @@ void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
 
     for (int z = 0; z < size; z++) {
         for (int x = 0; x < size; x++) {
-            const std::string mesh_name = "cube";
-            const std::string animation_name = "cube";
-            const std::string counter_id = kl::format(std::setw(3), std::setfill('0'), box_counter);
-            const std::string material_name = kl::format("box_mat_", counter_id);
-            const std::string entity_name = kl::format("Box", counter_id);
+            const String mesh_name = "cube";
+            const String animation_name = "cube";
+            const String counter_id = kl::format(std::setw(3), std::setfill('0'), box_counter);
+            const String material_name = kl::format("box_mat_", counter_id);
+            const String entity_name = kl::format("Box", counter_id);
 
             scene->meshes[mesh_name] = scene->default_meshes->cube;
 			scene->animations[animation_name] = scene->default_animations->cube;
 
             // Material
-            kl::Object material = new Material();
+            Ref material = new Material();
             material->texture_blend = 0.5f;
             material->color = kl::random::gen_color();
             material->color_map_name = color_map;
@@ -89,7 +89,7 @@ void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
             scene->materials[material_name] = material;
 
             // Entity
-            kl::Object box = scene->new_entity(true);
+            Ref box = scene->new_entity(true);
             box->scale = scale;
             box->set_rotation(kl::random::gen_float3(360.0f));
             box->set_position({ (half_size - x) * 2.25f, 15.0f + (z - size / 2) * 1.5f, -25.0f + (half_size - z) * 2.25f});

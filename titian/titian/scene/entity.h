@@ -23,12 +23,12 @@ namespace titian {
         kl::Float3 scale{ 1.0f };
         bool casts_shadows = true;
 
-        std::string animation_name = "/";
-        std::string material_name = "/";
-        std::string collider_mesh_name = "/";
+        String animation_name = "/";
+        String material_name = "/";
+        String collider_mesh_name = "/";
 
         // Creation
-        Entity(EntityType type, physx::PxPhysics* physics, bool dynamic);
+        Entity(EntityType type, px::PxPhysics* physics, bool dynamic);
         ~Entity() override;
 
         Entity(const Entity&) = delete;
@@ -41,7 +41,7 @@ namespace titian {
         void deserialize(const Serializer* serializer, const void* helper_data) override;
 
         // Get
-        physx::PxRigidActor* actor() const;
+        px::PxRigidActor* actor() const;
         kl::Float4x4 model_matrix() const;
         kl::Float4x4 collider_matrix() const;
 
@@ -69,16 +69,16 @@ namespace titian {
         kl::Float3 angular() const;
 
         // Collision
-        void set_collider(const kl::Object<Collider>& collider);
-        kl::Object<Collider> collider() const;
+        void set_collider(const Ref<Collider>& collider);
+        Ref<Collider> collider() const;
 
     private:
-        physx::PxPhysics* m_physics = nullptr;
-        physx::PxRigidActor* m_actor = nullptr;
-        kl::Object<Collider> m_collider = nullptr;
+        px::PxPhysics* m_physics = nullptr;
+        px::PxRigidActor* m_actor = nullptr;
+        Ref<Collider> m_collider = nullptr;
 
         void cleanup();
-        void generate_actor(const physx::PxTransform& transform, bool dynamic);
+        void generate_actor(const px::PxTransform& transform, bool dynamic);
         void wake_up() const;
     };
 }

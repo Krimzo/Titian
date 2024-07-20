@@ -1,13 +1,13 @@
 #include "main.h"
 
 
-titian::LanguageEditor::LanguageEditor()
+titian::CodeEditor::CodeEditor()
 	: m_text_editor()
 {
 	static const bool first_time_init = [&]() {
 		// chai
 		TextEditor::LanguageDefinition* chai = TextEditor::LanguageDefinition::Chai();
-		chai->mKeywords = INTERP_SCRIPT_KEYWORDS;
+		chai->mKeywords.insert(INTERP_SCRIPT_KEYWORDS.begin(), INTERP_SCRIPT_KEYWORDS.end());
 		chai->mIdentifiers.clear();
 		for (const auto& [name, info] : INTERP_SCRIPT_IDENTIFIERS) {
 			TextEditor::Identifier identifier = {};
@@ -16,7 +16,7 @@ titian::LanguageEditor::LanguageEditor()
 		}
 
 		// hlsl
-		std::unordered_map<std::string, std::string> HLSL_IDENTIFIERS;
+		Map<String, String> HLSL_IDENTIFIERS;
 		HLSL_IDENTIFIERS["VS_OUT"] = "Computed vertex data.";
 		HLSL_IDENTIFIERS["PS_OUT"] = "Computed pixel data.";
 
@@ -87,28 +87,28 @@ titian::LanguageEditor::LanguageEditor()
 	m_text_editor.SetPalette(TextEditor::PaletteId::Dark);
 }
 
-void titian::LanguageEditor::load(const std::string& source)
+void titian::CodeEditor::load(const String& source)
 {
 	m_text_editor.SetText(source);
 }
 
-void titian::LanguageEditor::edit(std::string* source)
+void titian::CodeEditor::edit(String* source)
 {
 	m_text_editor.Render("Interp Editor");
 	*source = m_text_editor.GetText();
 }
 
-std::string titian::LanguageEditor::get_word_at_cursor() const
+titian::String titian::CodeEditor::get_word_at_cursor() const
 {
 	return m_text_editor.get_word_at_cursor();
 }
 
-void titian::LanguageEditor::replace_word_at_cursor(const std::string_view& text)
+void titian::CodeEditor::replace_word_at_cursor(const String& text)
 {
 	m_text_editor.replace_word_at_cursor(text);
 }
 
-const TextEditor::LanguageDefinition* titian::LanguageEditor::get_definition() const
+const TextEditor::LanguageDefinition* titian::CodeEditor::get_definition() const
 {
 	switch (m_text_editor.GetLanguageDefinition())
 	{
@@ -120,17 +120,17 @@ const TextEditor::LanguageDefinition* titian::LanguageEditor::get_definition() c
 	return nullptr;
 }
 
-const TextEditor::Palette* titian::LanguageEditor::get_palette() const
+const TextEditor::Palette* titian::CodeEditor::get_palette() const
 {
 	return &m_text_editor.mPalette;
 }
 
-void titian::LanguageEditor::load_chai_standard()
+void titian::CodeEditor::load_chai_standard()
 {
 	m_text_editor.SetLanguageDefinition(TextEditor::LanguageDefinitionId::Chai);
 }
 
-void titian::LanguageEditor::load_hlsl_standard()
+void titian::CodeEditor::load_hlsl_standard()
 {
 	m_text_editor.SetLanguageDefinition(TextEditor::LanguageDefinitionId::Hlsl);
 }

@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-titian::AmbientLight::AmbientLight(physx::PxPhysics* physics, const bool dynamic)
+titian::AmbientLight::AmbientLight(px::PxPhysics* physics, const bool dynamic)
 	: Light(EntityType::AMBIENT_LIGHT, physics, dynamic)
 {}
 

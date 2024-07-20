@@ -15,9 +15,9 @@ namespace titian {
         SCENE,
     };
 
-    inline FileType classify_file(const std::filesystem::path& file)
+    inline FileType classify_file(const fs::path& file)
     {
-        const std::string extension = file.extension().string();
+        const String extension = file.extension().string();
         if (extension == FILE_EXTENSION_OBJ || extension == FILE_EXTENSION_GLB || extension == FILE_EXTENSION_FBX) {
             return FileType::MESH;
         }
@@ -36,14 +36,14 @@ namespace titian {
         return FileType::DEFAULT;
     }
 
-    inline std::unordered_map<std::string, std::string> parse_ini_file(const std::string& path)
+    inline Map<String, String> parse_ini_file(const String& path)
     {
-        std::unordered_map<std::string, std::string> data{};
+        Map<String, String> data{};
         for (auto& line : kl::split_string(kl::read_file_string(path), '\n')) {
-            const std::vector parts = kl::split_string(line, '=');
+            const Vector<String> parts = kl::split_string(line, '=');
             if (parts.size() == 2) {
-                const std::string key = trim(parts[0]);
-				const std::string value = trim(parts[1]);
+                const String key = trim(parts[0]);
+				const String value = trim(parts[1]);
 				data[key] = value;
             }
         }

@@ -8,7 +8,7 @@ namespace titian {
 	class GUILayer : public Layer
 	{
 	public:
-		std::vector<kl::Object<GUISection>> sections = {};
+		Vector<Ref<GUISection>> sections = {};
 		float dpi_scaling = 1.0f;
 
 		kl::Float4 special_color = kl::colors::WHITE;

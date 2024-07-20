@@ -1,18 +1,18 @@
 #include "main.h"
 
 
-int titian_entry(const int argc, const char** argv, const std::unordered_map<std::string, std::string>& ini_data, const bool use_editor)
+int titian_entry(const int argc, const char** argv, const titian::Map<titian::String, titian::String>& ini_data, const bool use_editor)
 {
 	using namespace titian;
 
 	bool is_valid = true;
-	kl::Object<LayerStack> layer_stack;
+	Ref<LayerStack> layer_stack;
 
 	if (use_editor) {
 		layer_stack = new TitianEditor();
 	}
 	else {
-		std::string entry_scene = "entry.titian";
+		String entry_scene = "entry.titian";
 		if (argc >= 3) {
 			entry_scene = argv[2];
 			Logger::log("Using argument entry scene: ", entry_scene);
@@ -25,7 +25,7 @@ int titian_entry(const int argc, const char** argv, const std::unordered_map<std
 			Logger::log("Entry scene defaulting to ", entry_scene);
 		}
 
-		kl::Object game = new TitianGame(entry_scene);
+		Ref game = new TitianGame(entry_scene);
 		is_valid = game->is_valid();
 		layer_stack = game;
 	}

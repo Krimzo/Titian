@@ -28,16 +28,16 @@ void titian::GUISectionScriptEditor::render_gui()
 	InterpScript* interp_script = dynamic_cast<InterpScript*>(script);
 	NodeScript* node_script = dynamic_cast<NodeScript*>(script);
 
-	if (imgui::Begin("Script Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-		const float available_width = imgui::GetContentRegionAvail().x;
-		imgui::Columns(2, "ScriptEditorColumns", false);
+	if (im::Begin("Script Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+		const float available_width = im::GetContentRegionAvail().x;
+		im::Columns(2, "ScriptEditorColumns", false);
 
-		imgui::SetColumnWidth(imgui::GetColumnIndex(), available_width * 0.25f);
-		if (imgui::BeginChild("ScriptListChild")) {
+		im::SetColumnWidth(im::GetColumnIndex(), available_width * 0.25f);
+		if (im::BeginChild("ScriptListChild")) {
 			display_scripts(scene);
 		}
-		imgui::EndChild();
-		imgui::NextColumn();
+		im::EndChild();
+		im::NextColumn();
 
 		if (native_script) {
 			edit_native_script(native_script);
@@ -49,17 +49,17 @@ void titian::GUISectionScriptEditor::render_gui()
 			edit_node_script(node_script);
 		}
 
-		if (const std::optional file = gui_get_drag_drop<std::string>(DRAG_FILE_ID)) {
-			const std::filesystem::path path = file.value();
-			const std::string extension = path.extension().string();
+		if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
+			const fs::path path = file.value();
+			const String extension = path.extension().string();
 			if (extension == FILE_EXTENSION_CHAI) {
-				kl::Object script = new InterpScript();
+				Ref script = new InterpScript();
 				script->source = kl::read_file_string(path.string());
 				script->reload();
 				scene->scripts[scene->generate_unique_name(path.filename().string(), scene->scripts)] = script;
 			}
 			else if (extension == FILE_EXTENSION_DLL) {
-				kl::Object script = new NativeScript();
+				Ref script = new NativeScript();
 				script->data = kl::read_file(path.string());
 				script->reload();
 				scene->scripts[scene->generate_unique_name(path.filename().string(), scene->scripts)] = script;
@@ -68,33 +68,33 @@ void titian::GUISectionScriptEditor::render_gui()
 
 		show_script_properties(script);
 	}
-	imgui::End();
+	im::End();
 }
 
 void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 {
-	if (imgui::BeginPopupContextWindow("NewScript", ImGuiPopupFlags_MouseButtonMiddle)) {
-		const std::string name = gui_input_continuous("##CreateScriptInput");
+	if (im::BeginPopupContextWindow("NewScript", ImGuiPopupFlags_MouseButtonMiddle)) {
+		const String name = gui_input_continuous("##CreateScriptInput");
 		if (!name.empty() && !scene->scripts.contains(name)) {
-			if (imgui::MenuItem("New Interp Script")) {
+			if (im::MenuItem("New Interp Script")) {
 				scene->scripts[name] = new InterpScript();
-				imgui::CloseCurrentPopup();
+				im::CloseCurrentPopup();
 			}
 #if false
-			if (imgui::MenuItem("New Node Script")) {
+			if (im::MenuItem("New Node Script")) {
 				scene->scripts[name] = new NodeScript();
-				imgui::CloseCurrentPopup();
+				im::CloseCurrentPopup();
 			}
 #endif
-			if (imgui::MenuItem("New Native Script")) {
+			if (im::MenuItem("New Native Script")) {
 				scene->scripts[name] = new NativeScript();
-				imgui::CloseCurrentPopup();
+				im::CloseCurrentPopup();
 			}
 		}
-		imgui::EndPopup();
+		im::EndPopup();
 	}
 
-	const std::string filter = gui_input_continuous("Search###ScriptEditor");
+	const String filter = gui_input_continuous("Search###ScriptEditor");
 	for (auto& [script_name, script] : scene->scripts) {
 		if (!filter.empty() && script_name.find(filter) == -1) {
 			continue;
@@ -102,30 +102,30 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 
 		// Script type
 		if (script.is<const NativeScript>()) {
-			imgui::Button("NATIVE");
+			im::Button("NATIVE");
 		}
 		else if (script.is<const InterpScript>()) {
-			imgui::Button("INTERP");
+			im::Button("INTERP");
 		}
 		else if (script.is<const NodeScript>()) {
-			imgui::Button("NODE");
+			im::Button("NODE");
 		}
 		else {
-			imgui::Button("SCRIPT");
+			im::Button("SCRIPT");
 		}
-		imgui::SameLine();
+		im::SameLine();
 
 		// Script name
-		if (imgui::Selectable(script_name.c_str(), script_name == this->selected_script)) {
+		if (im::Selectable(script_name.c_str(), script_name == this->selected_script)) {
 			this->selected_script = script_name;
 		}
 
-		if (imgui::BeginPopupContextItem(script_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+		if (im::BeginPopupContextItem(script_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
 			bool should_break = false;
-			imgui::Text("Edit Script");
+			im::Text("Edit Script");
 
-			if (std::optional opt_name = gui_input_waited("##RenameScriptInput", script_name)) {
-				const std::string& name = opt_name.value();
+			if (Optional opt_name = gui_input_waited("##RenameScriptInput", script_name)) {
+				const String& name = opt_name.value();
 				if (!name.empty() && !scene->scripts.contains(name)) {
 					if (this->selected_script == script_name) {
 						this->selected_script = name;
@@ -133,26 +133,26 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 					scene->scripts[name] = script;
 					scene->scripts.erase(script_name);
 					should_break = true;
-					imgui::CloseCurrentPopup();
+					im::CloseCurrentPopup();
 				}
 			}
 
-			if (imgui::Button("Reload", { -1.0f, 0.0f })) {
+			if (im::Button("Reload", { -1.0f, 0.0f })) {
 				script->reload();
 				should_break = true;
-				imgui::CloseCurrentPopup();
+				im::CloseCurrentPopup();
 			}
 
-			if (imgui::Button("Delete", { -1.0f, 0.0f })) {
+			if (im::Button("Delete", { -1.0f, 0.0f })) {
 				if (this->selected_script == script_name) {
 					this->selected_script = "/";
 				}
 				scene->scripts.erase(script_name);
 				should_break = true;
-				imgui::CloseCurrentPopup();
+				im::CloseCurrentPopup();
 			}
 
-			imgui::EndPopup();
+			im::EndPopup();
 			if (should_break) {
 				break;
 			}
@@ -162,31 +162,31 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 
 void titian::GUISectionScriptEditor::show_script_properties(Script* script) const
 {
-	if (imgui::Begin("Script Properties") && script) {
-		imgui::Text("Info");
+	if (im::Begin("Script Properties") && script) {
+		im::Text("Info");
 
-		imgui::Text("Name: ");
-		imgui::SameLine();
+		im::Text("Name: ");
+		im::SameLine();
 		gui_colored_text(selected_script, gui_layer->special_color);
 
-		imgui::Text("Type: ");
-		imgui::SameLine();
+		im::Text("Type: ");
+		im::SameLine();
 		if (dynamic_cast<NativeScript*>(script)) {
-			imgui::Text("NATIVE");
+			im::Text("NATIVE");
 		}
 		else if (dynamic_cast<InterpScript*>(script)) {
-			imgui::Text("INTERP");
+			im::Text("INTERP");
 		}
 		else if (dynamic_cast<NodeScript*>(script)) {
-			imgui::Text("NODE");
+			im::Text("NODE");
 		}
 	}
-	imgui::End();
+	im::End();
 }
 
 void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
 {
-	std::vector<byte>& data = script->data;
+	Vector<byte>& data = script->data;
 	m_native_editor.DrawContents(data.data(), data.size());
 }
 
@@ -197,49 +197,49 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 		m_interp_editor.load(script->source);
 	}
 
-	imgui::PushFont(gui_layer->roboto_font_large);
+	im::PushFont(gui_layer->roboto_font_large);
 	m_interp_editor.edit(&script->source);
 
-	if (imgui::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
+	if (im::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const TextEditor::LanguageDefinition* definition = m_interp_editor.get_definition();
-		const std::string current_word = m_interp_editor.get_word_at_cursor();
+		const String current_word = m_interp_editor.get_word_at_cursor();
 		if (definition && !current_word.empty()) {
 			const TextEditor::Palette& palette = *m_interp_editor.get_palette();
-			imgui::PushStyleColor(ImGuiCol_Text, (ImU32) ImColor(220, 206, 125, 255));
+			im::PushStyleColor(ImGuiCol_Text, (ImU32) ImColor(220, 206, 125, 255));
 			for (const auto& [member, _] : INTERP_SCRIPT_MEMBERS) {
 				if (member.find(current_word) != -1) {
-					if (imgui::MenuItem(member.c_str())) {
+					if (im::MenuItem(member.c_str())) {
 						m_interp_editor.replace_word_at_cursor(member);
 					}
 				}
 			}
-			imgui::PushStyleColor(ImGuiCol_Text, palette[1]);
+			im::PushStyleColor(ImGuiCol_Text, palette[1]);
 			for (const auto& keyword : definition->mKeywords) {
 				if (keyword.find(current_word) != -1) {
-					if (imgui::MenuItem(keyword.c_str())) {
+					if (im::MenuItem(keyword.c_str())) {
 						m_interp_editor.replace_word_at_cursor(keyword);
 					}
 				}
 			}
-			imgui::PushStyleColor(ImGuiCol_Text, palette[8]);
+			im::PushStyleColor(ImGuiCol_Text, palette[8]);
 			for (const auto& [identifier, _] : definition->mIdentifiers) {
 				if (identifier.find(current_word) != -1) {
-					if (imgui::MenuItem(identifier.c_str())) {
+					if (im::MenuItem(identifier.c_str())) {
 						m_interp_editor.replace_word_at_cursor(identifier);
 					}
 				}
 			}
-			imgui::PopStyleColor(3);
+			im::PopStyleColor(3);
 		}
 	}
-	imgui::End();
-	imgui::PopFont();
+	im::End();
+	im::PopFont();
 }
 
 void titian::GUISectionScriptEditor::edit_node_script(NodeScript* script)
 {
-	imgui::Text("Node Editor");
-	imgui::Separator();
+	im::Text("Node Editor");
+	im::Separator();
 
 	ed::SetCurrentEditor(m_node_editor);
 	ed::Begin("Node Editor", ImVec2(-1.0f, -1.0f));
@@ -249,31 +249,31 @@ void titian::GUISectionScriptEditor::edit_node_script(NodeScript* script)
 		auto display_pin = [&](const Pin& pin, PinKind kind)
 		{
 			ed::BeginPin(pin.id, kind);
-			imgui::Text(pin.title.c_str());
+			im::Text(pin.title.c_str());
 			ed::EndPin();
 		};
 
 		ed::BeginNode(node.id);
-		imgui::Text(node.title.c_str());
+		im::Text(node.title.c_str());
 
-		imgui::BeginGroup();
+		im::BeginGroup();
 		if (node.flow_input) {
 			display_pin(node.flow_input.value(), PinKind::Input);
 		}
 		for (auto& pin : node.input_pins) {
 			display_pin(pin, PinKind::Input);
 		}
-		imgui::EndGroup();
-		imgui::SameLine();
+		im::EndGroup();
+		im::SameLine();
 
-		imgui::BeginGroup();
+		im::BeginGroup();
 		if (node.flow_output) {
 			display_pin(node.flow_output.value(), PinKind::Output);
 		}
 		for (auto& pin : node.output_pins) {
 			display_pin(pin, PinKind::Output);
 		}
-		imgui::EndGroup();
+		im::EndGroup();
 
 		ed::EndNode();
 	};

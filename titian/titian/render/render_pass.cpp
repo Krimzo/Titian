@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-titian::RenderPass::RenderPass(const std::string& name, const LayerPackage& package)
+titian::RenderPass::RenderPass(const String& name, const LayerPackage& package)
 	: BenchmarkInfo(name)
 	, LayerHolder(package)
 {}

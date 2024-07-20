@@ -1,12 +1,12 @@
 #include "main.h"
 
 
-titian::Entity::Entity(const EntityType type, physx::PxPhysics* physics, const bool dynamic)
+titian::Entity::Entity(const EntityType type, px::PxPhysics* physics, const bool dynamic)
     : type(type), m_physics(physics)
 {
-    physx::PxTransform transform = {};
-    transform.q = physx::PxQuat(physx::PxIdentity);
-    transform.p = physx::PxVec3(physx::PxZero);
+    px::PxTransform transform = {};
+    transform.q = px::PxQuat(px::PxIdentity);
+    transform.p = px::PxVec3(px::PxZero);
     generate_actor(transform, dynamic);
 }
 
@@ -62,14 +62,14 @@ void titian::Entity::deserialize(const Serializer* serializer, const void* helpe
 
     const bool has_collider = serializer->read_object<bool>();
     if (has_collider) {
-        kl::Object new_collider = new Collider(m_physics);
+        Ref new_collider = new Collider(m_physics);
         new_collider->deserialize(serializer, helper_data);
         this->set_collider(new_collider);
     }
 }
 
 // Get
-physx::PxRigidActor* titian::Entity::actor() const
+px::PxRigidActor* titian::Entity::actor() const
 {
     return m_actor;
 }
@@ -97,27 +97,27 @@ kl::Float4x4 titian::Entity::collider_matrix() const
 void titian::Entity::set_rotation(const kl::Float3& rotation)
 {
     const kl::Float4 quat = kl::to_quaternion(rotation);
-    physx::PxTransform transform = m_actor->getGlobalPose();
-    transform.q = (const physx::PxQuat&)quat;
+    px::PxTransform transform = m_actor->getGlobalPose();
+    transform.q = (const px::PxQuat&)quat;
     m_actor->setGlobalPose(transform);
 }
 
 kl::Float3 titian::Entity::rotation() const
 {
-    const physx::PxTransform transform = m_actor->getGlobalPose();
+    const px::PxTransform transform = m_actor->getGlobalPose();
     return kl::to_euler<float>((const kl::Float4&) transform.q);
 }
 
 void titian::Entity::set_position(const kl::Float3& position)
 {
-    physx::PxTransform transform = m_actor->getGlobalPose();
-    transform.p = (const physx::PxVec3&)position;
+    px::PxTransform transform = m_actor->getGlobalPose();
+    transform.p = (const px::PxVec3&)position;
     m_actor->setGlobalPose(transform);
 }
 
 kl::Float3 titian::Entity::position() const
 {
-    const physx::PxTransform transform = m_actor->getGlobalPose();
+    const px::PxTransform transform = m_actor->getGlobalPose();
     return (const kl::Float3&)transform.p;
 }
 
@@ -128,8 +128,8 @@ void titian::Entity::set_dynamic(const bool enabled)
     if ((old_dynamic && enabled) || (!old_dynamic && !enabled)) {
         return;
     }
-    const physx::PxTransform old_transform = m_actor->getGlobalPose();
-    kl::Object<Collider> old_collider = m_collider;
+    const px::PxTransform old_transform = m_actor->getGlobalPose();
+    Ref<Collider> old_collider = m_collider;
     set_collider(nullptr);
     generate_actor(old_transform, enabled);
     set_collider(old_collider);
@@ -137,13 +137,13 @@ void titian::Entity::set_dynamic(const bool enabled)
 
 bool titian::Entity::is_dynamic() const
 {
-    const physx::PxActorType::Enum type = m_actor->getType();
-    return type == physx::PxActorType::Enum::eRIGID_DYNAMIC;
+    const px::PxActorType::Enum type = m_actor->getType();
+    return type == px::PxActorType::Enum::eRIGID_DYNAMIC;
 }
 
 void titian::Entity::set_gravity(const bool enabled)
 {
-    m_actor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !enabled);
+    m_actor->setActorFlag(px::PxActorFlag::eDISABLE_GRAVITY, !enabled);
     if (enabled) {
         wake_up();
     }
@@ -151,8 +151,8 @@ void titian::Entity::set_gravity(const bool enabled)
 
 bool titian::Entity::has_gravity() const
 {
-    const physx::PxActorFlags flags = m_actor->getActorFlags();
-    return !flags.isSet(physx::PxActorFlag::eDISABLE_GRAVITY);
+    const px::PxActorFlags flags = m_actor->getActorFlags();
+    return !flags.isSet(px::PxActorFlag::eDISABLE_GRAVITY);
 }
 
 void titian::Entity::set_mass(const float mass)
@@ -160,7 +160,7 @@ void titian::Entity::set_mass(const float mass)
     if (!is_dynamic()) {
         return;
     }
-    physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*)m_actor;
+    px::PxRigidDynamic* actor = (px::PxRigidDynamic*)m_actor;
     actor->setMass(mass);
 }
 
@@ -169,7 +169,7 @@ float titian::Entity::mass() const
     if (!is_dynamic()) {
         return 0.0f;
     }
-    const physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*)m_actor;
+    const px::PxRigidDynamic* actor = (px::PxRigidDynamic*)m_actor;
     return actor->getMass();
 }
 
@@ -178,8 +178,8 @@ void titian::Entity::set_velocity(const kl::Float3& velocity)
     if (!is_dynamic()) {
         return;
     }
-    physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*)m_actor;
-    actor->setLinearVelocity((const physx::PxVec3&)velocity);
+    px::PxRigidDynamic* actor = (px::PxRigidDynamic*)m_actor;
+    actor->setLinearVelocity((const px::PxVec3&)velocity);
 }
 
 kl::Float3 titian::Entity::velocity() const
@@ -187,8 +187,8 @@ kl::Float3 titian::Entity::velocity() const
     if (!is_dynamic()) {
         return {};
     }
-    const physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*)m_actor;
-    const physx::PxVec3 velocity = actor->getLinearVelocity();
+    const px::PxRigidDynamic* actor = (px::PxRigidDynamic*)m_actor;
+    const px::PxVec3 velocity = actor->getLinearVelocity();
     return (const kl::Float3&)velocity;
 }
 
@@ -197,8 +197,8 @@ void titian::Entity::set_angular(const kl::Float3& angular)
     if (!is_dynamic()) {
         return;
     }
-    physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*)m_actor;
-    actor->setAngularVelocity((const physx::PxVec3&)angular);
+    px::PxRigidDynamic* actor = (px::PxRigidDynamic*)m_actor;
+    actor->setAngularVelocity((const px::PxVec3&)angular);
 }
 
 kl::Float3 titian::Entity::angular() const
@@ -206,13 +206,13 @@ kl::Float3 titian::Entity::angular() const
     if (!is_dynamic()) {
         return {};
     }
-    const physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*)m_actor;
-    const physx::PxVec3 angular = actor->getAngularVelocity();
+    const px::PxRigidDynamic* actor = (px::PxRigidDynamic*)m_actor;
+    const px::PxVec3 angular = actor->getAngularVelocity();
     return (const kl::Float3&) angular;
 }
 
 // Collision
-void titian::Entity::set_collider(const kl::Object<Collider>& collider)
+void titian::Entity::set_collider(const Ref<Collider>& collider)
 {
     if (m_collider) {
         m_actor->detachShape(*m_collider->shape());
@@ -223,7 +223,7 @@ void titian::Entity::set_collider(const kl::Object<Collider>& collider)
     m_collider = collider;
 }
 
-kl::Object<titian::Collider> titian::Entity::collider() const
+titian::Ref<titian::Collider> titian::Entity::collider() const
 {
     return m_collider;
 }
@@ -236,7 +236,7 @@ void titian::Entity::cleanup()
     }
 }
 
-void titian::Entity::generate_actor(const physx::PxTransform& transform, const bool dynamic)
+void titian::Entity::generate_actor(const px::PxTransform& transform, const bool dynamic)
 {
     cleanup();
     if (dynamic) {
@@ -256,7 +256,7 @@ void titian::Entity::wake_up() const
     if (!is_dynamic()) {
         return;
     }
-    physx::PxRigidDynamic* actor = (physx::PxRigidDynamic*)m_actor;
+    px::PxRigidDynamic* actor = (px::PxRigidDynamic*)m_actor;
     if (actor->getScene()) {
         actor->wakeUp();
     }

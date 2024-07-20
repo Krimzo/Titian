@@ -2,13 +2,12 @@
 
 #include "scripting/script.h"
 #include "scene/scene.h"
-#include "chaiscript.hpp"
 
 
 namespace titian {
-	inline const chaiscript::ModulePtr INTERP_SCRIPT_MODULE = chaiscript::ModulePtr(new chaiscript::Module());
+	inline const cs::ModulePtr INTERP_SCRIPT_MODULE = cs::ModulePtr(new cs::Module());
 
-	inline const std::set<std::string> INTERP_SCRIPT_KEYWORDS
+	inline const Set<String> INTERP_SCRIPT_KEYWORDS
 	{
 		"attr",
 		"auto",
@@ -28,10 +27,10 @@ namespace titian {
 		"while",
 	};
 
-	inline std::map<std::string, std::string> INTERP_SCRIPT_IDENTIFIERS
+	inline Map<String, String> INTERP_SCRIPT_IDENTIFIERS
 	{};
 
-	inline std::map<std::string, std::string> INTERP_SCRIPT_MEMBERS
+	inline Map<String, String> INTERP_SCRIPT_MEMBERS
 	{};
 }
 
@@ -39,7 +38,7 @@ namespace titian {
 	class InterpScript : public Script
 	{
 	public:
-		std::string source = {};
+		String source;
 
 		InterpScript();
 
@@ -54,13 +53,13 @@ namespace titian {
 		void call_collision(Scene* scene, Entity* first, Entity* second) override;
 		void call_ui(Scene* scene) override;
 
-		std::map<std::string, chaiscript::Boxed_Value> get_parameters();
+		Map<String, cs::Boxed_Value> get_parameters();
 
 	private:
-		kl::Object<chaiscript::ChaiScript> m_engine = nullptr;
-		std::function<void(Scene*)> m_start_function = {};
-		std::function<void(Scene*)> m_update_function = {};
-		std::function<void(Scene*, Entity*, Entity*)> m_collision_function = {};
-		std::function<void(Scene*)> m_ui_function = {};
+		Ref<cs::ChaiScript> m_engine = nullptr;
+		Function<void(Scene*)> m_start_function = {};
+		Function<void(Scene*)> m_update_function = {};
+		Function<void(Scene*, Entity*, Entity*)> m_collision_function = {};
+		Function<void(Scene*)> m_ui_function = {};
 	};
 }

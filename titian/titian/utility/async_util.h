@@ -1,12 +1,12 @@
 #pragma once
 
-#include "klibrary.h"
+#include "standard/standard.h"
 
 
 namespace titian {
 	class WorkQueue
 	{
-		std::vector<std::future<void>> m_queue;
+		Vector<std::future<void>> m_queue;
 
 	public:
 		inline WorkQueue()

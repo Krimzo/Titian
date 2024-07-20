@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-titian::Layer::Layer(const std::string& name)
+titian::Layer::Layer(const String& name)
 	: BenchmarkInfo(name)
 {}
 

@@ -32,10 +32,10 @@ namespace titian {
         kl::Color background = {};
         kl::Float4x4 custom_data = {};
 
-        std::string skybox_name = "/";
-        std::string shader_name = "/";
+        String skybox_name = "/";
+        String shader_name = "/";
 
-        Camera(physx::PxPhysics* physics, bool dynamic);
+        Camera(px::PxPhysics* physics, bool dynamic);
 
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;

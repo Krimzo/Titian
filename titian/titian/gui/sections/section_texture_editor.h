@@ -9,7 +9,7 @@ namespace titian {
     class GUISectionTextureEditor : public GUISection
     {
     public:
-        std::string selected_texture = {};
+        String selected_texture = {};
 
         GUISectionTextureEditor(const LayerPackage& package);
 

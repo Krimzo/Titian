@@ -1,12 +1,12 @@
 #pragma once
 
-#include "klibrary.h"
+#include "standard/standard.h"
 
 
 namespace titian {
 	class TimeBomb
 	{
-		const std::function<void(float)> m_callback;
+		const Function<void(float)> m_callback;
 		uint64_t m_start_time = 0;
 
 	public:
@@ -29,10 +29,10 @@ namespace titian {
 	class BenchmarkInfo
 	{
 	public:
-		const std::string benchmark_name;
+		const String benchmark_name;
 		float benchmark_time = 0.0f;
 
-		inline BenchmarkInfo(const std::string& benchmark_name)
+		inline BenchmarkInfo(const String& benchmark_name)
 			: benchmark_name(benchmark_name)
 		{}
 

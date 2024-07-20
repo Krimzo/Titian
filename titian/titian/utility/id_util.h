@@ -1,11 +1,11 @@
 #pragma once
 
-#include "klibrary.h"
+#include "standard/standard.h"
 
 
 namespace titian {
 	using ID = int;
-	using IDStorage = std::unordered_set<ID>;
+	using IDStorage = Set<ID>;
 
 	namespace _priv {
 		inline IDStorage _ids = {};

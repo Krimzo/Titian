@@ -19,6 +19,6 @@ namespace titian {
         kl::dx::Buffer m_selected_entities_buff;
         kl::dx::ShaderView m_selected_entities_view;
 
-        void load_selected_entities(const std::vector<float>& entitiy_indices);
+        void load_selected_entities(const Vector<float>& entitiy_indices);
     };
 }

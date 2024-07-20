@@ -15,11 +15,11 @@ namespace titian {
         void render_gui() override;
 
     private:
-        const std::string m_temp_path = "temp.titian";
+        const String m_temp_path = "temp.titian";
 
-        kl::Object<Texture> m_start_button_texture = nullptr;
-        kl::Object<Texture> m_pause_button_texture = nullptr;
-        kl::Object<Texture> m_stop_button_texture = nullptr;
+        Ref<Texture> m_start_button_texture = nullptr;
+        Ref<Texture> m_pause_button_texture = nullptr;
+        Ref<Texture> m_stop_button_texture = nullptr;
 
         bool m_inputting_name = false;
         bool m_testing_exit = false;

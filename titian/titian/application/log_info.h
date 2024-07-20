@@ -1,18 +1,18 @@
 #pragma once
 
-#include "klibrary.h"
+#include "standard/standard.h"
 
 
 namespace titian {
 	class LogInfo
     {
     public:
-        std::string date = kl::format(kl::Date());
-        std::string message = {};
+        String date = kl::format(kl::Date());
+        String message = {};
 
         LogInfo();
         LogInfo(const char* message);
-        LogInfo(const std::string& message);
+        LogInfo(const String& message);
 
         template<typename... Args>
         LogInfo(const Args&... objects)

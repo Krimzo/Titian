@@ -140,7 +140,7 @@ void titian::ScenePass::render_self(StatePackage& package)
     global_cb.DELTA_TIME = timer->delta();
 
     // Preapare opaque objects
-    std::vector<std::tuple<uint32_t, Entity*, Animation*, Material*>> transparent_objects;
+    Vector<std::tuple<uint32_t, Entity*, Animation*, Material*>> transparent_objects;
     uint32_t id_counter = 0;
 
     // Render opaque objects

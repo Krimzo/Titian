@@ -1,7 +1,5 @@
 #include "main.h"
 
-namespace cs = chaiscript;
-
 
 /* Inter script */
 titian::InterpScript::InterpScript()
@@ -40,32 +38,32 @@ void titian::InterpScript::reload()
 		m_engine->add(INTERP_SCRIPT_MODULE);
 		m_engine->eval(this->source);
 	}
-	catch (std::exception& e) {
+	catch (Exception& e) {
 		Logger::log(e.what());
 	}
 
 	try {
-		m_start_function = m_engine->eval<std::function<void(Scene*)>>("on_start");
+		m_start_function = m_engine->eval<Function<void(Scene*)>>("on_start");
 	}
-	catch (std::exception&)
+	catch (Exception&)
 	{}
 
 	try {
-		m_update_function = m_engine->eval<std::function<void(Scene*)>>("on_update");
+		m_update_function = m_engine->eval<Function<void(Scene*)>>("on_update");
 	}
-	catch (std::exception&)
+	catch (Exception&)
 	{}
 
 	try {
-		m_collision_function = m_engine->eval<std::function<void(Scene*, Entity*, Entity*)>>("on_collision");
+		m_collision_function = m_engine->eval<Function<void(Scene*, Entity*, Entity*)>>("on_collision");
 	}
-	catch (std::exception&)
+	catch (Exception&)
 	{}
 
 	try {
-		m_ui_function = m_engine->eval<std::function<void(Scene*)>>("on_ui");
+		m_ui_function = m_engine->eval<Function<void(Scene*)>>("on_ui");
 	}
-	catch (std::exception&)
+	catch (Exception&)
 	{}
 }
 
@@ -78,7 +76,7 @@ void titian::InterpScript::call_start(Scene* scene)
 	try {
 		m_start_function(scene);
 	}
-	catch (std::exception& e) {
+	catch (Exception& e) {
 		Logger::log(e.what());
 	}
 }
@@ -92,7 +90,7 @@ void titian::InterpScript::call_update(Scene* scene)
 	try {
 		m_update_function(scene);
 	}
-	catch (std::exception& e) {
+	catch (Exception& e) {
 		Logger::log(e.what());
 	}
 }
@@ -106,7 +104,7 @@ void titian::InterpScript::call_collision(Scene* scene, Entity* first, Entity* s
 	try {
 		m_collision_function(scene, first, second);
 	}
-	catch (std::exception& e) {
+	catch (Exception& e) {
 		Logger::log(e.what());
 	}
 }
@@ -120,18 +118,18 @@ void titian::InterpScript::call_ui(Scene* scene)
 	try {
 		m_ui_function(scene);
 	}
-	catch (std::exception& e) {
+	catch (Exception& e) {
 		Logger::log(e.what());
 	}
 }
 
-std::map<std::string, cs::Boxed_Value> titian::InterpScript::get_parameters()
+titian::Map<titian::String, cs::Boxed_Value> titian::InterpScript::get_parameters()
 {
 	if (!m_engine) {
 		return {};
 	}
 
-	std::map<std::string, cs::Boxed_Value> result;
+	Map<String, cs::Boxed_Value> result;
 	for (auto& [name, value] : m_engine->get_state().engine_state.m_global_objects) {
 		if (name.starts_with("p_")) {
 			result[name] = value;
@@ -146,21 +144,21 @@ const int load_types = [&]
 	using namespace titian;
 	
 	// Bootstrap
-	cs::bootstrap::standard_library::vector_type<std::vector<std::string>>("StringData", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::vector_type<std::vector<kl::Vertex<float>>>("MeshData", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::vector_type<std::vector<kl::Color>>("TextureData", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<Vector<String>>("StringData", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<Vector<kl::Vertex<float>>>("MeshData", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<Vector<kl::Color>>("TextureData", *INTERP_SCRIPT_MODULE);
 
-	cs::bootstrap::standard_library::vector_type<std::vector<Mesh*>>("MeshVector", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::vector_type<std::vector<Animation*>>("AnimationVector", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::vector_type<std::vector<Texture*>>("TextureVector", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::vector_type<std::vector<Material*>>("MaterialVector", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::vector_type<std::vector<Entity*>>("EntityVector", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<Vector<Mesh*>>("MeshVector", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<Vector<Animation*>>("AnimationVector", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<Vector<Texture*>>("TextureVector", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<Vector<Material*>>("MaterialVector", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<Vector<Entity*>>("EntityVector", *INTERP_SCRIPT_MODULE);
 
-	cs::bootstrap::standard_library::map_type<std::map<std::string, Mesh*>>("MeshMap", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::map_type<std::map<std::string, Animation*>>("AnimationMap", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::map_type<std::map<std::string, Texture*>>("TextureMap", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::map_type<std::map<std::string, Material*>>("MaterialMap", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::map_type<std::map<std::string, Entity*>>("EntityMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<Map<String, Mesh*>>("MeshMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<Map<String, Animation*>>("AnimationMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<Map<String, Texture*>>("TextureMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<Map<String, Material*>>("MaterialMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<Map<String, Entity*>>("EntityMap", *INTERP_SCRIPT_MODULE);
 
 	// Derived
 	INTERP_SCRIPT_MODULE->add(cs::base_class<Entity, Camera>());
@@ -1087,11 +1085,11 @@ const int load_types = [&]
 		{ cs::fun(&Scene::helper_get_all_shaders), "get_all_shaders" },
 		{ cs::fun(&Scene::helper_get_all_entities), "get_all_entities" },
 
-		{ cs::fun<Camera* (Scene::*)(const std::string&)>(&Scene::get_casted<Camera>), "get_camera"},
-		{ cs::fun<Light* (Scene::*)(const std::string&)>(&Scene::get_casted<Light>), "get_light" },
-		{ cs::fun<AmbientLight* (Scene::*)(const std::string&)>(&Scene::get_casted<AmbientLight>), "get_ambient_light" },
-		{ cs::fun<PointLight* (Scene::*)(const std::string&)>(&Scene::get_casted<PointLight>), "get_point_light" },
-		{ cs::fun<DirectionalLight* (Scene::*)(const std::string&)>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
+		{ cs::fun<Camera* (Scene::*)(const String&)>(&Scene::get_casted<Camera>), "get_camera"},
+		{ cs::fun<Light* (Scene::*)(const String&)>(&Scene::get_casted<Light>), "get_light" },
+		{ cs::fun<AmbientLight* (Scene::*)(const String&)>(&Scene::get_casted<AmbientLight>), "get_ambient_light" },
+		{ cs::fun<PointLight* (Scene::*)(const String&)>(&Scene::get_casted<PointLight>), "get_point_light" },
+		{ cs::fun<DirectionalLight* (Scene::*)(const String&)>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Scene"] = "Collection of meshes, textures, materials, scripts and entities.";
 	INTERP_SCRIPT_MEMBERS["main_camera_name"] = "main_camera_name";
@@ -1470,7 +1468,7 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["on_ui"] = "Called every frame of the UI.";
 
 	// Logging
-	INTERP_SCRIPT_MODULE->add(cs::fun(&Logger::log<const std::string&>), "log");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Logger::log<const String&>), "log");
 	INTERP_SCRIPT_MODULE->eval("global print = fun(object) { return log(to_string(object)); }");
 	INTERP_SCRIPT_IDENTIFIERS["log"] = "Outputs the given string to the log window.";
 	INTERP_SCRIPT_IDENTIFIERS["print"] = "Converts the given object to a string and logs it.";
@@ -1649,7 +1647,7 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["parse_obj_file"] = "Parses the 3D data file and returns vector<Vertex<float>>.";
 
 	// Threading
-	INTERP_SCRIPT_MODULE->add(cs::fun<void (*)(int, int, const std::function<void(int)>&)>(&kl::async_for), "async_for");
+	INTERP_SCRIPT_MODULE->add(cs::fun<void (*)(int, int, const Function<void(int)>&)>(&kl::async_for), "async_for");
 	INTERP_SCRIPT_IDENTIFIERS["async_for"] = "Async for.";
 
 	// UI

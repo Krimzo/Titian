@@ -8,7 +8,7 @@ namespace titian {
 	class RenderPass : public BenchmarkInfo, public LayerHolder
 	{
 	public:
-		RenderPass(const std::string& name, const LayerPackage& package);
+		RenderPass(const String& name, const LayerPackage& package);
 		virtual ~RenderPass() = default;
 
 		RenderPass(const RenderPass&) = delete;

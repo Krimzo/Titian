@@ -9,7 +9,7 @@ namespace titian {
 	public:
 		kl::Float3 color{ 1.0f };
 
-		PointLight(physx::PxPhysics* physics, bool dynamic);
+		PointLight(px::PxPhysics* physics, bool dynamic);
 
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;

@@ -7,7 +7,7 @@ int sandbox_entry(const int argc, const char** argv)
     TitianEditor editor{};
 
     // Pieces
-    std::vector<kl::Object<SandboxPiece>> pieces{
+    Vector<Ref<SandboxPiece>> pieces{
         new SandboxPieceTest(&editor),
         new SandboxPiecePrepare(&editor),
         new SandboxPieceSkybox(&editor),

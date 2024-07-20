@@ -10,14 +10,14 @@ namespace titian {
 	class RenderLayer : public Layer
 	{
 	public:
-		std::vector<kl::Object<RenderPass>> passes = {};
-		kl::Object<RenderStates> states = nullptr;
+		Vector<Ref<RenderPass>> passes = {};
+		Ref<RenderStates> states = nullptr;
 
-		kl::Object<Texture> screen_texture = nullptr;
-		kl::Object<Texture> game_color_texture = nullptr;
-		kl::Object<Texture> game_depth_texture = nullptr;
-		kl::Object<Texture> editor_picking_texture = nullptr;
-		kl::Object<Texture> editor_staging_texture = nullptr;
+		Ref<Texture> screen_texture = nullptr;
+		Ref<Texture> game_color_texture = nullptr;
+		Ref<Texture> game_depth_texture = nullptr;
+		Ref<Texture> editor_picking_texture = nullptr;
+		Ref<Texture> editor_staging_texture = nullptr;
 
 		kl::dx::Buffer screen_mesh = nullptr;
 

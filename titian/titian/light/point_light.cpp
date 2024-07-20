@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-titian::PointLight::PointLight(physx::PxPhysics* physics, const bool dynamic)
+titian::PointLight::PointLight(px::PxPhysics* physics, const bool dynamic)
 	: Light(EntityType::POINT_LIGHT, physics, dynamic)
 {}
 

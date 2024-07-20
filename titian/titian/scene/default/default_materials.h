@@ -7,7 +7,7 @@ namespace titian {
 	class DefaultMaterials
 	{
 	public:
-		kl::Object<Material> white = nullptr;
+		Ref<Material> white = nullptr;
 
 		DefaultMaterials(kl::GPU* gpu);
 	};

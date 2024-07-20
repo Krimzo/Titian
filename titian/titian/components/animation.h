@@ -24,9 +24,9 @@ namespace titian {
 namespace titian {
 	struct AnimationChannel
 	{
-		std::vector<std::pair<float, aiVector3f>> scalings;
-		std::vector<std::pair<float, aiQuaternion>> rotations;
-		std::vector<std::pair<float, aiVector3f>> positions;
+		Vector<Pair<float, aiVector3f>> scalings;
+		Vector<Pair<float, aiQuaternion>> rotations;
+		Vector<Pair<float, aiVector3f>> positions;
 	};
 }
 
@@ -34,7 +34,7 @@ namespace titian {
 	struct AnimationNode
 	{
 		int channel_index = -1;
-		std::vector<kl::Object<AnimationNode>> children;
+		Vector<Ref<AnimationNode>> children;
 	};
 }
 
@@ -46,10 +46,10 @@ namespace titian {
 		float ticks_per_second = 30.0f;
 		float duration_in_ticks = 0.0f;
 
-		std::vector<std::string> meshes;
+		Vector<String> meshes;
 
-		std::vector<AnimationChannel> channels;
-		kl::Object<AnimationNode> animation_root;
+		Vector<AnimationChannel> channels;
+		Ref<AnimationNode> animation_root;
 
 		Animation(kl::GPU* gpu, Scene* scene);
 
@@ -67,7 +67,7 @@ namespace titian {
 		Scene* m_scene = nullptr;
 
 		kl::Float4x4 m_global_inverse_transform;
-		std::vector<kl::Float4x4> m_final_matrices;
+		Vector<kl::Float4x4> m_final_matrices;
 
 		kl::dx::Buffer m_matrices_buffer;
 		kl::dx::ShaderView m_matrices_view;

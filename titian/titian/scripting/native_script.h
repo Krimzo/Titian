@@ -12,7 +12,7 @@ namespace titian {
 		template<typename Return, typename... Args>
 		using Function = Return(__stdcall*)(Args...);
 
-		std::vector<byte> data = {};
+		Vector<byte> data = {};
 
 		NativeScript();
 
@@ -37,10 +37,10 @@ namespace titian {
 		void unload();
 
 		template<typename Return, typename... Args>
-		Function<Return, Args...> read_function(const std::string_view& function_name)
+		Function<Return, Args...> read_function(const String& function_name)
 		{
 			if (m_memory_module) {
-				auto function_address = MemoryGetProcAddress(m_memory_module, function_name.data());
+				auto function_address = MemoryGetProcAddress(m_memory_module, function_name.c_str());
 				return reinterpret_cast<Function<Return, Args...>>(function_address);
 			}
 			return nullptr;

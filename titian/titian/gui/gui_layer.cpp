@@ -10,14 +10,14 @@ void titian::GUILayer::init()
 	kl::Window* window = &app_layer->window;
 	kl::GPU* gpu = &app_layer->gpu;
 
-	imgui::CreateContext();
-	imgui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	im::CreateContext();
+	im::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	ImGui_ImplWin32_Init(static_cast<HWND>(*window));
 	ImGui_ImplDX11_Init(gpu->device().Get(), gpu->context().Get());
 	dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(*window);
 
-	imgui::StyleColorsDark();
+	im::StyleColorsDark();
 	load_custom_fonts();
 	load_custom_theme();
 }
@@ -28,10 +28,10 @@ bool titian::GUILayer::update()
 
 	ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
-	imgui::NewFrame();
+	im::NewFrame();
 	ImGuizmo::BeginFrame();
 
-	imgui::DockSpaceOverViewport(0, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
+	im::DockSpaceOverViewport(0, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 
 	for (auto& section : sections) {
 		section->render_gui();
@@ -40,8 +40,8 @@ bool titian::GUILayer::update()
 		game_layer->scene->update_ui();
 	}
 
-	imgui::Render();
-	ImGui_ImplDX11_RenderDrawData(imgui::GetDrawData());
+	im::Render();
+	ImGui_ImplDX11_RenderDrawData(im::GetDrawData());
 
 	render_layer->present();
 	return true;
@@ -49,7 +49,7 @@ bool titian::GUILayer::update()
 
 void titian::GUILayer::load_custom_fonts()
 {
-	ImFontAtlas* atlas = imgui::GetIO().Fonts;
+	ImFontAtlas* atlas = im::GetIO().Fonts;
 
 	roboto_font_small = atlas->AddFontFromFileTTF("builtin/fonts/Roboto.ttf", 16 * dpi_scaling);
 	roboto_font_large = atlas->AddFontFromFileTTF("builtin/fonts/Roboto.ttf", 20 * dpi_scaling);
@@ -62,7 +62,7 @@ void titian::GUILayer::load_custom_fonts()
 
 void titian::GUILayer::load_custom_theme() const
 {
-	ImGuiStyle& style = imgui::GetStyle();
+	ImGuiStyle& style = im::GetStyle();
 
 	style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 	style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);

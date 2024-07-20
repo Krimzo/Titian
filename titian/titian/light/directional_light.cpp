@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-titian::DirectionalLight::DirectionalLight(physx::PxPhysics* physics, const bool dynamic, kl::GPU* gpu, const uint32_t map_resolution)
+titian::DirectionalLight::DirectionalLight(px::PxPhysics* physics, const bool dynamic, kl::GPU* gpu, const uint32_t map_resolution)
     : Light(EntityType::DIRECTIONAL_LIGHT, physics, dynamic), m_map_resolution(map_resolution)
 {
     kl::dx::TextureDescriptor shadow_map_descriptor = {};

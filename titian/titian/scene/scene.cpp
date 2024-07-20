@@ -1,37 +1,37 @@
 #include "main.h"
 
 
-physx::PxDefaultAllocator     titian::Scene::m_allocator = {};
-physx::PxDefaultErrorCallback titian::Scene::m_error_callback = {};
-physx::PxFoundation*          titian::Scene::m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_allocator, m_error_callback);
+px::PxDefaultAllocator     titian::Scene::m_allocator = {};
+px::PxDefaultErrorCallback titian::Scene::m_error_callback = {};
+px::PxFoundation*          titian::Scene::m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_allocator, m_error_callback);
 
-static physx::PxFilterFlags filter_shader(
-    physx::PxFilterObjectAttributes attributes0,
-    physx::PxFilterData filterData0,
-    physx::PxFilterObjectAttributes attributes1,
-    physx::PxFilterData filterData1,
-    physx::PxPairFlags& pairFlags,
+static px::PxFilterFlags filter_shader(
+    px::PxFilterObjectAttributes attributes0,
+    px::PxFilterData filterData0,
+    px::PxFilterObjectAttributes attributes1,
+    px::PxFilterData filterData1,
+    px::PxPairFlags& pairFlags,
     const void* constantBlock,
-    physx::PxU32 constantBlockSize)
+    px::PxU32 constantBlockSize)
 {
-    pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
-    pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
-    return physx::PxFilterFlag::eDEFAULT;
+    pairFlags = px::PxPairFlag::eCONTACT_DEFAULT;
+    pairFlags |= px::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+    return px::PxFilterFlag::eDEFAULT;
 }
 
 titian::Scene::Scene(kl::GPU* gpu)
     : m_gpu(gpu)
 {
-    m_dispatcher = physx::PxDefaultCpuDispatcherCreate(kl::CPU_CORE_COUNT / 4);
+    m_dispatcher = px::PxDefaultCpuDispatcherCreate(kl::CPU_CORE_COUNT / 4);
     kl::assert(m_dispatcher, "Failed to create physics dispatcher");
 
-    m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, physx::PxTolerancesScale());
+    m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, px::PxTolerancesScale());
     kl::assert(m_physics, "Failed to create physics");
 
-    m_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_foundation, physx::PxCookingParams(m_physics->getTolerancesScale()));
+    m_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_foundation, px::PxCookingParams(m_physics->getTolerancesScale()));
     kl::assert(m_cooking, "Failed to create physics cooking");
 
-    physx::PxSceneDesc scene_descriptor = { m_physics->getTolerancesScale() };
+    px::PxSceneDesc scene_descriptor = { m_physics->getTolerancesScale() };
     scene_descriptor.gravity.y = -9.81f;
     scene_descriptor.cpuDispatcher = m_dispatcher;
     scene_descriptor.filterShader = filter_shader;
@@ -77,7 +77,7 @@ void titian::Scene::serialize(Serializer* serializer, const void* helper_data) c
     serializer->write_string(main_ambient_light_name);
     serializer->write_string(main_directional_light_name);
 
-    auto write_map = [&]<typename T>(const std::map<std::string, kl::Object<T>>& data, const void* helper_data)
+    auto write_map = [&]<typename T>(const Map<String, Ref<T>>& data, const void* helper_data)
     {
         serializer->write_object<uint64_t>(data.size());
         for (auto& [name, object] : data) {
@@ -101,40 +101,40 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     serializer->read_string(main_ambient_light_name);
     serializer->read_string(main_directional_light_name);
 
-    auto read_map = [&]<typename T>(std::map<std::string, kl::Object<T>>& data, const std::function<T*()>& provider, const void* helper_data)
+    auto read_map = [&]<typename T>(Map<String, Ref<T>>& data, const Function<T*()>& provider, const void* helper_data)
     {
         const uint64_t size = serializer->read_object<uint64_t>();
         for (uint64_t i = 0; i < size; i++) {
-            const std::string name = serializer->read_string();
-            kl::Object<T> object = provider();
+            const String name = serializer->read_string();
+            Ref<T> object = provider();
             object->deserialize(serializer, helper_data);
             data[name] = object;
         }
     };
 
-    std::function mesh_provider = [&] { return new Mesh(m_gpu, m_physics, m_cooking); };
+    Function mesh_provider = [&] { return new Mesh(m_gpu, m_physics, m_cooking); };
     read_map(meshes, mesh_provider, nullptr);
 
-    std::function animation_provider = [&] { return new Animation(m_gpu, this); };
+    Function animation_provider = [&] { return new Animation(m_gpu, this); };
     read_map(animations, animation_provider, nullptr);
 
-    std::function texture_provider = [&] { return new Texture(m_gpu); };
+    Function texture_provider = [&] { return new Texture(m_gpu); };
     read_map(textures, texture_provider, nullptr);
 
-    std::function material_provider = [&] { return new Material(); };
+    Function material_provider = [&] { return new Material(); };
     read_map(materials, material_provider, nullptr);
 
-    std::function shader_provider = [&] { return new Shader(ShaderType::MATERIAL, m_gpu); };
+    Function shader_provider = [&] { return new Shader(ShaderType::MATERIAL, m_gpu); };
     read_map(shaders, shader_provider, nullptr);
 
     /* SCRIPTS */
     {
         const uint64_t size = serializer->read_object<uint64_t>();
         for (uint64_t i = 0; i < size; i++) {
-            const std::string name = serializer->read_string();
+            const String name = serializer->read_string();
             const ScriptType type = serializer->read_object<ScriptType>();
 
-            kl::Object<Script> object = nullptr;
+            Ref<Script> object = nullptr;
             switch (type) {
             case ScriptType::NATIVE:
                 object = new NativeScript();
@@ -157,10 +157,10 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     {
         const uint64_t size = serializer->read_object<uint64_t>();
         for (uint64_t i = 0; i < size; i++) {
-            const std::string name = serializer->read_string();
+            const String name = serializer->read_string();
             const EntityType type = serializer->read_object<EntityType>();
 
-            kl::Object<Entity> entity = nullptr;
+            Ref<Entity> entity = nullptr;
             switch (type) {
             case EntityType::BASIC:
                 entity = new Entity(EntityType::BASIC, m_physics, false);
@@ -187,16 +187,16 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     }
 }
 
-void titian::Scene::onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count)
+void titian::Scene::onConstraintBreak(px::PxConstraintInfo* constraints, px::PxU32 count)
 {}
 
-void titian::Scene::onWake(physx::PxActor** actors, physx::PxU32 count)
+void titian::Scene::onWake(px::PxActor** actors, px::PxU32 count)
 {}
 
-void titian::Scene::onSleep(physx::PxActor** actors, physx::PxU32 count)
+void titian::Scene::onSleep(px::PxActor** actors, px::PxU32 count)
 {}
 
-void titian::Scene::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
+void titian::Scene::onContact(const px::PxContactPairHeader& pairHeader, const px::PxContactPair* pairs, px::PxU32 nbPairs)
 {
     Entity* entity_0 = static_cast<Entity*>(pairHeader.actors[0]->userData);
     Entity* entity_1 = static_cast<Entity*>(pairHeader.actors[1]->userData);
@@ -207,19 +207,19 @@ void titian::Scene::onContact(const physx::PxContactPairHeader& pairHeader, cons
     }
 }
 
-void titian::Scene::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count)
+void titian::Scene::onTrigger(px::PxTriggerPair* pairs, px::PxU32 count)
 {}
 
-void titian::Scene::onAdvance(const physx::PxRigidBody* const* bodyBuffer, const physx::PxTransform* poseBuffer, const physx::PxU32 count)
+void titian::Scene::onAdvance(const px::PxRigidBody* const* bodyBuffer, const px::PxTransform* poseBuffer, const px::PxU32 count)
 {}
 
 // Get ptrs
-physx::PxPhysics* titian::Scene::physics() const
+px::PxPhysics* titian::Scene::physics() const
 {
     return m_physics;
 }
 
-physx::PxCooking* titian::Scene::cooking() const
+px::PxCooking* titian::Scene::cooking() const
 {
     return m_cooking;
 }
@@ -227,12 +227,12 @@ physx::PxCooking* titian::Scene::cooking() const
 // Gravity
 void titian::Scene::set_gravity(const kl::Float3& gravity)
 {
-    m_scene->setGravity(reinterpret_cast<const physx::PxVec3&>(gravity));
+    m_scene->setGravity(reinterpret_cast<const px::PxVec3&>(gravity));
 }
 
 kl::Float3 titian::Scene::gravity() const
 {
-    const physx::PxVec3 gravity = m_scene->getGravity();
+    const px::PxVec3 gravity = m_scene->getGravity();
     return reinterpret_cast<const kl::Float3&>(gravity);
 }
 
@@ -258,18 +258,18 @@ void titian::Scene::update_ui()
 }
 
 // Entity
-kl::Object<titian::Entity> titian::Scene::new_entity(const bool dynamic) const
+titian::Ref<titian::Entity> titian::Scene::new_entity(const bool dynamic) const
 {
     return new Entity(EntityType::BASIC, m_physics, dynamic);
 }
 
-void titian::Scene::add_entity(const std::string& name, const kl::Object<Entity>& entity)
+void titian::Scene::add_entity(const String& name, const Ref<Entity>& entity)
 {
     m_entities[name] = entity;
     m_scene->addActor(*entity->actor());
 }
 
-void titian::Scene::remove_entity(const std::string& name)
+void titian::Scene::remove_entity(const String& name)
 {
     if (m_entities.contains(name)) {
         m_scene->removeActor(*m_entities.at(name)->actor());
@@ -277,7 +277,7 @@ void titian::Scene::remove_entity(const std::string& name)
     }
 }
 
-bool titian::Scene::contains_entity(const std::string& name) const
+bool titian::Scene::contains_entity(const String& name) const
 {
     return m_entities.contains(name);
 }
@@ -287,28 +287,28 @@ size_t titian::Scene::entity_count() const
     return m_entities.size();
 }
 
-std::map<std::string, kl::Object<titian::Entity>>::iterator titian::Scene::begin()
+titian::Map<titian::String, titian::Ref<titian::Entity>>::iterator titian::Scene::begin()
 {
     return m_entities.begin();
 }
 
-std::map<std::string, kl::Object<titian::Entity>>::iterator titian::Scene::end()
+titian::Map<titian::String, titian::Ref<titian::Entity>>::iterator titian::Scene::end()
 {
     return m_entities.end();
 }
 
-std::map<std::string, kl::Object<titian::Entity>>::const_iterator titian::Scene::begin() const
+titian::Map<titian::String, titian::Ref<titian::Entity>>::const_iterator titian::Scene::begin() const
 {
     return m_entities.begin();
 }
 
-std::map<std::string, kl::Object<titian::Entity>>::const_iterator titian::Scene::end() const
+titian::Map<titian::String, titian::Ref<titian::Entity>>::const_iterator titian::Scene::end() const
 {
     return m_entities.end();
 }
 
 // Get types
-kl::Object<titian::Mesh> titian::Scene::get_mesh(const std::string& id) const
+titian::Ref<titian::Mesh> titian::Scene::get_mesh(const String& id) const
 {
     if (meshes.contains(id)) {
         return meshes.at(id);
@@ -316,7 +316,7 @@ kl::Object<titian::Mesh> titian::Scene::get_mesh(const std::string& id) const
     return nullptr;
 }
 
-kl::Object<titian::Animation> titian::Scene::get_animation(const std::string& id) const
+titian::Ref<titian::Animation> titian::Scene::get_animation(const String& id) const
 {
     if (animations.contains(id)) {
         return animations.at(id);
@@ -324,7 +324,7 @@ kl::Object<titian::Animation> titian::Scene::get_animation(const std::string& id
     return nullptr;
 }
 
-kl::Object<titian::Texture> titian::Scene::get_texture(const std::string& id) const
+titian::Ref<titian::Texture> titian::Scene::get_texture(const String& id) const
 {
     if (textures.contains(id)) {
         return textures.at(id);
@@ -332,7 +332,7 @@ kl::Object<titian::Texture> titian::Scene::get_texture(const std::string& id) co
     return nullptr;
 }
 
-kl::Object<titian::Material> titian::Scene::get_material(const std::string& id) const
+titian::Ref<titian::Material> titian::Scene::get_material(const String& id) const
 {
     if (materials.contains(id)) {
         return materials.at(id);
@@ -340,7 +340,7 @@ kl::Object<titian::Material> titian::Scene::get_material(const std::string& id) 
     return nullptr;
 }
 
-kl::Object<titian::Shader> titian::Scene::get_shader(const std::string& id) const
+titian::Ref<titian::Shader> titian::Scene::get_shader(const String& id) const
 {
     if (shaders.contains(id)) {
         return shaders.at(id);
@@ -348,7 +348,7 @@ kl::Object<titian::Shader> titian::Scene::get_shader(const std::string& id) cons
     return nullptr;
 }
 
-kl::Object<titian::Script> titian::Scene::get_script(const std::string& id) const
+titian::Ref<titian::Script> titian::Scene::get_script(const String& id) const
 {
     if (scripts.contains(id)) {
         return scripts.at(id);
@@ -356,7 +356,7 @@ kl::Object<titian::Script> titian::Scene::get_script(const std::string& id) cons
     return nullptr;
 }
 
-kl::Object<titian::Entity> titian::Scene::get_entity(const std::string& id) const
+titian::Ref<titian::Entity> titian::Scene::get_entity(const String& id) const
 {
     if (m_entities.contains(id)) {
         return m_entities.at(id);
@@ -365,44 +365,44 @@ kl::Object<titian::Entity> titian::Scene::get_entity(const std::string& id) cons
 }
 
 // Dynamic colliders
-kl::Object<titian::Collider> titian::Scene::new_box_collider(const kl::Float3& scale) const
+titian::Ref<titian::Collider> titian::Scene::new_box_collider(const kl::Float3& scale) const
 {
-    return new Collider(m_physics, physx::PxBoxGeometry(reinterpret_cast<const physx::PxVec3&>(scale)));
+    return new Collider(m_physics, px::PxBoxGeometry(reinterpret_cast<const px::PxVec3&>(scale)));
 }
 
-kl::Object<titian::Collider> titian::Scene::new_sphere_collider(const float radius) const
+titian::Ref<titian::Collider> titian::Scene::new_sphere_collider(const float radius) const
 {
-    return new Collider(m_physics, physx::PxSphereGeometry(radius));
+    return new Collider(m_physics, px::PxSphereGeometry(radius));
 }
 
-kl::Object<titian::Collider> titian::Scene::new_capsule_collider(const float radius, const float height) const
+titian::Ref<titian::Collider> titian::Scene::new_capsule_collider(const float radius, const float height) const
 {
-    return new Collider(m_physics, physx::PxCapsuleGeometry(radius, height));
+    return new Collider(m_physics, px::PxCapsuleGeometry(radius, height));
 }
 
 // Static colliders
-kl::Object<titian::Collider> titian::Scene::new_mesh_collider(const Mesh& mesh, const kl::Float3& scale) const
+titian::Ref<titian::Collider> titian::Scene::new_mesh_collider(const Mesh& mesh, const kl::Float3& scale) const
 {
     if (mesh.physics_buffer) {
-        return new Collider(m_physics, physx::PxTriangleMeshGeometry(mesh.physics_buffer, reinterpret_cast<const physx::PxVec3&>(scale)));
+        return new Collider(m_physics, px::PxTriangleMeshGeometry(mesh.physics_buffer, reinterpret_cast<const px::PxVec3&>(scale)));
     }
     return nullptr;
 }
 
 // Default collider
-kl::Object<titian::Collider> titian::Scene::new_default_collider(const physx::PxGeometryType::Enum type, const Mesh* optional_mesh) const
+titian::Ref<titian::Collider> titian::Scene::new_default_collider(const px::PxGeometryType::Enum type, const Mesh* optional_mesh) const
 {
     switch (type) {
         // Dynamic
-    case physx::PxGeometryType::Enum::eBOX:
+    case px::PxGeometryType::Enum::eBOX:
         return new_box_collider(kl::Float3{ 1.0f });
-    case physx::PxGeometryType::Enum::eSPHERE:
+    case px::PxGeometryType::Enum::eSPHERE:
         return new_sphere_collider(1.0f);
-    case physx::PxGeometryType::Enum::eCAPSULE:
+    case px::PxGeometryType::Enum::eCAPSULE:
         return new_capsule_collider(1.0f, 2.0f);
 
         // Static
-    case physx::PxGeometryType::Enum::eTRIANGLEMESH:
+    case px::PxGeometryType::Enum::eTRIANGLEMESH:
         if (optional_mesh) {
             return new_mesh_collider(*optional_mesh, kl::Float3{ 1.0f });
         }
@@ -411,50 +411,50 @@ kl::Object<titian::Collider> titian::Scene::new_default_collider(const physx::Px
 }
 
 // Helper new
-titian::Mesh* titian::Scene::helper_new_mesh(const std::string& id)
+titian::Mesh* titian::Scene::helper_new_mesh(const String& id)
 {
     Mesh* mesh = new Mesh(m_gpu, m_physics, m_cooking);
     meshes[id] = mesh;
     return mesh;
 }
 
-titian::Animation* titian::Scene::helper_new_animation(const std::string& id)
+titian::Animation* titian::Scene::helper_new_animation(const String& id)
 {
     Animation* animation = new Animation(m_gpu, this);
     animations[id] = animation;
     return animation;
 }
 
-titian::Texture* titian::Scene::helper_new_texture(const std::string& id)
+titian::Texture* titian::Scene::helper_new_texture(const String& id)
 {
     Texture* texture = new Texture(m_gpu);
     textures[id] = texture;
     return texture;
 }
 
-titian::Material* titian::Scene::helper_new_material(const std::string& id)
+titian::Material* titian::Scene::helper_new_material(const String& id)
 {
     Material* material = new Material();
     materials[id] = material;
     return material;
 }
 
-titian::Shader* titian::Scene::helper_new_shader(const std::string& id)
+titian::Shader* titian::Scene::helper_new_shader(const String& id)
 {
     Shader* shader = new Shader(ShaderType::MATERIAL, m_gpu);
     shaders[id] = shader;
     return shader;
 }
 
-titian::Entity* titian::Scene::helper_new_entity(const std::string& id)
+titian::Entity* titian::Scene::helper_new_entity(const String& id)
 {
-    kl::Object entity = this->new_entity(true);
+    Ref entity = this->new_entity(true);
     this->add_entity(id, entity);
     return &entity;
 }
 
 // Helper get
-titian::Mesh* titian::Scene::helper_get_mesh(const std::string& id)
+titian::Mesh* titian::Scene::helper_get_mesh(const String& id)
 {
     if (meshes.contains(id)) {
         return &meshes.at(id);
@@ -462,7 +462,7 @@ titian::Mesh* titian::Scene::helper_get_mesh(const std::string& id)
     return nullptr;
 }
 
-titian::Animation* titian::Scene::helper_get_animation(const std::string& id)
+titian::Animation* titian::Scene::helper_get_animation(const String& id)
 {
     if (animations.contains(id)) {
         return &animations.at(id);
@@ -470,7 +470,7 @@ titian::Animation* titian::Scene::helper_get_animation(const std::string& id)
     return nullptr;
 }
 
-titian::Texture* titian::Scene::helper_get_texture(const std::string& id)
+titian::Texture* titian::Scene::helper_get_texture(const String& id)
 {
     if (textures.contains(id)) {
         return &textures.at(id);
@@ -478,7 +478,7 @@ titian::Texture* titian::Scene::helper_get_texture(const std::string& id)
     return nullptr;
 }
 
-titian::Material* titian::Scene::helper_get_material(const std::string& id)
+titian::Material* titian::Scene::helper_get_material(const String& id)
 {
     if (materials.contains(id)) {
         return &materials.at(id);
@@ -486,7 +486,7 @@ titian::Material* titian::Scene::helper_get_material(const std::string& id)
     return nullptr;
 }
 
-titian::Shader* titian::Scene::helper_get_shader(const std::string& id)
+titian::Shader* titian::Scene::helper_get_shader(const String& id)
 {
     if (shaders.contains(id)) {
         return &shaders.at(id);
@@ -494,69 +494,69 @@ titian::Shader* titian::Scene::helper_get_shader(const std::string& id)
     return nullptr;
 }
 
-titian::Entity* titian::Scene::helper_get_entity(const std::string& id)
+titian::Entity* titian::Scene::helper_get_entity(const String& id)
 {
     return &this->get_entity(id);
 }
 
 // Helper remove
-void titian::Scene::helper_remove_mesh(const std::string& id)
+void titian::Scene::helper_remove_mesh(const String& id)
 {
     meshes.erase(id);
 }
 
-void titian::Scene::helper_remove_animation(const std::string& id)
+void titian::Scene::helper_remove_animation(const String& id)
 {
     animations.erase(id);
 }
 
-void titian::Scene::helper_remove_texture(const std::string& id)
+void titian::Scene::helper_remove_texture(const String& id)
 {
     textures.erase(id);
 }
 
-void titian::Scene::helper_remove_material(const std::string& id)
+void titian::Scene::helper_remove_material(const String& id)
 {
     materials.erase(id);
 }
 
-void titian::Scene::helper_remove_shader(const std::string& id)
+void titian::Scene::helper_remove_shader(const String& id)
 {
     shaders.erase(id);
 }
 
-void titian::Scene::helper_remove_entity(const std::string& id)
+void titian::Scene::helper_remove_entity(const String& id)
 {
     this->remove_entity(id);
 }
 
 // Helper contains
-bool titian::Scene::helper_contains_mesh(const std::string& id) const
+bool titian::Scene::helper_contains_mesh(const String& id) const
 {
     return meshes.contains(id);
 }
 
-bool titian::Scene::helper_contains_animation(const std::string& id) const
+bool titian::Scene::helper_contains_animation(const String& id) const
 {
     return animations.contains(id);
 }
 
-bool titian::Scene::helper_contains_texture(const std::string& id) const
+bool titian::Scene::helper_contains_texture(const String& id) const
 {
     return textures.contains(id);
 }
 
-bool titian::Scene::helper_contains_material(const std::string& id) const
+bool titian::Scene::helper_contains_material(const String& id) const
 {
     return materials.contains(id);
 }
 
-bool titian::Scene::helper_contains_shader(const std::string& id) const
+bool titian::Scene::helper_contains_shader(const String& id) const
 {
     return shaders.contains(id);
 }
 
-bool titian::Scene::helper_contains_entity(const std::string& id) const
+bool titian::Scene::helper_contains_entity(const String& id) const
 {
     return this->contains_entity(id);
 }
@@ -593,63 +593,63 @@ int titian::Scene::helper_entity_count() const
 }
 
 // Helper get all
-std::map<std::string, titian::Mesh*> titian::Scene::helper_get_all_meshes()
+titian::Map<titian::String, titian::Mesh*> titian::Scene::helper_get_all_meshes()
 {
-    std::map<std::string, Mesh*> result = {};
+    Map<String, Mesh*> result = {};
     for (auto& [name, mesh] : meshes) {
         result[name] = &mesh;
     }
     return result;
 }
 
-std::map<std::string, titian::Animation*> titian::Scene::helper_get_all_animations()
+titian::Map<titian::String, titian::Animation*> titian::Scene::helper_get_all_animations()
 {
-    std::map<std::string, Animation*> result = {};
+    Map<String, Animation*> result = {};
     for (auto& [name, animation] : animations) {
         result[name] = &animation;
     }
     return result;
 }
 
-std::map<std::string, titian::Texture*> titian::Scene::helper_get_all_textures()
+titian::Map<titian::String, titian::Texture*> titian::Scene::helper_get_all_textures()
 {
-    std::map<std::string, Texture*> result = {};
+    Map<String, Texture*> result = {};
     for (auto& [name, texture] : textures) {
         result[name] = &texture;
     }
     return result;
 }
 
-std::map<std::string, titian::Material*> titian::Scene::helper_get_all_materials()
+titian::Map<titian::String, titian::Material*> titian::Scene::helper_get_all_materials()
 {
-    std::map<std::string, Material*> result = {};
+    Map<String, Material*> result = {};
     for (auto& [name, material] : materials) {
         result[name] = &material;
     }
     return result;
 }
 
-std::map<std::string, titian::Shader*> titian::Scene::helper_get_all_shaders()
+titian::Map<titian::String, titian::Shader*> titian::Scene::helper_get_all_shaders()
 {
-    std::map<std::string, Shader*> result = {};
+    Map<String, Shader*> result = {};
     for (auto& [name, shader] : shaders) {
         result[name] = &shader;
     }
     return result;
 }
 
-std::map<std::string, titian::Entity*> titian::Scene::helper_get_all_entities()
+titian::Map<titian::String, titian::Entity*> titian::Scene::helper_get_all_entities()
 {
-    std::map<std::string, Entity*> result = {};
+    Map<String, Entity*> result = {};
     for (auto& [name, entity] : m_entities) {
         result[name] = &entity;
     }
     return result;
 }
 
-std::optional<titian::AssimpData> titian::Scene::get_assimp_data(const std::string& path) const
+titian::Optional<titian::AssimpData> titian::Scene::get_assimp_data(const String& path) const
 {
-    kl::Object importer = new Assimp::Importer();
+    Ref importer = new as::Importer();
     const aiScene* scene = importer->ReadFile(path, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_MakeLeftHanded);
     if (!scene) {
         return std::nullopt;
@@ -659,7 +659,7 @@ std::optional<titian::AssimpData> titian::Scene::get_assimp_data(const std::stri
     data.importer = importer;
     for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[i];
-        std::string name = mesh->mName.C_Str();
+        String name = mesh->mName.C_Str();
         if (name.empty()) {
             name = "unknown_mesh";
         }
@@ -667,7 +667,7 @@ std::optional<titian::AssimpData> titian::Scene::get_assimp_data(const std::stri
     }
 	for (uint32_t i = 0; i < scene->mNumAnimations; i++) {
 		aiAnimation* animation = scene->mAnimations[i];
-        std::string name = animation->mName.C_Str();
+        String name = animation->mName.C_Str();
         if (name.empty()) {
             name = "unknown_animation";
         }
@@ -675,7 +675,7 @@ std::optional<titian::AssimpData> titian::Scene::get_assimp_data(const std::stri
 	}
 	for (uint32_t i = 0; i < scene->mNumTextures; i++) {
 		aiTexture* texture = scene->mTextures[i];
-        std::string name = texture->mFilename.C_Str();
+        String name = texture->mFilename.C_Str();
 		if (name.empty()) {
 			name = "unknown_texture";
 		}
@@ -683,7 +683,7 @@ std::optional<titian::AssimpData> titian::Scene::get_assimp_data(const std::stri
 	}
     for (uint32_t i = 0; i < scene->mNumMaterials; i++) {
         aiMaterial* material = scene->mMaterials[i];
-		std::string name = material->GetName().C_Str();
+		String name = material->GetName().C_Str();
 		if (name.empty()) {
 			name = "unknown_material";
 		}
@@ -710,11 +710,11 @@ void titian::Scene::load_assimp_data(const AssimpData& data)
     }
 }
 
-kl::Object<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, const aiMesh* mesh)
+titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, const aiMesh* mesh)
 {
-    kl::Object mesh_object = new Mesh(m_gpu, m_physics, m_cooking);
+    Ref mesh_object = new Mesh(m_gpu, m_physics, m_cooking);
     
-    std::vector<Vertex> vertices(mesh->mNumVertices);
+    Vector<Vertex> vertices(mesh->mNumVertices);
     if (mesh->HasPositions()) {
         for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
             vertices[i].world = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z };
@@ -762,10 +762,10 @@ kl::Object<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, c
         }
 
         // bone nodes
-        std::function<kl::Object<SkeletonNode>(const aiNode*)> recur_helper;
+        Function<Ref<SkeletonNode>(const aiNode*)> recur_helper;
         recur_helper = [&](const aiNode* node)
         {
-            kl::Object<SkeletonNode> skeleton_node = new SkeletonNode();
+            Ref<SkeletonNode> skeleton_node = new SkeletonNode();
             // bone index
             skeleton_node->bone_index = -1;
             for (uint32_t i = 0; i < mesh->mNumBones; i++) {
@@ -803,9 +803,9 @@ kl::Object<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, c
     return mesh_object;
 }
 
-kl::Object<titian::Animation> titian::Scene::load_assimp_animation(const aiScene* scene, const aiAnimation* animation)
+titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScene* scene, const aiAnimation* animation)
 {
-    kl::Object animation_object = new Animation(m_gpu, this);
+    Ref animation_object = new Animation(m_gpu, this);
 
     animation_object->ticks_per_second = (float) animation->mTicksPerSecond;
     animation_object->duration_in_ticks = (float) animation->mDuration;
@@ -838,10 +838,10 @@ kl::Object<titian::Animation> titian::Scene::load_assimp_animation(const aiScene
 	}
 
     // animation nodes
-    std::function<kl::Object<AnimationNode>(const aiNode*)> recur_helper;
+    Function<Ref<AnimationNode>(const aiNode*)> recur_helper;
     recur_helper = [&](const aiNode* node)
     {
-        kl::Object<AnimationNode> animation_node = new AnimationNode();
+        Ref<AnimationNode> animation_node = new AnimationNode();
         // channel index
         animation_node->channel_index = -1;
         for (uint32_t i = 0; i < animation->mNumChannels; i++) {
@@ -863,9 +863,9 @@ kl::Object<titian::Animation> titian::Scene::load_assimp_animation(const aiScene
     return animation_object;
 }
 
-kl::Object<titian::Texture> titian::Scene::load_assimp_texture(const aiScene* scene, const aiTexture* texture)
+titian::Ref<titian::Texture> titian::Scene::load_assimp_texture(const aiScene* scene, const aiTexture* texture)
 {
-    kl::Object texture_object = new Texture(m_gpu);
+    Ref texture_object = new Texture(m_gpu);
 
     if (texture->mHeight == 0) {
         texture_object->data_buffer.load_from_memory((byte*) texture->pcData, texture->mWidth);
@@ -881,9 +881,9 @@ kl::Object<titian::Texture> titian::Scene::load_assimp_texture(const aiScene* sc
     return texture_object;
 }
 
-kl::Object<titian::Material> titian::Scene::load_assimp_material(const aiScene* scene, const aiMaterial* material)
+titian::Ref<titian::Material> titian::Scene::load_assimp_material(const aiScene* scene, const aiMaterial* material)
 {
-	kl::Object material_object = new Material();
+	Ref material_object = new Material();
 
     material->Get(AI_MATKEY_COLOR_DIFFUSE, material_object->color);
 	material->Get(AI_MATKEY_COLOR_TRANSPARENT, material_object->color.w);

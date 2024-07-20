@@ -1,73 +1,73 @@
 #pragma once
 
-#include "klibrary.h"
+#include "standard/standard.h"
 
 
 namespace titian {
     namespace _priv {
-        inline std::unordered_map<std::string, std::any> DRAG_DROP_DATA = {};
-        inline std::unordered_map<std::string, std::string> INPUT_CONTINUOUS_DATA = {};
-        inline std::unordered_map<std::string, std::string> INPUT_WAITED_DATA = {};
+        inline Map<String, std::any> DRAG_DROP_DATA = {};
+        inline Map<String, String> INPUT_CONTINUOUS_DATA = {};
+        inline Map<String, String> INPUT_WAITED_DATA = {};
     }
 
-    inline const std::string FILE_EXTENSION_OBJ = ".obj";
-    inline const std::string FILE_EXTENSION_GLB = ".glb";
-    inline const std::string FILE_EXTENSION_FBX = ".fbx";
+    inline const String FILE_EXTENSION_OBJ = ".obj";
+    inline const String FILE_EXTENSION_GLB = ".glb";
+    inline const String FILE_EXTENSION_FBX = ".fbx";
 
-    inline const std::string FILE_EXTENSION_JPG = ".jpg";
-    inline const std::string FILE_EXTENSION_PNG = ".png";
-    inline const std::string FILE_EXTENSION_BMP = ".bmp";
+    inline const String FILE_EXTENSION_JPG = ".jpg";
+    inline const String FILE_EXTENSION_PNG = ".png";
+    inline const String FILE_EXTENSION_BMP = ".bmp";
 
-    inline const std::string FILE_EXTENSION_DLL = ".dll";
-    inline const std::string FILE_EXTENSION_CHAI = ".chai";
+    inline const String FILE_EXTENSION_DLL = ".dll";
+    inline const String FILE_EXTENSION_CHAI = ".chai";
 
-    inline const std::string FILE_EXTENSION_HLSL = ".hlsl";
-    inline const std::string FILE_EXTENSION_TITIAN = ".titian";
+    inline const String FILE_EXTENSION_HLSL = ".hlsl";
+    inline const String FILE_EXTENSION_TITIAN = ".titian";
 
-    inline const std::string DRAG_FILE_ID = "DragFileID";
-    inline const std::string DRAG_DIR_ID = "DragDirID";
+    inline const String DRAG_FILE_ID = "DragFileID";
+    inline const String DRAG_DIR_ID = "DragDirID";
 
-    inline void gui_colored_text(const std::string_view& message, const kl::Float4& color)
+    inline void gui_colored_text(const String& message, const kl::Float4& color)
     {
-        imgui::TextColored(reinterpret_cast<const ImVec4&>(color), message.data());
+        im::TextColored(reinterpret_cast<const ImVec4&>(color), message.c_str());
     }
 
-    inline std::pair<ImVec2, ImVec2> gui_window_rect()
+    inline Pair<ImVec2, ImVec2> gui_window_rect()
     {
-        const ImVec2 content_region = imgui::GetContentRegionAvail();
-        const ImVec2 win_content_min = imgui::GetWindowPos() + imgui::GetWindowContentRegionMin();
+        const ImVec2 content_region = im::GetContentRegionAvail();
+        const ImVec2 win_content_min = im::GetWindowPos() + im::GetWindowContentRegionMin();
         const ImVec2 win_content_max = win_content_min + content_region;
         return { win_content_min, win_content_max };
     }
 
-    inline float gui_calculate_item_with(const std::string_view& label)
+    inline float gui_calculate_item_with(const String& label)
     {
-        return imgui::CalcTextSize(label.data()).x;
+        return im::CalcTextSize(label.c_str()).x;
     }
 
     inline void gui_align_horizontally(const float width, const float alignment)
     {
-        const float available = imgui::GetContentRegionAvail().x;
+        const float available = im::GetContentRegionAvail().x;
         const float offset = (available - width) * alignment;
         if (offset > 0.0f) {
-            imgui::SetCursorPosX(imgui::GetCursorPosX() + offset);
+            im::SetCursorPosX(im::GetCursorPosX() + offset);
         }
     }
 
-    inline std::string gui_input_continuous(const std::string& id)
+    inline String gui_input_continuous(const String& id)
     {
         auto& buffer = _priv::INPUT_CONTINUOUS_DATA[id];
-        imgui::InputText(id.c_str(), &buffer);
+        im::InputText(id.c_str(), &buffer);
         return buffer;
     }
 
-    inline std::optional<std::string> gui_input_waited(const std::string& id, const std::string_view& to_copy)
+    inline Optional<String> gui_input_waited(const String& id, const String& to_copy)
     {
         auto& buffer = _priv::INPUT_WAITED_DATA[id];
         buffer = to_copy;
 
-        if (imgui::InputText(id.c_str(), &buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            const std::string result = buffer;
+        if (im::InputText(id.c_str(), &buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
+            const String result = buffer;
             buffer.clear();
             return { result };
         }
@@ -75,32 +75,32 @@ namespace titian {
     }
 
     template<typename T>
-    void gui_set_drag_drop(const std::string& id, const T& data, const kl::dx::ShaderView& texture = nullptr)
+    void gui_set_drag_drop(const String& id, const T& data, const kl::dx::ShaderView& texture = nullptr)
     {
-        imgui::PushStyleColor(ImGuiCol_PopupBg, {});
-        imgui::PushStyleColor(ImGuiCol_Border, {});
-        if (imgui::BeginDragDropSource()) {
-            imgui::SetDragDropPayload(id.c_str(), nullptr, 0);
+        im::PushStyleColor(ImGuiCol_PopupBg, {});
+        im::PushStyleColor(ImGuiCol_Border, {});
+        if (im::BeginDragDropSource()) {
+            im::SetDragDropPayload(id.c_str(), nullptr, 0);
             _priv::DRAG_DROP_DATA[id] = std::any{ data };
             if (texture) {
-                imgui::Image(texture.Get(), { 50.0f, 50.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+                im::Image(texture.Get(), { 50.0f, 50.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
             }
-            imgui::EndDragDropSource();
+            im::EndDragDropSource();
         }
-		imgui::PopStyleColor(2);
+		im::PopStyleColor(2);
     }
 
     template<typename T>
-    std::optional<T> gui_get_drag_drop(const std::string& id)
+    Optional<T> gui_get_drag_drop(const String& id)
     {
-        std::optional<T> result{};
-        if (imgui::BeginDragDropTarget()) {
-            if (imgui::AcceptDragDropPayload(id.c_str())) {
+        Optional<T> result{};
+        if (im::BeginDragDropTarget()) {
+            if (im::AcceptDragDropPayload(id.c_str())) {
                 const std::any data = _priv::DRAG_DROP_DATA[id];
                 result = std::any_cast<T>(data);
                 _priv::DRAG_DROP_DATA.erase(id);
             }
-            imgui::EndDragDropTarget();
+            im::EndDragDropTarget();
         }
         return result;
     }

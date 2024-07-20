@@ -23,7 +23,7 @@ titian::StatePackage titian::OutlinePass::get_state_package()
 
 void titian::OutlinePass::render_self(StatePackage& package)
 {
-    std::vector<float> entitiy_indices;
+    Vector<float> entitiy_indices;
     for (uint32_t counter_id = 0; const auto& [name, _] : *game_layer->scene) {
         counter_id += 1;
         if (editor_layer->selected_entities.contains(name)) {
@@ -61,7 +61,7 @@ void titian::OutlinePass::render_self(StatePackage& package)
     gpu->unbind_shader_view_for_pixel_shader(0);
 }
 
-void titian::OutlinePass::load_selected_entities(const std::vector<float>& entitiy_indices)
+void titian::OutlinePass::load_selected_entities(const Vector<float>& entitiy_indices)
 {
 	kl::GPU* gpu = &app_layer->gpu;
     if (gpu->vertex_buffer_size(m_selected_entities_buff, sizeof(float)) < entitiy_indices.size()) {

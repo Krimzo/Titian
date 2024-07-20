@@ -26,79 +26,79 @@ void titian::GUISectionAnimationEditor::render_gui()
 
     kl::GPU* gpu = &app_layer->gpu;
     Scene* scene = &game_layer->scene;
-    kl::Object animation = scene->get_animation(this->selected_animation);
+    Ref animation = scene->get_animation(this->selected_animation);
 
-    if (imgui::Begin("Animation Editor")) {
-        const float available_width = imgui::GetContentRegionAvail().x;
-        imgui::Columns(2, "AnimationEditorColumns", false);
+    if (im::Begin("Animation Editor")) {
+        const float available_width = im::GetContentRegionAvail().x;
+        im::Columns(2, "AnimationEditorColumns", false);
 
-        imgui::SetColumnWidth(imgui::GetColumnIndex(), available_width * 0.25f);
-        if (imgui::BeginChild("Animations")) {
+        im::SetColumnWidth(im::GetColumnIndex(), available_width * 0.25f);
+        if (im::BeginChild("Animations")) {
             display_animations(gpu, scene);
         }
-        imgui::EndChild();
-        imgui::NextColumn();
+        im::EndChild();
+        im::NextColumn();
 
-        imgui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
-        imgui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-        imgui::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
+        im::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 1.0f);
+        im::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+        im::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
 
-        if (imgui::BeginChild("Animation View", {}, was_focused)) {
-            const kl::Int2 viewport_size = { (int) imgui::GetContentRegionAvail().x, (int) imgui::GetContentRegionAvail().y };
+        if (im::BeginChild("Animation View", {}, was_focused)) {
+            const kl::Int2 viewport_size = { (int) im::GetContentRegionAvail().x, (int) im::GetContentRegionAvail().y };
             if (was_focused) {
                 update_animation_camera();
             }
             if (animation) {
                 render_selected_animation(gpu, &animation, viewport_size);
                 const kl::dx::ShaderView& shader_view = render_texture->shader_view;
-                imgui::Image(render_texture->shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
+                im::Image(render_texture->shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
-            was_focused = imgui::IsWindowFocused();
+            was_focused = im::IsWindowFocused();
         }
-        imgui::EndChild();
+        im::EndChild();
 
-        imgui::PopStyleColor();
-        imgui::PopStyleVar(2);
+        im::PopStyleColor();
+        im::PopStyleVar(2);
 
         show_animation_properties(&animation);
     }
-    imgui::End();
+    im::End();
 }
 
 void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* scene)
 {
     // New animation
-    if (imgui::BeginPopupContextWindow("NewAnimation", ImGuiPopupFlags_MouseButtonMiddle)) {
-        imgui::Text("New Animation");
+    if (im::BeginPopupContextWindow("NewAnimation", ImGuiPopupFlags_MouseButtonMiddle)) {
+        im::Text("New Animation");
 
-        if (std::optional opt_name = gui_input_waited("##CreateAnimationInput", {})) {
-            const std::string& name = opt_name.value();
+        if (Optional opt_name = gui_input_waited("##CreateAnimationInput", {})) {
+            const String& name = opt_name.value();
             if (!name.empty() && !scene->animations.contains(name)) {
-                kl::Object animation = new Animation(gpu, scene);
+                Ref animation = new Animation(gpu, scene);
                 scene->animations[name] = animation;
-                imgui::CloseCurrentPopup();
+                im::CloseCurrentPopup();
             }
         }
-        imgui::EndPopup();
+        im::EndPopup();
     }
 
     // Animations
-    const std::string filter = gui_input_continuous("Search###AnimationEditor");
+    const String filter = gui_input_continuous("Search###AnimationEditor");
     for (auto& [animation_name, animation] : scene->animations) {
         if (!filter.empty() && animation_name.find(filter) == -1) {
             continue;
         }
 
-        if (imgui::Selectable(animation_name.c_str(), animation_name == this->selected_animation)) {
+        if (im::Selectable(animation_name.c_str(), animation_name == this->selected_animation)) {
             this->selected_animation = animation_name;
         }
 
-        if (imgui::BeginPopupContextItem(animation_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+        if (im::BeginPopupContextItem(animation_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
             bool should_break = false;
-            imgui::Text("Edit Animation");
+            im::Text("Edit Animation");
 
-            if (std::optional opt_name = gui_input_waited("##RenameAnimationInput", animation_name)) {
-                const std::string& name = opt_name.value();
+            if (Optional opt_name = gui_input_waited("##RenameAnimationInput", animation_name)) {
+                const String& name = opt_name.value();
                 if (!name.empty() && !scene->animations.contains(name)) {
                     if (this->selected_animation == animation_name) {
                         this->selected_animation = name;
@@ -106,20 +106,20 @@ void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* 
                     scene->animations[name] = animation;
                     scene->animations.erase(animation_name);
                     should_break = true;
-                    imgui::CloseCurrentPopup();
+                    im::CloseCurrentPopup();
                 }
             }
 
-            if (imgui::Button("Delete", { -1.0f, 0.0f })) {
+            if (im::Button("Delete", { -1.0f, 0.0f })) {
                 if (this->selected_animation == animation_name) {
                     this->selected_animation = "/";
                 }
                 scene->animations.erase(animation_name);
                 should_break = true;
-                imgui::CloseCurrentPopup();
+                im::CloseCurrentPopup();
             }
 
-            imgui::EndPopup();
+            im::EndPopup();
             if (should_break) {
                 break;
             }
@@ -129,13 +129,13 @@ void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* 
 
 void titian::GUISectionAnimationEditor::update_animation_camera()
 {
-    if (imgui::IsMouseClicked(ImGuiMouseButton_Right)) {
+    if (im::IsMouseClicked(ImGuiMouseButton_Right)) {
         initial_camera_info = camera_info;
     }
 
     const int scroll = app_layer->window.mouse.scroll();
-    if (imgui::IsMouseDown(ImGuiMouseButton_Right)) {
-        const ImVec2 drag_delta = imgui::GetMouseDragDelta(ImGuiMouseButton_Right);
+    if (im::IsMouseDown(ImGuiMouseButton_Right)) {
+        const ImVec2 drag_delta = im::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;
         camera_info.y = initial_camera_info.y + drag_delta.y * camera->sensitivity;
         camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
@@ -262,24 +262,24 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
 
     const int current_scroll = window->mouse.scroll();
 
-    if (imgui::Begin("Animation Properties") && animation) {
-        if (imgui::IsWindowFocused()) {
+    if (im::Begin("Animation Properties") && animation) {
+        if (im::IsWindowFocused()) {
             m_start_mesh_index += m_last_scroll - current_scroll;
             m_start_mesh_index = std::clamp(m_start_mesh_index, 0, std::max<int>((int) animation->meshes.size() - 1, 0));
         }
 
         /*-*/
-        imgui::Text("Animation Editor");
-        if (imgui::DragFloat3("Sun Direction", sun_direction, 0.01f)) {
+        im::Text("Animation Editor");
+        if (im::DragFloat3("Sun Direction", sun_direction, 0.01f)) {
             sun_direction = kl::normalize(sun_direction);
         }
-        imgui::SliderInt("Frame", &m_frame_index, 0, std::max<int>((int) animation->meshes.size() - 1, 0));
+        im::SliderInt("Frame", &m_frame_index, 0, std::max<int>((int) animation->meshes.size() - 1, 0));
 
         const float duration_seconds = animation->duration_in_ticks / animation->ticks_per_second;
         float temp_anim_time = fmod(m_timer.elapsed(), duration_seconds);
-		imgui::SliderFloat("Time", &temp_anim_time, 0.0f, duration_seconds);
+		im::SliderFloat("Time", &temp_anim_time, 0.0f, duration_seconds);
 
-        if (imgui::Checkbox("Animating?", &m_animating)) {
+        if (im::Checkbox("Animating?", &m_animating)) {
             if (m_animating) {
                 m_timer.restart();
             }
@@ -288,49 +288,49 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
             }
         }
 
-        imgui::Separator();
+        im::Separator();
 
         /*-*/
-        imgui::Text("Info");
-        imgui::Text("Name: ");
-        imgui::SameLine();
+        im::Text("Info");
+        im::Text("Name: ");
+        im::SameLine();
         gui_colored_text(selected_animation, gui_layer->special_color);
 
-        static const std::map<AnimationType, std::string> animation_type_names{
+        static const Map<AnimationType, String> animation_type_names{
             { AnimationType::SEQUENTIAL, "Sequential" },
             { AnimationType::SKELETAL, "Skeletal" },
 		};
 
-        if (imgui::BeginCombo("Animation Type", animation_type_names.at(animation->type).c_str())) {
+        if (im::BeginCombo("Animation Type", animation_type_names.at(animation->type).c_str())) {
             for (auto& [type, name] : animation_type_names) {
-				if (imgui::Selectable(name.c_str(), animation->type == type)) {
+				if (im::Selectable(name.c_str(), animation->type == type)) {
 					animation->type = type;
 				}
 			}
-			imgui::EndCombo();
+			im::EndCombo();
         }
 
-        imgui::DragFloat("Ticks Per Second", &animation->ticks_per_second, 1.0f, 0.0f, 10'000.0f);
-        imgui::DragFloat("Duration in Ticks", &animation->duration_in_ticks, 1.0f, 0.0f, 10'000.0f);
+        im::DragFloat("Ticks Per Second", &animation->ticks_per_second, 1.0f, 0.0f, 10'000.0f);
+        im::DragFloat("Duration in Ticks", &animation->duration_in_ticks, 1.0f, 0.0f, 10'000.0f);
 
         int mesh_count = (int) animation->meshes.size();
-        if (imgui::DragInt("Mesh Count", &mesh_count, 1.0f, 0, 10'000)) {
+        if (im::DragInt("Mesh Count", &mesh_count, 1.0f, 0, 10'000)) {
             animation->meshes.resize(mesh_count);
         }
 
         for (int i = m_start_mesh_index; i < (m_start_mesh_index + 10) && i < (int) animation->meshes.size(); i++) {
-            if (imgui::BeginCombo(kl::format(i, ". Mesh").c_str(), animation->meshes[i].c_str())) {
+            if (im::BeginCombo(kl::format(i, ". Mesh").c_str(), animation->meshes[i].c_str())) {
                 for (auto& [name, _] : game_layer->scene->meshes) {
-                    if (imgui::Selectable(name.c_str(), name == animation->meshes[i])) {
+                    if (im::Selectable(name.c_str(), name == animation->meshes[i])) {
                         animation->meshes[i] = name;
                     }
                 }
-                imgui::EndCombo();
+                im::EndCombo();
             }
         }
 
     }
-    imgui::End();
+    im::End();
 
     m_last_scroll = current_scroll;
 }

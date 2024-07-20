@@ -15,13 +15,13 @@ namespace titian {
         void render_gui() override;
 
     private:
-        std::map<ImGuiKey, bool> m_last_key_states = {};
-        std::optional<kl::Int2> m_rect_selection_first = {};
+        Map<ImGuiKey, bool> m_last_key_states = {};
+        Optional<kl::Int2> m_rect_selection_first = {};
 
         kl::Int2 window_mouse_position();
-        std::unordered_set<uint32_t> read_entity_ids(const kl::Int2& first_coords, const kl::Int2& second_coords);
+        Set<uint32_t> read_entity_ids(const kl::Int2& first_coords, const kl::Int2& second_coords);
 
         void handle_gizmo_operation_change(int operation, ImGuiKey switch_key);
-        void render_gizmos(const std::unordered_set<Entity*>& entities);
+        void render_gizmos(const Set<Entity*>& entities);
 	};
 }

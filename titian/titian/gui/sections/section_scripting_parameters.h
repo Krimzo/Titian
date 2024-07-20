@@ -13,6 +13,6 @@ namespace titian {
         void render_gui() override;
 
     private:
-        void display_parameter_editor(int script_id, const std::string& name, const chaiscript::Boxed_Value& parameter);
+        void display_parameter_editor(int script_id, const String& name, const cs::Boxed_Value& parameter);
     };
 }

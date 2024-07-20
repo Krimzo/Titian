@@ -1,14 +1,14 @@
 #include "main.h"
 
 
-titian::Collider::Collider(physx::PxPhysics* physics)
+titian::Collider::Collider(px::PxPhysics* physics)
     : m_physics(physics)
 {
     m_material = m_physics->createMaterial(0.25f, 0.25f, 0.25f);
     kl::assert(m_material, "Failed to create collider MATERIAL");
 }
 
-titian::Collider::Collider(physx::PxPhysics* physics, const physx::PxGeometry& geometry)
+titian::Collider::Collider(px::PxPhysics* physics, const px::PxGeometry& geometry)
     : Collider(physics)
 {
     set_geometry(geometry);
@@ -28,33 +28,33 @@ titian::Collider::~Collider()
 
 void titian::Collider::serialize(Serializer* serializer, const void* helper_data) const
 {
-    auto helper_meshes = static_cast<const std::map<std::string, kl::Object<Mesh>>*>(helper_data);
+    const auto helper_meshes = static_cast<const Map<String, Ref<Mesh>>*>(helper_data);
 
-    const physx::PxGeometryType::Enum type = this->type();
-    serializer->write_object<physx::PxGeometryType::Enum>(type);
+    const px::PxGeometryType::Enum type = this->type();
+    serializer->write_object<px::PxGeometryType::Enum>(type);
 
     switch (type) {
-    case physx::PxGeometryType::Enum::eBOX: {
-        physx::PxBoxGeometry geometry = {};
+    case px::PxGeometryType::Enum::eBOX: {
+        px::PxBoxGeometry geometry = {};
         m_shape->getBoxGeometry(geometry);
         serializer->write_object<kl::Float3>(reinterpret_cast<kl::Float3&>(geometry.halfExtents));
         break;
     }
-    case physx::PxGeometryType::Enum::eSPHERE: {
-        physx::PxSphereGeometry geometry = {};
+    case px::PxGeometryType::Enum::eSPHERE: {
+        px::PxSphereGeometry geometry = {};
         m_shape->getSphereGeometry(geometry);
         serializer->write_object<float>(geometry.radius);
         break;
     }
-    case physx::PxGeometryType::Enum::eCAPSULE: {
-        physx::PxCapsuleGeometry geometry = {};
+    case px::PxGeometryType::Enum::eCAPSULE: {
+        px::PxCapsuleGeometry geometry = {};
         m_shape->getCapsuleGeometry(geometry);
         serializer->write_object<float>(geometry.halfHeight);
         serializer->write_object<float>(geometry.radius);
         break;
     }
-    case physx::PxGeometryType::Enum::eTRIANGLEMESH: {
-        physx::PxTriangleMeshGeometry geometry = {};
+    case px::PxGeometryType::Enum::eTRIANGLEMESH: {
+        px::PxTriangleMeshGeometry geometry = {};
         m_shape->getTriangleMeshGeometry(geometry);
         serializer->write_object<kl::Float3>(reinterpret_cast<kl::Float3&>(geometry.scale.scale));
         bool was_found = false;
@@ -80,32 +80,32 @@ void titian::Collider::serialize(Serializer* serializer, const void* helper_data
 
 void titian::Collider::deserialize(const Serializer* serializer, const void* helper_data)
 {
-    auto helper_meshes = static_cast<const std::map<std::string, kl::Object<Mesh>>*>(helper_data);
+    const auto helper_meshes = static_cast<const Map<String, Ref<Mesh>>*>(helper_data);
 
-    const physx::PxGeometryType::Enum type = serializer->read_object<physx::PxGeometryType::Enum>();
+    const px::PxGeometryType::Enum type = serializer->read_object<px::PxGeometryType::Enum>();
 
     switch (type) {
-    case physx::PxGeometryType::Enum::eBOX: {
-        physx::PxBoxGeometry geometry = {};
+    case px::PxGeometryType::Enum::eBOX: {
+        px::PxBoxGeometry geometry = {};
         serializer->read_object<kl::Float3>(reinterpret_cast<kl::Float3&>(geometry.halfExtents));
         this->set_geometry(geometry);
         break;
     }
-    case physx::PxGeometryType::Enum::eSPHERE: {
-        physx::PxSphereGeometry geometry = {};
+    case px::PxGeometryType::Enum::eSPHERE: {
+        px::PxSphereGeometry geometry = {};
         serializer->read_object<float>(geometry.radius);
         this->set_geometry(geometry);
         break;
     }
-    case physx::PxGeometryType::Enum::eCAPSULE: {
-        physx::PxCapsuleGeometry geometry = {};
+    case px::PxGeometryType::Enum::eCAPSULE: {
+        px::PxCapsuleGeometry geometry = {};
         serializer->read_object<float>(geometry.halfHeight);
         serializer->read_object<float>(geometry.radius);
         this->set_geometry(geometry);
         break;
     }
-    case physx::PxGeometryType::Enum::eTRIANGLEMESH: {
-        physx::PxTriangleMeshGeometry geometry = {};
+    case px::PxGeometryType::Enum::eTRIANGLEMESH: {
+        px::PxTriangleMeshGeometry geometry = {};
         serializer->read_object<kl::Float3>(reinterpret_cast<kl::Float3&>(geometry.scale.scale));
         geometry.triangleMesh = (*helper_meshes).at(serializer->read_string())->physics_buffer;
         this->set_geometry(geometry);
@@ -122,12 +122,12 @@ void titian::Collider::deserialize(const Serializer* serializer, const void* hel
 }
 
 // Get
-physx::PxShape* titian::Collider::shape() const
+px::PxShape* titian::Collider::shape() const
 {
     return m_shape;
 }
 
-physx::PxGeometryType::Enum titian::Collider::type() const
+px::PxGeometryType::Enum titian::Collider::type() const
 {
     return m_shape->getGeometryType();
 }
@@ -135,23 +135,23 @@ physx::PxGeometryType::Enum titian::Collider::type() const
 kl::Float4x4 titian::Collider::scaling_matrix() const
 {
     switch (type()) {
-    case physx::PxGeometryType::Enum::eBOX: {
-        physx::PxBoxGeometry geometry = {};
+    case px::PxGeometryType::Enum::eBOX: {
+        px::PxBoxGeometry geometry = {};
         m_shape->getBoxGeometry(geometry);
         return kl::Float4x4::scaling(reinterpret_cast<kl::Float3&>(geometry.halfExtents));
     }
-    case physx::PxGeometryType::Enum::eSPHERE: {
-        physx::PxSphereGeometry geometry = {};
+    case px::PxGeometryType::Enum::eSPHERE: {
+        px::PxSphereGeometry geometry = {};
         m_shape->getSphereGeometry(geometry);
         return kl::Float4x4::scaling(kl::Float3{ geometry.radius });
     }
-    case physx::PxGeometryType::Enum::eCAPSULE: {
-        physx::PxCapsuleGeometry geometry = {};
+    case px::PxGeometryType::Enum::eCAPSULE: {
+        px::PxCapsuleGeometry geometry = {};
         m_shape->getCapsuleGeometry(geometry);
         return kl::Float4x4::scaling(kl::Float3{ geometry.halfHeight * 0.5f, kl::Float2{geometry.radius} });
     }
-    case physx::PxGeometryType::Enum::eTRIANGLEMESH: {
-        physx::PxTriangleMeshGeometry geometry = {};
+    case px::PxGeometryType::Enum::eTRIANGLEMESH: {
+        px::PxTriangleMeshGeometry geometry = {};
         m_shape->getTriangleMeshGeometry(geometry);
         return kl::Float4x4::scaling(reinterpret_cast<kl::Float3&>(geometry.scale.scale));
     }
@@ -160,7 +160,7 @@ kl::Float4x4 titian::Collider::scaling_matrix() const
 }
 
 // Geometry
-void titian::Collider::set_geometry(const physx::PxGeometry& geometry)
+void titian::Collider::set_geometry(const px::PxGeometry& geometry)
 {
     if (m_shape) {
         m_shape->release();
@@ -173,27 +173,27 @@ void titian::Collider::set_geometry(const physx::PxGeometry& geometry)
 void titian::Collider::set_rotation(const kl::Float3& rotation)
 {
     const kl::Float4 quat = kl::to_quaternion(rotation);
-    physx::PxTransform transform = m_shape->getLocalPose();
-    transform.q = (const physx::PxQuat&)quat;
+    px::PxTransform transform = m_shape->getLocalPose();
+    transform.q = (const px::PxQuat&)quat;
     m_shape->setLocalPose(transform);
 }
 
 kl::Float3 titian::Collider::rotation() const
 {
-    const physx::PxTransform transform = m_shape->getLocalPose();
+    const px::PxTransform transform = m_shape->getLocalPose();
     return kl::to_euler<float>((const kl::Float4&) transform.q);
 }
 
 void titian::Collider::set_offset(const kl::Float3& position)
 {
-    physx::PxTransform transform = m_shape->getLocalPose();
-    transform.p = (const physx::PxVec3&)position;
+    px::PxTransform transform = m_shape->getLocalPose();
+    transform.p = (const px::PxVec3&)position;
     m_shape->setLocalPose(transform);
 }
 
 kl::Float3 titian::Collider::offset() const
 {
-    const physx::PxTransform transform = m_shape->getLocalPose();
+    const px::PxTransform transform = m_shape->getLocalPose();
     return (const kl::Float3&) transform.p;
 }
 

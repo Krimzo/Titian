@@ -1,19 +1,19 @@
 #pragma once
 
-#include "klibrary.h"
+#include "standard/standard.h"
 
 
 namespace titian {
-	class LanguageEditor
+	class CodeEditor
 	{
 	public:
-		LanguageEditor();
+		CodeEditor();
 
-		void load(const std::string& source);
-		void edit(std::string* source);
+		void load(const String& source);
+		void edit(String* source);
 
-		std::string get_word_at_cursor() const;
-		void replace_word_at_cursor(const std::string_view& text);
+		String get_word_at_cursor() const;
+		void replace_word_at_cursor(const String& text);
 
 		const TextEditor::LanguageDefinition* get_definition() const;
 		const TextEditor::Palette* get_palette() const;

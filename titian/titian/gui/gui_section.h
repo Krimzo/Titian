@@ -8,7 +8,7 @@ namespace titian {
 	class GUISection : public BenchmarkInfo, public LayerHolder
 	{
 	public:
-		GUISection(const std::string& name, const LayerPackage& package);
+		GUISection(const String& name, const LayerPackage& package);
 		virtual ~GUISection() = default;
 
 		GUISection(const GUISection&) = delete;

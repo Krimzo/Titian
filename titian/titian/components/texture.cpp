@@ -7,7 +7,7 @@ titian::Texture::Texture(kl::GPU* gpu)
 
 void titian::Texture::serialize(Serializer* serializer, const void* helper_data) const
 {
-	std::vector<byte> compressed_image;
+	Vector<byte> compressed_image;
 	data_buffer.save_to_vector(&compressed_image, COMPRESSION_TYPE);
 
 	serializer->write_object<uint64_t>(compressed_image.size());
@@ -18,7 +18,7 @@ void titian::Texture::serialize(Serializer* serializer, const void* helper_data)
 void titian::Texture::deserialize(const Serializer* serializer, const void* helper_data)
 {
 	const uint64_t data_size = serializer->read_object<uint64_t>();
-	std::vector<byte> image_data{};
+	Vector<byte> image_data{};
 	image_data.resize(data_size);
 
 	serializer->read_array<byte>(image_data.data(), data_size);

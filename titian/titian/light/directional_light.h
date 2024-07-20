@@ -15,7 +15,7 @@ namespace titian {
         float point_size = 1.0f;
 		kl::Float3 color{ 1.0f };
 
-		DirectionalLight(physx::PxPhysics* physics, bool dynamic, kl::GPU* gpu, uint32_t map_resolution);
+		DirectionalLight(px::PxPhysics* physics, bool dynamic, kl::GPU* gpu, uint32_t map_resolution);
 
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;
@@ -35,6 +35,6 @@ namespace titian {
 	private:
         uint32_t m_map_resolution = 0;
         kl::Float3 m_direction = { 0.0f, -1.0f, 0.0f };
-		kl::Object<Texture> m_cascades[CASCADE_COUNT] = {};
+		Ref<Texture> m_cascades[CASCADE_COUNT] = {};
 	};
 }

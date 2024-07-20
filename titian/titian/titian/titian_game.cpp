@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-titian::TitianGame::TitianGame(const std::string& entry_scene)
+titian::TitianGame::TitianGame(const String& entry_scene)
 {
     // Binds
     const LayerPackage layer_package{

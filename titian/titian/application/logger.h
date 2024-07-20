@@ -9,7 +9,7 @@ namespace titian {
 		static bool m_is_ready;
 
 	public:
-		static std::list<LogInfo> logs;
+		static List<LogInfo> logs;
 		static uint64_t last_log_index;
 
 		static void set_ready();

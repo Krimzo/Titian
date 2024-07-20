@@ -19,11 +19,11 @@ void sandbox::SandboxPieceMonkes::setup_self()
         const int x = i % size;
         const int y = i / size;
 
-        const std::string mesh_name = "monke";
-        const std::string animation_name = "monke";
-        const std::string counter_id = kl::format(std::setw(3), std::setfill('0'), i);
-        const std::string material_name = kl::format("monke_mat_", counter_id);
-        const std::string entity_name = kl::format("Monke", counter_id);
+        const String mesh_name = "monke";
+        const String animation_name = "monke";
+        const String counter_id = kl::format(std::setw(3), std::setfill('0'), i);
+        const String material_name = kl::format("monke_mat_", counter_id);
+        const String entity_name = kl::format("Monke", counter_id);
 
         scene->meshes[mesh_name] = scene->default_meshes->monke;
 		scene->animations[animation_name] = scene->default_animations->monke;
@@ -32,12 +32,12 @@ void sandbox::SandboxPieceMonkes::setup_self()
         const float percentage = (i + 1.0f) / entity_count;
         const float normalized = kl::clamp(percentage, 0.0f, 1.0f);
 
-        kl::Object material = new Material();
+        Ref material = new Material();
         material->color = kl::Float4{ kl::Float3{ normalized }, 1.0f };
         scene->materials[material_name] = material;
 
         // Entity
-        kl::Object monke = scene->new_entity(false);
+        Ref monke = scene->new_entity(false);
         monke->scale = kl::Float3{ 0.5f };
         monke->set_position({
             (float) (x - half_size) + x_offset,

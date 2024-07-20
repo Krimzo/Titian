@@ -3,14 +3,14 @@
 
 titian::ShaderStates::ShaderStates(kl::GPU* gpu)
 {
-    auto load_shader = [&](kl::RenderShaders& shader, const char* filename, const std::vector<kl::dx::LayoutDescriptor>& layout_descriptors)
+    auto load_shader = [&](kl::RenderShaders& shader, const char* filename, const Vector<kl::dx::LayoutDescriptor>& layout_descriptors)
 	{
-        const std::string source = kl::read_file_string(kl::format("builtin/shaders/", filename));
+        const String source = kl::read_file_string(kl::format("builtin/shaders/", filename));
         shader = gpu->create_render_shaders(source, layout_descriptors);
         kl::assert(shader, "Failed to init [", filename, "] shaders");
 	};
 
-    const std::vector<kl::dx::LayoutDescriptor> vertex_layout_descriptors = {
+    const Vector<kl::dx::LayoutDescriptor> vertex_layout_descriptors = {
         {    "KL_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         {     "KL_Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         {      "KL_Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },

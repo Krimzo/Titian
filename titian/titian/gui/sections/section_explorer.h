@@ -11,27 +11,27 @@ namespace titian {
 	class GUISectionExplorer : public GUISection
 	{
 	public:
-        kl::Object<Texture> default_file_texture = nullptr;
-        kl::Object<Texture> mesh_file_texture = nullptr;
-        kl::Object<Texture> texture_file_texture = nullptr;
-        kl::Object<Texture> script_file_texture = nullptr;
-        kl::Object<Texture> shader_file_texture = nullptr;
-        kl::Object<Texture> scene_file_texture = nullptr;
-        kl::Object<Texture> default_dir_texture = nullptr;
-        kl::Object<Texture> parent_dir_texture = nullptr;
+        Ref<Texture> default_file_texture = nullptr;
+        Ref<Texture> mesh_file_texture = nullptr;
+        Ref<Texture> texture_file_texture = nullptr;
+        Ref<Texture> script_file_texture = nullptr;
+        Ref<Texture> shader_file_texture = nullptr;
+        Ref<Texture> scene_file_texture = nullptr;
+        Ref<Texture> default_dir_texture = nullptr;
+        Ref<Texture> parent_dir_texture = nullptr;
 
         GUISectionExplorer(const LayerPackage& package);
 
         void render_gui() override;
 
     private:
-        std::string m_path = std::filesystem::absolute(".").string();
+        String m_path = fs::absolute(".").string();
         float m_icon_size = 65.0f;
 
-        void handle_file_entry(const std::filesystem::path& file);
-        void handle_directory_entry(const std::filesystem::path& directory, bool is_parent_dir);
+        void handle_file_entry(const fs::path& file);
+        void handle_directory_entry(const fs::path& directory, bool is_parent_dir);
 
-        void handle_item_transfer(const std::string& item, const std::string& destination);
+        void handle_item_transfer(const String& item, const String& destination);
         kl::dx::ShaderView file_icon(FileType type);
     };
 }

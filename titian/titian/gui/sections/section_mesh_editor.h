@@ -9,9 +9,9 @@ namespace titian {
     class GUISectionMeshEditor : public GUISection
     {
     public:
-        kl::Object<Camera> camera = nullptr;
-        kl::Object<Texture> render_texture = nullptr;
-        kl::Object<Texture> depth_texture = nullptr;
+        Ref<Camera> camera = nullptr;
+        Ref<Texture> render_texture = nullptr;
+        Ref<Texture> depth_texture = nullptr;
 
         kl::Float4 line_color = kl::colors::WHITE;
         kl::Float3 sun_direction = { 0.0f, -1.0f, 0.0f };
@@ -21,7 +21,7 @@ namespace titian {
         kl::Float2 initial_camera_info = { 200.0f, 10.0f };
         kl::Float2 camera_info = initial_camera_info;
 
-        std::string selected_mesh = "/";
+        String selected_mesh = "/";
 
         GUISectionMeshEditor(const LayerPackage& package);
 

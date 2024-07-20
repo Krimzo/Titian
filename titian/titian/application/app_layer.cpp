@@ -5,7 +5,7 @@ titian::AppLayer::AppLayer()
 	: Layer("AppLayer")
 {}
 
-void titian::AppLayer::init(const std::string_view& name)
+void titian::AppLayer::init(const String& name)
 {
 	ImGui_ImplWin32_EnableDpiAwareness();
 	window.set_title(name);

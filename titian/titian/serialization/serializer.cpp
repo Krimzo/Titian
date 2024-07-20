@@ -1,15 +1,15 @@
 #include "main.h"
 
 
-std::string titian::format_serial_version(const uint32_t version)
+titian::String titian::format_serial_version(const uint32_t version)
 {
-	std::string result = kl::format(std::hex, std::setfill('0'), std::setw(8), version);
+	String result = kl::format(std::hex, std::setfill('0'), std::setw(8), version);
 	result.insert(result.begin() + 2, '\'');
 	result.insert(result.begin() + 5, '\'');
 	return result;
 }
 
-titian::Serializer::Serializer(const std::string& path, const bool write)
+titian::Serializer::Serializer(const String& path, const bool write)
 	: m_path(path), m_writing(write)
 {
 	m_file.open(path, write);
@@ -46,23 +46,23 @@ titian::Serializer::operator bool() const
 	return m_file && m_is_valid_version;
 }
 
-void titian::Serializer::write_string(const std::string& data)
+void titian::Serializer::write_string(const String& data)
 {
 	const uint32_t size = (uint32_t) data.size();
 	m_file.write<uint32_t>(size);
 	m_file.write<char>(data.data(), size);
 }
 
-void titian::Serializer::read_string(std::string& data) const
+void titian::Serializer::read_string(String& data) const
 {
 	const uint32_t size = m_file.read<uint32_t>();
 	data.resize(size);
 	m_file.read<char>(data.data(), size);
 }
 
-std::string titian::Serializer::read_string() const
+titian::String titian::Serializer::read_string() const
 {
-	std::string result;
+	String result;
 	read_string(result);
 	return result;
 }

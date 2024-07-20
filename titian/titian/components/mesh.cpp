@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-titian::Mesh::Mesh(kl::GPU* gpu, physx::PxPhysics* physics, physx::PxCooking* cooking)
+titian::Mesh::Mesh(kl::GPU* gpu, px::PxPhysics* physics, px::PxCooking* cooking)
     : m_gpu(gpu), m_physics(physics), m_cooking(cooking)
 {}
 
@@ -25,7 +25,7 @@ void titian::Mesh::serialize(Serializer* serializer, const void* helper_data) co
         serializer->write_object(mat);
     }
 
-    std::function<void(const SkeletonNode*)> rec_helper;
+    Function<void(const SkeletonNode*)> rec_helper;
     rec_helper = [&](const SkeletonNode* node)
     {
         serializer->write_object<int>(node->bone_index);
@@ -57,7 +57,7 @@ void titian::Mesh::deserialize(const Serializer* serializer, const void* helper_
         serializer->read_object(mat);
     }
 
-    std::function<void(SkeletonNode*)> rec_helper;
+    Function<void(SkeletonNode*)> rec_helper;
     rec_helper = [&](SkeletonNode* node)
     {
         serializer->read_object<int>(node->bone_index);
@@ -77,7 +77,7 @@ void titian::Mesh::deserialize(const Serializer* serializer, const void* helper_
     this->reload();
 }
 
-void titian::Mesh::load(const std::vector<kl::Vertex<float>>& vertices)
+void titian::Mesh::load(const Vector<kl::Vertex<float>>& vertices)
 {
 	data_buffer.resize(vertices.size());
     for (size_t i = 0; i < vertices.size(); i++) {
@@ -100,15 +100,15 @@ void titian::Mesh::reload()
     // Physics
     free_physics_buffer();
 
-    physx::PxTriangleMeshDesc mesh_descriptor = {};
-    mesh_descriptor.points.stride = static_cast<physx::PxU32>(sizeof(Data::value_type));
-    mesh_descriptor.points.count = static_cast<physx::PxU32>(data_buffer.size() / 3 * 3);
+    px::PxTriangleMeshDesc mesh_descriptor = {};
+    mesh_descriptor.points.stride = static_cast<px::PxU32>(sizeof(Data::value_type));
+    mesh_descriptor.points.count = static_cast<px::PxU32>(data_buffer.size() / 3 * 3);
     mesh_descriptor.points.data = data_buffer.data();
 
-    physx::PxDefaultMemoryOutputStream cook_buffer = {};
+    px::PxDefaultMemoryOutputStream cook_buffer = {};
     m_cooking->cookTriangleMesh(mesh_descriptor, cook_buffer);
 
-    physx::PxDefaultMemoryInputData cooked_buffer(cook_buffer.getData(), cook_buffer.getSize());
+    px::PxDefaultMemoryInputData cooked_buffer(cook_buffer.getData(), cook_buffer.getSize());
     physics_buffer = m_physics->createTriangleMesh(cooked_buffer);
 }
 

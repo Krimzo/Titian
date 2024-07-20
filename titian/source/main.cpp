@@ -14,12 +14,12 @@ int main(const int argc, const char** argv)
 		create_package(PREVIEW_DIR, PACKAGED_PREVIEW_FILE);
 	}
 
-	if (!kl::IS_DEBUG && std::filesystem::path(argv[0]).is_absolute()) {
+	if (!kl::IS_DEBUG && fs::path(argv[0]).is_absolute()) {
 		kl::console::set_enabled(false);
 	}
-	const std::unordered_map<std::string, std::string> ini_data = parse_ini_file(ini::_FILE_NAME);
+	const Map<String, String> ini_data = parse_ini_file(ini::_FILE_NAME);
 
-	std::string exe_type = exe_type::PLAY;
+	String exe_type = exe_type::PLAY;
 	if (argc >= 2) {
 		exe_type = argv[1];
 		Logger::log("Using argument exe type: ", exe_type);

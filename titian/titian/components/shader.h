@@ -15,7 +15,7 @@ namespace titian {
 	class Shader : public Serializable
 	{
 	public:
-		using Data = std::string;
+		using Data = String;
 
 		ShaderType type = ShaderType::MATERIAL;
 		Data data_buffer = {};

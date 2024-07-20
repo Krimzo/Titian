@@ -7,20 +7,20 @@ namespace titian {
     class Collider : public Serializable
     {
     public:
-        Collider(physx::PxPhysics* physics);
-        Collider(physx::PxPhysics* physics, const physx::PxGeometry& geometry);
+        Collider(px::PxPhysics* physics);
+        Collider(px::PxPhysics* physics, const px::PxGeometry& geometry);
         ~Collider() override;
 
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;
 
         // Get
-        physx::PxShape* shape() const;
-        physx::PxGeometryType::Enum type() const;
+        px::PxShape* shape() const;
+        px::PxGeometryType::Enum type() const;
         kl::Float4x4 scaling_matrix() const;
 
         // Geometry
-        void set_geometry(const physx::PxGeometry& geometry);
+        void set_geometry(const px::PxGeometry& geometry);
 
         void set_rotation(const kl::Float3& rotation);
         kl::Float3 rotation() const;
@@ -39,8 +39,8 @@ namespace titian {
         float restitution() const;
 
     private:
-        physx::PxPhysics* m_physics = nullptr;
-        physx::PxMaterial* m_material = nullptr;
-        physx::PxShape* m_shape = nullptr;
+        px::PxPhysics* m_physics = nullptr;
+        px::PxMaterial* m_material = nullptr;
+        px::PxShape* m_shape = nullptr;
     };
 }

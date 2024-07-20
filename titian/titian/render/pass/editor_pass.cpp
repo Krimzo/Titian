@@ -15,7 +15,7 @@ titian::EditorPass::EditorPass(const LayerPackage& package)
         { {  1.0f, -1.0f,  1.0f } },
         { { -1.0f, -1.0f,  1.0f } },
     };
-    const std::vector<kl::Vertex<float>> frustum_data = {
+    const Vector<kl::Vertex<float>> frustum_data = {
         frustum_vertices[0], frustum_vertices[1],
         frustum_vertices[0], frustum_vertices[2],
         frustum_vertices[3], frustum_vertices[1],
@@ -89,19 +89,19 @@ void titian::EditorPass::render_self(StatePackage& package)
             package.shader_state.pixel_shader.update_cbuffer(ps_cb);
 
             switch (collider->type()) {
-            case physx::PxGeometryType::Enum::eBOX:
+            case px::PxGeometryType::Enum::eBOX:
                 gpu->draw(default_meshes->cube->graphics_buffer, default_meshes->cube->casted_topology());
                 break;
 
-            case physx::PxGeometryType::Enum::eSPHERE:
+            case px::PxGeometryType::Enum::eSPHERE:
                 gpu->draw(default_meshes->sphere->graphics_buffer, default_meshes->sphere->casted_topology());
                 break;
 
-            case physx::PxGeometryType::Enum::eCAPSULE:
+            case px::PxGeometryType::Enum::eCAPSULE:
                 gpu->draw(default_meshes->capsule->graphics_buffer, default_meshes->capsule->casted_topology());
                 break;
 
-            case physx::PxGeometryType::Enum::eTRIANGLEMESH:
+            case px::PxGeometryType::Enum::eTRIANGLEMESH:
                 if (Mesh* mesh = &scene->get_mesh(selected_entity->collider_mesh_name)) {
                     gpu->draw(mesh->graphics_buffer, mesh->casted_topology());
                 }

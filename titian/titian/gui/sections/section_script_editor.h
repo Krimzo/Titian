@@ -8,7 +8,7 @@
 #include "scripting/interp_script.h"
 #include "scripting/node_script.h"
 
-#include "scripting/interp/language_editor.h"
+#include "gui/editors/code_editor.h"
 
 
 namespace ed = ax::NodeEditor;
@@ -17,7 +17,7 @@ namespace titian {
 	class GUISectionScriptEditor : public GUISection
 	{
 	public:
-		std::string selected_script = "/";
+		String selected_script = "/";
 
 		GUISectionScriptEditor(const LayerPackage& package);
 		~GUISectionScriptEditor() override;
@@ -26,7 +26,7 @@ namespace titian {
 
 	private:
 		MemoryEditor m_native_editor{};
-		LanguageEditor m_interp_editor{};
+		CodeEditor m_interp_editor{};
 		ed::EditorContext* m_node_editor = nullptr;
 		Script* m_last_script = nullptr;
 

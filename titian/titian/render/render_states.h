@@ -11,11 +11,11 @@ namespace titian {
 	class RenderStates
 	{
 	public:
-		kl::Object<RasterStates> raster_states = nullptr;
-		kl::Object<DepthStates> depth_states = nullptr;
-		kl::Object<SamplerStates> sampler_states = nullptr;
-		kl::Object<ShaderStates> shader_states = nullptr;
-		kl::Object<BlendStates> blend_states = nullptr;
+		Ref<RasterStates> raster_states = nullptr;
+		Ref<DepthStates> depth_states = nullptr;
+		Ref<SamplerStates> sampler_states = nullptr;
+		Ref<ShaderStates> shader_states = nullptr;
+		Ref<BlendStates> blend_states = nullptr;
 
 		RenderStates(kl::GPU* gpu);
 	};

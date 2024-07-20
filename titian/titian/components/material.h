@@ -16,11 +16,11 @@ namespace titian {
 
 		kl::Float4x4 custom_data = {};
 
-		std::string color_map_name = "/";
-		std::string normal_map_name = "/";
-		std::string roughness_map_name = "/";
+		String color_map_name = "/";
+		String normal_map_name = "/";
+		String roughness_map_name = "/";
 
-		std::string shader_name = "/";
+		String shader_name = "/";
 
 		Material();
 
