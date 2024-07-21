@@ -1,0 +1,26 @@
+#pragma once
+
+#include "standard.h"
+
+
+namespace titian {
+    using namespace standard;
+}
+
+namespace titian {
+	class LogInfo
+    {
+    public:
+        String date = kl::format(kl::Date());
+        String message = {};
+
+        LogInfo();
+        LogInfo(const char* message);
+        LogInfo(const String& message);
+
+        template<typename... Args>
+        LogInfo(const Args&... objects)
+            : message(kl::format(objects...))
+        {}
+	};
+}

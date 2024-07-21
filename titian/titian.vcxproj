@@ -19,13 +19,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -44,24 +44,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>titian</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>titian_d</TargetName>
+    <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\assimp\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)chaiscript\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>main.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>titian.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -71,6 +71,9 @@
       </DelayLoadDLLs>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)chaiscript\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -78,15 +81,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;ZEP_FEATURE_CPP_FILE_SYSTEM;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)titian\;$(ProjectDir)sandbox\;$(ProjectDir)packager\;$(ProjectDir)external\assimp\;$(ProjectDir)external\physx\;$(ProjectDir)external\mmodule\;$(ProjectDir)external\chaiscript\;$(SolutionDir)klibrary\source\;$(SolutionDir)imgui\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)chaiscript\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>main.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>titian.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -98,542 +101,176 @@
       </DelayLoadDLLs>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)chaiscript\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\assimp\assimp.vcxproj">
+      <Project>{1c6b6176-003d-4cbe-bc5b-21be73f184f9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\chaiscript\chaiscript.vcxproj">
+      <Project>{f5fdc0a3-ab55-46ef-b5ba-cbba0ffef1c1}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\klibrary\klibrary.vcxproj">
       <Project>{5b9896b1-803a-45dd-a262-8055d73c6dd0}</Project>
     </ProjectReference>
     <ProjectReference Include="..\imgui\imgui.vcxproj">
       <Project>{737a8abd-a62f-4e28-8da3-d24a40d276bd}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\mmodule\mmodule.vcxproj">
+      <Project>{fe941003-8180-4824-a733-773690b2bf16}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\physx\physx.vcxproj">
+      <Project>{67d5795d-1cc1-462a-8d67-548cf9f03de5}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="external\mmodule\mmodule.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="packager\packager.cpp" />
-    <ClCompile Include="packager\packager_entry.cpp" />
-    <ClCompile Include="sandbox\pieces\piece_test.cpp" />
-    <ClCompile Include="titian\components\animation.cpp" />
-    <ClCompile Include="titian\gui\sections\section_animation_editor.cpp" />
-    <ClCompile Include="titian\render\pass\post_pass.cpp" />
-    <ClCompile Include="titian\scene\default\default_animations.cpp" />
-    <ClCompile Include="titian\ui\ui_funcs.cpp" />
-    <ClInclude Include="external\assimp\assimp\aabb.h" />
-    <ClInclude Include="external\assimp\assimp\ai_assert.h" />
-    <ClInclude Include="external\assimp\assimp\anim.h" />
-    <ClInclude Include="external\assimp\assimp\AssertHandler.h" />
-    <ClInclude Include="external\assimp\assimp\Base64.hpp" />
-    <ClInclude Include="external\assimp\assimp\BaseImporter.h" />
-    <ClInclude Include="external\assimp\assimp\Bitmap.h" />
-    <ClInclude Include="external\assimp\assimp\BlobIOSystem.h" />
-    <ClInclude Include="external\assimp\assimp\ByteSwapper.h" />
-    <ClInclude Include="external\assimp\assimp\camera.h" />
-    <ClInclude Include="external\assimp\assimp\cexport.h" />
-    <ClInclude Include="external\assimp\assimp\cfileio.h" />
-    <ClInclude Include="external\assimp\assimp\cimport.h" />
-    <ClInclude Include="external\assimp\assimp\ColladaMetaData.h" />
-    <ClInclude Include="external\assimp\assimp\color4.h" />
-    <ClInclude Include="external\assimp\assimp\commonMetaData.h" />
-    <ClInclude Include="external\assimp\assimp\Compiler\poppack1.h" />
-    <ClInclude Include="external\assimp\assimp\Compiler\pstdint.h" />
-    <ClInclude Include="external\assimp\assimp\Compiler\pushpack1.h" />
-    <ClInclude Include="external\assimp\assimp\config.h" />
-    <ClInclude Include="external\assimp\assimp\CreateAnimMesh.h" />
-    <ClInclude Include="external\assimp\assimp\DefaultIOStream.h" />
-    <ClInclude Include="external\assimp\assimp\DefaultIOSystem.h" />
-    <ClInclude Include="external\assimp\assimp\DefaultLogger.hpp" />
-    <ClInclude Include="external\assimp\assimp\defs.h" />
-    <ClInclude Include="external\assimp\assimp\Exceptional.h" />
-    <ClInclude Include="external\assimp\assimp\Exporter.hpp" />
-    <ClInclude Include="external\assimp\assimp\fast_atof.h" />
-    <ClInclude Include="external\assimp\assimp\GenericProperty.h" />
-    <ClInclude Include="external\assimp\assimp\GltfMaterial.h" />
-    <ClInclude Include="external\assimp\assimp\Hash.h" />
-    <ClInclude Include="external\assimp\assimp\Importer.hpp" />
-    <ClInclude Include="external\assimp\assimp\importerdesc.h" />
-    <ClInclude Include="external\assimp\assimp\IOStream.hpp" />
-    <ClInclude Include="external\assimp\assimp\IOStreamBuffer.h" />
-    <ClInclude Include="external\assimp\assimp\IOSystem.hpp" />
-    <ClInclude Include="external\assimp\assimp\light.h" />
-    <ClInclude Include="external\assimp\assimp\LineSplitter.h" />
-    <ClInclude Include="external\assimp\assimp\LogAux.h" />
-    <ClInclude Include="external\assimp\assimp\Logger.hpp" />
-    <ClInclude Include="external\assimp\assimp\LogStream.hpp" />
-    <ClInclude Include="external\assimp\assimp\material.h" />
-    <ClInclude Include="external\assimp\assimp\MathFunctions.h" />
-    <ClInclude Include="external\assimp\assimp\matrix3x3.h" />
-    <ClInclude Include="external\assimp\assimp\matrix4x4.h" />
-    <ClInclude Include="external\assimp\assimp\MemoryIOWrapper.h" />
-    <ClInclude Include="external\assimp\assimp\mesh.h" />
-    <ClInclude Include="external\assimp\assimp\metadata.h" />
-    <ClInclude Include="external\assimp\assimp\NullLogger.hpp" />
-    <ClInclude Include="external\assimp\assimp\ObjMaterial.h" />
-    <ClInclude Include="external\assimp\assimp\ParsingUtils.h" />
-    <ClInclude Include="external\assimp\assimp\pbrmaterial.h" />
-    <ClInclude Include="external\assimp\assimp\port\AndroidJNI\AndroidJNIIOSystem.h" />
-    <ClInclude Include="external\assimp\assimp\port\AndroidJNI\BundledAssetIOSystem.h" />
-    <ClInclude Include="external\assimp\assimp\postprocess.h" />
-    <ClInclude Include="external\assimp\assimp\Profiler.h" />
-    <ClInclude Include="external\assimp\assimp\ProgressHandler.hpp" />
-    <ClInclude Include="external\assimp\assimp\qnan.h" />
-    <ClInclude Include="external\assimp\assimp\quaternion.h" />
-    <ClInclude Include="external\assimp\assimp\RemoveComments.h" />
-    <ClInclude Include="external\assimp\assimp\revision.h" />
-    <ClInclude Include="external\assimp\assimp\scene.h" />
-    <ClInclude Include="external\assimp\assimp\SceneCombiner.h" />
-    <ClInclude Include="external\assimp\assimp\SGSpatialSort.h" />
-    <ClInclude Include="external\assimp\assimp\SkeletonMeshBuilder.h" />
-    <ClInclude Include="external\assimp\assimp\SmallVector.h" />
-    <ClInclude Include="external\assimp\assimp\SmoothingGroups.h" />
-    <ClInclude Include="external\assimp\assimp\SpatialSort.h" />
-    <ClInclude Include="external\assimp\assimp\StandardShapes.h" />
-    <ClInclude Include="external\assimp\assimp\StreamReader.h" />
-    <ClInclude Include="external\assimp\assimp\StreamWriter.h" />
-    <ClInclude Include="external\assimp\assimp\StringComparison.h" />
-    <ClInclude Include="external\assimp\assimp\StringUtils.h" />
-    <ClInclude Include="external\assimp\assimp\Subdivision.h" />
-    <ClInclude Include="external\assimp\assimp\texture.h" />
-    <ClInclude Include="external\assimp\assimp\TinyFormatter.h" />
-    <ClInclude Include="external\assimp\assimp\types.h" />
-    <ClInclude Include="external\assimp\assimp\vector2.h" />
-    <ClInclude Include="external\assimp\assimp\vector3.h" />
-    <ClInclude Include="external\assimp\assimp\version.h" />
-    <ClInclude Include="external\assimp\assimp\Vertex.h" />
-    <ClInclude Include="external\assimp\assimp\XmlParser.h" />
-    <ClInclude Include="external\assimp\assimp\XMLTools.h" />
-    <ClInclude Include="external\assimp\assimp\ZipArchiveIOSystem.h" />
-    <ClInclude Include="external\chaiscript\chaiscript.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\function_params.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\function_signature.hpp" />
-    <ClInclude Include="external\chaiscript\utility\hash.hpp" />
-    <ClInclude Include="external\chaiscript\utility\quick_flat_map.hpp" />
-    <ClInclude Include="external\chaiscript\utility\stack_vector.hpp" />
-    <ClInclude Include="sandbox\pieces\piece_prepare.h">
-      <FileType>Document</FileType>
-    </ClInclude>
-    <ClInclude Include="sandbox\pieces\piece_skybox.h">
-      <FileType>Document</FileType>
-    </ClInclude>
-    <ClInclude Include="external\physx\CharacterKinematic\PxBoxController.h" />
-    <ClInclude Include="external\physx\CharacterKinematic\PxCapsuleController.h" />
-    <ClInclude Include="external\physx\CharacterKinematic\PxController.h" />
-    <ClInclude Include="external\physx\CharacterKinematic\PxControllerBehavior.h" />
-    <ClInclude Include="external\physx\CharacterKinematic\PxControllerManager.h" />
-    <ClInclude Include="external\physx\CharacterKinematic\PxControllerObstacles.h" />
-    <ClInclude Include="external\physx\CharacterKinematic\PxExtended.h" />
-    <ClInclude Include="external\physx\Collision\PxCollisionDefs.h" />
-    <ClInclude Include="external\physx\Common\PxBase.h" />
-    <ClInclude Include="external\physx\Common\PxCollection.h" />
-    <ClInclude Include="external\physx\Common\PxCoreUtilityTypes.h" />
-    <ClInclude Include="external\physx\Common\PxMetaData.h" />
-    <ClInclude Include="external\physx\Common\PxMetaDataFlags.h" />
-    <ClInclude Include="external\physx\Common\PxPhysicsInsertionCallback.h" />
-    <ClInclude Include="external\physx\Common\PxPhysXCommonConfig.h" />
-    <ClInclude Include="external\physx\Common\PxProfileZone.h" />
-    <ClInclude Include="external\physx\Common\PxRenderBuffer.h" />
-    <ClInclude Include="external\physx\Common\PxSerialFramework.h" />
-    <ClInclude Include="external\physx\Common\PxSerializer.h" />
-    <ClInclude Include="external\physx\Common\PxStringTable.h" />
-    <ClInclude Include="external\physx\Common\PxTolerancesScale.h" />
-    <ClInclude Include="external\physx\Common\PxTypeInfo.h" />
-    <ClInclude Include="external\physx\Common\Windows\PxWindowsDelayLoadHook.h" />
-    <ClInclude Include="external\physx\Cooking\PxBVH33MidphaseDesc.h" />
-    <ClInclude Include="external\physx\Cooking\PxBVH34MidphaseDesc.h" />
-    <ClInclude Include="external\physx\Cooking\PxBVHStructureDesc.h" />
-    <ClInclude Include="external\physx\Cooking\Pxc.h" />
-    <ClInclude Include="external\physx\Cooking\PxConvexMeshDesc.h" />
-    <ClInclude Include="external\physx\Cooking\PxCooking.h" />
-    <ClInclude Include="external\physx\Cooking\PxMidphaseDesc.h" />
-    <ClInclude Include="external\physx\Cooking\PxTriangleMeshDesc.h" />
-    <ClInclude Include="external\physx\CudaManager\PxCudaContextManager.h" />
-    <ClInclude Include="external\physx\CudaManager\PxCudaMemoryManager.h" />
-    <ClInclude Include="external\physx\Extensions\PxBinaryConverter.h" />
-    <ClInclude Include="external\physx\Extensions\PxBroadPhaseExt.h" />
-    <ClInclude Include="external\physx\Extensions\PxCollectionExt.h" />
-    <ClInclude Include="external\physx\Extensions\PxConstraintExt.h" />
-    <ClInclude Include="external\physx\Extensions\PxContactJoint.h" />
-    <ClInclude Include="external\physx\Extensions\PxConvexMeshExt.h" />
-    <ClInclude Include="external\physx\Extensions\PxD6Joint.h" />
-    <ClInclude Include="external\physx\Extensions\PxD6JointCreate.h" />
-    <ClInclude Include="external\physx\Extensions\PxDefaultAllocator.h" />
-    <ClInclude Include="external\physx\Extensions\PxDefaultCpuDispatcher.h" />
-    <ClInclude Include="external\physx\Extensions\PxDefaultErrorCallback.h" />
-    <ClInclude Include="external\physx\Extensions\PxDefaultSimulationFilterShader.h" />
-    <ClInclude Include="external\physx\Extensions\PxDefaultStreams.h" />
-    <ClInclude Include="external\physx\Extensions\PxDistanceJoint.h" />
-    <ClInclude Include="external\physx\Extensions\PxExtensionsAPI.h" />
-    <ClInclude Include="external\physx\Extensions\PxFixedJoint.h" />
-    <ClInclude Include="external\physx\Extensions\PxJoint.h" />
-    <ClInclude Include="external\physx\Extensions\PxJointLimit.h" />
-    <ClInclude Include="external\physx\Extensions\PxMassProperties.h" />
-    <ClInclude Include="external\physx\Extensions\PxPrismaticJoint.h" />
-    <ClInclude Include="external\physx\Extensions\PxRaycastCCD.h" />
-    <ClInclude Include="external\physx\Extensions\PxRepXSerializer.h" />
-    <ClInclude Include="external\physx\Extensions\PxRepXSimpleType.h" />
-    <ClInclude Include="external\physx\Extensions\PxRevoluteJoint.h" />
-    <ClInclude Include="external\physx\Extensions\PxRigidActorExt.h" />
-    <ClInclude Include="external\physx\Extensions\PxRigidBodyExt.h" />
-    <ClInclude Include="external\physx\Extensions\PxSceneQueryExt.h" />
-    <ClInclude Include="external\physx\Extensions\PxSerialization.h" />
-    <ClInclude Include="external\physx\Extensions\PxShapeExt.h" />
-    <ClInclude Include="external\physx\Extensions\PxSimpleFactory.h" />
-    <ClInclude Include="external\physx\Extensions\PxSmoothNormals.h" />
-    <ClInclude Include="external\physx\Extensions\PxSphericalJoint.h" />
-    <ClInclude Include="external\physx\Extensions\PxStringTableExt.h" />
-    <ClInclude Include="external\physx\Extensions\PxTriangleMeshExt.h" />
-    <ClInclude Include="external\physx\Filebuf\PxFileBuf.h" />
-    <ClInclude Include="external\physx\Foundation\Px.h" />
-    <ClInclude Include="external\physx\Foundation\PxAllocatorCallback.h" />
-    <ClInclude Include="external\physx\Foundation\PxAssert.h" />
-    <ClInclude Include="external\physx\Foundation\PxBitAndData.h" />
-    <ClInclude Include="external\physx\Foundation\PxBounds3.h" />
-    <ClInclude Include="external\physx\Foundation\PxErrorCallback.h" />
-    <ClInclude Include="external\physx\Foundation\PxErrors.h" />
-    <ClInclude Include="external\physx\Foundation\PxFlags.h" />
-    <ClInclude Include="external\physx\Foundation\PxFoundationConfig.h" />
-    <ClInclude Include="external\physx\Foundation\PxIntrinsics.h" />
-    <ClInclude Include="external\physx\Foundation\PxIO.h" />
-    <ClInclude Include="external\physx\Foundation\PxMat33.h" />
-    <ClInclude Include="external\physx\Foundation\PxMat44.h" />
-    <ClInclude Include="external\physx\Foundation\PxMath.h" />
-    <ClInclude Include="external\physx\Foundation\PxMathUtils.h" />
-    <ClInclude Include="external\physx\Foundation\PxMemory.h" />
-    <ClInclude Include="external\physx\Foundation\PxPlane.h" />
-    <ClInclude Include="external\physx\Foundation\PxPreprocessor.h" />
-    <ClInclude Include="external\physx\Foundation\PxProfiler.h" />
-    <ClInclude Include="external\physx\Foundation\PxQuat.h" />
-    <ClInclude Include="external\physx\Foundation\PxSharedAssert.h" />
-    <ClInclude Include="external\physx\Foundation\PxSimpleTypes.h" />
-    <ClInclude Include="external\physx\Foundation\PxStrideIterator.h" />
-    <ClInclude Include="external\physx\Foundation\PxTransform.h" />
-    <ClInclude Include="external\physx\Foundation\PxUnionCast.h" />
-    <ClInclude Include="external\physx\Foundation\PxVec2.h" />
-    <ClInclude Include="external\physx\Foundation\PxVec3.h" />
-    <ClInclude Include="external\physx\Foundation\PxVec4.h" />
-    <ClInclude Include="external\physx\Foundation\Unix\PxUnixIntrinsics.h" />
-    <ClInclude Include="external\physx\Foundation\Windows\PxWindowsIntrinsics.h" />
-    <ClInclude Include="external\physx\Geometry\PxBoxGeometry.h" />
-    <ClInclude Include="external\physx\Geometry\PxBVHStructure.h" />
-    <ClInclude Include="external\physx\Geometry\PxCapsuleGeometry.h" />
-    <ClInclude Include="external\physx\Geometry\PxConvexMesh.h" />
-    <ClInclude Include="external\physx\Geometry\PxConvexMeshGeometry.h" />
-    <ClInclude Include="external\physx\Geometry\PxGeometry.h" />
-    <ClInclude Include="external\physx\Geometry\PxGeometryHelpers.h" />
-    <ClInclude Include="external\physx\Geometry\PxGeometryQuery.h" />
-    <ClInclude Include="external\physx\Geometry\PxHeightField.h" />
-    <ClInclude Include="external\physx\Geometry\PxHeightFieldDesc.h" />
-    <ClInclude Include="external\physx\Geometry\PxHeightFieldFlag.h" />
-    <ClInclude Include="external\physx\Geometry\PxHeightFieldGeometry.h" />
-    <ClInclude Include="external\physx\Geometry\PxHeightFieldSample.h" />
-    <ClInclude Include="external\physx\Geometry\PxMeshQuery.h" />
-    <ClInclude Include="external\physx\Geometry\PxMeshScale.h" />
-    <ClInclude Include="external\physx\Geometry\PxPlaneGeometry.h" />
-    <ClInclude Include="external\physx\Geometry\PxSimpleTriangleMesh.h" />
-    <ClInclude Include="external\physx\Geometry\PxSphereGeometry.h" />
-    <ClInclude Include="external\physx\Geometry\PxTriangle.h" />
-    <ClInclude Include="external\physx\Geometry\PxTriangleMesh.h" />
-    <ClInclude Include="external\physx\Geometry\PxTriangleMeshGeometry.h" />
-    <ClInclude Include="external\physx\Geomutils\GuContactBuffer.h" />
-    <ClInclude Include="external\physx\Geomutils\GuContactPoint.h" />
-    <ClInclude Include="external\physx\GPU\PxGpu.h" />
-    <ClInclude Include="external\physx\physx.h" />
-    <ClInclude Include="external\physx\PVD\PxPvd.h" />
-    <ClInclude Include="external\physx\PVD\PxPvdSceneClient.h" />
-    <ClInclude Include="external\physx\PVD\PxPvdTransport.h" />
-    <ClInclude Include="external\physx\PxActor.h" />
-    <ClInclude Include="external\physx\PxAggregate.h" />
-    <ClInclude Include="external\physx\PxArticulation.h" />
-    <ClInclude Include="external\physx\PxArticulationBase.h" />
-    <ClInclude Include="external\physx\PxArticulationJoint.h" />
-    <ClInclude Include="external\physx\PxArticulationJointReducedCoordinate.h" />
-    <ClInclude Include="external\physx\PxArticulationLink.h" />
-    <ClInclude Include="external\physx\PxArticulationReducedCoordinate.h" />
-    <ClInclude Include="external\physx\PxBatchQuery.h" />
-    <ClInclude Include="external\physx\PxBatchQueryDesc.h" />
-    <ClInclude Include="external\physx\PxBroadPhase.h" />
-    <ClInclude Include="external\physx\PxClient.h" />
-    <ClInclude Include="external\physx\PxConfig.h" />
-    <ClInclude Include="external\physx\PxConstraint.h" />
-    <ClInclude Include="external\physx\PxConstraintDesc.h" />
-    <ClInclude Include="external\physx\PxContact.h" />
-    <ClInclude Include="external\physx\PxContactModifyCallback.h" />
-    <ClInclude Include="external\physx\PxDeletionListener.h" />
-    <ClInclude Include="external\physx\PxFiltering.h" />
-    <ClInclude Include="external\physx\PxForceMode.h" />
-    <ClInclude Include="external\physx\PxFoundation.h" />
-    <ClInclude Include="external\physx\PxImmediateMode.h" />
-    <ClInclude Include="external\physx\PxLockedData.h" />
-    <ClInclude Include="external\physx\PxMaterial.h" />
-    <ClInclude Include="external\physx\PxPhysics.h" />
-    <ClInclude Include="external\physx\PxPhysicsAPI.h" />
-    <ClInclude Include="external\physx\PxPhysicsSerialization.h" />
-    <ClInclude Include="external\physx\PxPhysicsVersion.h" />
-    <ClInclude Include="external\physx\PxPhysXConfig.h" />
-    <ClInclude Include="external\physx\PxPruningStructure.h" />
-    <ClInclude Include="external\physx\PxQueryFiltering.h" />
-    <ClInclude Include="external\physx\PxQueryReport.h" />
-    <ClInclude Include="external\physx\PxRigidActor.h" />
-    <ClInclude Include="external\physx\PxRigidBody.h" />
-    <ClInclude Include="external\physx\PxRigidDynamic.h" />
-    <ClInclude Include="external\physx\PxRigidStatic.h" />
-    <ClInclude Include="external\physx\PxScene.h" />
-    <ClInclude Include="external\physx\PxSceneDesc.h" />
-    <ClInclude Include="external\physx\PxSceneLock.h" />
-    <ClInclude Include="external\physx\PxShape.h" />
-    <ClInclude Include="external\physx\PxSimulationEventCallback.h" />
-    <ClInclude Include="external\physx\PxSimulationStatistics.h" />
-    <ClInclude Include="external\physx\PxVisualizationParameter.h" />
-    <ClInclude Include="external\physx\Solver\PxSolverDefs.h" />
-    <ClInclude Include="external\physx\Task\PxCpuDispatcher.h" />
-    <ClInclude Include="external\physx\Task\PxTask.h" />
-    <ClInclude Include="external\physx\Task\PxTaskDefine.h" />
-    <ClInclude Include="external\physx\Task\PxTaskManager.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleComponents.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleDrive.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleDrive4W.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleDriveNW.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleDriveTank.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleNoDrive.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleSDK.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleShaders.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleTireFriction.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleUpdate.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleUtil.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleUtilControl.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleUtilSetup.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleUtilTelemetry.h" />
-    <ClInclude Include="external\physx\Vehicle\PxVehicleWheels.h" />
-    <ClInclude Include="sandbox\pieces\piece_cubes.h" />
-    <ClInclude Include="sandbox\pieces\piece_monkes.h">
-      <FileType>Document</FileType>
-    </ClInclude>
-    <ClInclude Include="sandbox\pieces\piece_spheres.h">
-      <FileType>Document</FileType>
-    </ClInclude>
-    <ClInclude Include="sandbox\pieces\piece_physics_test.h">
-      <FileType>Document</FileType>
-    </ClInclude>
-    <ClCompile Include="sandbox\pieces\piece_monkes.cpp" />
-    <ClCompile Include="sandbox\pieces\piece_physics_test.cpp" />
-    <ClCompile Include="sandbox\pieces\piece_prepare.cpp" />
-    <ClCompile Include="sandbox\pieces\piece_skybox.cpp" />
-    <ClCompile Include="sandbox\pieces\piece_spheres.cpp" />
-    <ClCompile Include="sandbox\sandbox_piece.cpp" />
-    <ClCompile Include="sandbox\sandbox_entry.cpp" />
-    <ClInclude Include="packager\packager.h" />
-    <ClInclude Include="packager\packager_entry.h" />
-    <ClCompile Include="sandbox\pieces\piece_cubes.cpp" />
-    <ClInclude Include="sandbox\pieces\piece_test.h" />
-    <ClInclude Include="sandbox\sandbox_entry.h" />
-    <ClInclude Include="sandbox\sandbox_piece.h" />
-    <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\pch.cpp">
+    <ClCompile Include="source\application\app_layer.cpp" />
+    <ClCompile Include="source\application\logger.cpp" />
+    <ClCompile Include="source\application\log_info.cpp" />
+    <ClCompile Include="source\components\animation.cpp" />
+    <ClCompile Include="source\components\collider.cpp" />
+    <ClCompile Include="source\components\material.cpp" />
+    <ClCompile Include="source\components\mesh.cpp" />
+    <ClCompile Include="source\components\shader.cpp" />
+    <ClCompile Include="source\components\texture.cpp" />
+    <ClCompile Include="source\editor\editor_layer.cpp" />
+    <ClCompile Include="source\editor\game_layer.cpp" />
+    <ClCompile Include="source\gui\editors\code_editor.cpp" />
+    <ClCompile Include="source\gui\gui_layer.cpp" />
+    <ClCompile Include="source\gui\gui_section.cpp" />
+    <ClCompile Include="source\gui\sections\section_animation_editor.cpp" />
+    <ClCompile Include="source\gui\sections\section_entity_properties.cpp" />
+    <ClCompile Include="source\gui\sections\section_explorer.cpp" />
+    <ClCompile Include="source\gui\sections\section_log_view.cpp" />
+    <ClCompile Include="source\gui\sections\section_main_menu.cpp" />
+    <ClCompile Include="source\gui\sections\section_material_editor.cpp" />
+    <ClCompile Include="source\gui\sections\section_mesh_editor.cpp" />
+    <ClCompile Include="source\gui\sections\section_scene_entities.cpp" />
+    <ClCompile Include="source\gui\sections\section_scene_info.cpp" />
+    <ClCompile Include="source\gui\sections\section_scripting_parameters.cpp" />
+    <ClCompile Include="source\gui\sections\section_script_editor.cpp" />
+    <ClCompile Include="source\gui\sections\section_shader_editor.cpp" />
+    <ClCompile Include="source\gui\sections\section_texture_editor.cpp" />
+    <ClCompile Include="source\gui\sections\section_time_info.cpp" />
+    <ClCompile Include="source\gui\sections\section_viewport.cpp" />
+    <ClCompile Include="source\layer\layer.cpp" />
+    <ClCompile Include="source\layer\layer_stack.cpp" />
+    <ClCompile Include="source\light\ambient_light.cpp" />
+    <ClCompile Include="source\light\directional_light.cpp" />
+    <ClCompile Include="source\light\light.cpp" />
+    <ClCompile Include="source\light\point_light.cpp" />
+    <ClCompile Include="source\nodes\nodes.cpp" />
+    <ClCompile Include="source\render\pass\display_pass.cpp" />
+    <ClCompile Include="source\render\pass\editor_pass.cpp" />
+    <ClCompile Include="source\render\pass\outline_pass.cpp" />
+    <ClCompile Include="source\render\pass\post_pass.cpp" />
+    <ClCompile Include="source\render\pass\scene_pass.cpp" />
+    <ClCompile Include="source\render\pass\shadow_pass.cpp" />
+    <ClCompile Include="source\render\pass\skybox_pass.cpp" />
+    <ClCompile Include="source\render\render_layer.cpp" />
+    <ClCompile Include="source\render\render_pass.cpp" />
+    <ClCompile Include="source\render\render_states.cpp" />
+    <ClCompile Include="source\render\states\blend_states.cpp" />
+    <ClCompile Include="source\render\states\depth_states.cpp" />
+    <ClCompile Include="source\render\states\raster_states.cpp" />
+    <ClCompile Include="source\render\states\sampler_states.cpp" />
+    <ClCompile Include="source\render\states\shader_states.cpp" />
+    <ClCompile Include="source\scene\camera.cpp" />
+    <ClCompile Include="source\scene\default\default_animations.cpp" />
+    <ClCompile Include="source\scene\default\default_materials.cpp" />
+    <ClCompile Include="source\scene\default\default_meshes.cpp" />
+    <ClCompile Include="source\scene\entity.cpp" />
+    <ClCompile Include="source\scene\scene.cpp" />
+    <ClCompile Include="source\scripting\interp_script.cpp" />
+    <ClCompile Include="source\scripting\native_script.cpp" />
+    <ClCompile Include="source\scripting\node_script.cpp" />
+    <ClCompile Include="source\scripting\script.cpp" />
+    <ClCompile Include="source\serialization\serializer.cpp" />
+    <ClCompile Include="source\titian\titian_editor.cpp" />
+    <ClCompile Include="source\titian\titian_game.cpp" />
+    <ClCompile Include="source\titian.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="titian\application\app_layer.cpp" />
-    <ClInclude Include="source\main_data.h" />
-    <ClInclude Include="titian\application\app_layer.h" />
-    <ClInclude Include="titian\application\logger.h" />
-    <ClInclude Include="titian\application\log_info.h" />
-    <ClCompile Include="titian\application\logger.cpp" />
-    <ClCompile Include="titian\application\log_info.cpp" />
-    <ClCompile Include="titian\components\collider.cpp" />
-    <ClInclude Include="titian\components\animation.h" />
-    <ClInclude Include="titian\components\collider.h" />
-    <ClCompile Include="titian\components\material.cpp" />
-    <ClInclude Include="titian\components\material.h" />
-    <ClCompile Include="titian\components\mesh.cpp" />
-    <ClInclude Include="titian\components\mesh.h" />
-    <ClCompile Include="titian\components\shader.cpp" />
-    <ClCompile Include="titian\components\texture.cpp" />
-    <ClInclude Include="titian\components\shader.h" />
-    <ClInclude Include="titian\components\texture.h" />
-    <ClCompile Include="titian\editor\editor_layer.cpp" />
-    <ClInclude Include="titian\editor\editor_layer.h" />
-    <ClCompile Include="titian\editor\game_layer.cpp" />
-    <ClInclude Include="titian\editor\game_layer.h" />
-    <ClCompile Include="titian\gui\gui_layer.cpp" />
-    <ClInclude Include="titian\gui\gui_layer.h" />
-    <ClInclude Include="titian\gui\gui_section.h" />
-    <ClCompile Include="titian\gui\gui_section.cpp" />
-    <ClCompile Include="titian\gui\sections\section_entity_properties.cpp" />
-    <ClCompile Include="titian\gui\sections\section_explorer.cpp" />
-    <ClCompile Include="titian\gui\sections\section_log_view.cpp" />
-    <ClCompile Include="titian\gui\sections\section_main_menu.cpp" />
-    <ClCompile Include="titian\gui\sections\section_material_editor.cpp" />
-    <ClInclude Include="titian\gui\sections\section_animation_editor.h" />
-    <ClInclude Include="titian\gui\sections\section_material_editor.h" />
-    <ClCompile Include="titian\gui\sections\section_mesh_editor.cpp" />
-    <ClInclude Include="titian\gui\sections\section_mesh_editor.h" />
-    <ClCompile Include="titian\gui\sections\section_time_info.cpp" />
-    <ClInclude Include="titian\gui\sections\section_time_info.h" />
-    <ClInclude Include="titian\gui\sections\section_entity_properties.h" />
-    <ClInclude Include="titian\gui\sections\section_explorer.h" />
-    <ClInclude Include="titian\gui\sections\section_log_view.h" />
-    <ClInclude Include="titian\gui\sections\section_main_menu.h" />
-    <ClCompile Include="titian\gui\sections\section_scene_entities.cpp" />
-    <ClCompile Include="titian\gui\sections\section_scene_info.cpp" />
-    <ClInclude Include="titian\gui\sections\section_scene_info.h">
-      <FileType>Document</FileType>
-    </ClInclude>
-    <ClInclude Include="titian\gui\sections\section_scene_entities.h">
-      <FileType>Document</FileType>
-    </ClInclude>
-    <ClCompile Include="titian\gui\sections\section_scripting_parameters.cpp" />
-    <ClCompile Include="titian\gui\sections\section_script_editor.cpp" />
-    <ClInclude Include="titian\gui\sections\section_script_editor.h" />
-    <ClCompile Include="titian\gui\sections\section_shader_editor.cpp" />
-    <ClCompile Include="titian\gui\sections\section_texture_editor.cpp" />
-    <ClCompile Include="titian\gui\sections\section_viewport.cpp" />
-    <ClInclude Include="titian\gui\sections\section_scripting_parameters.h" />
-    <ClInclude Include="titian\gui\sections\section_shader_editor.h" />
-    <ClInclude Include="titian\gui\sections\section_texture_editor.h" />
-    <ClInclude Include="titian\gui\sections\section_viewport.h" />
-    <ClInclude Include="titian\render\pass\post_pass.h" />
-    <ClInclude Include="titian\scene\default\default_animations.h" />
-    <ClInclude Include="titian\gui\editors\code_editor.h" />
-    <ClInclude Include="titian\nodes\nodes.h" />
-    <ClInclude Include="titian\scripting\node_script.h" />
-    <ClInclude Include="titian\standard\standard.h" />
-    <ClInclude Include="titian\ui\ui_funcs.h" />
-    <ClInclude Include="titian\utility\async_util.h" />
-    <ClInclude Include="titian\utility\gui_util.h" />
-    <ClInclude Include="titian\layer\layer.h" />
-    <ClInclude Include="titian\layer\layer_stack.h" />
-    <ClCompile Include="titian\layer\layer.cpp" />
-    <ClCompile Include="titian\layer\layer_stack.cpp" />
-    <ClCompile Include="titian\light\ambient_light.cpp" />
-    <ClInclude Include="titian\light\ambient_light.h" />
-    <ClCompile Include="titian\light\directional_light.cpp" />
-    <ClInclude Include="titian\light\directional_light.h" />
-    <ClCompile Include="titian\light\light.cpp" />
-    <ClInclude Include="titian\light\light.h" />
-    <ClCompile Include="titian\light\point_light.cpp" />
-    <ClInclude Include="titian\light\point_light.h" />
-    <ClCompile Include="titian\render\pass\display_pass.cpp" />
-    <ClInclude Include="titian\render\pass\display_pass.h" />
-    <ClCompile Include="titian\render\pass\outline_pass.cpp" />
-    <ClCompile Include="titian\render\pass\editor_pass.cpp" />
-    <ClCompile Include="titian\render\pass\scene_pass.cpp" />
-    <ClInclude Include="titian\render\pass\scene_pass.h" />
-    <ClInclude Include="titian\render\pass\editor_pass.h" />
-    <ClInclude Include="titian\render\pass\outline_pass.h" />
-    <ClCompile Include="titian\render\pass\shadow_pass.cpp" />
-    <ClInclude Include="titian\render\pass\shadow_pass.h" />
-    <ClCompile Include="titian\render\pass\skybox_pass.cpp" />
-    <ClInclude Include="titian\render\pass\skybox_pass.h" />
-    <ClCompile Include="titian\render\render_layer.cpp" />
-    <ClInclude Include="titian\render\render_layer.h" />
-    <ClCompile Include="titian\render\render_pass.cpp" />
-    <ClInclude Include="titian\render\render_pass.h" />
-    <ClCompile Include="titian\render\render_states.cpp" />
-    <ClInclude Include="titian\render\render_states.h" />
-    <ClCompile Include="titian\render\states\blend_states.cpp" />
-    <ClInclude Include="titian\render\states\blend_states.h" />
-    <ClInclude Include="titian\render\states\depth_states.h" />
-    <ClCompile Include="titian\render\states\depth_states.cpp" />
-    <ClCompile Include="titian\render\states\raster_states.cpp" />
-    <ClInclude Include="titian\render\states\raster_states.h" />
-    <ClCompile Include="titian\render\states\sampler_states.cpp" />
-    <ClInclude Include="titian\render\states\sampler_states.h" />
-    <ClCompile Include="titian\render\states\shader_states.cpp" />
-    <ClInclude Include="titian\render\states\shader_states.h" />
-    <ClInclude Include="titian\render\state_package.h" />
-    <ClCompile Include="titian\scene\camera.cpp" />
-    <ClInclude Include="titian\scene\camera.h" />
-    <ClCompile Include="titian\scene\default\default_materials.cpp" />
-    <ClInclude Include="titian\scene\default\default_materials.h" />
-    <ClInclude Include="titian\scene\default\default_meshes.h" />
-    <ClCompile Include="titian\scene\default\default_meshes.cpp" />
-    <ClCompile Include="titian\scene\entity.cpp" />
-    <ClInclude Include="titian\scene\entity.h" />
-    <ClInclude Include="titian\scene\scene.h" />
-    <ClCompile Include="titian\scene\scene.cpp" />
-    <ClInclude Include="titian\scripting\interp_script.h" />
-    <ClCompile Include="titian\gui\editors\code_editor.cpp" />
-    <ClCompile Include="titian\scripting\interp_script.cpp" />
-    <ClCompile Include="titian\scripting\native_script.cpp" />
-    <ClCompile Include="titian\nodes\nodes.cpp" />
-    <ClCompile Include="titian\scripting\node_script.cpp" />
-    <ClCompile Include="titian\scripting\script.cpp" />
-    <ClInclude Include="titian\scripting\script.h" />
-    <ClInclude Include="titian\scripting\native_script.h" />
-    <ClInclude Include="titian\serialization\serializable.h" />
-    <ClCompile Include="titian\serialization\serializer.cpp" />
-    <ClInclude Include="titian\serialization\serializer.h" />
-    <ClInclude Include="titian\titian\titian_editor.h" />
-    <ClCompile Include="titian\titian\titian_editor.cpp" />
-    <ClInclude Include="titian\titian\titian_game.h" />
-    <ClCompile Include="titian\titian\titian_game.cpp" />
-    <ClCompile Include="titian\titian_entry.cpp" />
-    <ClInclude Include="titian\utility\file_util.h" />
-    <ClInclude Include="titian\utility\id_util.h" />
-    <ClInclude Include="titian\utility\string_util.h" />
-    <ClInclude Include="titian\utility\time_util.h" />
+    <ClCompile Include="source\ui\ui_funcs.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="external\chaiscript\chaiscript_basic.hpp" />
-    <ClInclude Include="external\chaiscript\chaiscript_defines.hpp" />
-    <ClInclude Include="external\chaiscript\chaiscript_stdlib.hpp" />
-    <ClInclude Include="external\chaiscript\chaiscript_threading.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\any.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\bad_boxed_cast.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\bind_first.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\bootstrap.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\bootstrap_stl.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\boxed_cast.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\boxed_cast_helper.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\boxed_number.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\boxed_value.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\callable_traits.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\dispatchkit.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\dynamic_object.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\dynamic_object_detail.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\exception_specification.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\function_call.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\function_call_detail.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\handle_return.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\operators.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\proxy_constructors.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\proxy_functions.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\proxy_functions_detail.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\register_function.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\short_alloc.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\type_conversions.hpp" />
-    <ClInclude Include="external\chaiscript\dispatchkit\type_info.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_algebraic.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_common.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_engine.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_eval.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_optimizer.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_parser.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_posix.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_prelude.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_prelude_docs.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_tracer.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_unknown.hpp" />
-    <ClInclude Include="external\chaiscript\language\chaiscript_windows.hpp" />
-    <ClInclude Include="external\chaiscript\utility\fnv1a.hpp" />
-    <ClInclude Include="external\chaiscript\utility\json.hpp" />
-    <ClInclude Include="external\chaiscript\utility\json_wrap.hpp" />
-    <ClInclude Include="external\chaiscript\utility\static_string.hpp" />
-    <ClInclude Include="external\chaiscript\utility\utility.hpp" />
-    <ClInclude Include="external\mmodule\mmodule.h" />
-    <ClInclude Include="source\main.h" />
-    <ClInclude Include="titian\titian_entry.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="external\assimp\assimp\color4.inl" />
-    <None Include="external\assimp\assimp\material.inl" />
-    <None Include="external\assimp\assimp\matrix3x3.inl" />
-    <None Include="external\assimp\assimp\matrix4x4.inl" />
-    <None Include="external\assimp\assimp\quaternion.inl" />
-    <None Include="external\assimp\assimp\SmoothingGroups.inl" />
-    <None Include="external\assimp\assimp\vector2.inl" />
-    <None Include="external\assimp\assimp\vector3.inl" />
+    <ClInclude Include="source\application\app_layer.h" />
+    <ClInclude Include="source\application\logger.h" />
+    <ClInclude Include="source\application\log_info.h" />
+    <ClInclude Include="source\components\animation.h" />
+    <ClInclude Include="source\components\collider.h" />
+    <ClInclude Include="source\components\material.h" />
+    <ClInclude Include="source\components\mesh.h" />
+    <ClInclude Include="source\components\shader.h" />
+    <ClInclude Include="source\components\texture.h" />
+    <ClInclude Include="source\editor\editor_layer.h" />
+    <ClInclude Include="source\editor\game_layer.h" />
+    <ClInclude Include="source\gui\editors\code_editor.h" />
+    <ClInclude Include="source\gui\gui_layer.h" />
+    <ClInclude Include="source\gui\gui_section.h" />
+    <ClInclude Include="source\gui\sections\section_animation_editor.h" />
+    <ClInclude Include="source\gui\sections\section_entity_properties.h" />
+    <ClInclude Include="source\gui\sections\section_explorer.h" />
+    <ClInclude Include="source\gui\sections\section_log_view.h" />
+    <ClInclude Include="source\gui\sections\section_main_menu.h" />
+    <ClInclude Include="source\gui\sections\section_material_editor.h" />
+    <ClInclude Include="source\gui\sections\section_mesh_editor.h" />
+    <ClInclude Include="source\gui\sections\section_scene_entities.h" />
+    <ClInclude Include="source\gui\sections\section_scene_info.h" />
+    <ClInclude Include="source\gui\sections\section_scripting_parameters.h" />
+    <ClInclude Include="source\gui\sections\section_script_editor.h" />
+    <ClInclude Include="source\gui\sections\section_shader_editor.h" />
+    <ClInclude Include="source\gui\sections\section_texture_editor.h" />
+    <ClInclude Include="source\gui\sections\section_time_info.h" />
+    <ClInclude Include="source\gui\sections\section_viewport.h" />
+    <ClInclude Include="source\layer\layer.h" />
+    <ClInclude Include="source\layer\layer_stack.h" />
+    <ClInclude Include="source\light\ambient_light.h" />
+    <ClInclude Include="source\light\directional_light.h" />
+    <ClInclude Include="source\light\light.h" />
+    <ClInclude Include="source\light\point_light.h" />
+    <ClInclude Include="source\nodes\nodes.h" />
+    <ClInclude Include="source\render\pass\display_pass.h" />
+    <ClInclude Include="source\render\pass\editor_pass.h" />
+    <ClInclude Include="source\render\pass\outline_pass.h" />
+    <ClInclude Include="source\render\pass\post_pass.h" />
+    <ClInclude Include="source\render\pass\scene_pass.h" />
+    <ClInclude Include="source\render\pass\shadow_pass.h" />
+    <ClInclude Include="source\render\pass\skybox_pass.h" />
+    <ClInclude Include="source\render\render_layer.h" />
+    <ClInclude Include="source\render\render_pass.h" />
+    <ClInclude Include="source\render\render_states.h" />
+    <ClInclude Include="source\render\states\blend_states.h" />
+    <ClInclude Include="source\render\states\depth_states.h" />
+    <ClInclude Include="source\render\states\raster_states.h" />
+    <ClInclude Include="source\render\states\sampler_states.h" />
+    <ClInclude Include="source\render\states\shader_states.h" />
+    <ClInclude Include="source\render\state_package.h" />
+    <ClInclude Include="source\scene\camera.h" />
+    <ClInclude Include="source\scene\default\default_animations.h" />
+    <ClInclude Include="source\scene\default\default_materials.h" />
+    <ClInclude Include="source\scene\default\default_meshes.h" />
+    <ClInclude Include="source\scene\entity.h" />
+    <ClInclude Include="source\scene\scene.h" />
+    <ClInclude Include="source\scripting\interp_script.h" />
+    <ClInclude Include="source\scripting\native_script.h" />
+    <ClInclude Include="source\scripting\node_script.h" />
+    <ClInclude Include="source\scripting\script.h" />
+    <ClInclude Include="source\serialization\serializable.h" />
+    <ClInclude Include="source\serialization\serializer.h" />
+    <ClInclude Include="source\titian\titian_editor.h" />
+    <ClInclude Include="source\titian\titian_game.h" />
+    <ClInclude Include="source\titian.h" />
+    <ClInclude Include="source\ui\ui_funcs.h" />
+    <ClInclude Include="source\utility\async_util.h" />
+    <ClInclude Include="source\utility\file_util.h" />
+    <ClInclude Include="source\utility\gui_util.h" />
+    <ClInclude Include="source\utility\id_util.h" />
+    <ClInclude Include="source\utility\string_util.h" />
+    <ClInclude Include="source\utility\time_util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
