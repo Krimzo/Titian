@@ -1,6 +1,6 @@
 #pragma once
 
-#include "titian/titian_editor.h"
+#include "titian_editor.h"
 
 
 namespace sandbox {

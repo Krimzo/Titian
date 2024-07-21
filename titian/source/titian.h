@@ -1,8 +1,8 @@
 #pragma once
 
 #include "globals.h"
-#include "titian/titian_game.h"
-#include "titian/titian_editor.h"
+#include "titian_game.h"
+#include "titian_editor.h"
 
 
 namespace titian {
