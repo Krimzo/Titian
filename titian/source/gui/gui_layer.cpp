@@ -36,14 +36,19 @@ bool titian::GUILayer::update()
 	for (auto& section : sections) {
 		section->render_gui();
 	}
-	if (game_layer->game_running) {
+	if (game_layer && game_layer->game_running) {
 		game_layer->scene->update_ui();
 	}
 
 	im::Render();
 	ImGui_ImplDX11_RenderDrawData(im::GetDrawData());
 
-	render_layer->present();
+	if (render_layer) {
+		render_layer->present();
+	}
+	else {
+		app_layer->gpu.swap_buffers(true);
+	}
 	return true;
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "standard.h"
+#include "fuze_editor.h"
 
 
 namespace fuze {

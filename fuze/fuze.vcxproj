@@ -56,6 +56,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)chaiscript\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>fuze.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -77,6 +79,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)chaiscript\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>fuze.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -89,10 +93,31 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\fuze.cpp" />
+    <ClCompile Include="source\fuze.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="source\fuze_editor.cpp" />
+    <ClCompile Include="source\layers\video_layer.cpp" />
+    <ClCompile Include="source\sections\gui_section_video_display.cpp" />
+    <ClCompile Include="source\sections\gui_section_video_effects.cpp" />
+    <ClCompile Include="source\sections\gui_section_video_main_menu.cpp" />
+    <ClCompile Include="source\sections\gui_section_video_render.cpp" />
+    <ClCompile Include="source\sections\gui_section_video_timeline.cpp" />
+    <ClCompile Include="source\track\media.cpp" />
+    <ClCompile Include="source\track\track.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\fuze.h" />
+    <ClInclude Include="source\fuze_editor.h" />
+    <ClInclude Include="source\layers\video_layer.h" />
+    <ClInclude Include="source\sections\gui_section_video_display.h" />
+    <ClInclude Include="source\sections\gui_section_video_effects.h" />
+    <ClInclude Include="source\sections\gui_section_video_main_menu.h" />
+    <ClInclude Include="source\sections\gui_section_video_render.h" />
+    <ClInclude Include="source\sections\gui_section_video_timeline.h" />
+    <ClInclude Include="source\track\media.h" />
+    <ClInclude Include="source\track\track.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\titian\titian.vcxproj">

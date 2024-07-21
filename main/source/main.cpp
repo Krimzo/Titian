@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-static constexpr bool SHOULD_PACKAGE_DEFAULTS = false;
+static constexpr bool SHOULD_PACKAGE_DEFAULTS = true;
 
 int main(const int argc, const char** argv)
 {
@@ -10,6 +10,7 @@ int main(const int argc, const char** argv)
 	if constexpr (SHOULD_PACKAGE_DEFAULTS) {
 		packager::create_package("../titian/package/", "titian.tipk");
 		packager::create_package("../sandbox/package/", "sandbox.tipk");
+		packager::create_package("../fuze/package/", "fuze.tipk");
 	}
 
 	if (!kl::IS_DEBUG && fs::path(argv[0]).is_absolute()) {

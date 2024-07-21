@@ -11,6 +11,10 @@ namespace titian {
 	class GUILayer;
 }
 
+namespace fuze {
+	class VideoLayer;
+}
+
 namespace titian {
 	class LayerPackage
 	{
@@ -20,13 +24,20 @@ namespace titian {
 		inline LayerPackage()
 		{}
 
-		inline LayerPackage(AppLayer* app_layer, GameLayer* game_layer, EditorLayer* editor_layer, RenderLayer* render_layer, GUILayer* gui_layer)
+		inline LayerPackage(
+			AppLayer* app_layer,
+			GameLayer* game_layer,
+			EditorLayer* editor_layer,
+			RenderLayer* render_layer,
+			GUILayer* gui_layer,
+			fuze::VideoLayer* video_layer)
 		{
 			this->app_layer = app_layer;
 			this->game_layer = game_layer;
 			this->editor_layer = editor_layer;
 			this->render_layer = render_layer;
 			this->gui_layer = gui_layer;
+			this->video_layer = video_layer;
 		}
 
 		inline void load_layers(const LayerPackage& package)
@@ -36,6 +47,7 @@ namespace titian {
 			editor_layer = package.editor_layer;
 			render_layer = package.render_layer;
 			gui_layer = package.gui_layer;
+			video_layer = package.video_layer;
 		}
 
 	protected:
@@ -44,6 +56,7 @@ namespace titian {
 		EditorLayer* editor_layer = nullptr;
 		RenderLayer* render_layer = nullptr;
 		GUILayer* gui_layer = nullptr;
+		fuze::VideoLayer* video_layer = nullptr;
 	};
 }
 
@@ -55,6 +68,7 @@ namespace titian {
 		static inline EditorLayer* editor_layer = nullptr;
 		static inline RenderLayer* render_layer = nullptr;
 		static inline GUILayer* gui_layer = nullptr;
+		static inline fuze::VideoLayer* video_layer = nullptr;
 
 		static inline void bind(const LayerPackage& package)
 		{
@@ -63,6 +77,7 @@ namespace titian {
 			editor_layer = package.editor_layer;
 			render_layer = package.render_layer;
 			gui_layer = package.gui_layer;
+			video_layer = package.video_layer;
 		}
 	};
 }

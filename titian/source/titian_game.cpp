@@ -10,6 +10,7 @@ titian::TitianGame::TitianGame(const String& entry_scene)
         nullptr,
         &render_layer,
         &gui_layer,
+        nullptr,
     };
     BOUND_LAYERS::bind(layer_package);
     app_layer.load_layers(layer_package);
