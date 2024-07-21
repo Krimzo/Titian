@@ -50,7 +50,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
     VS_CB vs_cb{};
 
     // Render shadows
-    for (int i = 0; i < kl::DirectionalLight::CASCADE_COUNT; i++) {
+    for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
         // Helper
         const Float4x4 VP = dir_light->light_matrix(camera, i);
         const dx::DepthView shadow_map = dir_light->depth_view(i);
