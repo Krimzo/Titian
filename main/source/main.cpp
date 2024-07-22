@@ -1,7 +1,7 @@
 #include "main.h"
 
 
-static constexpr bool SHOULD_PACKAGE_DEFAULTS = true;
+static constexpr bool SHOULD_PACKAGE_DEFAULTS = false;
 
 int main(const int argc, const char** argv)
 {

@@ -23,6 +23,19 @@ namespace fuze {
         void render_gui() override;
 
     private:
+        struct MovingMediaInfo
+        {
+            int track_index = 0;
+            Ref<Media> media;
+            float horiz_offset = 0.0f;
+            float offset = 0.0f;
+            ImVec2 old_mouse = {};
+            ImVec2 mouse_offset = {};
+        };
+
         int m_last_scroll = 0;
+        Optional<MovingMediaInfo> m_moving_media;
+
+        static ImColor color_classify(MediaType type);
     };
 }

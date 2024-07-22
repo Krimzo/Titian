@@ -60,7 +60,15 @@ void fuze::GUISectionVideoMainMenu::render_gui()
         }
 
         // View
-        if (im::BeginMenu("Render")) {
+        if (im::BeginMenu("View")) {
+            im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
+            if (im::BeginMenu("Timeline")) {
+                im::Checkbox("Timeline Seconds", &video_layer->timeline_seconds);
+                im::Checkbox("Timeline 10s Seconds", &video_layer->timeline_10seconds);
+                im::Checkbox("Timeline Minutes", &video_layer->timeline_minutes);
+				im::EndMenu();
+            }
+            im::PopStyleVar();
             im::EndMenu();
         }
 

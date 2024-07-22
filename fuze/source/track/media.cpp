@@ -3,6 +3,3 @@
 
 fuze::Media::Media()
 {}
-
-fuze::Media::~Media()
-{}

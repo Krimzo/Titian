@@ -4,7 +4,7 @@
 fuze::VideoLayer::VideoLayer()
 	: Layer("VideoLayer")
 {
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < 3; i++) {
 		tracks.emplace_back(new Track());
 	}
 }

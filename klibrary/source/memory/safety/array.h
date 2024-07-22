@@ -75,7 +75,7 @@ namespace kl {
         }
 
         // Destroy
-        virtual ~Array()
+        ~Array()
         {
             this->free();
         }

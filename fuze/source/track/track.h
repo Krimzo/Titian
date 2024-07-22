@@ -9,8 +9,19 @@ namespace fuze {
 	public:
 		String name = "Track";
 		bool enabled = true;
-		Vector<Ref<Media>> media;
+		std::map<float, Ref<Media>> media;
 
 		Track();
+
+		Track(const Track&) = delete;
+		Track(Track&&) = delete;
+
+		void operator=(const Track&) = delete;
+		void operator=(Track&&) = delete;
+
+		void insert_media(float offset, const Ref<Media>& med);
+		void remove_media(const Ref<Media>& med);
+
+		void readjust_media();
 	};
 }

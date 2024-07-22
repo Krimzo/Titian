@@ -8,6 +8,11 @@ namespace fuze {
 	{
 	public:
 		Vector<Ref<Track>> tracks;
+		float current_time = 0.0f;
+
+		bool timeline_seconds = true;
+		bool timeline_10seconds = true;
+		bool timeline_minutes = true;
 
 		VideoLayer();
 

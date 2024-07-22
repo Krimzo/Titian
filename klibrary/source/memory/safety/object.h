@@ -71,7 +71,7 @@ namespace kl {
         }
 
         // Destroy
-        virtual ~Object()
+        ~Object()
         {
             this->free();
         }
