@@ -1,0 +1,7 @@
+def on_start(Scene scene)
+{
+}
+
+def on_update(Scene scene)
+{
+}

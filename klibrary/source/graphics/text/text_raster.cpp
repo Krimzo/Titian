@@ -60,7 +60,7 @@ void kl::TextRaster::draw_text(const UINT target_index) const
 		);
 
 		// Draw
-		target->DrawTextW(
+		target->DrawText(
 			text.data.c_str(),
 			(UINT) text.data.size(),
 			text.format.Get(),

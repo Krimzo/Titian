@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{1c6b6176-003d-4cbe-bc5b-21be73f184f9}</ProjectGuid>
+    <RootNamespace>assimp</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)chaiscript\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)chaiscript\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)chaiscript\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)chaiscript\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="source\assimp.h" />
+    <ClInclude Include="source\assimp\aabb.h" />
+    <ClInclude Include="source\assimp\ai_assert.h" />
+    <ClInclude Include="source\assimp\anim.h" />
+    <ClInclude Include="source\assimp\AssertHandler.h" />
+    <ClInclude Include="source\assimp\Base64.hpp" />
+    <ClInclude Include="source\assimp\BaseImporter.h" />
+    <ClInclude Include="source\assimp\Bitmap.h" />
+    <ClInclude Include="source\assimp\BlobIOSystem.h" />
+    <ClInclude Include="source\assimp\ByteSwapper.h" />
+    <ClInclude Include="source\assimp\camera.h" />
+    <ClInclude Include="source\assimp\cexport.h" />
+    <ClInclude Include="source\assimp\cfileio.h" />
+    <ClInclude Include="source\assimp\cimport.h" />
+    <ClInclude Include="source\assimp\ColladaMetaData.h" />
+    <ClInclude Include="source\assimp\color4.h" />
+    <ClInclude Include="source\assimp\commonMetaData.h" />
+    <ClInclude Include="source\assimp\Compiler\poppack1.h" />
+    <ClInclude Include="source\assimp\Compiler\pstdint.h" />
+    <ClInclude Include="source\assimp\Compiler\pushpack1.h" />
+    <ClInclude Include="source\assimp\config.h" />
+    <ClInclude Include="source\assimp\CreateAnimMesh.h" />
+    <ClInclude Include="source\assimp\DefaultIOStream.h" />
+    <ClInclude Include="source\assimp\DefaultIOSystem.h" />
+    <ClInclude Include="source\assimp\DefaultLogger.hpp" />
+    <ClInclude Include="source\assimp\defs.h" />
+    <ClInclude Include="source\assimp\Exceptional.h" />
+    <ClInclude Include="source\assimp\Exporter.hpp" />
+    <ClInclude Include="source\assimp\fast_atof.h" />
+    <ClInclude Include="source\assimp\GenericProperty.h" />
+    <ClInclude Include="source\assimp\GltfMaterial.h" />
+    <ClInclude Include="source\assimp\Hash.h" />
+    <ClInclude Include="source\assimp\Importer.hpp" />
+    <ClInclude Include="source\assimp\importerdesc.h" />
+    <ClInclude Include="source\assimp\IOStream.hpp" />
+    <ClInclude Include="source\assimp\IOStreamBuffer.h" />
+    <ClInclude Include="source\assimp\IOSystem.hpp" />
+    <ClInclude Include="source\assimp\light.h" />
+    <ClInclude Include="source\assimp\LineSplitter.h" />
+    <ClInclude Include="source\assimp\LogAux.h" />
+    <ClInclude Include="source\assimp\Logger.hpp" />
+    <ClInclude Include="source\assimp\LogStream.hpp" />
+    <ClInclude Include="source\assimp\material.h" />
+    <ClInclude Include="source\assimp\MathFunctions.h" />
+    <ClInclude Include="source\assimp\matrix3x3.h" />
+    <ClInclude Include="source\assimp\matrix4x4.h" />
+    <ClInclude Include="source\assimp\MemoryIOWrapper.h" />
+    <ClInclude Include="source\assimp\mesh.h" />
+    <ClInclude Include="source\assimp\metadata.h" />
+    <ClInclude Include="source\assimp\NullLogger.hpp" />
+    <ClInclude Include="source\assimp\ObjMaterial.h" />
+    <ClInclude Include="source\assimp\ParsingUtils.h" />
+    <ClInclude Include="source\assimp\pbrmaterial.h" />
+    <ClInclude Include="source\assimp\port\AndroidJNI\AndroidJNIIOSystem.h" />
+    <ClInclude Include="source\assimp\port\AndroidJNI\BundledAssetIOSystem.h" />
+    <ClInclude Include="source\assimp\postprocess.h" />
+    <ClInclude Include="source\assimp\Profiler.h" />
+    <ClInclude Include="source\assimp\ProgressHandler.hpp" />
+    <ClInclude Include="source\assimp\qnan.h" />
+    <ClInclude Include="source\assimp\quaternion.h" />
+    <ClInclude Include="source\assimp\RemoveComments.h" />
+    <ClInclude Include="source\assimp\revision.h" />
+    <ClInclude Include="source\assimp\scene.h" />
+    <ClInclude Include="source\assimp\SceneCombiner.h" />
+    <ClInclude Include="source\assimp\SGSpatialSort.h" />
+    <ClInclude Include="source\assimp\SkeletonMeshBuilder.h" />
+    <ClInclude Include="source\assimp\SmallVector.h" />
+    <ClInclude Include="source\assimp\SmoothingGroups.h" />
+    <ClInclude Include="source\assimp\SpatialSort.h" />
+    <ClInclude Include="source\assimp\StandardShapes.h" />
+    <ClInclude Include="source\assimp\StreamReader.h" />
+    <ClInclude Include="source\assimp\StreamWriter.h" />
+    <ClInclude Include="source\assimp\StringComparison.h" />
+    <ClInclude Include="source\assimp\StringUtils.h" />
+    <ClInclude Include="source\assimp\Subdivision.h" />
+    <ClInclude Include="source\assimp\texture.h" />
+    <ClInclude Include="source\assimp\TinyFormatter.h" />
+    <ClInclude Include="source\assimp\types.h" />
+    <ClInclude Include="source\assimp\vector2.h" />
+    <ClInclude Include="source\assimp\vector3.h" />
+    <ClInclude Include="source\assimp\version.h" />
+    <ClInclude Include="source\assimp\Vertex.h" />
+    <ClInclude Include="source\assimp\XmlParser.h" />
+    <ClInclude Include="source\assimp\XMLTools.h" />
+    <ClInclude Include="source\assimp\ZipArchiveIOSystem.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\assimp\color4.inl" />
+    <None Include="source\assimp\material.inl" />
+    <None Include="source\assimp\matrix3x3.inl" />
+    <None Include="source\assimp\matrix4x4.inl" />
+    <None Include="source\assimp\quaternion.inl" />
+    <None Include="source\assimp\SmoothingGroups.inl" />
+    <None Include="source\assimp\vector2.inl" />
+    <None Include="source\assimp\vector3.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\assimp.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
