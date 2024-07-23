@@ -3,11 +3,7 @@
 #include "titian.h"
 
 
-namespace fuze {
-	using namespace titian;
-}
-
-namespace fuze {
+namespace titian {
 	enum class MediaType
 	{
 		Image = 0,
@@ -16,7 +12,7 @@ namespace fuze {
 	};
 }
 
-namespace fuze {
+namespace titian {
 	class Media
 	{
 	public:

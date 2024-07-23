@@ -1,20 +1,20 @@
 #include "sandbox.h"
 
 
-sandbox::SandboxPiecePhysicsTest::SandboxPiecePhysicsTest(TitianEditor* editor, const int size)
+titian::SandboxPiecePhysicsTest::SandboxPiecePhysicsTest(TitianEditor* editor, const int size)
     : SandboxPiece(editor)
 {
     this->size = size;
 }
 
-void sandbox::SandboxPiecePhysicsTest::setup_self()
+void titian::SandboxPiecePhysicsTest::setup_self()
 {
     Scene* scene = &editor->game_layer.scene;
     setup_platform(scene);
     setup_objects(scene);
 }
 
-void sandbox::SandboxPiecePhysicsTest::setup_platform(Scene* scene)
+void titian::SandboxPiecePhysicsTest::setup_platform(Scene* scene)
 {
     const String mesh_name = "cube";
     const String animation_name = "cube";
@@ -40,7 +40,7 @@ void sandbox::SandboxPiecePhysicsTest::setup_platform(Scene* scene)
     scene->add_entity(entity_name, platform);
 }
 
-void sandbox::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
+void titian::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
 {
     const int half_size = size / 2;
     const Float3 scale = { 0.5f, 0.5f, 0.5f };

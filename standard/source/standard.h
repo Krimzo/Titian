@@ -18,7 +18,7 @@ namespace px = physx;
 namespace cs = chaiscript;
 namespace as = Assimp;
 
-namespace standard {
+namespace titian {
 	using Int2 = kl::Int2;
 	using Int3 = kl::Int3;
 	using Int4 = kl::Int4;
@@ -43,6 +43,8 @@ namespace standard {
 
 	using Exception = std::exception;
 	using Error = std::error_code;
+
+	using Any = std::any;
 
 	template<typename T>
 	using Ref = kl::Object<T>;

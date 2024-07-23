@@ -4,11 +4,7 @@
 #include "gui/gui_layer.h"
 
 
-namespace fuze {
-    using namespace titian;
-}
-
-namespace fuze {
+namespace titian {
     class GUISectionVideoTimeline : public GUISection
     {
     public:

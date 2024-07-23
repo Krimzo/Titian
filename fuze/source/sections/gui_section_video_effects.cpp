@@ -1,11 +1,11 @@
 #include "fuze.h"
 
 
-fuze::GUISectionVideoEffects::GUISectionVideoEffects()
+titian::GUISectionVideoEffects::GUISectionVideoEffects()
 	: GUISection("GUISectionVideoEffects")
 {}
 
-void fuze::GUISectionVideoEffects::render_gui()
+void titian::GUISectionVideoEffects::render_gui()
 {
 	if (im::Begin("Effects")) {
 

@@ -4,10 +4,6 @@
 
 
 namespace titian {
-	using namespace standard;
-}
-
-namespace titian {
 	// misc
 	void ui_separator();
 	void ui_same_line();

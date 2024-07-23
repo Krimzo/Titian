@@ -4,10 +4,6 @@
 
 
 namespace titian {
-	using namespace standard;
-}
-
-namespace titian {
 	class CodeEditor
 	{
 	public:

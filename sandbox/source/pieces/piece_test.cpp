@@ -1,11 +1,11 @@
 #include "sandbox.h"
 
 
-sandbox::SandboxPieceTest::SandboxPieceTest(TitianEditor* editor)
+titian::SandboxPieceTest::SandboxPieceTest(TitianEditor* editor)
 	: SandboxPiece(editor)
 {}
 
-void sandbox::SandboxPieceTest::setup_self()
+void titian::SandboxPieceTest::setup_self()
 {
     /* for testing purposes */
     kl::GPU* gpu = &editor->app_layer.gpu;

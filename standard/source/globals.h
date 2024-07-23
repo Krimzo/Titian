@@ -3,11 +3,7 @@
 #include "standard.h"
 
 
-namespace globals {
-	using namespace standard;
-}
-
-namespace globals {
+namespace titian {
 	inline constexpr const char* INI_DEFAULT_FILE = "titian.ini";
 	inline constexpr const char* INI_EXE_TYPE = "exe_type";
 	inline constexpr const char* INI_ENTRY_SCENE = "entry_scene";

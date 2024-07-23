@@ -11,8 +11,8 @@ int titian::titian_entry(const int argc, const char** argv, const Map<String, St
 			entry_scene = argv[2];
 			Logger::log("Using argument entry scene: ", entry_scene);
 		}
-		else if (ini_data.contains(globals::INI_ENTRY_SCENE)) {
-			entry_scene = ini_data.at(globals::INI_ENTRY_SCENE);
+		else if (ini_data.contains(INI_ENTRY_SCENE)) {
+			entry_scene = ini_data.at(INI_ENTRY_SCENE);
 			Logger::log("Using .ini entry scene: ", entry_scene);
 		}
 		else {

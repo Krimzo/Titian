@@ -3,9 +3,7 @@
 #include "titian_editor.h"
 
 
-namespace sandbox {
-	using namespace titian;
-
+namespace titian {
 	class SandboxPiece
 	{
 	public:

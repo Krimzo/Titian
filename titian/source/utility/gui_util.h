@@ -4,15 +4,9 @@
 
 
 namespace titian {
-    using namespace standard;
-}
-
-namespace titian {
-    namespace _priv {
-        inline Map<String, std::any> DRAG_DROP_DATA = {};
-        inline Map<String, String> INPUT_CONTINUOUS_DATA = {};
-        inline Map<String, String> INPUT_WAITED_DATA = {};
-    }
+    inline Map<String, Any> _DRAG_DROP_DATA = {};
+    inline Map<String, String> _INPUT_CONTINUOUS_DATA = {};
+    inline Map<String, String> _INPUT_WAITED_DATA = {};
 
     inline const String FILE_EXTENSION_OBJ = ".obj";
     inline const String FILE_EXTENSION_GLB = ".glb";
@@ -60,14 +54,14 @@ namespace titian {
 
     inline String gui_input_continuous(const String& id)
     {
-        auto& buffer = _priv::INPUT_CONTINUOUS_DATA[id];
+        auto& buffer = _INPUT_CONTINUOUS_DATA[id];
         im::InputText(id.c_str(), &buffer);
         return buffer;
     }
 
     inline Optional<String> gui_input_waited(const String& id, const String& to_copy)
     {
-        auto& buffer = _priv::INPUT_WAITED_DATA[id];
+        auto& buffer = _INPUT_WAITED_DATA[id];
         buffer = to_copy;
 
         if (im::InputText(id.c_str(), &buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -85,7 +79,7 @@ namespace titian {
         im::PushStyleColor(ImGuiCol_Border, {});
         if (im::BeginDragDropSource()) {
             im::SetDragDropPayload(id.c_str(), nullptr, 0);
-            _priv::DRAG_DROP_DATA[id] = std::any{ data };
+            _DRAG_DROP_DATA[id] = Any{ data };
             if (texture) {
                 im::Image(texture.Get(), { 50.0f, 50.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
             }
@@ -100,9 +94,9 @@ namespace titian {
         Optional<T> result{};
         if (im::BeginDragDropTarget()) {
             if (im::AcceptDragDropPayload(id.c_str())) {
-                const std::any data = _priv::DRAG_DROP_DATA[id];
+                const Any data = _DRAG_DROP_DATA[id];
                 result = std::any_cast<T>(data);
-                _priv::DRAG_DROP_DATA.erase(id);
+                _DRAG_DROP_DATA.erase(id);
             }
             im::EndDragDropTarget();
         }

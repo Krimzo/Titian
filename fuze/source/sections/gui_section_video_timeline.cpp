@@ -1,11 +1,11 @@
 #include "fuze.h"
 
 
-fuze::GUISectionVideoTimeline::GUISectionVideoTimeline()
+titian::GUISectionVideoTimeline::GUISectionVideoTimeline()
 	: GUISection("GUISectionVideoTimeline")
 {}
 
-void fuze::GUISectionVideoTimeline::render_gui()
+void titian::GUISectionVideoTimeline::render_gui()
 {
 	AppLayer* app_layer = Layers::get<AppLayer>();
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
@@ -134,7 +134,7 @@ void fuze::GUISectionVideoTimeline::render_gui()
 				im::TableNextRow(ImGuiTableRowFlags_None, row_height);
 				{
 					im::TableSetColumnIndex(0);
-					im::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImColor(0.1764f, 0.1764f, 0.1764f)); // crashes if i pass ImColor(45, 45, 45) in release ???
+					im::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(45, 45, 45, 255)); // crashes if i pass ImColor(45, 45, 45) in release ???
 					
 					const String text = kl::format(i + 1, ". ", track->name);
 					const ImVec2 text_size = im::CalcTextSize(text.c_str());
@@ -231,7 +231,7 @@ void fuze::GUISectionVideoTimeline::render_gui()
 	m_last_scroll = current_scroll;
 }
 
-ImColor fuze::GUISectionVideoTimeline::color_classify(MediaType type)
+ImColor titian::GUISectionVideoTimeline::color_classify(MediaType type)
 {
 	switch (type)
 	{

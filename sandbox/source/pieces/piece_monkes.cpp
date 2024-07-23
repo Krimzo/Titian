@@ -1,13 +1,13 @@
 #include "sandbox.h"
 
 
-sandbox::SandboxPieceMonkes::SandboxPieceMonkes(TitianEditor* editor, const int size)
+titian::SandboxPieceMonkes::SandboxPieceMonkes(TitianEditor* editor, const int size)
     : SandboxPiece(editor)
 {
     this->size = size;
 }
 
-void sandbox::SandboxPieceMonkes::setup_self()
+void titian::SandboxPieceMonkes::setup_self()
 {
     Scene* scene = &editor->game_layer.scene;
     kl::GPU* gpu = &editor->app_layer.gpu;

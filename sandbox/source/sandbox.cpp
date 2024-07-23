@@ -1,7 +1,7 @@
 #include "sandbox.h"
 
 
-int sandbox::sandbox_entry(const int argc, const char** argv)
+int titian::sandbox_entry(const int argc, const char** argv)
 {
     TitianEditor editor{};
 

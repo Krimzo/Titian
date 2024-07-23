@@ -1,7 +1,7 @@
 #include "fuze.h"
 
 
-fuze::VideoLayer::VideoLayer()
+titian::VideoLayer::VideoLayer()
 	: Layer("VideoLayer")
 {
 	for (int i = 0; i < 3; i++) {
@@ -9,12 +9,12 @@ fuze::VideoLayer::VideoLayer()
 	}
 }
 
-void fuze::VideoLayer::init()
+void titian::VideoLayer::init()
 {
 	Layers::get<AppLayer>()->window.set_icon("package/textures/video_editor_icon.ico");
 }
 
-bool fuze::VideoLayer::update()
+bool titian::VideoLayer::update()
 {
 	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 	gpu->clear_internal(kl::colors::BLACK);

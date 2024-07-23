@@ -3,11 +3,7 @@
 #include "serialization/serializer.h"
 
 
-namespace packager {
-	using namespace titian;
-}
-
-namespace packager {
+namespace titian {
 	int packager_entry(int argc, const char** argv, bool package);
 
 	Set<String> list_files(const String& input);

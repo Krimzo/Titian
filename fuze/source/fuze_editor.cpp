@@ -1,7 +1,7 @@
 #include "fuze.h"
 
 
-fuze::FuzeEditor::FuzeEditor()
+titian::FuzeEditor::FuzeEditor()
 {
     // Binds
     Layers::bind<AppLayer>(&app_layer);
@@ -31,7 +31,7 @@ fuze::FuzeEditor::FuzeEditor()
     app_layer.timer.stop();
 }
 
-fuze::FuzeEditor::~FuzeEditor()
+titian::FuzeEditor::~FuzeEditor()
 {
 	gui_layer.sections.clear();
 }

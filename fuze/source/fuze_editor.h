@@ -10,11 +10,7 @@
 #include "sections/gui_section_video_render.h"
 
 
-namespace fuze {
-    using namespace titian;
-}
-
-namespace fuze {
+namespace titian {
     class FuzeEditor : public LayerStack
     {
     public:

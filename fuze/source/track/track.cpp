@@ -1,7 +1,7 @@
 #include "fuze.h"
 
 
-fuze::Track::Track()
+titian::Track::Track()
 {
 	for (int i = 0; i < 1; i++) {
 		Ref<Media> med = new Media();
@@ -12,7 +12,7 @@ fuze::Track::Track()
 	}
 }
 
-void fuze::Track::insert_media(const float offset, const Ref<Media>& new_med)
+void titian::Track::insert_media(const float offset, const Ref<Media>& new_med)
 {
 	if (media.contains(offset)) {
 		return;
@@ -21,7 +21,7 @@ void fuze::Track::insert_media(const float offset, const Ref<Media>& new_med)
 	readjust_media();
 }
 
-void fuze::Track::remove_media(const Ref<Media>& new_med)
+void titian::Track::remove_media(const Ref<Media>& new_med)
 {
 	for (auto it = media.begin(); it != media.end(); it++) {
 		if (it->second == new_med) {
@@ -31,7 +31,7 @@ void fuze::Track::remove_media(const Ref<Media>& new_med)
 	}
 }
 
-void fuze::Track::readjust_media()
+void titian::Track::readjust_media()
 {
 	std::map copy = media;
 	media.clear();

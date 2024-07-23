@@ -3,7 +3,7 @@
 #include "track/track.h"
 
 
-namespace fuze {
+namespace titian {
 	class VideoLayer : public Layer
 	{
 	public:

@@ -4,42 +4,10 @@
 
 
 namespace titian {
-	using namespace standard;
-}
-
-namespace titian {
-	using ID = int;
-	using IDStorage = Set<ID>;
-
-	namespace _priv {
-		inline IDStorage _ids = {};
-	}
-
-	inline const IDStorage& ref_ids()
+	inline int generate_id() noexcept
 	{
-		using namespace _priv;
-		return _ids;
-	}
-
-	inline ID generate_id()
-	{
-		using namespace _priv;
-
-		ID id;
-		while (true) {
-			id = rand();
-			if (_ids.contains(id)) {
-				continue;
-			}
-			_ids.insert(id);
-			return id;
-		}
-	}
-
-	inline void reset_ids()
-	{
-		using namespace _priv;
-		_ids.clear();
+		static int _counter = 0;
+		return ++_counter;
 	}
 }
 
@@ -47,7 +15,7 @@ namespace titian {
 	class Unique
 	{
 	public:
-		ID id = generate_id();
+		const int id = generate_id();
 
 		inline Unique() = default;
 	};

@@ -1,11 +1,11 @@
 #include "fuze.h"
 
 
-fuze::GUISectionVideoDisplay::GUISectionVideoDisplay()
+titian::GUISectionVideoDisplay::GUISectionVideoDisplay()
 	: GUISection("GUISectionVideoDisplay")
 {}
 
-void fuze::GUISectionVideoDisplay::render_gui()
+void titian::GUISectionVideoDisplay::render_gui()
 {
 	if (im::Begin("Display")) {
 

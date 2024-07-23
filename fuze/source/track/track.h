@@ -3,7 +3,7 @@
 #include "track/media.h"
 
 
-namespace fuze {
+namespace titian {
 	class Track
 	{
 	public:

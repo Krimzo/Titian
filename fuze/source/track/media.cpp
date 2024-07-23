@@ -1,5 +1,5 @@
 #include "fuze.h"
 
 
-fuze::Media::Media()
+titian::Media::Media()
 {}

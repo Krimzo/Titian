@@ -1,7 +1,7 @@
 #include "packager.h"
 
 
-int packager::packager_entry(const int argc, const char** argv, const bool package)
+int titian::packager_entry(const int argc, const char** argv, const bool package)
 {
 	bool result = false;
 	if (package) {
@@ -23,7 +23,7 @@ int packager::packager_entry(const int argc, const char** argv, const bool packa
 	return result ? 0 : 1;
 }
 
-titian::Set<titian::String> packager::list_files(const String& input)
+titian::Set<titian::String> titian::list_files(const String& input)
 {
 	if (!fs::is_directory(input)) {
 		return { input };
@@ -38,7 +38,7 @@ titian::Set<titian::String> packager::list_files(const String& input)
 	return found_files;
 }
 
-bool packager::create_package(const String& input, const String& output_file)
+bool titian::create_package(const String& input, const String& output_file)
 {
 	if (!fs::exists(input)) {
 		Logger::log("Create package error. ", input, " doesn't exists.");
@@ -65,7 +65,7 @@ bool packager::create_package(const String& input, const String& output_file)
 	return true;
 }
 
-bool packager::open_package(const String& input_file, const String& output_dir)
+bool titian::open_package(const String& input_file, const String& output_dir)
 {
 	const Serializer serializer = { input_file, false };
 	if (!serializer) {

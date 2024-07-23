@@ -1,11 +1,11 @@
 #include "sandbox.h"
 
 
-sandbox::SandboxPiecePrepare::SandboxPiecePrepare(TitianEditor* editor)
+titian::SandboxPiecePrepare::SandboxPiecePrepare(TitianEditor* editor)
     : SandboxPiece(editor)
 {}
 
-void sandbox::SandboxPiecePrepare::setup_self()
+void titian::SandboxPiecePrepare::setup_self()
 {
     Scene* scene = &editor->game_layer.scene;
     kl::GPU* gpu = &editor->app_layer.gpu;

@@ -4,10 +4,6 @@
 
 
 namespace titian {
-	using namespace standard;
-}
-
-namespace titian {
 	inline String get_default_script()
 	{
 		return kl::read_file_string("package/defaults/default_script.chai");

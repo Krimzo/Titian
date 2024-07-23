@@ -5,13 +5,13 @@ titian::NodeScript::NodeScript()
 	: Script(ScriptType::NODE)
 {
 	start_node.title = "on_start";
-	start_node.flow_output = Pin("flow out", PinType::FLOW, nullptr);
+	start_node.flow_output.emplace("flow out", PinType::FLOW, nullptr);
 
 	update_node.title = "on_update";
-	update_node.flow_output = Pin("flow out", PinType::FLOW, nullptr);
+	update_node.flow_output.emplace("flow out", PinType::FLOW, nullptr);
 
 	collision_node.title = "on_collision";
-	collision_node.flow_output = Pin("flow out", PinType::FLOW, nullptr);
+	collision_node.flow_output.emplace("flow out", PinType::FLOW, nullptr);
 }
 
 void titian::NodeScript::serialize(Serializer* serializer, const void* helper_data) const
