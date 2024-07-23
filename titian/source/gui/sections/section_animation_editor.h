@@ -23,7 +23,7 @@ namespace titian {
 
         String selected_animation = "/";
 
-        GUISectionAnimationEditor(const LayerPackage& package);
+        GUISectionAnimationEditor();
 
         void render_gui() override;
 

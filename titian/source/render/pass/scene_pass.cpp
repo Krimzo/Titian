@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::ScenePass::ScenePass(const LayerPackage& package)
-    : RenderPass("ScenePass", package)
+titian::ScenePass::ScenePass()
+    : RenderPass("ScenePass")
 {}
 
 bool titian::ScenePass::is_renderable() const
@@ -12,6 +12,7 @@ bool titian::ScenePass::is_renderable() const
 
 titian::StatePackage titian::ScenePass::get_state_package()
 {
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
     RenderStates* render_states = &render_layer->states;
 
     StatePackage package{};
@@ -25,9 +26,10 @@ titian::StatePackage titian::ScenePass::get_state_package()
 void titian::ScenePass::render_self(StatePackage& package)
 {
     // Helper
+	RenderLayer* render_layer = Layers::get<RenderLayer>();
     RenderStates* render_states = &render_layer->states;
-    kl::GPU* gpu = &app_layer->gpu;
-    Scene* scene = &game_layer->scene;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
 
     // Skip if no camera
     Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
@@ -135,7 +137,7 @@ void titian::ScenePass::render_self(StatePackage& package)
     global_cb.RECEIVES_SHADOWS = true;
 
     // Set cb time data
-    const kl::Timer* timer = &app_layer->timer;
+    const kl::Timer* timer = &Layers::get<AppLayer>()->timer;
     global_cb.ELAPSED_TIME = timer->elapsed();
     global_cb.DELTA_TIME = timer->delta();
 

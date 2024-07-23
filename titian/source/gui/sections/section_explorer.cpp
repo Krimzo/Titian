@@ -1,9 +1,11 @@
 #include "titian.h"
 
 
-titian::GUISectionExplorer::GUISectionExplorer(const LayerPackage& package)
-    : GUISection("GUISectionExplorer", package)
+titian::GUISectionExplorer::GUISectionExplorer()
+    : GUISection("GUISectionExplorer")
 {
+    AppLayer* app_layer = Layers::get<AppLayer>();
+
     auto create_texture = [&](Ref<Texture>& texture, const char* filename)
     {
         texture = new Texture(&app_layer->gpu);
@@ -107,6 +109,7 @@ void titian::GUISectionExplorer::render_gui()
             im::EndPopup();
         }
 
+        GUILayer* gui_layer = Layers::get<GUILayer>();
         const float icon_size = m_icon_size * gui_layer->dpi_scaling;
         const float window_width = im::GetWindowWidth() - im::GetStyle().WindowPadding.x * 2.0f;
         const float icon_width = icon_size + im::GetStyle().CellPadding.x * 2.0f;
@@ -154,7 +157,7 @@ void titian::GUISectionExplorer::handle_file_entry(const fs::path& file)
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
     im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
-    const float icon_size = m_icon_size * gui_layer->dpi_scaling;
+    const float icon_size = m_icon_size * Layers::get<GUILayer>()->dpi_scaling;
     const float text_height = im::CalcTextSize(path.c_str()).y;
 
     if (im::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
@@ -210,7 +213,7 @@ void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, con
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
     im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
-    const float icon_size = m_icon_size * gui_layer->dpi_scaling;
+    const float icon_size = m_icon_size * Layers::get<GUILayer>()->dpi_scaling;
     const float text_height = im::CalcTextSize(path.c_str()).y;
 
     if (im::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {

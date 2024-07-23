@@ -4,18 +4,9 @@
 fuze::FuzeEditor::FuzeEditor()
 {
     // Binds
-    const LayerPackage layer_package{
-        &app_layer,
-        nullptr,
-        nullptr,
-        nullptr,
-        &gui_layer,
-        &video_layer,
-    };
-    BOUND_LAYERS::bind(layer_package);
-    app_layer.load_layers(layer_package);
-    video_layer.load_layers(layer_package);
-    gui_layer.load_layers(layer_package);
+    Layers::bind<AppLayer>(&app_layer);
+    Layers::bind<VideoLayer>(&video_layer);
+    Layers::bind<GUILayer>(&gui_layer);
 
     // Init layers
     app_layer.init("FUZE");
@@ -23,11 +14,11 @@ fuze::FuzeEditor::FuzeEditor()
     gui_layer.init();
 
     // Init editor sections
-    gui_layer.sections.emplace_back(new GUISectionVideoMainMenu(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionVideoEffects(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionVideoDisplay(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionVideoTimeline(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionVideoRender(layer_package));
+    gui_layer.sections.emplace_back(new GUISectionVideoMainMenu());
+    gui_layer.sections.emplace_back(new GUISectionVideoEffects());
+    gui_layer.sections.emplace_back(new GUISectionVideoDisplay());
+    gui_layer.sections.emplace_back(new GUISectionVideoTimeline());
+    gui_layer.sections.emplace_back(new GUISectionVideoRender());
 
     // Push layers
     push_layer(&app_layer);

@@ -11,7 +11,7 @@ namespace titian {
     public:
         dx::Buffer frustum_mesh = nullptr;
 
-        EditorPass(const LayerPackage& package);
+        EditorPass();
 
         bool is_renderable() const override;
         StatePackage get_state_package() override;

@@ -1,7 +1,6 @@
 #include "titian.h"
 
 
-titian::GUISection::GUISection(const String& name, const LayerPackage& package)
+titian::GUISection::GUISection(const String& name)
 	: BenchmarkInfo(name)
-	, LayerHolder(package)
 {}

@@ -8,7 +8,7 @@ namespace titian {
     class DisplayPass : public RenderPass
     {
     public:
-        DisplayPass(const LayerPackage& package);
+        DisplayPass();
 
         bool is_renderable() const override;
         StatePackage get_state_package() override;

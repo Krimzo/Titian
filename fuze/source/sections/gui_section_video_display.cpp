@@ -1,8 +1,8 @@
 #include "fuze.h"
 
 
-fuze::GUISectionVideoDisplay::GUISectionVideoDisplay(const LayerPackage& package)
-	: GUISection("GUISectionVideoDisplay", package)
+fuze::GUISectionVideoDisplay::GUISectionVideoDisplay()
+	: GUISection("GUISectionVideoDisplay")
 {}
 
 void fuze::GUISectionVideoDisplay::render_gui()

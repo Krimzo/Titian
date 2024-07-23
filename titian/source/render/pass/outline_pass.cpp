@@ -1,18 +1,18 @@
 #include "titian.h"
 
 
-titian::OutlinePass::OutlinePass(const LayerPackage& package)
-    : RenderPass("OutlinePass", package)
+titian::OutlinePass::OutlinePass()
+    : RenderPass("OutlinePass")
 {}
 
 bool titian::OutlinePass::is_renderable() const
 {
-    return !editor_layer->selected_entities.empty();
+    return !Layers::get<EditorLayer>()->selected_entities.empty();
 }
 
 titian::StatePackage titian::OutlinePass::get_state_package()
 {
-    RenderStates* render_states = &render_layer->states;
+    RenderStates* render_states = &Layers::get<RenderLayer>()->states;
 
     StatePackage package = {};
     package.raster_state = render_states->raster_states->solid;
@@ -23,6 +23,12 @@ titian::StatePackage titian::OutlinePass::get_state_package()
 
 void titian::OutlinePass::render_self(StatePackage& package)
 {
+    AppLayer* app_layer = Layers::get<AppLayer>();
+	EditorLayer* editor_layer = Layers::get<EditorLayer>();
+	GameLayer* game_layer = Layers::get<GameLayer>();
+	RenderLayer* render_layer = Layers::get<RenderLayer>();
+    GUILayer* gui_layer = Layers::get<GUILayer>();
+
     Vector<float> entitiy_indices;
     for (uint32_t counter_id = 0; const auto& [name, _] : *game_layer->scene) {
         counter_id += 1;
@@ -63,7 +69,7 @@ void titian::OutlinePass::render_self(StatePackage& package)
 
 void titian::OutlinePass::load_selected_entities(const Vector<float>& entitiy_indices)
 {
-	kl::GPU* gpu = &app_layer->gpu;
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     if (gpu->vertex_buffer_size(m_selected_entities_buff, sizeof(float)) < entitiy_indices.size()) {
         dx::BufferDescriptor descriptor{};
         descriptor.Usage = D3D11_USAGE_DYNAMIC;

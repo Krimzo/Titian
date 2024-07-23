@@ -1,11 +1,11 @@
 #include "titian.h"
 
 
-titian::GUISectionMeshEditor::GUISectionMeshEditor(const LayerPackage& package)
-    : GUISection("GUISectionMeshEditor", package)
+titian::GUISectionMeshEditor::GUISectionMeshEditor()
+    : GUISection("GUISectionMeshEditor")
 {
-    kl::GPU* gpu = &app_layer->gpu;
-    Scene* scene = &game_layer->scene;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
 
     camera = new Camera(scene->physics(), true);
     render_texture = new Texture(gpu);
@@ -22,8 +22,8 @@ void titian::GUISectionMeshEditor::render_gui()
 {
     const TimeBomb _ = this->time_it();
 
-    kl::GPU* gpu = &app_layer->gpu;
-    Scene* scene = &game_layer->scene;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
     Ref mesh = scene->get_mesh(this->selected_mesh);
 
     if (im::Begin("Mesh Editor")) {
@@ -151,7 +151,7 @@ void titian::GUISectionMeshEditor::update_mesh_camera()
         initial_camera_info = camera_info;
     }
 
-    const int scroll = app_layer->window.mouse.scroll();
+    const int scroll = Layers::get<AppLayer>()->window.mouse.scroll();
     if (im::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = im::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;
@@ -206,7 +206,7 @@ void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh
     const Int2 old_viewport_size = gpu->viewport_size();
     gpu->set_viewport_size(viewport_size);
 
-    RenderStates* states = &render_layer->states;
+    RenderStates* states = &Layers::get<RenderLayer>()->states;
     gpu->bind_raster_state(mesh->render_wireframe ? states->raster_states->wireframe : states->raster_states->solid);
     gpu->bind_depth_state(states->depth_states->enabled);
 
@@ -250,7 +250,7 @@ void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh
 
 void titian::GUISectionMeshEditor::render_gizmos(Mesh* mesh)
 {
-    kl::Window* window = &app_layer->window;
+    kl::Window* window = &Layers::get<AppLayer>()->window;
 
     Mesh::Data& mesh_data = mesh->data_buffer;
     if (m_selected_vertex_index < 0 || m_selected_vertex_index >= mesh_data.size()) {
@@ -292,7 +292,8 @@ void titian::GUISectionMeshEditor::render_gizmos(Mesh* mesh)
 
 void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
 {
-    kl::Window* window = &app_layer->window;
+    GUILayer* gui_layer = Layers::get<GUILayer>();
+    kl::Window* window = &Layers::get<AppLayer>()->window;
 
     const int current_scroll = window->mouse.scroll();
 

@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::GUISectionScriptEditor::GUISectionScriptEditor(const LayerPackage& package)
-	: GUISection("GUISectionScriptEditor", package)
+titian::GUISectionScriptEditor::GUISectionScriptEditor()
+	: GUISection("GUISectionScriptEditor")
 {
 	m_interp_editor.load_chai_standard();
 
@@ -20,8 +20,8 @@ void titian::GUISectionScriptEditor::render_gui()
 {
 	const TimeBomb _ = this->time_it();
 
-	kl::GPU* gpu = &app_layer->gpu;
-	Scene* scene = &game_layer->scene;
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+	Scene* scene = &Layers::get<GameLayer>()->scene;
 
 	Script* script = &scene->get_script(selected_script);
 	NativeScript* native_script = dynamic_cast<NativeScript*>(script);
@@ -162,6 +162,8 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 
 void titian::GUISectionScriptEditor::show_script_properties(Script* script) const
 {
+	GUILayer* gui_layer = Layers::get<GUILayer>();
+
 	if (im::Begin("Script Properties") && script) {
 		im::Text("Info");
 
@@ -197,7 +199,7 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 		m_interp_editor.load(script->source);
 	}
 
-	im::PushFont(gui_layer->roboto_font_large);
+	im::PushFont(Layers::get<GUILayer>()->roboto_font_large);
 	m_interp_editor.edit(&script->source);
 
 	if (im::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {

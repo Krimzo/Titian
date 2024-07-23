@@ -20,7 +20,7 @@ namespace titian {
 
         String selected_material = {};
 
-        GUISectionMaterialEditor(const LayerPackage& package);
+        GUISectionMaterialEditor();
 
         void render_gui() override;
 

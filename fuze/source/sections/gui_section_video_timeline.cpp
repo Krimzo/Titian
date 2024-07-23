@@ -1,12 +1,15 @@
 #include "fuze.h"
 
 
-fuze::GUISectionVideoTimeline::GUISectionVideoTimeline(const LayerPackage& package)
-	: GUISection("GUISectionVideoTimeline", package)
+fuze::GUISectionVideoTimeline::GUISectionVideoTimeline()
+	: GUISection("GUISectionVideoTimeline")
 {}
 
 void fuze::GUISectionVideoTimeline::render_gui()
 {
+	AppLayer* app_layer = Layers::get<AppLayer>();
+	VideoLayer* video_layer = Layers::get<VideoLayer>();
+
 	kl::Window* window = &app_layer->window;
 	const int current_scroll = window->mouse.scroll();
 	const int scroll = current_scroll - m_last_scroll;
@@ -131,7 +134,7 @@ void fuze::GUISectionVideoTimeline::render_gui()
 				im::TableNextRow(ImGuiTableRowFlags_None, row_height);
 				{
 					im::TableSetColumnIndex(0);
-					im::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImColor(45, 45, 45));
+					im::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImColor(0.1764f, 0.1764f, 0.1764f)); // crashes if i pass ImColor(45, 45, 45) in release ???
 					
 					const String text = kl::format(i + 1, ". ", track->name);
 					const ImVec2 text_size = im::CalcTextSize(text.c_str());

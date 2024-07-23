@@ -5,10 +5,10 @@
 
 
 namespace titian {
-	class RenderPass : public BenchmarkInfo, public LayerHolder
+	class RenderPass : public BenchmarkInfo
 	{
 	public:
-		RenderPass(const String& name, const LayerPackage& package);
+		RenderPass(const String& name);
 		virtual ~RenderPass() = default;
 
 		RenderPass(const RenderPass&) = delete;

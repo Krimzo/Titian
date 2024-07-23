@@ -4,20 +4,11 @@
 titian::TitianEditor::TitianEditor()
 {
     // Binds
-    const LayerPackage layer_package{
-		&app_layer,
-		&game_layer,
-		&editor_layer,
-		&render_layer,
-		&gui_layer,
-        nullptr,
-    };
-    BOUND_LAYERS::bind(layer_package);
-    app_layer.load_layers(layer_package);
-    game_layer.load_layers(layer_package);
-    editor_layer.load_layers(layer_package);
-    render_layer.load_layers(layer_package);
-    gui_layer.load_layers(layer_package);
+    Layers::bind<AppLayer>(&app_layer);
+    Layers::bind<GameLayer>(&game_layer);
+    Layers::bind<EditorLayer>(&editor_layer);
+    Layers::bind<RenderLayer>(&render_layer);
+    Layers::bind<GUILayer>(&gui_layer);
 
     // Init layers
     app_layer.init("TITIAN");
@@ -27,29 +18,29 @@ titian::TitianEditor::TitianEditor()
 	gui_layer.init();
     
     // Init render passes
-    render_layer.passes.emplace_back(new ShadowPass(layer_package));
-    render_layer.passes.emplace_back(new SkyboxPass(layer_package));
-    render_layer.passes.emplace_back(new ScenePass(layer_package));
-    render_layer.passes.emplace_back(new PostPass(layer_package));
-    render_layer.passes.emplace_back(new EditorPass(layer_package));
-    render_layer.passes.emplace_back(new OutlinePass(layer_package));
+    render_layer.passes.emplace_back(new ShadowPass());
+    render_layer.passes.emplace_back(new SkyboxPass());
+    render_layer.passes.emplace_back(new ScenePass());
+    render_layer.passes.emplace_back(new PostPass());
+    render_layer.passes.emplace_back(new EditorPass());
+    render_layer.passes.emplace_back(new OutlinePass());
 
     // Init editor sections
-    gui_layer.sections.emplace_back(new GUISectionMainMenu(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionSceneEntities(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionSceneInfo(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionMeshEditor(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionAnimationEditor(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionTextureEditor(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionMaterialEditor(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionShaderEditor(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionScriptEditor(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionViewport(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionScriptingParameters(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionLogView(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionExplorer(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionEntityProperties(layer_package));
-    gui_layer.sections.emplace_back(new GUISectionTimeInfo(layer_package, this));
+    gui_layer.sections.emplace_back(new GUISectionMainMenu());
+    gui_layer.sections.emplace_back(new GUISectionSceneEntities());
+    gui_layer.sections.emplace_back(new GUISectionSceneInfo());
+    gui_layer.sections.emplace_back(new GUISectionMeshEditor());
+    gui_layer.sections.emplace_back(new GUISectionAnimationEditor());
+    gui_layer.sections.emplace_back(new GUISectionTextureEditor());
+    gui_layer.sections.emplace_back(new GUISectionMaterialEditor());
+    gui_layer.sections.emplace_back(new GUISectionShaderEditor());
+    gui_layer.sections.emplace_back(new GUISectionScriptEditor());
+    gui_layer.sections.emplace_back(new GUISectionViewport());
+    gui_layer.sections.emplace_back(new GUISectionScriptingParameters());
+    gui_layer.sections.emplace_back(new GUISectionLogView());
+    gui_layer.sections.emplace_back(new GUISectionExplorer());
+    gui_layer.sections.emplace_back(new GUISectionEntityProperties());
+    gui_layer.sections.emplace_back(new GUISectionTimeInfo(this));
 
     // Push layers
     push_layer(&app_layer);

@@ -1,13 +1,16 @@
 #include "titian.h"
 
 
-titian::GUISectionEntityProperties::GUISectionEntityProperties(const LayerPackage& package)
-    : GUISection("GUISectionEntityProperties", package)
+titian::GUISectionEntityProperties::GUISectionEntityProperties()
+    : GUISection("GUISectionEntityProperties")
 {}
 
 void titian::GUISectionEntityProperties::render_gui()
 {
     const TimeBomb _ = this->time_it();
+
+    EditorLayer* editor_layer = Layers::get<EditorLayer>();
+	GameLayer* game_layer = Layers::get<GameLayer>();
 
     if (im::Begin("Entity properties") && !editor_layer->selected_entities.empty()) {
         Scene* scene = &game_layer->scene;
@@ -27,6 +30,8 @@ void titian::GUISectionEntityProperties::render_gui()
 
 void titian::GUISectionEntityProperties::display_entity_info(Scene* scene, const String& entity_name, Entity* entity)
 {
+    GUILayer* gui_layer = Layers::get<GUILayer>();
+
     im::Text("Entity Info");
 
     im::Text("Name: ");

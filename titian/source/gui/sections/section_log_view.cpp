@@ -1,14 +1,15 @@
 #include "titian.h"
 
 
-titian::GUISectionLogView::GUISectionLogView(const LayerPackage& package)
-    : GUISection("GUISectionLogView", package)
+titian::GUISectionLogView::GUISectionLogView()
+    : GUISection("GUISectionLogView")
 {}
 
 void titian::GUISectionLogView::render_gui()
 {
     const TimeBomb _ = this->time_it();
 
+    GUILayer* gui_layer = Layers::get<GUILayer>();
     im::PushFont(gui_layer->roboto_font_large);
 
     const uint64_t unseen_count = Logger::last_log_index - last_log_index;

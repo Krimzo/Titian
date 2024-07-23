@@ -12,7 +12,7 @@ namespace fuze {
     class GUISectionVideoMainMenu : public GUISection
     {
     public:
-        GUISectionVideoMainMenu(const LayerPackage& package);
+        GUISectionVideoMainMenu();
 
         void render_gui() override;
 

@@ -10,7 +10,7 @@ namespace titian {
 	class GUISectionMainMenu : public GUISection
 	{
     public:
-        GUISectionMainMenu(const LayerPackage& package);
+        GUISectionMainMenu();
 
         void render_gui() override;
 

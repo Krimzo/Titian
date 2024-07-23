@@ -4,19 +4,10 @@
 titian::TitianGame::TitianGame(const String& entry_scene)
 {
     // Binds
-    const LayerPackage layer_package{
-        &app_layer,
-        &game_layer,
-        nullptr,
-        &render_layer,
-        &gui_layer,
-        nullptr,
-    };
-    BOUND_LAYERS::bind(layer_package);
-    app_layer.load_layers(layer_package);
-    game_layer.load_layers(layer_package);
-    render_layer.load_layers(layer_package);
-    gui_layer.load_layers(layer_package);
+    Layers::bind<AppLayer>(&app_layer);
+    Layers::bind<GameLayer>(&game_layer);
+    Layers::bind<RenderLayer>(&render_layer);
+    Layers::bind<GUILayer>(&gui_layer);
 
     // Init layers
 	app_layer.init("Titian Game");
@@ -25,11 +16,11 @@ titian::TitianGame::TitianGame(const String& entry_scene)
 	gui_layer.init();
 
     // Init render passes
-    render_layer.passes.emplace_back(new ShadowPass(layer_package));
-    render_layer.passes.emplace_back(new SkyboxPass(layer_package));
-    render_layer.passes.emplace_back(new ScenePass(layer_package));
-    render_layer.passes.emplace_back(new PostPass(layer_package));
-    render_layer.passes.emplace_back(new DisplayPass(layer_package));
+    render_layer.passes.emplace_back(new ShadowPass());
+    render_layer.passes.emplace_back(new SkyboxPass());
+    render_layer.passes.emplace_back(new ScenePass());
+    render_layer.passes.emplace_back(new PostPass());
+    render_layer.passes.emplace_back(new DisplayPass());
 
     // Push layers
     push_layer(&app_layer);

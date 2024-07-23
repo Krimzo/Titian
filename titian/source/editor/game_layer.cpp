@@ -7,7 +7,7 @@ titian::GameLayer::GameLayer()
 
 void titian::GameLayer::init()
 {
-	scene = new Scene(&app_layer->gpu);
+	scene = new Scene(&Layers::get<AppLayer>()->gpu);
 }
 
 bool titian::GameLayer::update()
@@ -15,7 +15,7 @@ bool titian::GameLayer::update()
 	const TimeBomb _ = this->time_it();
 
 	if (game_running && !game_paused) {
-		const float delta_time = app_layer->timer.delta();
+		const float delta_time = Layers::get<AppLayer>()->timer.delta();
 		scene->update_physics(delta_time);
 		scene->update_scripts();
 	}
@@ -24,11 +24,13 @@ bool titian::GameLayer::update()
 
 void titian::GameLayer::reset_scene()
 {
-	scene = new Scene(&app_layer->gpu);
+	scene = new Scene(&Layers::get<AppLayer>()->gpu);
 }
 
 void titian::GameLayer::start_game()
 {
+	AppLayer* app_layer = Layers::get<AppLayer>();
+
 	for (auto& [_, shader] : scene->shaders) {
 		shader->reload();
 	}
@@ -49,19 +51,19 @@ void titian::GameLayer::start_game()
 
 void titian::GameLayer::pause_game()
 {
-	app_layer->timer.pause();
+	Layers::get<AppLayer>()->timer.pause();
 	game_paused = true;
 }
 
 void titian::GameLayer::resume_game()
 {
 	game_paused = false;
-	app_layer->timer.resume();
+	Layers::get<AppLayer>()->timer.resume();
 }
 
 void titian::GameLayer::stop_game()
 {
-	app_layer->timer.stop();
+	Layers::get<AppLayer>()->timer.stop();
 	game_running = false;
 	game_paused = false;
 	Logger::log("Game stopped.");

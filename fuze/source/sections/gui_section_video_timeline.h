@@ -18,7 +18,7 @@ namespace fuze {
         int vertical_view = 5;
         float horizontal_view = 60.0f;
 
-        GUISectionVideoTimeline(const LayerPackage& package);
+        GUISectionVideoTimeline();
 
         void render_gui() override;
 

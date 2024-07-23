@@ -11,6 +11,9 @@ void titian::EditorLayer::init()
 bool titian::EditorLayer::update()
 {
     const TimeBomb _ = this->time_it();
+
+    AppLayer* app_layer = Layers::get<AppLayer>();
+	GameLayer* game_layer = Layers::get<GameLayer>();
     
     if (!is_viewport_focused || !is_over_viewport) {
         return true;

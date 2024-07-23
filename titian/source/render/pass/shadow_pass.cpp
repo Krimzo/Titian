@@ -1,20 +1,20 @@
 #include "titian.h"
 
 
-titian::ShadowPass::ShadowPass(const LayerPackage& package)
-    : RenderPass("ShadowPass", package)
+titian::ShadowPass::ShadowPass()
+    : RenderPass("ShadowPass")
 {}
 
 bool titian::ShadowPass::is_renderable() const
 {
-    const Scene* scene = &game_layer->scene;
+    const Scene* scene = &Layers::get<GameLayer>()->scene;
     const DirectionalLight* dir_light = scene->get_casted<DirectionalLight>(scene->main_directional_light_name);
     return static_cast<bool>(dir_light);
 }
 
 titian::StatePackage titian::ShadowPass::get_state_package()
 {
-    RenderStates* render_states = &render_layer->states;
+    RenderStates* render_states = &Layers::get<RenderLayer>()->states;
 
     StatePackage package = {};
     package.raster_state = render_states->raster_states->shadow;
@@ -26,10 +26,11 @@ titian::StatePackage titian::ShadowPass::get_state_package()
 void titian::ShadowPass::render_self(StatePackage& package)
 {
     // Helper
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
     RenderStates* render_states = &render_layer->states;
-    kl::Timer* timer = &app_layer->timer;
-    kl::GPU* gpu = &app_layer->gpu;
-    Scene* scene = &game_layer->scene;
+    kl::Timer* timer = &Layers::get<AppLayer>()->timer;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
 
     // Skip if no camera
     Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);

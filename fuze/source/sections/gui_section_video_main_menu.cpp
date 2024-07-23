@@ -1,12 +1,15 @@
 #include "fuze.h"
 
 
-fuze::GUISectionVideoMainMenu::GUISectionVideoMainMenu(const LayerPackage& package)
-	: GUISection("GUISectionVideoMainMenu", package)
+fuze::GUISectionVideoMainMenu::GUISectionVideoMainMenu()
+	: GUISection("GUISectionVideoMainMenu")
 {}
 
 void fuze::GUISectionVideoMainMenu::render_gui()
 {
+    AppLayer* app_layer = Layers::get<AppLayer>();
+    VideoLayer* video_layer = Layers::get<VideoLayer>();
+
     if (m_testing_exit) {
         if (im::Begin("Exit?", nullptr, ImGuiWindowFlags_NoScrollbar)) {
             im::Text("Are you sure you want to exit?");

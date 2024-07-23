@@ -10,7 +10,7 @@ namespace titian {
     public:
         void* editor = nullptr;
 
-        GUISectionTimeInfo(const LayerPackage& package, void* editor);
+        GUISectionTimeInfo(void* editor);
 
         void render_gui() override;
     };

@@ -8,7 +8,7 @@ namespace titian {
     class GUISectionScriptingParameters : public GUISection
     {
     public:
-        GUISectionScriptingParameters(const LayerPackage& package);
+        GUISectionScriptingParameters();
 
         void render_gui() override;
 

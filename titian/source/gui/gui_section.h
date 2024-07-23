@@ -5,10 +5,10 @@
 
 
 namespace titian {
-	class GUISection : public BenchmarkInfo, public LayerHolder
+	class GUISection : public BenchmarkInfo
 	{
 	public:
-		GUISection(const String& name, const LayerPackage& package);
+		GUISection(const String& name);
 		virtual ~GUISection() = default;
 
 		GUISection(const GUISection&) = delete;

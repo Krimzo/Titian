@@ -12,7 +12,7 @@ namespace titian {
 	class GUISectionSceneInfo : public GUISection
 	{
 	public:
-		GUISectionSceneInfo(const LayerPackage& package);
+		GUISectionSceneInfo();
 
 		void render_gui() override;
 

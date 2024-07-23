@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::GUISectionViewport::GUISectionViewport(const LayerPackage& package)
-    : GUISection("GUISectionViewport", package)
+titian::GUISectionViewport::GUISectionViewport()
+    : GUISection("GUISectionViewport")
 {}
 
 void titian::GUISectionViewport::render_gui()
@@ -10,6 +10,11 @@ void titian::GUISectionViewport::render_gui()
     const TimeBomb _ = this->time_it();
 
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
+
+    AppLayer* app_layer = Layers::get<AppLayer>();
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
+	GameLayer* game_layer = Layers::get<GameLayer>();
+    EditorLayer* editor_layer = Layers::get<EditorLayer>();
 
     kl::GPU* gpu = &app_layer->gpu;
     Ref<Scene>& scene = game_layer->scene;
@@ -162,8 +167,9 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_entity_ids(const Int2& fi
         return {};
     }
 
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
     const Int2 size = max_coords - min_coords;
-    const kl::GPU* gpu = &app_layer->gpu;
+    const kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 
     render_layer->resize_staging(size);
     gpu->copy_resource_region(render_layer->editor_staging_texture->graphics_buffer.Get(), render_layer->editor_picking_texture->graphics_buffer.Get(), min_coords, max_coords);
@@ -180,6 +186,7 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_entity_ids(const Int2& fi
 
 void titian::GUISectionViewport::handle_gizmo_operation_change(const int operation, const ImGuiKey switch_key)
 {
+    EditorLayer* editor_layer = Layers::get<EditorLayer>();
     if (im::IsKeyDown(switch_key)) {
         if (!m_last_key_states[switch_key]) {
             editor_layer->gizmo_operation = editor_layer->gizmo_operation != operation ? operation : 0;
@@ -193,6 +200,10 @@ void titian::GUISectionViewport::handle_gizmo_operation_change(const int operati
 
 void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
 {
+	EditorLayer* editor_layer = Layers::get<EditorLayer>();
+	GameLayer* game_layer = Layers::get<GameLayer>();
+	AppLayer* app_layer = Layers::get<AppLayer>();
+
     if (editor_layer->gizmo_operation == 0)
         return;
 

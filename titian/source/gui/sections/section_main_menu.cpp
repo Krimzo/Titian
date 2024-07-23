@@ -1,9 +1,11 @@
 #include "titian.h"
 
 
-titian::GUISectionMainMenu::GUISectionMainMenu(const LayerPackage& package)
-    : GUISection("GUISectionMainMenu", package)
+titian::GUISectionMainMenu::GUISectionMainMenu()
+    : GUISection("GUISectionMainMenu")
 {
+    AppLayer* app_layer = Layers::get<AppLayer>();
+
     auto create_texture = [&](Ref<Texture>& texture, const char* filename)
     {
         texture = new Texture(&app_layer->gpu);
@@ -24,8 +26,14 @@ void titian::GUISectionMainMenu::render_gui()
 {
     const TimeBomb _ = this->time_it();
 
-    Ref<Scene>& scene = game_layer->scene;
+	AppLayer* app_layer = Layers::get<AppLayer>();
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
+    GameLayer* game_layer = Layers::get<GameLayer>();
+    GUILayer* gui_layer = Layers::get<GUILayer>();
+    EditorLayer* editor_layer = Layers::get<EditorLayer>();
+
     kl::Window* window = &app_layer->window;
+    Ref<Scene>& scene = game_layer->scene;
 
     // Save scene popup
     if (m_inputting_name) {

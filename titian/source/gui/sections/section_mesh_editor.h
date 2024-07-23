@@ -23,7 +23,7 @@ namespace titian {
 
         String selected_mesh = "/";
 
-        GUISectionMeshEditor(const LayerPackage& package);
+        GUISectionMeshEditor();
 
         void render_gui() override;
 

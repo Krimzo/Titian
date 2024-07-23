@@ -20,7 +20,7 @@ namespace titian {
         Ref<Texture> default_dir_texture = nullptr;
         Ref<Texture> parent_dir_texture = nullptr;
 
-        GUISectionExplorer(const LayerPackage& package);
+        GUISectionExplorer();
 
         void render_gui() override;
 

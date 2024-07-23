@@ -11,12 +11,12 @@ fuze::VideoLayer::VideoLayer()
 
 void fuze::VideoLayer::init()
 {
-	app_layer->window.set_icon("package/textures/video_editor_icon.ico");
+	Layers::get<AppLayer>()->window.set_icon("package/textures/video_editor_icon.ico");
 }
 
 bool fuze::VideoLayer::update()
 {
-	kl::GPU* gpu = &app_layer->gpu;
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 	gpu->clear_internal(kl::colors::BLACK);
 	return true;
 }

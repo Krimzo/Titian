@@ -1,15 +1,16 @@
 #include "titian.h"
 
 
-titian::GUISectionScriptingParameters::GUISectionScriptingParameters(const LayerPackage& package)
-	: GUISection("GUISectionScriptingParameters", package)
+titian::GUISectionScriptingParameters::GUISectionScriptingParameters()
+	: GUISection("GUISectionScriptingParameters")
 {}
 
 void titian::GUISectionScriptingParameters::render_gui()
 {
 	const TimeBomb _ = this->time_it();
 
-	Scene* scene = &game_layer->scene;
+	GUILayer* gui_layer = Layers::get<GUILayer>();
+	Scene* scene = &Layers::get<GameLayer>()->scene;
 
 	Vector<Pair<String, Map<String, cs::Boxed_Value>>> scripts;
 	scripts.reserve(scene->scripts.size());

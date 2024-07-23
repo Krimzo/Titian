@@ -10,7 +10,7 @@ namespace titian {
 	class GUISectionViewport : public GUISection
 	{
 	public:
-        GUISectionViewport(const LayerPackage& package);
+        GUISectionViewport();
 
         void render_gui() override;
 

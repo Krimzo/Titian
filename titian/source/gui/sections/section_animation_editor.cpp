@@ -1,11 +1,11 @@
 #include "titian.h"
 
 
-titian::GUISectionAnimationEditor::GUISectionAnimationEditor(const LayerPackage& package)
-    : GUISection("GUISectionAnimationEditor", package)
+titian::GUISectionAnimationEditor::GUISectionAnimationEditor()
+    : GUISection("GUISectionAnimationEditor")
 {
-    kl::GPU* gpu = &app_layer->gpu;
-    Scene* scene = &game_layer->scene;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
 
     camera = new Camera(scene->physics(), true);
     render_texture = new Texture(gpu);
@@ -24,8 +24,8 @@ void titian::GUISectionAnimationEditor::render_gui()
 {
     const TimeBomb _ = this->time_it();
 
-    kl::GPU* gpu = &app_layer->gpu;
-    Scene* scene = &game_layer->scene;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
     Ref animation = scene->get_animation(this->selected_animation);
 
     if (im::Begin("Animation Editor")) {
@@ -133,7 +133,7 @@ void titian::GUISectionAnimationEditor::update_animation_camera()
         initial_camera_info = camera_info;
     }
 
-    const int scroll = app_layer->window.mouse.scroll();
+    const int scroll = Layers::get<AppLayer>()->window.mouse.scroll();
     if (im::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = im::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;
@@ -161,6 +161,9 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
         return;
     }
+
+    GameLayer* game_layer = Layers::get<GameLayer>();
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
 
     if (render_texture->graphics_buffer_size() != viewport_size) {
         render_texture->graphics_buffer = gpu->create_target_texture(viewport_size);
@@ -258,7 +261,9 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
 
 void titian::GUISectionAnimationEditor::show_animation_properties(Animation* animation)
 {
-    kl::Window* window = &app_layer->window;
+    GameLayer* game_layer = Layers::get<GameLayer>();
+    GUILayer* gui_layer = Layers::get<GUILayer>();
+    kl::Window* window = &Layers::get<AppLayer>()->window;
 
     const int current_scroll = window->mouse.scroll();
 

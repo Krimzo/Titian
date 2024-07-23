@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::GUISectionTimeInfo::GUISectionTimeInfo(const LayerPackage& package, void* editor)
-    : GUISection("GUISectionTimeInfo", package)
+titian::GUISectionTimeInfo::GUISectionTimeInfo(void* editor)
+    : GUISection("GUISectionTimeInfo")
     , editor(editor)
 {}
 
@@ -11,7 +11,7 @@ void titian::GUISectionTimeInfo::render_gui()
     const TimeBomb _ = this->time_it();
 
     TitianEditor* editor = static_cast<TitianEditor*>(this->editor);
-    kl::Timer* timer = &app_layer->timer;
+    kl::Timer* timer = &editor->app_layer.timer;
 
     static auto display_time = [](const String& name, const float time, const float multi = 1000.0f)
     {
@@ -31,13 +31,13 @@ void titian::GUISectionTimeInfo::render_gui()
 
         im::Separator();
         im::Text("Render Passes");
-        for (auto& pass : render_layer->passes) {
+        for (auto& pass : editor->render_layer.passes) {
             display_time(pass->benchmark_name, pass->benchmark_time);
         }
 
         im::Separator();
         im::Text("GUI Sections");
-        for (auto& section : gui_layer->sections) {
+        for (auto& section : editor->gui_layer.sections) {
             display_time(section->benchmark_name, section->benchmark_time);
         }
     }

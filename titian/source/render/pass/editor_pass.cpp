@@ -1,10 +1,10 @@
 #include "titian.h"
 
 
-titian::EditorPass::EditorPass(const LayerPackage& package)
-    : RenderPass("EditorPass", package)
+titian::EditorPass::EditorPass()
+    : RenderPass("EditorPass")
 {
-    kl::GPU* gpu = &app_layer->gpu;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     const kl::Vertex<float> frustum_vertices[8] = {
         { {  1.0f,  1.0f, -1.0f } },
         { { -1.0f,  1.0f, -1.0f } },
@@ -34,12 +34,12 @@ titian::EditorPass::EditorPass(const LayerPackage& package)
 
 bool titian::EditorPass::is_renderable() const
 {
-    return !editor_layer->selected_entities.empty();
+    return !Layers::get<EditorLayer>()->selected_entities.empty();
 }
 
 titian::StatePackage titian::EditorPass::get_state_package()
 {
-    RenderStates* render_states = &render_layer->states;
+    RenderStates* render_states = &Layers::get<RenderLayer>()->states;
 
     StatePackage package = {};
     package.raster_state = render_states->raster_states->wireframe;
@@ -50,8 +50,12 @@ titian::StatePackage titian::EditorPass::get_state_package()
 
 void titian::EditorPass::render_self(StatePackage& package)
 {
-    kl::GPU* gpu = &app_layer->gpu;
-    Scene* scene = &game_layer->scene;
+    EditorLayer* editor_layer = Layers::get<EditorLayer>();
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
+    GUILayer* gui_layer = Layers::get<GUILayer>();
+
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
 
     Camera* main_camera = scene->get_casted<Camera>(scene->main_camera_name);
     if (!main_camera) {

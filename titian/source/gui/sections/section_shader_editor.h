@@ -13,7 +13,7 @@ namespace titian {
     public:
         String selected_shader = {};
 
-        GUISectionShaderEditor(const LayerPackage& package);
+        GUISectionShaderEditor();
 
         void render_gui() override;
 

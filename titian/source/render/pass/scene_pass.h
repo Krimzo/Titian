@@ -13,7 +13,7 @@ namespace titian {
     class ScenePass : public RenderPass
     {
     public:
-        ScenePass(const LayerPackage& package);
+        ScenePass();
 
         bool is_renderable() const override;
         StatePackage get_state_package() override;

@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::GUISectionShaderEditor::GUISectionShaderEditor(const LayerPackage& package)
-	: GUISection("GUISectionShaderEditor", package)
+titian::GUISectionShaderEditor::GUISectionShaderEditor()
+	: GUISection("GUISectionShaderEditor")
 {
 	m_editor.load_hlsl_standard();
 }
@@ -11,8 +11,8 @@ void titian::GUISectionShaderEditor::render_gui()
 {
 	const TimeBomb _ = this->time_it();
 
-	kl::GPU* gpu = &app_layer->gpu;
-	Scene* scene = &game_layer->scene;
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+	Scene* scene = &Layers::get<GameLayer>()->scene;
 
 	if (im::Begin("Shader Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const float available_width = im::GetContentRegionAvail().x;
@@ -141,6 +141,8 @@ void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) cons
 		{ ShaderType::CAMERA, "Camera" },
 	};
 
+	GUILayer* gui_layer = Layers::get<GUILayer>();
+
 	if (im::Begin("Shader Properties") && shader) {
 		im::Text("Info");
 
@@ -167,7 +169,7 @@ void titian::GUISectionShaderEditor::edit_shader(Shader* shader)
 		m_editor.load(shader->data_buffer);
 	}
 
-	im::PushFont(gui_layer->roboto_font_large);
+	im::PushFont(Layers::get<GUILayer>()->roboto_font_large);
 	m_editor.edit(&shader->data_buffer);
 
 	if (im::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {

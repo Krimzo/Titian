@@ -11,7 +11,7 @@ namespace titian {
     public:
         String selected_texture = {};
 
-        GUISectionTextureEditor(const LayerPackage& package);
+        GUISectionTextureEditor();
 
         void render_gui() override;
 

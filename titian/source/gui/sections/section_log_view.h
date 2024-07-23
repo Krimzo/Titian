@@ -11,7 +11,7 @@ namespace titian {
 	public:
         uint64_t last_log_index = 0;
 
-		GUISectionLogView(const LayerPackage& package);
+		GUISectionLogView();
 
 		void render_gui() override;
 	};

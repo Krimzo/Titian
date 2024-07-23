@@ -19,7 +19,7 @@ namespace titian {
 	public:
 		String selected_script = "/";
 
-		GUISectionScriptEditor(const LayerPackage& package);
+		GUISectionScriptEditor();
 		~GUISectionScriptEditor() override;
 
 		void render_gui() override;

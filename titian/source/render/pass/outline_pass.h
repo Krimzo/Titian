@@ -9,7 +9,7 @@ namespace titian {
     class OutlinePass : public RenderPass
     {
     public:
-        OutlinePass(const LayerPackage& package);
+        OutlinePass();
 
         bool is_renderable() const override;
         StatePackage get_state_package() override;

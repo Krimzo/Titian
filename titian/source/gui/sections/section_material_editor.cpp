@@ -1,11 +1,11 @@
 #include "titian.h"
 
 
-titian::GUISectionMaterialEditor::GUISectionMaterialEditor(const LayerPackage& package)
-    : GUISection("GUISectionMaterialEditor", package)
+titian::GUISectionMaterialEditor::GUISectionMaterialEditor()
+    : GUISection("GUISectionMaterialEditor")
 {
-    kl::GPU* gpu = &app_layer->gpu;
-    Scene* scene = &game_layer->scene;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
 
     camera = new Camera(scene->physics(), true);
     render_texture = new Texture(gpu);
@@ -20,8 +20,8 @@ void titian::GUISectionMaterialEditor::render_gui()
 {
     const TimeBomb _ = this->time_it();
 
-    kl::GPU* gpu = &app_layer->gpu;
-    Scene* scene = &game_layer->scene;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
     Ref material = scene->get_material(this->selected_material);
 
     if (im::Begin("Material Editor")) {
@@ -148,6 +148,10 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     if (!scene_camera) {
         return;
     }
+
+    AppLayer* app_layer = Layers::get<AppLayer>();
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
+    GameLayer* game_layer = Layers::get<GameLayer>();
 
     // Create render texture if needed
     if (render_texture->graphics_buffer_size() != viewport_size) {
@@ -322,7 +326,7 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
 
         im::Text("Name: ");
         im::SameLine();
-        gui_colored_text(selected_material, gui_layer->special_color);
+        gui_colored_text(selected_material, Layers::get<GUILayer>()->special_color);
 
         im::ColorEdit4("Base Color", material->color);
         im::DragFloat("Texture Blend", &material->texture_blend, 0.05f, 0.0f, 1.0f);
@@ -391,7 +395,7 @@ void titian::GUISectionMaterialEditor::update_material_camera()
         initial_camera_info = camera_info;
     }
 
-    const int scroll = app_layer->window.mouse.scroll();
+    const int scroll = Layers::get<AppLayer>()->window.mouse.scroll();
     if (im::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = im::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;

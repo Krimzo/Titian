@@ -1,16 +1,16 @@
 #include "titian.h"
 
 
-titian::GUISectionTextureEditor::GUISectionTextureEditor(const LayerPackage& package)
-    : GUISection("GUISectionTextureEditor", package)
+titian::GUISectionTextureEditor::GUISectionTextureEditor()
+    : GUISection("GUISectionTextureEditor")
 {}
 
 void titian::GUISectionTextureEditor::render_gui()
 {
     const TimeBomb _ = this->time_it();
 
-    kl::GPU* gpu = &app_layer->gpu;
-    Scene* scene = &game_layer->scene;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
     Ref texture = scene->get_texture(this->selected_texture);
 
     if (im::Begin("Texture Editor")) {
@@ -152,6 +152,8 @@ void titian::GUISectionTextureEditor::render_selected_texture(Texture* texture, 
 
 void titian::GUISectionTextureEditor::show_texture_properties(Texture* texture)
 {
+	GUILayer* gui_layer = Layers::get<GUILayer>();
+
     if (im::Begin("Texture Properties") && texture) {
         im::Text("Info");
 

@@ -7,7 +7,7 @@ titian::RenderLayer::RenderLayer()
 
 void titian::RenderLayer::init()
 {
-	kl::GPU* gpu = &app_layer->gpu;
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 
 	// Meshes
 	screen_mesh = gpu->create_screen_mesh();
@@ -27,6 +27,9 @@ void titian::RenderLayer::init()
 bool titian::RenderLayer::update()
 {
 	const TimeBomb _ = this->time_it();
+
+	AppLayer* app_layer = Layers::get<AppLayer>();
+	GameLayer* game_layer = Layers::get<GameLayer>();
 
 	kl::GPU* gpu = &app_layer->gpu;
 	Scene* scene = &game_layer->scene;
@@ -64,7 +67,7 @@ bool titian::RenderLayer::update()
 
 void titian::RenderLayer::present() const
 {
-	app_layer->gpu.swap_buffers(v_sync);
+	Layers::get<AppLayer>()->gpu.swap_buffers(v_sync);
 }
 
 void titian::RenderLayer::resize(const Int2& new_size)
@@ -75,7 +78,7 @@ void titian::RenderLayer::resize(const Int2& new_size)
 	if (new_size == get_render_texture_size()) {
 		return;
 	}
-	kl::GPU* gpu = &app_layer->gpu;
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 
 	// Screen texture
 	dx::TextureDescriptor screen_tex_descriptor{};
@@ -131,7 +134,7 @@ void titian::RenderLayer::resize_staging(const Int2& new_size)
 	if (current_size.x == new_size.x && current_size.y == new_size.y) {
 		return;
 	}
-	kl::GPU* gpu = &app_layer->gpu;
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 	editor_staging_texture->graphics_buffer = gpu->create_staging_texture(editor_picking_texture->graphics_buffer, new_size);
 }
 

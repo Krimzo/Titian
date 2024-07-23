@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::PostPass::PostPass(const LayerPackage& package)
-	: RenderPass("PostPass", package)
+titian::PostPass::PostPass()
+	: RenderPass("PostPass")
 {}
 
 bool titian::PostPass::is_renderable() const
@@ -12,7 +12,7 @@ bool titian::PostPass::is_renderable() const
 
 titian::StatePackage titian::PostPass::get_state_package()
 {
-    RenderStates* render_states = &render_layer->states;
+    RenderStates* render_states = &Layers::get<RenderLayer>()->states;
 
     StatePackage package{};
     package.raster_state = render_states->raster_states->solid;
@@ -24,9 +24,10 @@ titian::StatePackage titian::PostPass::get_state_package()
 
 void titian::PostPass::render_self(StatePackage& package)
 {
-    kl::GPU* gpu = &app_layer->gpu;
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
     RenderStates* render_states = &render_layer->states;
-    Scene* scene = &game_layer->scene;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
 
     // Target
     gpu->bind_target_depth_view(render_layer->screen_texture->target_view, nullptr);

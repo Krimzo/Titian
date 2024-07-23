@@ -8,7 +8,7 @@ namespace titian {
     class PostPass : public RenderPass
     {
     public:
-        PostPass(const LayerPackage& package);
+        PostPass();
 
         bool is_renderable() const override;
         StatePackage get_state_package() override;
