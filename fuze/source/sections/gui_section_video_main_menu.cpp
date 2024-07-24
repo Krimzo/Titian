@@ -33,6 +33,21 @@ void titian::GUISectionVideoMainMenu::render_gui()
         if (im::BeginMenu("File")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (im::BeginMenu("Import")) {
+                if (im::MenuItem("Image")) {
+                    if (Optional file = kl::choose_file(false, { { "Image File",  FILE_EXTENSION_JPG }, { "Image File",  FILE_EXTENSION_PNG }, { "Image File",  FILE_EXTENSION_BMP } })) {
+                        Layers::get<VideoLayer>()->load_image(file.value());
+                    }
+                }
+                if (im::MenuItem("Audio")) {
+                    if (Optional file = kl::choose_file(false, { { "Audio File",  ".mp3" }, { "Audio File",  ".wav" } })) {
+                        Layers::get<VideoLayer>()->load_audio(file.value());
+                    }
+                }
+                if (im::MenuItem("Video")) {
+                    if (Optional file = kl::choose_file(false, { { "Video File",  ".mp4" } })) {
+                        Layers::get<VideoLayer>()->load_video(file.value());
+                    }
+                }
                 im::EndMenu();
             }
             if (im::BeginMenu("Export")) {

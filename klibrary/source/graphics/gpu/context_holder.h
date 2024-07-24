@@ -52,11 +52,11 @@ namespace kl {
         void read_from_buffer(void* cpu_buffer, const dx::Buffer& gpu_buffer, SIZE_T byte_size) const;
         void write_to_buffer(const dx::Buffer& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard = true) const;
 
-        void read_from_texture(void* cpu_buffer, const dx::Texture& gpu_buffer, const kl::Int2& size, UINT element_size) const;
-        void write_to_texture(const dx::Texture& gpu_buffer, const void* cpu_buffer, const kl::Int2& size, UINT element_size, bool discard = true) const;
+        void read_from_texture(void* cpu_buffer, const dx::Texture& gpu_buffer, const Int2& cpu_size, UINT element_size) const;
+        void write_to_texture(const dx::Texture& gpu_buffer, const void* cpu_buffer, const Int2& cpu_size, UINT element_size, bool discard = true) const;
 
-        // Buffers
         UINT buffer_size(const dx::Buffer& buffer) const;
+        Int2 texture_size(const dx::Texture& texture) const;
 
         // Const buffers
         void bind_cb_for_vertex_shader(const dx::Buffer& buffer, UINT slot) const;

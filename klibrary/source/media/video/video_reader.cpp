@@ -162,3 +162,55 @@ bool kl::VideoReader::next_frame(Image& out) const
     media_buffer->Unlock() >> verify_result;
     return true;
 }
+
+bool kl::VideoReader::get_frame(const float time, Image& out) const
+{
+    const INT64 time_100ns = INT64(time * 1e7);
+    if (time_100ns < 0 || time_100ns > m_duration) {
+		return false;
+	}
+
+    // Seek
+    PROPVARIANT time_var{};
+    PropVariantInit(&time_var);
+    time_var.vt = VT_I8;
+    time_var.hVal.QuadPart = time_100ns;
+    if (FAILED(m_reader->SetCurrentPosition(GUID_NULL, time_var))) {
+        return false;
+    }
+
+    // Read sample
+    DWORD flags = NULL;
+    LONGLONG time_stamp = 0;
+    ComPtr<IMFSample> sample;
+    if (FAILED(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
+        return false;
+    }
+
+    // Convert to array
+    ComPtr<IMFMediaBuffer> media_buffer;
+    if (FAILED(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
+        return false;
+    }
+
+    // Copy data
+    BYTE* frame_data = nullptr;
+    DWORD frame_byte_size = 0;
+    media_buffer->Lock(&frame_data, nullptr, &frame_byte_size) >> verify_result;
+
+    out.resize(m_frame_size);
+    const size_t pixel_count = (size_t) out.width() * out.height();
+    const Color* frame_source = (Color*) frame_data;
+    Color* frame_target = out;
+
+    for (size_t i = 0; i < pixel_count; i++) {
+        frame_target[i].r = frame_source[i].r;
+        frame_target[i].g = frame_source[i].g;
+        frame_target[i].b = frame_source[i].b;
+    }
+    media_buffer->Unlock() >> verify_result;
+
+    // Cleanup
+	PropVariantClear(&time_var);
+    return true;
+}

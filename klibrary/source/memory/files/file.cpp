@@ -190,19 +190,15 @@ std::optional<std::string> kl::choose_file(const bool save, const std::vector<st
     dialog_info.lpstrFilter = filter_data.c_str();
     dialog_info.nFilterIndex = 1;
 
-    if (!save && GetOpenFileNameA(&dialog_info)) {
-		if (out_index) {
-			*out_index = dialog_info.nFilterIndex - 1;
-		}
-        return { { file_buffer } };
+    std::optional<std::string> result;
+    if ((save ? GetSaveFileNameA : GetOpenFileNameA)(&dialog_info)) {
+        result = { std::string{file_buffer} };
+        if (out_index) {
+            *out_index = (int) dialog_info.nFilterIndex - 1;
+        }
     }
-    if (save && GetSaveFileNameA(&dialog_info)) {
-		if (out_index) {
-			*out_index = dialog_info.nFilterIndex - 1;
-		}
-        return { { file_buffer } };
-    }
-    return {};
+    SetCursor(LoadCursor(NULL, IDC_ARROW));
+    return result;
 }
 
 // File

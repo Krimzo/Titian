@@ -20,6 +20,28 @@ void titian::GUISectionVideoTimeline::render_gui()
 		const float available_height = im::GetContentRegionAvail().y;
 		ImDrawList* draw_list = im::GetWindowDrawList();
 
+		if (im::IsWindowFocused()) {
+			if (im::IsKeyPressed(ImGuiKey_Space)) {
+				if (!video_layer->playing) {
+					video_layer->playing = true;
+					video_layer->last_time = video_layer->current_time;
+					Layers::get<AppLayer>()->timer.restart();
+				}
+				else {
+					video_layer->playing = false;
+					video_layer->current_time = video_layer->last_time;
+					Layers::get<AppLayer>()->timer.stop();
+				}
+			}
+			if (!video_layer->playing && im::IsKeyPressed(ImGuiKey_Home)) {
+				const float start_time = video_layer->start_time();
+				video_layer->current_time = (video_layer->current_time > start_time) ? start_time : 0.0f;
+			}
+			if (!video_layer->playing && im::IsKeyPressed(ImGuiKey_End)) {
+				video_layer->current_time = video_layer->end_time();
+			}
+		}
+
 		if (im::IsWindowHovered()) {
 			if (im::IsKeyDown(ImGuiKey_LeftAlt)) {
 				vertical_view -= scroll;
@@ -50,10 +72,6 @@ void titian::GUISectionVideoTimeline::render_gui()
         if (im::BeginTable("##TracksTable", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable)) {
 			im::TableSetupColumn("Column 1", ImGuiTableColumnFlags_WidthFixed);
 			im::TableSetupColumn("Column 1", ImGuiTableColumnFlags_WidthStretch);
-			
-			if (im::IsWindowFocused() && im::IsKeyPressed(ImGuiKey_Home)) {
-				video_layer->current_time = 0.0f;
-			}
 
 			ImVec2 total_min{};
 			ImVec2 total_max{};
@@ -83,7 +101,7 @@ void titian::GUISectionVideoTimeline::render_gui()
 				const float col_middle = (col_min.y + col_max.y) * 0.5f;
 				
 				const ImVec2 mouse_pos = im::GetMousePos();
-				if (!m_moving_media && ImRect(col_min, col_max).Contains(mouse_pos) && im::IsMouseDown(ImGuiPopupFlags_MouseButtonLeft)) {
+				if (!video_layer->playing && !m_moving_media && ImRect(col_min, col_max).Contains(mouse_pos) && im::IsMouseDown(ImGuiMouseButton_Left)) {
 					video_layer->current_time = horizontal_offset + horizontal_view * kl::wrap(mouse_pos.x, col_min.x, col_max.x);
 				}
 
@@ -105,7 +123,8 @@ void titian::GUISectionVideoTimeline::render_gui()
 					else if (video_layer->timeline_10seconds && i % 10 == 0) {
 						height = 0.8f;
 						color = { 165, 210, 130 };
-						text = std::to_string(i / 10);
+						const int res = video_layer->timeline_minutes ? (i - ((i / 60) * 60)) : i;
+						text = std::to_string(res / 10);
 					}
 					else if (video_layer->timeline_seconds) {
 						height = 0.6f;
@@ -124,6 +143,7 @@ void titian::GUISectionVideoTimeline::render_gui()
 				}
 
 				total_min = col_min;
+				total_max = col_max;
 			}
 
 			/* TRACKS */
@@ -235,9 +255,9 @@ ImColor titian::GUISectionVideoTimeline::color_classify(MediaType type)
 {
 	switch (type)
 	{
-	case MediaType::Image: return ImColor(215, 180, 125);
-	case MediaType::Audio: return ImColor(125, 180, 215);
-	case MediaType::Video: return ImColor(135, 215, 135);
+	case MediaType::IMAGE: return ImColor(215, 180, 125);
+	case MediaType::AUDIO: return ImColor(125, 180, 215);
+	case MediaType::VIDEO: return ImColor(135, 215, 135);
 	}
 	return ImColor();
 }

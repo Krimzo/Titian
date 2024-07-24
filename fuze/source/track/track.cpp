@@ -2,15 +2,7 @@
 
 
 titian::Track::Track()
-{
-	for (int i = 0; i < 1; i++) {
-		Ref<Media> med = new Media();
-		med->name = kl::random::gen_string(10);
-		med->type = MediaType(kl::random::gen_int(3));
-		med->duration = kl::random::gen_float(1.0f, 20.0f);
-		this->insert_media(kl::random::gen_float(7.0f), med);
-	}
-}
+{}
 
 void titian::Track::insert_media(const float offset, const Ref<Media>& new_med)
 {
@@ -29,6 +21,18 @@ void titian::Track::remove_media(const Ref<Media>& new_med)
 			break;
 		}
 	}
+}
+
+titian::Ref<titian::Media> titian::Track::get_media(const float time, float& out_offset) const
+{
+	for (auto& [offset, med] : media) {
+		if (offset <= time && (offset + med->duration) >= time) {
+			out_offset = offset;
+			return med;
+		}
+	}
+	out_offset = 0.0f;
+	return {};
 }
 
 void titian::Track::readjust_media()

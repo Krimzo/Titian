@@ -104,10 +104,13 @@
     <ClCompile Include="source\sections\gui_section_video_main_menu.cpp" />
     <ClCompile Include="source\sections\gui_section_video_render.cpp" />
     <ClCompile Include="source\sections\gui_section_video_timeline.cpp" />
+    <ClCompile Include="source\storage\frame.cpp" />
     <ClCompile Include="source\track\media.cpp" />
     <ClCompile Include="source\track\track.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\effects\audio_effect.h" />
+    <ClInclude Include="source\effects\image_effect.h" />
     <ClInclude Include="source\fuze.h" />
     <ClInclude Include="source\fuze_editor.h" />
     <ClInclude Include="source\layers\video_layer.h" />
@@ -116,6 +119,7 @@
     <ClInclude Include="source\sections\gui_section_video_main_menu.h" />
     <ClInclude Include="source\sections\gui_section_video_render.h" />
     <ClInclude Include="source\sections\gui_section_video_timeline.h" />
+    <ClInclude Include="source\storage\frame.h" />
     <ClInclude Include="source\track\media.h" />
     <ClInclude Include="source\track\track.h" />
   </ItemGroup>

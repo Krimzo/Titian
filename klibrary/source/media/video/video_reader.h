@@ -36,5 +36,6 @@ namespace kl {
 
         float fps() const;
         bool next_frame(Image& out) const;
+        bool get_frame(float time, Image& out) const;
     };
 }

@@ -44,5 +44,8 @@ namespace kl {
         // Encoding
         bool save_to_vector(std::vector<byte>* buffer, AudioType type) const;
         bool save_to_file(const std::string_view& filepath, AudioType type) const;
+
+        // Get
+        bool get_audio(float time, float duration, Audio& out) const;
     };
 }
