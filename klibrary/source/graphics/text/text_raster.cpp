@@ -7,10 +7,10 @@ kl::TextRaster::TextRaster()
 	// D2D1
 	D2D1_FACTORY_OPTIONS options{};
 	options.debugLevel = static_cast<D2D1_DEBUG_LEVEL>(kl::IS_DEBUG ? (D2D1_DEBUG_LEVEL_WARNING | D2D1_DEBUG_LEVEL_ERROR) : D2D1_DEBUG_LEVEL_NONE);
-	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory), &options, &m_d2d1_factory) >> verify_result;
+	D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory), &options, (void**) &m_d2d1_factory) >> verify_result;
 
 	// DirectWrite
-	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &m_write_factory) >> verify_result;
+	DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**) &m_write_factory) >> verify_result;
 }
 
 // Create
@@ -35,7 +35,7 @@ void kl::TextRaster::draw_text(const UINT target_index) const
 {
 	// Prep
 	auto& target = m_d2d1_targets[target_index];
-	ComPtr<ID2D1SolidColorBrush> brush{};
+	ComRef<ID2D1SolidColorBrush> brush{};
 	const D2D1_SIZE_F target_size = target->GetSize();
 	D2D1_RECT_F layout_rect{};
 
@@ -63,9 +63,9 @@ void kl::TextRaster::draw_text(const UINT target_index) const
 		target->DrawText(
 			text.data.c_str(),
 			(UINT) text.data.size(),
-			text.format.Get(),
+			text.format.get(),
 			layout_rect,
-			brush.Get()
+			brush.get()
 		);
 	}
 	target->EndDraw();

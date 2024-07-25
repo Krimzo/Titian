@@ -54,24 +54,24 @@ bool kl::Audio::load_from_memory(const byte* data, const uint64_t byte_size)
 {
 	HRESULT hr = 0;
 
-	ComPtr<IStream> stream = SHCreateMemStream(data, (UINT) byte_size);
+	ComRef<IStream> stream{ SHCreateMemStream(data, (UINT) byte_size) };
 	if (!stream) {
 		return false;
 	}
 
-	ComPtr<IMFByteStream> byte_stream;
-	hr = MFCreateMFByteStreamOnStream(stream.Get(), &byte_stream);
+	ComRef<IMFByteStream> byte_stream;
+	hr = MFCreateMFByteStreamOnStream(stream.get(), &byte_stream);
 	if (FAILED(hr)) {
 		return false;
 	}
 
-	ComPtr<IMFSourceReader> reader;
-	hr = MFCreateSourceReaderFromByteStream(byte_stream.Get(), nullptr, &reader);
+	ComRef<IMFSourceReader> reader;
+	hr = MFCreateSourceReaderFromByteStream(byte_stream.get(), nullptr, &reader);
 	if (FAILED(hr)) {
 		return false;
 	}
 
-	ComPtr<IMFMediaType> new_media_type;
+	ComRef<IMFMediaType> new_media_type;
 	hr = MFCreateMediaType(&new_media_type);
 	if (FAILED(hr)) {
 		return false;
@@ -84,12 +84,12 @@ bool kl::Audio::load_from_memory(const byte* data, const uint64_t byte_size)
 	new_media_type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, sample_rate > 0 ? sample_rate : 48000);
 	new_media_type->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, (sample_rate > 0 ? sample_rate : 48000) * sizeof(float));
 
-	hr = reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, new_media_type.Get());
+	hr = reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, new_media_type.get());
 	if (FAILED(hr)) {
 		return false;
 	}
 
-	ComPtr<IMFMediaType> media_type;
+	ComRef<IMFMediaType> media_type;
 	hr = reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, &media_type);
 	if (FAILED(hr)) {
 		return false;
@@ -101,13 +101,13 @@ bool kl::Audio::load_from_memory(const byte* data, const uint64_t byte_size)
 		// Read sample
 		DWORD flags = NULL;
 		LONGLONG time_stamp = 0;
-		ComPtr<IMFSample> sample;
+		ComRef<IMFSample> sample;
 		if (FAILED(reader->ReadSample(MF_SOURCE_READER_FIRST_AUDIO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
 			break;
 		}
 
 		// Convert to array
-		ComPtr<IMFMediaBuffer> media_buffer;
+		ComRef<IMFMediaBuffer> media_buffer;
 		if (FAILED(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
 			break;
 		}
@@ -140,35 +140,35 @@ bool kl::Audio::save_to_vector(std::vector<byte>* buffer, const AudioType type) 
 {
 	HRESULT hr = 0;
 
-	ComPtr<IStream> stream = SHCreateMemStream(nullptr, 0);
+	ComRef<IStream> stream{ SHCreateMemStream(nullptr, 0) };
 	if (!stream) {
 		return false;
 	}
 
-	ComPtr<IMFByteStream> byte_stream;
-	hr = MFCreateMFByteStreamOnStream(stream.Get(), &byte_stream);
+	ComRef<IMFByteStream> byte_stream;
+	hr = MFCreateMFByteStreamOnStream(stream.get(), &byte_stream);
 	if (FAILED(hr)) {
 		return false;
 	}
 
-	ComPtr<IMFMediaSink> sink;
+	ComRef<IMFMediaSink> sink;
 	if (type == AudioType::WAV) {
 		assert(false, "WAV saving is not supported yet");
 	}
 	else if (type == AudioType::MP3) {
-		MFCreateMP3MediaSink(byte_stream.Get(), &sink);
+		MFCreateMP3MediaSink(byte_stream.get(), &sink);
 	}
 	else {
 		return false;
 	}
 	
-	ComPtr<IMFSinkWriter> writer;
-	hr = MFCreateSinkWriterFromMediaSink(sink.Get(), nullptr, &writer);
+	ComRef<IMFSinkWriter> writer;
+	hr = MFCreateSinkWriterFromMediaSink(sink.get(), nullptr, &writer);
 	if (FAILED(hr)) {
 		return false;
 	}
 
-	ComPtr<IMFMediaType> input_type;
+	ComRef<IMFMediaType> input_type;
 	hr = MFCreateMediaType(&input_type);
 	if (FAILED(hr)) {
 		return false;
@@ -180,20 +180,20 @@ bool kl::Audio::save_to_vector(std::vector<byte>* buffer, const AudioType type) 
 	input_type->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, 4);
 	input_type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, sample_rate);
 	input_type->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, sample_rate * sizeof(float));
-	writer->SetInputMediaType(0, input_type.Get(), nullptr) >> verify_result;
+	writer->SetInputMediaType(0, input_type.get(), nullptr) >> verify_result;
 
 	writer->BeginWriting() >> verify_result;
 	for (int i = 0; i < (int) size();) {
 		const int sample_size = std::min(sample_rate, (int) size() - i);
 		const int sample_byte_size = sample_size * sizeof(float);
 
-		ComPtr<IMFMediaBuffer> media_buffer;
+		ComRef<IMFMediaBuffer> media_buffer;
 		MFCreateMemoryBuffer(sample_byte_size, &media_buffer) >> verify_result;
 		media_buffer->SetCurrentLength(sample_byte_size) >> verify_result;
 
-		ComPtr<IMFSample> media_sample;
+		ComRef<IMFSample> media_sample;
 		MFCreateSample(&media_sample) >> verify_result;
-		media_sample->AddBuffer(media_buffer.Get()) >> verify_result;
+		media_sample->AddBuffer(media_buffer.get()) >> verify_result;
 
 		BYTE* out_buffer = nullptr;
 		media_buffer->Lock(&out_buffer, nullptr, nullptr) >> verify_result;
@@ -202,7 +202,7 @@ bool kl::Audio::save_to_vector(std::vector<byte>* buffer, const AudioType type) 
 
 		media_sample->SetSampleDuration((sample_size * 10'000'000LL) / sample_rate) >> verify_result;
 		media_sample->SetSampleTime((i * 10'000'000LL) / sample_rate) >> verify_result;
-		writer->WriteSample(0, media_sample.Get()) >> verify_result;
+		writer->WriteSample(0, media_sample.get()) >> verify_result;
 		i += sample_size;
 	}
 	writer->Finalize() >> verify_result;

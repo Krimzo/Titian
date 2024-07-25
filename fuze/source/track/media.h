@@ -23,7 +23,7 @@ namespace titian {
 
 		Ref<Image> image;
 		Ref<Audio> audio;
-		Ref<kl::VideoReader> video;
+		Ref<Video> video;
 
 		Vector<Ref<ImageEffect>> image_effects;
 		Vector<Ref<AudioEffect>> audio_effects;
@@ -43,10 +43,8 @@ namespace titian {
 		bool get_audio(float time, float duration);
 
 	private:
-		std::unordered_map<int, Image> m_cached_frames;
-
-		bool get_raw_frame(float time, Frame& out) const;
-		bool get_raw_audio(float time, float duration, Audio& out) const;
+		bool get_raw_frame(float time, Frame& out);
+		bool get_raw_audio(float time, float duration, Audio& out);
 
 		void apply_image_effects(float time, Frame& out) const;
 		void apply_audio_effects(float time, float duration, Audio& out) const;

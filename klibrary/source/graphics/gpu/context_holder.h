@@ -8,7 +8,7 @@ namespace kl {
     class ContextHolder
     {
     protected:
-        dx::Context m_context = nullptr;
+        dx::Context m_context;
 
     public:
         ContextHolder();

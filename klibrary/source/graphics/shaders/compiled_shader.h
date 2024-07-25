@@ -7,8 +7,8 @@ namespace kl {
     class CompiledShader
     {
     public:
-        dx::DataBlob data = nullptr;
-        dx::DataBlob error = nullptr;
+        dx::DataBlob data;
+        dx::DataBlob error;
         
         operator bool() const;
 

@@ -22,9 +22,9 @@ namespace kl {
 	class TextRaster
 	{
 	protected:
-		ComPtr<ID2D1Factory> m_d2d1_factory{};
-		ComPtr<IDWriteFactory> m_write_factory{};
-		ComPtr<ID2D1RenderTarget> m_d2d1_targets[GPU_BUFFER_COUNT] = {};
+		ComRef<ID2D1Factory> m_d2d1_factory{};
+		ComRef<IDWriteFactory> m_write_factory{};
+		ComRef<ID2D1RenderTarget> m_d2d1_targets[GPU_BUFFER_COUNT] = {};
 
 	public:
 		std::vector<Text> text_data{};

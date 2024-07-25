@@ -105,6 +105,7 @@
     <ClCompile Include="source\sections\gui_section_video_render.cpp" />
     <ClCompile Include="source\sections\gui_section_video_timeline.cpp" />
     <ClCompile Include="source\storage\frame.cpp" />
+    <ClCompile Include="source\storage\video.cpp" />
     <ClCompile Include="source\track\media.cpp" />
     <ClCompile Include="source\track\track.cpp" />
   </ItemGroup>
@@ -120,6 +121,7 @@
     <ClInclude Include="source\sections\gui_section_video_render.h" />
     <ClInclude Include="source\sections\gui_section_video_timeline.h" />
     <ClInclude Include="source\storage\frame.h" />
+    <ClInclude Include="source\storage\video.h" />
     <ClInclude Include="source\track\media.h" />
     <ClInclude Include="source\track\track.h" />
   </ItemGroup>

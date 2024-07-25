@@ -30,7 +30,7 @@ void titian::GUISectionViewport::render_gui()
         editor_layer->is_over_viewport = im::IsMouseHoveringRect(win_content_min, win_content_max);
 
         // Display rendered texture
-        im::Image(render_layer->screen_texture->shader_view.Get(), content_region);
+        im::Image(render_layer->screen_texture->shader_view.get(), content_region);
 
         // Scene loading
         if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
@@ -172,10 +172,10 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_entity_ids(const Int2& fi
     const kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 
     render_layer->resize_staging(size);
-    gpu->copy_resource_region(render_layer->editor_staging_texture->graphics_buffer.Get(), render_layer->editor_picking_texture->graphics_buffer.Get(), min_coords, max_coords);
+    gpu->copy_resource_region(render_layer->editor_staging_texture->graphics_buffer, render_layer->editor_picking_texture->graphics_buffer, min_coords, max_coords);
 
     Vector<float> values(size.x * size.y);
-    gpu->read_from_texture(values.data(), render_layer->editor_staging_texture->graphics_buffer.Get(), size, sizeof(float));
+    gpu->read_from_texture(values.data(), render_layer->editor_staging_texture->graphics_buffer, size, sizeof(float));
 
     Set<uint32_t> results;
     for (float value : values) {

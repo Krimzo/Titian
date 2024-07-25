@@ -16,7 +16,7 @@ titian::StatePackage titian::ScenePass::get_state_package()
     RenderStates* render_states = &render_layer->states;
 
     StatePackage package{};
-    package.raster_state = render_layer->render_wireframe ? render_states->raster_states->wireframe : nullptr;
+    package.raster_state = render_layer->render_wireframe ? render_states->raster_states->wireframe : dx::RasterState{};
     package.depth_state = render_states->depth_states->enabled;
     package.shader_state = render_states->shader_states->scene_pass;
     package.blend_state = render_states->blend_states->enabled;
@@ -37,7 +37,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         return;
 
     // Target
-    gpu->bind_target_depth_views({ render_layer->game_color_texture->target_view.Get(), render_layer->editor_picking_texture->target_view.Get() }, render_layer->game_depth_texture->depth_view);
+    gpu->bind_target_depth_views({ render_layer->game_color_texture->target_view.get(), render_layer->editor_picking_texture->target_view.get() }, render_layer->game_depth_texture->depth_view);
 
     // Bind shader views
     gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);
@@ -118,7 +118,7 @@ void titian::ScenePass::render_self(StatePackage& package)
     if (directional_light) {
         ID3D11ShaderResourceView* dir_light_views[DirectionalLight::CASCADE_COUNT] = {};
         for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
-            dir_light_views[i] = directional_light->shader_view(i).Get();
+            dir_light_views[i] = directional_light->shader_view(i).get();
             global_cb.LIGHT_VPs[i] = directional_light->light_matrix(camera, i);
         }
 

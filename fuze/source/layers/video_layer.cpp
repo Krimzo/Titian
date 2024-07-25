@@ -125,7 +125,8 @@ void titian::VideoLayer::load_video(const String& path)
 	}
 
 	Ref media = new Media();
-	media->video = new kl::VideoReader(path, true);
+	media->audio = new Audio(path);
+	media->video = new Video(path);
 	media->duration = media->video->duration_seconds();
 	media->type = MediaType::VIDEO;
 	media->name = fs::path(path).filename().string();

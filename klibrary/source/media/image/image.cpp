@@ -364,19 +364,19 @@ static constexpr CLSID png_encoder_clsid = {
 // Decoding
 bool kl::Image::load_from_memory(const byte* data, const uint64_t byte_size)
 {
-    const ComPtr<IStream> stream = SHCreateMemStream(data, (UINT) byte_size);
-    Gdiplus::Bitmap loaded_bitmap(stream.Get());
+    const ComRef<IStream> stream{ SHCreateMemStream(data, (UINT) byte_size) };
+    Gdiplus::Bitmap loaded_bitmap(stream.get());
     if (!verify(!loaded_bitmap.GetLastStatus(), "Failed to decode image")) {
         return false;
     }
 
-    Gdiplus::BitmapData bitmap_data = {};
+    Gdiplus::BitmapData bitmap_data{};
     loaded_bitmap.LockBits(nullptr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bitmap_data);
     if (!verify(bitmap_data.Scan0, "Failed to load image data")) {
         return false;
     }
 
-    resize({ static_cast<int>(bitmap_data.Width), static_cast<int>(bitmap_data.Height) });
+    resize({ int(bitmap_data.Width), int(bitmap_data.Height) });
     memcpy(PixelStorage::data(), bitmap_data.Scan0, PixelStorage::size() * sizeof(Color));
     return true;
 }
@@ -423,8 +423,8 @@ bool kl::Image::save_to_vector(std::vector<byte>* buffer, const ImageType type) 
     memcpy(bitmap_data.Scan0, PixelStorage::data(), PixelStorage::size() * sizeof(Color));
     bitmap.UnlockBits(&bitmap_data);
 
-    ComPtr<IStream> stream = SHCreateMemStream(nullptr, 0);
-    bitmap.Save(stream.Get(), format_to_use, nullptr);
+    const ComRef<IStream> stream{ SHCreateMemStream(nullptr, 0) };
+    bitmap.Save(stream.get(), format_to_use, nullptr);
 
     STATSTG stream_info{};
     stream->Stat(&stream_info, STATFLAG_NONAME);

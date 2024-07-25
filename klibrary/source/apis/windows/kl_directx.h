@@ -25,46 +25,154 @@
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "dwrite.lib")
 
+
 namespace kl {
-    using Microsoft::WRL::ComPtr;
-    using TextFormat = ComPtr<IDWriteTextFormat>;
+    template<typename T>
+	    requires std::is_base_of_v<IUnknown, T>
+    class ComRef
+    {
+        T* m_instance = nullptr;
+
+    public:
+        inline ComRef()
+        {}
+
+        inline explicit ComRef(T* instance)
+            : m_instance(instance)
+        {}
+
+        inline ~ComRef() noexcept
+        {
+            if (m_instance) {
+                m_instance->Release();
+            }
+        }
+
+        inline ComRef(const ComRef& other)
+            : m_instance(other.m_instance)
+        {
+            if (m_instance) {
+                m_instance->AddRef();
+            }
+        }
+
+        inline ComRef(ComRef&& other) noexcept
+            : ComRef(other)
+        {}
+
+        inline ComRef& operator=(const ComRef& other)
+        {
+            if (other.m_instance != m_instance) {
+                if (m_instance) {
+					m_instance->Release();
+				}
+                m_instance = other.m_instance;
+                if (m_instance) {
+                    m_instance->AddRef();
+                }
+            }
+            return *this;
+        }
+
+        inline ComRef& operator=(ComRef&& other) noexcept
+        {
+            return (*this = other);
+        }
+
+        inline operator bool() const
+        {
+            return bool(m_instance);
+        }
+
+        template<typename B>
+            requires std::is_base_of_v<B, T>
+        inline operator ComRef<B>() const
+        {
+            m_instance->AddRef();
+            return ComRef<B>{m_instance};
+        }
+
+        inline T** operator&()
+        {
+            if (m_instance) {
+                m_instance->Release();
+                m_instance = nullptr;
+            }
+            return &m_instance;
+        }
+
+        inline T& operator*() const
+        {
+            return *m_instance;
+        }
+        
+        inline T* operator->() const
+        {
+            return m_instance;
+        }
+
+        inline T* get() const
+        {
+			return m_instance;
+        }
+
+        inline T** address()
+        {
+            return &m_instance;
+        }
+
+        inline T*const* address() const
+        {
+            return &m_instance;
+        }
+
+        template<typename U>
+        inline HRESULT as(ComRef<U>& out) const
+        {
+            return m_instance->QueryInterface(__uuidof(U), (void**) &out);
+        }
+    };
+}
+
+namespace kl {
+    using TextFormat = ComRef<IDWriteTextFormat>;
 }
 
 namespace kl::dx {
     /* Types */
     // Device
-    using Device = ComPtr<ID3D11Device4>;
-    using Context = ComPtr<ID3D11DeviceContext4>;
-    using Chain = ComPtr<IDXGISwapChain4>;
+    using Device = ComRef<ID3D11Device4>;
+    using Context = ComRef<ID3D11DeviceContext4>;
+    using Chain = ComRef<IDXGISwapChain4>;
 
     // Data
-    using Buffer = ComPtr<ID3D11Buffer>;
-    using Texture = ComPtr<ID3D11Texture2D>;
-    using Resource = ComPtr<ID3D11Resource>;
+    using Buffer = ComRef<ID3D11Buffer>;
+    using Texture = ComRef<ID3D11Texture2D>;
+    using Resource = ComRef<ID3D11Resource>;
 
     // State
-    using RasterState = ComPtr<ID3D11RasterizerState>;
-    using DepthState = ComPtr<ID3D11DepthStencilState>;
-    using SamplerState = ComPtr<ID3D11SamplerState>;
-    using BlendState = ComPtr<ID3D11BlendState>;
+    using RasterState = ComRef<ID3D11RasterizerState>;
+    using DepthState = ComRef<ID3D11DepthStencilState>;
+    using SamplerState = ComRef<ID3D11SamplerState>;
+    using BlendState = ComRef<ID3D11BlendState>;
 
     // View
-    using TargetView = ComPtr<ID3D11RenderTargetView>;
-    using DepthView = ComPtr<ID3D11DepthStencilView>;
-    using ShaderView = ComPtr<ID3D11ShaderResourceView>;
-    using AccessView = ComPtr<ID3D11UnorderedAccessView>;
+    using TargetView = ComRef<ID3D11RenderTargetView>;
+    using DepthView = ComRef<ID3D11DepthStencilView>;
+    using ShaderView = ComRef<ID3D11ShaderResourceView>;
+    using AccessView = ComRef<ID3D11UnorderedAccessView>;
 
     // Shader data
-    using DataBlob = ComPtr<ID3DBlob>;
-    using InputLayout = ComPtr<ID3D11InputLayout>;
+    using DataBlob = ComRef<ID3DBlob>;
+    using InputLayout = ComRef<ID3D11InputLayout>;
 
     // Shaders
-    using VertexShader = ComPtr<ID3D11VertexShader>;
-    using PixelShader = ComPtr<ID3D11PixelShader>;
-    using GeometryShader = ComPtr<ID3D11GeometryShader>;
-    using HullShader = ComPtr<ID3D11HullShader>;
-    using DomainShader = ComPtr<ID3D11DomainShader>;
-    using ComputeShader = ComPtr<ID3D11ComputeShader>;
+    using VertexShader = ComRef<ID3D11VertexShader>;
+    using PixelShader = ComRef<ID3D11PixelShader>;
+    using GeometryShader = ComRef<ID3D11GeometryShader>;
+    using HullShader = ComRef<ID3D11HullShader>;
+    using DomainShader = ComRef<ID3D11DomainShader>;
+    using ComputeShader = ComRef<ID3D11ComputeShader>;
 
     /* Descriptors */
     // Data
@@ -91,31 +199,31 @@ namespace kl::dx {
 
 namespace kl::dx12 {
     // Main device
-    using Device = ComPtr<ID3D12Device8>;
+    using Device = ComRef<ID3D12Device8>;
 
     // Context commands
-    using CommandQueue = ComPtr<ID3D12CommandQueue>;
-    using CommandAllocator = ComPtr<ID3D12CommandAllocator>;
-    using CommandList = ComPtr<ID3D12GraphicsCommandList4>;
-    using Fence = ComPtr<ID3D12Fence>;
+    using CommandQueue = ComRef<ID3D12CommandQueue>;
+    using CommandAllocator = ComRef<ID3D12CommandAllocator>;
+    using CommandList = ComRef<ID3D12GraphicsCommandList4>;
+    using Fence = ComRef<ID3D12Fence>;
 
     // Swapchain
-    using DXGIFactory = ComPtr<IDXGIFactory4>;
-    using SwapChain = ComPtr<IDXGISwapChain4>;
+    using DXGIFactory = ComRef<IDXGIFactory4>;
+    using SwapChain = ComRef<IDXGISwapChain4>;
 
     // Resources
-    using DescriptorHeap = ComPtr<ID3D12DescriptorHeap>;
+    using DescriptorHeap = ComRef<ID3D12DescriptorHeap>;
     using DescriptorHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE;
-    using Resource = ComPtr<ID3D12Resource>;
+    using Resource = ComRef<ID3D12Resource>;
     using VertexBuffer = D3D12_VERTEX_BUFFER_VIEW;
 
     // Pipeline stuff
-    using Blob = ComPtr<ID3DBlob>;
+    using Blob = ComRef<ID3DBlob>;
     using ShaderByteCode = CD3DX12_SHADER_BYTECODE;
     using InputLayout = D3D12_INPUT_ELEMENT_DESC;
-    using RootSignature = ComPtr<ID3D12RootSignature>;
-    using PipelineState = ComPtr<ID3D12PipelineState>;
-    using StateObject = ComPtr<ID3D12StateObject>;
+    using RootSignature = ComRef<ID3D12RootSignature>;
+    using PipelineState = ComRef<ID3D12PipelineState>;
+    using StateObject = ComRef<ID3D12StateObject>;
 
     // Clippers
     using Scissors = CD3DX12_RECT;
@@ -123,6 +231,6 @@ namespace kl::dx12 {
 
     // Raytracing
     using AccelerationInputs = D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS;
-    using AccelerationStructure = ComPtr<ID3D12Resource>;
-    using ObjectProperties = ComPtr<ID3D12StateObjectProperties>;
+    using AccelerationStructure = ComRef<ID3D12Resource>;
+    using ObjectProperties = ComRef<ID3D12StateObjectProperties>;
 }

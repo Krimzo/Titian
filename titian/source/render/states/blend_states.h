@@ -7,8 +7,8 @@ namespace titian {
 	class BlendStates
 	{
 	public:
-		dx::BlendState disabled = nullptr;
-		dx::BlendState enabled = nullptr;
+		dx::BlendState disabled;
+		dx::BlendState enabled;
 
 		BlendStates(kl::GPU* gpu);
 	};

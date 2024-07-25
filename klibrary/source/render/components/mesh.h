@@ -23,7 +23,7 @@ namespace kl {
         Scene* scene = nullptr;
 
         MeshData data_buffer = {};
-        dx::Buffer graphics_buffer = nullptr;
+        dx::Buffer graphics_buffer;
         physx::PxTriangleMesh* physics_buffer = nullptr;
 
         Mesh(GPU* gpu, Scene* scene);
@@ -42,7 +42,7 @@ namespace kl {
     public:
         GPU* gpu = nullptr;
         MeshData data_buffer = {};
-        dx::Buffer graphics_buffer = nullptr;
+        dx::Buffer graphics_buffer;
 
         Mesh(kl::GPU* gpu);
         Mesh(kl::GPU* gpu, const MeshData& data);

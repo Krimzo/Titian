@@ -16,7 +16,7 @@ void titian::GUISectionVideoDisplay::render_gui()
         m_frame.resize({ (int) content_region.x, (int) content_region.y });
 		this->clear_frame();
 		video_layer->get_frame(m_frame);
-        im::Image(m_frame.shader_view.Get(), content_region);
+        im::Image(m_frame.shader_view.get(), content_region);
 	}
 	im::End();
 

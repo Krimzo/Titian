@@ -22,7 +22,7 @@ bool titian::Media::get_audio(const float time, const float duration)
 	return true;
 }
 
-bool titian::Media::get_raw_frame(const float time, Frame& out) const
+bool titian::Media::get_raw_frame(const float time, Frame& out)
 {
 	if (type == MediaType::IMAGE) {
 		if (image) {
@@ -44,7 +44,7 @@ bool titian::Media::get_raw_frame(const float time, Frame& out) const
 	return false;
 }
 
-bool titian::Media::get_raw_audio(const float time, const float duration, Audio& out) const
+bool titian::Media::get_raw_audio(const float time, const float duration, Audio& out)
 {
 	if (type == MediaType::AUDIO) {
 		if (audio) {

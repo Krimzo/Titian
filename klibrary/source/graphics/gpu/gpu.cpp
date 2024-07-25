@@ -16,8 +16,8 @@ kl::GPU::GPU(const bool debug, const bool single_threaded, const bool video_supp
 		creation_flags |= D3D11_CREATE_DEVICE_VIDEO_SUPPORT;
 	}
 
-    ComPtr<ID3D11Device> temp_device;
-	ComPtr<ID3D11DeviceContext> temp_context;
+    ComRef<ID3D11Device> temp_device;
+	ComRef<ID3D11DeviceContext> temp_context;
     const D3D_FEATURE_LEVEL feature_levels[] = { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0 };
     D3D11CreateDevice(
         nullptr,
@@ -31,8 +31,8 @@ kl::GPU::GPU(const bool debug, const bool single_threaded, const bool video_supp
         nullptr,
         &temp_context
     ) >> verify_result;
-    temp_device.As(&m_device) >> verify_result;
-    temp_context.As(&m_context) >> verify_result;
+    temp_device.as(m_device) >> verify_result;
+    temp_context.as(m_context) >> verify_result;
     assert(m_device, "Failed to create device");
     assert(m_context, "Failed to create device context");
 }
@@ -66,9 +66,9 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded, co
 		creation_flags |= D3D11_CREATE_DEVICE_VIDEO_SUPPORT;
 	}
 
-    ComPtr<IDXGISwapChain> temp_chain;
-    ComPtr<ID3D11Device> temp_device;
-    ComPtr<ID3D11DeviceContext> temp_context;
+    ComRef<IDXGISwapChain> temp_chain;
+    ComRef<ID3D11Device> temp_device;
+    ComRef<ID3D11DeviceContext> temp_context;
     const D3D_FEATURE_LEVEL feature_levels[] = { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0 };
     D3D11CreateDeviceAndSwapChain(
         nullptr,
@@ -84,9 +84,9 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded, co
         nullptr,
         &temp_context
     ) >> verify_result;
-    temp_chain.As(&m_chain) >> verify_result;
-	temp_device.As(&m_device) >> verify_result;
-	temp_context.As(&m_context) >> verify_result;
+    temp_chain.as(m_chain) >> verify_result;
+	temp_device.as(m_device) >> verify_result;
+	temp_context.as(m_context) >> verify_result;
     assert(m_device, "Failed to create device");
     assert(m_context, "Failed to create device context");
     assert(m_chain, "Failed to create swapchain");
@@ -126,7 +126,7 @@ UINT kl::GPU::back_index() const
 
 kl::dx::Texture kl::GPU::target_buffer(const UINT index) const
 {
-    dx::Texture buffer = nullptr;
+    dx::Texture buffer;
     m_chain->GetBuffer(index, IID_PPV_ARGS(&buffer)) >> verify_result;
     return buffer;
 }
@@ -190,13 +190,13 @@ void kl::GPU::set_fullscreen(const bool enabled) const
 // Internal buffers
 void kl::GPU::clear_internal_color(const Float4& color) const
 {
-    m_context->ClearRenderTargetView(back_target_view().Get(), color);
+    m_context->ClearRenderTargetView(back_target_view().get(), color);
 }
 
 void kl::GPU::clear_internal_depth(const float depth, const UINT8 stencil) const
 {
     static constexpr UINT clear_type = (D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL);
-    m_context->ClearDepthStencilView(back_depth_view().Get(), clear_type, depth, stencil);
+    m_context->ClearDepthStencilView(back_depth_view().get(), clear_type, depth, stencil);
 }
 
 void kl::GPU::clear_internal(const Float4& color) const
@@ -210,13 +210,13 @@ void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
     // Cleanup
     unbind_target_depth_views();
     for (auto& view : m_target_views) {
-        view.Reset();
+        view = {};
     }
     for (auto& view : m_depth_views) {
-        view.Reset();
+        view = {};
     }
     for (auto& target : m_d2d1_targets) {
-        target.Reset();
+        target = {};
     }
     m_chain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING) >> verify_result;
 
@@ -227,7 +227,7 @@ void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
         m_target_views[i] = create_target_view(texture, nullptr);
 
         // Surface
-        ComPtr<IDXGISurface> surface{};
+        ComRef<IDXGISurface> surface{};
         texture->QueryInterface(IID_PPV_ARGS(&surface)) >> verify_result;
         
         // Text raster target
@@ -235,7 +235,7 @@ void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
             D2D1_RENDER_TARGET_TYPE_DEFAULT,
             D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
         );
-        m_d2d1_factory->CreateDxgiSurfaceRenderTarget(surface.Get(), target_properties, &m_d2d1_targets[i]) >> verify_result;
+        m_d2d1_factory->CreateDxgiSurfaceRenderTarget(surface.get(), target_properties, &m_d2d1_targets[i]) >> verify_result;
 
         // Swap
         m_chain->Present(0, NULL) >> verify_result;

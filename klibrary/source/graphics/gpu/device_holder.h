@@ -8,7 +8,7 @@ namespace kl {
     class DeviceHolder
     {
     protected:
-        dx::Device m_device = nullptr;
+        dx::Device m_device;
 
     public:
         DeviceHolder();

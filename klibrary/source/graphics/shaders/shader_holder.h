@@ -13,8 +13,8 @@ namespace kl {
     {
     public:
         const GPU* gpu = nullptr;
-        S shader = nullptr;
-        dx::Buffer cbuffer = nullptr;
+        S shader = {};
+        dx::Buffer cbuffer;
 
         // Construct
         ShaderHolder(const kl::GPU* gpu);

@@ -47,7 +47,7 @@ void titian::GUISectionMaterialEditor::render_gui()
             }
             if (material) {
                 render_selected_material(scene, gpu, &material, viewport_size);
-                im::Image(render_texture->shader_view.Get(), { (float) viewport_size.x, (float) viewport_size.y });
+                im::Image(render_texture->shader_view.get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
             was_focused = im::IsWindowFocused();
         }

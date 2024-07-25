@@ -162,7 +162,7 @@ void titian::GUISectionExplorer::handle_file_entry(const fs::path& file)
 
     if (im::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
         const ImVec2 cursor_pos = im::GetCursorPos();
-        if (im::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+        if (im::ImageButton(path.c_str(), icon.get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
             ShellExecuteA(nullptr, nullptr, path.c_str(), nullptr, nullptr, 5);
         }
         gui_set_drag_drop<String>(DRAG_FILE_ID, path, icon);
@@ -218,7 +218,7 @@ void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, con
 
     if (im::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
         const ImVec2 cursor_pos = im::GetCursorPos();
-        if (im::ImageButton(path.c_str(), icon.Get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+        if (im::ImageButton(path.c_str(), icon.get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
             this->m_path = path;
         }
 

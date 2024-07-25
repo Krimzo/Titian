@@ -147,7 +147,7 @@ void titian::GUISectionTextureEditor::render_selected_texture(Texture* texture, 
         (im::GetWindowWidth() - min_size) * 0.5f,
         (im::GetWindowHeight() - min_size) * 0.5f,
     });
-    im::Image(texture->shader_view.Get(), { min_size, min_size }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+    im::Image(texture->shader_view.get(), { min_size, min_size }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 }
 
 void titian::GUISectionTextureEditor::show_texture_properties(Texture* texture)

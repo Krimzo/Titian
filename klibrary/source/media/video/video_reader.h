@@ -17,7 +17,7 @@ namespace kl {
         int m_frame_count = 0;
         float m_fps = 0.0f;
 
-        ComPtr<IMFSourceReader> m_reader = nullptr;
+        ComRef<IMFSourceReader> m_reader;
         Object<GPU> m_gpu = nullptr;
 
     public:
@@ -36,9 +36,9 @@ namespace kl {
 
         Int2 frame_size() const;
         int frame_count() const;
-
         float fps() const;
-        bool next_frame(Image& out) const;
+
+        bool read_frame(Image& out) const;
         bool get_frame(float time, Image& out) const;
     };
 }

@@ -10,16 +10,16 @@ namespace titian {
 	class RenderLayer : public Layer
 	{
 	public:
-		Vector<Ref<RenderPass>> passes = {};
-		Ref<RenderStates> states = nullptr;
+		Vector<Ref<RenderPass>> passes;
+		Ref<RenderStates> states;
 
-		Ref<Texture> screen_texture = nullptr;
-		Ref<Texture> game_color_texture = nullptr;
-		Ref<Texture> game_depth_texture = nullptr;
-		Ref<Texture> editor_picking_texture = nullptr;
-		Ref<Texture> editor_staging_texture = nullptr;
+		Ref<Texture> screen_texture;
+		Ref<Texture> game_color_texture;
+		Ref<Texture> game_depth_texture;
+		Ref<Texture> editor_picking_texture;
+		Ref<Texture> editor_staging_texture;
 
-		dx::Buffer screen_mesh = nullptr;
+		dx::Buffer screen_mesh;
 
 		Float4 background = Color(30, 30, 30);
 		bool render_wireframe = false;

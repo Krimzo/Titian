@@ -16,7 +16,7 @@ namespace kl {
         const uint32_t m_sample_rate;
         const uint64_t m_frame_duration;
 
-        ComPtr<IMFSinkWriter> m_writer = {};
+        ComRef<IMFSinkWriter> m_writer = {};
         DWORD m_video_index = 0;
         DWORD m_audio_index = 0;
         uint64_t m_video_time = 0;

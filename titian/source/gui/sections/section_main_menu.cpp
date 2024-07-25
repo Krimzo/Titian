@@ -361,7 +361,7 @@ void titian::GUISectionMainMenu::render_gui()
         const ImVec4 start_tint_color = is_start_enabled ? ImColor(200, 200, 200) : ImColor(75, 75, 75);
 
         im::PushItemFlag(ImGuiItemFlags_Disabled, !is_start_enabled);
-        if (im::ImageButton(m_start_button_texture->shader_view.Get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), -1, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), start_tint_color)) {
+        if (im::ImageButton(m_start_button_texture->shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), -1, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), start_tint_color)) {
             if (game_layer->game_paused) {
                 game_layer->resume_game();
             }
@@ -379,7 +379,7 @@ void titian::GUISectionMainMenu::render_gui()
         const ImVec4 pause_tint_color = is_pause_enabled ? ImColor(200, 200, 200) : ImColor(75, 75, 75);
 
         im::PushItemFlag(ImGuiItemFlags_Disabled, !is_pause_enabled);
-        if (im::ImageButton(m_pause_button_texture->shader_view.Get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), -1, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), pause_tint_color)) {
+        if (im::ImageButton(m_pause_button_texture->shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), -1, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), pause_tint_color)) {
             game_layer->pause_game();
         }
         m_control_buttons_width += im::GetItemRectSize().x;
@@ -389,7 +389,7 @@ void titian::GUISectionMainMenu::render_gui()
         const ImVec4 stop_tint_color = is_stop_enabled ? ImColor(200, 200, 200) : ImColor(75, 75, 75);
 
         im::PushItemFlag(ImGuiItemFlags_Disabled, !is_stop_enabled);
-        if (im::ImageButton(m_stop_button_texture->shader_view.Get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), -1, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), stop_tint_color)) {
+        if (im::ImageButton(m_stop_button_texture->shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), -1, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), stop_tint_color)) {
             game_layer->stop_game();
             if (const Serializer serializer = { m_temp_path, false }) {
                 game_layer->reset_scene();

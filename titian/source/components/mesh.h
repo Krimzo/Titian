@@ -33,7 +33,7 @@ namespace titian {
         bool render_wireframe = false;
 
         Data data_buffer = {};
-        dx::Buffer graphics_buffer = nullptr;
+        dx::Buffer graphics_buffer;
         px::PxTriangleMesh* physics_buffer = nullptr;
 
         Vector<Float4x4> bone_matrices;

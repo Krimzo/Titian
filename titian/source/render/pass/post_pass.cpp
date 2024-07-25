@@ -30,7 +30,7 @@ void titian::PostPass::render_self(StatePackage& package)
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
     // Target
-    gpu->bind_target_depth_view(render_layer->screen_texture->target_view, nullptr);
+    gpu->bind_target_depth_view(render_layer->screen_texture->target_view, {});
 
     gpu->bind_shader_view_for_pixel_shader(render_layer->game_color_texture->shader_view, 0);
     gpu->bind_shader_view_for_pixel_shader(render_layer->game_depth_texture->shader_view, 1);

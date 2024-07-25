@@ -14,32 +14,32 @@ kl::VideoWriter::VideoWriter(const std::string& filepath, const GUID& output_for
     MFCreateSinkWriterFromURL(converted_path.c_str(), nullptr, nullptr, &m_writer) >> verify_result;
 
     // Video
-    ComPtr<IMFMediaType> video_out_type;
+    ComRef<IMFMediaType> video_out_type;
     MFCreateMediaType(&video_out_type) >> verify_result;
 
     video_out_type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video) >> verify_result;
     video_out_type->SetGUID(MF_MT_SUBTYPE, m_output_format) >> verify_result;
     video_out_type->SetUINT32(MF_MT_AVG_BITRATE, m_bit_rate) >> verify_result;
     video_out_type->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive) >> verify_result;
-    MFSetAttributeSize(video_out_type.Get(), MF_MT_FRAME_SIZE, m_width, m_height) >> verify_result;
-    MFSetAttributeRatio(video_out_type.Get(), MF_MT_FRAME_RATE, m_fps, 1) >> verify_result;
-    MFSetAttributeRatio(video_out_type.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1) >> verify_result;
-    m_writer->AddStream(video_out_type.Get(), &m_video_index) >> verify_result;
+    MFSetAttributeSize(video_out_type.get(), MF_MT_FRAME_SIZE, m_width, m_height) >> verify_result;
+    MFSetAttributeRatio(video_out_type.get(), MF_MT_FRAME_RATE, m_fps, 1) >> verify_result;
+    MFSetAttributeRatio(video_out_type.get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1) >> verify_result;
+    m_writer->AddStream(video_out_type.get(), &m_video_index) >> verify_result;
 
-    ComPtr<IMFMediaType> video_in_type;
+    ComRef<IMFMediaType> video_in_type;
     MFCreateMediaType(&video_in_type) >> verify_result;
 
     video_in_type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video) >> verify_result;
     video_in_type->SetGUID(MF_MT_SUBTYPE, m_input_format) >> verify_result;
     video_in_type->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive) >> verify_result;
-    MFSetAttributeSize(video_in_type.Get(), MF_MT_FRAME_SIZE, m_width, m_height) >> verify_result;
-    MFSetAttributeRatio(video_in_type.Get(), MF_MT_FRAME_RATE, m_fps, 1) >> verify_result;
-    MFSetAttributeRatio(video_in_type.Get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1) >> verify_result;
-    m_writer->SetInputMediaType(m_video_index, video_in_type.Get(), nullptr) >> verify_result;
+    MFSetAttributeSize(video_in_type.get(), MF_MT_FRAME_SIZE, m_width, m_height) >> verify_result;
+    MFSetAttributeRatio(video_in_type.get(), MF_MT_FRAME_RATE, m_fps, 1) >> verify_result;
+    MFSetAttributeRatio(video_in_type.get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1) >> verify_result;
+    m_writer->SetInputMediaType(m_video_index, video_in_type.get(), nullptr) >> verify_result;
 
     // Audio
     if (m_sample_rate > 0) {
-        ComPtr<IMFMediaType> audio_out_type;
+        ComRef<IMFMediaType> audio_out_type;
         MFCreateMediaType(&audio_out_type) >> verify_result;
 
         audio_out_type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio) >> verify_result;
@@ -47,9 +47,9 @@ kl::VideoWriter::VideoWriter(const std::string& filepath, const GUID& output_for
         audio_out_type->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, 1) >> verify_result;
         audio_out_type->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 16) >> verify_result;
         audio_out_type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, m_sample_rate) >> verify_result;
-        m_writer->AddStream(audio_out_type.Get(), &m_audio_index) >> verify_result;
+        m_writer->AddStream(audio_out_type.get(), &m_audio_index) >> verify_result;
 
-        ComPtr<IMFMediaType> audio_in_type;
+        ComRef<IMFMediaType> audio_in_type;
         MFCreateMediaType(&audio_in_type) >> verify_result;
 
         audio_in_type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio) >> verify_result;
@@ -59,7 +59,7 @@ kl::VideoWriter::VideoWriter(const std::string& filepath, const GUID& output_for
         audio_in_type->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, 4) >> verify_result;
         audio_in_type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, m_sample_rate) >> verify_result;
         audio_in_type->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, m_sample_rate * 4) >> verify_result;
-        m_writer->SetInputMediaType(m_audio_index, audio_in_type.Get(), nullptr) >> verify_result;
+        m_writer->SetInputMediaType(m_audio_index, audio_in_type.get(), nullptr) >> verify_result;
     }
 
     // Start
@@ -100,13 +100,13 @@ bool kl::VideoWriter::add_frame(const Image& frame)
     const int frame_byte_width = m_width * 4;
     const int frame_byte_size = frame_byte_width * m_height;
 
-    ComPtr<IMFMediaBuffer> media_buffer;
+    ComRef<IMFMediaBuffer> media_buffer;
     MFCreateMemoryBuffer(frame_byte_size, &media_buffer) >> verify_result;
     media_buffer->SetCurrentLength(frame_byte_size) >> verify_result;
 
-    ComPtr<IMFSample> media_sample;
+    ComRef<IMFSample> media_sample;
     MFCreateSample(&media_sample) >> verify_result;
-    media_sample->AddBuffer(media_buffer.Get()) >> verify_result;
+    media_sample->AddBuffer(media_buffer.get()) >> verify_result;
     media_sample->SetSampleDuration((LONGLONG) m_frame_duration) >> verify_result;
 
     Color* out_buffer = nullptr;
@@ -120,7 +120,7 @@ bool kl::VideoWriter::add_frame(const Image& frame)
     if (FAILED(media_sample->SetSampleTime((LONGLONG) video_duration_100ns()))) {
         return false;
     }
-    if (FAILED(m_writer->WriteSample(m_video_index, media_sample.Get()))) {
+    if (FAILED(m_writer->WriteSample(m_video_index, media_sample.get()))) {
         return false;
     }
     m_video_time += m_frame_duration;
@@ -150,13 +150,13 @@ bool kl::VideoWriter::add_audio(const Audio& audio)
     }
 
     const int sample_byte_size = (int) audio.size() * sizeof(float);
-    ComPtr<IMFMediaBuffer> media_buffer;
+    ComRef<IMFMediaBuffer> media_buffer;
     MFCreateMemoryBuffer(sample_byte_size, &media_buffer) >> verify_result;
     media_buffer->SetCurrentLength(sample_byte_size) >> verify_result;
 
-    ComPtr<IMFSample> media_sample;
+    ComRef<IMFSample> media_sample;
     MFCreateSample(&media_sample) >> verify_result;
-    media_sample->AddBuffer(media_buffer.Get()) >> verify_result;
+    media_sample->AddBuffer(media_buffer.get()) >> verify_result;
     media_sample->SetSampleDuration(audio.duration_100ns()) >> verify_result;
 
     BYTE* out_buffer = nullptr;
@@ -167,7 +167,7 @@ bool kl::VideoWriter::add_audio(const Audio& audio)
     if (FAILED(media_sample->SetSampleTime((LONGLONG) audio_duration_100ns()))) {
         return false;
     }
-    if (FAILED(m_writer->WriteSample(m_audio_index, media_sample.Get()))) {
+    if (FAILED(m_writer->WriteSample(m_audio_index, media_sample.get()))) {
         return false;
     }
     m_audio_time += audio.duration_100ns();

@@ -4,16 +4,16 @@
 kl::GPU12::GPU12(const HWND window, const bool debug)
 {
 	if (debug) {
-		ComPtr<ID3D12Debug> debug_interface{};
+		ComRef<ID3D12Debug> debug_interface{};
 		D3D12GetDebugInterface(IID_PPV_ARGS(&debug_interface)) >> verify_result;
 		debug_interface->EnableDebugLayer();
 	}
 	D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&m_device)) >> verify_result;
 	if (debug) {
-		ComPtr<ID3D12DebugDevice> debug_device{};
+		ComRef<ID3D12DebugDevice> debug_device{};
 		m_device->QueryInterface(IID_PPV_ARGS(&debug_device)) >> verify_result;
 		debug_device->ReportLiveDeviceObjects(D3D12_RLDO_SUMMARY);
-		debug_device.Reset();
+		debug_device = {};
 	}
 
 	queue = create_command_queue();
@@ -91,9 +91,9 @@ kl::dx12::SwapChain kl::GPU12::create_swap_chain(const HWND window, const dx12::
 
 	dx12::SwapChain swap_chain{};
 	{
-		ComPtr<IDXGISwapChain1> temp_chain{};
-		m_dxgi_factor->CreateSwapChainForHwnd(command_queue.Get(), window, &descriptor, nullptr, nullptr, &temp_chain) >> verify_result;
-		temp_chain.As(&swap_chain) >> verify_result;
+		ComRef<IDXGISwapChain1> temp_chain{};
+		m_dxgi_factor->CreateSwapChainForHwnd(command_queue.get(), window, &descriptor, nullptr, nullptr, &temp_chain) >> verify_result;
+		temp_chain.as(swap_chain) >> verify_result;
 	}
 	return swap_chain;
 }
@@ -130,7 +130,7 @@ kl::dx12::CommandAllocator kl::GPU12::create_command_allocator() const
 kl::dx12::CommandList kl::GPU12::create_command_list(const dx12::CommandAllocator& command_allocator) const
 {
 	dx12::CommandList command_list{};
-	m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, command_allocator.Get(), nullptr, IID_PPV_ARGS(&command_list)) >> verify_result;
+	m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, command_allocator.get(), nullptr, IID_PPV_ARGS(&command_list)) >> verify_result;
 	command_list->Close() >> verify_result;
 	return command_list;
 }
@@ -169,9 +169,9 @@ void kl::GPU12::resize(const Int2& size)
 	// Reset
 	wait();
 	for (auto& back_buffer : m_back_buffers) {
-		back_buffer.Reset();
+		back_buffer = {};
 	}
-	m_rtv_descriptor_heap.Reset();
+	m_rtv_descriptor_heap = {};
 	m_rtv_descriptor_size = 0;
 	m_swap_chain->ResizeBuffers(0, (UINT) size.x, (UINT) size.y, DXGI_FORMAT_UNKNOWN, 0);
 
@@ -181,7 +181,7 @@ void kl::GPU12::resize(const Int2& size)
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtv_handle{ m_rtv_descriptor_heap->GetCPUDescriptorHandleForHeapStart() };
 	for (int i = 0; i < BACK_BUFFER_COUNT; i++) {
 		m_swap_chain->GetBuffer(i, IID_PPV_ARGS(&m_back_buffers[i])) >> verify_result;
-		m_device->CreateRenderTargetView(m_back_buffers[i].Get(), nullptr, rtv_handle);
+		m_device->CreateRenderTargetView(m_back_buffers[i].get(), nullptr, rtv_handle);
 		rtv_handle.Offset(m_rtv_descriptor_size);
 	}
 }
@@ -189,7 +189,7 @@ void kl::GPU12::resize(const Int2& size)
 kl::dx12::Resource kl::GPU12::get_back_buffer(const UINT index) const
 {
 	if (index >= BACK_BUFFER_COUNT) {
-		return nullptr;
+		return {};
 	}
 	return m_back_buffers[index];
 }
@@ -382,11 +382,11 @@ kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline(const d
 
 	// Pipeline
 	GPU12::DefaultRaserizationPipeline pipeline_desc{};
-	pipeline_desc.root_signature = root_signature.Get();
+	pipeline_desc.root_signature = root_signature.get();
 	pipeline_desc.input_layout = { input_layout.data(), (UINT) input_layout.size() };
 	pipeline_desc.primitive_topology = primitive_topology;
-	pipeline_desc.vertex_shader = dx12::ShaderByteCode(vertex_shader.data.Get());
-	pipeline_desc.pixel_shader = dx12::ShaderByteCode(pixel_shader.data.Get());
+	pipeline_desc.vertex_shader = dx12::ShaderByteCode(vertex_shader.data.get());
+	pipeline_desc.pixel_shader = dx12::ShaderByteCode(pixel_shader.data.get());
 	pipeline_desc.render_target_formats = {
 		.RTFormats = DXGI_FORMAT_R8G8B8A8_UNORM,
 		.NumRenderTargets = 1,
@@ -412,7 +412,7 @@ kl::dx12::StateObject kl::GPU12::create_default_raytracing_pipeline(const std::v
 		.MaxAttributeSizeInBytes = max_attribute_size,
 	};
 	const D3D12_GLOBAL_ROOT_SIGNATURE global_signature{
-		root_signature.Get(),
+		root_signature.get(),
 	};
 	const D3D12_RAYTRACING_PIPELINE_CONFIG pipeline_config{
 		.MaxTraceRecursionDepth = max_recursion_depth,

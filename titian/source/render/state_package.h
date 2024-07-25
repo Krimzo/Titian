@@ -7,10 +7,10 @@ namespace titian {
 	class StatePackage
 	{
 	public:
-		dx::RasterState raster_state = nullptr;
-		dx::DepthState depth_state = nullptr;
-		kl::RenderShaders shader_state = {};
-		dx::BlendState blend_state = nullptr;
+		dx::RasterState raster_state;
+		dx::DepthState depth_state;
+		kl::RenderShaders shader_state;
+		dx::BlendState blend_state;
 
 		StatePackage() = default;
 	};

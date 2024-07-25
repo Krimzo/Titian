@@ -81,7 +81,7 @@ namespace titian {
             im::SetDragDropPayload(id.c_str(), nullptr, 0);
             _DRAG_DROP_DATA[id] = Any{ data };
             if (texture) {
-                im::Image(texture.Get(), { 50.0f, 50.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+                im::Image(texture.get(), { 50.0f, 50.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
             }
             im::EndDragDropSource();
         }

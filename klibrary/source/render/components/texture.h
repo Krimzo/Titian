@@ -14,12 +14,12 @@ namespace kl {
     public:
         GPU* gpu = nullptr;
         TextureData data_buffer = {};
-        dx::Texture graphics_buffer = nullptr;
+        dx::Texture graphics_buffer;
 
-        dx::TargetView target_view = nullptr;
-        dx::DepthView   depth_view = nullptr;
-        dx::ShaderView shader_view = nullptr;
-        dx::AccessView access_view = nullptr;
+        dx::TargetView target_view;
+        dx::DepthView depth_view;
+        dx::ShaderView shader_view;
+        dx::AccessView access_view;
 
         bool is_cube = false;
 

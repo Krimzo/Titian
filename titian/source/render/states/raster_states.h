@@ -7,10 +7,10 @@ namespace titian {
     class RasterStates
     {
     public:
-        dx::RasterState wireframe = nullptr;
-        dx::RasterState solid_cull = nullptr;
-        dx::RasterState solid = nullptr;
-        dx::RasterState shadow = nullptr;
+        dx::RasterState wireframe;
+        dx::RasterState solid_cull;
+        dx::RasterState solid;
+        dx::RasterState shadow;
 
         RasterStates(kl::GPU* gpu);
     };

@@ -15,7 +15,7 @@ kl::GPU12Commands::GPU12Commands(const dx12::CommandAllocator& allocator, const 
 void kl::GPU12Commands::reset() const
 {
 	allocator->Reset() >> verify_result;
-	list->Reset(allocator.Get(), nullptr) >> verify_result;
+	list->Reset(allocator.get(), nullptr) >> verify_result;
 }
 
 void kl::GPU12Commands::close() const
@@ -25,7 +25,7 @@ void kl::GPU12Commands::close() const
 
 void kl::GPU12Commands::transition_resource(const dx12::Resource& resource, const D3D12_RESOURCE_STATES from, const D3D12_RESOURCE_STATES to) const
 {
-	const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(resource.Get(), from, to);
+	const auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(resource.get(), from, to);
 	list->ResourceBarrier(1, &barrier);
 }
 
@@ -36,17 +36,17 @@ void kl::GPU12Commands::clear_target_view(const dx12::DescriptorHandle& handle, 
 
 void kl::GPU12Commands::copy(dx12::Resource& destination, const dx12::Resource& source) const
 {
-	list->CopyResource(destination.Get(), source.Get());
+	list->CopyResource(destination.get(), source.get());
 }
 
 void kl::GPU12Commands::set_root_signature(const dx12::RootSignature& root_signature) const
 {
-	list->SetGraphicsRootSignature(root_signature.Get());
+	list->SetGraphicsRootSignature(root_signature.get());
 }
 
 void kl::GPU12Commands::set_pipeline_state(const dx12::PipelineState& pipeline_state) const
 {
-	list->SetPipelineState(pipeline_state.Get());
+	list->SetPipelineState(pipeline_state.get());
 }
 
 void kl::GPU12Commands::set_primitive_topology(const D3D_PRIMITIVE_TOPOLOGY topology) const
