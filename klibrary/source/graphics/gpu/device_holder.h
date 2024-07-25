@@ -1,7 +1,7 @@
 #pragma once
 
 #include "graphics/shaders/compiled_shader.h"
-#include "media/media.h"
+#include "media/image/image.h"
 
 
 namespace kl {
@@ -55,7 +55,7 @@ namespace kl {
         dx::Texture create_texture(const Image& image, bool has_unordered_access = false, bool is_target = false) const;
         dx::Texture create_cube_texture(const Image& front, const Image& back, const Image& left, const Image& right, const Image& top, const Image& bottom) const;
         dx::Texture create_staging_texture(const dx::Texture& texture, const Int2& size) const;
-        dx::Texture create_target_texture(const kl::Int2& size) const;
+        dx::Texture create_target_texture(const Int2& size) const;
 
         // Views
         dx::TargetView create_target_view(const dx::Resource& resource, const dx::TargetViewDescriptor* descriptor) const;

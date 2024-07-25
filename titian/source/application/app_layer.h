@@ -9,7 +9,7 @@ namespace titian {
 	{
 	public:
 		kl::Window window{ "Titian App", {1600, 900} };
-		kl::GPU gpu{ static_cast<HWND>(window), kl::IS_DEBUG, true };
+		kl::GPU gpu{ HWND(window), kl::IS_DEBUG, true, false };
 		kl::Timer timer{};
 
 		AppLayer();

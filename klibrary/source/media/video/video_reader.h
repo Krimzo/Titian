@@ -1,6 +1,8 @@
 #pragma once
 
 #include "media/image/image.h"
+#include "graphics/gpu/gpu.h"
+#include "memory/safety/object.h"
 
 
 namespace kl {
@@ -16,9 +18,10 @@ namespace kl {
         float m_fps = 0.0f;
 
         ComPtr<IMFSourceReader> m_reader = nullptr;
+        Object<GPU> m_gpu = nullptr;
 
     public:
-        VideoReader(const std::string& filepath);
+        VideoReader(const std::string& filepath, bool use_gpu = true);
 
         VideoReader(const VideoReader&) = delete;
         VideoReader(VideoReader&&) = delete;

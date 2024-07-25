@@ -27,8 +27,8 @@ namespace kl {
         const GPUCreationType creation_type = GPUCreationType::NONE;
 
         // Creation
-        GPU(bool debug = false, bool single_threaded = true);
-        GPU(HWND window, bool debug = false, bool single_threaded = true);
+        GPU(bool debug = false, bool single_threaded = true, bool video_support = false);
+        GPU(HWND window, bool debug = false, bool single_threaded = true, bool video_support = false);
         virtual ~GPU();
 
         GPU(const GPU&) = delete;

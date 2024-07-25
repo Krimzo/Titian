@@ -73,13 +73,27 @@ static float video_fps(const ComPtr<IMFSourceReader>& reader)
 }
 
 // Video reader
-kl::VideoReader::VideoReader(const std::string& filepath)
+kl::VideoReader::VideoReader(const std::string& filepath, const bool use_gpu)
 {
     // Init
     ComPtr<IMFAttributes> attributes = nullptr;
-    MFCreateAttributes(&attributes, 1) >> verify_result;
+    MFCreateAttributes(&attributes, 0) >> verify_result;
 
-    attributes->SetUINT32(MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, true) >> verify_result;
+    attributes->SetUINT32(MF_SOURCE_READER_ENABLE_ADVANCED_VIDEO_PROCESSING, TRUE) >> verify_result;
+    attributes->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE) >> verify_result;
+
+    if (use_gpu) {
+        m_gpu = new GPU(IS_DEBUG, false, true);
+        ComPtr<ID3D11Multithread> multithread;
+        m_gpu->device().As(&multithread) >> verify_result;
+        multithread->SetMultithreadProtected(TRUE);
+
+        UINT reset_token = 0;
+        ComPtr<IMFDXGIDeviceManager> manager;
+        MFCreateDXGIDeviceManager(&reset_token, &manager) >> verify_result;
+        manager->ResetDevice(m_gpu->device().Get(), reset_token) >> verify_result;
+		attributes->SetUnknown(MF_SOURCE_READER_D3D_MANAGER, manager.Get()) >> verify_result;
+    }
 
     const std::wstring converted_path = convert_string(filepath);
     MFCreateSourceReaderFromURL(converted_path.c_str(), attributes.Get(), &m_reader) >> verify_result;
@@ -171,7 +185,7 @@ bool kl::VideoReader::get_frame(const float time, Image& out) const
 	}
 
     // Seek
-    PROPVARIANT time_var{};
+    PROPVARIANT time_var;
     PropVariantInit(&time_var);
     time_var.vt = VT_I8;
     time_var.hVal.QuadPart = time_100ns;
@@ -180,11 +194,21 @@ bool kl::VideoReader::get_frame(const float time, Image& out) const
     }
 
     // Read sample
-    DWORD flags = NULL;
-    LONGLONG time_stamp = 0;
     ComPtr<IMFSample> sample;
-    if (FAILED(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
-        return false;
+    INT64 last_delta = std::numeric_limits<INT64>::max();
+    while (true) {
+        DWORD flags = NULL;
+        LONGLONG time_stamp = 0;
+        ComPtr<IMFSample> temp_sample;
+        if (FAILED(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &temp_sample)) || !temp_sample) {
+            return false;
+        }
+        const INT64 current_delta = std::abs(time_stamp - time_100ns);
+        if (current_delta >= last_delta) {
+            break;
+        }
+        last_delta = current_delta;
+        sample = temp_sample;
     }
 
     // Convert to array

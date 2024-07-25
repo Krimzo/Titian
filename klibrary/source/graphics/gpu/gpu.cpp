@@ -2,7 +2,7 @@
 
 
 // Creation
-kl::GPU::GPU(const bool debug, const bool single_threaded)
+kl::GPU::GPU(const bool debug, const bool single_threaded, const bool video_support)
     : creation_type(GPUCreationType::COMPUTE)
 {
     UINT creation_flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -12,8 +12,13 @@ kl::GPU::GPU(const bool debug, const bool single_threaded)
     if (single_threaded) {
         creation_flags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
     }
+	if (video_support) {
+		creation_flags |= D3D11_CREATE_DEVICE_VIDEO_SUPPORT;
+	}
 
-    const D3D_FEATURE_LEVEL feature_levels[1] = { D3D_FEATURE_LEVEL_11_1 };
+    ComPtr<ID3D11Device> temp_device;
+	ComPtr<ID3D11DeviceContext> temp_context;
+    const D3D_FEATURE_LEVEL feature_levels[] = { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0 };
     D3D11CreateDevice(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
@@ -22,15 +27,17 @@ kl::GPU::GPU(const bool debug, const bool single_threaded)
         feature_levels,
         (UINT) std::size(feature_levels),
         D3D11_SDK_VERSION,
-        &m_device,
+        &temp_device,
         nullptr,
-        &m_context
+        &temp_context
     ) >> verify_result;
+    temp_device.As(&m_device) >> verify_result;
+    temp_context.As(&m_context) >> verify_result;
     assert(m_device, "Failed to create device");
     assert(m_context, "Failed to create device context");
 }
 
-kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
+kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded, const bool video_support)
     : creation_type(GPUCreationType::RENDER)
 {
     RECT window_client_area{};
@@ -55,9 +62,14 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
     if (single_threaded) {
         creation_flags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
     }
+	if (video_support) {
+		creation_flags |= D3D11_CREATE_DEVICE_VIDEO_SUPPORT;
+	}
 
-    const D3D_FEATURE_LEVEL feature_levels[1] = { D3D_FEATURE_LEVEL_11_1 };
-    ComPtr<IDXGISwapChain> temp_chain{};
+    ComPtr<IDXGISwapChain> temp_chain;
+    ComPtr<ID3D11Device> temp_device;
+    ComPtr<ID3D11DeviceContext> temp_context;
+    const D3D_FEATURE_LEVEL feature_levels[] = { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0 };
     D3D11CreateDeviceAndSwapChain(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
@@ -68,11 +80,13 @@ kl::GPU::GPU(const HWND window, const bool debug, const bool single_threaded)
         D3D11_SDK_VERSION,
         &chain_descriptor,
         &temp_chain,
-        &m_device,
+        &temp_device,
         nullptr,
-        &m_context
+        &temp_context
     ) >> verify_result;
     temp_chain.As(&m_chain) >> verify_result;
+	temp_device.As(&m_device) >> verify_result;
+	temp_context.As(&m_context) >> verify_result;
     assert(m_device, "Failed to create device");
     assert(m_context, "Failed to create device context");
     assert(m_chain, "Failed to create swapchain");

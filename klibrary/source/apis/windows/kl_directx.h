@@ -9,14 +9,17 @@
 #include <gdiplus.h>
 #include <dxgi1_6.h>
 #include <d2d1.h>
-#include <d3d11.h>
+#include <d3d9.h>
+#include <d3d11_4.h>
 #include <d3d12.h>
 #include <d3dcompiler.h>
 #include <dwrite.h>
+#include <dxva2api.h>
 
 #pragma comment(lib, "gdiplus.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "d3dcompiler.lib")
@@ -30,8 +33,8 @@ namespace kl {
 namespace kl::dx {
     /* Types */
     // Device
-    using Device = ComPtr<ID3D11Device>;
-    using Context = ComPtr<ID3D11DeviceContext>;
+    using Device = ComPtr<ID3D11Device4>;
+    using Context = ComPtr<ID3D11DeviceContext4>;
     using Chain = ComPtr<IDXGISwapChain4>;
 
     // Data

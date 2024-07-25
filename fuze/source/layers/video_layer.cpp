@@ -66,14 +66,12 @@ float titian::VideoLayer::end_time() const
 
 void titian::VideoLayer::get_frame(Frame& out) const
 {
-	Frame temp{};
-	temp.resize(out.size());
 	for (int i = int(tracks.size()) - 1; i >= 0; i--) {
 		auto& track = tracks[i];
 		float offset = 0.0f;
 		if (Ref media = track->get_media(current_time, offset)) {
-			if (media->get_frame(current_time - offset, temp)) {
-				mix_frame(out, temp);
+			if (media->get_frame(current_time - offset)) {
+				mix_frame(out, media->out_frame);
 			}
 		}
 	}
@@ -81,13 +79,12 @@ void titian::VideoLayer::get_frame(Frame& out) const
 
 void titian::VideoLayer::get_audio(const float duration, Audio& out) const
 {
-	Audio temp{};
 	for (int i = int(tracks.size()) - 1; i >= 0; i--) {
 		auto& track = tracks[i];
 		float offset = 0.0f;
 		if (Ref media = track->get_media(current_time, offset)) {
-			if (media->get_audio(current_time - offset, duration, temp)) {
-				mix_audio(out, temp);
+			if (media->get_audio(current_time - offset, duration)) {
+				mix_audio(out, media->out_audio);
 			}
 		}
 	}
@@ -128,7 +125,7 @@ void titian::VideoLayer::load_video(const String& path)
 	}
 
 	Ref media = new Media();
-	media->video = new kl::VideoReader(path);
+	media->video = new kl::VideoReader(path, true);
 	media->duration = media->video->duration_seconds();
 	media->type = MediaType::VIDEO;
 	media->name = fs::path(path).filename().string();

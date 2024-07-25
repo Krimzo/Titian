@@ -26,7 +26,7 @@ titian::Int2 titian::Frame::size() const
 void titian::Frame::resize(const Int2& size)
 {
     if (m_size == size)
-		return;
+        return;
 
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 

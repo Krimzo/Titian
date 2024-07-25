@@ -28,6 +28,9 @@ namespace titian {
 		Vector<Ref<ImageEffect>> image_effects;
 		Vector<Ref<AudioEffect>> audio_effects;
 
+		Frame out_frame;
+		Audio out_audio;
+
 		Media();
 
 		Media(const Media&) = delete;
@@ -36,14 +39,16 @@ namespace titian {
 		void operator=(const Media&) = delete;
 		void operator=(Media&&) = delete;
 
-		bool get_frame(float time, Frame& out_frame) const;
-		bool get_audio(float time, float duration, Audio& out_audio) const;
+		bool get_frame(float time);
+		bool get_audio(float time, float duration);
 
 	private:
-		bool get_raw_frame(float time, Frame& out_frame) const;
-		bool get_raw_audio(float time, float duration, Audio& out_audio) const;
+		std::unordered_map<int, Image> m_cached_frames;
 
-		void apply_image_effects(float time, Frame& out_frame) const;
-		void apply_audio_effects(float time, float duration, Audio& out_audio) const;
+		bool get_raw_frame(float time, Frame& out) const;
+		bool get_raw_audio(float time, float duration, Audio& out) const;
+
+		void apply_image_effects(float time, Frame& out) const;
+		void apply_audio_effects(float time, float duration, Audio& out) const;
 	};
 }
