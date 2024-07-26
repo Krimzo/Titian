@@ -20,6 +20,106 @@ void titian::GUISectionVideoTimeline::render_gui()
 		const float available_height = im::GetContentRegionAvail().y;
 		ImDrawList* draw_list = im::GetWindowDrawList();
 
+		im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
+		if (!video_layer->playing() && im::BeginPopupContextWindow("##TimelinePopup")) {
+			if (m_editing_track && video_layer->selected_track) {
+				if (Optional opt_name = gui_input_waited("##RenameTrackInput", video_layer->selected_track->name)) {
+					video_layer->selected_track->name = opt_name.value();
+					im::CloseCurrentPopup();
+				}
+				if (im::Button("Delete Track")) {
+					for (int i = 0; i < (int) video_layer->tracks.size(); i++) {
+						if (video_layer->tracks[i] == video_layer->selected_track) {
+							video_layer->tracks.erase(video_layer->tracks.begin() + i);
+							break;
+						}
+					}
+					im::CloseCurrentPopup();
+				}
+			}
+			else if (m_editing_media && video_layer->selected_media) {
+				if (Optional opt_name = gui_input_waited("##RenameMediaInput", video_layer->selected_media->name)) {
+					video_layer->selected_media->name = opt_name.value();
+					im::CloseCurrentPopup();
+				}
+				if (video_layer->selected_media->type == MediaType::VIDEO && im::Button("Split Audio")) {
+					int next_track_index = -1;
+					float media_offset = 0.0f;
+					for (int i = 0; i < (int) video_layer->tracks.size(); i++) {
+						auto& track = video_layer->tracks[i];
+						bool should_break = false;
+						for (auto& [offset, media] : track->media) {
+							if (media == video_layer->selected_media) {
+								next_track_index = i + 1;
+								media_offset = offset;
+								should_break = true;
+								break;
+							}
+						}
+						if (should_break) {
+							break;
+						}
+					}
+					if (next_track_index >= 0) {
+						if (next_track_index >= (int) video_layer->tracks.size()) {
+							video_layer->tracks.resize(next_track_index + 1);
+							for (auto& track : video_layer->tracks) {
+								if (!track) {
+									track = new Track();
+								}
+							}
+						}
+						if (!video_layer->selected_media->audio->empty()) {
+							auto& track = video_layer->tracks[next_track_index];
+							Ref media = new Media();
+							media->audio = new Audio();
+
+							*media->audio = *video_layer->selected_media->audio;
+							video_layer->selected_media->audio->clear();
+
+							media->duration = media->audio->duration_seconds();
+							media->type = MediaType::AUDIO;
+							media->name = video_layer->selected_media->name;
+							track->insert_media(media_offset, media);
+						}
+					}
+					im::CloseCurrentPopup();
+				}
+				if (im::Button("Delete Media")) {
+					for (auto& track : video_layer->tracks) {
+						bool should_break = false;
+						for (auto& [offset, media] : track->media) {
+							if (media == video_layer->selected_media) {
+								track->media.erase(offset);
+								should_break = true;
+								break;
+							}
+						}
+						if (should_break) {
+							break;
+						}
+					}
+					im::CloseCurrentPopup();
+				}
+			}
+			else {
+				if (im::Button("New Track")) {
+					video_layer->tracks.emplace_back(new Track());
+					im::CloseCurrentPopup();
+				}
+			}
+			im::EndPopup();
+			m_popup_was = true;
+		}
+		else {
+			if (m_popup_was) {
+				m_editing_track = false;
+				m_editing_media = false;
+			}
+			m_popup_was = false;
+		}
+		im::PopStyleVar(1);
+
 		if (im::IsWindowFocused()) {
 			if (im::IsKeyPressed(ImGuiKey_Space)) {
 				if (!video_layer->playing()) {
@@ -154,6 +254,31 @@ void titian::GUISectionVideoTimeline::render_gui()
 					im::TableSetColumnIndex(0);
 					im::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(45, 45, 45, 255)); // crashes if i pass ImColor(45, 45, 45) in release ???
 					
+					const ImVec2 col_min = im::TableGetCellBgRect(im::GetCurrentTable(), 0).Min;
+					const ImVec2 col_max = im::TableGetCellBgRect(im::GetCurrentTable(), 0).Max;
+					if (im::IsWindowFocused()) {
+						if (im::IsMouseClicked(ImGuiMouseButton_Left)) {
+							if (ImRect(col_min, col_max).Contains(im::GetMousePos())) {
+								video_layer->selected_media = {};
+								video_layer->selected_track = track;
+							}
+							else if (video_layer->selected_track == track) {
+								video_layer->selected_track = {};
+							}
+						}
+						if (im::IsMouseClicked(ImGuiMouseButton_Right)) {
+							if (ImRect(col_min, col_max).Contains(im::GetMousePos())) {
+								video_layer->selected_media = {};
+								video_layer->selected_track = track;
+								m_editing_track = true;
+							}
+						}
+					}
+
+					if (video_layer->selected_track == track) {
+						draw_list->AddRect(col_min, col_max, ImColor(220, 220, 220));
+					}
+
 					const String text = kl::format(i + 1, ". ", track->name);
 					const ImVec2 text_size = im::CalcTextSize(text.c_str());
 					
@@ -203,6 +328,25 @@ void titian::GUISectionVideoTimeline::render_gui()
 								m_moving_media = info;
 							}
 						}
+
+						if (im::IsWindowFocused()) {
+							if (im::IsMouseClicked(ImGuiMouseButton_Left)) {
+								if (ImRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y)).Contains(im::GetMousePos())) {
+									video_layer->selected_track = {};
+									video_layer->selected_media = media;
+								}
+								else if (video_layer->selected_media == media) {
+									video_layer->selected_media = {};
+								}
+							}
+							if (im::IsMouseClicked(ImGuiMouseButton_Right)) {
+								if (ImRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y)).Contains(im::GetMousePos())) {
+									video_layer->selected_track = {};
+									video_layer->selected_media = media;
+									m_editing_media = true;
+								}
+							}
+						}
 						
 						if (m_moving_media && m_moving_media.value().media == media) {
 							const float width = col_width * kl::wrap(media->duration, 0.0f, horizontal_view);
@@ -210,10 +354,16 @@ void titian::GUISectionVideoTimeline::render_gui()
 							const ImVec2 top_left = im::GetMousePos() - m_moving_media.value().mouse_offset;
 							const ImVec2 bottom_right = top_left + ImVec2(width, height);
 							draw_list->AddRectFilled(top_left, bottom_right, color_classify(media->type), 5.0f);
+							if (video_layer->selected_media == media) {
+								draw_list->AddRect(top_left, bottom_right, ImColor(255, 255, 255), 5.0f);
+							}
 							draw_list->AddText(top_left, ImColor(30, 30, 30), media->name.c_str());
 						}
 						else {
 							draw_list->AddRectFilled(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), color_classify(media->type), 5.0f);
+							if (video_layer->selected_media == media) {
+								draw_list->AddRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), ImColor(255, 255, 255), 5.0f);
+							}
 							draw_list->AddText(ImVec2(left_x, col_min.y), ImColor(30, 30, 30), media->name.c_str());
 						}
 					}

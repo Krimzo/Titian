@@ -32,6 +32,10 @@ namespace titian {
         int m_last_scroll = 0;
         Optional<MovingMediaInfo> m_moving_media;
 
+        bool m_editing_track = false;
+        bool m_editing_media = false;
+        bool m_popup_was = false;
+
         static ImColor color_classify(MediaType type);
     };
 }

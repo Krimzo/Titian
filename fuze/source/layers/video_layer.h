@@ -14,6 +14,9 @@ namespace titian {
 		bool timeline_10seconds = true;
 		bool timeline_minutes = true;
 
+		Ref<Track> selected_track;
+		Ref<Media> selected_media;
+
 		dx::ComputeShader clear_shader;
 		dx::ComputeShader mix_shader;
 
