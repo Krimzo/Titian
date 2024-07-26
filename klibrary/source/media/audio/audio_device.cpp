@@ -5,7 +5,7 @@ kl::AudioDevice::AudioDevice(const UINT id)
     : id(id)
 {}
 
-bool kl::AudioDevice::record_audio(Audio* audio) const
+bool kl::AudioDevice::record_audio(Audio* audio, const std::function<bool()>& should_record) const
 {
 	WAVEFORMATEX wave_format{};
 	wave_format.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
@@ -36,12 +36,17 @@ bool kl::AudioDevice::record_audio(Audio* audio) const
 		waveInClose(wave_in);
 		return false;
 	}
-	while (waveInUnprepareHeader(wave_in, &wave_in_hdr, sizeof(WAVEHDR)) == WAVERR_STILLPLAYING) {}
+	while (waveInUnprepareHeader(wave_in, &wave_in_hdr, sizeof(WAVEHDR)) == WAVERR_STILLPLAYING) {
+		if (!should_record()) {
+			waveInStop(wave_in);
+		}
+	}
+
 	waveInClose(wave_in);
     return true;
 }
 
-bool kl::AudioDevice::play_audio(const Audio& audio) const
+bool kl::AudioDevice::play_audio(const Audio& audio, const std::function<bool()>& should_play) const
 {
 	WAVEFORMATEX wave_format{};
 	wave_format.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
@@ -63,12 +68,17 @@ bool kl::AudioDevice::play_audio(const Audio& audio) const
 		waveOutClose(wave_out);
 		return false;
 	}
+
 	if (waveOutWrite(wave_out, &wave_in_hdr, sizeof(WAVEHDR))) {
 		waveOutClose(wave_out);
 		return false;
 	}
+	while (waveOutUnprepareHeader(wave_out, &wave_in_hdr, sizeof(WAVEHDR)) == WAVERR_STILLPLAYING) {
+		if (!should_play()) {
+			waveOutReset(wave_out);
+		}
+	}
 
-	while (waveOutUnprepareHeader(wave_out, &wave_in_hdr, sizeof(WAVEHDR)) == WAVERR_STILLPLAYING);
 	waveOutClose(wave_out);
     return true;
 }

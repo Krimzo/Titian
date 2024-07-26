@@ -4,6 +4,10 @@
 kl::Audio::Audio()
 {}
 
+kl::Audio::Audio(const int sample_rate)
+	: sample_rate(sample_rate)
+{}
+
 kl::Audio::Audio(const std::string_view& path)
 {
 	load_from_file(path);
@@ -223,16 +227,4 @@ bool kl::Audio::save_to_file(const std::string_view& filepath, const AudioType t
 		return false;
 	}
 	return write_file(filepath, buffer);
-}
-
-bool kl::Audio::get_audio(const float time, const float duration, Audio& out) const
-{
-	if (time < 0.0f || duration <= 0.0f || (duration_seconds() - time) < duration) {
-		return false;
-	}
-	const int start = sample_index(time);
-	const int end = sample_index(time + duration);
-	out.resize((size_t) end - start);
-	memcpy(out.data(), data() + start, out.size() * sizeof(float));
-	return true;
 }

@@ -31,12 +31,29 @@ bool titian::VideoLayer::update()
 	kl::GPU* gpu = &app_layer->gpu;
 	kl::Timer* timer = &app_layer->timer;
 
-	timer->update_delta();
-	if (playing) {
-		current_time = last_time + timer->elapsed();
+	if (m_playing) {
+		current_time = m_last_time + timer->elapsed();
 	}
 	gpu->clear_internal(kl::colors::BLACK);
 	return true;
+}
+
+void titian::VideoLayer::play()
+{
+	m_playing = true;
+	m_last_time = current_time;
+	play_audio();
+}
+
+void titian::VideoLayer::stop()
+{
+	m_playing = false;
+	current_time = m_last_time;
+}
+
+bool titian::VideoLayer::playing() const
+{
+	return m_playing;
 }
 
 float titian::VideoLayer::start_time() const
@@ -72,19 +89,6 @@ void titian::VideoLayer::get_frame(Frame& out) const
 		if (Ref media = track->get_media(current_time, offset)) {
 			if (media->get_frame(current_time - offset)) {
 				mix_frame(out, media->out_frame);
-			}
-		}
-	}
-}
-
-void titian::VideoLayer::get_audio(const float duration, Audio& out) const
-{
-	for (int i = int(tracks.size()) - 1; i >= 0; i--) {
-		auto& track = tracks[i];
-		float offset = 0.0f;
-		if (Ref media = track->get_media(current_time, offset)) {
-			if (media->get_audio(current_time - offset, duration)) {
-				mix_audio(out, media->out_audio);
 			}
 		}
 	}
@@ -133,7 +137,7 @@ void titian::VideoLayer::load_video(const String& path)
 	tracks.front()->insert_media(current_time, media);
 }
 
-void titian::VideoLayer::mix_frame(Frame& first, Frame& second) const
+void titian::VideoLayer::mix_frame(Frame& first, const Frame& second) const
 {
 	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 	gpu->bind_access_view_for_compute_shader(first.access_view, 0);
@@ -144,10 +148,41 @@ void titian::VideoLayer::mix_frame(Frame& first, Frame& second) const
 	gpu->unbind_access_view_for_compute_shader(0);
 }
 
-void titian::VideoLayer::mix_audio(Audio& first, Audio& second) const
+void titian::VideoLayer::play_audio()
 {
-	kl::async_for(0, (int) std::min(first.size(), second.size()), [&](const int i)
+	prepare_audio();
+
+	if (!m_audio.empty()) {
+		const int index = std::clamp(m_audio.sample_index(current_time), 0, (int) m_audio.size() - 1);
+		m_audio.erase(m_audio.begin(), m_audio.begin() + index);
+	}
+
+	m_audio_worker = {};
+	m_audio_worker = std::async(std::launch::async, [&]
 	{
-		first[i] += second[i];
+		m_audio_device.play_audio(m_audio, [this] { return this->m_playing; });
 	});
+}
+
+void titian::VideoLayer::prepare_audio()
+{
+	m_audio.set_duration(end_time());
+	kl::async_for(0, (int) m_audio.size(), [&](const int i)
+	{
+		m_audio[i] = 0.0f;
+	});
+
+	for (auto& track : tracks) {
+		for (auto& [offset, media] : track->media) {
+			media->get_audio();
+			kl::async_for(0, (int) m_audio.size(), [&](const int i)
+			{
+				const float time = m_audio.sample_time(i) - offset;
+				const int sample_index = media->out_audio.sample_index(time);
+				if (sample_index >= 0 && sample_index < media->out_audio.size()) {
+					m_audio[i] += media->out_audio[sample_index];
+				}
+			});
+		}
+	}
 }

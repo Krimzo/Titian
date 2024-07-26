@@ -22,6 +22,7 @@ namespace kl {
         int sample_rate = 0;
 
         Audio();
+        Audio(int sample_rate);
         Audio(const std::string_view& path);
 
         // Alter
@@ -44,8 +45,5 @@ namespace kl {
         // Encoding
         bool save_to_vector(std::vector<byte>* buffer, AudioType type) const;
         bool save_to_file(const std::string_view& filepath, AudioType type) const;
-
-        // Get
-        bool get_audio(float time, float duration, Audio& out) const;
     };
 }

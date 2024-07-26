@@ -22,22 +22,20 @@ void titian::GUISectionVideoTimeline::render_gui()
 
 		if (im::IsWindowFocused()) {
 			if (im::IsKeyPressed(ImGuiKey_Space)) {
-				if (!video_layer->playing) {
-					video_layer->playing = true;
-					video_layer->last_time = video_layer->current_time;
+				if (!video_layer->playing()) {
+					video_layer->play();
 					Layers::get<AppLayer>()->timer.restart();
 				}
 				else {
-					video_layer->playing = false;
-					video_layer->current_time = video_layer->last_time;
+					video_layer->stop();
 					Layers::get<AppLayer>()->timer.stop();
 				}
 			}
-			if (!video_layer->playing && im::IsKeyPressed(ImGuiKey_Home)) {
+			if (!video_layer->playing() && im::IsKeyPressed(ImGuiKey_Home)) {
 				const float start_time = video_layer->start_time();
 				video_layer->current_time = (video_layer->current_time > start_time) ? start_time : 0.0f;
 			}
-			if (!video_layer->playing && im::IsKeyPressed(ImGuiKey_End)) {
+			if (!video_layer->playing() && im::IsKeyPressed(ImGuiKey_End)) {
 				video_layer->current_time = video_layer->end_time();
 			}
 		}
@@ -101,7 +99,7 @@ void titian::GUISectionVideoTimeline::render_gui()
 				const float col_middle = (col_min.y + col_max.y) * 0.5f;
 				
 				const ImVec2 mouse_pos = im::GetMousePos();
-				if (!video_layer->playing && !m_moving_media && ImRect(col_min, col_max).Contains(mouse_pos) && im::IsMouseDown(ImGuiMouseButton_Left)) {
+				if (!video_layer->playing() && !m_moving_media && ImRect(col_min, col_max).Contains(mouse_pos) && im::IsMouseDown(ImGuiMouseButton_Left)) {
 					video_layer->current_time = horizontal_offset + horizontal_view * kl::wrap(mouse_pos.x, col_min.x, col_max.x);
 				}
 
@@ -192,7 +190,7 @@ void titian::GUISectionVideoTimeline::render_gui()
 
 						const float left_x = kl::unwrap(kl::wrap(media_start, min_time, max_time), col_min.x, col_max.x);
 						const float right_x = kl::unwrap(kl::wrap(media_end, min_time, max_time), col_min.x, col_max.x);
-						if (!m_moving_media && im::IsWindowFocused() && im::IsMouseClicked(ImGuiMouseButton_Left)) {
+						if (!video_layer->playing() && !m_moving_media && im::IsWindowFocused() && im::IsMouseClicked(ImGuiMouseButton_Left)) {
 							const ImVec2 mouse_pos = im::GetMousePos();
 							if (ImRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y)).Contains(mouse_pos)) {
 								MovingMediaInfo info{};

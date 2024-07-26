@@ -13,13 +13,10 @@ bool titian::Media::get_frame(const float time)
 	return true;
 }
 
-bool titian::Media::get_audio(const float time, const float duration)
+void titian::Media::get_audio()
 {
-	if (!get_raw_audio(time, duration, out_audio)) {
-		return false;
-	}
-	apply_audio_effects(time, duration, out_audio);
-	return true;
+	get_raw_audio(out_audio);
+	apply_audio_effects(out_audio);
 }
 
 bool titian::Media::get_raw_frame(const float time, Frame& out)
@@ -44,19 +41,18 @@ bool titian::Media::get_raw_frame(const float time, Frame& out)
 	return false;
 }
 
-bool titian::Media::get_raw_audio(const float time, const float duration, Audio& out)
+void titian::Media::get_raw_audio(Audio& out)
 {
 	if (type == MediaType::AUDIO) {
 		if (audio) {
-			return audio->get_audio(time, duration, out);
+			out = *audio;
 		}
 	}
 	else if (type == MediaType::VIDEO) {
 		if (audio) {
-			return audio->get_audio(time, duration, out);
+			out = *audio;
 		}
 	}
-	return false;
 }
 
 void titian::Media::apply_image_effects(const float time, Frame& out) const
@@ -65,8 +61,8 @@ void titian::Media::apply_image_effects(const float time, Frame& out) const
 		effect->apply(time, out);
 }
 
-void titian::Media::apply_audio_effects(const float time, const float duration, Audio& out) const
+void titian::Media::apply_audio_effects(Audio& out) const
 {
 	for (const auto& effect : audio_effects)
-		effect->apply(time, duration, out);
+		effect->apply(out);
 }

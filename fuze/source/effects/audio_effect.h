@@ -15,6 +15,6 @@ namespace titian {
 		void operator=(const AudioEffect&) = delete;
 		void operator=(AudioEffect&&) = delete;
 
-		virtual void apply(float time, float duration, Audio& audio) const = 0;
+		virtual void apply(Audio& audio) const = 0;
 	};
 }
