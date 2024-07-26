@@ -4,7 +4,7 @@
 using kl::ComRef;
 
 // Utility
-static void configure_reader(const ComRef<IMFSourceReader>& reader)
+static void configure_reader(const ComRef<IMFSourceReader>& reader, const kl::Int2& size)
 {
     ComRef<IMFMediaType> media_type;
     reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &media_type) >> kl::verify_result;
@@ -14,8 +14,13 @@ static void configure_reader(const ComRef<IMFSourceReader>& reader)
 
     ComRef<IMFMediaType> new_type;
     MFCreateMediaType(&new_type) >> kl::verify_result;
+
     new_type->SetGUID(MF_MT_MAJOR_TYPE, major_type) >> kl::verify_result;
     new_type->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32) >> kl::verify_result;
+    if (size.x > 0 && size.y > 0) {
+        MFSetAttributeSize(new_type.get(), MF_MT_FRAME_SIZE, (UINT32) size.x, (UINT32) size.y) >> kl::verify_result;
+    }
+
     reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, nullptr, new_type.get()) >> kl::verify_result;
 }
 
@@ -73,7 +78,7 @@ static float video_fps(const ComRef<IMFSourceReader>& reader)
 }
 
 // Video reader
-kl::VideoReader::VideoReader(const std::string& filepath, const bool use_gpu)
+kl::VideoReader::VideoReader(const std::string& filepath, const Int2& output_size, const bool use_gpu)
 {
     // Init
     ComRef<IMFAttributes> attributes;
@@ -97,7 +102,7 @@ kl::VideoReader::VideoReader(const std::string& filepath, const bool use_gpu)
 
     const std::wstring converted_path = convert_string(filepath);
     MFCreateSourceReaderFromURL(converted_path.c_str(), attributes.get(), &m_reader) >> verify_result;
-    configure_reader(m_reader);
+    configure_reader(m_reader, output_size);
 
     // Getting info
     m_byte_size = video_byte_size(m_reader);
@@ -143,7 +148,6 @@ float kl::VideoReader::fps() const
 
 bool kl::VideoReader::read_frame(Image& out) const
 {
-    // Read sample
     DWORD flags = NULL;
     LONGLONG time_stamp = 0;
     ComRef<IMFSample> sample;
@@ -151,27 +155,25 @@ bool kl::VideoReader::read_frame(Image& out) const
         return false;
     }
 
-    // Convert to array
     ComRef<IMFMediaBuffer> media_buffer;
     if (FAILED(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
         return false;
     }
 
-    // Copy data
     BYTE* frame_data = nullptr;
     DWORD frame_byte_size = 0;
     media_buffer->Lock(&frame_data, nullptr, &frame_byte_size) >> verify_result;
 
     out.resize(m_frame_size);
-    const size_t pixel_count = (size_t) out.width() * out.height();
     const Color* frame_source = (Color*) frame_data;
     Color* frame_target = out;
 
-    for (size_t i = 0; i < pixel_count; i++) {
+    kl::async_for(0, out.width() * out.height(), [&](const int i)
+    {
         frame_target[i].r = frame_source[i].r;
         frame_target[i].g = frame_source[i].g;
         frame_target[i].b = frame_source[i].b;
-    }
+    });
 
     media_buffer->Unlock() >> verify_result;
     return true;
@@ -184,7 +186,6 @@ bool kl::VideoReader::get_frame(const float time, Image& out) const
 		return false;
 	}
 
-    // Seek
     PROPVARIANT time_var;
     PropVariantInit(&time_var);
     time_var.vt = VT_I8;
@@ -193,7 +194,6 @@ bool kl::VideoReader::get_frame(const float time, Image& out) const
         return false;
     }
 
-    // Read sample
     ComRef<IMFSample> sample;
     while (true) {
         DWORD flags = NULL;
@@ -206,30 +206,27 @@ bool kl::VideoReader::get_frame(const float time, Image& out) const
         }
     }
 
-    // Convert to array
     ComRef<IMFMediaBuffer> media_buffer;
     if (FAILED(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
         return false;
     }
 
-    // Copy data
     BYTE* frame_data = nullptr;
     DWORD frame_byte_size = 0;
     media_buffer->Lock(&frame_data, nullptr, &frame_byte_size) >> verify_result;
 
     out.resize(m_frame_size);
-    const size_t pixel_count = (size_t) out.width() * out.height();
     const Color* frame_source = (Color*) frame_data;
     Color* frame_target = out;
 
-    for (size_t i = 0; i < pixel_count; i++) {
+    kl::async_for(0, out.width() * out.height(), [&](const int i)
+    {
         frame_target[i].r = frame_source[i].r;
         frame_target[i].g = frame_source[i].g;
         frame_target[i].b = frame_source[i].b;
-    }
-    media_buffer->Unlock() >> verify_result;
+    });
 
-    // Cleanup
+    media_buffer->Unlock() >> verify_result;
 	PropVariantClear(&time_var);
     return true;
 }

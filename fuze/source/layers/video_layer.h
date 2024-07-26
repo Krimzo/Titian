@@ -20,6 +20,8 @@ namespace titian {
 		dx::ComputeShader clear_shader;
 		dx::ComputeShader mix_shader;
 
+		Int2 viewport_size;
+
 		VideoLayer();
 
 		void init();

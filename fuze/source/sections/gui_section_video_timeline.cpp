@@ -34,6 +34,7 @@ void titian::GUISectionVideoTimeline::render_gui()
 							break;
 						}
 					}
+					video_layer->selected_track = {};
 					im::CloseCurrentPopup();
 				}
 			}
@@ -99,6 +100,7 @@ void titian::GUISectionVideoTimeline::render_gui()
 							break;
 						}
 					}
+					video_layer->selected_media = {};
 					im::CloseCurrentPopup();
 				}
 			}
@@ -147,15 +149,15 @@ void titian::GUISectionVideoTimeline::render_gui()
 			}
 			else if (im::IsKeyDown(ImGuiKey_LeftCtrl)) {
 				if (scroll < 0) {
-					horizontal_view *= 1.02f;
+					horizontal_view *= 1.05f;
 				}
 				else if (scroll > 0) {
-					horizontal_view /= 1.02f;
+					horizontal_view /= 1.05f;
 				}
 				horizontal_view = std::max(horizontal_view, 1.0f);
 			}
 			else if (im::IsKeyDown(ImGuiKey_LeftShift)) {
-				horizontal_offset += scroll * horizontal_view * 0.02f;
+				horizontal_offset += scroll * horizontal_view * 0.05f;
 				horizontal_offset = std::max(horizontal_offset, 0.0f);
 			}
 			else if (scroll != 0) {

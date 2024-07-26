@@ -21,7 +21,7 @@ namespace kl {
         Object<GPU> m_gpu = nullptr;
 
     public:
-        VideoReader(const std::string& filepath, bool use_gpu = true);
+        VideoReader(const std::string& filepath, const Int2& output_size = {}, bool use_gpu = true);
 
         VideoReader(const VideoReader&) = delete;
         VideoReader(VideoReader&&) = delete;

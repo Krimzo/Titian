@@ -7,14 +7,11 @@ namespace titian {
 	class Video
 	{
 	public:
-		static constexpr int MAX_WORK_COUNT = 15;
-		float buffer_range = 5.0f;
-
 		Video(const String& path);
 
 		float duration_seconds() const;
 
-		void cache_frames(float time, float duration);
+		void cache_frames(const Int2& size);
 		bool get_frame(float time, Image& out);
 
 	private:
@@ -24,10 +21,5 @@ namespace titian {
 		float m_fps = 0.0f;
 
 		Map<int, Vector<byte>> m_frames;
-		Set<int> m_queued_frames;
-		std::mutex m_frames_lock;
-
-		WorkQueue m_work;
-		std::atomic<int> m_current_work = 0;
 	};
 }

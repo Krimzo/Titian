@@ -13,7 +13,8 @@ void titian::GUISectionVideoDisplay::render_gui()
 
 	if (im::Begin("Display", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
         const ImVec2 content_region = im::GetContentRegionAvail();
-        m_frame.resize({ (int) content_region.x, (int) content_region.y });
+		video_layer->viewport_size = { (int) content_region.x, (int) content_region.y };
+        m_frame.resize(video_layer->viewport_size);
 		this->clear_frame();
 		video_layer->get_frame(m_frame);
         im::Image(m_frame.shader_view.get(), content_region);

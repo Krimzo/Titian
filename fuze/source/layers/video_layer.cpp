@@ -97,7 +97,10 @@ void titian::VideoLayer::get_frame(Frame& out) const
 void titian::VideoLayer::load_image(const String& path)
 {
 	if (!selected_track) {
-		return;
+		if (tracks.empty()) {
+			tracks.emplace_back(new Track());
+		}
+		selected_track = tracks.front();
 	}
 
 	Ref media = new Media();
@@ -111,7 +114,10 @@ void titian::VideoLayer::load_image(const String& path)
 void titian::VideoLayer::load_audio(const String& path)
 {
 	if (!selected_track) {
-		return;
+		if (tracks.empty()) {
+			tracks.emplace_back(new Track());
+		}
+		selected_track = tracks.front();
 	}
 
 	Ref media = new Media();
@@ -125,7 +131,10 @@ void titian::VideoLayer::load_audio(const String& path)
 void titian::VideoLayer::load_video(const String& path)
 {
 	if (!selected_track) {
-		return;
+		if (tracks.empty()) {
+			tracks.emplace_back(new Track());
+		}
+		selected_track = tracks.front();
 	}
 
 	Ref media = new Media();
@@ -135,7 +144,7 @@ void titian::VideoLayer::load_video(const String& path)
 	media->type = MediaType::VIDEO;
 	media->name = fs::path(path).filename().string();
 
-	media->video->cache_frames(0.0f, 30.0f);
+	media->video->cache_frames(viewport_size);
 	selected_track->insert_media(current_time, media);
 }
 
