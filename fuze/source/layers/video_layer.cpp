@@ -134,6 +134,8 @@ void titian::VideoLayer::load_video(const String& path)
 	media->duration = media->video->duration_seconds();
 	media->type = MediaType::VIDEO;
 	media->name = fs::path(path).filename().string();
+
+	media->video->cache_frames(0.0f, 30.0f);
 	tracks.front()->insert_media(current_time, media);
 }
 

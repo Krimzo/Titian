@@ -7,13 +7,14 @@ namespace titian {
 	class Video
 	{
 	public:
-		static constexpr int MAX_WORK_COUNT = 2;
-		float buffer_range = 10.0f;
+		static constexpr int MAX_WORK_COUNT = 15;
+		float buffer_range = 5.0f;
 
 		Video(const String& path);
 
 		float duration_seconds() const;
 
+		void cache_frames(float time, float duration);
 		bool get_frame(float time, Image& out);
 
 	private:
