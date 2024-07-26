@@ -88,7 +88,9 @@ namespace kl {
             requires std::is_base_of_v<B, T>
         inline operator ComRef<B>() const
         {
-            m_instance->AddRef();
+            if (m_instance) {
+                m_instance->AddRef();
+            }
             return ComRef<B>{m_instance};
         }
 

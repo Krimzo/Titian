@@ -6,6 +6,9 @@ titian::Frame::Frame()
 
 void titian::Frame::upload(const Image& image)
 {
+    if (image.width() == 0 || image.height() == 0) {
+        return;
+    }
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 	gpu->write_to_texture(m_staging_texture, image, image.size(), sizeof(Color), false);
 	gpu->copy_resource(texture, m_staging_texture);

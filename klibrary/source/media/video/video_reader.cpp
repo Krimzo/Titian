@@ -195,20 +195,15 @@ bool kl::VideoReader::get_frame(const float time, Image& out) const
 
     // Read sample
     ComRef<IMFSample> sample;
-    INT64 last_delta = std::numeric_limits<INT64>::max();
     while (true) {
         DWORD flags = NULL;
         LONGLONG time_stamp = 0;
-        ComRef<IMFSample> temp_sample;
-        if (FAILED(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &temp_sample)) || !temp_sample) {
+        if (FAILED(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
             return false;
         }
-        const INT64 current_delta = std::abs(time_stamp - time_100ns);
-        if (current_delta >= last_delta) {
+        if (time_stamp >= time_100ns) {
             break;
         }
-        last_delta = current_delta;
-        sample = temp_sample;
     }
 
     // Convert to array
