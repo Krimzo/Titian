@@ -115,7 +115,7 @@ bool kl::Audio::load_from_memory(const byte* data, const uint64_t byte_size)
 
 	 	const int64_t sample_index = int64_t(time_stamp * 1e-7 * sample_rate);
 		if (sample_index >= (int64_t) this->size()) {
-			this->resize(sample_index + 1);
+			this->resize(sample_index); // NOT (sample_index + 1) since the next lines will also resize
 		}
 
 		BYTE* sample_data = nullptr;
