@@ -102,28 +102,28 @@ bool kl::Audio::load_from_memory(const byte* data, const uint64_t byte_size)
 
 	this->clear();
 	while (true) {
-		// Read sample
 		DWORD flags = NULL;
 		LONGLONG time_stamp = 0;
 		ComRef<IMFSample> sample;
 		if (FAILED(reader->ReadSample(MF_SOURCE_READER_FIRST_AUDIO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
 			break;
 		}
-
-		// Convert to array
 		ComRef<IMFMediaBuffer> media_buffer;
 		if (FAILED(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
 			break;
 		}
 
-		// Copy data
+	 	const int64_t sample_index = int64_t(time_stamp * 1e-7 * sample_rate);
+		if (sample_index >= (int64_t) this->size()) {
+			this->resize(sample_index + 1);
+		}
+
 		BYTE* sample_data = nullptr;
 		DWORD sample_byte_size = 0;
 		media_buffer->Lock(&sample_data, nullptr, &sample_byte_size) >> verify_result;
 		const int old_size = (int) this->size();
 		this->resize(old_size + (sample_byte_size / sizeof(float)));
 		memcpy(this->data() + old_size, sample_data, sample_byte_size);
-		media_buffer->Unlock() >> verify_result;
 	}
 	return true;
 }
