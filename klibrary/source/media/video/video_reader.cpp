@@ -186,7 +186,5 @@ bool kl::VideoReader::read_frame(Image& out, int* out_index) const
 	if (out_index) {
 		*out_index = int(time_stamp * 1e-7 * m_fps);
 	}
-
-    media_buffer->Unlock() >> verify_result;
     return true;
 }
