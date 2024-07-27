@@ -31,12 +31,6 @@ namespace kl {
         GPU(HWND window, bool debug = false, bool single_threaded = true, bool video_support = false);
         virtual ~GPU();
 
-        GPU(const GPU&) = delete;
-        GPU(GPU&&) = delete;
-
-        void operator=(const GPU&) = delete;
-        void operator=(GPU&&) = delete;
-
         // Get
         dx::Device device() const;
         dx::Context context() const;

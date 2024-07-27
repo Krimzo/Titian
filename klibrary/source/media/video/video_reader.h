@@ -6,7 +6,7 @@
 
 
 namespace kl {
-    class VideoReader
+    class VideoReader : NoCopy
     {
         uint64_t m_byte_size = 0;
         int64_t m_duration = 0;
@@ -22,12 +22,6 @@ namespace kl {
 
     public:
         VideoReader(const std::string& filepath, const Int2& output_size = {}, bool use_gpu = true);
-
-        VideoReader(const VideoReader&) = delete;
-        VideoReader(VideoReader&&) = delete;
-
-        void operator=(const VideoReader&) = delete;
-        void operator=(VideoReader&&) = delete;
 
         uint64_t byte_size() const;
 

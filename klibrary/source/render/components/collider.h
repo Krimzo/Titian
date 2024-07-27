@@ -6,7 +6,7 @@
 #ifdef KL_USING_PHYSX
 
 namespace kl {
-    class Collider
+    class Collider : NoCopy
     {
         physx::PxMaterial* m_material = nullptr;
         physx::PxShape* m_shape = nullptr;
@@ -14,12 +14,6 @@ namespace kl {
     public:
         Collider(physx::PxPhysics* physics, const physx::PxGeometry& geometry);
         virtual ~Collider();
-
-        Collider(const Collider&) = delete;
-        Collider(Collider&&) = delete;
-
-        void operator=(const Collider&) = delete;
-        void operator=(Collider&&) = delete;
 
         // Get
         physx::PxShape* shape() const;

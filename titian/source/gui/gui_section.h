@@ -5,17 +5,11 @@
 
 
 namespace titian {
-	class GUISection : public BenchmarkInfo
+	class GUISection : kl::NoCopy, public BenchmarkInfo
 	{
 	public:
 		GUISection(const String& name);
 		virtual ~GUISection() = default;
-
-		GUISection(const GUISection&) = delete;
-		GUISection(GUISection&&) = delete;
-
-		void operator=(const GUISection&) = delete;
-		void operator=(GUISection&&) = delete;
 
 		virtual void render_gui() = 0;
 	};

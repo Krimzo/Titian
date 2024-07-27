@@ -21,20 +21,14 @@ namespace kl {
 
 // File
 namespace kl {
-    class File
+    class File : NoCopy
     {
         FILE* m_file = nullptr;
 
     public:
         File();
         File(const std::string_view& filepath, bool clear);
-        virtual ~File();
-
-        File(const File&) = delete;
-        File(File&&) = delete;
-
-        void operator=(const File&) = delete;
-        void operator=(File&&) = delete;
+        ~File();
 
         operator bool() const;
 

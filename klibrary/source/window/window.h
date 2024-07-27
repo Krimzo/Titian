@@ -21,7 +21,7 @@ namespace kl::screen {
 }
 
 namespace kl {
-    class Window
+    class Window : NoCopy
     {
         std::string m_name = {};
 
@@ -49,12 +49,6 @@ namespace kl {
         // Creation
         Window(const std::string& name, const Int2& size);
         virtual ~Window();
-
-        Window(const Window&) = delete;
-        Window(Window&&) = delete;
-
-        void operator=(const Window&) = delete;
-        void operator=(Window&&) = delete;
 
         // Methods
         operator HWND() const;

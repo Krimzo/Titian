@@ -15,7 +15,7 @@ namespace titian {
 }
 
 namespace titian {
-    class Entity : public Serializable
+    class Entity : kl::NoCopy, public Serializable
     {
     public:
         const EntityType type;
@@ -30,12 +30,6 @@ namespace titian {
         // Creation
         Entity(EntityType type, px::PxPhysics* physics, bool dynamic);
         ~Entity() override;
-
-        Entity(const Entity&) = delete;
-        Entity(Entity&&) = delete;
-
-        void operator=(const Entity&) = delete;
-        void operator=(Entity&&) = delete;
 
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;

@@ -37,12 +37,12 @@ void titian::Media::store_raw_audio()
 {
 	if (type == MediaType::AUDIO) {
 		if (audio) {
-			out_audio = *audio;
+			out_audio.out_audio = audio->out_audio;
 		}
 	}
 	else if (type == MediaType::VIDEO) {
 		if (audio) {
-			out_audio = *audio;
+			out_audio.out_audio = audio->out_audio;
 		}
 	}
 }

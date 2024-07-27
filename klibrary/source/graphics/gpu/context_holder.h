@@ -5,19 +5,13 @@
 
 
 namespace kl {
-    class ContextHolder
+    class ContextHolder : NoCopy
     {
     protected:
         dx::Context m_context;
 
     public:
         ContextHolder();
-
-        ContextHolder(const ContextHolder&) = delete;
-        ContextHolder(ContextHolder&&) = delete;
-
-        void operator=(const ContextHolder&) = delete;
-        void operator=(ContextHolder&&) = delete;
 
         // Viewport
         void set_viewport_position(const Int2& position) const;

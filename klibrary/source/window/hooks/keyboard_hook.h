@@ -4,17 +4,11 @@
 
 
 namespace kl {
-    class KeyboardHook : public Keyboard
+    class KeyboardHook : NoCopy, public Keyboard
     {
     public:
         KeyboardHook();
         ~KeyboardHook();
-
-        KeyboardHook(const KeyboardHook&) = delete;
-        KeyboardHook(KeyboardHook&&) = delete;
-
-        void operator=(const KeyboardHook&) = delete;
-        void operator=(KeyboardHook&&) = delete;
 
         void process(bool wait = true);
 

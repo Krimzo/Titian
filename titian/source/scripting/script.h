@@ -17,18 +17,12 @@ namespace titian {
 }
 
 namespace titian {
-	class Script : public Serializable
+	class Script : kl::NoCopy, public Serializable
 	{
 	public:
 		const ScriptType type;
 
 		Script(ScriptType type);
-
-		Script(const Script&) = delete;
-		Script(Script&&) = delete;
-
-		void operator=(const Script&) = delete;
-		void operator=(Script&&) = delete;
 
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;

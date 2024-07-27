@@ -25,7 +25,7 @@ namespace titian {
 }
 
 namespace titian {
-    class Scene : public Serializable, public px::PxSimulationEventCallback
+    class Scene : kl::NoCopy, public Serializable, public px::PxSimulationEventCallback
     {
     public:
         Map<String, Ref<Mesh>> meshes;
@@ -45,12 +45,6 @@ namespace titian {
 
         Scene(kl::GPU* gpu);
         ~Scene() override;
-
-        Scene(const Scene&) = delete;
-        Scene(Scene&&) = delete;
-
-        void operator=(const Scene&) = delete;
-        void operator=(Scene&&) = delete;
 
         // Overrides
         void serialize(Serializer* serializer, const void* helper_data) const override;

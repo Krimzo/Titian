@@ -5,19 +5,13 @@
 
 
 namespace kl {
-    class DeviceHolder
+    class DeviceHolder : NoCopy
     {
     protected:
         dx::Device m_device;
 
     public:
         DeviceHolder();
-
-        DeviceHolder(const DeviceHolder&) = delete;
-        DeviceHolder(DeviceHolder&&) = delete;
-
-        void operator=(const DeviceHolder&) = delete;
-        void operator=(DeviceHolder&&) = delete;
 
         // States
         dx::RasterState create_raster_state(const dx::RasterStateDescriptor* descriptor) const;

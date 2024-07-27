@@ -14,7 +14,7 @@ namespace titian {
 }
 
 namespace titian {
-	class Media
+	class Media : kl::NoCopy
 	{
 	public:
 		String name;
@@ -32,12 +32,6 @@ namespace titian {
 		Audio out_audio;
 
 		Media();
-
-		Media(const Media&) = delete;
-		Media(Media&&) = delete;
-
-		void operator=(const Media&) = delete;
-		void operator=(Media&&) = delete;
 
 		void store_frame(float time);
 		void store_audio();

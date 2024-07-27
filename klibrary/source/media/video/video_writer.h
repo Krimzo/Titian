@@ -4,7 +4,7 @@
 
 
 namespace kl {
-    class VideoWriter
+    class VideoWriter : NoCopy
     {
         const GUID m_output_format;
         const GUID m_input_format = MFVideoFormat_RGB32;
@@ -24,12 +24,6 @@ namespace kl {
 
     public:
         VideoWriter(const std::string& filepath, const GUID& output_format, const Int2& frame_size, int fps, int video_bit_rate, int audio_sample_rate);
-
-        VideoWriter(const VideoWriter&) = delete;
-        VideoWriter(VideoWriter&&) = delete;
-
-        void operator=(const VideoWriter&) = delete;
-        void operator=(VideoWriter&&) = delete;
 
         GUID output_format() const;
         Int2 frame_size() const;

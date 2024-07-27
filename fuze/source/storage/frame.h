@@ -4,7 +4,7 @@
 
 
 namespace titian {
-	class Frame
+	class Frame : kl::NoCopy
 	{
 	public:
 		dx::Texture texture;
@@ -12,12 +12,6 @@ namespace titian {
 		dx::AccessView access_view;
 
 		Frame();
-
-		Frame(const Frame&) = delete;
-		Frame(Frame&&) = delete;
-
-		void operator=(const Frame&) = delete;
-		void operator=(Frame&&) = delete;
 
 		void upload(const RAWImage& image);
 		void retrieve(RAWImage& image) const;

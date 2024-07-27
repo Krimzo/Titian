@@ -4,12 +4,13 @@
 
 
 namespace titian {
-	class Video
+	class Video : kl::NoCopy
 	{
 	public:
 		RAWImage out_frame;
 
 		Video(const String& path);
+		~Video();
 
 		float duration() const;
 
@@ -23,5 +24,7 @@ namespace titian {
 		float m_fps = 0.0f;
 
 		Map<int, Vector<byte>> m_frames;
+		std::mutex m_frames_lock;
+		std::thread m_thread;
 	};
 }

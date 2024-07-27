@@ -4,17 +4,11 @@
 
 
 namespace titian {
-	class Layer : public BenchmarkInfo
+	class Layer : kl::NoCopy, public BenchmarkInfo
 	{
 	public:
 		Layer(const String& name);
 		virtual ~Layer() = default;
-
-		Layer(const Layer&) = delete;
-		Layer(Layer&&) = delete;
-
-		void operator=(const Layer&) = delete;
-		void operator=(Layer&&) = delete;
 
 		virtual bool update() = 0;
 

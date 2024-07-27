@@ -75,8 +75,8 @@ void titian::GUISectionVideoTimeline::render_gui()
 							Ref media = new Media();
 							media->audio = new Audio();
 
-							*media->audio = *video_layer->selected_media->audio;
-							video_layer->selected_media->audio->audio.clear();
+							media->audio->out_audio = video_layer->selected_media->audio->out_audio;
+							video_layer->selected_media->audio->out_audio.clear();
 
 							media->duration = media->audio->duration();
 							media->type = MediaType::AUDIO;

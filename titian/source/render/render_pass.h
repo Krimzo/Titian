@@ -5,17 +5,11 @@
 
 
 namespace titian {
-	class RenderPass : public BenchmarkInfo
+	class RenderPass : kl::NoCopy, public BenchmarkInfo
 	{
 	public:
 		RenderPass(const String& name);
 		virtual ~RenderPass() = default;
-
-		RenderPass(const RenderPass&) = delete;
-		RenderPass(RenderPass&&) = delete;
-
-		void operator=(const RenderPass&) = delete;
-		void operator=(RenderPass&&) = delete;
 
 		void process();
 

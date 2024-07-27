@@ -17,7 +17,7 @@ namespace kl {
 }
 
 namespace kl {
-    class Socket
+    class Socket : NoCopy
     {
     public:
         using ID = uint64_t;
@@ -30,12 +30,6 @@ namespace kl {
     public:
         Socket(bool udp);
         ~Socket();
-
-        Socket(const Socket&) = delete;
-        Socket(Socket&&) = delete;
-
-        void operator=(const Socket&) = delete;
-        void operator=(Socket&&) = delete;
 
         // Properties
         ID id() const;

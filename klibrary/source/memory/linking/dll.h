@@ -6,7 +6,7 @@
 
 
 namespace kl {
-    class DLL
+    class DLL : NoCopy
     {
     public:
         template<typename Return, typename... Args>
@@ -19,13 +19,7 @@ namespace kl {
     public:
         DLL();
         DLL(const std::string& path);
-        virtual ~DLL();
-
-        DLL(const DLL&) = delete;
-        DLL(DLL&&) = delete;
-
-        void operator=(const DLL&) = delete;
-        void operator=(DLL&&) = delete;
+        ~DLL();
 
         operator bool() const;
 

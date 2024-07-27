@@ -9,7 +9,7 @@ namespace titian {
 }
 
 namespace titian {
-	class Image
+	class Image : kl::NoCopy
 	{
 	public:
 		RAWImage out_frame;

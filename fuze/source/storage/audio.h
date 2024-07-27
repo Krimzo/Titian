@@ -9,10 +9,10 @@ namespace titian {
 }
 
 namespace titian {
-	class Audio
+	class Audio : kl::NoCopy
 	{
 	public:
-		RAWAudio audio;
+		RAWAudio out_audio;
 
 		Audio();
 		Audio(const String& path);

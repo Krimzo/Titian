@@ -13,12 +13,6 @@ namespace kl {
         FrameBuffer();
         FrameBuffer(const Int2& size);
 
-        FrameBuffer(const FrameBuffer&) = delete;
-        FrameBuffer(FrameBuffer&&) = delete;
-
-        void operator=(const FrameBuffer&) = delete;
-        void operator=(FrameBuffer&&) = delete;
-
         void resize(const Int2& size);
         Int2 size() const;
 

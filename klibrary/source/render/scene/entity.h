@@ -8,7 +8,7 @@
 #ifdef KL_USING_PHYSX
 
 namespace kl {
-    class Entity
+    class Entity : NoCopy
     {
         physx::PxRigidActor* m_physics_actor = nullptr;
         Object<Collider> m_collider = nullptr;
@@ -26,12 +26,6 @@ namespace kl {
         // Creation
         Entity(physx::PxPhysics* physics, bool dynamic);
         virtual ~Entity();
-
-        Entity(const Entity&) = delete;
-        Entity(Entity&&) = delete;
-
-        void operator=(const Entity&) = delete;
-        void operator=(Entity&&) = delete;
 
         // Get
         physx::PxRigidActor* actor() const;

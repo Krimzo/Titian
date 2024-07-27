@@ -40,3 +40,26 @@
 // Old-C
 #include <ctime>
 #include <cstdint>
+
+
+namespace kl {
+	class NoCopy
+	{
+	protected:
+		NoCopy() = default;
+	private:
+		NoCopy(const NoCopy&) = delete;
+		void operator=(const NoCopy&) = delete;
+	};
+}
+
+namespace kl {
+	class NoMove
+	{
+	protected:
+		NoMove() = default;
+	private:
+		NoMove(NoMove&&) = delete;
+		void operator=(NoMove&&) = delete;
+	};
+}

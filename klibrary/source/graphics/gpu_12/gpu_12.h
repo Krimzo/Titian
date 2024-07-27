@@ -7,7 +7,7 @@
 
 
 namespace kl {
-	class GPU12 : public ShaderCompiler
+	class GPU12 : NoCopy, public ShaderCompiler
 	{
 	public:
 		static constexpr UINT BACK_BUFFER_COUNT = 2;
@@ -37,12 +37,6 @@ namespace kl {
 		GPU12Fence fence{};
 
 		GPU12(HWND window, bool debug = false);
-
-		GPU12(const GPU12&) = delete;
-		GPU12(GPU12&&) = delete;
-
-		void operator=(const GPU12&) = delete;
-		void operator=(GPU12&&) = delete;
 
 		dx12::Device device() const;
 		dx12::SwapChain chain() const;

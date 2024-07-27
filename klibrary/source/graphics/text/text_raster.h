@@ -19,7 +19,7 @@ namespace kl {
 }
 
 namespace kl {
-	class TextRaster
+	class TextRaster : NoCopy
 	{
 	protected:
 		ComRef<ID2D1Factory> m_d2d1_factory{};
@@ -29,17 +29,8 @@ namespace kl {
 	public:
 		std::vector<Text> text_data{};
 
-		// Init
 		TextRaster();
 
-		// Copy
-		TextRaster(const TextRaster&) = delete;
-		TextRaster(TextRaster&&) = delete;
-
-		void operator=(const TextRaster&) = delete;
-		void operator=(TextRaster&&) = delete;
-
-		// Create
 		TextFormat create_text_format(
 			const std::wstring_view& font_family,
 			DWRITE_FONT_WEIGHT font_weight,
@@ -48,7 +39,6 @@ namespace kl {
 			const std::wstring_view& locale = L"en-us"
 		) const;
 
-		// Draw
 		void draw_text(UINT target_index) const;
 	};
 }

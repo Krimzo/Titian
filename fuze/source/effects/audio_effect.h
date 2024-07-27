@@ -4,17 +4,10 @@
 
 
 namespace titian {
-	class AudioEffect
+	class AudioEffect : kl::NoCopy
 	{
 	public:
 		AudioEffect() = default;
-
-		AudioEffect(const AudioEffect&) = delete;
-		AudioEffect(AudioEffect&&) = delete;
-
-		void operator=(const AudioEffect&) = delete;
-		void operator=(AudioEffect&&) = delete;
-
 		virtual void apply(Audio& audio) const = 0;
 	};
 }

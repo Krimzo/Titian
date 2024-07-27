@@ -4,17 +4,11 @@
 
 
 namespace kl {
-    class MouseHook : public Mouse
+    class MouseHook : NoCopy, public Mouse
     {
     public:
         MouseHook();
         ~MouseHook();
-
-        MouseHook(const MouseHook&) = delete;
-        MouseHook(MouseHook&&) = delete;
-
-        void operator=(const MouseHook&) = delete;
-        void operator=(MouseHook&&) = delete;
 
         void process(bool wait = true);
 

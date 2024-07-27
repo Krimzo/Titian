@@ -7,7 +7,7 @@
 
 
 namespace kl {
-    class DirectionalLight
+    class DirectionalLight : NoCopy
     {
     public:
         static constexpr UINT CASCADE_COUNT = 4;
@@ -22,12 +22,6 @@ namespace kl {
         float point_size = 1.0f;
 
         DirectionalLight(GPU* gpu, UINT map_resolution);
-
-        DirectionalLight(const DirectionalLight&) = delete;
-        DirectionalLight(DirectionalLight&&) = delete;
-
-        void operator=(const DirectionalLight&) = delete;
-        void operator=(DirectionalLight&&) = delete;
 
         void set_direction(const Float3& direction);
         Float3 direction() const;

@@ -11,7 +11,7 @@
 #ifdef KL_USING_PHYSX
 
 namespace kl {
-    class Scene
+    class Scene : NoCopy
     {
         static physx::PxDefaultAllocator m_allocator;
         static physx::PxDefaultErrorCallback m_error_callback;
@@ -38,12 +38,6 @@ namespace kl {
         // Creation
         Scene();
         virtual ~Scene();
-
-        Scene(const Scene&) = delete;
-        Scene(Scene&&) = delete;
-
-        void operator=(const Scene&) = delete;
-        void operator=(Scene&&) = delete;
 
         // Iterate
         std::map<std::string, Object<Entity>>::iterator begin();
