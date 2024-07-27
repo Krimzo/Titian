@@ -29,17 +29,19 @@ void titian::Video::cache_frames(const Int2& size)
 			kl::VideoReader reader(m_path, size, true);
 			Map<int, Vector<byte>> temp_frames;
 
-			int index = core * frames_per_core + 0;
+			const int start_index = core * frames_per_core;
+			const int end_index = (core + 1) * frames_per_core;
 
 			RAWImage frame;
-			if (!reader.get_frame(index / m_fps, frame)) {
-				return;
+			if (start_index > 0) {
+				reader.seek(start_index / m_fps);
 			}
-			frame.save_to_vector(&temp_frames[index], RAWImageType::JPG);
-
-			for (int i = 1; i < frames_per_core; i++) {
-				index = core * frames_per_core + i;
-				if (!reader.read_frame(frame)) {
+			while (true) {
+				int index = -1;
+				if (!reader.read_frame(frame, &index)) {
+					break;
+				}
+				if (index > end_index) {
 					break;
 				}
 				frame.save_to_vector(&temp_frames[index], RAWImageType::JPG);

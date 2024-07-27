@@ -38,7 +38,7 @@ namespace kl {
         int frame_count() const;
         float fps() const;
 
-        bool read_frame(Image& out) const;
-        bool get_frame(float time, Image& out) const;
+        void seek(float time) const;
+        bool read_frame(Image& out, int* out_index = nullptr) const;
     };
 }

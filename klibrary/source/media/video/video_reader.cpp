@@ -146,7 +146,16 @@ float kl::VideoReader::fps() const
     return m_fps;
 }
 
-bool kl::VideoReader::read_frame(Image& out) const
+void kl::VideoReader::seek(const float time) const
+{
+    PROPVARIANT time_var;
+    PropVariantInit(&time_var);
+    time_var.vt = VT_I8;
+    time_var.hVal.QuadPart = LONGLONG(time * 1e7);
+    m_reader->SetCurrentPosition(GUID_NULL, time_var);
+}
+
+bool kl::VideoReader::read_frame(Image& out, int* out_index) const
 {
     DWORD flags = NULL;
     LONGLONG time_stamp = 0;
@@ -174,59 +183,10 @@ bool kl::VideoReader::read_frame(Image& out) const
         frame_target[i].g = frame_source[i].g;
         frame_target[i].b = frame_source[i].b;
     });
-
-    media_buffer->Unlock() >> verify_result;
-    return true;
-}
-
-bool kl::VideoReader::get_frame(const float time, Image& out) const
-{
-    const INT64 time_100ns = INT64(time * 1e7);
-    if (time_100ns < 0 || time_100ns > m_duration) {
-		return false;
+	if (out_index) {
+		*out_index = int(time_stamp * 1e-7 * m_fps);
 	}
 
-    PROPVARIANT time_var;
-    PropVariantInit(&time_var);
-    time_var.vt = VT_I8;
-    time_var.hVal.QuadPart = time_100ns;
-    if (FAILED(m_reader->SetCurrentPosition(GUID_NULL, time_var))) {
-        return false;
-    }
-
-    ComRef<IMFSample> sample;
-    while (true) {
-        DWORD flags = NULL;
-        LONGLONG time_stamp = 0;
-        if (FAILED(m_reader->ReadSample(MF_SOURCE_READER_FIRST_VIDEO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample)) || !sample) {
-            return false;
-        }
-        if (time_stamp >= time_100ns) {
-            break;
-        }
-    }
-
-    ComRef<IMFMediaBuffer> media_buffer;
-    if (FAILED(sample->ConvertToContiguousBuffer(&media_buffer)) || !media_buffer) {
-        return false;
-    }
-
-    BYTE* frame_data = nullptr;
-    DWORD frame_byte_size = 0;
-    media_buffer->Lock(&frame_data, nullptr, &frame_byte_size) >> verify_result;
-
-    out.resize(m_frame_size);
-    const Color* frame_source = (Color*) frame_data;
-    Color* frame_target = out;
-
-    kl::async_for(0, out.width() * out.height(), [&](const int i)
-    {
-        frame_target[i].r = frame_source[i].r;
-        frame_target[i].g = frame_source[i].g;
-        frame_target[i].b = frame_source[i].b;
-    });
-
     media_buffer->Unlock() >> verify_result;
-	PropVariantClear(&time_var);
     return true;
 }
