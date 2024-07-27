@@ -86,8 +86,8 @@ dx::ShaderView titian::DirectionalLight::shader_view(const uint32_t cascade_inde
 titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const uint32_t cascade_index) const
 {
     const Float2 old_camera_planes = { camera->near_plane, camera->far_plane };
-    camera->near_plane = kl::unwrap(CASCADE_SPLITS[cascade_index + 0], old_camera_planes.x, old_camera_planes.y);
-    camera->far_plane = kl::unwrap(CASCADE_SPLITS[cascade_index + 1], old_camera_planes.x, old_camera_planes.y);
+    camera->near_plane = kl::lerp(CASCADE_SPLITS[cascade_index + 0], old_camera_planes.x, old_camera_planes.y);
+    camera->far_plane = kl::lerp(CASCADE_SPLITS[cascade_index + 1], old_camera_planes.x, old_camera_planes.y);
     const Float4x4 inverse_camera_matrix = kl::inverse(camera->camera_matrix());
     camera->near_plane = old_camera_planes.x;
     camera->far_plane = old_camera_planes.y;

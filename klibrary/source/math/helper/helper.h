@@ -51,26 +51,31 @@ namespace kl {
         return T(std::atan(value) * TO_DEGREES);
     }
 
-    // Wrap
-    template<typename T>
-    constexpr T wrap(T value, T lower, T upper)
-    {
-        value = (value - lower) / (upper - lower);
-        value = std::clamp(value, T(0), T(1));
-        return value;
-    }
-
-    template<typename T>
-    constexpr T unwrap(T value, T lower, T upper)
-    {
-        value = (upper - lower) * value + lower;
-        return std::clamp(value, lower, upper);
-    }
-
+    // Clamp
     template<typename T>
     constexpr T clamp(T value, T lower, T upper)
     {
         return std::clamp(value, lower, upper);
+    }
+
+    template<typename T, bool Clamp = true>
+    constexpr T lerp(T value, T lower, T upper)
+    {
+        value = lower + (upper - lower) * value;
+        if constexpr (Clamp) {
+            value = clamp(value, lower, upper);
+        }
+        return value;
+    }
+
+    template<typename T, bool Clamp = true>
+    constexpr T unlerp(T value, T lower, T upper)
+    {
+        value = (value - lower) / (upper - lower);
+        if constexpr (Clamp) {
+            value = clamp(value, T(0), T(1));
+        }
+        return value;
     }
 
     // Apply

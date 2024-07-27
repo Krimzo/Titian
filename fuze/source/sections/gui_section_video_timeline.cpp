@@ -202,13 +202,13 @@ void titian::GUISectionVideoTimeline::render_gui()
 				
 				const ImVec2 mouse_pos = im::GetMousePos();
 				if (!video_layer->playing() && !m_moving_media && ImRect(col_min, col_max).Contains(mouse_pos) && im::IsMouseDown(ImGuiMouseButton_Left)) {
-					video_layer->current_time = horizontal_offset + horizontal_view * kl::wrap(mouse_pos.x, col_min.x, col_max.x);
+					video_layer->current_time = horizontal_offset + horizontal_view * kl::unlerp(mouse_pos.x, col_min.x, col_max.x);
 				}
 
 				draw_list->AddLine(ImVec2(col_min.x, col_middle), ImVec2(col_max.x, col_middle), ImColor(75, 75, 75), 1.0f);
 
 				for (int i = (int) horizontal_offset; i < int(horizontal_offset + horizontal_view); i++) {
-					const float x = col_min.x + col_width * kl::wrap(float(i), horizontal_offset, horizontal_offset + horizontal_view);
+					const float x = col_min.x + col_width * kl::unlerp(float(i), horizontal_offset, horizontal_offset + horizontal_view);
 					if (x <= col_min.x || x > col_max.x)
 						continue;
 
@@ -315,18 +315,19 @@ void titian::GUISectionVideoTimeline::render_gui()
 						if (media_end < min_time || media_start > max_time)
 							continue;
 
-						const float left_x = kl::unwrap(kl::wrap(media_start, min_time, max_time), col_min.x, col_max.x);
-						const float right_x = kl::unwrap(kl::wrap(media_end, min_time, max_time), col_min.x, col_max.x);
+						const float left_x = kl::lerp(kl::unlerp(media_start, min_time, max_time), col_min.x, col_max.x);
+						const float right_x = kl::lerp(kl::unlerp(media_end, min_time, max_time), col_min.x, col_max.x);
 						if (!video_layer->playing() && !m_moving_media && im::IsWindowFocused() && im::IsMouseClicked(ImGuiMouseButton_Left)) {
 							const ImVec2 mouse_pos = im::GetMousePos();
 							if (ImRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y)).Contains(mouse_pos)) {
+								const float left_x_offset = kl::lerp<float, false>(kl::unlerp<float, false>(media_start, min_time, max_time), col_min.x, col_max.x);
 								MovingMediaInfo info{};
 								info.track_index = i;
 								info.media = media;
 								info.horiz_offset = horizontal_offset;
 								info.offset = offset;
 								info.old_mouse = mouse_pos;
-								info.mouse_offset = mouse_pos - ImVec2(left_x, col_min.y);
+								info.mouse_offset = mouse_pos - ImVec2(left_x_offset, col_min.y);
 								m_moving_media = info;
 							}
 						}
@@ -351,7 +352,7 @@ void titian::GUISectionVideoTimeline::render_gui()
 						}
 						
 						if (m_moving_media && m_moving_media.value().media == media) {
-							const float width = col_width * kl::wrap(media->duration, 0.0f, horizontal_view);
+							const float width = col_width * kl::unlerp(media->duration, 0.0f, horizontal_view);
 							const float height = col_max.y - col_min.y;
 							const ImVec2 top_left = im::GetMousePos() - m_moving_media.value().mouse_offset;
 							const ImVec2 bottom_right = top_left + ImVec2(width, height);
@@ -382,7 +383,7 @@ void titian::GUISectionVideoTimeline::render_gui()
 			/* POINTER */
 			{
 				const float x = total_min.x + (total_max.x - total_min.x) *
-					kl::wrap(video_layer->current_time, horizontal_offset, horizontal_offset + horizontal_view);
+					kl::unlerp(video_layer->current_time, horizontal_offset, horizontal_offset + horizontal_view);
 				if (x > total_min.x && x < total_max.x) {
 					const ImColor color{ 255, 255, 255 };
 					draw_list->AddLine(ImVec2(x, total_min.y), ImVec2(x, total_max.y), color, 1.0f);

@@ -1552,11 +1552,11 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["line_x"] = "Calculates line x.";
 	INTERP_SCRIPT_IDENTIFIERS["line_y"] = "Calculates line y.";
 
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::wrap<float>), "wrap");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::unwrap<float>), "unwrap");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::lerp<float>), "lerp");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::unlerp<float>), "unlerp");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::clamp<float>), "clamp");
-	INTERP_SCRIPT_IDENTIFIERS["wrap"] = "Wraps the given value to the range [0, 1].";
-	INTERP_SCRIPT_IDENTIFIERS["unwrap"] = "Unwraps the given value to the defined range.";
+	INTERP_SCRIPT_IDENTIFIERS["lerp"] = "Lerps the given value to the range [lower, upper].";
+	INTERP_SCRIPT_IDENTIFIERS["unlerp"] = "Unlerps the given value to the range [0, 1].";
 	INTERP_SCRIPT_IDENTIFIERS["clamp"] = "Clamps the given value between the given min and max.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun<Quaternion (*)(const Float3&)>(&kl::to_quaternion<float>), "to_quaternion");
