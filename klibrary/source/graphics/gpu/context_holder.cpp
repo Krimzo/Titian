@@ -125,7 +125,7 @@ void kl::ContextHolder::copy_resource(const dx::Resource& destination, const dx:
     m_context->CopyResource(destination.get(), source.get());
 }
 
-void kl::ContextHolder::copy_resource_region(const dx::Resource& destination, const dx::Resource& source, const kl::Int2& src_min, const kl::Int2& src_max, const kl::Int2& dst) const
+void kl::ContextHolder::copy_resource_region(const dx::Resource& destination, const dx::Resource& source, const Int2& src_min, const Int2& src_max, const Int2& dst) const
 {
     D3D11_BOX source_box{};
     source_box.left = src_min.x;

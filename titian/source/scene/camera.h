@@ -29,7 +29,7 @@ namespace titian {
         float sensitivity = 0.1f;
         float speed = 2.0f;
 
-        Color background = {};
+        kl::Color background = {};
         Float4x4 custom_data = {};
 
         String skybox_name = "/";

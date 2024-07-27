@@ -82,8 +82,8 @@ void titian::GUISectionScriptingParameters::display_parameter_editor(const int s
 		const String identifier = kl::format(name, "##", script_id);
 		im::DragFloat4(identifier.c_str(), (float*) ptr);
 	}
-	else if (type == typeid(Color)) {
-		Color* color_ptr = (Color*) ptr;
+	else if (type == typeid(kl::Color)) {
+		kl::Color* color_ptr = (kl::Color*) ptr;
 		Float4 color_as_float = *color_ptr;
 		const String identifier = kl::format(name, "##", script_id);
 		if (im::ColorEdit4(identifier.c_str(), color_as_float)) {

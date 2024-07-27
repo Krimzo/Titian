@@ -23,7 +23,7 @@ void titian::Camera::serialize(Serializer* serializer, const void* helper_data) 
     serializer->write_object<Float3>(m_forward);
     serializer->write_object<Float3>(m_up);
 
-    serializer->write_object<Color>(background);
+    serializer->write_object<kl::Color>(background);
     serializer->write_object<Float4x4>(custom_data);
 
     serializer->write_string(skybox_name);
@@ -48,7 +48,7 @@ void titian::Camera::deserialize(const Serializer* serializer, const void* helpe
     serializer->read_object<Float3>(m_forward);
     serializer->read_object<Float3>(m_up);
 
-    serializer->read_object<Color>(background);
+    serializer->read_object<kl::Color>(background);
     serializer->read_object<Float4x4>(custom_data);
 
     serializer->read_string(skybox_name);

@@ -34,10 +34,6 @@ namespace titian {
 	using Complex = kl::Complex<float>;
 	using Quaternion = kl::Quaternion<float>;
 
-	using Color = kl::Color;
-	using Image = kl::Image;
-	using Audio = kl::Audio;
-
 	using String = std::string;
 	using StringStream = std::stringstream;
 

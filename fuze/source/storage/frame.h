@@ -19,8 +19,8 @@ namespace titian {
 		void operator=(const Frame&) = delete;
 		void operator=(Frame&&) = delete;
 
-		void upload(const Image& image);
-		void retrieve(Image& image) const;
+		void upload(const RAWImage& image);
+		void retrieve(RAWImage& image) const;
 
 		Int2 size() const;
 		void resize(const Int2& size);

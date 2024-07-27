@@ -104,7 +104,9 @@
     <ClCompile Include="source\sections\gui_section_video_main_menu.cpp" />
     <ClCompile Include="source\sections\gui_section_video_render.cpp" />
     <ClCompile Include="source\sections\gui_section_video_timeline.cpp" />
+    <ClCompile Include="source\storage\audio.cpp" />
     <ClCompile Include="source\storage\frame.cpp" />
+    <ClCompile Include="source\storage\image.cpp" />
     <ClCompile Include="source\storage\video.cpp" />
     <ClCompile Include="source\track\media.cpp" />
     <ClCompile Include="source\track\track.cpp" />
@@ -120,7 +122,9 @@
     <ClInclude Include="source\sections\gui_section_video_main_menu.h" />
     <ClInclude Include="source\sections\gui_section_video_render.h" />
     <ClInclude Include="source\sections\gui_section_video_timeline.h" />
+    <ClInclude Include="source\storage\audio.h" />
     <ClInclude Include="source\storage\frame.h" />
+    <ClInclude Include="source\storage\image.h" />
     <ClInclude Include="source\storage\video.h" />
     <ClInclude Include="source\track\media.h" />
     <ClInclude Include="source\track\track.h" />

@@ -10,7 +10,7 @@ namespace titian {
 		// jpg has really good compression but isn't lossless
 		// png is lossless but the compression isn't as good
 		static constexpr kl::ImageType COMPRESSION_TYPE = kl::ImageType::JPG;
-		using Data = Image;
+		using Data = kl::Image;
 
 		Data data_buffer = {};
 		dx::Texture graphics_buffer;

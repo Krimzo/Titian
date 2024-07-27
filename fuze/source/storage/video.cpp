@@ -10,7 +10,7 @@ titian::Video::Video(const String& path)
 	m_fps = temp_reader.fps();
 }
 
-float titian::Video::duration_seconds() const
+float titian::Video::duration() const
 {
 	return m_duration;
 }
@@ -31,18 +31,18 @@ void titian::Video::cache_frames(const Int2& size)
 
 			int index = core * frames_per_core + 0;
 
-			Image frame;
+			RAWImage frame;
 			if (!reader.get_frame(index / m_fps, frame)) {
 				return;
 			}
-			frame.save_to_vector(&temp_frames[index], kl::ImageType::JPG);
+			frame.save_to_vector(&temp_frames[index], RAWImageType::JPG);
 
 			for (int i = 1; i < frames_per_core; i++) {
 				index = core * frames_per_core + i;
 				if (!reader.read_frame(frame)) {
 					break;
 				}
-				frame.save_to_vector(&temp_frames[index], kl::ImageType::JPG);
+				frame.save_to_vector(&temp_frames[index], RAWImageType::JPG);
 			}
 
 			lock.lock();
@@ -53,12 +53,10 @@ void titian::Video::cache_frames(const Int2& size)
 	queue.finalize();
 }
 
-bool titian::Video::get_frame(const float time, Image& out)
+void titian::Video::store_frame(const float time)
 {
 	const int frame_index = int(time * m_fps);
-	if (!m_frames.contains(frame_index)) {
-		return false;
+	if (m_frames.contains(frame_index)) {
+		out_frame.load_from_vector(m_frames[frame_index]);
 	}
-	out.load_from_vector(m_frames[frame_index]);
-	return true;
 }

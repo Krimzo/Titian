@@ -47,7 +47,7 @@ bool titian::Texture::reload_as_cube()
 	}
 
 	const int part_size = data_buffer.width() / 4;
-	const Image box_sides[6] = {
+	const kl::Image box_sides[6] = {
 		data_buffer.rectangle(Int2(1, 1) * part_size, Int2(2, 2) * part_size),
 		data_buffer.rectangle(Int2(3, 1) * part_size, Int2(4, 2) * part_size),
 		data_buffer.rectangle(Int2(0, 1) * part_size, Int2(1, 2) * part_size),

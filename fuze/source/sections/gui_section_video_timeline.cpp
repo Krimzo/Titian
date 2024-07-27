@@ -70,15 +70,15 @@ void titian::GUISectionVideoTimeline::render_gui()
 								}
 							}
 						}
-						if (!video_layer->selected_media->audio->empty()) {
+						if (video_layer->selected_media->audio->duration() > 0.0f) {
 							auto& track = video_layer->tracks[next_track_index];
 							Ref media = new Media();
 							media->audio = new Audio();
 
 							*media->audio = *video_layer->selected_media->audio;
-							video_layer->selected_media->audio->clear();
+							video_layer->selected_media->audio->audio.clear();
 
-							media->duration = media->audio->duration_seconds();
+							media->duration = media->audio->duration();
 							media->type = MediaType::AUDIO;
 							media->name = video_layer->selected_media->name;
 							track->insert_media(media_offset, media);

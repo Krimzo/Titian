@@ -27,7 +27,7 @@ void titian::SandboxPieceCubes::setup_self()
 
             // Material
             Ref material = new Material();
-            material->color = Color(214, 156, 86);
+            material->color = kl::Color(214, 156, 86);
             material->reflection_factor = cube_counter / static_cast<float>(size * size);
             scene->materials[material_name] = material;
 

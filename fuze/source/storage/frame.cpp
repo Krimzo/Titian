@@ -4,21 +4,21 @@
 titian::Frame::Frame()
 {}
 
-void titian::Frame::upload(const Image& image)
+void titian::Frame::upload(const RAWImage& image)
 {
-    if (image.width() == 0 || image.height() == 0) {
+    if (image.width() <= 0 || image.height() <= 0) {
         return;
     }
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-	gpu->write_to_texture(m_staging_texture, image, image.size(), sizeof(Color), false);
+	gpu->write_to_texture(m_staging_texture, image, image.size(), sizeof(kl::Color), false);
 	gpu->copy_resource(texture, m_staging_texture);
 }
 
-void titian::Frame::retrieve(Image& image) const
+void titian::Frame::retrieve(RAWImage& image) const
 {
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     gpu->copy_resource(m_staging_texture, texture);
-    gpu->read_from_texture(image, m_staging_texture, image.size(), sizeof(Color));
+    gpu->read_from_texture(image, m_staging_texture, image.size(), sizeof(kl::Color));
 }
 
 titian::Int2 titian::Frame::size() const

@@ -4,65 +4,57 @@
 titian::Media::Media()
 {}
 
-bool titian::Media::get_frame(const float time)
+void titian::Media::store_frame(const float time)
 {
-	if (!get_raw_frame(time, out_frame)) {
-		return false;
-	}
-	apply_image_effects(time, out_frame);
-	return true;
+	store_raw_frame(time);
+	apply_image_effects(time);
 }
 
-void titian::Media::get_audio()
+void titian::Media::store_audio()
 {
-	get_raw_audio(out_audio);
-	apply_audio_effects(out_audio);
+	store_raw_audio();
+	apply_audio_effects();
 }
 
-bool titian::Media::get_raw_frame(const float time, Frame& out)
+void titian::Media::store_raw_frame(const float time)
 {
 	if (type == MediaType::IMAGE) {
 		if (image) {
-			out.resize(image->size());
-			out.upload(*image);
-			return true;
+			out_frame.resize(image->out_frame.size());
+			out_frame.upload(image->out_frame);
 		}
 	}
 	else if (type == MediaType::VIDEO) {
 		if (video) {
-			Image temp;
-			if (video->get_frame(time, temp)) {
-				out.resize(temp.size());
-				out.upload(temp);
-				return true;
-			}
+			video->store_frame(time);
+			out_frame.resize(video->out_frame.size());
+			out_frame.upload(video->out_frame);
 		}
 	}
-	return false;
 }
 
-void titian::Media::get_raw_audio(Audio& out)
+void titian::Media::store_raw_audio()
 {
 	if (type == MediaType::AUDIO) {
 		if (audio) {
-			out = *audio;
+			out_audio = *audio;
 		}
 	}
 	else if (type == MediaType::VIDEO) {
 		if (audio) {
-			out = *audio;
+			out_audio = *audio;
 		}
 	}
 }
 
-void titian::Media::apply_image_effects(const float time, Frame& out) const
+void titian::Media::apply_image_effects(const float time)
 {
 	for (const auto& effect : image_effects)
-		effect->apply(time, out);
+		effect->apply(time, out_frame);
 }
 
-void titian::Media::apply_audio_effects(Audio& out) const
+void titian::Media::apply_audio_effects()
 {
 	for (const auto& effect : audio_effects)
-		effect->apply(out);
+		effect->apply(out_audio);
 }

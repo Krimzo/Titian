@@ -61,6 +61,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)chaiscript\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)titian\package\" "$(LocalDebuggerWorkingDirectory)package\" /S /Y
@@ -91,6 +92,7 @@ xcopy "$(SolutionDir)imgui\imgui.ini" "$(LocalDebuggerWorkingDirectory)" /S /Y
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)chaiscript\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)titian\package\" "$(LocalDebuggerWorkingDirectory)package\" /S /Y

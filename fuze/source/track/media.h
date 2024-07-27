@@ -39,14 +39,14 @@ namespace titian {
 		void operator=(const Media&) = delete;
 		void operator=(Media&&) = delete;
 
-		bool get_frame(float time);
-		void get_audio();
+		void store_frame(float time);
+		void store_audio();
 
 	private:
-		bool get_raw_frame(float time, Frame& out);
-		void get_raw_audio(Audio& out);
+		void store_raw_frame(float time);
+		void store_raw_audio();
 
-		void apply_image_effects(float time, Frame& out) const;
-		void apply_audio_effects(Audio& out) const;
+		void apply_image_effects(float time);
+		void apply_audio_effects();
 	};
 }

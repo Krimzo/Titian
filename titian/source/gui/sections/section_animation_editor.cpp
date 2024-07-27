@@ -13,7 +13,7 @@ titian::GUISectionAnimationEditor::GUISectionAnimationEditor()
 
     sun_direction = kl::normalize(Float3(-0.5f, -0.75f, 1.0f));
 
-    camera->background = Color{ 30, 30, 30 };
+    camera->background = kl::Color{ 30, 30, 30 };
     camera->set_position({ -0.34f, 0.18f, -0.94f });
     camera->speed = 3.1f;
 

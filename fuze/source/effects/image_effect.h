@@ -1,5 +1,6 @@
 #pragma once
 
+#include "storage/image.h"
 #include "storage/frame.h"
 
 

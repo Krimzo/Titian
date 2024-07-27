@@ -35,22 +35,40 @@ void titian::GUISectionVideoMainMenu::render_gui()
             if (im::BeginMenu("Import")) {
                 if (im::MenuItem("Image")) {
                     if (Optional file = kl::choose_file(false, { { "Image File",  FILE_EXTENSION_JPG }, { "Image File",  FILE_EXTENSION_PNG }, { "Image File",  FILE_EXTENSION_BMP } })) {
-                        Layers::get<VideoLayer>()->load_image(file.value());
+                        video_layer->load_image(file.value());
                     }
                 }
                 if (im::MenuItem("Audio")) {
                     if (Optional file = kl::choose_file(false, { { "Audio File",  ".mp3" }, { "Audio File",  ".wav" } })) {
-                        Layers::get<VideoLayer>()->load_audio(file.value());
+                        video_layer->load_audio(file.value());
                     }
                 }
                 if (im::MenuItem("Video")) {
                     if (Optional file = kl::choose_file(false, { { "Video File",  ".mp4" } })) {
-                        Layers::get<VideoLayer>()->load_video(file.value());
+                        video_layer->load_video(file.value());
                     }
                 }
                 im::EndMenu();
             }
             if (im::BeginMenu("Export")) {
+                if (im::MenuItem("Frame")) {
+                    int index = 0;
+                    if (Optional file = kl::choose_file(true, { { "Image File",  FILE_EXTENSION_JPG }, { "Image File",  FILE_EXTENSION_PNG }, { "Image File",  FILE_EXTENSION_BMP } }, &index)) {
+                        video_layer->store_frame();
+                        RAWImage image{};
+                        image.resize(video_layer->viewport_size);
+                        video_layer->out_frame.retrieve(image);
+                        
+                        RAWImageType image_type = RAWImageType::JPG;
+                        if (index == 1) {
+                            image_type = RAWImageType::PNG;
+                        }
+                        else if (index == 2) {
+                            image_type = RAWImageType::BMP;
+                        }
+                        image.save_to_file(file.value(), image_type);
+                    }
+                }
                 im::EndMenu();
             }
             im::Separator();
@@ -69,11 +87,6 @@ void titian::GUISectionVideoMainMenu::render_gui()
             if (im::MenuItem("Redo")) {
             }
             im::PopStyleVar();
-            im::EndMenu();
-        }
-
-        // Tools
-        if (im::BeginMenu("Tools")) {
             im::EndMenu();
         }
 

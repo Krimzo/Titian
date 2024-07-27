@@ -11,10 +11,5 @@ namespace titian {
         GUISectionVideoDisplay();
 
         void render_gui() override;
-
-    private:
-        Frame m_frame{};
-
-        void clear_frame();
     };
 }

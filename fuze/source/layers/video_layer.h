@@ -21,6 +21,7 @@ namespace titian {
 		dx::ComputeShader mix_shader;
 
 		Int2 viewport_size;
+		Frame out_frame;
 
 		VideoLayer();
 
@@ -34,7 +35,7 @@ namespace titian {
 		float start_time() const;
 		float end_time() const;
 
-		void get_frame(Frame& out) const;
+		void store_frame();
 
 		void load_image(const String& path);
 		void load_audio(const String& path);
@@ -46,9 +47,10 @@ namespace titian {
 
 		std::future<void> m_audio_worker;
 		kl::AudioDevice m_audio_device{ 0 };
-		Audio m_audio{ 96000 };
+		RAWAudio m_audio{ 96000 };
 		
-		void mix_frame(Frame& first, const Frame& second) const;
+		void clear_frame();
+		void mix_frame(const Frame& frame) const;
 
 		void play_audio();
 		void prepare_audio();
