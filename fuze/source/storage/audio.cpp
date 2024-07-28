@@ -16,9 +16,5 @@ float titian::Audio::duration() const
 
 float titian::Audio::sample(const float time) const
 {
-	const int index = out_audio.sample_index(time);
-	if (index >= 0 && index < (int) out_audio.size()) {
-		return out_audio[index];
-	}
-	return 0.0f;
+	return out_audio.sample_at_time(time);
 }

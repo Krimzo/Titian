@@ -174,9 +174,8 @@ namespace kl {
 
         static constexpr Matrix4x4<T> rotation(const Vector3<T>& rotation)
         {
-            const T x_rad = static_cast<T>(rotation.x * TO_RADIANS);
-            const T x_sin = (T) std::sin(x_rad);
-            const T x_cos = (T) std::cos(x_rad);
+            const T x_sin = sin_d(rotation.x);
+            const T x_cos = cos_d(rotation.x);
 
             Matrix4x4<T> x_rot;
             x_rot[5] = x_cos;
@@ -184,9 +183,8 @@ namespace kl {
             x_rot[9] = x_sin;
             x_rot[10] = x_cos;
 
-            const T y_rad = static_cast<T>(rotation.y * TO_RADIANS);
-            const T y_sin = (T) std::sin(y_rad);
-            const T y_cos = (T) std::cos(y_rad);
+            const T y_sin = sin_d(rotation.y);
+            const T y_cos = cos_d(rotation.y);
 
             Matrix4x4<T> y_rot;
             y_rot[0] = y_cos;
@@ -194,9 +192,8 @@ namespace kl {
             y_rot[8] = -y_sin;
             y_rot[10] = y_cos;
 
-            const T z_rad = static_cast<T>(rotation.z * TO_RADIANS);
-            const T z_sin = (T) std::sin(z_rad);
-            const T z_cos = (T) std::cos(z_rad);
+            const T z_sin = sin_d(rotation.z);
+            const T z_cos = cos_d(rotation.z);
 
             Matrix4x4<T> z_rot;
             z_rot[0] = z_cos;
@@ -240,7 +237,7 @@ namespace kl {
 
         static constexpr Matrix4x4<T> perspective(T field_of_view, T aspect_ratio, T near_plane, T far_plane)
         {
-            const T tan_half = T(1) / (T) std::tan(field_of_view * 0.5 * TO_RADIANS);
+            const T tan_half = T(1) / tan_d<T>(field_of_view * 0.5f);
 
             Matrix4x4<T> result;
             result[0] = tan_half / aspect_ratio;

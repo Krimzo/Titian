@@ -66,7 +66,7 @@ void kl::Camera::rotate(const Float2& mouse_pos, const Float2& frame_center, con
     const Float2 rotation = (mouse_pos - frame_center) * sensitivity;
     const Float3 forward_vert = kl::rotate(m_forward, right(), rotation.y);
 
-    if (::abs(angle(forward_vert, m_up) - 90.0f) <= vertical_angle_limit) {
+    if (abs(angle(forward_vert, m_up) - 90.0f) <= vertical_angle_limit) {
         set_forward(forward_vert);
     }
 

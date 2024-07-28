@@ -141,13 +141,13 @@ void titian::GUISectionAnimationEditor::update_animation_camera()
         camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
 
         camera->set_position({
-            kl::sin_deg(camera_info.x),
-            kl::tan_deg(camera_info.y),
-            kl::cos_deg(camera_info.x),
+            kl::sin_d(camera_info.x),
+            kl::tan_d(camera_info.y),
+            kl::cos_d(camera_info.x),
         });
 
         camera->speed += (last_scroll - scroll) * 0.1f;
-        camera->speed = std::max(camera->speed, 0.1f);
+        camera->speed = kl::max(camera->speed, 0.1f);
     }
     last_scroll = scroll;
 
@@ -270,7 +270,7 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
     if (im::Begin("Animation Properties") && animation) {
         if (im::IsWindowFocused()) {
             m_start_mesh_index += m_last_scroll - current_scroll;
-            m_start_mesh_index = std::clamp(m_start_mesh_index, 0, std::max<int>((int) animation->meshes.size() - 1, 0));
+            m_start_mesh_index = kl::clamp(m_start_mesh_index, 0, kl::max<int>((int) animation->meshes.size() - 1, 0));
         }
 
         /*-*/
@@ -278,7 +278,7 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
         if (im::DragFloat3("Sun Direction", sun_direction, 0.01f)) {
             sun_direction = kl::normalize(sun_direction);
         }
-        im::SliderInt("Frame", &m_frame_index, 0, std::max<int>((int) animation->meshes.size() - 1, 0));
+        im::SliderInt("Frame", &m_frame_index, 0, kl::max<int>((int) animation->meshes.size() - 1, 0));
 
         const float duration_seconds = animation->duration_in_ticks / animation->ticks_per_second;
         float temp_anim_time = fmod(m_timer.elapsed(), duration_seconds);

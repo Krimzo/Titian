@@ -67,7 +67,7 @@ float titian::VideoLayer::start_time() const
 	float result = std::numeric_limits<float>::infinity();
 	for (auto& track : tracks) {
 		for (auto& [offset, _] : track->media) {
-			result = std::min(result, offset);
+			result = kl::min(result, offset);
 		}
 	}
 	return result;
@@ -78,7 +78,7 @@ float titian::VideoLayer::end_time() const
 	float result = 0.0f;
 	for (auto& track : tracks) {
 		for (auto& [offset, media] : track->media) {
-			result = std::max(result, offset + media->duration);
+			result = kl::max(result, offset + media->duration);
 		}
 	}
 	return result;
@@ -180,7 +180,7 @@ void titian::VideoLayer::play_audio()
 	prepare_audio();
 
 	if (!m_audio.empty()) {
-		const int index = std::clamp(m_audio.sample_index(current_time), 0, (int) m_audio.size() - 1);
+		const int index = kl::clamp(m_audio.time_to_index(current_time), 0, (int) m_audio.size() - 1);
 		m_audio.erase(m_audio.begin(), m_audio.begin() + index);
 	}
 
@@ -204,7 +204,7 @@ void titian::VideoLayer::prepare_audio()
 			media->store_audio();
 			kl::async_for(0, (int) m_audio.size(), [&](const int i)
 			{
-				const float time = m_audio.sample_time(i) - offset;
+				const float time = m_audio.index_to_time(i) - offset;
 				m_audio[i] += media->out_audio.sample(time);
 			});
 		}

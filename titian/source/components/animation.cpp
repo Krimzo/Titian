@@ -167,7 +167,7 @@ void titian::Animation::upload_matrices()
 	if (m_final_matrices.empty()) {
 		return;
 	}
-	const size_t count = std::min(m_final_matrices.size(), (size_t) MAX_BONE_COUNT);
+	const size_t count = kl::min(m_final_matrices.size(), (size_t) MAX_BONE_COUNT);
 	m_gpu->write_to_buffer(m_matrices_buffer, m_final_matrices.data(), count * sizeof(Float4x4));
 }
 

@@ -44,7 +44,7 @@ bool kl::Color::operator!=(const Color& other) const
 kl::Color kl::Color::gray() const
 {
     const float float_value = r * 0.299f + g * 0.587f + b * 0.114f;
-    const byte gray_value = std::clamp<int>((int) float_value, 0, 255);
+    const byte gray_value = clamp<int>((int) float_value, 0, 255);
     return { gray_value, gray_value, gray_value, a };
 }
 
@@ -62,7 +62,7 @@ char kl::Color::as_ascii() const
 
 kl::Color kl::Color::mix(const Color& color, float ratio) const
 {
-    ratio = std::clamp(ratio, 0.0f, 1.0f);
+    ratio = clamp(ratio, 0.0f, 1.0f);
     return {
         (byte) (r * (1.0f - ratio) + color.r * ratio),
         (byte) (g * (1.0f - ratio) + color.g * ratio),

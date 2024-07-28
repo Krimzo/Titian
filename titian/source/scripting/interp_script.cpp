@@ -1510,37 +1510,37 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["Float4x4_orthographic"] = "Creates a 4x4 orthographic matrix.";
 
 	// Math
-	INTERP_SCRIPT_MODULE->add(cs::fun<int (*)(int)>(&std::abs), "abs");
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<int (*)(int)>(&kl::abs), "abs");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::abs), "abs");
 	INTERP_SCRIPT_IDENTIFIERS["abs"] = "Returns absolute value of the given value.";
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::sin), "sin");
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::cos), "cos");
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::tan), "tan");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::sin), "sin");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::cos), "cos");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::tan), "tan");
 	INTERP_SCRIPT_IDENTIFIERS["sin"] = "Returns sin of the given angle in radians.";
 	INTERP_SCRIPT_IDENTIFIERS["cos"] = "Returns cos of the given angle in radians.";
 	INTERP_SCRIPT_IDENTIFIERS["tan"] = "Returns tan of the given angle in radians.";
 
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::asin), "asin");
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::acos), "acos");
-	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&std::atan), "atan");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::asin), "asin");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::acos), "acos");
+	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::atan), "atan");
 	INTERP_SCRIPT_IDENTIFIERS["asin"] = "Returns angle in radians of the given sin.";
 	INTERP_SCRIPT_IDENTIFIERS["acos"] = "Returns angle in radians of the given cos.";
 	INTERP_SCRIPT_IDENTIFIERS["atan"] = "Returns angle in radians of the given tan.";
 
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::sin_deg<float>), "sin_deg");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::cos_deg<float>), "cos_deg");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::tan_deg<float>), "tan_deg");
-	INTERP_SCRIPT_IDENTIFIERS["sin_deg"] = "Returns sin of the given angle in degrees.";
-	INTERP_SCRIPT_IDENTIFIERS["cos_deg"] = "Returns cos of the given angle in degrees.";
-	INTERP_SCRIPT_IDENTIFIERS["tan_deg"] = "Returns tan of the given angle in degrees.";
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::sin_d<float>), "sin_d");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::cos_d<float>), "cos_d");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::tan_d<float>), "tan_d");
+	INTERP_SCRIPT_IDENTIFIERS["sin_d"] = "Returns sin of the given angle in degrees.";
+	INTERP_SCRIPT_IDENTIFIERS["cos_d"] = "Returns cos of the given angle in degrees.";
+	INTERP_SCRIPT_IDENTIFIERS["tan_d"] = "Returns tan of the given angle in degrees.";
 
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::asin_deg<float>), "asin_deg");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::acos_deg<float>), "acos_deg");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::atan_deg<float>), "atan_deg");
-	INTERP_SCRIPT_IDENTIFIERS["asin_deg"] = "Returns angle in degrees of the given sin.";
-	INTERP_SCRIPT_IDENTIFIERS["acos_deg"] = "Returns angle in degrees of the given cos.";
-	INTERP_SCRIPT_IDENTIFIERS["atan_deg"] = "Returns angle in degrees of the given tan.";
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::asin_d<float>), "asin_d");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::acos_d<float>), "acos_d");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::atan_d<float>), "atan_d");
+	INTERP_SCRIPT_IDENTIFIERS["asin_d"] = "Returns angle in degrees of the given sin.";
+	INTERP_SCRIPT_IDENTIFIERS["acos_d"] = "Returns angle in degrees of the given cos.";
+	INTERP_SCRIPT_IDENTIFIERS["atan_d"] = "Returns angle in degrees of the given tan.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::calc_ndc<float>), "calc_ndc");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::calc_ndc_ar<float>), "calc_ndc_ar");

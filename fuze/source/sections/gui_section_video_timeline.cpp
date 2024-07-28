@@ -145,7 +145,7 @@ void titian::GUISectionVideoTimeline::render_gui()
 		if (im::IsWindowHovered()) {
 			if (im::IsKeyDown(ImGuiKey_LeftAlt)) {
 				vertical_view -= scroll;
-				vertical_view = std::max(vertical_view, 3);
+				vertical_view = kl::max(vertical_view, 3);
 			}
 			else if (im::IsKeyDown(ImGuiKey_LeftCtrl)) {
 				if (scroll < 0) {
@@ -154,15 +154,15 @@ void titian::GUISectionVideoTimeline::render_gui()
 				else if (scroll > 0) {
 					horizontal_view /= 1.05f;
 				}
-				horizontal_view = std::max(horizontal_view, 1.0f);
+				horizontal_view = kl::max(horizontal_view, 1.0f);
 			}
 			else if (im::IsKeyDown(ImGuiKey_LeftShift)) {
 				horizontal_offset += scroll * horizontal_view * 0.05f;
-				horizontal_offset = std::max(horizontal_offset, 0.0f);
+				horizontal_offset = kl::max(horizontal_offset, 0.0f);
 			}
 			else if (scroll != 0) {
 				vertical_offset -= scroll;
-				vertical_offset = std::clamp(vertical_offset, 0, (int) video_layer->tracks.size() - 1);
+				vertical_offset = kl::clamp(vertical_offset, 0, (int) video_layer->tracks.size() - 1);
 			}
 		}
 
@@ -356,16 +356,16 @@ void titian::GUISectionVideoTimeline::render_gui()
 							const float height = col_max.y - col_min.y;
 							const ImVec2 top_left = im::GetMousePos() - m_moving_media.value().mouse_offset;
 							const ImVec2 bottom_right = top_left + ImVec2(width, height);
-							draw_list->AddRectFilled(top_left, bottom_right, color_classify(media->type), 5.0f);
+							draw_list->AddRectFilled(top_left, bottom_right, color_classify(media->type));
 							if (video_layer->selected_media == media) {
-								draw_list->AddRect(top_left, bottom_right, ImColor(255, 255, 255), 5.0f);
+								draw_list->AddRect(top_left, bottom_right, ImColor(255, 255, 255));
 							}
 							draw_list->AddText(top_left, ImColor(30, 30, 30), media->name.c_str());
 						}
 						else {
-							draw_list->AddRectFilled(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), color_classify(media->type), 5.0f);
+							draw_list->AddRectFilled(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), color_classify(media->type));
 							if (video_layer->selected_media == media) {
-								draw_list->AddRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), ImColor(255, 255, 255), 5.0f);
+								draw_list->AddRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), ImColor(255, 255, 255));
 							}
 							draw_list->AddText(ImVec2(left_x, col_min.y), ImColor(30, 30, 30), media->name.c_str());
 						}

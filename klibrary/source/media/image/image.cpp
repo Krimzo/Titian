@@ -126,8 +126,8 @@ void kl::Image::resize(const Int2& new_size)
 {
     if (new_size == m_size) { return; }
 
-    const int min_x = std::min(new_size.x, m_size.x);
-    const int min_y = std::min(new_size.y, m_size.y);
+    const int min_x = min(new_size.x, m_size.x);
+    const int min_y = min(new_size.y, m_size.y);
 
     Image result { new_size };
     for (Int2 position; position.y < min_y; position.y++) {
@@ -227,7 +227,7 @@ std::string kl::Image::as_ascii(const Int2& frame_size) const
 // Draw
 void kl::Image::draw_line(const Int2& from, const Int2& to, const Color& color)
 {
-    const int length = std::max(::abs(to.x - from.x), ::abs(to.y - from.y));
+    const int length = max(abs(to.x - from.x), abs(to.y - from.y));
     const Float2 increment = { (to.x - from.x) / (float) length, (to.y - from.y) / (float) length };
 
     Float2 draw_point = from;

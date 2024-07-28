@@ -14,52 +14,110 @@ namespace kl {
 }
 
 namespace kl {
-    // Deg trig
+    // Radian trigonometry
+	template<typename T>
+	constexpr T sin(T angle_in_rad) noexcept
+	{
+		return (T) std::sin(angle_in_rad);
+	}
+
+	template<typename T>
+	constexpr T cos(T angle_in_rad) noexcept
+	{
+		return (T) std::cos(angle_in_rad);
+	}
+
+	template<typename T>
+	constexpr T tan(T angle_in_rad) noexcept
+	{
+		return (T) std::tan(angle_in_rad);
+	}
+
+	template<typename T>
+	constexpr T asin(T value) noexcept
+	{
+		return (T) std::asin(value);
+	}
+
+	template<typename T>
+	constexpr T acos(T value) noexcept
+	{
+		return (T) std::acos(value);
+	}
+
+	template<typename T>
+	constexpr T atan(T value) noexcept
+	{
+		return (T) std::atan(value);
+	}
+
+    // Degree trigonometry
     template<typename T>
-    constexpr T sin_deg(T angle_in_deg)
+    constexpr T sin_d(T angle_in_deg) noexcept
     {
-        return (T) std::sin(angle_in_deg * TO_RADIANS);
+        return (T) sin(angle_in_deg * TO_RADIANS);
     }
 
     template<typename T>
-    constexpr T cos_deg(T angle_in_deg)
+    constexpr T cos_d(T angle_in_deg) noexcept
     {
-        return (T) std::cos(angle_in_deg * TO_RADIANS);
+        return (T) cos(angle_in_deg * TO_RADIANS);
     }
 
     template<typename T>
-    constexpr T tan_deg(T angle_in_deg)
+    constexpr T tan_d(T angle_in_deg) noexcept
     {
-        return (T) std::tan(angle_in_deg * TO_RADIANS);
+        return (T) tan(angle_in_deg * TO_RADIANS);
     }
 
     template<typename T>
-    constexpr T asin_deg(T value)
+    constexpr T asin_d(T value) noexcept
     {
-        return T(std::asin(value) * TO_DEGREES);
+        return T(asin(value) * TO_DEGREES);
     }
 
     template<typename T>
-    constexpr T acos_deg(T value)
+    constexpr T acos_d(T value) noexcept
     {
-        return T(std::acos(value) * TO_DEGREES);
+        return T(acos(value) * TO_DEGREES);
     }
 
     template<typename T>
-    constexpr T atan_deg(T value)
+    constexpr T atan_d(T value) noexcept
     {
-        return T(std::atan(value) * TO_DEGREES);
+        return T(atan(value) * TO_DEGREES);
     }
 
     // Clamp
     template<typename T>
-    constexpr T clamp(T value, T lower, T upper)
+    constexpr T abs(T object) noexcept
     {
-        return std::clamp(value, lower, upper);
+        return (object < T(0)) ? -object : object;
+    }
+
+    template<typename T>
+    constexpr T min(T first, T second) noexcept
+    {
+        return (first <= second) ? first : second;
+    }
+
+    template<typename T>
+    constexpr T max(T first, T second) noexcept
+    {
+		return (first >= second) ? first : second;
+    }
+
+    template<typename T>
+    constexpr T clamp(T value, T lower, T upper) noexcept
+    {
+        if (lower > upper) {
+            return value;
+        }
+        return min(max(value, lower), upper);
     }
 
     template<typename T, bool Clamp = true>
-    constexpr T lerp(T value, T lower, T upper)
+    constexpr T lerp(T value, T lower, T upper) noexcept
     {
         value = lower + (upper - lower) * value;
         if constexpr (Clamp) {
@@ -69,7 +127,7 @@ namespace kl {
     }
 
     template<typename T, bool Clamp = true>
-    constexpr T unlerp(T value, T lower, T upper)
+    constexpr T unlerp(T value, T lower, T upper) noexcept
     {
         value = (value - lower) / (upper - lower);
         if constexpr (Clamp) {
@@ -97,25 +155,5 @@ namespace kl {
             result[i] = func(first[i], second[i]);
         }
         return result;
-    }
-
-    namespace helper {
-        template<typename T>
-        constexpr T abs(T object)
-        {
-            return std::abs(object);
-        }
-
-        template<typename T>
-        constexpr T min(T first, T second)
-        {
-            return std::min(first, second);
-        }
-
-        template<typename T>
-        constexpr T max(T first, T second)
-        {
-            return std::max(first, second);
-        }
     }
 }

@@ -159,13 +159,13 @@ void titian::GUISectionMeshEditor::update_mesh_camera()
         camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
 
         camera->set_position({
-            kl::sin_deg(camera_info.x),
-            kl::tan_deg(camera_info.y),
-            kl::cos_deg(camera_info.x),
+            kl::sin_d(camera_info.x),
+            kl::tan_d(camera_info.y),
+            kl::cos_d(camera_info.x),
         });
 
         camera->speed += (last_scroll - scroll) * 0.1f;
-        camera->speed = std::max(camera->speed, 0.1f);
+        camera->speed = kl::max(camera->speed, 0.1f);
     }
     last_scroll = scroll;
 
@@ -345,7 +345,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
             if (im::IsMouseHoveringRect(window_rect.first, window_rect.second)) {
                 m_starting_vertex_index += m_last_scroll - current_scroll;
             }
-            m_starting_vertex_index = std::clamp(m_starting_vertex_index, 0, vertex_count - 1);
+            m_starting_vertex_index = kl::clamp(m_starting_vertex_index, 0, vertex_count - 1);
 
             int change_counter = 0;
             for (int i = m_starting_vertex_index; i < (m_starting_vertex_index + m_vertex_display_count) && i < vertex_count; i++) {

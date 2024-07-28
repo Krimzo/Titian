@@ -164,8 +164,8 @@ namespace kl {
 
 		static constexpr Matrix3x3<T> rotation(T rotation)
 		{
-			const T z_sin = (T) std::sin(rotation * TO_RADIANS);
-			const T z_cos = (T) std::cos(rotation * TO_RADIANS);
+			const T z_sin = sin_d(rotation);
+			const T z_cos = cos_d(rotation);
 
 			Matrix3x3<T> result;
 			result[0] = z_cos;

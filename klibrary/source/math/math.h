@@ -32,19 +32,19 @@ namespace kl {
     template<typename T>
     constexpr Complex<T> abs(const Complex<T>& num)
     {
-        return apply<2>(helper::abs<T>, num);
+        return apply<2>((T(*)(T)) abs<T>, num);
     }
 
     template<typename T>
     constexpr Complex<T> min(const Complex<T>& num1, const Complex<T>& num2)
     {
-        return apply<2>(helper::min<T>, num1, num2);
+        return apply<2>((T(*)(T, T)) min<T>, num1, num2);
     }
 
     template<typename T>
     constexpr Complex<T> max(const Complex<T>& num1, const Complex<T>& num2)
     {
-        return apply<2>(helper::max<T>, num1, num2);
+        return apply<2>((T(*)(T, T)) max<T>, num1, num2);
     }
 
     template<typename T>
@@ -67,19 +67,19 @@ namespace kl {
     template<typename T>
     constexpr Quaternion<T> abs(const Quaternion<T>& num)
     {
-        return apply<4>(helper::abs<T>, num);
+        return apply<4>((T(*)(T)) abs<T>, num);
     }
 
     template<typename T>
     constexpr Quaternion<T> min(const Quaternion<T>& num1, const Quaternion<T>& num2)
     {
-        return apply<4>(helper::min<T>, num1, num2);
+        return apply<4>((T(*)(T, T)) min<T>, num1, num2);
     }
 
     template<typename T>
     constexpr Quaternion<T> max(const Quaternion<T>& num1, const Quaternion<T>& num2)
     {
-        return apply<4>(helper::max<T>, num1, num2);
+        return apply<4>((T(*)(T, T)) max<T>, num1, num2);
     }
 
     template<typename T>
@@ -98,19 +98,19 @@ namespace kl {
     template<typename T>
     constexpr Vector2<T> abs(const Vector2<T>& vec)
     {
-        return apply<2>(helper::abs<T>, vec);
+        return apply<2>((T(*)(T)) abs<T>, vec);
     }
 
     template<typename T>
     constexpr Vector2<T> min(const Vector2<T>& vec1, const Vector2<T>& vec2)
     {
-        return apply<2>(helper::min<T>, vec1, vec2);
+        return apply<2>((T(*)(T, T)) min<T>, vec1, vec2);
     }
 
     template<typename T>
     constexpr Vector2<T> max(const Vector2<T>& vec1, const Vector2<T>& vec2)
     {
-        return apply<2>(helper::max<T>, vec1, vec2);
+        return apply<2>((T(*)(T, T)) max<T>, vec1, vec2);
     }
 
     template<typename T>
@@ -137,16 +137,16 @@ namespace kl {
             result += (T) PI;
         }
         else {
-            result = std::acos(dot(first, second));
+            result = acos(dot(first, second));
         }
-        return static_cast<T>(result * TO_DEGREES);
+        return T(result * TO_DEGREES);
     }
 
     template<typename T>
     constexpr Vector2<T> rotate(const Vector2<T>& vec, T angle)
     {
-        const T sin_a = (T) std::sin(angle * TO_RADIANS);
-        const T cos_a = (T) std::cos(angle * TO_RADIANS);
+        const T sin_a = sin_d(angle);
+        const T cos_a = cos_d(angle);
         return { cos_a * vec.x - sin_a * vec.y, sin_a * vec.x + cos_a * vec.y };
     }
 
@@ -161,19 +161,19 @@ namespace kl {
     template<typename T>
     constexpr Vector3<T> abs(const Vector3<T>& vec)
     {
-        return apply<3>(helper::abs<T>, vec);
+        return apply<3>((T(*)(T)) abs<T>, vec);
     }
 
     template<typename T>
     constexpr Vector3<T> min(const Vector3<T>& vec1, const Vector3<T>& vec2)
     {
-        return apply<3>(helper::min<T>, vec1, vec2);
+        return apply<3>((T(*)(T, T)) min<T>, vec1, vec2);
     }
 
     template<typename T>
     constexpr Vector3<T> max(const Vector3<T>& vec1, const Vector3<T>& vec2)
     {
-        return apply<3>(helper::max<T>, vec1, vec2);
+        return apply<3>((T(*)(T, T)) max<T>, vec1, vec2);
     }
 
     template<typename T>
@@ -191,8 +191,7 @@ namespace kl {
     template<typename T>
     constexpr T angle(const Vector3<T>& first, const Vector3<T>& second)
     {
-        const T result = std::acos(dot(normalize(first), normalize(second)));
-        return static_cast<T>(result * TO_DEGREES);
+        return acos_d(dot(normalize(first), normalize(second)));
     }
 
     template<typename T>
@@ -224,19 +223,19 @@ namespace kl {
     template<typename T>
     constexpr Vector4<T> abs(const Vector4<T>& vec)
     {
-        return apply<4>(helper::abs<T>, vec);
+        return apply<4>((T(*)(T)) abs<T>, vec);
     }
 
     template<typename T>
     constexpr Vector4<T> min(const Vector4<T>& vec1, const Vector4<T>& vec2)
     {
-        return apply<4>(helper::min<T>, vec1, vec2);
+        return apply<4>((T(*)(T, T)) min<T>, vec1, vec2);
     }
 
     template<typename T>
     constexpr Vector4<T> max(const Vector4<T>& vec1, const Vector4<T>& vec2)
     {
-        return apply<4>(helper::max<T>, vec1, vec2);
+        return apply<4>((T(*)(T, T)) max<T>, vec1, vec2);
     }
 
     template<typename T>
@@ -254,27 +253,26 @@ namespace kl {
     template<typename T>
     constexpr T angle(const Vector4<T>& first, const Vector4<T>& second)
     {
-        const T result = std::acos(dot(normalize(first), normalize(second)));
-        return static_cast<T>(result * TO_DEGREES);
+        return acos_d(dot(normalize(first), normalize(second)));
     }
 
     // Matrix2x2
     template<typename T>
     constexpr Matrix2x2<T> abs(const Matrix2x2<T>& mat)
     {
-        return apply<4>(helper::abs<T>, mat);
+        return apply<4>((T(*)(T)) abs<T>, mat);
     }
 
     template<typename T>
     constexpr Matrix2x2<T> min(const Matrix2x2<T>& mat1, const Matrix2x2<T>& mat2)
     {
-        return apply<4>(helper::min<T>, mat1, mat2);
+        return apply<4>((T(*)(T, T)) min<T>, mat1, mat2);
     }
 
     template<typename T>
     constexpr Matrix2x2<T> max(const Matrix2x2<T>& mat1, const Matrix2x2<T>& mat2)
     {
-        return apply<4>(helper::max<T>, mat1, mat2);
+        return apply<4>((T(*)(T, T)) max<T>, mat1, mat2);
     }
 
     template<typename T>
@@ -306,19 +304,19 @@ namespace kl {
     template<typename T>
     constexpr Matrix3x3<T> abs(const Matrix3x3<T>& mat)
     {
-        return apply<9>(helper::abs<T>, mat);
+        return apply<9>((T(*)(T)) abs<T>, mat);
     }
 
     template<typename T>
     constexpr Matrix3x3<T> min(const Matrix3x3<T>& mat1, const Matrix3x3<T>& mat2)
     {
-        return apply<9>(helper::min<T>, mat1, mat2);
+        return apply<9>((T(*)(T, T)) min<T>, mat1, mat2);
     }
 
     template<typename T>
     constexpr Matrix3x3<T> max(const Matrix3x3<T>& mat1, const Matrix3x3<T>& mat2)
     {
-        return apply<9>(helper::max<T>, mat1, mat2);
+        return apply<9>((T(*)(T, T)) max<T>, mat1, mat2);
     }
 
     template<typename T>
@@ -355,19 +353,19 @@ namespace kl {
     template<typename T>
     constexpr Matrix4x4<T> abs(const Matrix4x4<T>& mat)
     {
-        return apply<16>(helper::abs<T>, mat);
+        return apply<16>((T(*)(T)) abs<T>, mat);
     }
 
     template<typename T>
     constexpr Matrix4x4<T> min(const Matrix4x4<T>& mat1, const Matrix4x4<T>& mat2)
     {
-        return apply<16>(helper::min<T>, mat1, mat2);
+        return apply<16>((T(*)(T, T)) min<T>, mat1, mat2);
     }
 
     template<typename T>
     constexpr Matrix4x4<T> max(const Matrix4x4<T>& mat1, const Matrix4x4<T>& mat2)
     {
-        return apply<16>(helper::max<T>, mat1, mat2);
+        return apply<16>((T(*)(T, T)) max<T>, mat1, mat2);
     }
 
     template<typename T>
@@ -447,27 +445,27 @@ namespace kl {
 
     // Lines
     template<typename T>
-    constexpr float line_x(const Vector2<T>& a, const Vector2<T>& b, T y)
+    constexpr T line_x(const Vector2<T>& a, const Vector2<T>& b, T y)
     {
-        return ((y - a.y) * (b.x - a.x)) / (b.y - a.y) + a.x;
+        return T(((y - a.y) * (b.x - a.x)) / (b.y - a.y) + a.x);
     }
 
     template<typename T>
-    constexpr float line_y(const Vector2<T>& a, const Vector2<T>& b, T x)
+    constexpr T line_y(const Vector2<T>& a, const Vector2<T>& b, T x)
     {
-        return ((b.y - a.y) * (x - a.x)) / (b.x - a.x) + a.y;
+        return T(((b.y - a.y) * (x - a.x)) / (b.x - a.x) + a.y);
     }
 
     // Rotation
     template<typename T>
     constexpr Quaternion<T> to_quaternion(const Vector3<T>& euler)
     {
-        const T cr = cos_deg(euler.x * T(0.5));
-        const T sr = sin_deg(euler.x * T(0.5));
-        const T cp = cos_deg(euler.y * T(0.5));
-        const T sp = sin_deg(euler.y * T(0.5));
-        const T cy = cos_deg(euler.z * T(0.5));
-        const T sy = sin_deg(euler.z * T(0.5));
+        const T cr = cos_d(euler.x * T(0.5));
+        const T sr = sin_d(euler.x * T(0.5));
+        const T cp = cos_d(euler.y * T(0.5));
+        const T sp = sin_d(euler.y * T(0.5));
+        const T cy = cos_d(euler.z * T(0.5));
+        const T sy = sin_d(euler.z * T(0.5));
         return {
             cr * cp * cy + sr * sp * sy,
             sr * cp * cy - cr * sp * sy,
@@ -487,7 +485,7 @@ namespace kl {
 
         const Vector3<T> result = {
             std::atan2(sin_r_cos_p, cos_r_cos_p),
-            std::abs(sin_p) >= T(1) ? (T) std::copysign(PI * T(0.5), sin_p) : (T) std::asin(sin_p),
+            abs(sin_p) >= T(1) ? (T) std::copysign(PI * T(0.5), sin_p) : (T) asin(sin_p),
             std::atan2(sin_y_cos_p, cos_y_cos_p),
         };
         return result * (T) TO_DEGREES;
@@ -504,7 +502,6 @@ namespace kl {
     template<typename T>
     constexpr Vector3<T> to_euler(const Vector3<T>& original, const Vector3<T>& target)
     {
-        const Quaternion<T> quat = to_quaternion(original, target);
-        return to_euler(quat);
+        return to_euler(to_quaternion(original, target));
     }
 }

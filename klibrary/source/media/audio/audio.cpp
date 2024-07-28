@@ -43,14 +43,34 @@ void kl::Audio::decrease_volume(const float amount)
 }
 
 // Helper
-float kl::Audio::sample_time(const int at_index) const
+float kl::Audio::index_to_time(const int at_index) const
 {
 	return at_index / (float) sample_rate;
 }
 
-int kl::Audio::sample_index(const float at_time) const
+int kl::Audio::time_to_index(const float at_time) const
 {
 	return (int) (at_time * sample_rate);
+}
+
+// Read
+float kl::Audio::sample_at_index(const int index) const
+{
+	if (index >= 0 && index < (int) size()) {
+		return (*this)[index];
+	}
+	return 0.0f;
+}
+
+float kl::Audio::sample_at_time(const float time) const
+{
+	const int first_index = time_to_index(time);
+	const int second_index = first_index + 1;
+	const float first_time = index_to_time(first_index);
+	const float second_time = index_to_time(second_index);
+	const float first_sample = sample_at_index(first_index);
+	const float second_sample = sample_at_index(second_index);
+	return lerp(unlerp(time, first_time, second_time), first_sample, second_sample);
 }
 
 // Decoding
@@ -75,6 +95,13 @@ bool kl::Audio::load_from_memory(const byte* data, const uint64_t byte_size)
 		return false;
 	}
 
+	ComRef<IMFMediaType> media_type;
+	hr = reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, &media_type);
+	if (FAILED(hr)) {
+		return false;
+	}
+	media_type->GetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, (uint32_t*) &sample_rate);
+
 	ComRef<IMFMediaType> new_media_type;
 	hr = MFCreateMediaType(&new_media_type);
 	if (FAILED(hr)) {
@@ -85,20 +112,13 @@ bool kl::Audio::load_from_memory(const byte* data, const uint64_t byte_size)
 	new_media_type->SetUINT32(MF_MT_AUDIO_NUM_CHANNELS, 1);
 	new_media_type->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 32);
 	new_media_type->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, 4);
-	new_media_type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, sample_rate > 0 ? sample_rate : 48000);
-	new_media_type->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, (sample_rate > 0 ? sample_rate : 48000) * sizeof(float));
+	new_media_type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, sample_rate);
+	new_media_type->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, sample_rate * sizeof(float));
 
 	hr = reader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, new_media_type.get());
 	if (FAILED(hr)) {
 		return false;
 	}
-
-	ComRef<IMFMediaType> media_type;
-	hr = reader->GetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, &media_type);
-	if (FAILED(hr)) {
-		return false;
-	}
-	media_type->GetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, (uint32_t*) &sample_rate);
 
 	this->clear();
 	while (true) {
@@ -188,7 +208,7 @@ bool kl::Audio::save_to_vector(std::vector<byte>* buffer, const AudioType type) 
 
 	writer->BeginWriting() >> verify_result;
 	for (int i = 0; i < (int) size();) {
-		const int sample_size = std::min(sample_rate, (int) size() - i);
+		const int sample_size = min(sample_rate, (int) size() - i);
 		const int sample_byte_size = sample_size * sizeof(float);
 
 		ComRef<IMFMediaBuffer> media_buffer;

@@ -120,13 +120,13 @@ titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const ui
     Float2 max_xy = { -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
     float min_z = std::numeric_limits<float>::infinity();
     for (const auto& corner : frustum_corners) {
-        min_xy.x = std::min(min_xy.x, corner.x);
-        min_xy.y = std::min(min_xy.y, corner.y);
+        min_xy.x = kl::min(min_xy.x, corner.x);
+        min_xy.y = kl::min(min_xy.y, corner.y);
 
-        max_xy.x = std::max(max_xy.x, corner.x);
-        max_xy.y = std::max(max_xy.y, corner.y);
+        max_xy.x = kl::max(max_xy.x, corner.x);
+        max_xy.y = kl::max(max_xy.y, corner.y);
 
-        min_z = std::min(min_z, corner.z);
+        min_z = kl::min(min_z, corner.z);
     }
 
     // Find center of near plane in light-space

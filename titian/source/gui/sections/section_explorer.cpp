@@ -113,7 +113,7 @@ void titian::GUISectionExplorer::render_gui()
         const float icon_size = m_icon_size * gui_layer->dpi_scaling;
         const float window_width = im::GetWindowWidth() - im::GetStyle().WindowPadding.x * 2.0f;
         const float icon_width = icon_size + im::GetStyle().CellPadding.x * 2.0f;
-        const int column_count = std::max((int) (window_width / icon_width), 1);
+        const int column_count = kl::max((int) (window_width / icon_width), 1);
 
         im::Text(m_path.c_str());
         im::Separator();

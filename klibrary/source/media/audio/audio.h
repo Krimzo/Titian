@@ -34,8 +34,12 @@ namespace kl {
 		void decrease_volume(float amount);
 
         // Helper
-        float sample_time(int at_index) const;
-        int sample_index(float at_time) const;
+        float index_to_time(int at_index) const;
+        int time_to_index(float at_time) const;
+
+        // Read
+        float sample_at_index(int index) const;
+        float sample_at_time(float time) const;
 
         // Decoding
         bool load_from_memory(const byte* data, uint64_t byte_size);

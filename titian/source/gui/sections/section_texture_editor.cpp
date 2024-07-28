@@ -142,7 +142,7 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
 
 void titian::GUISectionTextureEditor::render_selected_texture(Texture* texture, const Int2 viewport_size)
 {
-    const float min_size = static_cast<float>(std::min(viewport_size.x, viewport_size.y));
+    const float min_size = (float) kl::min(viewport_size.x, viewport_size.y);
     im::SetCursorPos(ImVec2{
         (im::GetWindowWidth() - min_size) * 0.5f,
         (im::GetWindowHeight() - min_size) * 0.5f,

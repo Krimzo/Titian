@@ -27,7 +27,7 @@ namespace kl {
         for (int x = 0; x < W; x++) {
             for (int y = 0; y < H; y++) {
                 output_data[y * W + x] = std::format("{:.2f}", data[y * W + x]);
-                max_lengths[x] = std::max(max_lengths[x], (int) output_data[y * W + x].size());
+                max_lengths[x] = max(max_lengths[x], (int) output_data[y * W + x].size());
             }
         }
 

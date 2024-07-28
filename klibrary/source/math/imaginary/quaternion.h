@@ -26,9 +26,9 @@ namespace kl {
         {}
 
         explicit constexpr Quaternion(const Vector3<T>& axis, T angle)
-            : w((T) cos_deg(angle * 0.5))
+            : w((T) cos_d(angle * 0.5))
         {
-            reinterpret_cast<Vector3<T>&>(x) = normalize(axis) * (T) sin_deg(angle * 0.5);
+            reinterpret_cast<Vector3<T>&>(x) = normalize(axis) * (T) sin_d(angle * 0.5);
         }
 
         // Get

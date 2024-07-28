@@ -39,7 +39,7 @@ void titian::GUISectionVideoMainMenu::render_gui()
                     }
                 }
                 if (im::MenuItem("Audio")) {
-                    if (Optional file = kl::choose_file(false, { { "Audio File",  ".mp3" }, { "Audio File",  ".wav" } })) {
+                    if (Optional file = kl::choose_file(false, { { "Audio File",  ".mp3" }, { "Audio File",  ".m4a" }, { "Audio File",  ".wav" } })) {
                         video_layer->load_audio(file.value());
                     }
                 }

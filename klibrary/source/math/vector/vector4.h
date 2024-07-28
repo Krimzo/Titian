@@ -84,10 +84,10 @@ namespace kl {
 		constexpr operator Color() const
 		{
 			return {
-				(byte) std::clamp(T(x * TO_BYTE_COLOR), T(0), T(255)),
-				(byte) std::clamp(T(y * TO_BYTE_COLOR), T(0), T(255)),
-				(byte) std::clamp(T(z * TO_BYTE_COLOR), T(0), T(255)),
-				(byte) std::clamp(T(w * TO_BYTE_COLOR), T(0), T(255)),
+				(byte) clamp(T(x * TO_BYTE_COLOR), T(0), T(255)),
+				(byte) clamp(T(y * TO_BYTE_COLOR), T(0), T(255)),
+				(byte) clamp(T(z * TO_BYTE_COLOR), T(0), T(255)),
+				(byte) clamp(T(w * TO_BYTE_COLOR), T(0), T(255)),
 			};
 		}
 

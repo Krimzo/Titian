@@ -135,7 +135,7 @@ void kl::console::dump(const std::string& data, const Int2& location)
 
 void kl::console::progress_bar(const std::string& message, int output_y, float percentage)
 {
-    percentage = std::clamp(percentage, 0.0f, 1.0f);
+    percentage = clamp(percentage, 0.0f, 1.0f);
 
     const int bar_length = (int)(width() - message.length() - 12);
     const int finish_length = (int) ((float) bar_length * percentage);

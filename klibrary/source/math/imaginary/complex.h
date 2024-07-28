@@ -20,7 +20,7 @@ namespace kl {
         {}
 
         explicit constexpr Complex(T angle)
-            : r(cos_deg(angle)), i(sin_deg(angle))
+            : r(cos_d(angle)), i(sin_d(angle))
         {}
 
         // Get

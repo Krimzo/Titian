@@ -48,7 +48,7 @@ namespace kl {
         constexpr bool intersect_plane(const Plane<T>& plane, Vector3<T>* out_intersection) const
         {
             const T denom = dot(plane.normal(), m_direction);
-            if (std::abs(denom) <= T(0.0001)) {
+            if (abs(denom) <= T(0.0001)) {
                 return false;
             }
 
@@ -99,10 +99,10 @@ namespace kl {
             const Vector3<T> t1 = (aabb_min - origin) * inv_ray;
             const Vector3<T> t2 = (aabb_max - origin) * inv_ray;
 
-            const Vector3<T> t_min{ std::min(t1.x, t2.x), std::min(t1.y, t2.y), std::min(t1.z, t2.z) };
-            const Vector3<T> t_max{ std::max(t1.x, t2.x), std::max(t1.y, t2.y), std::max(t1.z, t2.z) };
-            const T t_min_max = std::max({ t_min.x, t_min.y, t_min.z });
-            const T t_max_min = std::min({ t_max.x, t_max.y, t_max.z });
+            const Vector3<T> t_min{ min(t1.x, t2.x), min(t1.y, t2.y), min(t1.z, t2.z) };
+            const Vector3<T> t_max{ max(t1.x, t2.x), max(t1.y, t2.y), max(t1.z, t2.z) };
+            const T t_min_max = max({ t_min.x, t_min.y, t_min.z });
+            const T t_max_min = min({ t_max.x, t_max.y, t_max.z });
 
             if (t_max_min < T(0) || t_min_max > t_max_min) {
                 return false;

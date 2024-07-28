@@ -403,13 +403,13 @@ void titian::GUISectionMaterialEditor::update_material_camera()
         camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
 
         camera->set_position({
-            kl::sin_deg(camera_info.x),
-            kl::tan_deg(camera_info.y),
-            kl::cos_deg(camera_info.x),
+            kl::sin_d(camera_info.x),
+            kl::tan_d(camera_info.y),
+            kl::cos_d(camera_info.x),
         });
 
         camera->speed += (last_scroll - scroll) * 0.1f;
-        camera->speed = std::max(camera->speed, 0.1f);
+        camera->speed = kl::max(camera->speed, 0.1f);
     }
     last_scroll = scroll;
 

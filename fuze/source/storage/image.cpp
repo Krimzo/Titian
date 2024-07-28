@@ -15,7 +15,7 @@ void titian::Image::cache_frame(const Int2& size)
 		return;
 
 	RAWImage temp_frame = m_image;
-	const Int2 scaled_size = Float2(temp_frame.size()) * std::min((float) size.x / temp_frame.width(), (float) size.y / temp_frame.height());
+	const Int2 scaled_size = Float2(temp_frame.size()) * kl::min((float) size.x / temp_frame.width(), (float) size.y / temp_frame.height());
 	temp_frame.resize_scaled(scaled_size);
 
 	out_frame.resize(size);

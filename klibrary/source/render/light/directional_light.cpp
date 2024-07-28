@@ -87,13 +87,13 @@ kl::Float4x4 kl::DirectionalLight::matrix(Camera camera, const UINT cascade_inde
     Float2 max_xy = { -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
     float min_z = std::numeric_limits<float>::infinity();
     for (const auto& corner : frustum_corners) {
-        min_xy.x = std::min(min_xy.x, corner.x);
-        min_xy.y = std::min(min_xy.y, corner.y);
+        min_xy.x = min(min_xy.x, corner.x);
+        min_xy.y = min(min_xy.y, corner.y);
 
-        max_xy.x = std::max(max_xy.x, corner.x);
-        max_xy.y = std::max(max_xy.y, corner.y);
+        max_xy.x = max(max_xy.x, corner.x);
+        max_xy.y = max(max_xy.y, corner.y);
 
-        min_z = std::min(min_z, corner.z);
+        min_z = min(min_z, corner.z);
     }
 
     // Find center of near plane in light-space
@@ -120,9 +120,9 @@ kl::Float4x4 kl::DirectionalLight::matrix(Camera camera, const UINT cascade_inde
     // Find proper coordinates of frustum in light-space
     Float3 max_xyz { -std::numeric_limits<float>::infinity() };
     for (const auto& corner : frustum_corners) {
-        max_xyz.x = std::max(max_xyz.x, corner.x);
-        max_xyz.y = std::max(max_xyz.y, corner.y);
-        max_xyz.z = std::max(max_xyz.z, corner.z);
+        max_xyz.x = max(max_xyz.x, corner.x);
+        max_xyz.y = max(max_xyz.y, corner.y);
+        max_xyz.z = max(max_xyz.z, corner.z);
     }
 
     // Calculate final orthographic projection
