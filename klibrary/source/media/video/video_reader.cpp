@@ -146,13 +146,13 @@ float kl::VideoReader::fps() const
     return m_fps;
 }
 
-void kl::VideoReader::seek(const float time) const
+bool kl::VideoReader::seek(const float time) const
 {
     PROPVARIANT time_var;
     PropVariantInit(&time_var);
     time_var.vt = VT_I8;
     time_var.hVal.QuadPart = LONGLONG(time * 1e7);
-    m_reader->SetCurrentPosition(GUID_NULL, time_var);
+    return SUCCEEDED(m_reader->SetCurrentPosition(GUID_NULL, time_var));
 }
 
 bool kl::VideoReader::read_frame(Image& out, int* out_index) const

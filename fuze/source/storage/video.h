@@ -7,6 +7,10 @@ namespace titian {
 	class Video : kl::NoCopy
 	{
 	public:
+		static constexpr int SECTION_THREAD_COUNT = 3;
+		static constexpr float BUFFERING_LENGTH = 30.0f;
+
+		Int2 cache_scale;
 		RAWImage out_frame;
 
 		Video(const String& path);
@@ -14,8 +18,10 @@ namespace titian {
 
 		float duration() const;
 
-		void cache_frames(const Int2& size);
 		void store_frame(float time);
+		void cache_frames(float time);
+
+		Vector<Vector<Pair<bool, float>>> buffering_sections() const;
 
 	private:
 		const String m_path;
@@ -25,6 +31,9 @@ namespace titian {
 
 		Map<int, Vector<byte>> m_frames;
 		std::mutex m_frames_lock;
-		std::thread m_thread;
+
+		Vector<std::thread> m_threads;
+		Vector<bool> m_buffering_states;
+		Vector<std::array<Pair<bool, float>, SECTION_THREAD_COUNT>> m_buffering_sections;
 	};
 }

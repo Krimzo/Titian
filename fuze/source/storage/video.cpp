@@ -8,63 +8,23 @@ titian::Video::Video(const String& path)
 	m_resolution = temp_reader.frame_size();
 	m_duration = temp_reader.duration_seconds();
 	m_fps = temp_reader.fps();
+
+	m_buffering_states.resize(size_t(m_duration / BUFFERING_LENGTH) + 1);
+	m_buffering_sections.resize(size_t(m_duration / BUFFERING_LENGTH) + 1);
 }
 
 titian::Video::~Video()
 {
-	if (m_thread.joinable()) {
-		m_thread.join();
+	for (auto& thread : m_threads) {
+		if (thread.joinable()) {
+			thread.join();
+		}
 	}
 }
 
 float titian::Video::duration() const
 {
 	return m_duration;
-}
-
-void titian::Video::cache_frames(const Int2& size)
-{
-	if (m_thread.joinable()) {
-		m_thread.join();
-	}
-	m_thread = std::thread([this, size]
-	{
-		const int frame_count = int(m_duration * m_fps);
-		const int core_count = kl::CPU_CORE_COUNT;
-		const int frames_per_core = frame_count / core_count;
-
-		WorkQueue queue;
-		for (int core = 0; core <= core_count; core++) {
-			queue.add_task([this, size, frames_per_core, core]
-			{
-				kl::VideoReader reader(m_path, size, true);
-				Map<int, Vector<byte>> temp_frames;
-
-				const int start_index = core * frames_per_core;
-				const int end_index = (core + 1) * frames_per_core;
-
-				RAWImage frame;
-				if (start_index > 0) {
-					reader.seek(start_index / m_fps);
-				}
-				while (true) {
-					int index = -1;
-					if (!reader.read_frame(frame, &index)) {
-						break;
-					}
-					if (index > end_index) {
-						break;
-					}
-					frame.save_to_vector(&temp_frames[index], RAWImageType::JPG);
-				}
-
-				m_frames_lock.lock();
-				m_frames.insert(temp_frames.begin(), temp_frames.end());
-				m_frames_lock.unlock();
-			});
-		}
-		queue.finalize();
-	});
 }
 
 void titian::Video::store_frame(const float time)
@@ -75,4 +35,72 @@ void titian::Video::store_frame(const float time)
 		out_frame.load_from_vector(m_frames[frame_index]);
 	}
 	m_frames_lock.unlock();
+	cache_frames(time);
+	cache_frames(time + BUFFERING_LENGTH * 0.5f);
+}
+
+void titian::Video::cache_frames(const float time)
+{
+	int section_index = int(time / BUFFERING_LENGTH);
+	section_index = kl::clamp(section_index, 0, (int) m_buffering_states.size() - 1);
+	if (m_buffering_states[section_index]) {
+		return;
+	}
+	m_buffering_states[section_index] = true;
+	m_threads.emplace_back([this, section_index]
+	{
+		const int frames_per_section = int(BUFFERING_LENGTH * m_fps);
+		const int frames_per_core = frames_per_section / SECTION_THREAD_COUNT;
+
+		WorkQueue queue;
+		for (int core_index = 0; core_index < SECTION_THREAD_COUNT; core_index++) {
+			queue.add_task([this, section_index, frames_per_section, frames_per_core, core_index]
+			{
+				kl::VideoReader reader{ m_path, cache_scale, true };
+				Map<int, Vector<byte>> temp_frames;
+
+				const int start_index = section_index * frames_per_section + core_index * frames_per_core;
+				const int end_index = start_index + frames_per_core;
+
+				RAWImage frame;
+				if (start_index > 0) {
+					if (!reader.seek(start_index / m_fps)) {
+						return;
+					}
+				}
+				int index = 0;
+				while (true) {
+					if (!reader.read_frame(frame, &index)) {
+						break;
+					}
+					if (index > end_index) {
+						break;
+					}
+					if (index % int(m_fps) == 0) {
+						m_buffering_sections[section_index][core_index] = { false, kl::unlerp((float) index, (float) start_index, (float) end_index) };
+					}
+					frame.save_to_vector(&temp_frames[index], RAWImageType::JPG);
+				}
+
+				m_frames_lock.lock();
+				m_buffering_sections[section_index][core_index] = { true, kl::unlerp((float) index, (float) start_index, (float) end_index) };
+				m_frames.insert(temp_frames.begin(), temp_frames.end());
+				m_frames_lock.unlock();
+			});
+		}
+		queue.finalize();
+	});
+}
+
+titian::Vector<titian::Vector<titian::Pair<bool, float>>> titian::Video::buffering_sections() const
+{
+	Vector<Vector<Pair<bool, float>>> result;
+	for (const auto& section : m_buffering_sections) {
+		Vector<Pair<bool, float>> section_data;
+		for (auto& [state, value] : section) {
+			section_data.emplace_back(state, value);
+		}
+		result.push_back(section_data);
+	}
+	return result;
 }

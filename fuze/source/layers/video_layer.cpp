@@ -149,11 +149,11 @@ void titian::VideoLayer::load_video(const String& path)
 	media->type = MediaType::VIDEO;
 	media->name = fs::path(path).filename().string();
 
-	media->video->cache_frames(viewport_size);
+	media->video->cache_scale = viewport_size;
 	selected_track->insert_media(current_time, media);
 }
 
-void titian::VideoLayer::clear_frame()
+void titian::VideoLayer::clear_frame() const
 {
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
 	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;

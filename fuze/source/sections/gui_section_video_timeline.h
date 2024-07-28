@@ -36,6 +36,11 @@ namespace titian {
         bool m_editing_media = false;
         bool m_popup_was = false;
 
+        void handle_input(int scroll);
+        void render_header(ImVec2 cell_padding, float available_height, float& header_height, ImVec2& total_min, ImVec2& total_max);
+        void render_track(ImVec2 cell_padding, float row_height, int i, ImVec2& total_max);
+        void render_pointer(ImVec2 total_min, ImVec2 total_max);
+
         static ImColor color_classify(MediaType type);
     };
 }

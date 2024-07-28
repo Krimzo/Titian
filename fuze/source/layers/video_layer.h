@@ -49,7 +49,7 @@ namespace titian {
 		kl::AudioDevice m_audio_device{ 0 };
 		RAWAudio m_audio{ 96000 };
 		
-		void clear_frame();
+		void clear_frame() const;
 		void mix_frame(const Frame& frame) const;
 
 		void play_audio();
