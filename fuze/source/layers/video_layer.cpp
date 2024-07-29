@@ -20,8 +20,8 @@ void titian::VideoLayer::init()
 	};
 
 	WorkQueue queue;
-	queue.add_task([&] { load_shader(clear_shader, "video_clear_shader.hlsl"); });
-	queue.add_task([&] { load_shader(mix_shader, "video_mix_shader.hlsl"); });
+	queue.add_task([&] { load_shader(m_clear_shader, "video_clear_shader.hlsl"); });
+	queue.add_task([&] { load_shader(m_mix_shader, "video_mix_shader.hlsl"); });
 	queue.finalize();
 
 	for (int i = 0; i < 5; i++)
@@ -153,6 +153,107 @@ void titian::VideoLayer::load_video(const String& path)
 	selected_track->insert_media(current_time, media);
 }
 
+int titian::VideoLayer::find_track(const Ref<Track>& track) const
+{
+	for (int i = 0; i < (int) tracks.size(); i++) {
+		if (tracks[i] == track) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+void titian::VideoLayer::delete_track(const Ref<Track>& track)
+{
+	for (int i = 0; i < (int) tracks.size(); i++) {
+		if (tracks[i] == track) {
+			tracks.erase(tracks.begin() + i);
+			return;
+		}
+	}
+}
+
+void titian::VideoLayer::move_track_up(const Ref<Track>& track)
+{
+	const int index = find_track(track);
+	if (index > 0) {
+		std::swap(tracks[index], tracks[(size_t) index - 1]);
+	}
+}
+
+void titian::VideoLayer::move_track_down(const Ref<Track>& track)
+{
+	const int index = find_track(track);
+	if (index >= 0 && index < (int) tracks.size() - 1) {
+		std::swap(tracks[index], tracks[(size_t) index + 1]);
+	}
+}
+
+titian::Ref<titian::Track> titian::VideoLayer::find_track(const Ref<Media>& media) const
+{
+	for (const auto& track : tracks) {
+		for (const auto& [_, med] : track->media) {
+			if (med == media) {
+				return track;
+			}
+		}
+	}
+	return {};
+}
+
+void titian::VideoLayer::delete_media(const Ref<Media>& media)
+{
+	for (auto& track : tracks) {
+		for (const auto& [offset, med] : track->media) {
+			if (med == media) {
+				track->media.erase(offset);
+				return;
+			}
+		}
+	}
+}
+
+void titian::VideoLayer::split_audio(Ref<Media>& media)
+{
+	if (media->audio->duration() <= 0.0f) {
+		return;
+	}
+
+	int next_track_index = -1;
+	float media_offset = 0.0f;
+	for (int i = 0; i < (int) tracks.size(); i++) {
+		for (auto& [offset, med] : tracks[i]->media) {
+			if (med == media) {
+				next_track_index = i + 1;
+				media_offset = offset;
+				i = (int) tracks.size();
+				break;
+			}
+		}
+	}
+
+	if (next_track_index < 0) {
+		return;
+	}
+	if (next_track_index >= (int) tracks.size()) {
+		tracks.resize((size_t) next_track_index + 1);
+		for (auto& track : tracks) {
+			if (!track) {
+				track = new Track();
+			}
+		}
+	}
+
+	Ref new_media = new Media();
+	new_media->audio = new Audio();
+	new_media->audio->out_audio = media->audio->out_audio;
+	media->audio->out_audio.clear();
+	new_media->duration = new_media->audio->duration();
+	new_media->type = MediaType::AUDIO;
+	new_media->name = media->name;
+	tracks[next_track_index]->insert_media(media_offset, new_media);
+}
+
 void titian::VideoLayer::clear_frame() const
 {
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
@@ -160,7 +261,7 @@ void titian::VideoLayer::clear_frame() const
 
 	gpu->bind_access_view_for_compute_shader(out_frame.access_view, 0);
 	const Int2 dispatch_size = out_frame.size() / 32 + Int2(1);
-	gpu->execute_compute_shader(video_layer->clear_shader, dispatch_size.x, dispatch_size.y, 1);
+	gpu->execute_compute_shader(video_layer->m_clear_shader, dispatch_size.x, dispatch_size.y, 1);
 	gpu->unbind_access_view_for_compute_shader(0);
 }
 
@@ -170,7 +271,7 @@ void titian::VideoLayer::mix_frame(const Frame& frame) const
 	gpu->bind_access_view_for_compute_shader(out_frame.access_view, 0);
 	gpu->bind_access_view_for_compute_shader(frame.access_view, 1);
 	const Int2 dispatch_size = kl::min(out_frame.size(), frame.size()) / 32 + Int2(1);
-	gpu->execute_compute_shader(mix_shader, dispatch_size.x, dispatch_size.y, 1);
+	gpu->execute_compute_shader(m_mix_shader, dispatch_size.x, dispatch_size.y, 1);
 	gpu->unbind_access_view_for_compute_shader(1);
 	gpu->unbind_access_view_for_compute_shader(0);
 }

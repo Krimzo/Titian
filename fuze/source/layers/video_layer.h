@@ -17,9 +17,6 @@ namespace titian {
 		Ref<Track> selected_track;
 		Ref<Media> selected_media;
 
-		dx::ComputeShader clear_shader;
-		dx::ComputeShader mix_shader;
-
 		Int2 viewport_size;
 		Frame out_frame;
 
@@ -41,9 +38,21 @@ namespace titian {
 		void load_audio(const String& path);
 		void load_video(const String& path);
 
+		int find_track(const Ref<Track>& track) const;
+		void delete_track(const Ref<Track>& track);
+		void move_track_up(const Ref<Track>& track);
+		void move_track_down(const Ref<Track>& track);
+
+		Ref<Track> find_track(const Ref<Media>& media) const;
+		void delete_media(const Ref<Media>& media);
+		void split_audio(Ref<Media>& media);
+
 	private:
 		bool m_playing = false;
 		float m_last_time = 0.0f;
+
+		dx::ComputeShader m_clear_shader;
+		dx::ComputeShader m_mix_shader;
 
 		std::future<void> m_audio_worker;
 		kl::AudioDevice m_audio_device{ 0 };

@@ -60,7 +60,7 @@ void titian::GUISectionVideoTimeline::handle_input(const int scroll)
 {
 	AppLayer* app_layer = Layers::get<AppLayer>();
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
-
+	
 	im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
 	if (!video_layer->playing() && im::BeginPopupContextWindow("##TimelinePopup")) {
 		if (m_editing_track && video_layer->selected_track) {
@@ -68,13 +68,16 @@ void titian::GUISectionVideoTimeline::handle_input(const int scroll)
 				video_layer->selected_track->name = opt_name.value();
 				im::CloseCurrentPopup();
 			}
-			if (im::Button("Delete Track")) {
-				for (int i = 0; i < (int) video_layer->tracks.size(); i++) {
-					if (video_layer->tracks[i] == video_layer->selected_track) {
-						video_layer->tracks.erase(video_layer->tracks.begin() + i);
-						break;
-					}
-				}
+			if (im::Button("Move Up", { -1.0f, 0.0f })) {
+				video_layer->move_track_up(video_layer->selected_track);
+				im::CloseCurrentPopup();
+			}
+			if (im::Button("Move Down", { -1.0f, 0.0f })) {
+				video_layer->move_track_down(video_layer->selected_track);
+				im::CloseCurrentPopup();
+			}
+			if (im::Button("Delete Track", { -1.0f, 0.0f })) {
+				video_layer->delete_track(video_layer->selected_track);
 				video_layer->selected_track = {};
 				im::CloseCurrentPopup();
 			}
@@ -84,63 +87,12 @@ void titian::GUISectionVideoTimeline::handle_input(const int scroll)
 				video_layer->selected_media->name = opt_name.value();
 				im::CloseCurrentPopup();
 			}
-			if (video_layer->selected_media->type == MediaType::VIDEO && im::Button("Split Audio")) {
-				int next_track_index = -1;
-				float media_offset = 0.0f;
-				for (int i = 0; i < (int) video_layer->tracks.size(); i++) {
-					auto& track = video_layer->tracks[i];
-					bool should_break = false;
-					for (auto& [offset, media] : track->media) {
-						if (media == video_layer->selected_media) {
-							next_track_index = i + 1;
-							media_offset = offset;
-							should_break = true;
-							break;
-						}
-					}
-					if (should_break) {
-						break;
-					}
-				}
-				if (next_track_index >= 0) {
-					if (next_track_index >= (int) video_layer->tracks.size()) {
-						video_layer->tracks.resize((size_t) next_track_index + 1);
-						for (auto& track : video_layer->tracks) {
-							if (!track) {
-								track = new Track();
-							}
-						}
-					}
-					if (video_layer->selected_media->audio->duration() > 0.0f) {
-						auto& track = video_layer->tracks[next_track_index];
-						Ref media = new Media();
-						media->audio = new Audio();
-
-						media->audio->out_audio = video_layer->selected_media->audio->out_audio;
-						video_layer->selected_media->audio->out_audio.clear();
-
-						media->duration = media->audio->duration();
-						media->type = MediaType::AUDIO;
-						media->name = video_layer->selected_media->name;
-						track->insert_media(media_offset, media);
-					}
-				}
+			if (video_layer->selected_media->type == MediaType::VIDEO && im::Button("Split Audio", { -1.0f, 0.0f })) {
+				video_layer->split_audio(video_layer->selected_media);
 				im::CloseCurrentPopup();
 			}
-			if (im::Button("Delete Media")) {
-				for (auto& track : video_layer->tracks) {
-					bool should_break = false;
-					for (auto& [offset, media] : track->media) {
-						if (media == video_layer->selected_media) {
-							track->media.erase(offset);
-							should_break = true;
-							break;
-						}
-					}
-					if (should_break) {
-						break;
-					}
-				}
+			if (im::Button("Delete Media", { -1.0f, 0.0f })) {
+				video_layer->delete_media(video_layer->selected_media);
 				video_layer->selected_media = {};
 				im::CloseCurrentPopup();
 			}
