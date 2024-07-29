@@ -33,6 +33,10 @@ namespace titian {
 
 		Media();
 
+		bool has_image() const;
+		bool has_audio() const;
+		bool has_video() const;
+
 		void store_frame(float time);
 		void store_audio();
 

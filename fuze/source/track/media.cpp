@@ -4,6 +4,21 @@
 titian::Media::Media()
 {}
 
+bool titian::Media::has_image() const
+{
+	return image;
+}
+
+bool titian::Media::has_audio() const
+{
+	return audio && audio->duration() > 0.0f;
+}
+
+bool titian::Media::has_video() const
+{
+	return video && video->duration() > 0.0f;
+}
+
 void titian::Media::store_frame(const float time)
 {
 	store_raw_frame(time);

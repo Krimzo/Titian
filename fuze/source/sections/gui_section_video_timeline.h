@@ -38,9 +38,9 @@ namespace titian {
 
         void handle_input(int scroll);
         void render_header(ImVec2 cell_padding, float available_height, float& header_height, ImVec2& total_min, ImVec2& total_max);
-        void render_track(ImVec2 cell_padding, float row_height, int i, ImVec2& total_max);
+        void render_track(ImVec2 cell_padding, float row_height, int i, float header_height, const ImVec2& total_min, ImVec2& total_max);
         void render_pointer(ImVec2 total_min, ImVec2 total_max);
 
-        static ImColor color_classify(MediaType type);
+        static ImColor color_classify(const Ref<Media>& media);
     };
 }

@@ -97,6 +97,24 @@ void titian::VideoLayer::store_frame()
 	}
 }
 
+void titian::VideoLayer::load_file(const String& path)
+{
+	static const Set<String> image_extensions = { ".bmp", ".png", ".jpg", ".jpeg"  };
+	static const Set<String> audio_extensions = { ".wav", ".mp3" };
+	static const Set<String> video_extensions = { ".mkv", ".mp4" };
+
+	const String extension = fs::path(path).extension().string();
+	if (image_extensions.contains(extension)) {
+		load_image(path);
+	}
+	else if (audio_extensions.contains(extension)) {
+		load_audio(path);
+	}
+	else if (video_extensions.contains(extension)) {
+		load_video(path);
+	}
+}
+
 void titian::VideoLayer::load_image(const String& path)
 {
 	if (!selected_track) {

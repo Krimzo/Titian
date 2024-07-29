@@ -34,6 +34,7 @@ namespace titian {
 
 		void store_frame();
 
+		void load_file(const String& path);
 		void load_image(const String& path);
 		void load_audio(const String& path);
 		void load_video(const String& path);

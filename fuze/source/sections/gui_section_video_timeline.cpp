@@ -36,7 +36,7 @@ void titian::GUISectionVideoTimeline::render_gui()
 
 			const float row_height = (available_height - header_height) / vertical_view;
 			for (int i = vertical_offset; i < vertical_offset + vertical_view && i < (int) video_layer->tracks.size(); i++) {
-				render_track(cell_padding, row_height, i, total_max);
+				render_track(cell_padding, row_height, i, header_height, total_min, total_max);
 			}
 			if (im::IsMouseReleased(ImGuiMouseButton_Left)) {
 				m_moving_media = std::nullopt;
@@ -92,7 +92,9 @@ void titian::GUISectionVideoTimeline::handle_input(const int scroll)
 				video_layer->update_offset(video_layer->selected_media, offset);
 			}
 			im::DragFloat("Duration", &video_layer->selected_media->duration, 0.1f, 0.1f, 1'000'000.0f);
-			if (video_layer->selected_media->type == MediaType::VIDEO && im::Button("Split Audio", { -1.0f, 0.0f })) {
+			if (video_layer->selected_media->type == MediaType::VIDEO
+				&& video_layer->selected_media->has_audio()
+				&& im::Button("Split Audio", { -1.0f, 0.0f })) {
 				video_layer->split_audio(video_layer->selected_media);
 				im::CloseCurrentPopup();
 			}
@@ -186,6 +188,7 @@ void titian::GUISectionVideoTimeline::render_header(const ImVec2 cell_padding, c
 	im::Text(text.c_str());
 
 	im::TableSetColumnIndex(1);
+	im::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImColor(35, 35, 35));
 
 	const ImVec2 col_min = im::TableGetCellBgRect(im::GetCurrentTable(), 1).Min;
 	const ImVec2 col_max = im::TableGetCellBgRect(im::GetCurrentTable(), 1).Max;
@@ -238,7 +241,7 @@ void titian::GUISectionVideoTimeline::render_header(const ImVec2 cell_padding, c
 	total_max = col_max;
 }
 
-void titian::GUISectionVideoTimeline::render_track(const ImVec2 cell_padding, const float row_height, const int i, ImVec2& total_max)
+void titian::GUISectionVideoTimeline::render_track(const ImVec2 cell_padding, const float row_height, const int i, const float header_height, const ImVec2& total_min, ImVec2& total_max)
 {
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
 	ImDrawList* draw_list = im::GetWindowDrawList();
@@ -287,6 +290,7 @@ void titian::GUISectionVideoTimeline::render_track(const ImVec2 cell_padding, co
 
 	col_min = im::TableGetCellBgRect(im::GetCurrentTable(), 1).Min;
 	col_max = im::TableGetCellBgRect(im::GetCurrentTable(), 1).Max;
+	col_min += ImVec2(1.0f, 1.0f); // outline adjust
 	const float col_width = col_max.x - col_min.x;
 	const float col_middle = (col_min.y + col_max.y) * 0.5f;
 
@@ -304,8 +308,6 @@ void titian::GUISectionVideoTimeline::render_track(const ImVec2 cell_padding, co
 	for (const auto& [offset, media] : track->media) {
 		const float media_start = offset;
 		const float media_end = offset + media->duration;
-		if (media_end < min_time || media_start > max_time)
-			continue;
 
 		const float left_x_no_clamp = kl::lerp<float, false>(kl::unlerp<float, false>(media_start, min_time, max_time), col_min.x, col_max.x);
 		const float left_x = kl::lerp(kl::unlerp(media_start, min_time, max_time), col_min.x, col_max.x);
@@ -344,39 +346,43 @@ void titian::GUISectionVideoTimeline::render_track(const ImVec2 cell_padding, co
 		}
 
 		if (m_moving_media && m_moving_media.value().media == media) {
-			const float width = col_width * kl::unlerp(media->duration, 0.0f, horizontal_view);
+			const float width = col_width * kl::unlerp<float, false>(media->duration, 0.0f, horizontal_view);
 			const float height = col_max.y - col_min.y;
 			const ImVec2 top_left = im::GetMousePos() - m_moving_media.value().mouse_offset;
 			const ImVec2 bottom_right = top_left + ImVec2(width, height);
+			const ImVec2 top_left_clamped = ImVec2(kl::clamp(top_left.x, col_min.x, col_max.x), kl::max(top_left.y, total_min.y + header_height));
+			const ImVec2 bottom_right_clamped = ImVec2(kl::clamp(bottom_right.x, col_min.x, col_max.x), kl::max(bottom_right.y, total_min.y + header_height));
 
 			if (media->type == MediaType::VIDEO) {
-				draw_list->AddRectFilled(top_left, bottom_right, ImColor(40, 40, 40));
-				const float section_width = col_width * kl::unlerp(Video::BUFFERING_LENGTH, 0.0f, horizontal_view);
+				draw_list->AddRectFilled(top_left_clamped, bottom_right_clamped, ImColor(40, 40, 40));
+				const float section_width = col_width * kl::unlerp<float, false>(Video::BUFFERING_LENGTH, 0.0f, horizontal_view);
 				const float core_width = section_width / Video::SECTION_THREAD_COUNT;
 				float width_offset = 0.0f;
 				for (const auto& section : media->video->buffering_sections()) {
 					for (const auto& [state, core] : section) {
-						const float left = top_left.x + width_offset;
-						const float right = left + core_width * core;
-						const ImColor color = state ? color_classify(media->type) : ImColor(205, 120, 115);
-						draw_list->AddRectFilled(ImVec2(left, top_left.y), ImVec2(right, bottom_right.y), color);
+						float left = top_left.x + width_offset;
+						float right = kl::min(left + core_width * core, bottom_right.x);
+						left = kl::clamp(left, col_min.x, bottom_right_clamped.x);
+						right = kl::clamp(right, col_min.x, bottom_right_clamped.x);
+						const ImColor color = state ? color_classify(media) : ImColor(205, 120, 115);
+						draw_list->AddRectFilled(ImVec2(left, top_left_clamped.y), ImVec2(right, bottom_right_clamped.y), color);
 						width_offset += core_width;
 					}
 				}
 			}
 			else {
-				draw_list->AddRectFilled(top_left, bottom_right, color_classify(media->type));
+				draw_list->AddRectFilled(top_left_clamped, bottom_right_clamped, color_classify(media));
 			}
 
 			if (video_layer->selected_media == media) {
-				draw_list->AddRect(top_left, bottom_right, ImColor(255, 255, 255));
+				draw_list->AddRect(top_left_clamped, bottom_right_clamped, ImColor(255, 255, 255));
 			}
-			draw_list->AddText(top_left, ImColor(30, 30, 30), media->name.c_str());
+			draw_list->AddText(top_left_clamped, ImColor(30, 30, 30), media->name.c_str());
 		}
 		else {
 			if (media->type == MediaType::VIDEO) {
 				draw_list->AddRectFilled(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), ImColor(40, 40, 40));
-				const float section_width = col_width * kl::unlerp(Video::BUFFERING_LENGTH, 0.0f, horizontal_view);
+				const float section_width = col_width * kl::unlerp<float, false>(Video::BUFFERING_LENGTH, 0.0f, horizontal_view);
 				const float core_width = section_width / Video::SECTION_THREAD_COUNT;
 				float width_offset = 0.0f;
 				for (const auto& section : media->video->buffering_sections()) {
@@ -385,14 +391,14 @@ void titian::GUISectionVideoTimeline::render_track(const ImVec2 cell_padding, co
 						float right = left + core_width * core;
 						left = kl::clamp(left, left_x, right_x);
 						right = kl::clamp(right, left_x, right_x);
-						const ImColor color = state ? color_classify(media->type) : ImColor(205, 120, 115);
+						const ImColor color = state ? color_classify(media) : ImColor(205, 120, 115);
 						draw_list->AddRectFilled(ImVec2(left, col_min.y), ImVec2(right, col_max.y), color);
 						width_offset += core_width;
 					}
 				}
 			}
 			else {
-				draw_list->AddRectFilled(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), color_classify(media->type));
+				draw_list->AddRectFilled(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), color_classify(media));
 			}
 			if (video_layer->selected_media == media) {
 				draw_list->AddRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), ImColor(255, 255, 255));
@@ -419,13 +425,27 @@ void titian::GUISectionVideoTimeline::render_pointer(const ImVec2 total_min, con
 	}
 }
 
-ImColor titian::GUISectionVideoTimeline::color_classify(const MediaType type)
+ImColor titian::GUISectionVideoTimeline::color_classify(const Ref<Media>& media)
 {
-	switch (type)
+	static constexpr ImColor IMAGE_COLOR = ImColor(215, 180, 125);
+	static constexpr ImColor AUDIO_COLOR = ImColor(125, 180, 215);
+	static constexpr ImColor VIDEO_COLOR = ImColor(135, 215, 135);
+
+	switch (media->type)
 	{
-	case MediaType::IMAGE: return ImColor(215, 180, 125);
-	case MediaType::AUDIO: return ImColor(125, 180, 215);
-	case MediaType::VIDEO: return ImColor(135, 215, 135);
+	case MediaType::IMAGE:
+		return IMAGE_COLOR;
+
+	case MediaType::AUDIO:
+		return AUDIO_COLOR;
+
+	case MediaType::VIDEO:
+		if (media->has_audio()) {
+			return ImVec4(VIDEO_COLOR) * ImVec4(0.5f, 0.5f, 0.5f, 0.5f) + ImVec4(AUDIO_COLOR) * ImVec4(0.5f, 0.5f, 0.5f, 0.5f);
+		}
+		else {
+			return VIDEO_COLOR;
+		}
 	}
-	return ImColor();
+	return {};
 }
