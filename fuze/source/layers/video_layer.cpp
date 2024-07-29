@@ -213,6 +213,31 @@ void titian::VideoLayer::delete_media(const Ref<Media>& media)
 	}
 }
 
+float titian::VideoLayer::get_offset(const Ref<Media>& media) const
+{
+	for (const auto& track : tracks) {
+		for (const auto& [offset, med] : track->media) {
+			if (med == media) {
+				return offset;
+			}
+		}
+	}
+	return 0.0f;
+}
+
+void titian::VideoLayer::update_offset(const Ref<Media>& media, const float offset)
+{
+	Ref track = find_track(media);
+	if (!track) {
+		return;
+	}
+	if (track->media.contains(offset)) {
+		return;
+	}
+	track->remove_media(media);
+	track->insert_media(offset, media);
+}
+
 void titian::VideoLayer::split_audio(Ref<Media>& media)
 {
 	if (media->audio->duration() <= 0.0f) {

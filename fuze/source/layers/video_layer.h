@@ -45,6 +45,8 @@ namespace titian {
 
 		Ref<Track> find_track(const Ref<Media>& media) const;
 		void delete_media(const Ref<Media>& media);
+		float get_offset(const Ref<Media>& media) const;
+		void update_offset(const Ref<Media>& media, float offset);
 		void split_audio(Ref<Media>& media);
 
 	private:

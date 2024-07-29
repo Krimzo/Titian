@@ -87,6 +87,11 @@ void titian::GUISectionVideoTimeline::handle_input(const int scroll)
 				video_layer->selected_media->name = opt_name.value();
 				im::CloseCurrentPopup();
 			}
+			float offset = video_layer->get_offset(video_layer->selected_media);
+			if (im::DragFloat("Offset", &offset, 0.1f, 0.0f, 1'000'000.0f)) {
+				video_layer->update_offset(video_layer->selected_media, offset);
+			}
+			im::DragFloat("Duration", &video_layer->selected_media->duration, 0.1f, 0.1f, 1'000'000.0f);
 			if (video_layer->selected_media->type == MediaType::VIDEO && im::Button("Split Audio", { -1.0f, 0.0f })) {
 				video_layer->split_audio(video_layer->selected_media);
 				im::CloseCurrentPopup();
