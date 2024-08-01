@@ -1,6 +1,7 @@
 #pragma once
 
-#include "track/track.h"
+#include "render/frame_handler.h"
+#include "render/fuze_renderer.h"
 
 
 namespace titian {
@@ -17,9 +18,6 @@ namespace titian {
 		Ref<Track> selected_track;
 		Ref<Media> selected_media;
 
-		Int2 viewport_size;
-		Frame out_frame;
-
 		VideoLayer();
 
 		void init();
@@ -29,11 +27,23 @@ namespace titian {
 		void stop();
 		bool playing() const;
 
+		void start_rendering();
+		void stop_rendering();
+		bool rendering() const;
+
+		String render_status() const;
+		float render_progress() const;
+
+		bool can_edit() const;
+
 		float start_time() const;
 		float end_time() const;
 
-		void store_frame();
-
+		void store_frame(const Int2& size);
+		Int2 frame_size() const;
+		dx::ShaderView get_shader_view() const;
+		void retrieve_frame(RAWImage& out_image) const;
+		
 		void load_file(const String& path);
 		void load_image(const String& path);
 		void load_audio(const String& path);
@@ -54,15 +64,12 @@ namespace titian {
 		bool m_playing = false;
 		float m_last_time = 0.0f;
 
-		dx::ComputeShader m_clear_shader;
-		dx::ComputeShader m_mix_shader;
+		FrameHandler m_handler;
+		Ref<FuzeRenderer> m_renderer;
 
 		std::future<void> m_audio_worker;
 		kl::AudioDevice m_audio_device{ 0 };
 		RAWAudio m_audio{ 96000 };
-		
-		void clear_frame() const;
-		void mix_frame(const Frame& frame) const;
 
 		void play_audio();
 		void prepare_audio();

@@ -14,7 +14,7 @@ void titian::GUISectionFuzeImageEffects::render_gui()
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
 	Media* selected_media = &video_layer->selected_media;
 
-	if (im::Begin("Image Effects") && selected_media) {
+	if (im::Begin("Image Effects", nullptr, !video_layer->can_edit() ? ImGuiWindowFlags_NoInputs : ImGuiWindowFlags_None) && selected_media) {
 		if (im::BeginPopupContextWindow("New Effect", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
 			int counter = 0;
 			im::Text("New Effect");
@@ -42,7 +42,7 @@ void titian::GUISectionFuzeImageEffects::render_gui()
 			im::SameLine();
 
 			im::Selectable(effect->get_name().c_str());
-			if (im::BeginPopupContextItem()) {
+			if (im::BeginPopupContextItem(kl::format("##ImageEffectPopup", counter).c_str())) {
 				if (counter > 0) {
 					if (im::Button("Move Up")) {
 						std::swap(selected_media->image_effects[counter], selected_media->image_effects[(size_t) counter - 1]);

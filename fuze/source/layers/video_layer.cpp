@@ -10,22 +10,11 @@ void titian::VideoLayer::init()
 	kl::Window* window = &Layers::get<AppLayer>()->window;
 	window->set_icon("package/textures/video_editor_icon.ico");
 
-	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-
-	auto load_shader = [&](dx::ComputeShader& shader, const char* filename)
-	{
-		const String source = kl::read_file_string(kl::format("package/shaders/", filename));
-		shader = gpu->create_compute_shader(source);
-		kl::assert(shader, "Failed to init [", filename, "] shaders");
-	};
-
-	WorkQueue queue;
-	queue.add_task([&] { load_shader(m_clear_shader, "video_clear_shader.hlsl"); });
-	queue.add_task([&] { load_shader(m_mix_shader, "video_mix_shader.hlsl"); });
-	queue.finalize();
-
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++) {
 		tracks.emplace_back(new Track());
+	}
+
+	m_handler.init();
 }
 
 bool titian::VideoLayer::update()
@@ -43,6 +32,9 @@ bool titian::VideoLayer::update()
 
 void titian::VideoLayer::play()
 {
+	if (m_playing || m_renderer) {
+		return;
+	}
 	m_playing = true;
 	m_last_time = current_time;
 	play_audio();
@@ -50,6 +42,9 @@ void titian::VideoLayer::play()
 
 void titian::VideoLayer::stop()
 {
+	if (!m_playing) {
+		return;
+	}
 	m_playing = false;
 	current_time = m_last_time;
 }
@@ -57,6 +52,45 @@ void titian::VideoLayer::stop()
 bool titian::VideoLayer::playing() const
 {
 	return m_playing;
+}
+
+void titian::VideoLayer::start_rendering()
+{
+	if (m_renderer || m_playing) {
+		return;
+	}
+	m_renderer = new FuzeRenderer();
+}
+
+void titian::VideoLayer::stop_rendering()
+{
+	if (!m_renderer) {
+		return;
+	}
+	m_renderer = {};
+}
+
+bool titian::VideoLayer::rendering() const
+{
+	return m_renderer;
+}
+
+titian::String titian::VideoLayer::render_status() const
+{
+	return "none";
+}
+
+float titian::VideoLayer::render_progress() const
+{
+	if (m_renderer) {
+		return m_renderer->progress();
+	}
+	return 0.0f;
+}
+
+bool titian::VideoLayer::can_edit() const
+{
+	return !m_playing && !m_renderer;
 }
 
 float titian::VideoLayer::start_time() const
@@ -84,10 +118,9 @@ float titian::VideoLayer::end_time() const
 	return result;
 }
 
-void titian::VideoLayer::store_frame()
+void titian::VideoLayer::store_frame(const Int2& size)
 {
-	out_frame.resize(viewport_size);
-	this->clear_frame();
+	m_handler.prepare_frame(size);
 
 	EffectPackage package;
 	package.current_time = current_time;
@@ -97,9 +130,24 @@ void titian::VideoLayer::store_frame()
 			package.media_start = offset;
 			package.media_end = offset + media->duration;
 			media->store_frame(package);
-			mix_frame(media->out_frame);
+			m_handler.mix_frame(media->out_frame);
 		}
 	}
+}
+
+titian::Int2 titian::VideoLayer::frame_size() const
+{
+	return m_handler.out_frame.size();
+}
+
+dx::ShaderView titian::VideoLayer::get_shader_view() const
+{
+	return m_handler.out_frame.shader_view;
+}
+
+void titian::VideoLayer::retrieve_frame(RAWImage& out_image) const
+{
+	m_handler.out_frame.retrieve(out_image);
 }
 
 void titian::VideoLayer::load_file(const String& path)
@@ -135,7 +183,7 @@ void titian::VideoLayer::load_image(const String& path)
 	media->type = MediaType::IMAGE;
 	media->name = fs::path(path).filename().string();
 
-	media->image->cache_frame(viewport_size);
+	media->image->cache_frame(m_handler.out_frame.size());
 	selected_track->insert_media(current_time, media);
 }
 
@@ -172,7 +220,7 @@ void titian::VideoLayer::load_video(const String& path)
 	media->type = MediaType::VIDEO;
 	media->name = fs::path(path).filename().string();
 
-	media->video->cache_scale = viewport_size;
+	media->video->cache_scale = m_handler.out_frame.size();
 	selected_track->insert_media(current_time, media);
 }
 
@@ -300,28 +348,6 @@ media_loop_end:
 	new_media->type = MediaType::AUDIO;
 	new_media->name = media->name;
 	tracks[next_track_index]->insert_media(media_offset, new_media);
-}
-
-void titian::VideoLayer::clear_frame() const
-{
-	VideoLayer* video_layer = Layers::get<VideoLayer>();
-	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-
-	gpu->bind_access_view_for_compute_shader(out_frame.access_view, 0);
-	const Int2 dispatch_size = (out_frame.size() / 32) + Int2(1);
-	gpu->execute_compute_shader(video_layer->m_clear_shader, dispatch_size.x, dispatch_size.y, 1);
-	gpu->unbind_access_view_for_compute_shader(0);
-}
-
-void titian::VideoLayer::mix_frame(const Frame& frame) const
-{
-	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-	gpu->bind_access_view_for_compute_shader(out_frame.access_view, 0);
-	gpu->bind_access_view_for_compute_shader(frame.access_view, 1);
-	const Int2 dispatch_size = kl::min(out_frame.size(), frame.size()) / 32 + Int2(1);
-	gpu->execute_compute_shader(m_mix_shader, dispatch_size.x, dispatch_size.y, 1);
-	gpu->unbind_access_view_for_compute_shader(1);
-	gpu->unbind_access_view_for_compute_shader(0);
 }
 
 void titian::VideoLayer::play_audio()

@@ -41,10 +41,10 @@ void titian::GUISectionFuzeMainMenu::render_gui()
                 if (im::MenuItem("Frame")) {
                     int index = 0;
                     if (Optional file = kl::choose_file(true, { { "Image File",  FILE_EXTENSION_JPG }, { "Image File",  FILE_EXTENSION_PNG }, { "Image File",  FILE_EXTENSION_BMP } }, &index)) {
-                        video_layer->store_frame();
+                        video_layer->store_frame(video_layer->frame_size());
                         RAWImage image{};
-                        image.resize(video_layer->viewport_size);
-                        video_layer->out_frame.retrieve(image);
+                        image.resize(video_layer->frame_size());
+                        video_layer->retrieve_frame(image);
                         
                         RAWImageType image_type = RAWImageType::JPG;
                         if (index == 1) {

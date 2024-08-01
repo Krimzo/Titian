@@ -104,6 +104,8 @@
     </ClCompile>
     <ClCompile Include="source\fuze_editor.cpp" />
     <ClCompile Include="source\layers\video_layer.cpp" />
+    <ClCompile Include="source\render\frame_handler.cpp" />
+    <ClCompile Include="source\render\fuze_renderer.cpp" />
     <ClCompile Include="source\sections\gui_section_fuze_audio_effects.cpp" />
     <ClCompile Include="source\sections\gui_section_fuze_display.cpp" />
     <ClCompile Include="source\sections\gui_section_fuze_image_effects.cpp" />
@@ -126,6 +128,8 @@
     <ClInclude Include="source\fuze.h" />
     <ClInclude Include="source\fuze_editor.h" />
     <ClInclude Include="source\layers\video_layer.h" />
+    <ClInclude Include="source\render\frame_handler.h" />
+    <ClInclude Include="source\render\fuze_renderer.h" />
     <ClInclude Include="source\sections\gui_section_fuze_audio_effects.h" />
     <ClInclude Include="source\sections\gui_section_fuze_display.h" />
     <ClInclude Include="source\sections\gui_section_fuze_image_effects.h" />

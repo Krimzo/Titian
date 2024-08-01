@@ -62,7 +62,7 @@ void titian::GUISectionFuzeTimeline::handle_input(const int scroll)
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
 	
 	im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
-	if (!video_layer->playing() && im::BeginPopupContextWindow("##TimelinePopup")) {
+	if (video_layer->can_edit() && im::BeginPopupContextWindow("##TimelinePopup")) {
 		if (m_editing_track && video_layer->selected_track) {
 			if (Optional opt_name = gui_input_waited("##RenameTrackInput", video_layer->selected_track->name)) {
 				video_layer->selected_track->name = opt_name.value();
@@ -133,11 +133,11 @@ void titian::GUISectionFuzeTimeline::handle_input(const int scroll)
 				app_layer->timer.stop();
 			}
 		}
-		if (!video_layer->playing() && im::IsKeyPressed(ImGuiKey_Home)) {
+		if (video_layer->can_edit() && im::IsKeyPressed(ImGuiKey_Home)) {
 			const float start_time = video_layer->start_time();
 			video_layer->current_time = (video_layer->current_time > start_time) ? start_time : 0.0f;
 		}
-		if (!video_layer->playing() && im::IsKeyPressed(ImGuiKey_End)) {
+		if (video_layer->can_edit() && im::IsKeyPressed(ImGuiKey_End)) {
 			video_layer->current_time = video_layer->end_time();
 		}
 	}
@@ -196,7 +196,7 @@ void titian::GUISectionFuzeTimeline::render_header(const ImVec2 cell_padding, co
 	const float col_middle = (col_min.y + col_max.y) * 0.5f;
 
 	const ImVec2 mouse_pos = im::GetMousePos();
-	if (!video_layer->playing() && !m_moving_media && ImRect(col_min, col_max).Contains(mouse_pos) && im::IsMouseDown(ImGuiMouseButton_Left)) {
+	if (video_layer->can_edit() && !m_moving_media && ImRect(col_min, col_max).Contains(mouse_pos) && im::IsMouseDown(ImGuiMouseButton_Left)) {
 		video_layer->current_time = horizontal_offset + horizontal_view * kl::unlerp(mouse_pos.x, col_min.x, col_max.x);
 	}
 
@@ -316,7 +316,7 @@ void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, con
 		const float left_x_no_clamp = kl::lerp<float, false>(kl::unlerp<float, false>(media_start, min_time, max_time), col_min.x, col_max.x);
 		const float left_x = kl::lerp(kl::unlerp(media_start, min_time, max_time), col_min.x, col_max.x);
 		const float right_x = kl::lerp(kl::unlerp(media_end, min_time, max_time), col_min.x, col_max.x);
-		if (!video_layer->playing() && !m_moving_media && im::IsWindowFocused() && im::IsMouseClicked(ImGuiMouseButton_Left)) {
+		if (video_layer->can_edit() && !m_moving_media && im::IsWindowFocused() && im::IsMouseClicked(ImGuiMouseButton_Left)) {
 			const ImVec2 mouse_pos = im::GetMousePos();
 			if (ImRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y)).Contains(mouse_pos)) {
 				MovingMediaInfo info{};
