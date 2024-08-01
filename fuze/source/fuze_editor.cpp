@@ -14,21 +14,17 @@ titian::FuzeEditor::FuzeEditor()
     gui_layer.init();
 
     // Init editor sections
-    gui_layer.sections.emplace_back(new GUISectionVideoMainMenu());
-    gui_layer.sections.emplace_back(new GUISectionVideoEffects());
-    gui_layer.sections.emplace_back(new GUISectionVideoDisplay());
-    gui_layer.sections.emplace_back(new GUISectionVideoTimeline());
-    gui_layer.sections.emplace_back(new GUISectionVideoRender());
+    gui_layer.sections.emplace_back(new GUISectionFuzeMainMenu());
+    gui_layer.sections.emplace_back(new GUISectionFuzeImageEffects());
+    gui_layer.sections.emplace_back(new GUISectionFuzeAudioEffects());
+    gui_layer.sections.emplace_back(new GUISectionFuzeDisplay());
+    gui_layer.sections.emplace_back(new GUISectionFuzeTimeline());
+    gui_layer.sections.emplace_back(new GUISectionFuzeRender());
 
     // Push layers
     push_layer(&app_layer);
     push_layer(&video_layer);
     push_layer(&gui_layer);
-
-    // Logger
-    Logger::set_ready();
-    kl::VERIFICATION_LOGGER = Logger::log<std::string_view>;
-    app_layer.timer.stop();
 }
 
 titian::FuzeEditor::~FuzeEditor()

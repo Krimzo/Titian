@@ -19,16 +19,16 @@ bool titian::Media::has_video() const
 	return video && video->duration() > 0.0f;
 }
 
-void titian::Media::store_frame(const float time)
+void titian::Media::store_frame(const EffectPackage& package)
 {
-	store_raw_frame(time);
-	apply_image_effects(time);
+	store_raw_frame(package.current_time - package.media_start);
+	apply_image_effects(package);
 }
 
-void titian::Media::store_audio()
+void titian::Media::store_audio(const EffectPackage& package)
 {
 	store_raw_audio();
-	apply_audio_effects();
+	apply_audio_effects(package);
 }
 
 void titian::Media::store_raw_frame(const float time)
@@ -64,14 +64,14 @@ void titian::Media::store_raw_audio()
 	}
 }
 
-void titian::Media::apply_image_effects(const float time)
+void titian::Media::apply_image_effects(const EffectPackage& package)
 {
-	for (const auto& effect : image_effects)
-		effect->apply(time, out_frame);
+	for (auto& effect : image_effects)
+		effect->apply(package, out_frame);
 }
 
-void titian::Media::apply_audio_effects()
+void titian::Media::apply_audio_effects(const EffectPackage& package)
 {
-	for (const auto& effect : audio_effects)
-		effect->apply(out_audio);
+	for (auto& effect : audio_effects)
+		effect->apply(package, out_audio);
 }

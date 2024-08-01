@@ -5,14 +5,11 @@
 
 
 namespace titian {
-    class GUISectionVideoMainMenu : public GUISection
+    class GUISectionFuzeDisplay : public GUISection
     {
     public:
-        GUISectionVideoMainMenu();
+        GUISectionFuzeDisplay();
 
         void render_gui() override;
-
-    private:
-        bool m_testing_exit = false;
     };
 }

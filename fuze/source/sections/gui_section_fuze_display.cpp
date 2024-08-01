@@ -1,11 +1,11 @@
 #include "fuze.h"
 
 
-titian::GUISectionVideoDisplay::GUISectionVideoDisplay()
-	: GUISection("GUISectionVideoDisplay")
+titian::GUISectionFuzeDisplay::GUISectionFuzeDisplay()
+	: GUISection("GUISectionFuzeDisplay")
 {}
 
-void titian::GUISectionVideoDisplay::render_gui()
+void titian::GUISectionFuzeDisplay::render_gui()
 {
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
 	

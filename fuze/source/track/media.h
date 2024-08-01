@@ -37,14 +37,14 @@ namespace titian {
 		bool has_audio() const;
 		bool has_video() const;
 
-		void store_frame(float time);
-		void store_audio();
+		void store_frame(const EffectPackage& package);
+		void store_audio(const EffectPackage& package);
 
 	private:
 		void store_raw_frame(float time);
 		void store_raw_audio();
 
-		void apply_image_effects(float time);
-		void apply_audio_effects();
+		void apply_image_effects(const EffectPackage& package);
+		void apply_audio_effects(const EffectPackage& package);
 	};
 }

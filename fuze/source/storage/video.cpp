@@ -15,11 +15,7 @@ titian::Video::Video(const String& path)
 
 titian::Video::~Video()
 {
-	for (auto& thread : m_threads) {
-		if (thread.joinable()) {
-			thread.join();
-		}
-	}
+	this->wait();
 }
 
 float titian::Video::duration() const
@@ -90,6 +86,11 @@ void titian::Video::cache_frames(const float time)
 		}
 		queue.finalize();
 	});
+}
+
+void titian::Video::wait()
+{
+	m_threads.clear();
 }
 
 titian::Vector<titian::Vector<titian::Pair<bool, float>>> titian::Video::buffering_sections() const

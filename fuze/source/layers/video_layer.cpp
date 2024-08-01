@@ -88,10 +88,15 @@ void titian::VideoLayer::store_frame()
 {
 	out_frame.resize(viewport_size);
 	this->clear_frame();
+
+	EffectPackage package;
+	package.current_time = current_time;
 	for (int i = int(tracks.size()) - 1; i >= 0; i--) {
 		float offset = 0.0f;
 		if (Ref media = tracks[i]->get_media(current_time, offset)) {
-			media->store_frame(current_time - offset);
+			package.media_start = offset;
+			package.media_end = offset + media->duration;
+			media->store_frame(package);
 			mix_frame(media->out_frame);
 		}
 	}
@@ -99,7 +104,7 @@ void titian::VideoLayer::store_frame()
 
 void titian::VideoLayer::load_file(const String& path)
 {
-	static const Set<String> image_extensions = { ".bmp", ".png", ".jpg", ".jpeg"  };
+	static const Set<String> image_extensions = { ".bmp", ".png", ".jpg", ".jpeg" };
 	static const Set<String> audio_extensions = { ".wav", ".mp3" };
 	static const Set<String> video_extensions = { ".mkv", ".mp4" };
 
@@ -269,11 +274,11 @@ void titian::VideoLayer::split_audio(Ref<Media>& media)
 			if (med == media) {
 				next_track_index = i + 1;
 				media_offset = offset;
-				i = (int) tracks.size();
-				break;
+				goto media_loop_end;
 			}
 		}
 	}
+media_loop_end:
 
 	if (next_track_index < 0) {
 		return;
@@ -303,7 +308,7 @@ void titian::VideoLayer::clear_frame() const
 	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 
 	gpu->bind_access_view_for_compute_shader(out_frame.access_view, 0);
-	const Int2 dispatch_size = out_frame.size() / 32 + Int2(1);
+	const Int2 dispatch_size = (out_frame.size() / 32) + Int2(1);
 	gpu->execute_compute_shader(video_layer->m_clear_shader, dispatch_size.x, dispatch_size.y, 1);
 	gpu->unbind_access_view_for_compute_shader(0);
 }
@@ -343,9 +348,13 @@ void titian::VideoLayer::prepare_audio()
 		m_audio[i] = 0.0f;
 	});
 
+	EffectPackage package;
+	package.current_time = current_time;
 	for (auto& track : tracks) {
 		for (auto& [offset, media] : track->media) {
-			media->store_audio();
+			package.media_start = offset;
+			package.media_end = offset + media->duration;
+			media->store_audio(package);
 			kl::async_for(0, (int) m_audio.size(), [&](const int i)
 			{
 				const float time = m_audio.index_to_time(i) - offset;

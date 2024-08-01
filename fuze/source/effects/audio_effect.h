@@ -1,5 +1,6 @@
 #pragma once
 
+#include "effects/effect_package.h"
 #include "storage/audio.h"
 
 
@@ -7,7 +8,12 @@ namespace titian {
 	class AudioEffect : kl::NoCopy
 	{
 	public:
-		AudioEffect() = default;
-		virtual void apply(Audio& audio) const = 0;
+		AudioEffect();
+		virtual ~AudioEffect();
+
+		virtual String get_name() const = 0;
+		virtual void display_gui() = 0;
+
+		virtual void apply(const EffectPackage& package, Audio& audio) = 0;
 	};
 }

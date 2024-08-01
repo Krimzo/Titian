@@ -21,6 +21,6 @@ namespace titian {
 
 	private:
 		dx::Texture m_staging_texture;
-		Int2 m_size = {};
+		Int2 m_size;
 	};
 }

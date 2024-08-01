@@ -5,10 +5,10 @@
 
 
 namespace titian {
-    class GUISectionVideoRender : public GUISection
+    class GUISectionFuzeRender : public GUISection
     {
     public:
-        GUISectionVideoRender();
+        GUISectionFuzeRender();
 
         void render_gui() override;
     };

@@ -5,7 +5,7 @@
 
 
 namespace titian {
-    class GUISectionVideoTimeline : public GUISection
+    class GUISectionFuzeTimeline : public GUISection
     {
     public:
         int vertical_offset = 0;
@@ -14,7 +14,7 @@ namespace titian {
         int vertical_view = 5;
         float horizontal_view = 60.0f;
 
-        GUISectionVideoTimeline();
+        GUISectionFuzeTimeline();
 
         void render_gui() override;
 

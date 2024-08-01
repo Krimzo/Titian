@@ -1,11 +1,11 @@
 #include "fuze.h"
 
 
-titian::GUISectionVideoTimeline::GUISectionVideoTimeline()
-	: GUISection("GUISectionVideoTimeline")
+titian::GUISectionFuzeTimeline::GUISectionFuzeTimeline()
+	: GUISection("GUISectionFuzeTimeline")
 {}
 
-void titian::GUISectionVideoTimeline::render_gui()
+void titian::GUISectionFuzeTimeline::render_gui()
 {
 	AppLayer* app_layer = Layers::get<AppLayer>();
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
@@ -56,7 +56,7 @@ void titian::GUISectionVideoTimeline::render_gui()
 	m_last_scroll = current_scroll;
 }
 
-void titian::GUISectionVideoTimeline::handle_input(const int scroll)
+void titian::GUISectionFuzeTimeline::handle_input(const int scroll)
 {
 	AppLayer* app_layer = Layers::get<AppLayer>();
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
@@ -167,7 +167,7 @@ void titian::GUISectionVideoTimeline::handle_input(const int scroll)
 	}
 }
 
-void titian::GUISectionVideoTimeline::render_header(const ImVec2 cell_padding, const float available_height, float& header_height, ImVec2& total_min, ImVec2& total_max)
+void titian::GUISectionFuzeTimeline::render_header(const ImVec2 cell_padding, const float available_height, float& header_height, ImVec2& total_min, ImVec2& total_max)
 {
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
 	ImDrawList* draw_list = im::GetWindowDrawList();
@@ -241,7 +241,7 @@ void titian::GUISectionVideoTimeline::render_header(const ImVec2 cell_padding, c
 	total_max = col_max;
 }
 
-void titian::GUISectionVideoTimeline::render_track(const ImVec2 cell_padding, const float row_height, const int i, const float header_height, const ImVec2& total_min, ImVec2& total_max)
+void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, const float row_height, const int i, const float header_height, const ImVec2& total_min, ImVec2& total_max)
 {
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
 	ImDrawList* draw_list = im::GetWindowDrawList();
@@ -252,9 +252,13 @@ void titian::GUISectionVideoTimeline::render_track(const ImVec2 cell_padding, co
 	im::TableSetColumnIndex(0);
 	im::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(45, 45, 45, 255)); // crashes if i pass ImColor(45, 45, 45) in release ???
 
+	ImRect window_rect{ im::GetWindowContentRegionMin(), im::GetWindowContentRegionMax() };
+	window_rect.Translate(im::GetWindowPos());
+
 	ImVec2 col_min = im::TableGetCellBgRect(im::GetCurrentTable(), 0).Min;
 	ImVec2 col_max = im::TableGetCellBgRect(im::GetCurrentTable(), 0).Max;
-	if (im::IsWindowFocused()) {
+
+	if (im::IsWindowFocused() && window_rect.Contains(im::GetMousePos())) {
 		if (im::IsMouseClicked(ImGuiMouseButton_Left)) {
 			if (ImRect(col_min, col_max).Contains(im::GetMousePos())) {
 				video_layer->selected_media = {};
@@ -326,7 +330,7 @@ void titian::GUISectionVideoTimeline::render_track(const ImVec2 cell_padding, co
 			}
 		}
 
-		if (im::IsWindowFocused()) {
+		if (im::IsWindowFocused() && window_rect.Contains(im::GetMousePos())) {
 			if (im::IsMouseClicked(ImGuiMouseButton_Left)) {
 				if (ImRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y)).Contains(im::GetMousePos())) {
 					video_layer->selected_track = {};
@@ -412,7 +416,7 @@ void titian::GUISectionVideoTimeline::render_track(const ImVec2 cell_padding, co
 	}
 }
 
-void titian::GUISectionVideoTimeline::render_pointer(const ImVec2 total_min, const ImVec2 total_max)
+void titian::GUISectionFuzeTimeline::render_pointer(const ImVec2 total_min, const ImVec2 total_max)
 {
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
 	ImDrawList* draw_list = im::GetWindowDrawList();
@@ -425,7 +429,7 @@ void titian::GUISectionVideoTimeline::render_pointer(const ImVec2 total_min, con
 	}
 }
 
-ImColor titian::GUISectionVideoTimeline::color_classify(const Ref<Media>& media)
+ImColor titian::GUISectionFuzeTimeline::color_classify(const Ref<Media>& media)
 {
 	static constexpr ImColor IMAGE_COLOR = ImColor(215, 180, 125);
 	static constexpr ImColor AUDIO_COLOR = ImColor(125, 180, 215);

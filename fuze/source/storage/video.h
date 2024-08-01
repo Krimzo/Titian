@@ -8,7 +8,7 @@ namespace titian {
 	{
 	public:
 		static constexpr int SECTION_THREAD_COUNT = 3;
-		static constexpr float BUFFERING_LENGTH = 30.0f;
+		static constexpr float BUFFERING_LENGTH = 10.0f;
 
 		Int2 cache_scale;
 		RAWImage out_frame;
@@ -21,6 +21,8 @@ namespace titian {
 		void store_frame(float time);
 		void cache_frames(float time);
 
+		void wait();
+
 		Vector<Vector<Pair<bool, float>>> buffering_sections() const;
 
 	private:
@@ -32,7 +34,7 @@ namespace titian {
 		Map<int, Vector<byte>> m_frames;
 		std::mutex m_frames_lock;
 
-		Vector<std::thread> m_threads;
+		Vector<std::jthread> m_threads;
 		Vector<bool> m_buffering_states;
 		Vector<std::array<Pair<bool, float>, SECTION_THREAD_COUNT>> m_buffering_sections;
 	};
