@@ -47,6 +47,13 @@ void titian::ImageEffectScaleRotPos::display_gui()
     im::DragFloat2("Position", position());
 }
 
+titian::Ref<titian::ImageEffect> titian::ImageEffectScaleRotPos::make_copy() const
+{
+    Ref effect = new ImageEffectScaleRotPos();
+    effect->custom_data = this->custom_data;
+    return effect;
+}
+
 titian::Float2& titian::ImageEffectScaleRotPos::scale()
 {
     return (Float2&) custom_data(0, 0);

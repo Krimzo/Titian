@@ -18,3 +18,10 @@ float titian::Audio::sample(const float time) const
 {
 	return out_audio.sample_at_time(time);
 }
+
+titian::Ref<titian::Audio> titian::Audio::make_copy() const
+{
+	Ref audio = new Audio();
+	audio->out_audio = this->out_audio;
+	return audio;
+}

@@ -27,11 +27,14 @@ namespace titian {
 		void stop();
 		bool playing() const;
 
-		void start_rendering();
+		void start_rendering(
+			const Int2& frame_size,
+			int fps,
+			int video_bit_rate,
+			int audio_sample_rate);
 		void stop_rendering();
 		bool rendering() const;
 
-		String render_status() const;
 		float render_progress() const;
 
 		bool can_edit() const;
@@ -69,7 +72,10 @@ namespace titian {
 
 		std::future<void> m_audio_worker;
 		kl::AudioDevice m_audio_device{ 0 };
-		RAWAudio m_audio{ 96000 };
+		RAWAudio m_audio{ 48000 };
+
+		static Optional<GUID> classify_video_format(const String& path);
+		static Optional<kl::AudioType> classify_audio_format(const String& path);
 
 		void play_audio();
 		void prepare_audio();

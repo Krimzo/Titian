@@ -26,6 +26,15 @@ bool titian::VideoLayer::update()
 	if (m_playing) {
 		current_time = m_last_time + timer->elapsed();
 	}
+	if (m_renderer) {
+		if (m_renderer->progress() >= 1.0f) {
+			m_renderer = {};
+		}
+		else {
+			m_renderer->load_frame();
+		}
+	}
+
 	gpu->clear_internal(kl::colors::BLACK);
 	return true;
 }
@@ -54,12 +63,27 @@ bool titian::VideoLayer::playing() const
 	return m_playing;
 }
 
-void titian::VideoLayer::start_rendering()
+void titian::VideoLayer::start_rendering(
+	const Int2& frame_size,
+	const int fps,
+	const int video_bit_rate,
+	const int audio_sample_rate)
 {
 	if (m_renderer || m_playing) {
 		return;
 	}
-	m_renderer = new FuzeRenderer();
+	if (Optional file = kl::choose_file(true)) {
+		if (Optional format = classify_video_format(file.value())) {
+			m_renderer = new FuzeRenderer(file.value(), format.value(), frame_size, fps, video_bit_rate, audio_sample_rate);
+		}
+		else if (Optional type = classify_audio_format(file.value())) {
+			m_renderer = new FuzeRenderer(file.value(), type.value(), audio_sample_rate);
+		}
+		if (m_renderer) {
+			m_renderer->load_tracks(tracks);
+			m_renderer->load_audio();
+		}
+	}
 }
 
 void titian::VideoLayer::stop_rendering()
@@ -73,11 +97,6 @@ void titian::VideoLayer::stop_rendering()
 bool titian::VideoLayer::rendering() const
 {
 	return m_renderer;
-}
-
-titian::String titian::VideoLayer::render_status() const
-{
-	return "none";
 }
 
 float titian::VideoLayer::render_progress() const
@@ -129,7 +148,7 @@ void titian::VideoLayer::store_frame(const Int2& size)
 		if (Ref media = tracks[i]->get_media(current_time, offset)) {
 			package.media_start = offset;
 			package.media_end = offset + media->duration;
-			media->store_frame(package);
+			media->store_frame(package, false);
 			m_handler.mix_frame(media->out_frame);
 		}
 	}
@@ -348,6 +367,27 @@ media_loop_end:
 	new_media->type = MediaType::AUDIO;
 	new_media->name = media->name;
 	tracks[next_track_index]->insert_media(media_offset, new_media);
+}
+
+titian::Optional<GUID> titian::VideoLayer::classify_video_format(const String& path)
+{
+	const String extension = fs::path(path).extension().string();
+	if (extension == ".mp4") {
+		return MFVideoFormat_H264;
+	}
+	return std::nullopt;
+}
+
+titian::Optional<kl::AudioType> titian::VideoLayer::classify_audio_format(const String& path)
+{
+	const String extension = fs::path(path).extension().string();
+	if (extension == ".wav") {
+		return kl::AudioType::WAV;
+	}
+	if (extension == ".mp3") {
+		return kl::AudioType::MP3;
+	}
+	return std::nullopt;
 }
 
 void titian::VideoLayer::play_audio()

@@ -32,3 +32,10 @@ void titian::Image::cache_frame(const Int2& size)
 		}
 	});
 }
+
+titian::Ref<titian::Image> titian::Image::make_copy() const
+{
+	Ref image = new Image();
+	image->m_image = this->m_image;
+	return image;
+}

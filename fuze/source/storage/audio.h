@@ -18,7 +18,8 @@ namespace titian {
 		Audio(const String& path);
 
 		float duration() const;
-
 		float sample(float time) const;
+
+		Ref<Audio> make_copy() const;
 	};
 }

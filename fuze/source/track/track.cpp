@@ -35,6 +35,17 @@ titian::Ref<titian::Media> titian::Track::get_media(const float time, float& out
 	return {};
 }
 
+titian::Ref<titian::Track> titian::Track::make_copy() const
+{
+	Ref track = new Track();
+	track->name = this->name;
+	track->enabled = this->enabled;
+	for (const auto& [offset, media] : this->media) {
+		track->media[offset] = media->make_copy();
+	}
+	return track;
+}
+
 void titian::Track::readjust_media()
 {
 	std::map copy = media;

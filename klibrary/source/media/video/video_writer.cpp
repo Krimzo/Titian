@@ -58,7 +58,7 @@ kl::VideoWriter::VideoWriter(const std::string& filepath, const GUID& output_for
         audio_in_type->SetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, 32) >> verify_result;
         audio_in_type->SetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, 4) >> verify_result;
         audio_in_type->SetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, m_sample_rate) >> verify_result;
-        audio_in_type->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, m_sample_rate * 4) >> verify_result;
+        audio_in_type->SetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, m_sample_rate * sizeof(float)) >> verify_result;
         m_writer->SetInputMediaType(m_audio_index, audio_in_type.get(), nullptr) >> verify_result;
     }
 
@@ -97,7 +97,7 @@ bool kl::VideoWriter::add_frame(const Image& frame)
         return false;
     }
 
-    const int frame_byte_width = m_width * 4;
+    const int frame_byte_width = m_width * sizeof(Color);
     const int frame_byte_size = frame_byte_width * m_height;
 
     ComRef<IMFMediaBuffer> media_buffer;

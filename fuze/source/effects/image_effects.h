@@ -15,6 +15,8 @@ namespace titian {
 		String get_name() const override;
 		void display_gui() override;
 
+		Ref<ImageEffect> make_copy() const override;
+
 		Float2& scale();
 		float& rotation();
 		Float2& position();

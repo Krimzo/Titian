@@ -14,10 +14,12 @@ void titian::GUISectionFuzeRender::render_gui()
 		im::DragInt("Video FPS", &video_fps, 1.0f, 0, 1'000'000'000);
 		im::DragInt("Video Bitrate", &video_bitrate, 1.0f, 0, 1'000'000'000);
 		im::DragInt("Audio Rate", &audio_rate, 1.0f, 0, 1'000'000'000);
-		
+
+		im::Separator();
+
 		if (!video_layer->rendering()) {
 			if (im::Button("Start", { -1.0f, 0.0f })) {
-				video_layer->start_rendering();
+				video_layer->start_rendering(video_resolution, video_fps, video_bitrate, audio_rate);
 			}
 		}
 		else {
@@ -27,13 +29,9 @@ void titian::GUISectionFuzeRender::render_gui()
 		}
 
 		if (video_layer->rendering()) {
-			im::Separator();
-
-			String status = video_layer->render_status();
-			im::Text(kl::format("Status: ", status).c_str());
-
 			float progress = video_layer->render_progress();
-			im::SliderFloat("Progress", &progress, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_NoInput);
+			im::SetNextItemWidth(-1.0f);
+			im::SliderFloat("##Progress", &progress, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_NoInput);
 		}
 	}
 	im::End();

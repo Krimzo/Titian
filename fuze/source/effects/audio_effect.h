@@ -15,5 +15,7 @@ namespace titian {
 		virtual void display_gui() = 0;
 
 		virtual void apply(const EffectPackage& package, Audio& audio) = 0;
+		
+		virtual Ref<AudioEffect> make_copy() const = 0;
 	};
 }

@@ -23,16 +23,20 @@ float titian::Video::duration() const
 	return m_duration;
 }
 
-void titian::Video::store_frame(const float time)
+void titian::Video::store_frame(const float time, const bool wait)
 {
+	cache_frames(time);
+	cache_frames(time + BUFFERING_LENGTH * 0.5f);
+	if (wait) {
+		this->wait();
+	}
+
 	const int frame_index = int(time * m_fps);
 	m_frames_lock.lock();
 	if (m_frames.contains(frame_index)) {
 		out_frame.load_from_vector(m_frames[frame_index]);
 	}
 	m_frames_lock.unlock();
-	cache_frames(time);
-	cache_frames(time + BUFFERING_LENGTH * 0.5f);
 }
 
 void titian::Video::cache_frames(const float time)
@@ -104,4 +108,10 @@ titian::Vector<titian::Vector<titian::Pair<bool, float>>> titian::Video::bufferi
 		result.push_back(section_data);
 	}
 	return result;
+}
+
+titian::Ref<titian::Video> titian::Video::make_copy() const
+{
+	Ref video = new Video(m_path);
+	return video;
 }

@@ -24,5 +24,7 @@ namespace titian {
 
 		virtual void init() final;
 		virtual void apply(const EffectPackage& package, Frame& frame) final;
+
+		virtual Ref<ImageEffect> make_copy() const = 0;
 	};
 }

@@ -22,3 +22,9 @@ void titian::AudioEffectVolume::apply(const EffectPackage& package, Audio& audio
 		audio.out_audio[i] *= volume;
 	});
 }
+
+titian::Ref<titian::AudioEffect> titian::AudioEffectVolume::make_copy() const
+{
+	Ref effect = new AudioEffectVolume();
+	return effect;
+}

@@ -9,9 +9,9 @@ namespace titian {
     {
     public:
         Int2 video_resolution = { 1920, 1080 };
-        int video_fps = 30;
-        int video_bitrate = 40'000'000;
-        int audio_rate = 96000;
+        int video_fps = 60;
+        int video_bitrate = 10'000'000;
+        int audio_rate = 48000;
 
         GUISectionFuzeRender();
 

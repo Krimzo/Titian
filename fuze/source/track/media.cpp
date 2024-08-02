@@ -19,9 +19,9 @@ bool titian::Media::has_video() const
 	return video && video->duration() > 0.0f;
 }
 
-void titian::Media::store_frame(const EffectPackage& package)
+void titian::Media::store_frame(const EffectPackage& package, const bool wait)
 {
-	store_raw_frame(package.current_time - package.media_start);
+	store_raw_frame(package.current_time - package.media_start, wait);
 	apply_image_effects(package);
 }
 
@@ -31,7 +31,25 @@ void titian::Media::store_audio(const EffectPackage& package)
 	apply_audio_effects(package);
 }
 
-void titian::Media::store_raw_frame(const float time)
+titian::Ref<titian::Media> titian::Media::make_copy() const
+{
+	Ref media = new Media();
+	media->name = this->name;
+	media->type = this->type;
+	media->duration = this->duration;
+	media->image = this->image ? this->image->make_copy() : nullptr;
+	media->audio = this->audio ? this->audio->make_copy() : nullptr;
+	media->video = this->video ? this->video->make_copy() : nullptr;
+	for (const auto& effect : this->image_effects) {
+		media->image_effects.push_back(effect->make_copy());
+	}
+	for (const auto& effect : this->audio_effects) {
+		media->audio_effects.push_back(effect->make_copy());
+	}
+	return media;
+}
+
+void titian::Media::store_raw_frame(const float time, const bool wait)
 {
 	if (type == MediaType::IMAGE) {
 		if (image) {
@@ -41,7 +59,7 @@ void titian::Media::store_raw_frame(const float time)
 	}
 	else if (type == MediaType::VIDEO) {
 		if (video) {
-			video->store_frame(time);
+			video->store_frame(time, wait);
 			out_frame.resize(video->out_frame.size());
 			out_frame.upload(video->out_frame);
 		}

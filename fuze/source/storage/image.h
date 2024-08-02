@@ -18,6 +18,8 @@ namespace titian {
 		Image(const String& path);
 
 		void cache_frame(const Int2& size);
+
+		Ref<Image> make_copy() const;
 	
 	private:
 		RAWImage m_image;

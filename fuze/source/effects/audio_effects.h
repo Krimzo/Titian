@@ -15,5 +15,7 @@ namespace titian {
 		void display_gui() override;
 
 		void apply(const EffectPackage& package, Audio& audio) override;
+
+		Ref<AudioEffect> make_copy() const override;
 	};
 }

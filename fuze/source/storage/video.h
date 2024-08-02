@@ -18,12 +18,13 @@ namespace titian {
 
 		float duration() const;
 
-		void store_frame(float time);
+		void store_frame(float time, bool wait);
 		void cache_frames(float time);
 
 		void wait();
-
 		Vector<Vector<Pair<bool, float>>> buffering_sections() const;
+
+		Ref<Video> make_copy() const;
 
 	private:
 		const String m_path;

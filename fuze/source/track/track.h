@@ -18,6 +18,8 @@ namespace titian {
 
 		Ref<Media> get_media(float time, float& out_offset) const;
 
+		Ref<Track> make_copy() const;
+
 	private:
 		void readjust_media();
 	};
