@@ -3,7 +3,7 @@
 
 titian::FuzeRenderer::FuzeRenderer(
 	const String& filepath,
-	const GUID& output_format,
+	const kl::VideoType& video_type,
 	const Int2& frame_size,
 	const int fps,
 	const int video_bit_rate,
@@ -11,7 +11,7 @@ titian::FuzeRenderer::FuzeRenderer(
 	: m_path(filepath), m_frame_size(frame_size), m_fps(fps)
 {
 	m_handler.init();
-	m_video_writer = new kl::VideoWriter(filepath, output_format, frame_size, fps, video_bit_rate, audio_sample_rate);
+	m_video_writer = new kl::VideoWriter(filepath, video_type, frame_size, fps, video_bit_rate, audio_sample_rate);
 }
 
 titian::FuzeRenderer::FuzeRenderer(

@@ -74,7 +74,7 @@ namespace titian {
 		kl::AudioDevice m_audio_device{ 0 };
 		RAWAudio m_audio{ 48000 };
 
-		static Optional<GUID> classify_video_format(const String& path);
+		static Optional<kl::VideoType> classify_video_format(const String& path);
 		static Optional<kl::AudioType> classify_audio_format(const String& path);
 
 		void play_audio();

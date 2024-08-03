@@ -20,6 +20,8 @@
 #include <mmsystem.h>
 #include <mmdeviceapi.h>
 #include <functiondiscoverykeys_devpkey.h>
+#include <codecapi.h>
+#include <dvdmedia.h>
 
 #pragma comment(lib, "mf.lib")
 #pragma comment(lib, "mfplay.lib")

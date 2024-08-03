@@ -369,11 +369,11 @@ media_loop_end:
 	tracks[next_track_index]->insert_media(media_offset, new_media);
 }
 
-titian::Optional<GUID> titian::VideoLayer::classify_video_format(const String& path)
+titian::Optional<kl::VideoType> titian::VideoLayer::classify_video_format(const String& path)
 {
 	const String extension = fs::path(path).extension().string();
 	if (extension == ".mp4") {
-		return MFVideoFormat_H264;
+		return kl::VideoType::h264();
 	}
 	return std::nullopt;
 }

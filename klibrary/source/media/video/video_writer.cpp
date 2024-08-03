@@ -1,9 +1,8 @@
 #include "klibrary.h"
 
 
-kl::VideoWriter::VideoWriter(const std::string& filepath, const GUID& output_format, const Int2& frame_size, const int fps, const int video_bit_rate, const int audio_sample_rate)
-    : m_output_format(output_format)
-    , m_width(frame_size.x)
+kl::VideoWriter::VideoWriter(const std::string& filepath, const VideoType& video_type, const Int2& frame_size, const int fps, const int video_bit_rate, const int audio_sample_rate)
+    : m_width(frame_size.x)
     , m_height(frame_size.y)
     , m_fps(fps)
     , m_bit_rate(video_bit_rate)
@@ -18,23 +17,24 @@ kl::VideoWriter::VideoWriter(const std::string& filepath, const GUID& output_for
     MFCreateMediaType(&video_out_type) >> verify_result;
 
     video_out_type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video) >> verify_result;
-    video_out_type->SetGUID(MF_MT_SUBTYPE, m_output_format) >> verify_result;
+    video_out_type->SetGUID(MF_MT_SUBTYPE, video_type.type()) >> verify_result;
+    if (video_type.profile() > 0) {
+        video_out_type->SetUINT32(MF_MT_MPEG2_PROFILE, video_type.profile()) >> verify_result;
+    }
     video_out_type->SetUINT32(MF_MT_AVG_BITRATE, m_bit_rate) >> verify_result;
     video_out_type->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive) >> verify_result;
     MFSetAttributeSize(video_out_type.get(), MF_MT_FRAME_SIZE, m_width, m_height) >> verify_result;
     MFSetAttributeRatio(video_out_type.get(), MF_MT_FRAME_RATE, m_fps, 1) >> verify_result;
-    MFSetAttributeRatio(video_out_type.get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1) >> verify_result;
     m_writer->AddStream(video_out_type.get(), &m_video_index) >> verify_result;
 
     ComRef<IMFMediaType> video_in_type;
     MFCreateMediaType(&video_in_type) >> verify_result;
 
     video_in_type->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video) >> verify_result;
-    video_in_type->SetGUID(MF_MT_SUBTYPE, m_input_format) >> verify_result;
+    video_in_type->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32) >> verify_result;
     video_in_type->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive) >> verify_result;
     MFSetAttributeSize(video_in_type.get(), MF_MT_FRAME_SIZE, m_width, m_height) >> verify_result;
     MFSetAttributeRatio(video_in_type.get(), MF_MT_FRAME_RATE, m_fps, 1) >> verify_result;
-    MFSetAttributeRatio(video_in_type.get(), MF_MT_PIXEL_ASPECT_RATIO, 1, 1) >> verify_result;
     m_writer->SetInputMediaType(m_video_index, video_in_type.get(), nullptr) >> verify_result;
 
     // Audio
@@ -66,11 +66,6 @@ kl::VideoWriter::VideoWriter(const std::string& filepath, const GUID& output_for
     m_writer->BeginWriting() >> verify_result;
 }
 
-GUID kl::VideoWriter::output_format() const
-{
-    return m_output_format;
-}
-
 kl::Int2 kl::VideoWriter::frame_size() const
 {
     return { (int) m_width, (int) m_height };
@@ -81,14 +76,14 @@ int kl::VideoWriter::fps() const
     return (int) m_fps;
 }
 
-int kl::VideoWriter::frame_count() const
-{
-    return (int) (m_video_time / m_frame_duration);
-}
-
 int kl::VideoWriter::video_bit_rate() const
 {
     return (int) m_bit_rate;
+}
+
+int kl::VideoWriter::frame_count() const
+{
+    return (int) (m_video_time / m_frame_duration);
 }
 
 bool kl::VideoWriter::add_frame(const Image& frame)
