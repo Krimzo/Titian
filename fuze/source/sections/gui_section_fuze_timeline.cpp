@@ -21,7 +21,7 @@ void titian::GUISectionFuzeTimeline::render_gui()
 
 		handle_input(scroll);
 
-		const ImVec2 cell_padding = ImVec2(4.0f, 4.0f);
+		constexpr ImVec2 cell_padding = ImVec2(4.0f, 4.0f);
 		im::PushStyleVar(ImGuiStyleVar_CellPadding, cell_padding);
 
         if (im::BeginTable("##TracksTable", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable)) {
