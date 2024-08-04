@@ -172,8 +172,8 @@ void titian::VideoLayer::retrieve_frame(RAWImage& out_image) const
 void titian::VideoLayer::load_file(const String& path)
 {
 	static const Set<String> image_extensions = { ".bmp", ".png", ".jpg", ".jpeg" };
-	static const Set<String> audio_extensions = { ".wav", ".mp3" };
-	static const Set<String> video_extensions = { ".mkv", ".mp4" };
+	static const Set<String> audio_extensions = { ".wav", ".m4a", ".mp3" };
+	static const Set<String> video_extensions = { ".mkv", ".mpg", ".mp4" };
 
 	const String extension = fs::path(path).extension().string();
 	if (image_extensions.contains(extension)) {

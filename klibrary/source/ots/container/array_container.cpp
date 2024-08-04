@@ -32,7 +32,7 @@ bool kl::ots::ArrayContainer::from_string(std::string data, Preprocessor preproc
 
     // Split to parts and parse each part
     for (const auto& part : Parser::split_array_data(data)) {
-        Object<DataContainer> containers[3] = { new LiteralContainer(), new ArrayContainer(), new MapContainer() };
+        Ref<DataContainer> containers[3] = { new LiteralContainer(), new ArrayContainer(), new MapContainer() };
         for (auto& container : containers) {
             if (container->from_string(part)) {
                 this->push_back(container);

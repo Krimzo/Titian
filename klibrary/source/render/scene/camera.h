@@ -12,7 +12,7 @@ namespace kl {
         Float3 m_up = { 0.0f, 1.0f, 0.0f };
 
     public:
-        Float3 origin = {};
+        Float3 origin;
 
         float aspect_ratio = 1.7778f;
         float field_of_view = 75.0f;
@@ -23,8 +23,8 @@ namespace kl {
         float sensitivity = 0.1f;
         float speed = 2.0f;
 
-        Color background = {};
-        Object<Texture> skybox = nullptr;
+        Color background;
+        Ref<Texture> skybox;
 
         void update_aspect_ratio(const Int2& size);
 

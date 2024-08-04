@@ -4,7 +4,7 @@
 
 
 namespace kl::ots {
-	class ArrayContainer : public DataContainer, public ArrayContainerType<Object<DataContainer>>
+	class ArrayContainer : public DataContainer, public ArrayContainerType<Ref<DataContainer>>
 	{
 	public:
 		ArrayContainer();

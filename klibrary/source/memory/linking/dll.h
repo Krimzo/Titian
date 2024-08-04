@@ -12,11 +12,6 @@ namespace kl {
         template<typename Return, typename... Args>
         using Function = Return(__stdcall*)(Args...);
 
-    private:
-        std::string m_path = "";
-        HMODULE m_module = nullptr;
-
-    public:
         DLL();
         DLL(const std::string& path);
         ~DLL();
@@ -36,5 +31,9 @@ namespace kl {
             auto function_address = GetProcAddress(m_module, function_name.c_str());
             return (Function<Return, Args...>) function_address;
         }
+
+    private:
+        std::string m_path;
+        HMODULE m_module = nullptr;
     };
 }

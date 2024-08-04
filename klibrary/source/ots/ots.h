@@ -14,7 +14,8 @@ namespace kl::ots {
     class ContainerSerializable
     {
     public:
-        virtual Object<DataContainer> to_container() const = 0;
+        virtual ~ContainerSerializable() = default;
+        virtual Ref<DataContainer> to_container() const = 0;
         virtual void from_container(const DataContainer& container) = 0;
     };
 
@@ -24,14 +25,14 @@ namespace kl::ots {
         virtual void to_array(ArrayContainer& array) const = 0;
         virtual void from_array(const ArrayContainer& array) = 0;
 
-        Object<DataContainer> to_container() const override final
+        Ref<DataContainer> to_container() const final
         {
-            Object<ArrayContainer> container = new ArrayContainer();
+            Ref container = new ArrayContainer();
             this->to_array(*container);
             return container;
         }
 
-        void from_container(const DataContainer& container) override final
+        void from_container(const DataContainer& container) final
         {
             if (const ArrayContainer* array_container = dynamic_cast<const ArrayContainer*>(&container)) {
                 this->from_array(*array_container);
@@ -45,14 +46,14 @@ namespace kl::ots {
         virtual void to_map(MapContainer& map) const = 0;
         virtual void from_map(const MapContainer& map) = 0;
 
-        Object<DataContainer> to_container() const override final
+        Ref<DataContainer> to_container() const final
         {
-            Object<MapContainer> container = new MapContainer();
+            Ref container = new MapContainer();
             this->to_map(*container);
             return container;
         }
 
-        void from_container(const DataContainer& container) override final
+        void from_container(const DataContainer& container) final
         {
             if (const MapContainer* map_container = dynamic_cast<const MapContainer*>(&container)) {
                 this->from_map(*map_container);

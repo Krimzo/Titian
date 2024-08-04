@@ -21,7 +21,7 @@ void titian::GUISectionFuzeTimeline::render_gui()
 
 		handle_input(scroll);
 
-		constexpr ImVec2 cell_padding = ImVec2(4.0f, 4.0f);
+		constexpr ImVec2 cell_padding{ 4.0f, 4.0f };
 		im::PushStyleVar(ImGuiStyleVar_CellPadding, cell_padding);
 
         if (im::BeginTable("##TracksTable", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable)) {
@@ -250,7 +250,7 @@ void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, con
 
 	im::TableNextRow(ImGuiTableRowFlags_None, row_height);
 	im::TableSetColumnIndex(0);
-	im::TableSetBgColor(ImGuiTableBgTarget_CellBg, IM_COL32(45, 45, 45, 255)); // crashes if i pass ImColor(45, 45, 45) in release ???
+	im::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImColor(45, 45, 45));
 
 	ImRect window_rect{ im::GetWindowContentRegionMin(), im::GetWindowContentRegionMax() };
 	window_rect.Translate(im::GetWindowPos());

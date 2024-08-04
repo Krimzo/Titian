@@ -6,10 +6,10 @@
 namespace kl {
     /* NOT THREAD SAFE */
     template<typename T, typename C = uint32_t>
-    class Object
+    class Ref
     {
         template<typename, typename>
-        friend class Object;
+        friend class Ref;
 
         T* m_instance = nullptr;
         C* m_count = nullptr;
@@ -59,10 +59,10 @@ namespace kl {
 
     public:
         // Create
-        Object()
+        Ref()
         {}
 
-        Object(T* instance)
+        Ref(T* instance)
             : m_instance(instance)
         {
             if (m_instance) {
@@ -71,7 +71,7 @@ namespace kl {
         }
 
         // Destroy
-        ~Object()
+        ~Ref()
         {
             this->free();
         }
@@ -87,18 +87,18 @@ namespace kl {
         }
 
         // Create copy
-        Object(const Object& other)
+        Ref(const Ref& other)
             : m_instance(other.m_instance), m_count(other.m_count)
         {
             increase_count();
         }
 
-        Object(Object&& other) noexcept
-            : Object(other)
+        Ref(Ref&& other) noexcept
+            : Ref(other)
         {}
 
         // Copy
-        Object& operator=(const Object& other)
+        Ref& operator=(const Ref& other)
         {
             if (other.m_instance != m_instance) {
                 this->free();
@@ -109,7 +109,7 @@ namespace kl {
             return *this;
         }
 
-        Object& operator=(Object&& other) noexcept
+        Ref& operator=(Ref&& other) noexcept
         {
             return (*this = other);
         }
@@ -117,9 +117,9 @@ namespace kl {
         // Cast
         template<typename B>
             requires (not std::is_same_v<B, T> and std::is_base_of_v<B, T>)
-        operator Object<B, C> ()
+        operator Ref<B, C> ()
         {
-            Object<B, C> result;
+            Ref<B, C> result;
             result.m_instance = m_instance;
             result.m_count = m_count;
             increase_count();
@@ -128,14 +128,14 @@ namespace kl {
 
         template<typename D>
             requires (not std::is_same_v<D, T>)
-        Object<D, C> as() const
+        Ref<D, C> as() const
         {
             D* derived = dynamic_cast<D*>(m_instance);
             if (!derived) {
                 return {};
             }
 
-            Object<D, C> result;
+            Ref<D, C> result;
             result.m_instance = derived;
             result.m_count = m_count;
             increase_count();
@@ -165,14 +165,14 @@ namespace kl {
         }
 
         // Compare
-        bool operator==(const Object& other) const
+        bool operator==(const Ref& other) const
         {
             const void* first = m_instance;
             const void* second = other.m_instance;
             return first == second;
         }
 
-        bool operator!=(const Object& other) const
+        bool operator!=(const Ref& other) const
         {
             return !(*this == other);
         }
@@ -212,22 +212,22 @@ namespace kl {
 
 namespace kl {
     template<typename T>
-    using SafeObject = Object<T, std::atomic<uint32_t>>;
+    using SafeRef = Ref<T, std::atomic<uint32_t>>;
 }
 
 namespace kl {
     template<typename T, typename C>
-    std::ostream& operator<<(std::ostream& stream, const Object<T, C>& object)
+    std::ostream& operator<<(std::ostream& stream, const Ref<T, C>& ref)
     {
         // Address
-        stream << "(0x" << std::hex << &object << std::dec;
+        stream << "(0x" << std::hex << &ref << std::dec;
 
         // Ref count
-        stream << "{" << object.count() << "}: ";
+        stream << "{" << ref.count() << "}: ";
     
         // Object
-        if (object) {
-            stream << *object;
+        if (ref) {
+            stream << *ref;
         }
         else {
             stream << "/";

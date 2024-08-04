@@ -15,8 +15,8 @@ namespace kl {
 
         Float4 color = colors::WHITE;
 
-        Object<Texture> color_map = nullptr;
-        Object<Texture> normal_map = nullptr;
-        Object<Texture> roughness_map = nullptr;
+        Ref<Texture> color_map;
+        Ref<Texture> normal_map;
+        Ref<Texture> roughness_map;
     };
 }

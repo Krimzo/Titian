@@ -36,44 +36,44 @@ namespace kl::ots {
 		std::optional<std::string> get_string() const override;
 
 		// Helper
-		static inline Object<LiteralContainer> load_null()
+		static inline Ref<LiteralContainer> load_null()
 		{
-			Object<LiteralContainer> container = new LiteralContainer();
+			Ref container = new LiteralContainer();
 			container->put_null();
 			return container;
 		}
 
-		static inline Object<LiteralContainer> load_bool(bool value)
+		static inline Ref<LiteralContainer> load_bool(bool value)
 		{
-			Object<LiteralContainer> container = new LiteralContainer();
+			Ref container = new LiteralContainer();
 			container->put_bool(value);
 			return container;
 		}
 
-		static inline Object<LiteralContainer> load_int(int64_t value)
+		static inline Ref<LiteralContainer> load_int(int64_t value)
 		{
-			Object<LiteralContainer> container = new LiteralContainer();
+			Ref container = new LiteralContainer();
 			container->put_int(value);
 			return container;
 		}
 
-		static inline Object<LiteralContainer> load_float(double value)
+		static inline Ref<LiteralContainer> load_float(double value)
 		{
-			Object<LiteralContainer> container = new LiteralContainer();
+			Ref container = new LiteralContainer();
 			container->put_float(value);
 			return container;
 		}
 
-		static inline Object<LiteralContainer> load_char(char value)
+		static inline Ref<LiteralContainer> load_char(char value)
 		{
-			Object<LiteralContainer> container = new LiteralContainer();
+			Ref container = new LiteralContainer();
 			container->put_char(value);
 			return container;
 		}
 
-		static inline Object<LiteralContainer> load_string(const std::string& value)
+		static inline Ref<LiteralContainer> load_string(const std::string& value)
 		{
-			Object<LiteralContainer> container = new LiteralContainer();
+			Ref container = new LiteralContainer();
 			container->put_string(value);
 			return container;
 		}

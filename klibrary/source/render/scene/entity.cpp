@@ -81,7 +81,7 @@ void kl::Entity::set_dynamic(physx::PxPhysics* physics, const bool enabled)
     }
 
     const physx::PxTransform old_transform = m_physics_actor->getGlobalPose();
-    const Object<Collider> old_collider = m_collider;
+    const Ref<Collider> old_collider = m_collider;
 
     set_collider(nullptr);
     generate_actor(physics, old_transform, enabled);
@@ -159,7 +159,7 @@ kl::Float3 kl::Entity::angular() const
 }
 
 // Collision
-void kl::Entity::set_collider(const Object<kl::Collider>& collider)
+void kl::Entity::set_collider(const Ref<kl::Collider>& collider)
 {
     if (m_collider) {
         m_physics_actor->detachShape(*m_collider->shape());
@@ -172,7 +172,7 @@ void kl::Entity::set_collider(const Object<kl::Collider>& collider)
     }
 }
 
-kl::Object<kl::Collider> kl::Entity::collider() const
+kl::Ref<kl::Collider> kl::Entity::collider() const
 {
     return m_collider;
 }

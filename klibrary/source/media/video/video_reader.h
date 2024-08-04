@@ -2,7 +2,7 @@
 
 #include "media/image/image.h"
 #include "graphics/gpu/gpu.h"
-#include "memory/safety/object.h"
+#include "memory/safety/ref.h"
 
 
 namespace kl {
@@ -18,7 +18,7 @@ namespace kl {
         float m_fps = 0.0f;
 
         ComRef<IMFSourceReader> m_reader;
-        Object<GPU> m_gpu = nullptr;
+        Ref<GPU> m_gpu = nullptr;
 
     public:
         VideoReader(const std::string& filepath, const Int2& output_size = {}, bool use_gpu = true);

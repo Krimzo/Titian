@@ -15,7 +15,7 @@ namespace kl {
 
     private:
         Float3 m_direction = { 0.0f, 0.0f, 1.0f };
-        Object<Texture> m_cascades[CASCADE_COUNT] = {};
+        Ref<Texture> m_cascades[CASCADE_COUNT] = {};
 
     public:
         const UINT map_resolution;

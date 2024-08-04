@@ -4,7 +4,7 @@
 
 
 namespace kl::ots {
-	class MapContainer : public DataContainer, public MapContainerType<std::string, Object<DataContainer>>
+	class MapContainer : public DataContainer, public MapContainerType<std::string, Ref<DataContainer>>
 	{
 	public:
 		MapContainer();

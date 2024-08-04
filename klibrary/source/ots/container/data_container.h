@@ -8,6 +8,8 @@ namespace kl::ots {
 	class DataContainer
 	{
 	public:
+		virtual ~DataContainer() = default;
+
 		virtual bool from_string(std::string data, Preprocessor preprocessor = {}) = 0;
 		virtual std::string to_string() const = 0;
 

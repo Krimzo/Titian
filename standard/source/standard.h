@@ -43,7 +43,7 @@ namespace titian {
 	using Any = std::any;
 
 	template<typename T>
-	using Ref = kl::Object<T>;
+	using Ref = kl::Ref<T>;
 
 	template<typename T>
 	using Optional = std::optional<T>;

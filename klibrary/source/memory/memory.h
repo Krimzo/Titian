@@ -2,7 +2,7 @@
 
 
 // Safety
-#include "memory/safety/object.h"
+#include "memory/safety/ref.h"
 #include "memory/safety/array.h"
 
 // Files

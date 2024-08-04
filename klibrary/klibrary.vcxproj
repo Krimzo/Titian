@@ -63,7 +63,7 @@
     <ClInclude Include="source\memory\linking\dll.h" />
     <ClInclude Include="source\memory\memory.h" />
     <ClInclude Include="source\memory\safety\array.h" />
-    <ClInclude Include="source\memory\safety\object.h" />
+    <ClInclude Include="source\memory\safety\ref.h" />
     <ClInclude Include="source\ots\container\array_container.h" />
     <ClInclude Include="source\ots\container\data_container.h" />
     <ClInclude Include="source\ots\container\literal_container.h" />
