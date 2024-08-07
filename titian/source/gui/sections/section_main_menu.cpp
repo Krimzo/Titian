@@ -305,6 +305,9 @@ void titian::GUISectionMainMenu::render_gui()
                 im::ColorEdit3("Special", gui_layer->special_color);
                 im::SetNextItemWidth(250.0f);
                 im::ColorEdit3("Alternate", gui_layer->alternate_color);
+                if (im::Button("Reload", { -1.0f, 0.0f })) {
+                    gui_layer->reload_colors();
+                }
                 im::EndMenu();
             }
 

@@ -20,8 +20,8 @@ void titian::GUILayer::init()
 	dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(*window);
 
 	im::StyleColorsDark();
-	load_custom_fonts();
-	load_custom_theme();
+	reload_fonts();
+	reload_colors();
 }
 
 bool titian::GUILayer::update()
@@ -58,7 +58,7 @@ bool titian::GUILayer::update()
 	return true;
 }
 
-void titian::GUILayer::load_custom_fonts()
+void titian::GUILayer::reload_fonts()
 {
 	ImFontAtlas* atlas = im::GetIO().Fonts;
 
@@ -71,7 +71,7 @@ void titian::GUILayer::load_custom_fonts()
 	atlas->Build();
 }
 
-void titian::GUILayer::load_custom_theme() const
+void titian::GUILayer::reload_colors()
 {
 	ImGuiStyle& style = im::GetStyle();
 
@@ -100,10 +100,10 @@ void titian::GUILayer::load_custom_theme() const
 	style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
 	style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
 
-	style.Colors[ImGuiCol_CheckMark] = (const ImVec4&)special_color;
+	style.Colors[ImGuiCol_CheckMark] = (const ImVec4&) special_color;
 
-	style.Colors[ImGuiCol_SliderGrab] = (const ImVec4&)special_color;
-	style.Colors[ImGuiCol_SliderGrabActive] = (const ImVec4&)special_color;
+	style.Colors[ImGuiCol_SliderGrab] = (const ImVec4&) special_color;
+	style.Colors[ImGuiCol_SliderGrabActive] = (const ImVec4&) special_color;
 
 	style.Colors[ImGuiCol_Button] = style.Colors[ImGuiCol_FrameBg];
 	style.Colors[ImGuiCol_ButtonHovered] = style.Colors[ImGuiCol_FrameBgHovered];
@@ -115,19 +115,20 @@ void titian::GUILayer::load_custom_theme() const
 
 	style.Colors[ImGuiCol_Separator] = style.Colors[ImGuiCol_Border];
 	style.Colors[ImGuiCol_SeparatorHovered] = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
-	style.Colors[ImGuiCol_SeparatorActive] = (const ImVec4&)special_color;
+	style.Colors[ImGuiCol_SeparatorActive] = (const ImVec4&) special_color;
 
 	style.Colors[ImGuiCol_ResizeGrip] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
 	style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.30f, 0.30f, 0.30f, 0.67f);
-	style.Colors[ImGuiCol_ResizeGripActive] = (const ImVec4&)special_color;
+	style.Colors[ImGuiCol_ResizeGripActive] = (const ImVec4&) special_color;
 
 	style.Colors[ImGuiCol_Tab] = ImVec4(0.08f, 0.08f, 0.08f, 0.83f);
 	style.Colors[ImGuiCol_TabHovered] = ImVec4(0.35f, 0.35f, 0.35f, 0.83f);
 	style.Colors[ImGuiCol_TabActive] = ImVec4(0.23f, 0.23f, 0.23f, 1.00f);
 	style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
 	style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+	style.Colors[ImGuiCol_TabSelectedOverline] = (const ImVec4&) special_color;
 
-	style.Colors[ImGuiCol_DockingPreview] = (const ImVec4&)special_color;
+	style.Colors[ImGuiCol_DockingPreview] = (const ImVec4&) special_color;
 	style.Colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
 
 	style.Colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
@@ -137,9 +138,9 @@ void titian::GUILayer::load_custom_theme() const
 
 	style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.42f, 0.69f, 0.69f, 0.32f);
 
-	style.Colors[ImGuiCol_DragDropTarget] = (const ImVec4&)special_color;
+	style.Colors[ImGuiCol_DragDropTarget] = (const ImVec4&) special_color;
 
-	style.Colors[ImGuiCol_NavHighlight] = (const ImVec4&)special_color;
+	style.Colors[ImGuiCol_NavHighlight] = (const ImVec4&) special_color;
 	style.Colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
 	style.Colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 

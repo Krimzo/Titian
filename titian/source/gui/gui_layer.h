@@ -22,8 +22,7 @@ namespace titian {
 		void init();
 		bool update() override;
 
-	private:
-		void load_custom_fonts();
-		void load_custom_theme() const;
+		void reload_fonts();
+		void reload_colors();
 	};
 }
