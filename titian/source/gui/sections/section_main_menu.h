@@ -21,7 +21,6 @@ namespace titian {
         Ref<Texture> m_pause_button_texture = nullptr;
         Ref<Texture> m_stop_button_texture = nullptr;
 
-        bool m_inputting_name = false;
         bool m_testing_exit = false;
 
         float m_control_buttons_width = 0.0f;

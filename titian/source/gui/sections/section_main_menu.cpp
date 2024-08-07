@@ -35,26 +35,6 @@ void titian::GUISectionMainMenu::render_gui()
     kl::Window* window = &app_layer->window;
     Ref<Scene>& scene = game_layer->scene;
 
-    // Save scene popup
-    if (m_inputting_name) {
-        if (im::Begin("Save Scene", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-            im::SetNextItemWidth(-1.0f);
-            if (Optional opt_name = gui_input_waited("##SaveSceneNameInput", {})) {
-                const String& name = opt_name.value();
-                if (!name.empty()) {
-                    const String save_path = kl::format(opt_name.value(), FILE_EXTENSION_TITIAN);
-                    if (Serializer serializer = { save_path, true }) {
-                        scene->serialize(&serializer, nullptr);
-                    }
-                    m_inputting_name = false;
-                }
-            }
-            if (im::Button("Cancel")) {
-                m_inputting_name = false;
-            }
-        }
-        im::End();
-    }
     if (m_testing_exit) {
         if (im::Begin("Exit?", nullptr, ImGuiWindowFlags_NoScrollbar)) {
             im::Text("Are you sure you want to exit?");
@@ -232,9 +212,6 @@ void titian::GUISectionMainMenu::render_gui()
             im::Separator();
             if (im::MenuItem("New Scene")) {
                 scene = new Scene(&app_layer->gpu);
-            }
-            if (im::MenuItem("Save Scene")) {
-                m_inputting_name = true;
             }
             im::Separator();
             if (im::MenuItem("Exit")) {
