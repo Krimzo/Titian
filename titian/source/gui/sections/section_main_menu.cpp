@@ -32,7 +32,6 @@ void titian::GUISectionMainMenu::render_gui()
     GUILayer* gui_layer = Layers::get<GUILayer>();
     EditorLayer* editor_layer = Layers::get<EditorLayer>();
 
-    kl::Window* window = &app_layer->window;
     Ref<Scene>& scene = game_layer->scene;
 
     if (m_testing_exit) {
@@ -332,7 +331,7 @@ void titian::GUISectionMainMenu::render_gui()
         im::SetCursorPosX((menu_size.x - m_control_buttons_width) * 0.5f);
         m_control_buttons_width = 0.0f;
 
-        const float button_image_size = 16.0f;
+        constexpr float button_image_size = 16.0f;
         
         const bool is_start_enabled = !game_layer->game_running || game_layer->game_paused;
         const ImVec4 start_tint_color = is_start_enabled ? ImColor(200, 200, 200) : ImColor(75, 75, 75);

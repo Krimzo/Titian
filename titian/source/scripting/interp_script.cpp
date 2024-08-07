@@ -700,10 +700,10 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["Ray"] = "A 3D ray in space.";
 	INTERP_SCRIPT_IDENTIFIERS["set_direction"] = "Sets the normalized direction.";
 	INTERP_SCRIPT_IDENTIFIERS["direction"] = "Returns the normalized direction.";
-	INTERP_SCRIPT_IDENTIFIERS["intersect_plane"] = "Ray interesects plane.";
-	INTERP_SCRIPT_IDENTIFIERS["intersect_triangle"] = "Ray interesects triangle.";
+	INTERP_SCRIPT_IDENTIFIERS["intersect_plane"] = "Ray intersects plane.";
+	INTERP_SCRIPT_IDENTIFIERS["intersect_triangle"] = "Ray intersects triangle.";
 	INTERP_SCRIPT_IDENTIFIERS["can_intersect_sphere"] = "Checks if this ray can intersect a sphere.";
-	INTERP_SCRIPT_IDENTIFIERS["intersect_sphere"] = "Ray interesects sphere.";
+	INTERP_SCRIPT_IDENTIFIERS["intersect_sphere"] = "Ray intersects sphere.";
 
 	// Color
 	cs::utility::add_class<kl::Color>(*INTERP_SCRIPT_MODULE, "Color",
@@ -1419,9 +1419,9 @@ const int load_constants = [&]
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) D3D_PRIMITIVE_TOPOLOGY_POINTLIST), "TOPOLOGY_POINTS");
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) D3D_PRIMITIVE_TOPOLOGY_LINELIST), "TOPOLOGY_LINES");
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST), "TOPOLOGY_TRIANGLES");
-	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_POINTS"] = "Makes the rasterizer render this mesh as an array of POINTS.";
-	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_LINES"] = "Makes the rasterizer render this mesh as an array of LINES.";
-	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_TRIANGLES"] = "Makes the rasterizer render this mesh as an array of TRIANGLES.";
+	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_POINTS"] = "Makes the rasterizer rasterize this mesh as an array of POINTS.";
+	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_LINES"] = "Makes the rasterizer rasterize this mesh as an array of LINES.";
+	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_TRIANGLES"] = "Makes the rasterizer rasterize this mesh as an array of TRIANGLES.";
 
 	// Animation
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) AnimationType::SEQUENTIAL), "ANIMATION_SEQUENTIAL");
@@ -1544,8 +1544,8 @@ const int load_functions = [&]
 
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::calc_ndc<float>), "calc_ndc");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::calc_ndc_ar<float>), "calc_ndc_ar");
-	INTERP_SCRIPT_IDENTIFIERS["calc_ndc"] = "Converts coorinates into ndc.";
-	INTERP_SCRIPT_IDENTIFIERS["calc_ndc_ar"] = "Converts coorinates into ndc and applies aspect ratio.";
+	INTERP_SCRIPT_IDENTIFIERS["calc_ndc"] = "Converts coordinates into ndc.";
+	INTERP_SCRIPT_IDENTIFIERS["calc_ndc_ar"] = "Converts coordinates into ndc and applies aspect ratio.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::line_x<float>), "line_x");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::line_y<float>), "line_y");
