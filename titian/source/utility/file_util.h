@@ -35,18 +35,4 @@ namespace titian {
         }
         return FileType::DEFAULT;
     }
-
-    inline Map<String, String> parse_ini_file(const String& path)
-    {
-        Map<String, String> data{};
-        for (auto& line : kl::split_string(kl::read_file_string(path), '\n')) {
-            const Vector<String> parts = kl::split_string(line, '=');
-            if (parts.size() == 2) {
-                const String key = trim(parts[0]);
-				const String value = trim(parts[1]);
-				data[key] = value;
-            }
-        }
-        return data;
-    }
 }

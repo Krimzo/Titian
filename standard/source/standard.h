@@ -13,6 +13,7 @@
 
 namespace fs = std::filesystem;
 namespace dx = kl::dx;
+namespace ts = kl::ots;
 namespace im = imgui;
 namespace px = physx;
 namespace cs = chaiscript;

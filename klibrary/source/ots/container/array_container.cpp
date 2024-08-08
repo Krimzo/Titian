@@ -4,6 +4,11 @@
 kl::ots::ArrayContainer::ArrayContainer()
 {}
 
+kl::ots::ArrayContainer::ArrayContainer(const std::initializer_list<Ref<DataContainer>>& items)
+{
+    insert(begin(), items.begin(), items.end());
+}
+
 kl::ots::ArrayContainer::ArrayContainer(const std::string& data)
 {
     from_string(data);
@@ -35,7 +40,7 @@ bool kl::ots::ArrayContainer::from_string(std::string data, Preprocessor preproc
         Ref<DataContainer> containers[3] = { new LiteralContainer(), new ArrayContainer(), new MapContainer() };
         for (auto& container : containers) {
             if (container->from_string(part)) {
-                this->push_back(container);
+                push_back(container);
                 break;
             }
         }
@@ -43,17 +48,17 @@ bool kl::ots::ArrayContainer::from_string(std::string data, Preprocessor preproc
     return true;
 }
 
-std::string kl::ots::ArrayContainer::to_string() const
+std::string kl::ots::ArrayContainer::to_string(const int depth) const
 {
-    if (this->empty()) {
+    if (empty()) {
         return format(Standard::array_start_literal, Standard::array_end_literal);
     }
 
     std::stringstream stream;
     stream << Standard::array_start_literal;
-    for (auto i = this->begin(); i != this->end(); i++) {
-        stream << (*i)->to_string();
-        if (i != --this->end()) {
+    for (size_t i = 0; i < size(); i++) {
+        stream << at(i)->to_string(-1);
+        if (i < size() - 1) {
             stream << Standard::splitter_literal << ' ';
         }
     }

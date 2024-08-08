@@ -13,7 +13,7 @@ namespace kl::ots {
 		LiteralContainer(const std::string& source);
 
 		bool from_string(std::string data, Preprocessor preprocessor = {}) override;
-		std::string to_string() const override;
+		std::string to_string(int depth = 0) const override;
 
 		void put_null() override;
 
@@ -36,42 +36,42 @@ namespace kl::ots {
 		std::optional<std::string> get_string() const override;
 
 		// Helper
-		static inline Ref<LiteralContainer> load_null()
+		static inline Ref<LiteralContainer> make_null()
 		{
 			Ref container = new LiteralContainer();
 			container->put_null();
 			return container;
 		}
 
-		static inline Ref<LiteralContainer> load_bool(bool value)
+		static inline Ref<LiteralContainer> make_bool(bool value)
 		{
 			Ref container = new LiteralContainer();
 			container->put_bool(value);
 			return container;
 		}
 
-		static inline Ref<LiteralContainer> load_int(int64_t value)
+		static inline Ref<LiteralContainer> make_int(int64_t value)
 		{
 			Ref container = new LiteralContainer();
 			container->put_int(value);
 			return container;
 		}
 
-		static inline Ref<LiteralContainer> load_float(double value)
+		static inline Ref<LiteralContainer> make_float(double value)
 		{
 			Ref container = new LiteralContainer();
 			container->put_float(value);
 			return container;
 		}
 
-		static inline Ref<LiteralContainer> load_char(char value)
+		static inline Ref<LiteralContainer> make_char(char value)
 		{
 			Ref container = new LiteralContainer();
 			container->put_char(value);
 			return container;
 		}
 
-		static inline Ref<LiteralContainer> load_string(const std::string& value)
+		static inline Ref<LiteralContainer> make_string(const std::string& value)
 		{
 			Ref container = new LiteralContainer();
 			container->put_string(value);

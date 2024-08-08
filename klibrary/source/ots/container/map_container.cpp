@@ -4,6 +4,11 @@
 kl::ots::MapContainer::MapContainer()
 {}
 
+kl::ots::MapContainer::MapContainer(const std::initializer_list<std::pair<std::string, Ref<DataContainer>>>& items)
+{
+    insert(items.begin(), items.end());
+}
+
 kl::ots::MapContainer::MapContainer(const std::string& data)
 {
 	from_string(data);
@@ -43,22 +48,37 @@ bool kl::ots::MapContainer::from_string(std::string data, Preprocessor preproces
     return true;
 }
 
-std::string kl::ots::MapContainer::to_string() const
+std::string kl::ots::MapContainer::to_string(const int depth) const
 {
-    if (this->empty()) {
+    if (empty()) {
         return format(Standard::map_start_literal, Standard::map_end_literal);
     }
 
     std::stringstream stream;
-    stream << Standard::map_start_literal << ' ';
-    for (auto i = this->begin(); i != this->end(); i++) {
-        stream << i->first;
-        stream << Standard::assign_literal << ' ';
-        stream << i->second->to_string();
-        if (i != --this->end()) {
-            stream << Standard::splitter_literal << ' ';
+    if (depth >= 0) {
+        const std::string map_depth(depth * 2, ' ');
+        const std::string content_depth((depth + 1) * 2, ' ');
+        stream << Standard::map_start_literal << '\n';
+        for (const auto& [key, value] : *this) {
+            stream << content_depth << key;
+            stream << Standard::assign_literal << ' ';
+            stream << value->to_string(depth + 1);
+            stream << Standard::splitter_literal << '\n';
         }
+        stream << map_depth << Standard::map_end_literal;
     }
-    stream << ' ' << Standard::map_end_literal;
+    else {
+        const auto last_it = --end();
+        stream << Standard::map_start_literal << ' ';
+        for (auto i = begin(); i != end(); i++) {
+            stream << i->first;
+            stream << Standard::assign_literal << ' ';
+            stream << i->second->to_string(-1);
+            if (i != last_it) {
+                stream << Standard::splitter_literal << ' ';
+            }
+        }
+        stream << ' ' << Standard::map_end_literal;
+    }
     return stream.str();
 }

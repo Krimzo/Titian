@@ -4,11 +4,9 @@
 std::string kl::convert_string(const std::wstring& data)
 {
     std::string temp;
-    temp.reserve(data.size());
-    for (const wchar_t c : data) {
-        if (c < 256) {
-            temp.push_back((char) c);
-        }
+    temp.resize(data.size());
+    for (size_t i = 0; i < data.size(); i++) {
+        temp[i] = static_cast<char>(data[i]);
     }
     return temp;
 }
@@ -18,7 +16,7 @@ std::wstring kl::convert_string(const std::string& data)
     std::wstring temp;
     temp.resize(data.size());
     for (size_t i = 0; i < data.size(); i++) {
-        temp[i] = data[i];
+        temp[i] = static_cast<wchar_t>(data[i]);
     }
     return temp;
 }
@@ -26,7 +24,7 @@ std::wstring kl::convert_string(const std::string& data)
 std::vector<std::string> kl::split_string(const std::string& data, const char delimiter)
 {
     std::stringstream stream{ data };
-    std::vector<std::string> parts{};
+    std::vector<std::string> parts;
     for (std::string part; std::getline(stream, part, delimiter);) {
         parts.push_back(part);
     }

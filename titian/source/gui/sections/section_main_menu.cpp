@@ -307,6 +307,19 @@ void titian::GUISectionMainMenu::render_gui()
                 im::ColorEdit3("Alternate", gui_layer->alternate_color);
                 if (im::Button("Reload", { -1.0f, 0.0f })) {
                     gui_layer->reload_colors();
+                    const kl::Color special_color = gui_layer->special_color;
+                    _conf_data[CONF_SPECIAL_COLOR] = new ts::ArrayContainer({
+                        ts::LiteralContainer::make_int(special_color.r),
+                        ts::LiteralContainer::make_int(special_color.g),
+                        ts::LiteralContainer::make_int(special_color.b),
+                    });
+                    const kl::Color alternate_color = gui_layer->alternate_color;
+                    _conf_data[CONF_ALTERNATE_COLOR] = new ts::ArrayContainer({
+                        ts::LiteralContainer::make_int(alternate_color.r),
+                        ts::LiteralContainer::make_int(alternate_color.g),
+                        ts::LiteralContainer::make_int(alternate_color.b),
+                    });
+                    kl::write_file_string(_CONF_FILE, _conf_data.to_string());
                 }
                 im::EndMenu();
             }

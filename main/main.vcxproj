@@ -68,7 +68,7 @@
 xcopy "$(SolutionDir)sandbox\package\" "$(LocalDebuggerWorkingDirectory)package\" /S /Y
 xcopy "$(SolutionDir)fuze\package\" "$(LocalDebuggerWorkingDirectory)package\" /S /Y
 
-xcopy "$(SolutionDir)titian\titian.ini" "$(LocalDebuggerWorkingDirectory)" /S /Y
+xcopy "$(SolutionDir)titian\titian.conf" "$(LocalDebuggerWorkingDirectory)" /S /Y
 xcopy "$(SolutionDir)imgui\imgui.ini" "$(LocalDebuggerWorkingDirectory)" /S /Y
 </Command>
     </PostBuildEvent>
@@ -99,7 +99,7 @@ xcopy "$(SolutionDir)imgui\imgui.ini" "$(LocalDebuggerWorkingDirectory)" /S /Y
 xcopy "$(SolutionDir)sandbox\package\" "$(LocalDebuggerWorkingDirectory)package\" /S /Y
 xcopy "$(SolutionDir)fuze\package\" "$(LocalDebuggerWorkingDirectory)package\" /S /Y
 
-xcopy "$(SolutionDir)titian\titian.ini" "$(LocalDebuggerWorkingDirectory)" /S /Y
+xcopy "$(SolutionDir)titian\titian.conf" "$(LocalDebuggerWorkingDirectory)" /S /Y
 xcopy "$(SolutionDir)imgui\imgui.ini" "$(LocalDebuggerWorkingDirectory)" /S /Y
 </Command>
     </PostBuildEvent>

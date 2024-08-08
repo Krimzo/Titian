@@ -16,16 +16,15 @@ int main(const int argc, const char** argv)
 	if (!kl::IS_DEBUG && fs::path(argv[0]).is_absolute()) {
 		kl::console::set_enabled(false);
 	}
-	const Map<String, String> ini_data = parse_ini_file(INI_DEFAULT_FILE);
 
 	String exe_type = EXE_PLAY;
 	if (argc >= 2) {
 		exe_type = argv[1];
 		Logger::log("Using argument exe type: ", exe_type);
 	}
-	else if (ini_data.contains(INI_EXE_TYPE)) {
-		exe_type = ini_data.at(INI_EXE_TYPE);
-		Logger::log("Using .ini exe type: ", exe_type);
+	else if (_conf_data.contains(CONF_EXE_TYPE)) {
+		exe_type = _conf_data.at(CONF_EXE_TYPE)->get_string().value_or(exe_type);
+		Logger::log("Using .conf exe type: ", exe_type);
 	}
 	else {
 		Logger::log("Exe type defaulting to ", exe_type);
@@ -33,10 +32,10 @@ int main(const int argc, const char** argv)
 
 	/* titian */
 	if (exe_type == EXE_PLAY) {
-		return titian_entry(argc, argv, ini_data, EntryType::GAME);
+		return titian_entry(argc, argv, EntryType::GAME);
 	}
 	if (exe_type == EXE_EDIT) {
-		return titian_entry(argc, argv, ini_data, EntryType::GAME_EDITOR);
+		return titian_entry(argc, argv, EntryType::GAME_EDITOR);
 	}
 	if (exe_type == EXE_SANDBOX) {
 		return sandbox_entry(argc, argv);

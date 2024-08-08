@@ -14,7 +14,7 @@ void titian::GUISectionEntityProperties::render_gui()
 
     if (im::Begin("Entity properties") && !editor_layer->selected_entities.empty()) {
         Scene* scene = &game_layer->scene;
-        const String entity_name = *--editor_layer->selected_entities.end();
+        const String entity_name = *(--editor_layer->selected_entities.end());
         if (Ref entity = scene->get_entity(entity_name)) {
             display_entity_info(scene, entity_name, &entity);
             edit_entity_transform(scene, &entity);

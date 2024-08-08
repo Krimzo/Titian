@@ -54,7 +54,7 @@ bool kl::ots::LiteralContainer::from_string(std::string data, Preprocessor prepr
     return false;
 }
 
-std::string kl::ots::LiteralContainer::to_string() const
+std::string kl::ots::LiteralContainer::to_string(const int depth) const
 {
     if (std::optional value = get_bool()) {
         return value.value() ? Standard::true_value : Standard::false_value;

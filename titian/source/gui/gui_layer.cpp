@@ -19,6 +19,27 @@ void titian::GUILayer::init()
 	ImGui_ImplDX11_Init(gpu->device().get(), gpu->context().get());
 	dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(*window);
 
+	if (_conf_data.contains(CONF_SPECIAL_COLOR)) {
+		Ref data = _conf_data[CONF_SPECIAL_COLOR].as<ts::ArrayContainer>();
+		if (data && data->size() >= 3) {
+			special_color = kl::Color{
+				(byte) (*data)[0]->get_int().value_or(0),
+				(byte) (*data)[1]->get_int().value_or(0),
+				(byte) (*data)[2]->get_int().value_or(0),
+			};
+		}
+	}
+	if (_conf_data.contains(CONF_ALTERNATE_COLOR)) {
+		Ref data = _conf_data[CONF_ALTERNATE_COLOR].as<ts::ArrayContainer>();
+		if (data && data->size() >= 3) {
+			alternate_color = kl::Color{
+				(byte) (*data)[0]->get_int().value_or(0),
+				(byte) (*data)[1]->get_int().value_or(0),
+				(byte) (*data)[2]->get_int().value_or(0),
+			};
+		}
+	}
+
 	im::StyleColorsDark();
 	reload_fonts();
 	reload_colors();

@@ -14,5 +14,5 @@ namespace titian {
 }
 
 namespace titian {
-	int titian_entry(int argc, const char** argv, const Map<String, String>& ini_data, EntryType type);
+	int titian_entry(int argc, const char** argv, EntryType type);
 }

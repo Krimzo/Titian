@@ -8,9 +8,10 @@ namespace kl::ots {
 	{
 	public:
 		MapContainer();
+		MapContainer(const std::initializer_list<std::pair<std::string, Ref<DataContainer>>>& items);
 		MapContainer(const std::string& data);
 
 		bool from_string(std::string data, Preprocessor preprocessor = {}) override;
-		std::string to_string() const override;
+		std::string to_string(int depth = 0) const override;
 	};
 }

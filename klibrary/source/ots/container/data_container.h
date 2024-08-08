@@ -11,7 +11,7 @@ namespace kl::ots {
 		virtual ~DataContainer() = default;
 
 		virtual bool from_string(std::string data, Preprocessor preprocessor = {}) = 0;
-		virtual std::string to_string() const = 0;
+		virtual std::string to_string(int depth = 0) const = 0;
 
 		virtual void put_null() {}
 		
@@ -24,8 +24,8 @@ namespace kl::ots {
 		virtual std::optional<int16_t> get_short() const { return std::nullopt; }
 
 		virtual void put_float(double value) {}
-		virtual std::optional<float> get_float() const { return std::nullopt; }
 		virtual std::optional<double> get_double() const { return std::nullopt; }
+		virtual std::optional<float> get_float() const { return std::nullopt; }
 
 		virtual void put_char(char value) {}
 		virtual std::optional<char> get_char() const { return std::nullopt; }
