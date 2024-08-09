@@ -41,8 +41,7 @@
     <ClInclude Include="source\json\container\literal.h" />
     <ClInclude Include="source\json\container\object.h" />
     <ClInclude Include="source\json\json.h" />
-    <ClInclude Include="source\json\language\parser.h" />
-    <ClInclude Include="source\json\language\preprocessor.h" />
+    <ClInclude Include="source\json\language\lexer.h" />
     <ClInclude Include="source\json\language\standard.h" />
     <ClInclude Include="source\klibrary.h" />
     <ClInclude Include="source\math\helper\helper.h" />
@@ -119,8 +118,7 @@
     <ClCompile Include="source\json\container\array.cpp" />
     <ClCompile Include="source\json\container\literal.cpp" />
     <ClCompile Include="source\json\container\object.cpp" />
-    <ClCompile Include="source\json\language\parser.cpp" />
-    <ClCompile Include="source\json\language\preprocessor.cpp" />
+    <ClCompile Include="source\json\language\lexer.cpp" />
     <ClCompile Include="source\klibrary.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

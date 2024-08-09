@@ -11,33 +11,39 @@ kl::json::Array::Array(const std::initializer_list<Ref<Container>>& items)
 
 kl::json::Array::Array(const std::string& data)
 {
-    from_string(data);
+    const auto tokens = Lexer::parse(data);
+    compile(tokens.begin(), tokens.end());
 }
 
-bool kl::json::Array::from_string(std::string data, Preprocessor preprocessor)
+bool kl::json::Array::compile(std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last)
 {
-    preprocessor.process(data);
-    if (data.empty()) {
+    if (first == last) {
         return false;
     }
 
-    if (data.size() < 2) {
-        return false;
-    }
-    if (data.front() != Standard::array_start_literal || data.back() != Standard::array_end_literal) {
-        return false;
-    }
-
-    data = data.substr(1, data.size() - 2);
-    if (!data.empty() && data.back() != Standard::splitter_literal) {
-        data += Standard::splitter_literal;
-    }
-
-    for (const auto& part : Parser::split_array_data(data)) {
-        Ref<Container> containers[3] = { new Literal(), new Object(), new Array() };
-        for (auto& container : containers) {
-            if (container->from_string(part)) {
+    int depth = 0;
+    for (auto it = first; it != last; ++it) {
+        if (depth == 1) {
+            Ref<Container> container;
+            if (it->type == TokenType::_ARRAY_START) {
+                container = new Array();
+            }
+            else if (it->type == TokenType::_OBJECT_START) {
+                container = new Object();
+            }
+            else {
+                container = new Literal();
+            }
+            if (container->compile(it, last)) {
                 push_back(container);
+            }
+        }
+        if (it->type == TokenType::_OBJECT_START || it->type == TokenType::_ARRAY_START) {
+            depth += 1;
+        }
+        else if (it->type == TokenType::_OBJECT_END || it->type == TokenType::_ARRAY_END) {
+            depth -= 1;
+            if (depth <= 0) {
                 break;
             }
         }
@@ -45,7 +51,7 @@ bool kl::json::Array::from_string(std::string data, Preprocessor preprocessor)
     return true;
 }
 
-std::string kl::json::Array::to_string(const int depth) const
+std::string kl::json::Array::decompile(const int depth) const
 {
     if (empty()) {
         return format(Standard::array_start_literal, Standard::array_end_literal);
@@ -54,7 +60,7 @@ std::string kl::json::Array::to_string(const int depth) const
     std::stringstream stream;
     stream << Standard::array_start_literal;
     for (size_t i = 0; i < size(); i++) {
-        stream << at(i)->to_string(-1);
+        stream << at(i)->decompile(-1);
         if (i < size() - 1) {
             stream << Standard::splitter_literal << ' ';
         }

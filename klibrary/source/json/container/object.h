@@ -11,7 +11,7 @@ namespace kl::json {
 		Object(const std::initializer_list<std::pair<std::string, Ref<Container>>>& items);
 		Object(const std::string& data);
 
-		bool from_string(std::string data, Preprocessor preprocessor = {}) override;
-		std::string to_string(int depth = 0) const override;
+		bool compile(std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last) override;
+		std::string decompile(int depth = 0) const override;
 	};
 }

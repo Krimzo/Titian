@@ -10,7 +10,7 @@ titian::TextSerializer::TextSerializer(const String& path, const bool write)
 		Logger::log("Opened file for text serialization [", path, "]", " (", SERIAL_VERSION_FORMAT, ")");
 	}
 	else {
-		current().from_string(kl::read_file_string(path));
+		current() = { kl::read_file_string(path) };
 
 		int32_t version = 0;
 		if (current().contains("version")) {
@@ -30,7 +30,9 @@ titian::TextSerializer::TextSerializer(const String& path, const bool write)
 titian::TextSerializer::~TextSerializer()
 {
 	if (*this) {
-		kl::write_file_string(m_path, m_container.to_string());
+		if (m_writing) {
+			kl::write_file_string(m_path, m_container.decompile());
+		}
 		Logger::log("Closed text ", m_writing ? "serialization" : "deserialization", " file [", m_path, "]");
 	}
 }

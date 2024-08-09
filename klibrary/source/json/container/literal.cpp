@@ -4,49 +4,44 @@
 kl::json::Literal::Literal()
 {}
 
-kl::json::Literal::Literal(const std::string& source)
+kl::json::Literal::Literal(const std::string& data)
 {
-	from_string(source);
+    const auto tokens = Lexer::parse(data);
+	compile(tokens.begin(), tokens.end());
 }
 
-bool kl::json::Literal::from_string(std::string data, Preprocessor preprocessor)
+bool kl::json::Literal::compile(std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last)
 {
-    preprocessor.process(data);
-    if (data.empty()) {
+    if (first == last) {
         return false;
     }
-
-    // null
-    if (data == Standard::null_value) {
+    const auto& token = *first;
+    if (token.type == TokenType::_NULL) {
         put_null();
         return true;
     }
-
-    // bool
-    if (data == Standard::false_value) {
+    if (token.type == TokenType::_FALSE) {
 		put_bool(false);
         return true;
     }
-    if (data == Standard::true_value) {
+    if (token.type == TokenType::_TRUE) {
 		put_bool(true);
         return true;
     }
-
-    // number
-    if (std::optional result = parse_float(data)) {
-        put_number(result.value());
-        return true;
+    if (token.type == TokenType::_NUMBER) {
+        if (std::optional result = parse_float(token.value)) {
+            put_number(result.value());
+            return true;
+        }
     }
-
-    // string
-    if (data.size() >= 2 && data.front() == Standard::string_literal && data.back() == Standard::string_literal) {
-		put_string(data.substr(1, data.size() - 2));
+    if (token.type == TokenType::_STRING) {
+		put_string(token.value);
         return true;
     }
     return false;
 }
 
-std::string kl::json::Literal::to_string(const int depth) const
+std::string kl::json::Literal::decompile(const int depth) const
 {
     if (std::optional value = get_bool()) {
         return value.value() ? Standard::true_value : Standard::false_value;
@@ -57,9 +52,10 @@ std::string kl::json::Literal::to_string(const int depth) const
         if (int_value == flt_value) {
             return std::to_string(int_value);
         }
-		return std::to_string(flt_value);
+        return std::to_string(flt_value);
 	}
     if (std::optional value = get_string()) {
+        Lexer::from_escaping(value.value());
 		return format(Standard::string_literal, value.value(), Standard::string_literal);
     }
     return Standard::null_value;

@@ -343,7 +343,7 @@ void titian::GUISectionMainMenu::render_gui()
                         js::Literal::make_number(alternate_color.g),
                         js::Literal::make_number(alternate_color.b),
                     });
-                    kl::write_file_string(_CONF_FILE, _conf_data.to_string());
+                    kl::write_file_string(_CONF_FILE, _conf_data.decompile());
                 }
                 im::EndMenu();
             }

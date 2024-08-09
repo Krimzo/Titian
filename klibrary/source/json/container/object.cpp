@@ -11,33 +11,46 @@ kl::json::Object::Object(const std::initializer_list<std::pair<std::string, Ref<
 
 kl::json::Object::Object(const std::string& data)
 {
-	from_string(data);
+    const auto tokens = Lexer::parse(data);
+    compile(tokens.begin(), tokens.end());
 }
 
-bool kl::json::Object::from_string(std::string data, Preprocessor preprocessor)
+bool kl::json::Object::compile(std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last)
 {
-    preprocessor.process(data);
-    if (data.empty()) {
+    if (first == last) {
         return false;
     }
 
-    if (data.size() < 2) {
-        return false;
-    }
-    if (data.front() != Standard::object_start_literal || data.back() != Standard::object_end_literal) {
-        return false;
-    }
-
-    data = data.substr(1, data.size() - 2);
-    if (!data.empty() && data.back() != Standard::splitter_literal) {
-        data += Standard::splitter_literal;
-    }
-
-    for (const auto& part : Parser::split_object_data(data)) {
-        Ref<Container> containers[3] = { new Literal(), new Object(), new Array() };
-        for (auto& container : containers) {
-            if (container->from_string(part.second)) {
-                (*this)[part.first] = container;
+    int depth = 0;
+    std::optional<std::string> key;
+    for (auto it = first; it != last; ++it) {
+        if (depth == 1) {
+            if (key) {
+                Ref<Container> container;
+                if (it->type == TokenType::_ARRAY_START) {
+                    container = new Array();
+                }
+                else if (it->type == TokenType::_OBJECT_START) {
+                    container = new Object();
+                }
+                else {
+                    container = new Literal();
+                }
+                if (container->compile(it, last)) {
+                    (*this)[key.value()] = container;
+                }
+                key.reset();
+            }
+            else if (it->type == TokenType::_STRING) {
+                key = it->value;
+            }
+        }
+        if (it->type == TokenType::_OBJECT_START || it->type == TokenType::_ARRAY_START) {
+            depth += 1;
+        }
+        else if (it->type == TokenType::_OBJECT_END || it->type == TokenType::_ARRAY_END) {
+            depth -= 1;
+            if (depth <= 0) {
                 break;
             }
         }
@@ -45,7 +58,7 @@ bool kl::json::Object::from_string(std::string data, Preprocessor preprocessor)
     return true;
 }
 
-std::string kl::json::Object::to_string(const int depth) const
+std::string kl::json::Object::decompile(const int depth) const
 {
     if (empty()) {
         return format(Standard::object_start_literal, Standard::object_end_literal);
@@ -58,9 +71,11 @@ std::string kl::json::Object::to_string(const int depth) const
         const auto last_it = --end();
         stream << Standard::object_start_literal << '\n';
         for (auto i = begin(); i != end(); i++) {
-            stream << content_depth << Standard::string_literal << i->first << Standard::string_literal;
+            std::string name = i->first;
+            Lexer::from_escaping(name);
+            stream << content_depth << Standard::string_literal << name << Standard::string_literal;
             stream << Standard::assign_literal << ' ';
-            stream << i->second->to_string(depth + 1);
+            stream << i->second->decompile(depth + 1);
             if (i != last_it) {
                 stream << Standard::splitter_literal;
             }
@@ -72,9 +87,11 @@ std::string kl::json::Object::to_string(const int depth) const
         const auto last_it = --end();
         stream << Standard::object_start_literal << ' ';
         for (auto i = begin(); i != end(); i++) {
-            stream << Standard::string_literal << i->first << Standard::string_literal;
+            std::string name = i->first;
+            Lexer::from_escaping(name);
+            stream << Standard::string_literal << name << Standard::string_literal;
             stream << Standard::assign_literal << ' ';
-            stream << i->second->to_string(-1);
+            stream << i->second->decompile(-1);
             if (i != last_it) {
                 stream << Standard::splitter_literal;
             }

@@ -1,7 +1,7 @@
 #pragma once
 
+#include "json/language/standard.h"
 #include "memory/memory.h"
-#include "json/language/preprocessor.h"
 
 
 namespace kl::json {
@@ -10,8 +10,8 @@ namespace kl::json {
 	public:
 		virtual ~Container() = default;
 
-		virtual bool from_string(std::string data, Preprocessor preprocessor = {}) = 0;
-		virtual std::string to_string(int depth = 0) const = 0;
+		virtual bool compile(std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last) = 0;
+		virtual std::string decompile(int depth = 0) const = 0;
 
 		virtual void put_null() {}
 		

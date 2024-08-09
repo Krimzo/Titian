@@ -1,8 +1,7 @@
 #pragma once
 
 #include "json/language/standard.h"
-#include "json/language/preprocessor.h"
-#include "json/language/parser.h"
+#include "json/language/lexer.h"
 
 #include "json/container/container.h"
 #include "json/container/literal.h"

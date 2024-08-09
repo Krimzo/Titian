@@ -12,7 +12,7 @@ namespace titian {
 		return result;
 	}
 
-	inline constexpr int32_t SERIAL_VERSION = 0x08'08'2024;
+	inline constexpr int32_t SERIAL_VERSION = 0x10'08'2024;
 	inline const String SERIAL_VERSION_FORMAT = format_serial_version(SERIAL_VERSION);
 }
 

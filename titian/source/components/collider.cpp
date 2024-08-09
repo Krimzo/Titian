@@ -30,11 +30,11 @@ void titian::Collider::serialize(Serializer* serializer, const void* helper_data
 {
     const auto helper_meshes = static_cast<const Map<String, Ref<Mesh>>*>(helper_data);
 
-    const px::PxGeometryType::Enum type = this->type();
-    serializer->write_int("type", type);
+    const px::PxGeometryType::Enum geometry_type = this->type();
+    serializer->write_int("geometry_type", geometry_type);
 
     serializer->push_object("geometry");
-    switch (type) {
+    switch (geometry_type) {
     case px::PxGeometryType::Enum::eBOX: {
         px::PxBoxGeometry geometry = {};
         m_shape->getBoxGeometry(geometry);
@@ -82,11 +82,11 @@ void titian::Collider::deserialize(const Serializer* serializer, const void* hel
 {
     const auto helper_meshes = static_cast<const Map<String, Ref<Mesh>>*>(helper_data);
 
-    px::PxGeometryType::Enum type{};
-    serializer->read_int("type", (int&) type);
+    px::PxGeometryType::Enum geometry_type{};
+    serializer->read_int("geometry_type", (int&) geometry_type);
 
     serializer->load_object("geometry");
-    switch (type) {
+    switch (geometry_type) {
     case px::PxGeometryType::Enum::eBOX: {
         px::PxBoxGeometry geometry = {};
         serializer->read_float_array("half_extents", (Float3&) geometry.halfExtents, 3);
