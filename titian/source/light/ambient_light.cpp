@@ -9,16 +9,16 @@ void titian::AmbientLight::serialize(Serializer* serializer, const void* helper_
 {
 	Light::serialize(serializer, helper_data);
 
-	serializer->write_object<float>(intensity);
-	serializer->write_object<Float3>(color);
+	serializer->write_float("intensity", intensity);
+	serializer->write_float_array("color", color, 3);
 }
 
 void titian::AmbientLight::deserialize(const Serializer* serializer, const void* helper_data)
 {
 	Light::deserialize(serializer, helper_data);
 
-	serializer->read_object<float>(intensity);
-	serializer->read_object<Float3>(color);
+	serializer->read_float("intensity", intensity);
+	serializer->read_float_array("color", color, 3);
 }
 
 titian::Float3 titian::AmbientLight::light_at_point(const Float3& point) const

@@ -73,69 +73,85 @@ titian::Scene::~Scene()
 // Overrides
 void titian::Scene::serialize(Serializer* serializer, const void* helper_data) const
 {
-    serializer->write_string(main_camera_name);
-    serializer->write_string(main_ambient_light_name);
-    serializer->write_string(main_directional_light_name);
+    serializer->write_string("main_camera_name", main_camera_name);
+    serializer->write_string("main_ambient_light_name", main_ambient_light_name);
+    serializer->write_string("main_directional_light_name", main_directional_light_name);
 
-    auto write_map = [&]<typename T>(const Map<String, Ref<T>>& data, const void* helper_data)
+    auto write_map = [&]<typename T>(const String& map_name, const Map<String, Ref<T>>& data, const void* helper_data)
     {
-        serializer->write_object<uint64_t>(data.size());
+        serializer->push_object(map_name);
+        serializer->write_int("data_size", (int32_t) data.size());
+        int counter = 0;
         for (auto& [name, object] : data) {
-            serializer->write_string(name);
+            serializer->write_string(kl::format("__name_", counter), name);
+            serializer->push_object(name);
             object->serialize(serializer, helper_data);
+            serializer->pop_object();
+            counter += 1;
         }
+        serializer->pop_object();
     };
 
-    write_map(meshes, nullptr);
-    write_map(animations, nullptr);
-    write_map(textures, nullptr);
-    write_map(materials, nullptr);
-    write_map(shaders, nullptr);
-    write_map(scripts, nullptr);
-    write_map(m_entities, &meshes);
+    write_map("meshes", meshes, nullptr);
+    write_map("animations", animations, nullptr);
+    write_map("textures", textures, nullptr);
+    write_map("materials", materials, nullptr);
+    write_map("shaders", shaders, nullptr);
+    write_map("scripts", scripts, nullptr);
+    write_map("entities", m_entities, &meshes);
 }
 
 void titian::Scene::deserialize(const Serializer* serializer, const void* helper_data)
 {
-    serializer->read_string(main_camera_name);
-    serializer->read_string(main_ambient_light_name);
-    serializer->read_string(main_directional_light_name);
+    serializer->read_string("main_camera_name", main_camera_name);
+    serializer->read_string("main_ambient_light_name", main_ambient_light_name);
+    serializer->read_string("main_directional_light_name", main_directional_light_name);
 
-    auto read_map = [&]<typename T>(Map<String, Ref<T>>& data, const Function<T*()>& provider, const void* helper_data)
+    auto read_map = [&]<typename T>(const String& map_name, Map<String, Ref<T>>& data, const Function<T*()>& provider, const void* helper_data)
     {
-        const uint64_t size = serializer->read_object<uint64_t>();
-        for (uint64_t i = 0; i < size; i++) {
-            const String name = serializer->read_string();
+        serializer->load_object(map_name);
+        int32_t data_size = 0;
+        serializer->read_int("data_size", data_size);
+        for (int32_t i = 0; i < data_size; i++) {
+            String name;
+            serializer->read_string(kl::format("__name_", i), name);
             Ref<T> object = provider();
+            serializer->load_object(name);
             object->deserialize(serializer, helper_data);
+            serializer->unload_object();
             data[name] = object;
         }
+        serializer->unload_object();
     };
 
     Function mesh_provider = [&] { return new Mesh(m_gpu, m_physics, m_cooking); };
-    read_map(meshes, mesh_provider, nullptr);
+    read_map("meshes", meshes, mesh_provider, nullptr);
 
     Function animation_provider = [&] { return new Animation(m_gpu, this); };
-    read_map(animations, animation_provider, nullptr);
+    read_map("animations", animations, animation_provider, nullptr);
 
     Function texture_provider = [&] { return new Texture(m_gpu); };
-    read_map(textures, texture_provider, nullptr);
+    read_map("textures", textures, texture_provider, nullptr);
 
     Function material_provider = [&] { return new Material(); };
-    read_map(materials, material_provider, nullptr);
+    read_map("materials", materials, material_provider, nullptr);
 
     Function shader_provider = [&] { return new Shader(ShaderType::MATERIAL, m_gpu); };
-    read_map(shaders, shader_provider, nullptr);
+    read_map("shaders", shaders, shader_provider, nullptr);
 
     /* SCRIPTS */
     {
-        const uint64_t size = serializer->read_object<uint64_t>();
-        for (uint64_t i = 0; i < size; i++) {
-            const String name = serializer->read_string();
-            const ScriptType type = serializer->read_object<ScriptType>();
-
-            Ref<Script> object = nullptr;
-            switch (type) {
+        serializer->load_object("scripts");
+        int32_t data_size = 0;
+        serializer->read_int("data_size", data_size);
+        for (int32_t i = 0; i < data_size; i++) {
+            String name;
+            serializer->read_string(kl::format("__name_", i), name);
+            serializer->load_object(name);
+            ScriptType script_type = {};
+            serializer->read_int("script_type", (int32_t&) script_type);
+            Ref<Script> object;
+            switch (script_type) {
             case ScriptType::NATIVE:
                 object = new NativeScript();
                 break;
@@ -146,22 +162,28 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
                 object = new NodeScript();
                 break;
             default:
-                kl::assert(false, "Unknown script type: ", (int) type);
+                kl::assert(false, "Unknown script type: ", (int) script_type);
             }
             object->deserialize(serializer, nullptr);
+            serializer->unload_object();
             scripts[name] = object;
         }
+        serializer->unload_object();
     }
 
     /* ENTITIES */
     {
-        const uint64_t size = serializer->read_object<uint64_t>();
-        for (uint64_t i = 0; i < size; i++) {
-            const String name = serializer->read_string();
-            const EntityType type = serializer->read_object<EntityType>();
-
-            Ref<Entity> entity = nullptr;
-            switch (type) {
+        serializer->load_object("entities");
+        int32_t data_size = 0;
+        serializer->read_int("data_size", data_size);
+        for (int32_t i = 0; i < data_size; i++) {
+            String name;
+            serializer->read_string(kl::format("__name_", i), name);
+            serializer->load_object(name);
+            EntityType entity_type = {};
+            serializer->read_int("entity_type", (int32_t&) entity_type);
+            Ref<Entity> entity;
+            switch (entity_type) {
             case EntityType::BASIC:
                 entity = new Entity(EntityType::BASIC, m_physics, false);
                 break;
@@ -178,12 +200,13 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
                 entity = new DirectionalLight(m_physics, false, m_gpu, 4096);
                 break;
             default:
-                kl::assert(false, "Unknown entity type: ", (int) type);
+                kl::assert(false, "Unknown entity type: ", (int) entity_type);
             }
-
             entity->deserialize(serializer, &meshes);
+            serializer->unload_object();
             this->add_entity(name, entity);
         }
+        serializer->unload_object();
     }
 }
 

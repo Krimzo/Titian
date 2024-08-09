@@ -1,27 +1,26 @@
 #include "klibrary.h"
 
 
-kl::ots::ArrayContainer::ArrayContainer()
+kl::json::Array::Array()
 {}
 
-kl::ots::ArrayContainer::ArrayContainer(const std::initializer_list<Ref<DataContainer>>& items)
+kl::json::Array::Array(const std::initializer_list<Ref<Container>>& items)
 {
     insert(begin(), items.begin(), items.end());
 }
 
-kl::ots::ArrayContainer::ArrayContainer(const std::string& data)
+kl::json::Array::Array(const std::string& data)
 {
     from_string(data);
 }
 
-bool kl::ots::ArrayContainer::from_string(std::string data, Preprocessor preprocessor)
+bool kl::json::Array::from_string(std::string data, Preprocessor preprocessor)
 {
     preprocessor.process(data);
     if (data.empty()) {
         return false;
     }
 
-    // Size/(first, last) check
     if (data.size() < 2) {
         return false;
     }
@@ -29,15 +28,13 @@ bool kl::ots::ArrayContainer::from_string(std::string data, Preprocessor preproc
         return false;
     }
 
-    // Remove (first, last)
     data = data.substr(1, data.size() - 2);
     if (!data.empty() && data.back() != Standard::splitter_literal) {
         data += Standard::splitter_literal;
     }
 
-    // Split to parts and parse each part
     for (const auto& part : Parser::split_array_data(data)) {
-        Ref<DataContainer> containers[3] = { new LiteralContainer(), new ArrayContainer(), new MapContainer() };
+        Ref<Container> containers[3] = { new Literal(), new Object(), new Array() };
         for (auto& container : containers) {
             if (container->from_string(part)) {
                 push_back(container);
@@ -48,7 +45,7 @@ bool kl::ots::ArrayContainer::from_string(std::string data, Preprocessor preproc
     return true;
 }
 
-std::string kl::ots::ArrayContainer::to_string(const int depth) const
+std::string kl::json::Array::to_string(const int depth) const
 {
     if (empty()) {
         return format(Standard::array_start_literal, Standard::array_end_literal);

@@ -7,24 +7,25 @@ titian::Texture::Texture(kl::GPU* gpu)
 
 void titian::Texture::serialize(Serializer* serializer, const void* helper_data) const
 {
-	Vector<byte> compressed_image;
-	data_buffer.save_to_vector(&compressed_image, COMPRESSION_TYPE);
+	Vector<byte> compressed_data;
+	data_buffer.save_to_vector(&compressed_data, COMPRESSION_TYPE);
 
-	serializer->write_object<uint64_t>(compressed_image.size());
-	serializer->write_array<byte>(compressed_image.data(), compressed_image.size());
-	serializer->write_object<bool>(m_is_cube);
+	serializer->write_int("compressed_size", (int32_t) compressed_data.size());
+	serializer->write_byte_array("compressed_data", compressed_data.data(), (int32_t) compressed_data.size());
+	serializer->write_bool("is_cube", m_is_cube);
 }
 
 void titian::Texture::deserialize(const Serializer* serializer, const void* helper_data)
 {
-	const uint64_t data_size = serializer->read_object<uint64_t>();
-	Vector<byte> image_data{};
-	image_data.resize(data_size);
+	int32_t compressed_size = 0;
+	serializer->read_int("compressed_size", compressed_size);
 
-	serializer->read_array<byte>(image_data.data(), data_size);
-	data_buffer.load_from_vector(image_data);
+	Vector<byte> compressed_data;
+	compressed_data.resize(compressed_size);
+	serializer->read_byte_array("compressed_data", compressed_data.data(), (int32_t) compressed_data.size());
+	data_buffer.load_from_vector(compressed_data);
 
-	serializer->read_object<bool>(m_is_cube);
+	serializer->read_bool("is_cube", m_is_cube);
 	if (m_is_cube) {
 		reload_as_cube();
 	}

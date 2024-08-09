@@ -107,17 +107,28 @@ void titian::GUISectionMainMenu::render_gui()
                         shader->data_buffer = kl::read_file_string(file.value());
                     }
                 }
-                if (im::MenuItem("Scene")) {
-                    if (Optional file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
-                        const String stem_name = fs::path(file.value()).stem().string();
-
-                        Serializer serializer{ file.value(), false };
-                        if (serializer) {
-                            Ref scene = new Scene(&app_layer->gpu);
-                            scene->deserialize(&serializer, nullptr);
-                            game_layer->scene = scene;
+                if (im::BeginMenu("Scene")) {
+                    if (im::MenuItem("Binary")) {
+                        if (Optional file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
+                            const String stem_name = fs::path(file.value()).stem().string();
+                            if (BinarySerializer serializer{ file.value(), false }) {
+                                Ref scene = new Scene(&app_layer->gpu);
+                                scene->deserialize(&serializer, nullptr);
+                                game_layer->scene = scene;
+                            }
                         }
                     }
+                    if (im::MenuItem("Text")) {
+                        if (Optional file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_JSON } })) {
+                            const String stem_name = fs::path(file.value()).stem().string();
+                            if (TextSerializer serializer{ file.value(), false }) {
+                                Ref scene = new Scene(&app_layer->gpu);
+                                scene->deserialize(&serializer, nullptr);
+                                game_layer->scene = scene;
+                            }
+                        }
+                    }
+                    im::EndMenu();
                 }
                 im::EndMenu();
             }
@@ -194,17 +205,30 @@ void titian::GUISectionMainMenu::render_gui()
                     }
                     im::EndMenu();
                 }
-                if (im::MenuItem("Scene")) {
-                    if (Optional file = kl::choose_file(true, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
-                        const String extension = fs::path(file.value()).extension().string();
-                        if (extension.empty()) {
-                            file.value() += FILE_EXTENSION_TITIAN;
-                        }
-                        Serializer serializer{ file.value(), true };
-                        if (serializer) {
-                            scene->serialize(&serializer, nullptr);
+                if (im::BeginMenu("Scene")) {
+                    if (im::MenuItem("Binary")) {
+                        if (Optional file = kl::choose_file(true, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
+                            const String extension = fs::path(file.value()).extension().string();
+                            if (extension.empty()) {
+                                file.value() += FILE_EXTENSION_TITIAN;
+                            }
+                            if (BinarySerializer serializer{ file.value(), true }) {
+                                scene->serialize(&serializer, nullptr);
+                            }
                         }
                     }
+                    if (im::MenuItem("Text")) {
+                        if (Optional file = kl::choose_file(true, { { "Scene File", FILE_EXTENSION_JSON } })) {
+                            const String extension = fs::path(file.value()).extension().string();
+                            if (extension.empty()) {
+                                file.value() += FILE_EXTENSION_TITIAN;
+                            }
+                            if (TextSerializer serializer{ file.value(), true }) {
+                                scene->serialize(&serializer, nullptr);
+                            }
+                        }
+                    }
+                    im::EndMenu();
                 }
                 im::EndMenu();
             }
@@ -308,16 +332,16 @@ void titian::GUISectionMainMenu::render_gui()
                 if (im::Button("Reload", { -1.0f, 0.0f })) {
                     gui_layer->reload_colors();
                     const kl::Color special_color = gui_layer->special_color;
-                    _conf_data[CONF_SPECIAL_COLOR] = new ts::ArrayContainer({
-                        ts::LiteralContainer::make_int(special_color.r),
-                        ts::LiteralContainer::make_int(special_color.g),
-                        ts::LiteralContainer::make_int(special_color.b),
+                    _conf_data[CONF_SPECIAL_COLOR] = new js::Array({
+                        js::Literal::make_number(special_color.r),
+                        js::Literal::make_number(special_color.g),
+                        js::Literal::make_number(special_color.b),
                     });
                     const kl::Color alternate_color = gui_layer->alternate_color;
-                    _conf_data[CONF_ALTERNATE_COLOR] = new ts::ArrayContainer({
-                        ts::LiteralContainer::make_int(alternate_color.r),
-                        ts::LiteralContainer::make_int(alternate_color.g),
-                        ts::LiteralContainer::make_int(alternate_color.b),
+                    _conf_data[CONF_ALTERNATE_COLOR] = new js::Array({
+                        js::Literal::make_number(alternate_color.r),
+                        js::Literal::make_number(alternate_color.g),
+                        js::Literal::make_number(alternate_color.b),
                     });
                     kl::write_file_string(_CONF_FILE, _conf_data.to_string());
                 }
@@ -358,7 +382,7 @@ void titian::GUISectionMainMenu::render_gui()
                 game_layer->resume_game();
             }
             else {
-                if (Serializer serializer = { m_temp_path, true }) {
+                if (BinarySerializer serializer{ m_temp_path, true }) {
                     game_layer->scene->serialize(&serializer, nullptr);
                 }
                 game_layer->start_game();
@@ -383,7 +407,7 @@ void titian::GUISectionMainMenu::render_gui()
         im::PushItemFlag(ImGuiItemFlags_Disabled, !is_stop_enabled);
         if (im::ImageButton(m_stop_button_texture->shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), -1, ImVec4(0.0f, 0.0f, 0.0f, 0.0f), stop_tint_color)) {
             game_layer->stop_game();
-            if (const Serializer serializer = { m_temp_path, false }) {
+            if (const BinarySerializer serializer{ m_temp_path, false }) {
                 game_layer->reset_scene();
                 game_layer->scene->deserialize(&serializer, nullptr);
             }

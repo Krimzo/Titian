@@ -35,7 +35,7 @@ void titian::GUISectionViewport::render_gui()
         // Scene loading
         if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
             if (classify_file(file.value()) == FileType::SCENE) {
-                if (const Serializer serializer = { file.value(), false }) {
+                if (const BinarySerializer serializer{ file.value(), false }) {
                     game_layer->reset_scene();
                     scene->deserialize(&serializer, nullptr);
                 }

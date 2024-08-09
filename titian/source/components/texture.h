@@ -1,6 +1,6 @@
 #pragma once
 
-#include "serialization/serializable.h"
+#include "serialization/serialization.h"
 
 
 namespace titian {

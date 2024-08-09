@@ -60,17 +60,17 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
 {
     im::Text("Camera Special Info");
 
-    if (im::BeginCombo("Camera Type", camera->type == CameraType::ORTHOGRAPHIC ? "Orthographic" : "Perspective")) {
-        if (im::Selectable("Perspective", camera->type == CameraType::PERSPECTIVE)) {
-            camera->type = (int) CameraType::PERSPECTIVE;
+    if (im::BeginCombo("Camera Type", camera->camera_type == CameraType::ORTHOGRAPHIC ? "Orthographic" : "Perspective")) {
+        if (im::Selectable("Perspective", camera->camera_type == CameraType::PERSPECTIVE)) {
+            camera->camera_type = (int) CameraType::PERSPECTIVE;
         }
-        if (im::Selectable("Orthographic", camera->type == CameraType::ORTHOGRAPHIC)) {
-            camera->type = (int) CameraType::ORTHOGRAPHIC;
+        if (im::Selectable("Orthographic", camera->camera_type == CameraType::ORTHOGRAPHIC)) {
+            camera->camera_type = (int) CameraType::ORTHOGRAPHIC;
         }
         im::EndCombo();
     }
 
-    if (camera->type == CameraType::ORTHOGRAPHIC) {
+    if (camera->camera_type == CameraType::ORTHOGRAPHIC) {
         im::DragFloat("Width", &camera->width);
         im::DragFloat("Height", &camera->height);
     }

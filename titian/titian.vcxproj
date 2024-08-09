@@ -187,7 +187,8 @@
     <ClCompile Include="source\scripting\native_script.cpp" />
     <ClCompile Include="source\scripting\node_script.cpp" />
     <ClCompile Include="source\scripting\script.cpp" />
-    <ClCompile Include="source\serialization\serializer.cpp" />
+    <ClCompile Include="source\serialization\binary_serializer.cpp" />
+    <ClCompile Include="source\serialization\text_serializer.cpp" />
     <ClCompile Include="source\titian_editor.cpp" />
     <ClCompile Include="source\titian_game.cpp" />
     <ClCompile Include="source\titian.cpp">
@@ -259,8 +260,9 @@
     <ClInclude Include="source\scripting\native_script.h" />
     <ClInclude Include="source\scripting\node_script.h" />
     <ClInclude Include="source\scripting\script.h" />
-    <ClInclude Include="source\serialization\serializable.h" />
-    <ClInclude Include="source\serialization\serializer.h" />
+    <ClInclude Include="source\serialization\binary_serializer.h" />
+    <ClInclude Include="source\serialization\serialization.h" />
+    <ClInclude Include="source\serialization\text_serializer.h" />
     <ClInclude Include="source\titian_editor.h" />
     <ClInclude Include="source\titian_game.h" />
     <ClInclude Include="source\titian.h" />

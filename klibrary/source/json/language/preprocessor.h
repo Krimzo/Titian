@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ots/language/standard.h"
+#include "json/language/standard.h"
 
 
-namespace kl::ots {
+namespace kl::json {
 	class Preprocessor : public std::unordered_map<std::string, std::string>
 	{
 	public:

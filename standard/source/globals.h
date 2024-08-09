@@ -4,7 +4,7 @@
 
 
 namespace titian {
-	inline constexpr const char* _CONF_FILE = "titian.conf";
+	inline constexpr const char* _CONF_FILE = "titian.json";
 	inline constexpr const char* CONF_EXE_TYPE = "exe_type";
 	inline constexpr const char* CONF_ENTRY_SCENE = "entry_scene";
 	inline constexpr const char* CONF_SPECIAL_COLOR = "special_color";
@@ -19,5 +19,5 @@ namespace titian {
 }
 
 namespace titian {
-	inline ts::MapContainer _conf_data{ kl::read_file_string(_CONF_FILE) };
+	inline js::Object _conf_data{ kl::read_file_string(_CONF_FILE) };
 }

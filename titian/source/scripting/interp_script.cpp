@@ -12,14 +12,14 @@ void titian::InterpScript::serialize(Serializer* serializer, const void* helper_
 {
 	Script::serialize(serializer, helper_data);
 
-	serializer->write_string(source);
+	serializer->write_string("source", source);
 }
 
 void titian::InterpScript::deserialize(const Serializer* serializer, const void* helper_data)
 {
 	Script::deserialize(serializer, helper_data);
 
-	serializer->read_string(source);
+	serializer->read_string("source", source);
 	this->reload();
 }
 
@@ -770,7 +770,7 @@ const int load_types = [&]
 	cs::utility::add_class<Animation>(*INTERP_SCRIPT_MODULE, "Animation",
 	{},
 	{
-		{ cs::fun(&Animation::type), "type" },
+		{ cs::fun(&Animation::animation_type), "animation_type" },
 		{ cs::fun(&Animation::ticks_per_second), "ticks_per_second" },
 		{ cs::fun(&Animation::duration_in_ticks), "duration_in_ticks" },
 
@@ -782,7 +782,7 @@ const int load_types = [&]
 		{ cs::fun(&Animation::update), "update" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Animation"] = "Mesh animation descriptor.";
-	INTERP_SCRIPT_MEMBERS["type"] = "type";
+	INTERP_SCRIPT_MEMBERS["animation_type"] = "animation_type";
 	INTERP_SCRIPT_MEMBERS["ticks_per_second"] = "ticks_per_second";
 	INTERP_SCRIPT_MEMBERS["duration_in_ticks"] = "duration_in_ticks";
 	INTERP_SCRIPT_MEMBERS["meshes"] = "meshes";
@@ -917,7 +917,7 @@ const int load_types = [&]
 	cs::utility::add_class<Camera>(*INTERP_SCRIPT_MODULE, "Camera",
 	{},
 	{
-		{ cs::fun(&Camera::type), "type" },
+		{ cs::fun(&Camera::camera_type), "camera_type" },
 
 		{ cs::fun(&Camera::aspect_ratio), "aspect_ratio" },
 		{ cs::fun(&Camera::field_of_view), "field_of_view" },
@@ -956,6 +956,7 @@ const int load_types = [&]
 		{ cs::fun(&Camera::camera_matrix), "camera_matrix" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Camera"] = "Entity that has a view of the scene.";
+	INTERP_SCRIPT_MEMBERS["camera_type"] = "camera_type";
 	INTERP_SCRIPT_MEMBERS["aspect_ratio"] = "aspect_ratio";
 	INTERP_SCRIPT_MEMBERS["field_of_view"] = "field_of_view";
 	INTERP_SCRIPT_MEMBERS["width"] = "width";

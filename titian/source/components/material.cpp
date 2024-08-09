@@ -6,38 +6,38 @@ titian::Material::Material()
 
 void titian::Material::serialize(Serializer* serializer, const void* helper_data) const
 {
-	serializer->write_object<Float4>(color);
-	serializer->write_object<float>(texture_blend);
+	serializer->write_float_array("color", color, 4);
+	serializer->write_float("texture_blend", texture_blend);
 
-	serializer->write_object<float>(reflection_factor);
-	serializer->write_object<float>(refraction_factor);
-	serializer->write_object<float>(refraction_index);
+	serializer->write_float("reflection_factor", reflection_factor);
+	serializer->write_float("refraction_factor", refraction_factor);
+	serializer->write_float("refraction_index", refraction_index);
 
-	serializer->write_object<Float4x4>(custom_data);
+	serializer->write_float_array("custom_data", custom_data.data, 16);
 
-	serializer->write_string(color_map_name);
-	serializer->write_string(normal_map_name);
-	serializer->write_string(roughness_map_name);
+	serializer->write_string("color_map_name", color_map_name);
+	serializer->write_string("normal_map_name", normal_map_name);
+	serializer->write_string("roughness_map_name", roughness_map_name);
 
-	serializer->write_string(shader_name);
+	serializer->write_string("shader_name", shader_name);
 }
 
 void titian::Material::deserialize(const Serializer* serializer, const void* helper_data)
 {
-	serializer->read_object<Float4>(color);
-	serializer->read_object<float>(texture_blend);
+	serializer->read_float_array("color", color, 4);
+	serializer->read_float("texture_blend", texture_blend);
 
-	serializer->read_object<float>(reflection_factor);
-	serializer->read_object<float>(refraction_factor);
-	serializer->read_object<float>(refraction_index);
+	serializer->read_float("reflection_factor", reflection_factor);
+	serializer->read_float("refraction_factor", refraction_factor);
+	serializer->read_float("refraction_index", refraction_index);
 
-	serializer->read_object<Float4x4>(custom_data);
+	serializer->read_float_array("custom_data", custom_data.data, 16);
 
-	serializer->read_string(color_map_name);
-	serializer->read_string(normal_map_name);
-	serializer->read_string(roughness_map_name);
+	serializer->read_string("color_map_name", color_map_name);
+	serializer->read_string("normal_map_name", normal_map_name);
+	serializer->read_string("roughness_map_name", roughness_map_name);
 
-	serializer->read_string(shader_name);
+	serializer->read_string("shader_name", shader_name);
 }
 
 bool titian::Material::is_transparent() const

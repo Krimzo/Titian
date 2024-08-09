@@ -73,7 +73,7 @@ namespace kl {
 
     // 16 bit chars
     template <bool NewLine = true, typename... Args>
-    void w_write(std::wostream& w_stream, const Args&... args)
+    void wwrite(std::wostream& w_stream, const Args&... args)
     {
         std::wosyncstream w_synced_stream(w_stream);
         (w_synced_stream << ... << args);
@@ -83,16 +83,16 @@ namespace kl {
     }
 
     template <bool NewLine = true, typename... Args>
-    void w_print(const Args&... args)
+    void wprint(const Args&... args)
     {
-        w_write<NewLine>(std::wcout, args...);
+        wwrite<NewLine>(std::wcout, args...);
     }
 
     template <typename... Args>
-    std::wstring w_format(const Args&... args)
+    std::wstring wformat(const Args&... args)
     {
         std::wstringstream w_stream;
-        w_write<false>(w_stream, args...);
+        wwrite<false>(w_stream, args...);
         return w_stream.str();
     }
 }

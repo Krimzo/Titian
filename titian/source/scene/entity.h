@@ -18,7 +18,7 @@ namespace titian {
     class Entity : kl::NoCopy, public Serializable
     {
     public:
-        const EntityType type;
+        const EntityType entity_type;
 
         Float3 scale{ 1.0f };
         bool casts_shadows = true;

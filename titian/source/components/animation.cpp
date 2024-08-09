@@ -20,47 +20,68 @@ titian::Animation::Animation(kl::GPU* gpu, Scene* scene)
 
 void titian::Animation::serialize(Serializer* serializer, const void* helper_data) const
 {
-	serializer->write_object<AnimationType>(type);
-	serializer->write_object<float>(ticks_per_second);
-	serializer->write_object<float>(duration_in_ticks);
+	serializer->write_int("animation_type", animation_type);
+	serializer->write_float("ticks_per_second", ticks_per_second);
+	serializer->write_float("duration_in_ticks", duration_in_ticks);
 
-	serializer->write_object<uint64_t>(meshes.size());
+	serializer->write_int("meshes_size", (int32_t) meshes.size());
+	int counter = 0;
 	for (auto& mesh : meshes) {
-		serializer->write_string(mesh);
+		serializer->write_string(kl::format("__mesh_", counter), mesh);
+		counter += 1;
 	}
 
-	serializer->write_object<uint64_t>(channels.size());
+	serializer->write_int("channels_size", (int32_t) channels.size());
+	counter = 0;
 	for (auto& channel : channels) {
-		serializer->write_object<uint64_t>(channel.scalings.size());
+		serializer->push_object(kl::format("__channel_", counter));
+		serializer->write_int("scalings_size", (int32_t) channel.scalings.size());
+		int temp_counter = 0;
 		for (auto& scaling : channel.scalings) {
-			serializer->write_object(scaling.first);
-			serializer->write_object(scaling.second);
+			serializer->push_object(kl::format("__scaling_", temp_counter));
+			serializer->write_float("scaling_first", scaling.first);
+			serializer->write_float_array("scaling_second", &scaling.second.x, 3);
+			serializer->pop_object();
+			temp_counter += 1;
 		}
 
-		serializer->write_object<uint64_t>(channel.rotations.size());
+		serializer->write_int("rotations_size", (int32_t) channel.rotations.size());
+		temp_counter = 0;
 		for (auto& rotation : channel.rotations) {
-			serializer->write_object(rotation.first);
-			serializer->write_object(rotation.second);
+			serializer->push_object(kl::format("__rotation_", temp_counter));
+			serializer->write_float("rotation_first", rotation.first);
+			serializer->write_float_array("rotation_second", &rotation.second.w, 4);
+			serializer->pop_object();
+			temp_counter += 1;
 		}
 
-		serializer->write_object<uint64_t>(channel.positions.size());
+		serializer->write_int("positions_size", (int32_t) channel.positions.size());
+		temp_counter = 0;
 		for (auto& position : channel.positions) {
-			serializer->write_object(position.first);
-			serializer->write_object(position.second);
+			serializer->push_object(kl::format("__position_", temp_counter));
+			serializer->write_float("position_first", position.first);
+			serializer->write_float_array("position_second", &position.second.x, 3);
+			serializer->pop_object();
+			temp_counter += 1;
 		}
+		serializer->pop_object();
+		counter += 1;
 	}
 
 	Function<void(const AnimationNode*)> rec_helper;
+	counter = 0;
 	rec_helper = [&](const AnimationNode* node)
 	{
-		serializer->write_object<int>(node->channel_index);
-		serializer->write_object<uint64_t>(node->children.size());
+		serializer->push_object(kl::format("__node_", counter++));
+		serializer->write_int("channel_index", node->channel_index);
+		serializer->write_int("children_size", (int32_t) node->children.size());
 		for (auto& child : node->children) {
 			rec_helper(&child);
 		}
+		serializer->pop_object();
 	};
 
-	serializer->write_object<bool>((bool) animation_root);
+	serializer->write_bool("has_data", (bool) animation_root);
 	if (animation_root) {
 		rec_helper(&animation_root);
 	}
@@ -68,48 +89,83 @@ void titian::Animation::serialize(Serializer* serializer, const void* helper_dat
 
 void titian::Animation::deserialize(const Serializer* serializer, const void* helper_data)
 {
-	serializer->read_object<AnimationType>(type);
-	serializer->read_object<float>(ticks_per_second);
-	serializer->read_object<float>(duration_in_ticks);
+	serializer->read_int("animation_type", (int32_t&) animation_type);
+	serializer->read_float("ticks_per_second", ticks_per_second);
+	serializer->read_float("duration_in_ticks", duration_in_ticks);
 
-	meshes.resize(serializer->read_object<uint64_t>());
+	int32_t meshes_size = 0;
+	serializer->read_int("meshes_size", meshes_size);
+	meshes.resize(meshes_size);
+	int counter = 0;
 	for (auto& mesh : meshes) {
-		serializer->read_string(mesh);
+		serializer->read_string(kl::format("__mesh_", counter), mesh);
+		counter += 1;
 	}
 
-	channels.resize(serializer->read_object<uint64_t>());
+	int32_t channels_size = 0;
+	serializer->read_int("channels_size", channels_size);
+	channels.resize(channels_size);
+	counter = 0;
 	for (auto& channel : channels) {
-		channel.scalings.resize(serializer->read_object<uint64_t>());
+		serializer->load_object(kl::format("__channel_", counter));
+		int32_t scalings_size = 0;
+		serializer->read_int("scalings_size", scalings_size);
+		channel.scalings.resize(scalings_size);
+		int temp_counter = 0;
 		for (auto& scaling : channel.scalings) {
-			serializer->read_object(scaling.first);
-			serializer->read_object(scaling.second);
+			serializer->load_object(kl::format("__scaling_", temp_counter));
+			serializer->read_float("scaling_first", scaling.first);
+			serializer->read_float_array("scaling_second", &scaling.second.x, 3);
+			serializer->unload_object();
+			temp_counter += 1;
 		}
 
-		channel.rotations.resize(serializer->read_object<uint64_t>());
+		int32_t rotations_size = 0;
+		serializer->read_int("rotations_size", rotations_size);
+		channel.rotations.resize(rotations_size);
+		temp_counter = 0;
 		for (auto& rotation : channel.rotations) {
-			serializer->read_object(rotation.first);
-			serializer->read_object(rotation.second);
+			serializer->load_object(kl::format("__rotation_", temp_counter));
+			serializer->read_float("rotation_first", rotation.first);
+			serializer->read_float_array("rotation_second", &rotation.second.w, 4);
+			serializer->unload_object();
+			temp_counter += 1;
 		}
 
-		channel.positions.resize(serializer->read_object<uint64_t>());
+		int32_t positions_size = 0;
+		serializer->read_int("positions_size", positions_size);
+		channel.positions.resize(positions_size);
+		temp_counter = 0;
 		for (auto& position : channel.positions) {
-			serializer->read_object(position.first);
-			serializer->read_object(position.second);
+			serializer->load_object(kl::format("__position_", temp_counter));
+			serializer->read_float("position_first", position.first);
+			serializer->read_float_array("position_second", &position.second.x, 3);
+			serializer->unload_object();
+			temp_counter += 1;
 		}
+		serializer->unload_object();
+		counter += 1;
 	}
 
 	Function<void(AnimationNode*)> rec_helper;
+	counter = 0;
 	rec_helper = [&](AnimationNode* node)
 	{
-		serializer->read_object<int>(node->channel_index);
-		node->children.resize(serializer->read_object<uint64_t>());
+		serializer->load_object(kl::format("__node_", counter++));
+		serializer->read_int("channel_index", node->channel_index);
+		int32_t children_size = 0;
+		serializer->read_int("children_size", children_size);
+		node->children.resize(children_size);
 		for (auto& child : node->children) {
 			child = new AnimationNode();
 			rec_helper(&child);
 		}
+		serializer->unload_object();
 	};
 
-	if (serializer->read_object<bool>()) {
+	bool has_data = false;
+	serializer->read_bool("has_data", has_data);
+	if (has_data) {
 		animation_root = new AnimationNode();
 		rec_helper(&animation_root);
 	}
@@ -128,7 +184,7 @@ titian::Mesh* titian::Animation::get_mesh(const float time) const
 	if (meshes.empty()) {
 		return nullptr;
 	}
-	if (type == AnimationType::SKELETAL) {
+	if (animation_type == AnimationType::SKELETAL) {
 		return m_scene->helper_get_mesh(meshes[0]);
 	}
 	const int index = get_index(time);
@@ -137,7 +193,7 @@ titian::Mesh* titian::Animation::get_mesh(const float time) const
 
 void titian::Animation::update(const float current_time)
 {
-	if (type != AnimationType::SKELETAL || meshes.empty() || !this->animation_root) {
+	if (animation_type != AnimationType::SKELETAL || meshes.empty() || !this->animation_root) {
 		return;
 	}
 

@@ -214,7 +214,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.REFRACTION_FACTOR = material->refraction_factor;
         global_cb.REFRACTION_INDEX = material->refraction_index;
 
-        if (animation->type == AnimationType::SKELETAL) {
+        if (animation->animation_type == AnimationType::SKELETAL) {
             animation->bind_matrices(0);
             global_cb.IS_SKELETAL = 1.0f;
         }
@@ -299,7 +299,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.REFRACTION_FACTOR = material->refraction_factor;
         global_cb.REFRACTION_INDEX = material->refraction_index;
 
-        if (animation->type == AnimationType::SKELETAL) {
+        if (animation->animation_type == AnimationType::SKELETAL) {
             animation->bind_matrices(0);
             global_cb.IS_SKELETAL = 1.0f;
         }

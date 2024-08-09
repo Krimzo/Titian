@@ -13,7 +13,7 @@
 
 namespace fs = std::filesystem;
 namespace dx = kl::dx;
-namespace ts = kl::ots;
+namespace js = kl::json;
 namespace im = imgui;
 namespace px = physx;
 namespace cs = chaiscript;
@@ -36,6 +36,7 @@ namespace titian {
 	using Quaternion = kl::Quaternion<float>;
 
 	using String = std::string;
+	using StringView = std::string_view;
 	using StringStream = std::stringstream;
 
 	using Exception = std::exception;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "serialization/serializable.h"
+#include "serialization/serialization.h"
 
 
 namespace titian {
@@ -14,7 +14,7 @@ namespace titian {
 }
 
 namespace titian {
-	enum AnimationType : int
+	enum AnimationType : int32_t
 	{
 		SEQUENTIAL = 0,
 		SKELETAL = 1,
@@ -42,7 +42,7 @@ namespace titian {
 	class Animation : public Serializable
 	{
 	public:
-		AnimationType type = AnimationType::SEQUENTIAL;
+		AnimationType animation_type = AnimationType::SEQUENTIAL;
 		float ticks_per_second = 30.0f;
 		float duration_in_ticks = 0.0f;
 

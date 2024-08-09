@@ -21,6 +21,7 @@ namespace titian {
 
     inline const String FILE_EXTENSION_HLSL = ".hlsl";
     inline const String FILE_EXTENSION_TITIAN = ".titian";
+    inline const String FILE_EXTENSION_JSON = ".json";
 
     inline const String DRAG_FILE_ID = "DragFileID";
     inline const String DRAG_DIR_ID = "DragDirID";

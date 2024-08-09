@@ -85,7 +85,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
 
             // Set cb data
             vs_cb.WVP = VP * entity->model_matrix();
-            if (animation->type == AnimationType::SKELETAL) {
+            if (animation->animation_type == AnimationType::SKELETAL) {
                 animation->bind_matrices(0);
                 vs_cb.IS_SKELETAL = 1.0f;
             }

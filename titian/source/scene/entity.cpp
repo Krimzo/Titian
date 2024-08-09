@@ -2,7 +2,7 @@
 
 
 titian::Entity::Entity(const EntityType type, px::PxPhysics* physics, const bool dynamic)
-    : type(type), m_physics(physics)
+    : entity_type(type), m_physics(physics)
 {
     px::PxTransform transform = {};
     transform.q = px::PxQuat(px::PxIdentity);
@@ -17,53 +17,78 @@ titian::Entity::~Entity()
 
 void titian::Entity::serialize(Serializer* serializer, const void* helper_data) const
 {
-    serializer->write_object<EntityType>(type);
+    serializer->write_int("entity_type", (int32_t) entity_type);
 
-    serializer->write_object<bool>(is_dynamic());
-    serializer->write_object<bool>(has_gravity());
-    serializer->write_object<bool>(casts_shadows);
+    serializer->write_bool("is_dynamic", is_dynamic());
+    serializer->write_bool("has_gravity", has_gravity());
+    serializer->write_bool("casts_shadows", casts_shadows);
 
-    serializer->write_object<float>(mass());
+    serializer->write_float("mass", mass());
 
-    serializer->write_object<Float3>(scale);
-    serializer->write_object<Float3>(rotation());
-    serializer->write_object<Float3>(position());
-    serializer->write_object<Float3>(velocity());
-    serializer->write_object<Float3>(angular());
+    serializer->write_float_array("scale", scale, 3);
+    serializer->write_float_array("rotation", rotation(), 3);
+    serializer->write_float_array("position", position(), 3);
+    serializer->write_float_array("velocity", velocity(), 3);
+    serializer->write_float_array("angular", angular(), 3);
 
-    serializer->write_string(animation_name);
-    serializer->write_string(material_name);
-    serializer->write_string(collider_mesh_name);
+    serializer->write_string("animation_name", animation_name);
+    serializer->write_string("material_name", material_name);
+    serializer->write_string("collider_mesh_name", collider_mesh_name);
 
-    const bool has_collider = static_cast<bool>(m_collider);
-    serializer->write_object<bool>(has_collider);
+    const bool has_collider = m_collider;
+    serializer->write_bool("has_collider", has_collider);
     if (has_collider) {
+        serializer->push_object("collider");
         m_collider->serialize(serializer, helper_data);
+        serializer->pop_object();
     }
 }
 
 void titian::Entity::deserialize(const Serializer* serializer, const void* helper_data)
 {
-    set_dynamic(serializer->read_object<bool>());
-    set_gravity(serializer->read_object<bool>());
-    serializer->read_object<bool>(casts_shadows);
+    bool is_dynamic = false;
+    serializer->read_bool("is_dynamic", is_dynamic);
+    set_dynamic(is_dynamic);
 
-    set_mass(serializer->read_object<float>());
+    bool has_gravity = false;
+    serializer->read_bool("has_gravity", has_gravity);
+    set_gravity(has_gravity);
 
-    serializer->read_object<Float3>(scale);
-    set_rotation(serializer->read_object<Float3>());
-    set_position(serializer->read_object<Float3>());
-    set_velocity(serializer->read_object<Float3>());
-    set_angular(serializer->read_object<Float3>());
+    serializer->read_bool("casts_shadows", casts_shadows);
+    
+    float mass = 0.0f;
+    serializer->read_float("mass", mass);
+    set_mass(mass);
 
-    serializer->read_string(animation_name);
-    serializer->read_string(material_name);
-    serializer->read_string(collider_mesh_name);
+    serializer->read_float_array("scale", scale, 3);
 
-    const bool has_collider = serializer->read_object<bool>();
+    Float3 rotation;
+    serializer->read_float_array("rotation", rotation, 3);
+    set_rotation(rotation);
+
+    Float3 position;
+    serializer->read_float_array("position", position, 3);
+    set_position(position);
+
+    Float3 velocity;
+    serializer->read_float_array("velocity", velocity, 3);
+    set_velocity(velocity);
+
+    Float3 angular;
+    serializer->read_float_array("angular", angular, 3);
+    set_angular(angular);
+
+    serializer->read_string("animation_name", animation_name);
+    serializer->read_string("material_name", material_name);
+    serializer->read_string("collider_mesh_name", collider_mesh_name);
+
+    bool has_collider = false;
+    serializer->read_bool("has_collider", has_collider);
     if (has_collider) {
         Ref new_collider = new Collider(m_physics);
+        serializer->load_object("collider");
         new_collider->deserialize(serializer, helper_data);
+        serializer->unload_object();
         this->set_collider(new_collider);
     }
 }

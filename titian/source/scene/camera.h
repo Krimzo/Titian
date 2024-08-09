@@ -15,7 +15,7 @@ namespace titian {
     class Camera : public Entity
     {
     public:
-        int type = CameraType::PERSPECTIVE;
+        int camera_type = CameraType::PERSPECTIVE;
 
         float field_of_view = 75.0f;
         float aspect_ratio = 1.7778f;

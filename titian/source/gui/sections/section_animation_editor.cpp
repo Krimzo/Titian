@@ -188,7 +188,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
     gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
 
     Mesh* mesh = nullptr;
-    if (animation->type == AnimationType::SEQUENTIAL) {
+    if (animation->animation_type == AnimationType::SEQUENTIAL) {
         if (m_animating) {
             m_frame_index = animation->get_index(m_timer.elapsed());
         }
@@ -229,7 +229,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
         .WVP = camera->camera_matrix(),
     };
 
-    if (m_animating && animation->type == AnimationType::SKELETAL) {
+    if (m_animating && animation->animation_type == AnimationType::SKELETAL) {
         animation->update(m_timer.elapsed());
         animation->bind_matrices(0);
         vs_cb.IS_SKELETAL = 1.0f;
@@ -306,10 +306,10 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
             { AnimationType::SKELETAL, "Skeletal" },
 		};
 
-        if (im::BeginCombo("Animation Type", animation_type_names.at(animation->type).c_str())) {
+        if (im::BeginCombo("Animation Type", animation_type_names.at(animation->animation_type).c_str())) {
             for (auto& [type, name] : animation_type_names) {
-				if (im::Selectable(name.c_str(), animation->type == type)) {
-					animation->type = type;
+				if (im::Selectable(name.c_str(), animation->animation_type == type)) {
+					animation->animation_type = type;
 				}
 			}
 			im::EndCombo();

@@ -20,7 +20,7 @@ void titian::GUILayer::init()
 	dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(*window);
 
 	if (_conf_data.contains(CONF_SPECIAL_COLOR)) {
-		Ref data = _conf_data[CONF_SPECIAL_COLOR].as<ts::ArrayContainer>();
+		Ref data = _conf_data[CONF_SPECIAL_COLOR].as<js::Array>();
 		if (data && data->size() >= 3) {
 			special_color = kl::Color{
 				(byte) (*data)[0]->get_int().value_or(0),
@@ -30,7 +30,7 @@ void titian::GUILayer::init()
 		}
 	}
 	if (_conf_data.contains(CONF_ALTERNATE_COLOR)) {
-		Ref data = _conf_data[CONF_ALTERNATE_COLOR].as<ts::ArrayContainer>();
+		Ref data = _conf_data[CONF_ALTERNATE_COLOR].as<js::Array>();
 		if (data && data->size() >= 3) {
 			alternate_color = kl::Color{
 				(byte) (*data)[0]->get_int().value_or(0),

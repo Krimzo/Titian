@@ -20,7 +20,7 @@ namespace titian {
 	class Script : kl::NoCopy, public Serializable
 	{
 	public:
-		const ScriptType type;
+		const ScriptType script_type;
 
 		Script(ScriptType type);
 

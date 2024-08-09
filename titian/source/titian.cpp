@@ -13,7 +13,7 @@ int titian::titian_entry(const int argc, const char** argv, const EntryType type
 		}
 		else if (_conf_data.contains(CONF_ENTRY_SCENE)) {
 			entry_scene = _conf_data.at(CONF_ENTRY_SCENE)->get_string().value_or(entry_scene);
-			Logger::log("Using .conf entry scene: ", entry_scene);
+			Logger::log("Using .json entry scene: ", entry_scene);
 		}
 		else {
 			Logger::log("Entry scene defaulting to ", entry_scene);

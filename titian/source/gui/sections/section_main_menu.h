@@ -3,7 +3,8 @@
 #include "gui/gui_section.h"
 #include "render/render_layer.h"
 #include "editor/editor_layer.h"
-#include "serialization/serializer.h"
+#include "serialization/binary_serializer.h"
+#include "serialization/text_serializer.h"
 
 
 namespace titian {

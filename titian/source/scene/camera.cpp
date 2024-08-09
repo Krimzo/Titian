@@ -9,50 +9,50 @@ void titian::Camera::serialize(Serializer* serializer, const void* helper_data) 
 {
     Entity::serialize(serializer, helper_data);
 
-    serializer->write_object<int>(type);
+    serializer->write_int("camera_type", camera_type);
 
-    serializer->write_object<float>(aspect_ratio);
-    serializer->write_object<float>(field_of_view);
-    serializer->write_object<float>(width);
-    serializer->write_object<float>(height);
-    serializer->write_object<float>(near_plane);
-    serializer->write_object<float>(far_plane);
-    serializer->write_object<float>(sensitivity);
-    serializer->write_object<float>(speed);
+    serializer->write_float("aspect_ratio", aspect_ratio);
+    serializer->write_float("field_of_view", field_of_view);
+    serializer->write_float("width", width);
+    serializer->write_float("height", height);
+    serializer->write_float("near_plane", near_plane);
+    serializer->write_float("far_plane", far_plane);
+    serializer->write_float("sensitivity", sensitivity);
+    serializer->write_float("speed", speed);
 
-    serializer->write_object<Float3>(m_forward);
-    serializer->write_object<Float3>(m_up);
+    serializer->write_float_array("forward", m_forward, 3);
+    serializer->write_float_array("up", m_up, 3);
 
-    serializer->write_object<kl::Color>(background);
-    serializer->write_object<Float4x4>(custom_data);
+    serializer->write_byte_array("background", &background, 4);
+    serializer->write_float_array("custom_data", custom_data.data, 16);
 
-    serializer->write_string(skybox_name);
-    serializer->write_string(shader_name);
+    serializer->write_string("skybox_name", skybox_name);
+    serializer->write_string("shader_name", shader_name);
 }
 
 void titian::Camera::deserialize(const Serializer* serializer, const void* helper_data)
 {
     Entity::deserialize(serializer, helper_data);
 
-    serializer->read_object<int>(type);
+    serializer->read_int("camera_type", camera_type);
 
-    serializer->read_object<float>(aspect_ratio);
-    serializer->read_object<float>(field_of_view);
-    serializer->read_object<float>(width);
-    serializer->read_object<float>(height);
-    serializer->read_object<float>(near_plane);
-    serializer->read_object<float>(far_plane);
-    serializer->read_object<float>(sensitivity);
-    serializer->read_object<float>(speed);
+    serializer->read_float("aspect_ratio", aspect_ratio);
+    serializer->read_float("field_of_view", field_of_view);
+    serializer->read_float("width", width);
+    serializer->read_float("height", height);
+    serializer->read_float("near_plane", near_plane);
+    serializer->read_float("far_plane", far_plane);
+    serializer->read_float("sensitivity", sensitivity);
+    serializer->read_float("speed", speed);
 
-    serializer->read_object<Float3>(m_forward);
-    serializer->read_object<Float3>(m_up);
+    serializer->read_float_array("forward", m_forward, 3);
+    serializer->read_float_array("up", m_up, 3);
 
-    serializer->read_object<kl::Color>(background);
-    serializer->read_object<Float4x4>(custom_data);
+    serializer->read_byte_array("background", &background, 4);
+    serializer->read_float_array("custom_data", custom_data.data, 16);
 
-    serializer->read_string(skybox_name);
-    serializer->read_string(shader_name);
+    serializer->read_string("skybox_name", skybox_name);
+    serializer->read_string("shader_name", shader_name);
 }
 
 void titian::Camera::update_aspect_ratio(const Int2& size)
@@ -133,7 +133,7 @@ titian::Float4x4 titian::Camera::view_matrix() const
 
 titian::Float4x4 titian::Camera::projection_matrix() const
 {
-    if (type == CameraType::ORTHOGRAPHIC) {
+    if (camera_type == CameraType::ORTHOGRAPHIC) {
         return Float4x4::orthographic(-width * 0.5f, width * 0.5f, -height * 0.5f, height * 0.5f, near_plane, far_plane);
     }
     return Float4x4::perspective(field_of_view, aspect_ratio, near_plane, far_plane);

@@ -12,8 +12,8 @@
 // Memory
 #include "memory/memory.h"
 
-// Object text serialization
-#include "ots/ots.h"
+// JSON
+#include "json/json.h"
 
 // Media
 #include "media/media.h"

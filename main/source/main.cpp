@@ -24,7 +24,7 @@ int main(const int argc, const char** argv)
 	}
 	else if (_conf_data.contains(CONF_EXE_TYPE)) {
 		exe_type = _conf_data.at(CONF_EXE_TYPE)->get_string().value_or(exe_type);
-		Logger::log("Using .conf exe type: ", exe_type);
+		Logger::log("Using .json exe type: ", exe_type);
 	}
 	else {
 		Logger::log("Exe type defaulting to ", exe_type);

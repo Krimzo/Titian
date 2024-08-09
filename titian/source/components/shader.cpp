@@ -13,14 +13,14 @@ titian::Shader::Shader(ShaderType type, kl::GPU* gpu)
 
 void titian::Shader::serialize(Serializer* serializer, const void* helper_data) const
 {
-	serializer->write_object<ShaderType>(type);
-	serializer->write_string(data_buffer);
+	serializer->write_int("type", type);
+	serializer->write_string("data_buffer", data_buffer);
 }
 
 void titian::Shader::deserialize(const Serializer* serializer, const void* helper_data)
 {
-	serializer->read_object<ShaderType>(type);
-	serializer->read_string(data_buffer);
+	serializer->read_int("type", (int32_t&) type);
+	serializer->read_string("data_buffer", data_buffer);
 	this->reload();
 }
 

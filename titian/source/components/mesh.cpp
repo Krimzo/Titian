@@ -12,31 +12,38 @@ titian::Mesh::~Mesh()
 
 void titian::Mesh::serialize(Serializer* serializer, const void* helper_data) const
 {
-    serializer->write_object<int>(topology);
-    serializer->write_object<bool>(render_wireframe);
+    serializer->write_int("topology", topology);
+    serializer->write_bool("render_wireframe", render_wireframe);
 
-    serializer->write_object<uint64_t>(data_buffer.size());
-    for (auto& data : data_buffer) {
-		serializer->write_object(data);
+    serializer->write_int("data_buffer_size", (int32_t) data_buffer.size());
+    int counter = 0;
+    for (const auto& data : data_buffer) {
+		serializer->write_byte_array(kl::format("__vertex_", counter), &data, sizeof(Vertex));
+        counter += 1;
     }
 
-    serializer->write_object<uint64_t>(bone_matrices.size());
-    for (auto& mat : bone_matrices) {
-        serializer->write_object(mat);
+    serializer->write_int("bone_matrices_size", (int32_t) bone_matrices.size());
+    counter = 0;
+    for (const auto& mat : bone_matrices) {
+        serializer->write_float_array(kl::format("__bone_matrix_", counter), mat.data, 16);
+        counter += 1;
     }
 
     Function<void(const SkeletonNode*)> rec_helper;
+    counter = 0;
     rec_helper = [&](const SkeletonNode* node)
     {
-        serializer->write_object<int>(node->bone_index);
-        serializer->write_object<Float4x4>(node->transformation);
-        serializer->write_object<uint64_t>(node->children.size());
+        serializer->push_object(kl::format("__node_", counter++));
+        serializer->write_int("bone_index", node->bone_index);
+        serializer->write_float_array("transformation", node->transformation.data, 16);
+        serializer->write_int("children_size", (int32_t) node->children.size());
         for (auto& child : node->children) {
 			rec_helper(&child);
         }
+        serializer->pop_object();
     };
 
-    serializer->write_object<bool>((bool) skeleton_root);
+    serializer->write_bool("has_data", (bool) skeleton_root);
     if (skeleton_root) {
 		rec_helper(&skeleton_root);
 	}
@@ -44,32 +51,47 @@ void titian::Mesh::serialize(Serializer* serializer, const void* helper_data) co
 
 void titian::Mesh::deserialize(const Serializer* serializer, const void* helper_data)
 {
-    serializer->read_object<int>(topology);
-    serializer->read_object<bool>(render_wireframe);
+    serializer->read_int("topology", topology);
+    serializer->read_bool("render_wireframe", render_wireframe);
 
-    data_buffer.resize(serializer->read_object<uint64_t>());
+    int32_t data_buffer_size = 0;
+    serializer->read_int("data_buffer_size", data_buffer_size);
+    data_buffer.resize(data_buffer_size);
+    int counter = 0;
     for (auto& data : data_buffer) {
-        serializer->read_object(data);
+        serializer->read_byte_array(kl::format("__vertex_", counter), &data, sizeof(Vertex));
+        counter += 1;
     }
 
-    bone_matrices.resize(serializer->read_object<uint64_t>());
+    int32_t bone_matrices_size = 0;
+    serializer->read_int("bone_matrices_size", bone_matrices_size);
+    bone_matrices.resize(bone_matrices_size);
+    counter = 0;
     for (auto& mat : bone_matrices) {
-        serializer->read_object(mat);
+        serializer->read_float_array(kl::format("__bone_matrix_", counter), mat.data, 16);
+        counter += 1;
     }
 
     Function<void(SkeletonNode*)> rec_helper;
+    counter = 0;
     rec_helper = [&](SkeletonNode* node)
     {
-        serializer->read_object<int>(node->bone_index);
-        serializer->read_object<Float4x4>(node->transformation);
-        node->children.resize(serializer->read_object<uint64_t>());
+        serializer->load_object(kl::format("__node_", counter++));
+        serializer->read_int("bone_index", node->bone_index);
+        serializer->read_float_array("transformation", node->transformation.data, 16);
+        int32_t children_size = 0;
+        serializer->read_int("children_size", children_size);
+        node->children.resize(children_size);
         for (auto& child : node->children) {
 			child = new SkeletonNode();
             rec_helper(&child);
         }
+        serializer->unload_object();
     };
 
-    if (serializer->read_object<bool>()) {
+    bool has_skeleton = false;
+    serializer->read_bool("has_data", has_skeleton);
+    if (has_skeleton) {
 		skeleton_root = new SkeletonNode();
         rec_helper(&skeleton_root);
     }

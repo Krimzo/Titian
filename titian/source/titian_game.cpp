@@ -29,7 +29,7 @@ titian::TitianGame::TitianGame(const String& entry_scene)
     push_layer(&gui_layer);
 
     // Start entry scene
-    const Serializer serializer = { entry_scene, false };
+    const BinarySerializer serializer{ entry_scene, false };
     if (serializer) {
         game_layer.scene->deserialize(&serializer, nullptr);
         game_layer.start_game();

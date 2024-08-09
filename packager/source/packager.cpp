@@ -45,19 +45,19 @@ bool titian::create_package(const String& input, const String& output_file)
 		return false;
 	}
 
-	Serializer serializer = { output_file, true };
+	BinarySerializer serializer{ output_file, true };
 	if (!serializer) {
 		Logger::log("Create package error. Failed to open file ", output_file);
 		return false;
 	}
 
 	const Set<String> files = list_files(input);
-	serializer.write_object<uint64_t>(files.size());
+	serializer.write_int("files_size", (int32_t) files.size());
 	for (const auto& file : files) {
 		const Vector<byte> file_data = kl::read_file(file);
-		serializer.write_string(file);
-		serializer.write_object<uint64_t>(file_data.size());
-		serializer.write_array(file_data.data(), file_data.size());
+		serializer.write_string("file", file);
+		serializer.write_int("file_data_size", (int32_t) file_data.size());
+		serializer.write_byte_array("file_data", file_data.data(), (int32_t) file_data.size());
 		Logger::log("Saved file ", file, " to package ", output_file);
 	}
 
@@ -67,20 +67,25 @@ bool titian::create_package(const String& input, const String& output_file)
 
 bool titian::open_package(const String& input_file, const String& output_dir)
 {
-	const Serializer serializer = { input_file, false };
+	const BinarySerializer serializer{ input_file, false };
 	if (!serializer) {
 		Logger::log("Open package error. Failed to open file ", input_file);
 		return false;
 	}
 
-	const uint64_t file_count = serializer.read_object<uint64_t>();
-	for (uint64_t i = 0; i < file_count; i++) {
-		const String file = output_dir + "/" + serializer.read_string();
-		const uint64_t file_size = serializer.read_object<uint64_t>();
+	int32_t files_size = 0;
+	serializer.read_int("files_size", files_size);
+	for (int32_t i = 0; i < files_size; i++) {
+		String file;
+		serializer.read_string("file", file);
+		file = output_dir + "/" + file;
+
+		int32_t file_data_size = 0;
+		serializer.read_int("file_data_size", file_data_size);
 
 		Vector<byte> file_data;
-		file_data.resize(file_size);
-		serializer.read_array(file_data.data(), file_size);
+		file_data.resize(file_data_size);
+		serializer.read_byte_array("file_data", file_data.data(), file_data_size);
 
 		const fs::path path(file);
 		if (path.has_parent_path()) {
