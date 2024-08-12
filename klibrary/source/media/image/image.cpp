@@ -362,9 +362,9 @@ static constexpr CLSID png_encoder_clsid = {
 };
 
 // Decoding
-bool kl::Image::load_from_memory(const byte* data, const uint64_t byte_size)
+bool kl::Image::load_from_memory(const void* data, const uint64_t byte_size)
 {
-    const ComRef<IStream> stream{ SHCreateMemStream(data, (UINT) byte_size) };
+    const ComRef<IStream> stream{ SHCreateMemStream(reinterpret_cast<const BYTE*>(data), UINT(byte_size)) };
     Gdiplus::Bitmap loaded_bitmap(stream.get());
     if (!verify(!loaded_bitmap.GetLastStatus(), "Failed to decode image")) {
         return false;
@@ -381,19 +381,19 @@ bool kl::Image::load_from_memory(const byte* data, const uint64_t byte_size)
     return true;
 }
 
-bool kl::Image::load_from_vector(const std::vector<byte>& buffer)
+bool kl::Image::load_from_buffer(const std::string_view& buffer)
 {
     return load_from_memory(buffer.data(), buffer.size());
 }
 
 bool kl::Image::load_from_file(const std::string_view& filepath)
 {
-    const auto file_data = read_file(filepath);
-    return load_from_vector(file_data);
+    const std::string file_data = read_file(filepath);
+    return load_from_buffer(file_data);
 }
 
 // Encoding
-bool kl::Image::save_to_vector(std::vector<byte>* buffer, const ImageType type) const
+bool kl::Image::save_to_buffer(std::string& buffer, const ImageType type) const
 {
     const CLSID* format_to_use;
     if (type == ImageType::BMP) {
@@ -428,10 +428,10 @@ bool kl::Image::save_to_vector(std::vector<byte>* buffer, const ImageType type) 
 
     STATSTG stream_info{};
     stream->Stat(&stream_info, STATFLAG_NONAME);
-    buffer->resize(stream_info.cbSize.QuadPart);
+    buffer.resize(stream_info.cbSize.QuadPart);
 
     stream->Seek({}, STREAM_SEEK_SET, nullptr);
-    stream->Read(buffer->data(), (ULONG) buffer->size(), nullptr);
+    stream->Read(buffer.data(), (ULONG) buffer.size(), nullptr);
     return true;
 }
 
@@ -453,11 +453,11 @@ bool kl::Image::save_to_file(const std::string_view& filepath, ImageType type) c
         return true;
     }
 
-    std::vector<byte> buffer{};
-    if (!save_to_vector(&buffer, type)) {
-        return false;
+    std::string buffer;
+    if (save_to_buffer(buffer, type)) {
+        return write_file(filepath, buffer);
     }
-    return write_file(filepath, buffer);
+    return false;
 }
 
 // Static

@@ -74,12 +74,12 @@ namespace kl {
         void draw_image(const Int2& top_left, const Image& image, bool mix_alpha = true);
 
         // Decoding
-        bool load_from_memory(const byte* data, uint64_t byte_size);
-        bool load_from_vector(const std::vector<byte>& buffer);
+        bool load_from_memory(const void* data, uint64_t byte_size);
+        bool load_from_buffer(const std::string_view& buffer);
         bool load_from_file(const std::string_view& filepath);
 
         // Encoding
-        bool save_to_vector(std::vector<byte>* buffer, ImageType type) const;
+        bool save_to_buffer(std::string& buffer, ImageType type) const;
         bool save_to_file(const std::string_view& filepath, ImageType type) const;
     };
 }

@@ -6,17 +6,17 @@
 namespace titian {
 	inline String get_default_script()
 	{
-		return kl::read_file_string("package/defaults/default_script.chai");
+		return kl::read_file("package/defaults/default_script.chai");
 	}
 
 	inline String get_default_material_shader()
 	{
-		return kl::read_file_string("package/defaults/default_material_shader.hlsl");
+		return kl::read_file("package/defaults/default_material_shader.hlsl");
 	}
 
 	inline String get_default_camera_shader()
 	{
-		return kl::read_file_string("package/defaults/default_camera_shader.hlsl");
+		return kl::read_file("package/defaults/default_camera_shader.hlsl");
 	}
 
 	inline String format_byte_size(uint64_t byte_size)

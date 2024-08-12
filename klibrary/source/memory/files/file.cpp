@@ -1,168 +1,184 @@
 #include "klibrary.h"
 
 
+// File
+kl::File::File()
+{}
+
+kl::File::File(const std::string_view& filepath, const bool write)
+{
+    open(filepath, write);
+}
+
+kl::File::~File()
+{
+    close();
+}
+
+kl::File::operator bool() const
+{
+    return (bool) m_file;
+}
+
+void kl::File::open(const std::string_view& filepath, bool write)
+{
+    close();
+    errno_t error = fopen_s(&m_file, filepath.data(), write ? "wb" : "rb");
+    verify(!error, "Failed to open file \"", filepath, "\"");
+}
+
+void kl::File::close()
+{
+    if (m_file) {
+        fclose(m_file);
+        m_file = nullptr;
+    }
+}
+
+bool kl::File::seek(const int64_t position) const
+{
+    if (!m_file) {
+        return false;
+    }
+    if (position < 0) {
+        return !fseek(m_file, (long) position + 1, SEEK_END);
+    }
+    return !fseek(m_file, (long) position, SEEK_SET);
+}
+
+bool kl::File::move(const int64_t delta) const
+{
+    if (!m_file) {
+        return false;
+    }
+    return !fseek(m_file, (long) delta, SEEK_CUR);
+}
+
+bool kl::File::rewind() const
+{
+    return seek(0);
+}
+
+bool kl::File::unwind() const
+{
+    return seek(-1);
+}
+
+int64_t kl::File::tell() const
+{
+    if (!m_file) {
+        return -1;
+    }
+    return ftell(m_file);
+}
+
 // Helper
-std::string kl::file_extension(const std::string& filepath)
+std::string kl::file_extension(const std::string_view& filepath)
 {
     return std::filesystem::path(filepath).extension().string();
 }
 
-std::vector<std::string> kl::list_files(const std::string& path, const bool recursive)
+std::vector<std::string> kl::list_files(const std::string_view& path, const bool recursive)
 {
-    std::vector<std::string> files = {};
-    if (!recursive) {
-        for (const auto& file : std::filesystem::directory_iterator(path)) {
-            if (!file.is_directory()) {
-                files.push_back(file.path().string());
+    std::vector<std::string> files;
+    if (recursive) {
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
+            if (!entry.is_directory()) {
+                files.push_back(entry.path().string());
             }
         }
     }
     else {
-        for (const auto& file : std::filesystem::recursive_directory_iterator(path)) {
-            if (!file.is_directory()) {
-                files.push_back(file.path().string());
+        for (const auto& entry : std::filesystem::directory_iterator(path)) {
+            if (!entry.is_directory()) {
+                files.push_back(entry.path().string());
             }
         }
     }
     return files;
 }
 
-std::vector<byte> kl::read_file(const std::string_view& filepath)
+std::string kl::read_file(const std::string_view& filepath)
 {
-    kl::File file = { filepath, false };
+    File file{ filepath, false };
     if (!file) {
         return {};
     }
-
+    std::string result;
     file.unwind();
-    const int file_size = file.tell();
+    result.resize(file.tell());
     file.rewind();
-
-    std::vector<byte> result(file_size);
-    file.read(result.data(), file_size);
+    file.read(result.data(), result.size());
     return result;
 }
 
-bool kl::write_file(const std::string_view& filepath, const std::vector<byte>& data)
+bool kl::write_file(const std::string_view& filepath, const std::string_view& data)
 {
-    kl::File file = { filepath, true };
+    File file{ filepath, true };
     if (!file) {
         return false;
     }
-    file.write<byte>(data.data(), data.size());
+    file.write<char>(data.data(), data.size());
     return true;
 }
 
-std::string kl::read_file_string(const std::string& filepath)
+std::vector<kl::Vertex<float>> kl::parse_obj_file(const std::string_view& filepath, const bool flip_z)
 {
-    std::ifstream stream(filepath);
-    if (!verify(stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
+    std::ifstream file{ filepath.data() };
+    if (!verify(file.is_open(), "Failed to open file \"", filepath, "\"")) {
         return {};
     }
 
-    std::stringstream buffer = {};
-    buffer << stream.rdbuf();
-    stream.close();
-    return buffer.str();
-}
+    std::vector<Float3> world_data;
+    std::vector<Float2> texture_data;
+    std::vector<Float3> normal_data;
+    std::vector<Vertex<float>> vertex_data;
 
-bool kl::write_file_string(const std::string& filepath, const std::string& data)
-{
-    std::ofstream stream(filepath);
-    if (!verify(stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
-        return false;
-    }
-
-    stream << data;
-    stream.close();
-    return true;
-}
-
-bool kl::append_file_string(const std::string& filepath, const std::string& data, const int position)
-{
-    std::fstream stream(filepath, std::ios::in | std::ios::out);
-    if (!verify(stream.is_open(), "Failed to open file \"" + filepath + "\"")) {
-        return false;
-    }
-
-    if (position < 0) {
-        stream.seekp(0, std::ios_base::end);
-    }
-    else {
-        stream.seekp(position);
-    }
-
-    stream << data;
-    stream.close();
-    return true;
-}
-
-std::vector<kl::Vertex<float>> kl::parse_obj_file(const std::string& filepath, const bool flip_z)
-{
-    // Handle file
-    std::ifstream file{ filepath };
-    if (!verify(file.is_open(), "Failed to open file \"" + filepath + "\"")) {
-        return {};
-    }
-
-    // Buffers
-    std::vector<Float3> world_data{};
-    std::vector<Float2> texture_data{};
-    std::vector<Float3> normal_data{};
-    std::vector<Vertex<float>> vertex_data{};
-
-    // Parse
     const float z_flip = flip_z ? -1.0f : 1.0f;
     for (std::string line; std::getline(file, line);) {
-        // Split line
         const std::vector<std::string> parts = split_string(line, ' ');
 
-        // Parse world
         if (parts.size() == 4 && parts.front() == "v") {
             Float3 result{};
-            result.x = strtof(parts[1].c_str(), nullptr);
-            result.y = strtof(parts[2].c_str(), nullptr);
-            result.z = strtof(parts[3].c_str(), nullptr) * z_flip;
+            result.x = (float) parse_float(parts[1]).value_or(0.0);
+            result.y = (float) parse_float(parts[2]).value_or(0.0);
+            result.z = (float) parse_float(parts[3]).value_or(0.0) * z_flip;
             world_data.push_back(result);
             continue;
         }
 
-        // Parse texture
         if (parts.size() == 3 && parts.front() == "vt") {
             Float2 result{};
-            result.x = strtof(parts[1].c_str(), nullptr);
-            result.y = strtof(parts[2].c_str(), nullptr);
+            result.x = (float) parse_float(parts[1]).value_or(0.0);
+            result.y = (float) parse_float(parts[2]).value_or(0.0);
             texture_data.push_back(result);
             continue;
         }
 
-        // Parse normal
         if (parts.size() == 4 && parts.front() == "vn") {
             Float3 result{};
-            result.x = strtof(parts[1].c_str(), nullptr);
-            result.y = strtof(parts[2].c_str(), nullptr);
-            result.z = strtof(parts[3].c_str(), nullptr) * z_flip;
+            result.x = (float) parse_float(parts[1]).value_or(0.0);
+            result.y = (float) parse_float(parts[2]).value_or(0.0);
+            result.z = (float) parse_float(parts[3]).value_or(0.0) * z_flip;
             normal_data.push_back(result);
             continue;
         }
 
-        // Parse face
         if (parts.size() == 4 && parts.front() == "f") {
             for (int i = 1; i <= 3; i++) {
-                // Split part
                 const std::vector<std::string> line_part_parts = split_string(parts[i], '/');
                 if (line_part_parts.size() != 3) {
                     continue;
                 }
 
-                Vertex vertex{};
-                if (uint64_t index = strtoull(line_part_parts[0].c_str(), nullptr, 10) - 1; index >= 0 && index < world_data.size()) {
+                Vertex vertex;
+                if (uint64_t index = parse_int(line_part_parts[0]).value_or(0) - 1; index >= 0 && index < world_data.size()) {
                     vertex.world = world_data[index];
                 }
-                if (uint64_t index = strtoull(line_part_parts[1].c_str(), nullptr, 10) - 1; index >= 0 && index < texture_data.size()) {
+                if (uint64_t index = parse_int(line_part_parts[1]).value_or(0) - 1; index >= 0 && index < texture_data.size()) {
                     vertex.texture = texture_data[index];
                 }
-                if (uint64_t index = strtoull(line_part_parts[2].c_str(), nullptr, 10) - 1; index >= 0 && index < normal_data.size()) {
+                if (uint64_t index = parse_int(line_part_parts[2]).value_or(0) - 1; index >= 0 && index < normal_data.size()) {
                     vertex.normal = normal_data[index];
                 }
                 vertex_data.push_back(vertex);
@@ -172,12 +188,11 @@ std::vector<kl::Vertex<float>> kl::parse_obj_file(const std::string& filepath, c
     return vertex_data;
 }
 
-std::optional<std::string> kl::choose_file(const bool save, const std::vector<std::pair<std::string, std::string>>& filters, int* out_index)
+std::optional<std::string> kl::choose_file(const bool save, const std::vector<std::pair<std::string_view, std::string_view>>& filters, int* out_index)
 {
-    std::stringstream filter_buffer = {};
+    std::stringstream filter_buffer;
     for (const auto& filter : filters) {
-        const std::string desc = filter.first + " (*" + filter.second + ")";
-        filter_buffer << desc << '\0' << '*' << filter.second << '\0';
+        filter_buffer << filter.first << " (*" << filter.second << ")" << '\0' << '*' << filter.second << '\0';
     }
     const std::string filter_data = filter_buffer.str();
 
@@ -199,71 +214,4 @@ std::optional<std::string> kl::choose_file(const bool save, const std::vector<st
     }
     SetCursor(LoadCursor(NULL, IDC_ARROW));
     return result;
-}
-
-// File
-kl::File::File()
-{}
-
-kl::File::File(const std::string_view& filepath, const bool clear)
-{
-    open(filepath, clear);
-}
-
-kl::File::~File()
-{
-    close();
-}
-
-kl::File::operator bool() const
-{
-    return (bool) m_file;
-}
-
-void kl::File::open(const std::string_view& filepath, bool clear)
-{
-    close();
-    errno_t error = fopen_s(&m_file, filepath.data(), clear ? "wb+" : "ab+");
-    verify(error == NULL, "Failed to open file \"", filepath, "\"");
-}
-
-void kl::File::close()
-{
-    if (m_file) {
-        fclose(m_file);
-        m_file = nullptr;
-    }
-}
-
-bool kl::File::seek(const int position) const
-{
-    if (!m_file) {
-        return false;
-    }
-    if (position < 0) {
-        return !fseek(m_file, position + 1, SEEK_END);
-    }
-    return !fseek(m_file, position, SEEK_SET);
-}
-
-bool kl::File::move(const int delta) const
-{
-    if (!m_file) { return false; }
-    return !fseek(m_file, delta, SEEK_CUR);
-}
-
-bool kl::File::rewind() const
-{
-    return seek(0);
-}
-
-bool kl::File::unwind() const
-{
-    return seek(-1);
-}
-
-int kl::File::tell() const
-{
-    if (!m_file) { return -1; }
-    return (int) ftell(m_file);
 }

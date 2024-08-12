@@ -93,7 +93,7 @@ void titian::GUISectionMainMenu::render_gui()
                         }
                         else if (type_index == 1) {
                             Ref<InterpScript> script = new InterpScript();
-                            script->source = kl::read_file_string(file.value());
+                            script->source = kl::read_file(file.value());
                             script->reload();
                             scene->scripts[stem_name] = script;
                         }
@@ -104,7 +104,7 @@ void titian::GUISectionMainMenu::render_gui()
                         const String stem_name = fs::path(file.value()).stem().string();
 
                         Shader* shader = scene->helper_new_shader(stem_name);
-                        shader->data_buffer = kl::read_file_string(file.value());
+                        shader->data_buffer = kl::read_file(file.value());
                     }
                 }
                 if (im::BeginMenu("Scene")) {
@@ -174,7 +174,7 @@ void titian::GUISectionMainMenu::render_gui()
                                     if (extension.empty()) {
                                         file.value() += FILE_EXTENSION_CHAI;
                                     }
-                                    kl::write_file_string(file.value(), interp_script->source);
+                                    kl::write_file(file.value(), interp_script->source);
                                 }
                                 else if (NativeScript* native_script = &script.as<NativeScript>()) {
                                     if (extension.empty()) {
@@ -199,7 +199,7 @@ void titian::GUISectionMainMenu::render_gui()
                                 if (extension.empty()) {
                                     file.value() += FILE_EXTENSION_HLSL;
                                 }
-                                kl::write_file_string(file.value(), shader->data_buffer);
+                                kl::write_file(file.value(), shader->data_buffer);
                             }
                         }
                     }
@@ -346,7 +346,7 @@ void titian::GUISectionMainMenu::render_gui()
                     alternate_wrap->push_back(js::make_number(alternate_color.b));
                     _conf_data[CONF_ALTERNATE_COLOR] = std::move(alternate_wrap);
 
-                    kl::write_file_string(_CONF_FILE, _conf_data.decompile());
+                    kl::write_file(_CONF_FILE, _conf_data.decompile());
                 }
                 im::EndMenu();
             }

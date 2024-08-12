@@ -394,11 +394,11 @@ kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline(const d
 	return create_pipeline_state(&pipeline_desc);
 }
 
-kl::dx12::StateObject kl::GPU12::create_default_raytracing_pipeline(const std::vector<byte>& compiled_shaders, const dx12::RootSignature& root_signature, const UINT max_recursion_depth, const UINT max_attribute_size, const UINT max_payload_size) const
+kl::dx12::StateObject kl::GPU12::create_default_raytracing_pipeline(const std::string& compiled_shaders, const dx12::RootSignature& root_signature, const UINT max_recursion_depth, const UINT max_attribute_size, const UINT max_payload_size) const
 {
 	const D3D12_DXIL_LIBRARY_DESC dxil_lib{
 		.DXILLibrary{
-			.pShaderBytecode = compiled_shaders.data(),
+			.pShaderBytecode = (const void*) compiled_shaders.data(),
 			.BytecodeLength = (SIZE_T) compiled_shaders.size(),
 		},
 	};

@@ -32,7 +32,7 @@ namespace titian {
 		float m_duration = 0.0f;
 		float m_fps = 0.0f;
 
-		Map<int, Vector<byte>> m_frames;
+		Map<int, String> m_frames;
 		std::mutex m_frames_lock;
 
 		Vector<std::jthread> m_threads;

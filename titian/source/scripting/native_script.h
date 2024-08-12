@@ -12,7 +12,7 @@ namespace titian {
 		template<typename Return, typename... Args>
 		using Function = Return(__stdcall*)(Args...);
 
-		Vector<byte> data = {};
+		String data;
 
 		NativeScript();
 

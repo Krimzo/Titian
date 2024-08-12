@@ -54,7 +54,7 @@ bool titian::create_package(const String& input, const String& output_file)
 	const Set<String> files = list_files(input);
 	serializer.write_int("files_size", (int32_t) files.size());
 	for (const auto& file : files) {
-		const Vector<byte> file_data = kl::read_file(file);
+		const String file_data = kl::read_file(file);
 		serializer.write_string("file", file);
 		serializer.write_int("file_data_size", (int32_t) file_data.size());
 		serializer.write_byte_array("file_data", file_data.data(), (int32_t) file_data.size());
@@ -83,7 +83,7 @@ bool titian::open_package(const String& input_file, const String& output_dir)
 		int32_t file_data_size = 0;
 		serializer.read_int("file_data_size", file_data_size);
 
-		Vector<byte> file_data;
+		String file_data;
 		file_data.resize(file_data_size);
 		serializer.read_byte_array("file_data", file_data.data(), file_data_size);
 

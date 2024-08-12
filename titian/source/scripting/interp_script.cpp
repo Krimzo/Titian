@@ -1641,10 +1641,8 @@ const int load_functions = [&]
 
 	// Files
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::read_file), "read_file");
-	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::read_file_string), "read_file_string");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::parse_obj_file), "parse_obj_file");
-	INTERP_SCRIPT_IDENTIFIERS["read_file"] = "Reads a file and returns a vector<byte>.";
-	INTERP_SCRIPT_IDENTIFIERS["read_file_string"] = "Reads a file and returns a string.";
+	INTERP_SCRIPT_IDENTIFIERS["read_file"] = "Reads a file and returns a string.";
 	INTERP_SCRIPT_IDENTIFIERS["parse_obj_file"] = "Parses the 3D data file and returns vector<Vertex<float>>.";
 
 	// Threading

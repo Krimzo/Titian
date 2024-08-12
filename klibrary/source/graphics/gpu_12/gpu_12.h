@@ -143,7 +143,7 @@ namespace kl {
 		) const;
 
 		dx12::StateObject create_default_raytracing_pipeline(
-			const std::vector<byte>& compiled_shaders,
+			const std::string& compiled_shaders,
 			const dx12::RootSignature& root_signature,
 			UINT max_recursion_depth = 5,
 			UINT max_attribute_size = sizeof(kl::Vertex<float>),

@@ -54,7 +54,7 @@ void titian::GUISectionScriptEditor::render_gui()
 			const String extension = path.extension().string();
 			if (extension == FILE_EXTENSION_CHAI) {
 				Ref script = new InterpScript();
-				script->source = kl::read_file_string(path.string());
+				script->source = kl::read_file(path.string());
 				script->reload();
 				scene->scripts[scene->generate_unique_name(path.filename().string(), scene->scripts)] = script;
 			}
@@ -188,7 +188,7 @@ void titian::GUISectionScriptEditor::show_script_properties(Script* script) cons
 
 void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
 {
-	Vector<byte>& data = script->data;
+	auto& data = script->data;
 	m_native_editor.DrawContents(data.data(), data.size());
 }
 

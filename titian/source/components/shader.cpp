@@ -55,8 +55,8 @@ void titian::Shader::reload_for_material()
 		}
 	}
 
-	StringStream full_source{};
-	for (const auto& line : kl::split_string(kl::read_file_string("package/shaders/scene_pass.hlsl"), '\n')) {
+	StringStream full_source;
+	for (const auto& line : kl::split_string(kl::read_file("package/shaders/scene_pass.hlsl"), '\n')) {
 		if (line.find("#define _CUSTOM_VERTEX_SHADER_PLACEHOLDER") != -1) {
 			full_source << shader_sources[0].str() << '\n';
 		}

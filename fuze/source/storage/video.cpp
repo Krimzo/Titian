@@ -34,7 +34,7 @@ void titian::Video::store_frame(const float time, const bool wait)
 	const int frame_index = int(time * m_fps);
 	m_frames_lock.lock();
 	if (m_frames.contains(frame_index)) {
-		out_frame.load_from_vector(m_frames[frame_index]);
+		out_frame.load_from_buffer(m_frames[frame_index]);
 	}
 	m_frames_lock.unlock();
 }
@@ -57,7 +57,7 @@ void titian::Video::cache_frames(const float time)
 			queue.add_task([this, section_index, frames_per_section, frames_per_core, core_index]
 			{
 				kl::VideoReader reader{ m_path, cache_scale, true };
-				Map<int, Vector<byte>> temp_frames;
+				Map<int, String> temp_frames;
 
 				const int start_index = section_index * frames_per_section + core_index * frames_per_core;
 				const int end_index = start_index + frames_per_core;
@@ -79,7 +79,7 @@ void titian::Video::cache_frames(const float time)
 					if (index % int(m_fps) == 0) {
 						m_buffering_sections[section_index][core_index] = { false, kl::unlerp((float) index, (float) start_index, (float) end_index) };
 					}
-					frame.save_to_vector(&temp_frames[index], RAWImageType::JPG);
+					frame.save_to_buffer(temp_frames[index], RAWImageType::JPG);
 				}
 
 				m_frames_lock.lock();

@@ -42,12 +42,12 @@ namespace kl {
         float sample_at_time(float time) const;
 
         // Decoding
-        bool load_from_memory(const byte* data, uint64_t byte_size);
-        bool load_from_vector(const std::vector<byte>& buffer);
+        bool load_from_memory(const void* data, uint64_t byte_size);
+        bool load_from_buffer(const std::string_view& buffer);
         bool load_from_file(const std::string_view& filepath);
 
         // Encoding
-        bool save_to_vector(std::vector<byte>* buffer, AudioType type) const;
+        bool save_to_buffer(std::string& buffer, AudioType type) const;
         bool save_to_file(const std::string_view& filepath, AudioType type) const;
     };
 }

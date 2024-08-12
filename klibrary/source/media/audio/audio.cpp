@@ -74,11 +74,11 @@ float kl::Audio::sample_at_time(const float time) const
 }
 
 // Decoding
-bool kl::Audio::load_from_memory(const byte* data, const uint64_t byte_size)
+bool kl::Audio::load_from_memory(const void* data, const uint64_t byte_size)
 {
 	HRESULT hr = 0;
 
-	ComRef<IStream> stream{ SHCreateMemStream(data, (UINT) byte_size) };
+	ComRef<IStream> stream{ SHCreateMemStream(reinterpret_cast<const BYTE*>(data), UINT(byte_size)) };
 	if (!stream) {
 		return false;
 	}
@@ -148,19 +148,19 @@ bool kl::Audio::load_from_memory(const byte* data, const uint64_t byte_size)
 	return true;
 }
 
-bool kl::Audio::load_from_vector(const std::vector<byte>& buffer)
+bool kl::Audio::load_from_buffer(const std::string_view& buffer)
 {
 	return load_from_memory(buffer.data(), buffer.size());
 }
 
 bool kl::Audio::load_from_file(const std::string_view& filepath)
 {
-	const auto file_data = read_file(filepath);
-	return load_from_vector(file_data);
+	const std::string data = read_file(filepath);
+	return load_from_buffer(data);
 }
 
 // Encoding
-bool kl::Audio::save_to_vector(std::vector<byte>* buffer, const AudioType type) const
+bool kl::Audio::save_to_buffer(std::string& buffer, const AudioType type) const
 {
 	HRESULT hr = 0;
 
@@ -233,18 +233,18 @@ bool kl::Audio::save_to_vector(std::vector<byte>* buffer, const AudioType type) 
 
 	QWORD length = 0;
 	byte_stream->GetLength(&length) >> verify_result;
-	buffer->resize((size_t) length);
+	buffer.resize((size_t) length);
 	byte_stream->SetCurrentPosition(0) >> verify_result;
 	ULONG ignored = 0;
-	byte_stream->Read(buffer->data(), (ULONG) buffer->size(), &ignored) >> verify_result;
+	byte_stream->Read((BYTE*) buffer.data(), (ULONG) buffer.size(), &ignored) >> verify_result;
 	return true;
 }
 
 bool kl::Audio::save_to_file(const std::string_view& filepath, const AudioType type) const
 {
-	std::vector<byte> buffer{};
-	if (!save_to_vector(&buffer, type)) {
-		return false;
+	std::string buffer;
+	if (save_to_buffer(buffer, type)) {
+		return write_file(filepath, buffer);
 	}
-	return write_file(filepath, buffer);
+	return false;
 }
