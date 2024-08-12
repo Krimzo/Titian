@@ -2971,7 +2971,7 @@ struct ImGuiSelectionBasicStorage
     int             Size;           //          // Number of selected items, maintained by this helper.
     bool            PreserveOrder;  // = false  // GetNextSelectedItem() will return ordered selection (currently implemented by two additional sorts of selection. Could be improved)
     void*           UserData;       // = NULL   // User data for use by adapter function        // e.g. selection.UserData = (void*)my_items;
-    ImGuiID         (*AdapterIndexToStorageId)(ImGuiSelectionBasicStorage* self, int idx);      // e.g. selection.AdapterIndexToStorageId = [](ImGuiSelectionBasicStorage* self, int idx) { return ((MyItems**)self->UserData)[idx]->ID; };
+    ImGuiID         (*AdapterIndexToStorageId)(ImGuiSelectionBasicStorage* _self, int idx);      // e.g. selection.AdapterIndexToStorageId = [](ImGuiSelectionBasicStorage* self, int idx) { return ((MyItems**)self->UserData)[idx]->ID; };
     int             _SelectionOrder;// [Internal] Increasing counter to store selection order
     ImGuiStorage    _Storage;       // [Internal] Selection set. Think of this as similar to e.g. std::set<ImGuiID>. Prefer not accessing directly: iterate with GetNextSelectedItem().
 
@@ -2992,7 +2992,7 @@ struct ImGuiSelectionExternalStorage
 {
     // Members
     void*           UserData;       // User data for use by adapter function                                // e.g. selection.UserData = (void*)my_items;
-    void            (*AdapterSetItemSelected)(ImGuiSelectionExternalStorage* self, int idx, bool selected); // e.g. AdapterSetItemSelected = [](ImGuiSelectionExternalStorage* self, int idx, bool selected) { ((MyItems**)self->UserData)[idx]->Selected = selected; }
+    void            (*AdapterSetItemSelected)(ImGuiSelectionExternalStorage* _self, int idx, bool selected); // e.g. AdapterSetItemSelected = [](ImGuiSelectionExternalStorage* self, int idx, bool selected) { ((MyItems**)self->UserData)[idx]->Selected = selected; }
 
     // Methods
     IMGUI_API ImGuiSelectionExternalStorage();

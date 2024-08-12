@@ -2,6 +2,7 @@
 
 
 // Safety
+#include "memory/safety/wrap.h"
 #include "memory/safety/ref.h"
 
 // Files

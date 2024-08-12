@@ -4,11 +4,10 @@
 
 
 namespace kl::json {
-	class Array : public Container, public ArrayStorageType<Ref<Container>>
+	class Array : public ArrayStorageType<ContainerWrap>, public Container
 	{
 	public:
 		Array();
-		Array(const std::initializer_list<Ref<Container>>& items);
 		Array(const std::string& data);
 
 		bool compile(std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last) override;

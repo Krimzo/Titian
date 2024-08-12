@@ -12,7 +12,8 @@ namespace titian {
         TEXTURE,
         SCRIPT,
         SHADER,
-        SCENE,
+        BINARY_SCENE,
+        TEXT_SCENE,
     };
 
     inline FileType classify_file(const fs::path& file)
@@ -21,17 +22,20 @@ namespace titian {
         if (extension == FILE_EXTENSION_OBJ || extension == FILE_EXTENSION_GLB || extension == FILE_EXTENSION_FBX) {
             return FileType::MESH;
         }
-        else if (extension == FILE_EXTENSION_JPG || extension == FILE_EXTENSION_PNG || extension == FILE_EXTENSION_BMP) {
+        if (extension == FILE_EXTENSION_JPG || extension == FILE_EXTENSION_PNG || extension == FILE_EXTENSION_BMP) {
             return FileType::TEXTURE;
         }
-        else if (extension == FILE_EXTENSION_CHAI || extension == FILE_EXTENSION_DLL) {
+        if (extension == FILE_EXTENSION_CHAI || extension == FILE_EXTENSION_DLL) {
             return FileType::SCRIPT;
         }
-        else if (extension == FILE_EXTENSION_HLSL) {
+        if (extension == FILE_EXTENSION_HLSL) {
             return FileType::SHADER;
         }
-        else if (extension == FILE_EXTENSION_TITIAN) {
-            return FileType::SCENE;
+        if (extension == FILE_EXTENSION_TITIAN) {
+            return FileType::BINARY_SCENE;
+        }
+        if (extension == FILE_EXTENSION_JSON) {
+            return FileType::TEXT_SCENE;
         }
         return FileType::DEFAULT;
     }

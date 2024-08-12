@@ -30,3 +30,7 @@ namespace kl::json {
 		virtual std::optional<std::string> get_string() const { return std::nullopt; }
 	};
 }
+
+namespace kl::json {
+	using ContainerWrap = Wrap<Container, 72>;
+}

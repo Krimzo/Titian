@@ -221,7 +221,7 @@ void titian::GUISectionMainMenu::render_gui()
                         if (Optional file = kl::choose_file(true, { { "Scene File", FILE_EXTENSION_JSON } })) {
                             const String extension = fs::path(file.value()).extension().string();
                             if (extension.empty()) {
-                                file.value() += FILE_EXTENSION_TITIAN;
+                                file.value() += FILE_EXTENSION_JSON;
                             }
                             if (TextSerializer serializer{ file.value(), true }) {
                                 scene->serialize(&serializer, nullptr);
@@ -331,18 +331,21 @@ void titian::GUISectionMainMenu::render_gui()
                 im::ColorEdit3("Alternate", gui_layer->alternate_color);
                 if (im::Button("Reload", { -1.0f, 0.0f })) {
                     gui_layer->reload_colors();
+
                     const kl::Color special_color = gui_layer->special_color;
-                    _conf_data[CONF_SPECIAL_COLOR] = new js::Array({
-                        js::Literal::make_number(special_color.r),
-                        js::Literal::make_number(special_color.g),
-                        js::Literal::make_number(special_color.b),
-                    });
+                    kl::Wrap special_wrap = kl::Wrap<js::Array>::make();
+                    special_wrap->push_back(js::make_number(special_color.r));
+                    special_wrap->push_back(js::make_number(special_color.g));
+                    special_wrap->push_back(js::make_number(special_color.b));
+                    _conf_data[CONF_SPECIAL_COLOR] = std::move(special_wrap);
+
                     const kl::Color alternate_color = gui_layer->alternate_color;
-                    _conf_data[CONF_ALTERNATE_COLOR] = new js::Array({
-                        js::Literal::make_number(alternate_color.r),
-                        js::Literal::make_number(alternate_color.g),
-                        js::Literal::make_number(alternate_color.b),
-                    });
+                    kl::Wrap alternate_wrap = kl::Wrap<js::Array>::make();
+                    alternate_wrap->push_back(js::make_number(alternate_color.r));
+                    alternate_wrap->push_back(js::make_number(alternate_color.g));
+                    alternate_wrap->push_back(js::make_number(alternate_color.b));
+                    _conf_data[CONF_ALTERNATE_COLOR] = std::move(alternate_wrap);
+
                     kl::write_file_string(_CONF_FILE, _conf_data.decompile());
                 }
                 im::EndMenu();

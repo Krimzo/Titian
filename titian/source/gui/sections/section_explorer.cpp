@@ -295,7 +295,8 @@ dx::ShaderView titian::GUISectionExplorer::file_icon(const FileType type)
         return script_file_texture->shader_view;
     case FileType::SHADER:
         return shader_file_texture->shader_view;
-    case FileType::SCENE:
+    case FileType::BINARY_SCENE:
+    case FileType::TEXT_SCENE:
         return scene_file_texture->shader_view;
     }
     return default_file_texture->shader_view;

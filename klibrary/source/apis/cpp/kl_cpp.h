@@ -42,6 +42,8 @@
 #include <cstdint>
 
 
+#define self (*this)
+
 namespace kl {
 	class NoCopy
 	{

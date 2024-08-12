@@ -34,13 +34,22 @@ void titian::GUISectionViewport::render_gui()
 
         // Scene loading
         if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
-            if (classify_file(file.value()) == FileType::SCENE) {
+            if (classify_file(file.value()) == FileType::BINARY_SCENE) {
                 if (const BinarySerializer serializer{ file.value(), false }) {
                     game_layer->reset_scene();
                     scene->deserialize(&serializer, nullptr);
                 }
                 else {
-                    Logger::log("Failed to load scene: ", file.value());
+                    Logger::log("Failed to load BINARY scene: ", file.value());
+                }
+            }
+            else if (classify_file(file.value()) == FileType::TEXT_SCENE) {
+                if (const TextSerializer serializer{ file.value(), false }) {
+                    game_layer->reset_scene();
+                    scene->deserialize(&serializer, nullptr);
+                }
+                else {
+                    Logger::log("Failed to load TEXT scene: ", file.value());
                 }
             }
         }

@@ -12,14 +12,14 @@ titian::BinarySerializer::BinarySerializer(const String& path, const bool write)
 	if (write) {
 		write_int({}, SERIAL_VERSION);
 		m_is_valid = true;
-		Logger::log("Opened file for binary serialization [", path, "]", " (", SERIAL_VERSION_FORMAT, ")");
+		Logger::log("Opened BINARY serialization file [", path, "]", " (", SERIAL_VERSION_FORMAT, ")");
 	}
 	else {
 		int32_t version = 0;
 		read_int({}, version);
 		if (version == SERIAL_VERSION) {
 			m_is_valid = true;
-			Logger::log("Opened file for binary deserialization [", path, "]", " (", SERIAL_VERSION_FORMAT, ")");
+			Logger::log("Opened BINARY deserialization file [", path, "]", " (", SERIAL_VERSION_FORMAT, ")");
 		}
 		else {
 			Logger::log("Failed to verify [", path, "] found serial version (", format_serial_version(version), "), expected version (", SERIAL_VERSION_FORMAT, ")");

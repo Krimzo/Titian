@@ -6,59 +6,11 @@
 namespace kl {
     /* NOT THREAD SAFE */
     template<typename T, typename C = uint32_t>
-    class Ref
+    struct Ref
     {
-        template<typename, typename>
-        friend class Ref;
+        friend struct Ref;
 
-        T* m_instance = nullptr;
-        C* m_count = nullptr;
-
-        inline void increase_count() const
-        {
-            if (m_count) {
-                ++(*m_count);
-            }
-        }
-
-        template<typename T = uint32_t>
-        inline T decrease_count() const
-        {
-            if (m_count) {
-                return static_cast<T>(--(*m_count));
-            }
-            return static_cast<T>(-1);
-        }
-
-        inline void allocate()
-        {
-            m_count = new C();
-            if (!m_count) {
-                throw std::exception("Could not allocate memory for reference counter.");
-            }
-            *m_count = 1;
-        }
-
-        inline void deallocate()
-        {
-            if (m_instance) {
-                delete m_instance;
-                m_instance = nullptr;
-            }
-            if (m_count) {
-                delete m_count;
-                m_count = nullptr;
-            }
-        }
-
-        inline void clear()
-        {
-            m_instance = nullptr;
-            m_count = nullptr;
-        }
-
-    public:
-        // Create
+        // create
         Ref()
         {}
 
@@ -66,63 +18,65 @@ namespace kl {
             : m_instance(instance)
         {
             if (m_instance) {
-                allocate();
+                self.allocate();
             }
         }
 
-        // Destroy
-        ~Ref()
+        // destroy
+        ~Ref() noexcept
         {
-            this->free();
+            self.free();
         }
 
         void free()
         {
-            if (decrease_count() == 0) {
-                deallocate();
+            if (self.decrease_count() == 0) {
+                self.destroy();
             }
-            else {
-                clear();
-            }
+            self.clear();
         }
 
-        // Create copy
+        // copy
         Ref(const Ref& other)
             : m_instance(other.m_instance), m_count(other.m_count)
         {
-            increase_count();
+            self.increase_count();
         }
 
-        Ref(Ref&& other) noexcept
-            : Ref(other)
-        {}
-
-        // Copy
         Ref& operator=(const Ref& other)
         {
             if (other.m_instance != m_instance) {
-                this->free();
+                self.free();
                 m_instance = other.m_instance;
                 m_count = other.m_count;
-                increase_count();
+                self.increase_count();
             }
-            return *this;
+            return self;
+        }
+
+        // move
+        Ref(Ref&& other) noexcept
+        {
+            self = other;
+            other.free();
         }
 
         Ref& operator=(Ref&& other) noexcept
         {
-            return (*this = other);
+            self = other;
+            other.free();
+            return self;
         }
 
-        // Cast
+        // cast
         template<typename B>
             requires (not std::is_same_v<B, T> and std::is_base_of_v<B, T>)
-        operator Ref<B, C> ()
+        operator Ref<B, C>()
         {
             Ref<B, C> result;
             result.m_instance = m_instance;
             result.m_count = m_count;
-            increase_count();
+            self.increase_count();
             return result;
         }
 
@@ -138,33 +92,11 @@ namespace kl {
             Ref<D, C> result;
             result.m_instance = derived;
             result.m_count = m_count;
-            increase_count();
+            self.increase_count();
             return result;
         }
 
-        // Info
-        operator bool() const
-        {
-            return static_cast<bool>(m_instance);
-        }
-
-        template<typename T = uint32_t>
-        T count() const
-        {
-            if (m_count) {
-                return static_cast<T>(*m_count);
-            }
-            return static_cast<T>(0);
-        }
-
-        template<typename T>
-        bool is() const
-        {
-            return static_cast<bool>(
-                dynamic_cast<T*>(m_instance));
-        }
-
-        // Compare
+        // compare
         bool operator==(const Ref& other) const
         {
             const void* first = m_instance;
@@ -174,10 +106,10 @@ namespace kl {
 
         bool operator!=(const Ref& other) const
         {
-            return !(*this == other);
+            return !(self == other);
         }
 
-        // Access
+        // access
         T* operator&()
         {
             return m_instance;
@@ -207,12 +139,79 @@ namespace kl {
         {
             return m_instance;
         }
+
+        // info
+        operator bool() const
+        {
+            return static_cast<bool>(m_instance);
+        }
+
+        template<typename T = uint32_t>
+        T count() const
+        {
+            if (m_count) {
+                return static_cast<T>(*m_count);
+            }
+            return static_cast<T>(0);
+        }
+
+        template<typename T>
+        bool is() const
+        {
+            return static_cast<bool>(
+                dynamic_cast<T*>(m_instance));
+        }
+
+    private:
+        T* m_instance = nullptr;
+        C* m_count = nullptr;
+
+        inline void increase_count() const
+        {
+            if (m_count) {
+                ++(*m_count);
+            }
+        }
+
+        template<typename T = uint32_t>
+        inline T decrease_count() const
+        {
+            if (m_count) {
+                return static_cast<T>(--(*m_count));
+            }
+            return static_cast<T>(-1);
+        }
+
+        inline void allocate()
+        {
+            m_count = new C();
+            if (!m_count) {
+                throw std::exception("Could not allocate memory for reference counter.");
+            }
+            *m_count = 1;
+        }
+
+        inline void destroy()
+        {
+            if (m_instance) {
+                delete m_instance;
+            }
+            if (m_count) {
+                delete m_count;
+            }
+        }
+
+        inline void clear()
+        {
+            m_instance = nullptr;
+            m_count = nullptr;
+        }
     };
 }
 
 namespace kl {
     template<typename T>
-    using SafeRef = Ref<T, std::atomic<uint32_t>>;
+    using AtomicRef = Ref<T, std::atomic<uint32_t>>;
 }
 
 namespace kl {

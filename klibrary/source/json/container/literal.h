@@ -6,8 +6,6 @@
 namespace kl::json {
 	class Literal : public Container
 	{
-		std::any m_value;
-
 	public:
 		Literal();
 		Literal(const std::string& data);
@@ -31,36 +29,9 @@ namespace kl::json {
 		void put_string(const std::string& value) override;
 		std::optional<std::string> get_string() const override;
 
-		// Helper
-		static inline Ref<Literal> make_null()
-		{
-			Ref container = new Literal();
-			container->put_null();
-			return container;
-		}
-
-		static inline Ref<Literal> make_bool(bool value)
-		{
-			Ref container = new Literal();
-			container->put_bool(value);
-			return container;
-		}
-
-		static inline Ref<Literal> make_number(double value)
-		{
-			Ref container = new Literal();
-			container->put_number(value);
-			return container;
-		}
-
-		static inline Ref<Literal> make_string(const std::string& value)
-		{
-			Ref container = new Literal();
-			container->put_string(value);
-			return container;
-		}
-
 	private:
+		std::any m_value;
+
 		template<typename T>
 		std::optional<T> try_get() const
 		{
@@ -70,4 +41,34 @@ namespace kl::json {
 			return {};
 		}
 	};
+}
+
+namespace kl::json {
+	static inline Wrap<Literal> make_null()
+	{
+		Wrap result = Wrap<Literal>::make();
+		result->put_null();
+		return result;
+	}
+
+	static inline Wrap<Literal> make_bool(bool value)
+	{
+		Wrap result = Wrap<Literal>::make();
+		result->put_bool(value);
+		return result;
+	}
+
+	static inline Wrap<Literal> make_number(double value)
+	{
+		Wrap result = Wrap<Literal>::make();
+		result->put_number(value);
+		return result;
+	}
+
+	static inline Wrap<Literal> make_string(const std::string& value)
+	{
+		Wrap result = Wrap<Literal>::make();
+		result->put_string(value);
+		return result;
+	}
 }

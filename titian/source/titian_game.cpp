@@ -29,8 +29,10 @@ titian::TitianGame::TitianGame(const String& entry_scene)
     push_layer(&gui_layer);
 
     // Start entry scene
-    const BinarySerializer serializer{ entry_scene, false };
-    if (serializer) {
+    const Ref<Serializer> serializer = (classify_file(entry_scene) == FileType::TEXT_SCENE)
+        ? (Serializer*) new TextSerializer(entry_scene, false)
+        : (Serializer*) new BinarySerializer(entry_scene, false);
+    if (*serializer) {
         game_layer.scene->deserialize(&serializer, nullptr);
         game_layer.start_game();
     }

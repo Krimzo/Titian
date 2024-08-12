@@ -17,16 +17,13 @@ namespace titian {
 		template<typename... Args>
 		static void log(const Args&... objects)
 		{
-			// Add to logs
-			const LogInfo& info = logs.emplace_front(objects...);
+			const LogInfo& info = logs.emplace_back(objects...);
 			last_log_index += 1;
 
-			// Adjust size if needed
 			while (logs.size() > 250) {
-				logs.pop_back();
+				logs.pop_front();
 			}
 
-			// Print if displaying is not ready
 			if (!m_is_ready) {
 				kl::print("[", info.date, "]: ", info.message);
 			}

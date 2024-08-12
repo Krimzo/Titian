@@ -29,11 +29,9 @@
 namespace kl {
     template<typename T>
 	    requires std::is_base_of_v<IUnknown, T>
-    class ComRef
+    struct ComRef
     {
-        T* m_instance = nullptr;
-
-    public:
+        // create
         inline ComRef()
         {}
 
@@ -41,65 +39,70 @@ namespace kl {
             : m_instance(instance)
         {}
 
+        // destroy
         inline ~ComRef() noexcept
         {
-            if (m_instance) {
-                m_instance->Release();
-            }
+            this->free();
         }
 
-        inline ComRef(const ComRef& other)
-            : m_instance(other.m_instance)
-        {
-            if (m_instance) {
-                m_instance->AddRef();
-            }
-        }
-
-        inline ComRef(ComRef&& other) noexcept
-            : ComRef(other)
-        {}
-
-        inline ComRef& operator=(const ComRef& other)
-        {
-            if (other.m_instance != m_instance) {
-                if (m_instance) {
-					m_instance->Release();
-				}
-                m_instance = other.m_instance;
-                if (m_instance) {
-                    m_instance->AddRef();
-                }
-            }
-            return *this;
-        }
-
-        inline ComRef& operator=(ComRef&& other) noexcept
-        {
-            return (*this = other);
-        }
-
-        inline operator bool() const
-        {
-            return bool(m_instance);
-        }
-
-        template<typename B>
-            requires std::is_base_of_v<B, T>
-        inline operator ComRef<B>() const
-        {
-            if (m_instance) {
-                m_instance->AddRef();
-            }
-            return ComRef<B>{m_instance};
-        }
-
-        inline T** operator&()
+        inline void free()
         {
             if (m_instance) {
                 m_instance->Release();
                 m_instance = nullptr;
             }
+        }
+
+        // copy
+        inline ComRef(const ComRef& other)
+            : m_instance(other.m_instance)
+        {
+            this->increase_count();
+        }
+
+        inline ComRef& operator=(const ComRef& other)
+        {
+            if (other.m_instance != m_instance) {
+                this->free();
+                m_instance = other.m_instance;
+                this->increase_count();
+            }
+            return *this;
+        }
+
+        // move
+        inline ComRef(ComRef&& other) noexcept
+        {
+            *this = other;
+            other.free();
+        }
+
+        inline ComRef& operator=(ComRef&& other) noexcept
+        {
+            *this = other;
+            other.free();
+            return *this;
+        }
+
+        // cast 
+        template<typename B>
+            requires std::is_base_of_v<B, T>
+        inline operator ComRef<B>() const
+        {
+            this->increase_count();
+            return ComRef<B>{m_instance};
+        }
+
+        template<typename U>
+        inline HRESULT as(ComRef<U>& out) const
+        {
+            return m_instance->QueryInterface(__uuidof(U), (void**) &out);
+        }
+
+        // access
+        inline T** operator&()
+        {
+            this->free();
             return &m_instance;
         }
 
@@ -128,10 +131,20 @@ namespace kl {
             return &m_instance;
         }
 
-        template<typename U>
-        inline HRESULT as(ComRef<U>& out) const
+        // info
+        inline operator bool() const
         {
-            return m_instance->QueryInterface(__uuidof(U), (void**) &out);
+            return static_cast<bool>(m_instance);
+        }
+
+    private:
+        T* m_instance = nullptr;
+
+        inline void increase_count() const
+        {
+            if (m_instance) {
+                m_instance->AddRef();
+            }
         }
     };
 }

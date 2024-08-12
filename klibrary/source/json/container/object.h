@@ -4,11 +4,10 @@
 
 
 namespace kl::json {
-	class Object : public Container, public ObjectStorageType<std::string, Ref<Container>>
+	class Object : public ObjectStorageType<std::string, ContainerWrap>, public Container
 	{
 	public:
 		Object();
-		Object(const std::initializer_list<std::pair<std::string, Ref<Container>>>& items);
 		Object(const std::string& data);
 
 		bool compile(std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last) override;

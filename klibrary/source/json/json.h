@@ -13,7 +13,7 @@ namespace kl::json {
     struct ContainerSerializable
     {
         virtual ~ContainerSerializable() = default;
-        virtual Ref<Container> to_container() const = 0;
+        virtual ContainerWrap to_container() const = 0;
         virtual void from_container(const Container& container) = 0;
     };
 
@@ -23,9 +23,9 @@ namespace kl::json {
         virtual void to_object(Object& object) const = 0;
         virtual void from_object(const Object& object) = 0;
 
-        Ref<Container> to_container() const final
+        ContainerWrap to_container() const final
         {
-            Ref container = new Object();
+            Wrap container = Wrap<Object>::make();
             this->to_object(*container);
             return container;
         }
@@ -44,9 +44,9 @@ namespace kl::json {
         virtual void to_array(Array& array) const = 0;
         virtual void from_array(const Array& array) = 0;
 
-        Ref<Container> to_container() const final
+        ContainerWrap to_container() const final
         {
-            Ref container = new Array();
+            Wrap container = Wrap<Array>::make();
             this->to_array(*container);
             return container;
         }

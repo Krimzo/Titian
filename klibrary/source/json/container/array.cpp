@@ -4,11 +4,6 @@
 kl::json::Array::Array()
 {}
 
-kl::json::Array::Array(const std::initializer_list<Ref<Container>>& items)
-{
-    insert(begin(), items.begin(), items.end());
-}
-
 kl::json::Array::Array(const std::string& data)
 {
     const auto tokens = Lexer::parse(data);
@@ -24,18 +19,18 @@ bool kl::json::Array::compile(std::vector<Token>::const_iterator first, std::vec
     int depth = 0;
     for (auto it = first; it != last; ++it) {
         if (depth == 1) {
-            Ref<Container> container;
+            ContainerWrap container;
             if (it->type == TokenType::_ARRAY_START) {
-                container = new Array();
+                container = Wrap<Array>::make();
             }
             else if (it->type == TokenType::_OBJECT_START) {
-                container = new Object();
+                container = Wrap<Object>::make();
             }
             else {
-                container = new Literal();
+                container = Wrap<Literal>::make();
             }
             if (container->compile(it, last)) {
-                push_back(container);
+                self.push_back(std::move(container));
             }
         }
         if (it->type == TokenType::_OBJECT_START || it->type == TokenType::_ARRAY_START) {
