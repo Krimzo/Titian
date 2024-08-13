@@ -22,12 +22,20 @@ namespace chaiscript {
     struct Loadable_Module {
       template<typename T>
       static std::wstring to_wstring(const T &t_str) {
-        return std::wstring(t_str.begin(), t_str.end());
+          std::wstring result;
+          result.reserve(t_str.size());
+          for (auto it = t_str.begin(); it != t_str.end(); ++it)
+              result.push_back(static_cast<wchar_t>(*it));
+          return result;
       }
 
       template<typename T>
       static std::string to_string(const T &t_str) {
-        return std::string(t_str.begin(), t_str.end());
+          std::string result;
+          result.reserve(t_str.size());
+          for (auto it = t_str.begin(); it != t_str.end(); ++it)
+              result.push_back(static_cast<char>(*it));
+          return result;
       }
 
 #if defined(_UNICODE) || defined(UNICODE)

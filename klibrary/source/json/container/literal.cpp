@@ -63,12 +63,12 @@ std::string kl::json::Literal::decompile(const int depth) const
 
 void kl::json::Literal::put_null()
 {
-	m_value = std::nullopt;
+    m_value.emplace<std::nullptr_t>(nullptr);
 }
 
 void kl::json::Literal::put_bool(const bool value)
 {
-    m_value = value;
+    m_value.emplace<bool>(value);
 }
 
 std::optional<bool> kl::json::Literal::get_bool() const
@@ -78,7 +78,7 @@ std::optional<bool> kl::json::Literal::get_bool() const
 
 void kl::json::Literal::put_number(const double value)
 {
-	m_value = value;
+	m_value.emplace<double>(value);
 }
 
 std::optional<double> kl::json::Literal::get_double() const
@@ -128,7 +128,7 @@ std::optional<uint8_t> kl::json::Literal::get_byte() const
 
 void kl::json::Literal::put_string(const std::string& value)
 {
-	m_value = value;
+	m_value.emplace<std::string>(value);
 }
 
 std::optional<std::string> kl::json::Literal::get_string() const

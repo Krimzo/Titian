@@ -5,24 +5,24 @@ titian::TextSerializer::TextSerializer(const String& path, const bool write)
 	: m_path(path), m_writing(write)
 {
 	if (write) {
-		current()["version"] = js::make_number(SERIAL_VERSION);
+		current()["version"] = js::make_string(SERIAL_VERSION_STR);
 		m_is_valid = true;
-		Logger::log("Opened TEXT serialization file [", path, "]", " (", SERIAL_VERSION_FORMAT, ")");
+		Logger::log("Opened TEXT serialization file [", path, "]", " (", SERIAL_VERSION_STR, ")");
 	}
 	else {
 		current() = { kl::read_file(path) };
 
-		int32_t version = 0;
+		String version;
 		if (current().contains("version")) {
-			version = current().at("version")->get_int().value_or(version);
+			version = current().at("version")->get_string().value_or(version);
 		}
 
-		if (version == SERIAL_VERSION) {
+		if (version == SERIAL_VERSION_STR) {
 			m_is_valid = true;
-			Logger::log("Opened TEXT deserialization file [", path, "]", " (", SERIAL_VERSION_FORMAT, ")");
+			Logger::log("Opened TEXT deserialization file [", path, "]", " (", SERIAL_VERSION_STR, ")");
 		}
 		else {
-			Logger::log("Failed to verify [", path, "] serial version (", format_serial_version(version), "), expected version (", SERIAL_VERSION_FORMAT, ")");
+			Logger::log("Failed to verify [", path, "] serial version (", version, "), expected version (", SERIAL_VERSION_STR, ")");
 		}
 	}
 }

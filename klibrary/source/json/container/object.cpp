@@ -65,13 +65,13 @@ std::string kl::json::Object::decompile(const int depth) const
         const std::string content_depth((depth + 1) * 2, ' ');
         const auto last_it = --end();
         stream << Standard::object_start_literal << '\n';
-        for (auto i = begin(); i != end(); i++) {
-            std::string name = i->first;
+        for (auto it = begin(); it != end(); ++it) {
+            std::string name = it->first;
             Lexer::from_escaping(name);
             stream << content_depth << Standard::string_literal << name << Standard::string_literal;
             stream << Standard::assign_literal << ' ';
-            stream << i->second->decompile(depth + 1);
-            if (i != last_it) {
+            stream << it->second->decompile(depth + 1);
+            if (it != last_it) {
                 stream << Standard::splitter_literal;
             }
             stream << '\n';
@@ -81,13 +81,13 @@ std::string kl::json::Object::decompile(const int depth) const
     else {
         const auto last_it = --end();
         stream << Standard::object_start_literal << ' ';
-        for (auto i = begin(); i != end(); i++) {
-            std::string name = i->first;
+        for (auto it = begin(); it != end(); ++it) {
+            std::string name = it->first;
             Lexer::from_escaping(name);
             stream << Standard::string_literal << name << Standard::string_literal;
             stream << Standard::assign_literal << ' ';
-            stream << i->second->decompile(-1);
-            if (i != last_it) {
+            stream << it->second->decompile(-1);
+            if (it != last_it) {
                 stream << Standard::splitter_literal;
             }
             stream << ' ';

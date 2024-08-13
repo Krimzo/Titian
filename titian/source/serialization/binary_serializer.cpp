@@ -10,19 +10,19 @@ titian::BinarySerializer::BinarySerializer(const String& path, const bool write)
 	}
 
 	if (write) {
-		write_int({}, SERIAL_VERSION);
+		write_string("version", SERIAL_VERSION_STR);
 		m_is_valid = true;
-		Logger::log("Opened BINARY serialization file [", path, "]", " (", SERIAL_VERSION_FORMAT, ")");
+		Logger::log("Opened BINARY serialization file [", path, "]", " (", SERIAL_VERSION_STR, ")");
 	}
 	else {
-		int32_t version = 0;
-		read_int({}, version);
-		if (version == SERIAL_VERSION) {
+		String version;
+		read_string("version", version);
+		if (version == SERIAL_VERSION_STR) {
 			m_is_valid = true;
-			Logger::log("Opened BINARY deserialization file [", path, "]", " (", SERIAL_VERSION_FORMAT, ")");
+			Logger::log("Opened BINARY deserialization file [", path, "]", " (", SERIAL_VERSION_STR, ")");
 		}
 		else {
-			Logger::log("Failed to verify [", path, "] found serial version (", format_serial_version(version), "), expected version (", SERIAL_VERSION_FORMAT, ")");
+			Logger::log("Failed to verify [", path, "] found serial version (", version, "), expected version (", SERIAL_VERSION_STR, ")");
 		}
 	}
 }
@@ -30,7 +30,7 @@ titian::BinarySerializer::BinarySerializer(const String& path, const bool write)
 titian::BinarySerializer::~BinarySerializer()
 {
 	if (*this) {
-		Logger::log("Closed binary ", m_writing ? "serialization" : "deserialization", " file [", m_path, "]");
+		Logger::log("Closed BINARY ", m_writing ? "serialization" : "deserialization", " file [", m_path, "]");
 	}
 }
 

@@ -30,15 +30,15 @@ namespace kl::json {
 		std::optional<std::string> get_string() const override;
 
 	private:
-		std::any m_value;
+		std::variant<std::nullptr_t, bool, double, std::string> m_value;
 
 		template<typename T>
 		std::optional<T> try_get() const
 		{
-			if (m_value.type() == typeid(T)) {
-				return { std::any_cast<T>(m_value) };
+			if (const T* ptr = std::get_if<T>(&m_value)) {
+				return std::optional<T>{ *ptr };
 			}
-			return {};
+			return std::nullopt;
 		}
 	};
 }

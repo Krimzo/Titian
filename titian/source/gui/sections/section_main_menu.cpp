@@ -359,7 +359,7 @@ void titian::GUISectionMainMenu::render_gui()
         if (im::BeginMenu("About")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             im::Text("Titian 0.67v");
-            im::Text(kl::format("Serial ", SERIAL_VERSION_FORMAT).c_str());
+            im::Text(kl::format("Serial ", SERIAL_VERSION_STR).c_str());
             im::PopStyleVar();
             im::EndMenu();
         }
