@@ -148,25 +148,24 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
             String name;
             serializer->read_string(kl::format("__name_", i), name);
             serializer->load_object(name);
-            ScriptType script_type = {};
-            serializer->read_int("script_type", (int32_t&) script_type);
-            Ref<Script> object;
-            switch (script_type) {
-            case ScriptType::NATIVE:
-                object = new NativeScript();
-                break;
-            case ScriptType::INTERP:
-                object = new InterpScript();
-                break;
-            case ScriptType::NODE:
-                object = new NodeScript();
-                break;
-            default:
-                kl::assert(false, "Unknown script type: ", (int) script_type);
+            String script_type;
+            serializer->read_string("script_type", script_type);
+            Ref<Script> script;
+            if (typeid(InterpScript).name() == script_type) {
+                script = new InterpScript();
             }
-            object->deserialize(serializer, nullptr);
+            else if (typeid(NodeScript).name() == script_type) {
+                script = new NodeScript();
+            }
+            else if (typeid(NativeScript).name() == script_type) {
+                script = new NativeScript();
+            }
+            else {
+                kl::assert(false, "Unknown script type: ", script_type);
+            }
+            script->deserialize(serializer, nullptr);
             serializer->unload_object();
-            scripts[name] = object;
+            scripts[name] = script;
         }
         serializer->unload_object();
     }
@@ -180,27 +179,26 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
             String name;
             serializer->read_string(kl::format("__name_", i), name);
             serializer->load_object(name);
-            EntityType entity_type = {};
-            serializer->read_int("entity_type", (int32_t&) entity_type);
+            String entity_type;
+            serializer->read_string("entity_type", entity_type);
             Ref<Entity> entity;
-            switch (entity_type) {
-            case EntityType::BASIC:
-                entity = new Entity(EntityType::BASIC, m_physics, false);
-                break;
-            case EntityType::CAMERA:
+            if (typeid(Entity).name() == entity_type) {
+                entity = new Entity(m_physics, false);
+            }
+            else if (typeid(Camera).name() == entity_type) {
                 entity = new Camera(m_physics, false);
-                break;
-            case EntityType::AMBIENT_LIGHT:
+            }
+            else if (typeid(AmbientLight).name() == entity_type) {
                 entity = new AmbientLight(m_physics, false);
-                break;
-            case EntityType::POINT_LIGHT:
+            }
+            else if (typeid(PointLight).name() == entity_type) {
                 entity = new PointLight(m_physics, false);
-                break;
-            case EntityType::DIRECTIONAL_LIGHT:
+            }
+            else if (typeid(DirectionalLight).name() == entity_type) {
                 entity = new DirectionalLight(m_physics, false, m_gpu, 4096);
-                break;
-            default:
-                kl::assert(false, "Unknown entity type: ", (int) entity_type);
+            }
+            else {
+                kl::assert(false, "Unknown entity type: ", entity_type);
             }
             entity->deserialize(serializer, &meshes);
             serializer->unload_object();
@@ -283,7 +281,7 @@ void titian::Scene::update_ui()
 // Entity
 titian::Ref<titian::Entity> titian::Scene::new_entity(const bool dynamic) const
 {
-    return new Entity(EntityType::BASIC, m_physics, dynamic);
+    return new Entity(m_physics, dynamic);
 }
 
 void titian::Scene::add_entity(const String& name, const Ref<Entity>& entity)

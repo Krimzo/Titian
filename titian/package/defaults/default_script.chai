@@ -5,3 +5,11 @@ def on_start(Scene scene)
 def on_update(Scene scene)
 {
 }
+
+def on_collision(Scene scene, Entity first, Entity second)
+{
+}
+
+def on_ui(Scene scene)
+{
+}

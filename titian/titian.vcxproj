@@ -161,7 +161,6 @@
     <ClCompile Include="source\light\directional_light.cpp" />
     <ClCompile Include="source\light\light.cpp" />
     <ClCompile Include="source\light\point_light.cpp" />
-    <ClCompile Include="source\nodes\nodes.cpp" />
     <ClCompile Include="source\render\pass\display_pass.cpp" />
     <ClCompile Include="source\render\pass\editor_pass.cpp" />
     <ClCompile Include="source\render\pass\outline_pass.cpp" />
@@ -233,7 +232,6 @@
     <ClInclude Include="source\light\directional_light.h" />
     <ClInclude Include="source\light\light.h" />
     <ClInclude Include="source\light\point_light.h" />
-    <ClInclude Include="source\nodes\nodes.h" />
     <ClInclude Include="source\render\pass\display_pass.h" />
     <ClInclude Include="source\render\pass\editor_pass.h" />
     <ClInclude Include="source\render\pass\outline_pass.h" />

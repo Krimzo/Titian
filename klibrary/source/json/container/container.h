@@ -32,5 +32,5 @@ namespace kl::json {
 }
 
 namespace kl::json {
-	using ContainerWrap = Wrap<Container, 48>;
+	using ContainerWrap = Wrap<Container, IS_DEBUG ? 56 : 48>;
 }

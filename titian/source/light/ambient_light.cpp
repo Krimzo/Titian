@@ -2,7 +2,7 @@
 
 
 titian::AmbientLight::AmbientLight(px::PxPhysics* physics, const bool dynamic)
-	: Light(EntityType::AMBIENT_LIGHT, physics, dynamic)
+	: Light(physics, dynamic)
 {}
 
 void titian::AmbientLight::serialize(Serializer* serializer, const void* helper_data) const

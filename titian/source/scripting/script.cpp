@@ -1,13 +1,9 @@
 #include "titian.h"
 
 
-titian::Script::Script(const ScriptType type)
-	: script_type(type)
-{}
-
 void titian::Script::serialize(Serializer* serializer, const void* helper_data) const
 {
-	serializer->write_int("script_type", (int32_t) script_type);
+	serializer->write_string("script_type", typeid(self).name()); // must be read from outside
 }
 
 void titian::Script::deserialize(const Serializer* serializer, const void* helper_data)

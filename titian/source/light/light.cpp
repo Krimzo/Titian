@@ -1,6 +1,6 @@
 #include "titian.h"
 
 
-titian::Light::Light(const EntityType type, px::PxPhysics* physics, const bool dynamic)
-	: Entity(type, physics, dynamic)
+titian::Light::Light(px::PxPhysics* physics, const bool dynamic)
+	: Entity(physics, dynamic)
 {}

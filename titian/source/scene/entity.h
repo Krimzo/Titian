@@ -4,22 +4,9 @@
 
 
 namespace titian {
-    enum class EntityType : int32_t
-    {
-        BASIC,
-        CAMERA,
-        AMBIENT_LIGHT,
-        POINT_LIGHT,
-        DIRECTIONAL_LIGHT,
-    };
-}
-
-namespace titian {
     class Entity : kl::NoCopy, public Serializable
     {
     public:
-        const EntityType entity_type;
-
         Float3 scale{ 1.0f };
         bool casts_shadows = true;
 
@@ -28,7 +15,7 @@ namespace titian {
         String collider_mesh_name = "/";
 
         // Creation
-        Entity(EntityType type, px::PxPhysics* physics, bool dynamic);
+        Entity(px::PxPhysics* physics, bool dynamic);
         ~Entity() override;
 
         void serialize(Serializer* serializer, const void* helper_data) const override;

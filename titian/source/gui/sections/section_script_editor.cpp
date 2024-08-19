@@ -5,15 +5,6 @@ titian::GUISectionScriptEditor::GUISectionScriptEditor()
 	: GUISection("GUISectionScriptEditor")
 {
 	m_interp_editor.load_chai_standard();
-
-	ed::Config node_config{};
-	node_config.SettingsFile = "node_editor.json";
-	m_node_editor = ed::CreateEditor(&node_config);
-}
-
-titian::GUISectionScriptEditor::~GUISectionScriptEditor()
-{
-	ed::DestroyEditor(m_node_editor);
 }
 
 void titian::GUISectionScriptEditor::render_gui()
@@ -23,10 +14,10 @@ void titian::GUISectionScriptEditor::render_gui()
 	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 	Scene* scene = &Layers::get<GameLayer>()->scene;
 
-	Script* script = &scene->get_script(selected_script);
-	NativeScript* native_script = dynamic_cast<NativeScript*>(script);
-	InterpScript* interp_script = dynamic_cast<InterpScript*>(script);
-	NodeScript* node_script = dynamic_cast<NodeScript*>(script);
+	Ref script = scene->get_script(selected_script);
+	NativeScript* native_script = &script.as<NativeScript>();
+	InterpScript* interp_script = &script.as<InterpScript>();
+	NodeScript* node_script = &script.as<NodeScript>();
 
 	if (im::Begin("Script Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const float available_width = im::GetContentRegionAvail().x;
@@ -66,7 +57,7 @@ void titian::GUISectionScriptEditor::render_gui()
 			}
 		}
 
-		show_script_properties(script);
+		show_script_properties(&script);
 	}
 	im::End();
 }
@@ -80,12 +71,10 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 				scene->scripts[name] = new InterpScript();
 				im::CloseCurrentPopup();
 			}
-#if false
 			if (im::MenuItem("New Node Script")) {
 				scene->scripts[name] = new NodeScript();
 				im::CloseCurrentPopup();
 			}
-#endif
 			if (im::MenuItem("New Native Script")) {
 				scene->scripts[name] = new NativeScript();
 				im::CloseCurrentPopup();
@@ -186,12 +175,6 @@ void titian::GUISectionScriptEditor::show_script_properties(Script* script) cons
 	im::End();
 }
 
-void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
-{
-	auto& data = script->data;
-	m_native_editor.DrawContents(data.data(), data.size());
-}
-
 void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 {
 	if (script != m_last_script) {
@@ -240,54 +223,11 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 
 void titian::GUISectionScriptEditor::edit_node_script(NodeScript* script)
 {
-	im::Text("Node Editor");
-	im::Separator();
+	script->update_editor();
+}
 
-	ed::SetCurrentEditor(m_node_editor);
-	ed::Begin("Node Editor", ImVec2(-1.0f, -1.0f));
-
-	auto display_node = [&](const Node& node)
-	{
-		auto display_pin = [&](const Pin& pin, PinKind kind)
-		{
-			ed::BeginPin(pin.id, kind);
-			im::Text(pin.title.c_str());
-			ed::EndPin();
-		};
-
-		ed::BeginNode(node.id);
-		im::Text(node.title.c_str());
-
-		im::BeginGroup();
-		if (node.flow_input) {
-			display_pin(node.flow_input.value(), PinKind::Input);
-		}
-		for (auto& pin : node.input_pins) {
-			display_pin(pin, PinKind::Input);
-		}
-		im::EndGroup();
-		im::SameLine();
-
-		im::BeginGroup();
-		if (node.flow_output) {
-			display_pin(node.flow_output.value(), PinKind::Output);
-		}
-		for (auto& pin : node.output_pins) {
-			display_pin(pin, PinKind::Output);
-		}
-		im::EndGroup();
-
-		ed::EndNode();
-	};
-
-	/* WIP, maybe in the future */
-
-	//display_node(script->start_node);
-	//display_node(script->update_node);
-	//for (auto& node : script->nodes) {
-	//	display_node(node);
-	//}
-
-	ed::End();
-	ed::SetCurrentEditor(nullptr);
+void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
+{
+	auto& data = script->data;
+	m_native_editor.DrawContents(data.data(), data.size());
 }

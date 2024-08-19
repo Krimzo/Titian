@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::Entity::Entity(const EntityType type, px::PxPhysics* physics, const bool dynamic)
-    : entity_type(type), m_physics(physics)
+titian::Entity::Entity(px::PxPhysics* physics, const bool dynamic)
+    : m_physics(physics)
 {
     px::PxTransform transform = {};
     transform.q = px::PxQuat(px::PxIdentity);
@@ -17,7 +17,7 @@ titian::Entity::~Entity()
 
 void titian::Entity::serialize(Serializer* serializer, const void* helper_data) const
 {
-    serializer->write_int("entity_type", (int32_t) entity_type);
+    serializer->write_string("entity_type", typeid(self).name()); // must be read from outside
 
     serializer->write_bool("is_dynamic", is_dynamic());
     serializer->write_bool("has_gravity", has_gravity());

@@ -3,7 +3,6 @@
 
 /* Inter script */
 titian::InterpScript::InterpScript()
-	: Script(ScriptType::INTERP)
 {
 	this->source = get_default_script();
 }
@@ -20,6 +19,7 @@ void titian::InterpScript::deserialize(const Serializer* serializer, const void*
 	Script::deserialize(serializer, helper_data);
 
 	serializer->read_string("source", source);
+
 	this->reload();
 }
 

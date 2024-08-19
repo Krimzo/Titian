@@ -28,12 +28,11 @@
     <ClCompile Include="source\imgui_draw.cpp" />
     <ClCompile Include="source\imgui_impl_dx11.cpp" />
     <ClCompile Include="source\imgui_impl_win32.cpp" />
-    <ClCompile Include="source\imgui_node_editor.cpp" />
-    <ClCompile Include="source\imgui_node_editor_api.cpp" />
     <ClCompile Include="source\imgui_stdlib.cpp" />
     <ClCompile Include="source\imgui_tables.cpp" />
     <ClCompile Include="source\imgui_text_editor.cpp" />
     <ClCompile Include="source\imgui_widgets.cpp" />
+    <ClCompile Include="source\ImNodeFlow.cpp" />
     <ClCompile Include="source\ImSequencer.cpp" />
     <ClCompile Include="source\LanguageDefinitions.cpp" />
   </ItemGroup>
@@ -144,6 +143,7 @@
     <ClInclude Include="source\boost\regex\v5\unicode_iterator.hpp" />
     <ClInclude Include="source\boost\regex\v5\w32_regex_traits.hpp" />
     <ClInclude Include="source\boost\regex_fwd.hpp" />
+    <ClInclude Include="source\context_wrapper.h" />
     <ClInclude Include="source\crude_json.h" />
     <ClInclude Include="source\GraphEditor.h" />
     <ClInclude Include="source\imconfig.h" />
@@ -158,10 +158,9 @@
     <ClInclude Include="source\imgui_impl_win32.h" />
     <ClInclude Include="source\imgui_internal.h" />
     <ClInclude Include="source\imgui_memory_editor.h" />
-    <ClInclude Include="source\imgui_node_editor.h" />
-    <ClInclude Include="source\imgui_node_editor_internal.h" />
     <ClInclude Include="source\imgui_stdlib.h" />
     <ClInclude Include="source\imgui_text_editor.h" />
+    <ClInclude Include="source\ImNodeFlow.h" />
     <ClInclude Include="source\ImSequencer.h" />
     <ClInclude Include="source\imstb_rectpack.h" />
     <ClInclude Include="source\imstb_textedit.h" />
@@ -171,7 +170,7 @@
   <ItemGroup>
     <None Include="source\imgui_bezier_math.inl" />
     <None Include="source\imgui_extra_math.inl" />
-    <None Include="source\imgui_node_editor_internal.inl" />
+    <None Include="source\ImNodeFlow.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

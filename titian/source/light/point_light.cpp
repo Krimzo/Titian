@@ -2,7 +2,7 @@
 
 
 titian::PointLight::PointLight(px::PxPhysics* physics, const bool dynamic)
-	: Light(EntityType::POINT_LIGHT, physics, dynamic)
+	: Light(physics, dynamic)
 {}
 
 void titian::PointLight::serialize(Serializer* serializer, const void* helper_data) const

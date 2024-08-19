@@ -14,7 +14,7 @@
 #include <ImGuizmo.h>
 #include <imgui_memory_editor.h>
 #include <imgui_text_editor.h>
-#include <imgui_node_editor.h>
+#include <ImNodeFlow.h>
 
 namespace imgui = ImGui;
 

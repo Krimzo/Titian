@@ -2,7 +2,6 @@
 
 
 titian::NativeScript::NativeScript()
-	: Script(ScriptType::NATIVE)
 {}
 
 void titian::NativeScript::serialize(Serializer* serializer, const void* helper_data) const
@@ -22,6 +21,7 @@ void titian::NativeScript::deserialize(const Serializer* serializer, const void*
 	serializer->read_int("data_size", data_size);
 	data.resize(data_size);
 	serializer->read_byte_array("data", data.data(), data_size);
+
 	this->reload();
 }
 
