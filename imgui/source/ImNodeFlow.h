@@ -167,14 +167,13 @@ namespace ImFlow
         /// @brief Border thickness when selected
         float border_selected_thickness = 2.f;
     public:
-        /// @brief <BR>Default cyan style
-        static std::shared_ptr<NodeStyle> cyan() { return std::make_shared<NodeStyle>(IM_COL32(71,142,173,255), ImColor(233,241,244,255), 6.5f); }
-        /// @brief <BR>Default green style
-        static std::shared_ptr<NodeStyle> green() { return std::make_shared<NodeStyle>(IM_COL32(90,191,93,255), ImColor(233,241,244,255), 3.5f); }
-        /// @brief <BR>Default red style
-        static std::shared_ptr<NodeStyle> red() { return std::make_shared<NodeStyle>(IM_COL32(191,90,90,255), ImColor(233,241,244,255), 11.f); }
-        /// @brief <BR>Default brown style
-        static std::shared_ptr<NodeStyle> brown() { return std::make_shared<NodeStyle>(IM_COL32(191,134,90,255), ImColor(233,241,244,255), 6.5f); }
+        static std::shared_ptr<NodeStyle> red() { return std::make_shared<NodeStyle>(IM_COL32(190, 90, 90, 255), ImColor(30, 30, 30, 255), 11.f); }
+        static std::shared_ptr<NodeStyle> green() { return std::make_shared<NodeStyle>(IM_COL32(90, 190, 95, 255), ImColor(30, 30, 30, 255), 3.5f); }
+        static std::shared_ptr<NodeStyle> blue() { return std::make_shared<NodeStyle>(IM_COL32(85, 155, 215, 255), ImColor(30, 30, 30, 255), 6.5f); }
+        static std::shared_ptr<NodeStyle> cyan() { return std::make_shared<NodeStyle>(IM_COL32(70, 175, 140, 255), ImColor(30, 30, 30, 255), 6.5f); }
+        static std::shared_ptr<NodeStyle> yellow() { return std::make_shared<NodeStyle>(IM_COL32(220, 220, 70, 255), ImColor(30, 30, 30, 255), 6.5f); }
+        static std::shared_ptr<NodeStyle> orange() { return std::make_shared<NodeStyle>(IM_COL32(210, 155, 90, 255), ImColor(30, 30, 30, 255), 6.5f); }
+        static std::shared_ptr<NodeStyle> pink() { return std::make_shared<NodeStyle>(IM_COL32(215, 160, 225, 255), ImColor(30, 30, 30, 255), 6.5f); }
     };
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -546,7 +545,7 @@ namespace ImFlow
          * @return Shared pointer to the newly added pin
          */
         template<typename T>
-        std::shared_ptr<InPin<T>> addIN(const std::string& name, std::function<bool(Pin*, Pin*)> filter, std::shared_ptr<PinStyle> style = nullptr);
+        std::shared_ptr<InPin<T>> addIN(const std::string& name, std::shared_ptr<PinStyle> style);
 
         /**
          * @brief <BR>Add an Input to the node

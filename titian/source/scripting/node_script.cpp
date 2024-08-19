@@ -20,18 +20,39 @@ namespace titian {
 		serial_generator_helper<CastNode<bool, int32_t>>(""),
 		serial_generator_helper<CastNode<bool, float>>(""),
 		serial_generator_helper<CastNode<bool, String>>(""),
-
 		serial_generator_helper<CastNode<int32_t, bool>>(""),
 		serial_generator_helper<CastNode<int32_t, float>>(""),
 		serial_generator_helper<CastNode<int32_t, String>>(""),
-
 		serial_generator_helper<CastNode<float, bool>>(""),
 		serial_generator_helper<CastNode<float, int32_t>>(""),
 		serial_generator_helper<CastNode<float, String>>(""),
-
 		serial_generator_helper<CastNode<String, bool>>(""),
 		serial_generator_helper<CastNode<String, int32_t>>(""),
 		serial_generator_helper<CastNode<String, float>>(""),
+		serial_generator_helper<CastNode<void*, String>>(""),
+
+		serial_generator_helper<CompareNode<bool>>(""),
+		serial_generator_helper<CompareNode<int32_t>>(""),
+		serial_generator_helper<CompareNode<float>>(""),
+		serial_generator_helper<CompareNode<String>>(""),
+
+		serial_generator_helper<LogicNotNode>(),
+		serial_generator_helper<LogicAndNode>(),
+		serial_generator_helper<LogicOrNode>(),
+
+		serial_generator_helper<OperatorPlusNode<int32_t>>(),
+		serial_generator_helper<OperatorPlusNode<float>>(),
+		serial_generator_helper<OperatorPlusNode<String>>(),
+		serial_generator_helper<OperatorMinusNode<int32_t>>(),
+		serial_generator_helper<OperatorMinusNode<float>>(),
+		serial_generator_helper<OperatorTimesNode<int32_t>>(),
+		serial_generator_helper<OperatorTimesNode<float>>(),
+		serial_generator_helper<OperatorDivideNode<int32_t>>(),
+		serial_generator_helper<OperatorDivideNode<float>>(),
+		serial_generator_helper<OperatorPowerNode<int32_t>>(),
+		serial_generator_helper<OperatorPowerNode<float>>(),
+		serial_generator_helper<OperatorModuloNode<int32_t>>(),
+		serial_generator_helper<OperatorModuloNode<float>>(),
 
 		serial_generator_helper<FlowNode>("", false, false),
 
@@ -58,18 +79,39 @@ namespace titian {
 		ui_generator_helper<CastNode<bool, int32_t>>("Bool -> Int", "Bool -> Int"),
 		ui_generator_helper<CastNode<bool, float>>("Bool -> Float", "Bool -> Float"),
 		ui_generator_helper<CastNode<bool, String>>("Bool -> String", "Bool -> String"),
-
 		ui_generator_helper<CastNode<int32_t, bool>>("Int -> Bool", "Int -> Bool"),
 		ui_generator_helper<CastNode<int32_t, float>>("Int -> Float", "Int -> Float"),
 		ui_generator_helper<CastNode<int32_t, String>>("Int -> String", "Int -> String"),
-
 		ui_generator_helper<CastNode<float, bool>>("Float -> Bool", "Float -> Bool"),
 		ui_generator_helper<CastNode<float, int32_t>>("Float -> Int", "Float -> Int"),
 		ui_generator_helper<CastNode<float, String>>("Float -> String", "Float -> String"),
-
-		ui_generator_helper<CastNode<String, bool>>("String -> Bool",  "String -> Bool"),
+		ui_generator_helper<CastNode<String, bool>>("String -> Bool", "String -> Bool"),
 		ui_generator_helper<CastNode<String, int32_t>>("String -> Int", "String -> Int"),
-		ui_generator_helper<CastNode<String, float>>("String -> Float",  "String -> Float"),
+		ui_generator_helper<CastNode<String, float>>("String -> Float", "String -> Float"),
+		ui_generator_helper<CastNode<void*, String>>("Pointer -> String", "Pointer -> String"),
+
+		ui_generator_helper<CompareNode<bool>>("Compare Bool",  "Compare Bool"),
+		ui_generator_helper<CompareNode<int32_t>>("Compare Int", "Compare Int"),
+		ui_generator_helper<CompareNode<float>>("Compare Float",  "Compare Float"),
+		ui_generator_helper<CompareNode<String>>("Compare String",  "Compare String"),
+
+		ui_generator_helper<LogicNotNode>("Not"),
+		ui_generator_helper<LogicAndNode>("And"),
+		ui_generator_helper<LogicOrNode>("Or"),
+
+		ui_generator_helper<OperatorPlusNode<int32_t>>("Plus Int"),
+		ui_generator_helper<OperatorPlusNode<float>>("Plus Float"),
+		ui_generator_helper<OperatorPlusNode<String>>("Plus String"),
+		ui_generator_helper<OperatorMinusNode<int32_t>>("Minus Int"),
+		ui_generator_helper<OperatorMinusNode<float>>("Minus Float"),
+		ui_generator_helper<OperatorTimesNode<int32_t>>("Times Int"),
+		ui_generator_helper<OperatorTimesNode<float>>("Times Float"),
+		ui_generator_helper<OperatorDivideNode<int32_t>>("Divide Int"),
+		ui_generator_helper<OperatorDivideNode<float>>("Divide Float"),
+		ui_generator_helper<OperatorPowerNode<int32_t>>("Power Int"),
+		ui_generator_helper<OperatorPowerNode<float>>("Power Float"),
+		ui_generator_helper<OperatorModuloNode<int32_t>>("Modulo Int"),
+		ui_generator_helper<OperatorModuloNode<float>>("Modulo Float"),
 
 		ui_generator_helper<IfNode>("If"),
 		ui_generator_helper<WhileNode>("While"),
@@ -102,6 +144,11 @@ titian::NodeScript::NodeScript()
 		->behaviour([timer]() { return timer->elapsed(); });
 	on_update_node->addOUT<float>("delta_time", get_pin_style<float>())
 		->behaviour([timer]() { return timer->delta(); });
+
+	on_collision_node->addOUT<void*>("first_entity", get_pin_style<void*>())
+		->behaviour([this]() { return on_collision_node->user_data + 0; });
+	on_collision_node->addOUT<void*>("second_entity", get_pin_style<void*>())
+		->behaviour([this]() { return on_collision_node->user_data + 8; });
 
 	m_editor.rightClickPopUpContent([&](ne::BaseNode* node)
 	{
@@ -143,7 +190,7 @@ void titian::NodeScript::serialize(Serializer* serializer, const void* helper_da
 	serializer->write_int("node_count", (int32_t) nodes.size() - 4);
 
 	int counter = 0;
-	for (auto& [id, node] : nodes) {
+	for (auto& [uid, node] : nodes) {
 		auto node_ptr = dynamic_cast<const Node*>(node.get());
 		if (!node_ptr)
 			kl::assert(false, "Each node type needs to be derived from Node!");
@@ -157,7 +204,7 @@ void titian::NodeScript::serialize(Serializer* serializer, const void* helper_da
 
 		const String name = kl::format("__node_", counter);
 		serializer->push_object(name);
-		serializer->write_byte_array("uid", &id, sizeof(id));
+		serializer->write_byte_array("uid", &uid, sizeof(uid));
 		node_ptr->serialize(serializer, helper_data);
 		serializer->pop_object();
 		counter += 1;
@@ -204,8 +251,8 @@ void titian::NodeScript::deserialize(const Serializer* serializer, const void* h
 		const String name = kl::format("__node_", i);
 		serializer->load_object(name);
 
-		ne::NodeUID id{};
-		serializer->read_byte_array("uid", &id, sizeof(id));
+		ne::NodeUID uid{};
+		serializer->read_byte_array("uid", &uid, sizeof(uid));
 
 		String node_type;
 		serializer->read_string("node_type", node_type);
@@ -220,6 +267,7 @@ void titian::NodeScript::deserialize(const Serializer* serializer, const void* h
 		kl::assert((bool) node, "Unknown node type: ", node_type);
 
 		node->deserialize(serializer, helper_data);
+		node->setUID(uid);
 		m_editor.insertNode(node);
 
 		serializer->unload_object();
@@ -277,6 +325,8 @@ void titian::NodeScript::call_update(Scene* scene)
 
 void titian::NodeScript::call_collision(Scene* scene, Entity* first, Entity* second)
 {
+	*reinterpret_cast<Entity**>(on_collision_node->user_data + 0) = first;
+	*reinterpret_cast<Entity**>(on_collision_node->user_data + 8) = second;
 	on_collision_node->call();
 }
 

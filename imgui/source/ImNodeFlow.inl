@@ -84,9 +84,9 @@ namespace ImFlow
     // BASE NODE
 
     template<typename T>
-    std::shared_ptr<InPin<T>> BaseNode::addIN(const std::string& name, std::function<bool(Pin*, Pin*)> filter, std::shared_ptr<PinStyle> style)
+    std::shared_ptr<InPin<T>> BaseNode::addIN(const std::string& name, std::shared_ptr<PinStyle> style)
     {
-        return addIN_uid<T>(name, name, std::move(filter), std::move(style));
+        return addIN_uid<T>(name, name, ConnectionFilter::SameType(), std::move(style));
     }
 
     template<typename T, typename U>
@@ -219,7 +219,8 @@ namespace ImFlow
         PinUID h = std::hash<U>{}(uid);
         auto it = std::find_if(m_ins.begin(), m_ins.end(), [&h](std::shared_ptr<Pin>& p)
                             { return p->getUid() == h; });
-        assert(it != m_ins.end() && "Pin UID not found!");
+        if (it == m_ins.end())
+            return nullptr;
         return it->get();
     }
 
@@ -234,7 +235,8 @@ namespace ImFlow
         PinUID h = std::hash<U>{}(uid);
         auto it = std::find_if(m_outs.begin(), m_outs.end(), [&h](std::shared_ptr<Pin>& p)
                             { return p->getUid() == h; });
-        assert(it != m_outs.end() && "Pin UID not found!");
+        if (it == m_outs.end())
+            return nullptr;
         return it->get();
     }
 

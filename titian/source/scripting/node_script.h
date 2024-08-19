@@ -45,19 +45,22 @@ namespace titian {
 	std::shared_ptr<ne::PinStyle> get_pin_style()
 	{
 		if constexpr (std::is_same_v<T, FlowNode*>) {
-			return std::make_shared<ne::PinStyle>(IM_COL32(255, 255, 255, 255), 0, 4.f, 4.67f, 3.7f, 1.f);
+			return std::make_shared<ne::PinStyle>(IM_COL32(255, 255, 255, 255), 0, 5.0f, 6.0f, 5.5f, 1.0f);
 		}
 		else if constexpr (std::is_same_v<T, bool>) {
-			return std::make_shared<ne::PinStyle>(IM_COL32(190, 90, 90, 255), 3, 4.f, 4.67f, 3.7f, 1.f);
+			return std::make_shared<ne::PinStyle>(IM_COL32(190, 90, 90, 255), 3, 5.0f, 6.0f, 5.5f, 1.0f);
 		}
 		else if constexpr (std::is_same_v<T, int32_t>) {
-			return std::make_shared<ne::PinStyle>(IM_COL32(75, 200, 175, 255), 4, 4.f, 4.67f, 3.7f, 1.f);
+			return std::make_shared<ne::PinStyle>(IM_COL32(75, 155, 215, 255), 4, 5.0f, 6.0f, 5.5f, 1.0f);
 		}
 		else if constexpr (std::is_same_v<T, float>) {
-			return std::make_shared<ne::PinStyle>(IM_COL32(75, 155, 215, 255), 5, 4.f, 4.67f, 3.7f, 1.f);
+			return std::make_shared<ne::PinStyle>(IM_COL32(75, 200, 175, 255), 5, 5.0f, 6.0f, 5.5f, 1.0f);
 		}
 		else if constexpr (std::is_same_v<T, String>) {
-			return std::make_shared<ne::PinStyle>(IM_COL32(215, 155, 135, 255), 6, 4.f, 4.67f, 3.7f, 1.f);
+			return std::make_shared<ne::PinStyle>(IM_COL32(215, 155, 135, 255), 6, 5.0f, 6.0f, 5.5f, 1.0f);
+		}
+		else if constexpr (std::is_same_v<T, void*>) {
+			return std::make_shared<ne::PinStyle>(IM_COL32(155, 85, 215, 255), 7, 5.0f, 6.0f, 5.5f, 1.0f);
 		}
 		else {
 			static_assert(false, "Unkown pin style type");
@@ -69,11 +72,11 @@ namespace titian {
 namespace titian {
 	struct Node : ne::BaseNode, Serializable
 	{
-		int64_t user_data = 0;
+		byte user_data[16] = {};
 
-		inline Node(const StringView& title, const std::shared_ptr<ne::NodeStyle>& style)
+		inline Node(const String& title, const std::shared_ptr<ne::NodeStyle>& style)
 		{
-			setTitle(title.data());
+			setTitle(title);
 			setStyle(style);
 		}
 
@@ -81,7 +84,7 @@ namespace titian {
 		{
 			serializer->write_string("node_type", typeid(self).name()); // must be read from outside
 
-			serializer->write_byte_array("user_data", &user_data, sizeof(user_data));
+			serializer->write_byte_array("user_data", user_data, sizeof(user_data));
 			serializer->write_string("title", getName());
 			serializer->write_float_array("position", (const float*) &getPos(), 2);
 
@@ -91,7 +94,7 @@ namespace titian {
 
 		void deserialize(const Serializer* serializer, const void* helper_data) override
 		{
-			serializer->read_byte_array("user_data", &user_data, sizeof(user_data));
+			serializer->read_byte_array("user_data", user_data, sizeof(user_data));
 			
 			String title;
 			serializer->read_string("title", title);
@@ -121,7 +124,7 @@ namespace titian {
 	{
 		T value = {};
 
-		inline LiteralNode(const StringView& title)
+		inline LiteralNode(const String& title)
 			: Node(title, ne::NodeStyle::green())
 		{
 			addOUT<T>("result", get_pin_style<T>())->behaviour([this] { return this->value; });
@@ -195,10 +198,10 @@ namespace titian {
 	template<typename From, typename To>
 	struct CastNode : Node
 	{
-		inline CastNode(const StringView& title)
-			: Node(title, ne::NodeStyle::cyan())
+		inline CastNode(const String& title)
+			: Node(title, ne::NodeStyle::orange())
 		{
-			addIN<From>("from", ne::ConnectionFilter::SameType(), get_pin_style<From>());
+			addIN<From>("from", get_pin_style<From>());
 			addOUT<To>("to", get_pin_style<To>())->behaviour([this]
 			{
 				auto& from = get_value<From>("from");
@@ -225,16 +228,206 @@ namespace titian {
 }
 
 namespace titian {
+	template<typename T>
+	struct CompareNode : Node
+	{
+		inline CompareNode(const String& title)
+			: Node(title, ne::NodeStyle::yellow())
+		{
+			addIN<T>("left", get_pin_style<T>());
+			addIN<T>("right", get_pin_style<T>());
+			addOUT<bool>("less", get_pin_style<bool>())->behaviour([this]
+			{
+				return get_value<T>("left") < get_value<T>("right");
+			});
+			addOUT<bool>("equal", get_pin_style<bool>())->behaviour([this]
+			{
+				return get_value<T>("left") == get_value<T>("right");
+			});
+			addOUT<bool>("greater", get_pin_style<bool>())->behaviour([this]
+			{
+				return get_value<T>("left") > get_value<T>("right");
+			});
+		}
+	};
+}
+
+namespace titian {
+	struct LogicNotNode : Node
+	{
+		inline LogicNotNode()
+			: Node("Not", ne::NodeStyle::pink())
+		{
+			addIN<bool>("in", get_pin_style<bool>());
+			addOUT<bool>("out", get_pin_style<bool>())->behaviour([this]
+			{
+				return !get_value<bool>("in");
+			});
+		}
+	};
+
+	struct LogicAndNode : Node
+	{
+		inline LogicAndNode()
+			: Node("And", ne::NodeStyle::pink())
+		{
+			addIN<bool>("left", get_pin_style<bool>());
+			addIN<bool>("right", get_pin_style<bool>());
+			addOUT<bool>("out", get_pin_style<bool>())->behaviour([this]
+			{
+				return get_value<bool>("left") && get_value<bool>("right");
+			});
+		}
+	};
+
+	struct LogicOrNode : Node
+	{
+		inline LogicOrNode()
+			: Node("Or", ne::NodeStyle::pink())
+		{
+			addIN<bool>("left", get_pin_style<bool>());
+			addIN<bool>("right", get_pin_style<bool>());
+			addOUT<bool>("out", get_pin_style<bool>())->behaviour([this]
+			{
+				return get_value<bool>("left") || get_value<bool>("right");
+			});
+		}
+	};
+}
+
+namespace titian {
+	template<typename T>
+	struct OperatorPlusNode : Node
+	{
+		inline OperatorPlusNode()
+			: Node("Plus", ne::NodeStyle::blue())
+		{
+			addIN<T>("left", get_pin_style<T>());
+			addIN<T>("right", get_pin_style<T>());
+			addOUT<T>("out", get_pin_style<T>())->behaviour([this]
+			{
+				return get_value<T>("left") + get_value<T>("right");
+			});
+		}
+	};
+
+	template<typename T>
+	struct OperatorMinusNode : Node
+	{
+		inline OperatorMinusNode()
+			: Node("Minus", ne::NodeStyle::blue())
+		{
+			addIN<T>("left", get_pin_style<T>());
+			addIN<T>("right", get_pin_style<T>());
+			addOUT<T>("out", get_pin_style<T>())->behaviour([this]
+			{
+				return get_value<T>("left") - get_value<T>("right");
+			});
+		}
+	};
+
+	template<typename T>
+	struct OperatorTimesNode : Node
+	{
+		inline OperatorTimesNode()
+			: Node("Times", ne::NodeStyle::blue())
+		{
+			addIN<T>("left", get_pin_style<T>());
+			addIN<T>("right", get_pin_style<T>());
+			addOUT<T>("out", get_pin_style<T>())->behaviour([this]
+			{
+				return get_value<T>("left") * get_value<T>("right");
+			});
+		}
+	};
+
+	template<typename T>
+	struct OperatorDivideNode : Node
+	{
+		inline OperatorDivideNode()
+			: Node("Divide", ne::NodeStyle::blue())
+		{
+			addIN<T>("left", get_pin_style<T>());
+			addIN<T>("right", get_pin_style<T>());
+			addOUT<T>("out", get_pin_style<T>())->behaviour([this]
+			{
+				return get_value<T>("left") / get_value<T>("right");
+			});
+		}
+	};
+
+	template<typename T>
+	struct OperatorPowerNode : Node
+	{
+		inline OperatorPowerNode()
+			: Node("Power", ne::NodeStyle::blue())
+		{
+			addIN<T>("left", get_pin_style<T>());
+			addIN<T>("right", get_pin_style<T>());
+			addOUT<T>("out", get_pin_style<T>())->behaviour([this]
+			{
+				return helper_pow<T>(get_value<T>("left"), get_value<T>("right"));
+			});
+		}
+
+	private:
+		template<typename T>
+		static T helper_pow(T left, T right)
+		{
+			if constexpr (std::is_same_v<T, int32_t>) {
+				return (int32_t) ::pow((double) left, (double) right);
+			}
+			else if constexpr (std::is_same_v<T, float>) {
+				return (float) ::pow(left, right);
+			}
+			else {
+				static_assert(false, "Unsupported helper pow type");
+			}
+		}
+	};
+
+	template<typename T>
+	struct OperatorModuloNode : Node
+	{
+		inline OperatorModuloNode()
+			: Node("Modulo", ne::NodeStyle::blue())
+		{
+			addIN<T>("left", get_pin_style<T>());
+			addIN<T>("right", get_pin_style<T>());
+			addOUT<T>("out", get_pin_style<T>())->behaviour([this]
+			{
+				return helper_mod<T>(get_value<T>("left"), get_value<T>("right"));
+			});
+		}
+
+	private:
+		template<typename T>
+		static T helper_mod(T left, T right)
+		{
+			if constexpr (std::is_same_v<T, int32_t>) {
+				return (int32_t) (left % right);
+			}
+			else if constexpr (std::is_same_v<T, float>) {
+				return (float) ::fmod(left, right);
+			}
+			else {
+				static_assert(false, "Unsupported helper mod type");
+			}
+		}
+	};
+}
+
+namespace titian {
 	struct FlowNode : Node
 	{
 		bool has_input = false;
 		bool has_output = false;
 
-		inline FlowNode(const StringView& title, bool has_input, bool has_output)
+		inline FlowNode(const String& title, bool has_input, bool has_output)
 			: Node(title, ne::NodeStyle::red()), has_input(has_input), has_output(has_output)
 		{
 			if (has_input) {
-				addIN<FlowNode*>("in_flow", ne::ConnectionFilter::SameType(), get_pin_style<FlowNode*>());
+				addIN<FlowNode*>("in_flow", get_pin_style<FlowNode*>());
 			}
 			if (has_output) {
 				addOUT<FlowNode*>("out_flow", get_pin_style<FlowNode*>())->behaviour([this] { return this; });
@@ -260,7 +453,7 @@ namespace titian {
 
 			if (!has_input && saved_has_input) {
 				has_input = true;
-				addIN<FlowNode*>("in_flow", ne::ConnectionFilter::SameType(), get_pin_style<FlowNode*>());
+				addIN<FlowNode*>("in_flow", get_pin_style<FlowNode*>());
 			}
 			if (!has_output && saved_has_ouput) {
 				has_output = true;
@@ -298,7 +491,7 @@ namespace titian {
 		inline IfNode()
 			: FlowNode("If", true, false)
 		{
-			addIN<bool>("value", ne::ConnectionFilter::SameType(), get_pin_style<bool>());
+			addIN<bool>("value", get_pin_style<bool>());
 			addOUT<FlowNode*>("if", get_pin_style<FlowNode*>())->behaviour([this] { return this; });
 			addOUT<FlowNode*>("else", get_pin_style<FlowNode*>())->behaviour([this] { return this; });
 		}
@@ -322,7 +515,7 @@ namespace titian {
 		inline WhileNode()
 			: FlowNode("While", true, true)
 		{
-			addIN<bool>("value", ne::ConnectionFilter::SameType(), get_pin_style<bool>());
+			addIN<bool>("value", get_pin_style<bool>());
 		}
 
 		void call() override
@@ -346,11 +539,11 @@ namespace titian {
 		inline ForNode()
 			: FlowNode("For", true, true)
 		{
-			addIN<int32_t>("from_incl", ne::ConnectionFilter::SameType(), get_pin_style<int32_t>());
-			addIN<int32_t>("to_excl", ne::ConnectionFilter::SameType(), get_pin_style<int32_t>());
+			addIN<int32_t>("from_incl", get_pin_style<int32_t>());
+			addIN<int32_t>("to_excl", get_pin_style<int32_t>());
 			addOUT<int32_t>("i", get_pin_style<int32_t>())->behaviour([this]()
 			{
-				return static_cast<int32_t>(this->user_data);
+				return *reinterpret_cast<int32_t*>(user_data);
 			});
 		}
 
@@ -359,7 +552,7 @@ namespace titian {
 			auto& from = get_value<int32_t>("from_incl");
 			auto& to = get_value<int32_t>("to_excl");
 			for (int32_t i = from; i < to; i++) {
-				user_data = i;
+				*reinterpret_cast<int32_t*>(user_data) = i;
 				call_next();
 			}
 		}
@@ -372,7 +565,7 @@ namespace titian {
 		inline PrintNode()
 			: FlowNode("Print", true, true)
 		{
-			addIN<String>("value", ne::ConnectionFilter::SameType(), get_pin_style<String>());
+			addIN<String>("value", get_pin_style<String>());
 		}
 
 		void call() override

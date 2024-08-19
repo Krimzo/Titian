@@ -79,8 +79,16 @@ public:
     [[nodiscard]] const ImVec2& scroll() const { return m_scroll; }
     ImGuiContext* getRawContext() { return m_ctx; }
 
-    void set_scale(float scale) { m_scale = scale; }
-    void set_scroll(const ImVec2& scroll) { m_scroll = scroll; }
+    inline void set_scale(float scale)
+    {
+        m_scale = scale;
+        m_scaleTarget = scale;
+    }
+
+    inline void set_scroll(const ImVec2& scroll)
+    {
+        m_scroll = scroll;
+    }
 
 private:
     ContainedContextConfig m_config;
