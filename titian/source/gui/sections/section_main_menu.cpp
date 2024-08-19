@@ -82,17 +82,27 @@ void titian::GUISectionMainMenu::render_gui()
                 }
                 if (im::MenuItem("Script")) {
                     int type_index = 0;
-                    if (Optional file = kl::choose_file(false, { { "Script File", FILE_EXTENSION_CHAI }, { "Script File", FILE_EXTENSION_DLL } }, &type_index)) {
+                    if (Optional file = kl::choose_file(false, { { "Script File", FILE_EXTENSION_CHAI }, { "Script File", FILE_EXTENSION_JSON }, { "Script File", FILE_EXTENSION_DLL } }, &type_index)) {
                         const String stem_name = fs::path(file.value()).stem().string();
 
                         if (type_index == 0) {
-                            Ref<NativeScript> script = new NativeScript();
+                            Ref script = new NativeScript();
                             script->data = kl::read_file(file.value());
 							script->reload();
                             scene->scripts[stem_name] = script;
                         }
                         else if (type_index == 1) {
-                            Ref<InterpScript> script = new InterpScript();
+                            Ref script = new NodeScript();
+                            if (const TextSerializer serializer{ file.value(), false }) {
+                                String ignored_type;
+                                serializer.read_string("script_type", ignored_type);
+                                script->deserialize(&serializer, nullptr);
+                            }
+                            script->reload();
+                            scene->scripts[stem_name] = script;
+                        }
+                        else if (type_index == 2) {
+                            Ref script = new InterpScript();
                             script->source = kl::read_file(file.value());
                             script->reload();
                             scene->scripts[stem_name] = script;
@@ -111,7 +121,7 @@ void titian::GUISectionMainMenu::render_gui()
                     if (im::MenuItem("Binary")) {
                         if (Optional file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
                             const String stem_name = fs::path(file.value()).stem().string();
-                            if (BinarySerializer serializer{ file.value(), false }) {
+                            if (const BinarySerializer serializer{ file.value(), false }) {
                                 Ref scene = new Scene(&app_layer->gpu);
                                 scene->deserialize(&serializer, nullptr);
                                 game_layer->scene = scene;
@@ -121,7 +131,7 @@ void titian::GUISectionMainMenu::render_gui()
                     if (im::MenuItem("Text")) {
                         if (Optional file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_JSON } })) {
                             const String stem_name = fs::path(file.value()).stem().string();
-                            if (TextSerializer serializer{ file.value(), false }) {
+                            if (const TextSerializer serializer{ file.value(), false }) {
                                 Ref scene = new Scene(&app_layer->gpu);
                                 scene->deserialize(&serializer, nullptr);
                                 game_layer->scene = scene;
@@ -167,7 +177,16 @@ void titian::GUISectionMainMenu::render_gui()
                             continue;
                         }
                         if (im::MenuItem(name.c_str())) {
-                            const Pair<String, String> type_info = script.is<InterpScript>() ? Pair{ "Interp Script", FILE_EXTENSION_CHAI } : Pair{ "Native Script", FILE_EXTENSION_DLL };
+                            Pair<String, String> type_info;
+                            if (script.is<InterpScript>()) {
+                                type_info = Pair{ "Interp Script", FILE_EXTENSION_CHAI };
+                            }
+                            else if (script.is<NodeScript>()) {
+                                type_info = Pair{ "Node Script", FILE_EXTENSION_JSON };
+                            }
+                            else {
+                                type_info = Pair{ "Native Script", FILE_EXTENSION_DLL };
+                            }
                             if (Optional file = kl::choose_file(true, { type_info })) {
                                 const String extension = fs::path(file.value()).extension().string();
                                 if (InterpScript* interp_script = &script.as<InterpScript>()) {
@@ -175,6 +194,14 @@ void titian::GUISectionMainMenu::render_gui()
                                         file.value() += FILE_EXTENSION_CHAI;
                                     }
                                     kl::write_file(file.value(), interp_script->source);
+                                }
+                                else if (NodeScript* node_script = &script.as<NodeScript>()) {
+                                    if (extension.empty()) {
+                                        file.value() += FILE_EXTENSION_JSON;
+                                    }
+                                    if (TextSerializer serializer{ file.value(), true }) {
+                                        node_script->serialize(&serializer, nullptr);
+                                    }
                                 }
                                 else if (NativeScript* native_script = &script.as<NativeScript>()) {
                                     if (extension.empty()) {

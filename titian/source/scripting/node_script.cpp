@@ -14,22 +14,74 @@ namespace titian {
 
 		serial_generator_helper<LiteralNode<bool>>(""),
 		serial_generator_helper<LiteralNode<int32_t>>(""),
+		serial_generator_helper<LiteralNode<Int2>>(""),
 		serial_generator_helper<LiteralNode<float>>(""),
+		serial_generator_helper<LiteralNode<Float2>>(""),
+		serial_generator_helper<LiteralNode<Float3>>(""),
+		serial_generator_helper<LiteralNode<Float4>>(""),
+		serial_generator_helper<LiteralNode<Complex>>(""),
+		serial_generator_helper<LiteralNode<Quaternion>>(""),
+		serial_generator_helper<LiteralNode<kl::Color>>(""),
 		serial_generator_helper<LiteralNode<String>>(""),
+
+		serial_generator_helper<ConstructNode<Int2>>(""),
+		serial_generator_helper<ConstructNode<Float2>>(""),
+		serial_generator_helper<ConstructNode<Float3>>(""),
+		serial_generator_helper<ConstructNode<Float4>>(""),
+		serial_generator_helper<ConstructNode<Complex>>(""),
+		serial_generator_helper<ConstructNode<Quaternion>>(""),
+		serial_generator_helper<ConstructNode<kl::Color>>(""),
+
+		serial_generator_helper<DeconstructNode<Int2>>(""),
+		serial_generator_helper<DeconstructNode<Float2>>(""),
+		serial_generator_helper<DeconstructNode<Float3>>(""),
+		serial_generator_helper<DeconstructNode<Float4>>(""),
+		serial_generator_helper<DeconstructNode<Complex>>(""),
+		serial_generator_helper<DeconstructNode<Quaternion>>(""),
+		serial_generator_helper<DeconstructNode<kl::Color>>(""),
+
+		serial_generator_helper<CastNode<void*, String>>(""),
 
 		serial_generator_helper<CastNode<bool, int32_t>>(""),
 		serial_generator_helper<CastNode<bool, float>>(""),
 		serial_generator_helper<CastNode<bool, String>>(""),
+
 		serial_generator_helper<CastNode<int32_t, bool>>(""),
 		serial_generator_helper<CastNode<int32_t, float>>(""),
 		serial_generator_helper<CastNode<int32_t, String>>(""),
+
+		serial_generator_helper<CastNode<Int2, Float2>>(""),
+		serial_generator_helper<CastNode<Int2, String>>(""),
+
 		serial_generator_helper<CastNode<float, bool>>(""),
 		serial_generator_helper<CastNode<float, int32_t>>(""),
 		serial_generator_helper<CastNode<float, String>>(""),
+
+		serial_generator_helper<CastNode<Float2, Int2>>(""),
+		serial_generator_helper<CastNode<Float2, Complex>>(""),
+		serial_generator_helper<CastNode<Float2, String>>(""),
+
+		serial_generator_helper<CastNode<Float3, Quaternion>>(""),
+		serial_generator_helper<CastNode<Float3, kl::Color>>(""),
+		serial_generator_helper<CastNode<Float3, String>>(""),
+
+		serial_generator_helper<CastNode<Float4, Quaternion>>(""),
+		serial_generator_helper<CastNode<Float4, kl::Color>>(""),
+		serial_generator_helper<CastNode<Float4, String>>(""),
+
+		serial_generator_helper<CastNode<Complex, Float2>>(""),
+		serial_generator_helper<CastNode<Complex, String>>(""),
+
+		serial_generator_helper<CastNode<Quaternion, Float3>>(""),
+		serial_generator_helper<CastNode<Quaternion, Float4>>(""),
+		serial_generator_helper<CastNode<Quaternion, String>>(""),
+
+		serial_generator_helper<CastNode<kl::Color, Float3>>(""),
+		serial_generator_helper<CastNode<kl::Color, Float4>>(""),
+
 		serial_generator_helper<CastNode<String, bool>>(""),
 		serial_generator_helper<CastNode<String, int32_t>>(""),
 		serial_generator_helper<CastNode<String, float>>(""),
-		serial_generator_helper<CastNode<void*, String>>(""),
 
 		serial_generator_helper<CompareNode<bool>>(""),
 		serial_generator_helper<CompareNode<int32_t>>(""),
@@ -41,16 +93,43 @@ namespace titian {
 		serial_generator_helper<LogicOrNode>(),
 
 		serial_generator_helper<OperatorPlusNode<int32_t>>(),
+		serial_generator_helper<OperatorPlusNode<Int2>>(),
 		serial_generator_helper<OperatorPlusNode<float>>(),
+		serial_generator_helper<OperatorPlusNode<Float2>>(),
+		serial_generator_helper<OperatorPlusNode<Float3>>(),
+		serial_generator_helper<OperatorPlusNode<Float4>>(),
+		serial_generator_helper<OperatorPlusNode<Complex>>(),
+		serial_generator_helper<OperatorPlusNode<Quaternion>>(),
 		serial_generator_helper<OperatorPlusNode<String>>(),
+
 		serial_generator_helper<OperatorMinusNode<int32_t>>(),
+		serial_generator_helper<OperatorMinusNode<Int2>>(),
 		serial_generator_helper<OperatorMinusNode<float>>(),
+		serial_generator_helper<OperatorMinusNode<Float2>>(),
+		serial_generator_helper<OperatorMinusNode<Float3>>(),
+		serial_generator_helper<OperatorMinusNode<Float4>>(),
+		serial_generator_helper<OperatorMinusNode<Complex>>(),
+		serial_generator_helper<OperatorMinusNode<Quaternion>>(),
+
 		serial_generator_helper<OperatorTimesNode<int32_t>>(),
+		serial_generator_helper<OperatorTimesNode<Int2>>(),
 		serial_generator_helper<OperatorTimesNode<float>>(),
+		serial_generator_helper<OperatorTimesNode<Float2>>(),
+		serial_generator_helper<OperatorTimesNode<Float3>>(),
+		serial_generator_helper<OperatorTimesNode<Float4>>(),
+		serial_generator_helper<OperatorTimesNode<Complex>>(),
+		serial_generator_helper<OperatorTimesNode<Quaternion>>(),
+
 		serial_generator_helper<OperatorDivideNode<int32_t>>(),
+		serial_generator_helper<OperatorDivideNode<Int2>>(),
 		serial_generator_helper<OperatorDivideNode<float>>(),
+		serial_generator_helper<OperatorDivideNode<Float2>>(),
+		serial_generator_helper<OperatorDivideNode<Float3>>(),
+		serial_generator_helper<OperatorDivideNode<Float4>>(),
+
 		serial_generator_helper<OperatorPowerNode<int32_t>>(),
 		serial_generator_helper<OperatorPowerNode<float>>(),
+
 		serial_generator_helper<OperatorModuloNode<int32_t>>(),
 		serial_generator_helper<OperatorModuloNode<float>>(),
 
@@ -59,6 +138,7 @@ namespace titian {
 		serial_generator_helper<IfNode>(),
 		serial_generator_helper<WhileNode>(),
 		serial_generator_helper<ForNode>(),
+
 		serial_generator_helper<PrintNode>(),
 	};
 }
@@ -73,22 +153,74 @@ namespace titian {
 	static const std::map<String, Function<std::shared_ptr<Node>()>> ui_node_generators = {
 		ui_generator_helper<LiteralNode<bool>>("Bool", "Bool"),
 		ui_generator_helper<LiteralNode<int32_t>>("Int", "Int"),
+		ui_generator_helper<LiteralNode<Int2>>("Int2", "Int2"),
 		ui_generator_helper<LiteralNode<float>>("Float", "Float"),
+		ui_generator_helper<LiteralNode<Float2>>("Float2", "Float2"),
+		ui_generator_helper<LiteralNode<Float3>>("Float3", "Float3"),
+		ui_generator_helper<LiteralNode<Float4>>("Float4", "Float4"),
+		ui_generator_helper<LiteralNode<Complex>>("Complex", "Complex"),
+		ui_generator_helper<LiteralNode<Quaternion>>("Quaternion", "Quaternion"),
+		ui_generator_helper<LiteralNode<kl::Color>>("Color", "Color"),
 		ui_generator_helper<LiteralNode<String>>("String", "String"),
+
+		ui_generator_helper<ConstructNode<Int2>>("Construct Int2", "Construct Int2"),
+		ui_generator_helper<ConstructNode<Float2>>("Construct Float2", "Construct Float2"),
+		ui_generator_helper<ConstructNode<Float3>>("Construct Float3", "Construct Float3"),
+		ui_generator_helper<ConstructNode<Float4>>("Construct Float4", "Construct Float4"),
+		ui_generator_helper<ConstructNode<Complex>>("Construct Complex", "Construct Complex"),
+		ui_generator_helper<ConstructNode<Quaternion>>("Construct Quaternion", "Construct Quaternion"),
+		ui_generator_helper<ConstructNode<kl::Color>>("Construct Color", "Construct Color"),
+
+		ui_generator_helper<DeconstructNode<Int2>>("Deconstruct Int2", "Deconstruct Int2"),
+		ui_generator_helper<DeconstructNode<Float2>>("Deconstruct Float2", "Deconstruct Float2"),
+		ui_generator_helper<DeconstructNode<Float3>>("Deconstruct Float3", "Deconstruct Float3"),
+		ui_generator_helper<DeconstructNode<Float4>>("Deconstruct Float4", "Deconstruct Float4"),
+		ui_generator_helper<DeconstructNode<Complex>>("Deconstruct Complex", "Deconstruct Complex"),
+		ui_generator_helper<DeconstructNode<Quaternion>>("Deconstruct Quaternion", "Deconstruct Quaternion"),
+		ui_generator_helper<DeconstructNode<kl::Color>>("Deconstruct Color", "Deconstruct Color"),
+
+		ui_generator_helper<CastNode<void*, String>>("Pointer -> String", "Pointer -> String"),
 
 		ui_generator_helper<CastNode<bool, int32_t>>("Bool -> Int", "Bool -> Int"),
 		ui_generator_helper<CastNode<bool, float>>("Bool -> Float", "Bool -> Float"),
 		ui_generator_helper<CastNode<bool, String>>("Bool -> String", "Bool -> String"),
+
 		ui_generator_helper<CastNode<int32_t, bool>>("Int -> Bool", "Int -> Bool"),
 		ui_generator_helper<CastNode<int32_t, float>>("Int -> Float", "Int -> Float"),
 		ui_generator_helper<CastNode<int32_t, String>>("Int -> String", "Int -> String"),
+
+		ui_generator_helper<CastNode<Int2, Float2>>("Int2 -> Float2", "Int2 -> Float2"),
+		ui_generator_helper<CastNode<Int2, String>>("Int2 -> String", "Int2 -> String"),
+
 		ui_generator_helper<CastNode<float, bool>>("Float -> Bool", "Float -> Bool"),
 		ui_generator_helper<CastNode<float, int32_t>>("Float -> Int", "Float -> Int"),
 		ui_generator_helper<CastNode<float, String>>("Float -> String", "Float -> String"),
+
+		ui_generator_helper<CastNode<Float2, Int2>>("Float2 -> Int2", "Float2 -> Int2"),
+		ui_generator_helper<CastNode<Float2, Complex>>("Float2 -> Complex", "Float2 -> Complex"),
+		ui_generator_helper<CastNode<Float2, String>>("Float2 -> String", "Float2 -> String"),
+
+		ui_generator_helper<CastNode<Float3, Quaternion>>("Float3 -> Quaternion", "Float3 -> Quaternion"),
+		ui_generator_helper<CastNode<Float3, kl::Color>>("Float3 -> Color", "Float3 -> Color"),
+		ui_generator_helper<CastNode<Float3, String>>("Float3 -> String", "Float3 -> String"),
+
+		ui_generator_helper<CastNode<Float4, Quaternion>>("Float4 -> Quaternion", "Float4 -> Quaternion"),
+		ui_generator_helper<CastNode<Float4, kl::Color>>("Float4 -> Color", "Float4 -> Color"),
+		ui_generator_helper<CastNode<Float4, String>>("Float4 -> String", "Float4 -> String"),
+
+		ui_generator_helper<CastNode<Complex, Float2>>("Complex -> Float2", "Complex -> Float2"),
+		ui_generator_helper<CastNode<Complex, String>>("Complex -> String", "Complex -> String"),
+
+		ui_generator_helper<CastNode<Quaternion, Float3>>("Quaternion -> Float3", "Quaternion -> Float3"),
+		ui_generator_helper<CastNode<Quaternion, Float4>>("Quaternion -> Float4", "Quaternion -> Float4"),
+		ui_generator_helper<CastNode<Quaternion, String>>("Quaternion -> String", "Quaternion -> String"),
+
+		ui_generator_helper<CastNode<kl::Color, Float3>>("Color -> Float3", "Color -> Float3"),
+		ui_generator_helper<CastNode<kl::Color, Float4>>("Color -> Float4", "Color -> Float4"),
+
 		ui_generator_helper<CastNode<String, bool>>("String -> Bool", "String -> Bool"),
 		ui_generator_helper<CastNode<String, int32_t>>("String -> Int", "String -> Int"),
 		ui_generator_helper<CastNode<String, float>>("String -> Float", "String -> Float"),
-		ui_generator_helper<CastNode<void*, String>>("Pointer -> String", "Pointer -> String"),
 
 		ui_generator_helper<CompareNode<bool>>("Compare Bool",  "Compare Bool"),
 		ui_generator_helper<CompareNode<int32_t>>("Compare Int", "Compare Int"),
@@ -100,16 +232,43 @@ namespace titian {
 		ui_generator_helper<LogicOrNode>("Or"),
 
 		ui_generator_helper<OperatorPlusNode<int32_t>>("Plus Int"),
+		ui_generator_helper<OperatorPlusNode<Int2>>("Plus Int2"),
 		ui_generator_helper<OperatorPlusNode<float>>("Plus Float"),
+		ui_generator_helper<OperatorPlusNode<Float2>>("Plus Float2"),
+		ui_generator_helper<OperatorPlusNode<Float3>>("Plus Float3"),
+		ui_generator_helper<OperatorPlusNode<Float4>>("Plus Float4"),
+		ui_generator_helper<OperatorPlusNode<Complex>>("Plus Complex"),
+		ui_generator_helper<OperatorPlusNode<Quaternion>>("Plus Quaternion"),
 		ui_generator_helper<OperatorPlusNode<String>>("Plus String"),
+
 		ui_generator_helper<OperatorMinusNode<int32_t>>("Minus Int"),
+		ui_generator_helper<OperatorMinusNode<Int2>>("Minus Int2"),
 		ui_generator_helper<OperatorMinusNode<float>>("Minus Float"),
+		ui_generator_helper<OperatorMinusNode<Float2>>("Minus Float2"),
+		ui_generator_helper<OperatorMinusNode<Float3>>("Minus Float3"),
+		ui_generator_helper<OperatorMinusNode<Float4>>("Minus Float4"),
+		ui_generator_helper<OperatorMinusNode<Complex>>("Minus Complex"),
+		ui_generator_helper<OperatorMinusNode<Quaternion>>("Minus Quaternion"),
+
 		ui_generator_helper<OperatorTimesNode<int32_t>>("Times Int"),
+		ui_generator_helper<OperatorTimesNode<Int2>>("Times Int2"),
 		ui_generator_helper<OperatorTimesNode<float>>("Times Float"),
+		ui_generator_helper<OperatorTimesNode<Float2>>("Times Float2"),
+		ui_generator_helper<OperatorTimesNode<Float3>>("Times Float3"),
+		ui_generator_helper<OperatorTimesNode<Float4>>("Times Float4"),
+		ui_generator_helper<OperatorTimesNode<Complex>>("Times Complex"),
+		ui_generator_helper<OperatorTimesNode<Quaternion>>("Times Quaternion"),
+
 		ui_generator_helper<OperatorDivideNode<int32_t>>("Divide Int"),
+		ui_generator_helper<OperatorDivideNode<Int2>>("Divide Int2"),
 		ui_generator_helper<OperatorDivideNode<float>>("Divide Float"),
+		ui_generator_helper<OperatorDivideNode<Float2>>("Divide Float2"),
+		ui_generator_helper<OperatorDivideNode<Float3>>("Divide Float3"),
+		ui_generator_helper<OperatorDivideNode<Float4>>("Divide Float4"),
+
 		ui_generator_helper<OperatorPowerNode<int32_t>>("Power Int"),
 		ui_generator_helper<OperatorPowerNode<float>>("Power Float"),
+
 		ui_generator_helper<OperatorModuloNode<int32_t>>("Modulo Int"),
 		ui_generator_helper<OperatorModuloNode<float>>("Modulo Float"),
 
