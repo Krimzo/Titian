@@ -45,13 +45,13 @@ namespace titian {
 	std::shared_ptr<ne::PinStyle> get_pin_style()
 	{
 		if constexpr (std::is_same_v<T, FlowNode*>) {
-			return std::make_shared<ne::PinStyle>(IM_COL32(255, 255, 255, 255), 0, 5.0f, 6.0f, 5.5f, 1.0f);
+			return std::make_shared<ne::PinStyle>(IM_COL32(255, 255, 255, 255), 3, 5.0f, 6.0f, 5.5f, 1.0f);
 		}
 		else if constexpr (std::is_same_v<T, void*>) {
 			return std::make_shared<ne::PinStyle>(IM_COL32(190, 85, 200, 255), 4, 5.0f, 6.0f, 5.5f, 1.0f);
 		}
 		else if constexpr (std::is_same_v<T, bool>) {
-			return std::make_shared<ne::PinStyle>(IM_COL32(190, 90, 90, 255), 3, 5.0f, 6.0f, 5.5f, 1.0f);
+			return std::make_shared<ne::PinStyle>(IM_COL32(190, 90, 90, 255), 4, 5.0f, 6.0f, 5.5f, 1.0f);
 		}
 		else if constexpr (std::is_same_v<T, int32_t>) {
 			return std::make_shared<ne::PinStyle>(IM_COL32(75, 155, 215, 255), 4, 5.0f, 6.0f, 5.5f, 1.0f);
@@ -500,6 +500,9 @@ namespace titian {
 					}
 					else if constexpr (std::is_same_v<To, float>) {
 						return (float) kl::parse_float(from).value_or(0.0);
+					}
+					else {
+						static_assert(false, "Unkown cast node from String to T");
 					}
 				}
 				else if constexpr (std::is_same_v<To, String>) {
