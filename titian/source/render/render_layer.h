@@ -21,7 +21,7 @@ namespace titian {
 
 		dx::Buffer screen_mesh;
 
-		Float4 background = kl::Color(30, 30, 30);
+		Float4 background = Color{ 30, 30, 30 };
 		bool render_wireframe = false;
 		bool v_sync = false;
 

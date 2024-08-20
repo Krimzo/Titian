@@ -2,6 +2,27 @@
 
 
 namespace titian {
+	static const int _ignored = [&]
+	{
+		using namespace ne;
+		register_pin_style<FlowNode*>(255, 255, 255, 3);
+		register_pin_style<void*>(190, 85, 200, 4);
+		register_pin_style<bool>(190, 90, 90, 4);
+		register_pin_style<int32_t>(75, 155, 215, 4);
+		register_pin_style<Int2>(75, 135, 215, 5);
+		register_pin_style<float>(75, 200, 175, 4);
+		register_pin_style<Float2>(75, 200, 155, 5);
+		register_pin_style<Float3>(75, 200, 135, 6);
+		register_pin_style<Float4>(75, 200, 115, 7);
+		register_pin_style<Complex>(115, 70, 190, 4);
+		register_pin_style<Quaternion>(100, 75, 205, 5);
+		register_pin_style<Color>(185, 175, 70, 4);
+		register_pin_style<String>(215, 155, 135, 4);
+		return 0;
+	}();
+}
+
+namespace titian {
 	template<typename T, typename... Args>
 	static constexpr Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>> serial_generator_helper(const Args&... args)
 	{
@@ -84,7 +105,7 @@ namespace titian {
 		serial_generator_helper<ConstructNode<Float3>>(""),
 		serial_generator_helper<DeconstructNode<Float3>>(""),
 		serial_generator_helper<CastNode<Float3, Quaternion>>(""),
-		serial_generator_helper<CastNode<Float3, kl::Color>>(""),
+		serial_generator_helper<CastNode<Float3, Color>>(""),
 		serial_generator_helper<CastNode<Float3, String>>(""),
 		serial_generator_helper<OperatorPlusNode<Float3>>(),
 		serial_generator_helper<OperatorMinusNode<Float3>>(),
@@ -97,7 +118,7 @@ namespace titian {
 		serial_generator_helper<ConstructNode<Float4>>(""),
 		serial_generator_helper<DeconstructNode<Float4>>(""),
 		serial_generator_helper<CastNode<Float4, Quaternion>>(""),
-		serial_generator_helper<CastNode<Float4, kl::Color>>(""),
+		serial_generator_helper<CastNode<Float4, Color>>(""),
 		serial_generator_helper<CastNode<Float4, String>>(""),
 		serial_generator_helper<OperatorPlusNode<Float4>>(),
 		serial_generator_helper<OperatorMinusNode<Float4>>(),
@@ -128,12 +149,12 @@ namespace titian {
 		serial_generator_helper<OperatorTimesNode<Quaternion>>(),
 
 		// color
-		serial_generator_helper<LiteralNode<kl::Color>>(""),
-		serial_generator_helper<VariableNode<kl::Color>>("", ""),
-		serial_generator_helper<ConstructNode<kl::Color>>(""),
-		serial_generator_helper<DeconstructNode<kl::Color>>(""),
-		serial_generator_helper<CastNode<kl::Color, Float3>>(""),
-		serial_generator_helper<CastNode<kl::Color, Float4>>(""),
+		serial_generator_helper<LiteralNode<Color>>(""),
+		serial_generator_helper<VariableNode<Color>>("", ""),
+		serial_generator_helper<ConstructNode<Color>>(""),
+		serial_generator_helper<DeconstructNode<Color>>(""),
+		serial_generator_helper<CastNode<Color, Float3>>(""),
+		serial_generator_helper<CastNode<Color, Float4>>(""),
 
 		// string
 		serial_generator_helper<LiteralNode<String>>(""),
@@ -154,6 +175,11 @@ namespace titian {
 		serial_generator_helper<IfNode>(),
 		serial_generator_helper<WhileNode>(),
 		serial_generator_helper<ForNode>(),
+
+		// getters
+		serial_generator_helper<GetSceneNode>(),
+		serial_generator_helper<GetMeshNode>(),
+		serial_generator_helper<GetAnimationNode>(),
 
 		// functions
 		serial_generator_helper<PrintNode>(),
@@ -177,8 +203,8 @@ namespace titian {
 		
 		{ "Bool",
 		{
-		ui_generator_helper<LiteralNode<bool>>("Bool Literal", "Bool Literal"),
-		ui_generator_helper<VariableNode<bool>>("Bool Variable", "Bool Variable", "bool_var"),
+		ui_generator_helper<LiteralNode<bool>>("Literal Bool", "Literal Bool"),
+		ui_generator_helper<VariableNode<bool>>("Variable Bool", "Variable Bool", "bool_var"),
 		ui_generator_helper<CastNode<bool, int32_t>>("Bool -> Int", "Bool -> Int"),
 		ui_generator_helper<CastNode<bool, float>>("Bool -> Float", "Bool -> Float"),
 		ui_generator_helper<CastNode<bool, String>>("Bool -> String", "Bool -> String"),
@@ -188,8 +214,8 @@ namespace titian {
 
 		{ "Int",
 		{
-		ui_generator_helper<LiteralNode<int32_t>>("Int Literal", "Int Literal"),
-		ui_generator_helper<VariableNode<int32_t>>("Int Variable", "Int Variable", "int_var"),
+		ui_generator_helper<LiteralNode<int32_t>>("Literal Int", "Literal Int"),
+		ui_generator_helper<VariableNode<int32_t>>("Variable Int", "Variable Int", "int_var"),
 		ui_generator_helper<CastNode<int32_t, bool>>("Int -> Bool", "Int -> Bool"),
 		ui_generator_helper<CastNode<int32_t, float>>("Int -> Float", "Int -> Float"),
 		ui_generator_helper<CastNode<int32_t, String>>("Int -> String", "Int -> String"),
@@ -205,8 +231,8 @@ namespace titian {
 
 		{ "Int2",
 		{
-		ui_generator_helper<LiteralNode<Int2>>("Int2 Literal", "Int2 Literal"),
-		ui_generator_helper<VariableNode<Int2>>("Int2 Variable", "Int2 Variable", "int2_var"),
+		ui_generator_helper<LiteralNode<Int2>>("Literal Int2", "Literal Int2"),
+		ui_generator_helper<VariableNode<Int2>>("Variable Int2", "Variable Int2", "int2_var"),
 		ui_generator_helper<ConstructNode<Int2>>("Construct Int2", "Construct Int2"),
 		ui_generator_helper<DeconstructNode<Int2>>("Deconstruct Int2", "Deconstruct Int2"),
 		ui_generator_helper<CastNode<Int2, Float2>>("Int2 -> Float2", "Int2 -> Float2"),
@@ -220,8 +246,8 @@ namespace titian {
 
 		{ "Float",
 		{
-		ui_generator_helper<LiteralNode<float>>("Float Literal", "Float Literal"),
-		ui_generator_helper<VariableNode<float>>("Float Variable", "Float Variable", "float_var"),
+		ui_generator_helper<LiteralNode<float>>("Literal Float", "Literal Float"),
+		ui_generator_helper<VariableNode<float>>("Variable Float", "Variable Float", "float_var"),
 		ui_generator_helper<CastNode<float, bool>>("Float -> Bool", "Float -> Bool"),
 		ui_generator_helper<CastNode<float, int32_t>>("Float -> Int", "Float -> Int"),
 		ui_generator_helper<CastNode<float, String>>("Float -> String", "Float -> String"),
@@ -237,8 +263,8 @@ namespace titian {
 
 		{ "Float2",
 		{
-		ui_generator_helper<LiteralNode<Float2>>("Float2 Literal", "Float2 Literal"),
-		ui_generator_helper<VariableNode<Float2>>("Float2 Variable", "Float2 Variable", "float2_var"),
+		ui_generator_helper<LiteralNode<Float2>>("Literal Float2", "Literal Float2"),
+		ui_generator_helper<VariableNode<Float2>>("Variable Float2", "Variable Float2", "float2_var"),
 		ui_generator_helper<ConstructNode<Float2>>("Construct Float2", "Construct Float2"),
 		ui_generator_helper<DeconstructNode<Float2>>("Deconstruct Float2", "Deconstruct Float2"),
 		ui_generator_helper<CastNode<Float2, Int2>>("Float2 -> Int2", "Float2 -> Int2"),
@@ -253,12 +279,12 @@ namespace titian {
 
 		{ "Float3",
 		{
-		ui_generator_helper<LiteralNode<Float3>>("Float3 Literal", "Float3 Literal"),
-		ui_generator_helper<VariableNode<Float3>>("Float3 Variable", "Float3 Variable", "float3_var"),
+		ui_generator_helper<LiteralNode<Float3>>("Literal Float3", "Literal Float3"),
+		ui_generator_helper<VariableNode<Float3>>("Variable Float3", "Variable Float3", "float3_var"),
 		ui_generator_helper<ConstructNode<Float3>>("Construct Float3", "Construct Float3"),
 		ui_generator_helper<DeconstructNode<Float3>>("Deconstruct Float3", "Deconstruct Float3"),
 		ui_generator_helper<CastNode<Float3, Quaternion>>("Float3 -> Quaternion", "Float3 -> Quaternion"),
-		ui_generator_helper<CastNode<Float3, kl::Color>>("Float3 -> Color", "Float3 -> Color"),
+		ui_generator_helper<CastNode<Float3, Color>>("Float3 -> Color", "Float3 -> Color"),
 		ui_generator_helper<CastNode<Float3, String>>("Float3 -> String", "Float3 -> String"),
 		ui_generator_helper<OperatorPlusNode<Float3>>("Plus Float3"),
 		ui_generator_helper<OperatorMinusNode<Float3>>("Minus Float3"),
@@ -269,12 +295,12 @@ namespace titian {
 
 		{ "Float4",
 		{
-		ui_generator_helper<LiteralNode<Float4>>("Float4 Literal", "Float4 Literal"),
-		ui_generator_helper<VariableNode<Float4>>("Float4 Variable", "Float4 Variable", "float4_var"),
+		ui_generator_helper<LiteralNode<Float4>>("Literal Float4", "Literal Float4"),
+		ui_generator_helper<VariableNode<Float4>>("Variable Float4", "Variable Float4", "float4_var"),
 		ui_generator_helper<ConstructNode<Float4>>("Construct Float4", "Construct Float4"),
 		ui_generator_helper<DeconstructNode<Float4>>("Deconstruct Float4", "Deconstruct Float4"),
 		ui_generator_helper<CastNode<Float4, Quaternion>>("Float4 -> Quaternion", "Float4 -> Quaternion"),
-		ui_generator_helper<CastNode<Float4, kl::Color>>("Float4 -> Color", "Float4 -> Color"),
+		ui_generator_helper<CastNode<Float4, Color>>("Float4 -> Color", "Float4 -> Color"),
 		ui_generator_helper<CastNode<Float4, String>>("Float4 -> String", "Float4 -> String"),
 		ui_generator_helper<OperatorPlusNode<Float4>>("Plus Float4"),
 		ui_generator_helper<OperatorMinusNode<Float4>>("Minus Float4"),
@@ -285,8 +311,8 @@ namespace titian {
 
 		{ "Complex",
 		{
-		ui_generator_helper<LiteralNode<Complex>>("Complex Literal", "Complex Literal"),
-		ui_generator_helper<VariableNode<Complex>>("Complex Variable", "Complex Variable", "complex_var"),
+		ui_generator_helper<LiteralNode<Complex>>("Literal Complex", "Literal Complex"),
+		ui_generator_helper<VariableNode<Complex>>("Variable Complex", "Variable Complex", "complex_var"),
 		ui_generator_helper<ConstructNode<Complex>>("Construct Complex", "Construct Complex"),
 		ui_generator_helper<DeconstructNode<Complex>>("Deconstruct Complex", "Deconstruct Complex"),
 		ui_generator_helper<CastNode<Complex, Float2>>("Complex -> Float2", "Complex -> Float2"),
@@ -299,8 +325,8 @@ namespace titian {
 
 		{ "Quaternion",
 		{
-		ui_generator_helper<LiteralNode<Quaternion>>("Quaternion Literal", "Quaternion Literal"),
-		ui_generator_helper<VariableNode<Quaternion>>("Quaternion Variable", "Quaternion Variable", "quaternion_var"),
+		ui_generator_helper<LiteralNode<Quaternion>>("Literal Quaternion", "Literal Quaternion"),
+		ui_generator_helper<VariableNode<Quaternion>>("Variable Quaternion", "Variable Quaternion", "quaternion_var"),
 		ui_generator_helper<ConstructNode<Quaternion>>("Construct Quaternion", "Construct Quaternion"),
 		ui_generator_helper<DeconstructNode<Quaternion>>("Deconstruct Quaternion", "Deconstruct Quaternion"),
 		ui_generator_helper<CastNode<Quaternion, Float3>>("Quaternion -> Float3", "Quaternion -> Float3"),
@@ -314,19 +340,19 @@ namespace titian {
 
 		{ "Color",
 		{
-		ui_generator_helper<LiteralNode<kl::Color>>("Color Literal", "Color Literal"),
-		ui_generator_helper<VariableNode<kl::Color>>("Color Variable", "Color Variable", "color_var"),
-		ui_generator_helper<ConstructNode<kl::Color>>("Construct Color", "Construct Color"),
-		ui_generator_helper<DeconstructNode<kl::Color>>("Deconstruct Color", "Deconstruct Color"),
-		ui_generator_helper<CastNode<kl::Color, Float3>>("Color -> Float3", "Color -> Float3"),
-		ui_generator_helper<CastNode<kl::Color, Float4>>("Color -> Float4", "Color -> Float4"),
+		ui_generator_helper<LiteralNode<Color>>("Literal Color", "Literal Color"),
+		ui_generator_helper<VariableNode<Color>>("Variable Color", "Variable Color", "color_var"),
+		ui_generator_helper<ConstructNode<Color>>("Construct Color", "Construct Color"),
+		ui_generator_helper<DeconstructNode<Color>>("Deconstruct Color", "Deconstruct Color"),
+		ui_generator_helper<CastNode<Color, Float3>>("Color -> Float3", "Color -> Float3"),
+		ui_generator_helper<CastNode<Color, Float4>>("Color -> Float4", "Color -> Float4"),
 		},
 		},
 
 		{ "String",
 		{
-		ui_generator_helper<LiteralNode<String>>("String Literal", "String Literal"),
-		ui_generator_helper<VariableNode<String>>("String Variable", "String Variable", "string_var"),
+		ui_generator_helper<LiteralNode<String>>("Literal String", "Literal String"),
+		ui_generator_helper<VariableNode<String>>("Variable String", "Variable String", "string_var"),
 		ui_generator_helper<CastNode<String, bool>>("String -> Bool", "String -> Bool"),
 		ui_generator_helper<CastNode<String, int32_t>>("String -> Int", "String -> Int"),
 		ui_generator_helper<CastNode<String, float>>("String -> Float", "String -> Float"),
@@ -348,6 +374,14 @@ namespace titian {
 		ui_generator_helper<IfNode>("If"),
 		ui_generator_helper<WhileNode>("While"),
 		ui_generator_helper<ForNode>("For"),
+		},
+		},
+
+		{ "Getters",
+		{
+			ui_generator_helper<GetSceneNode>("Get Scene"),
+			ui_generator_helper<GetMeshNode>("Get Mesh"),
+			ui_generator_helper<GetAnimationNode>("Get Animation"),
 		},
 		},
 		
@@ -378,14 +412,14 @@ titian::NodeScript::NodeScript()
 	on_collision_node = m_editor.insertNode({ 0.0f, 83.33f }, temp_collision_node).get();
 	on_ui_node = m_editor.insertNode({ 0.0f, 250.0f }, temp_ui_node).get();
 
-	on_update_node->addOUT<float>("elapsed_time", get_pin_style<float>())
+	on_update_node->addOUT<float>("elapsed_time")
 		->behaviour([timer]() { return timer->elapsed(); });
-	on_update_node->addOUT<float>("delta_time", get_pin_style<float>())
+	on_update_node->addOUT<float>("delta_time")
 		->behaviour([timer]() { return timer->delta(); });
 
-	on_collision_node->addOUT<void*>("first_entity", get_pin_style<void*>())
+	on_collision_node->addOUT<void*>("first_entity")
 		->behaviour([this]() { return on_collision_node->user_data + 0; });
-	on_collision_node->addOUT<void*>("second_entity", get_pin_style<void*>())
+	on_collision_node->addOUT<void*>("second_entity")
 		->behaviour([this]() { return on_collision_node->user_data + 8; });
 
 	m_editor.rightClickPopUpContent([&](ne::BaseNode* node)

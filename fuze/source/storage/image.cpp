@@ -19,7 +19,7 @@ void titian::Image::cache_frame(const Int2& size)
 	temp_frame.resize_scaled(scaled_size);
 
 	out_frame.resize(size);
-	out_frame.fill(kl::Color(0, 0, 0, 0));
+	out_frame.fill(Color{ 0, 0, 0, 0 });
 	const Int2 offset = kl::abs((size - scaled_size) / 2);
 
 	kl::async_for(0, temp_frame.pixel_count(), [&](int i)

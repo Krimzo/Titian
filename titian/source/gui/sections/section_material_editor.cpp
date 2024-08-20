@@ -11,7 +11,7 @@ titian::GUISectionMaterialEditor::GUISectionMaterialEditor()
     render_texture = new Texture(gpu);
     depth_texture = new Texture(gpu);
 
-    camera->background = kl::Color{ 30, 30, 30 };
+    camera->background = Color{ 30, 30, 30 };
     camera->set_position({ 0.642787576f, 0.577350259f, 0.766044438f });
     camera->speed = 3.1f;
 }

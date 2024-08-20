@@ -17,9 +17,6 @@
 #include "imgui_bezier_math.h"
 #include "context_wrapper.h"
 
-//#define ConnectionFilter_None       [](ImFlow::Pin* out, ImFlow::Pin* in){ return true; }
-//#define ConnectionFilter_SameType   [](ImFlow::Pin* out, ImFlow::Pin* in){ return out->getDataType() == in->getDataType(); }
-//#define ConnectionFilter_Numbers    [](ImFlow::Pin* out, ImFlow::Pin* in){ return out->getDataType() == typeid(double) || out->getDataType() == typeid(float) || out->getDataType() == typeid(int); }
 
 namespace ImFlow
 {
@@ -166,14 +163,19 @@ namespace ImFlow
         float border_thickness = -1.35f;
         /// @brief Border thickness when selected
         float border_selected_thickness = 2.f;
+
     public:
-        static std::shared_ptr<NodeStyle> red() { return std::make_shared<NodeStyle>(IM_COL32(190, 90, 90, 255), ImColor(30, 30, 30, 255), 11.f); }
-        static std::shared_ptr<NodeStyle> green() { return std::make_shared<NodeStyle>(IM_COL32(90, 190, 95, 255), ImColor(30, 30, 30, 255), 3.5f); }
+        static std::shared_ptr<NodeStyle> white() { return std::make_shared<NodeStyle>(IM_COL32(200, 200, 200, 255), ImColor(30, 30, 30, 255), 11.0f); }
+        static std::shared_ptr<NodeStyle> gray() { return std::make_shared<NodeStyle>(IM_COL32(100, 100, 100, 255), ImColor(30, 30, 30, 255), 11.0f); }
+        static std::shared_ptr<NodeStyle> red() { return std::make_shared<NodeStyle>(IM_COL32(190, 90, 90, 255), ImColor(30, 30, 30, 255), 6.5f); }
+        static std::shared_ptr<NodeStyle> green() { return std::make_shared<NodeStyle>(IM_COL32(90, 190, 95, 255), ImColor(30, 30, 30, 255), 6.5f); }
         static std::shared_ptr<NodeStyle> blue() { return std::make_shared<NodeStyle>(IM_COL32(85, 155, 215, 255), ImColor(30, 30, 30, 255), 6.5f); }
         static std::shared_ptr<NodeStyle> cyan() { return std::make_shared<NodeStyle>(IM_COL32(70, 175, 140, 255), ImColor(30, 30, 30, 255), 6.5f); }
         static std::shared_ptr<NodeStyle> yellow() { return std::make_shared<NodeStyle>(IM_COL32(220, 220, 70, 255), ImColor(30, 30, 30, 255), 6.5f); }
         static std::shared_ptr<NodeStyle> orange() { return std::make_shared<NodeStyle>(IM_COL32(210, 155, 90, 255), ImColor(30, 30, 30, 255), 6.5f); }
         static std::shared_ptr<NodeStyle> pink() { return std::make_shared<NodeStyle>(IM_COL32(215, 160, 225, 255), ImColor(30, 30, 30, 255), 6.5f); }
+        static std::shared_ptr<NodeStyle> purple() { return std::make_shared<NodeStyle>(IM_COL32(125, 70, 180, 255), ImColor(30, 30, 30, 255), 6.5f); }
+        static std::shared_ptr<NodeStyle> magenta() { return std::make_shared<NodeStyle>(IM_COL32(170, 50, 105, 255), ImColor(30, 30, 30, 255), 6.5f); }
     };
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -545,7 +547,7 @@ namespace ImFlow
          * @return Shared pointer to the newly added pin
          */
         template<typename T>
-        std::shared_ptr<InPin<T>> addIN(const std::string& name, std::shared_ptr<PinStyle> style);
+        std::shared_ptr<InPin<T>> addIN(const std::string& name);
 
         /**
          * @brief <BR>Add an Input to the node
@@ -561,7 +563,7 @@ namespace ImFlow
          * @return Shared pointer to the newly added pin
          */
         template<typename T, typename U>
-        std::shared_ptr<InPin<T>> addIN_uid(const U& uid, const std::string& name, std::function<bool(Pin*, Pin*)> filter, std::shared_ptr<PinStyle> style = nullptr);
+        std::shared_ptr<InPin<T>> addIN_uid(const U& uid, const std::string& name);
 
         /**
          * @brief <BR>Remove input pin
@@ -622,7 +624,7 @@ namespace ImFlow
          * @return Shared pointer to the newly added pin. Must be used to set the behaviour
          */
         template<typename T>
-        [[nodiscard]] std::shared_ptr<OutPin<T>> addOUT(const std::string& name, std::shared_ptr<PinStyle> style = nullptr);
+        [[nodiscard]] std::shared_ptr<OutPin<T>> addOUT(const std::string& name);
 
         /**
          * @brief <BR>Add an Output to the node
@@ -637,7 +639,7 @@ namespace ImFlow
          * @return Shared pointer to the newly added pin. Must be used to set the behaviour
          */
         template<typename T, typename U>
-        [[nodiscard]] std::shared_ptr<OutPin<T>> addOUT_uid(const U& uid, const std::string& name, std::shared_ptr<PinStyle> style = nullptr);
+        [[nodiscard]] std::shared_ptr<OutPin<T>> addOUT_uid(const U& uid, const std::string& name);
 
         /**
          * @brief <BR>Remove output pin

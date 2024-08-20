@@ -146,7 +146,7 @@ const int load_types = [&]
 	// Bootstrap
 	cs::bootstrap::standard_library::vector_type<Vector<String>>("StringData", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::vector_type<Vector<kl::Vertex<float>>>("MeshData", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::vector_type<Vector<kl::Color>>("TextureData", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::vector_type<Vector<Color>>("TextureData", *INTERP_SCRIPT_MODULE);
 
 	cs::bootstrap::standard_library::vector_type<Vector<Mesh*>>("MeshVector", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::vector_type<Vector<Animation*>>("AnimationVector", *INTERP_SCRIPT_MODULE);
@@ -171,15 +171,15 @@ const int load_types = [&]
 	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Int2, Float2>());
 	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float2, Int2>());
 	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float2, Complex>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float3, kl::Color>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float3, Color>());
 	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float3, Quaternion>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float4, kl::Color>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float4, Color>());
 	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float4, Quaternion>());
 	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Complex, Float2>());
 	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Quaternion, Float3>());
 	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Quaternion, Float4>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Color, Float3>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<kl::Color, Float4>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Color, Float3>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Color, Float4>());
 
 	// Int2
 	cs::utility::add_class<Int2>(*INTERP_SCRIPT_MODULE, "Int2",
@@ -706,33 +706,33 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["intersect_sphere"] = "Ray intersects sphere.";
 
 	// Color
-	cs::utility::add_class<kl::Color>(*INTERP_SCRIPT_MODULE, "Color",
+	cs::utility::add_class<Color>(*INTERP_SCRIPT_MODULE, "Color",
 	{
-		cs::constructor<kl::Color()>(),
-		cs::constructor<kl::Color(const kl::Color&)>(),
+		cs::constructor<Color()>(),
+		cs::constructor<Color(const Color&)>(),
 
-		cs::constructor<kl::Color(byte, byte, byte)>(),
-		cs::constructor<kl::Color(byte, byte, byte, byte)>(),
+		cs::constructor<Color(byte, byte, byte)>(),
+		cs::constructor<Color(byte, byte, byte, byte)>(),
 	},
 	{
-		{ cs::fun(&kl::Color::r), "r" },
-		{ cs::fun(&kl::Color::g), "g" },
-		{ cs::fun(&kl::Color::b), "b" },
-		{ cs::fun(&kl::Color::a), "a" },
+		{ cs::fun(&Color::r), "r" },
+		{ cs::fun(&Color::g), "g" },
+		{ cs::fun(&Color::b), "b" },
+		{ cs::fun(&Color::a), "a" },
 
-		{ cs::fun<kl::Color& (kl::Color::*)(const kl::Color&)>(&kl::Color::operator=), "=" },
+		{ cs::fun<Color& (Color::*)(const Color&)>(&Color::operator=), "=" },
 
-		{ cs::fun(&kl::Color::operator==), "==" },
-		{ cs::fun(&kl::Color::operator!=), "!=" },
+		{ cs::fun(&Color::operator==), "==" },
+		{ cs::fun(&Color::operator!=), "!=" },
 
-		{ cs::fun(&kl::Color::gray), "gray" },
-		{ cs::fun(&kl::Color::inverted), "inverted" },
-		{ cs::fun(&kl::Color::as_ascii), "as_ascii" },
+		{ cs::fun(&Color::gray), "gray" },
+		{ cs::fun(&Color::inverted), "inverted" },
+		{ cs::fun(&Color::as_ascii), "as_ascii" },
 
-		{ cs::fun<kl::Color (kl::Color::*)(const kl::Color&, float) const>(&kl::Color::mix), "mix" },
-		{ cs::fun<kl::Color (kl::Color::*)(const kl::Color&) const>(&kl::Color::mix), "mix" },
+		{ cs::fun<Color (Color::*)(const Color&, float) const>(&Color::mix), "mix" },
+		{ cs::fun<Color (Color::*)(const Color&) const>(&Color::mix), "mix" },
 
-		{ cs::fun([](const kl::Color& object) {
+		{ cs::fun([](const Color& object) {
 			return kl::format('(', int(object.r),
 				", ", int(object.g),
 				", ", int(object.b),
@@ -1087,7 +1087,6 @@ const int load_types = [&]
 		{ cs::fun(&Scene::helper_get_all_entities), "get_all_entities" },
 
 		{ cs::fun<Camera* (Scene::*)(const String&)>(&Scene::get_casted<Camera>), "get_camera"},
-		{ cs::fun<Light* (Scene::*)(const String&)>(&Scene::get_casted<Light>), "get_light" },
 		{ cs::fun<AmbientLight* (Scene::*)(const String&)>(&Scene::get_casted<AmbientLight>), "get_ambient_light" },
 		{ cs::fun<PointLight* (Scene::*)(const String&)>(&Scene::get_casted<PointLight>), "get_point_light" },
 		{ cs::fun<DirectionalLight* (Scene::*)(const String&)>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
@@ -1133,7 +1132,6 @@ const int load_types = [&]
 	INTERP_SCRIPT_IDENTIFIERS["get_all_shaders"] = "Returns a map of all scene shaders.";
 	INTERP_SCRIPT_IDENTIFIERS["get_all_entities"] = "Returns a map of all scene entities.";
 	INTERP_SCRIPT_IDENTIFIERS["get_camera"] = "Returns a scene camera.";
-	INTERP_SCRIPT_IDENTIFIERS["get_light"] = "Returns a scene light.";
 	INTERP_SCRIPT_IDENTIFIERS["get_ambient_light"] = "Returns a scene ambient light.";
 	INTERP_SCRIPT_IDENTIFIERS["get_point_light"] = "Returns a scene point light.";
 	INTERP_SCRIPT_IDENTIFIERS["get_directional_light"] = "Returns a scene directional light.";
@@ -1385,21 +1383,21 @@ const int load_constants = [&]
 	INTERP_SCRIPT_IDENTIFIERS["TO_BYTE_COLOR"] = "Constant for converting float color to byte color (255 / 1).";
 
 	// Colors
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::CONSOLE), "CONSOLE");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::BLACK), "BLACK");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::WHITE), "WHITE");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::GRAY), "GRAY");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::RED), "RED");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::GREEN), "GREEN");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::BLUE), "BLUE");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::CYAN), "CYAN");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::PURPLE), "PURPLE");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::YELLOW), "YELLOW");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::ORANGE), "ORANGE");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::MAGENTA), "MAGENTA");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::CRIMSON), "CRIMSON");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::WHEAT), "WHEAT");
-	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((kl::Color) kl::colors::SKY), "SKY");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::CONSOLE), "CONSOLE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::BLACK), "BLACK");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::WHITE), "WHITE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::GRAY), "GRAY");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::RED), "RED");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::GREEN), "GREEN");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::BLUE), "BLUE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::CYAN), "CYAN");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::PURPLE), "PURPLE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::YELLOW), "YELLOW");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::ORANGE), "ORANGE");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::MAGENTA), "MAGENTA");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::CRIMSON), "CRIMSON");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::WHEAT), "WHEAT");
+	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::SKY), "SKY");
 	INTERP_SCRIPT_IDENTIFIERS["CONSOLE"] = "Constant color (204, 204, 204).";
 	INTERP_SCRIPT_IDENTIFIERS["BLACK"] = "Constant color (0, 0, 0).";
 	INTERP_SCRIPT_IDENTIFIERS["WHITE"] = "Constant color (255, 255, 255).";

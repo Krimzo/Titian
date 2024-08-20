@@ -2,6 +2,31 @@
 
 #include "ImNodeFlow.h"
 
+
+// CUSTOM
+namespace ImFlow {
+    static std::unordered_map<size_t, std::function<std::shared_ptr<PinStyle>()>> pin_style_generators;
+
+    template<typename T>
+    static void register_pin_style(int r, int g, int b, int count)
+    {
+        static const size_t ptr = reinterpret_cast<size_t>(&typeid(T));
+        pin_style_generators[ptr] = [=]() { return std::make_shared<PinStyle>(IM_COL32(r, g, b, 255), count, 5.0f, 6.0f, 5.5f, 1.0f); };
+    }
+
+    template<typename T>
+    static std::shared_ptr<PinStyle> get_pin_style()
+    {
+        static const size_t ptr = reinterpret_cast<size_t>(&typeid(T));
+        if (pin_style_generators.contains(ptr)) {
+            return pin_style_generators.at(ptr)();
+        }
+        printf("Unknown pin style for type: %s\n", typeid(T).name());
+        exit(17);
+        return {};
+    }
+}
+
 namespace ImFlow
 {
     inline void smart_bezier(const ImVec2& p1, const ImVec2& p2, ImU32 color, float thickness)
@@ -84,16 +109,16 @@ namespace ImFlow
     // BASE NODE
 
     template<typename T>
-    std::shared_ptr<InPin<T>> BaseNode::addIN(const std::string& name, std::shared_ptr<PinStyle> style)
+    std::shared_ptr<InPin<T>> BaseNode::addIN(const std::string& name)
     {
-        return addIN_uid<T>(name, name, ConnectionFilter::SameType(), std::move(style));
+        return addIN_uid<T>(name, name);
     }
 
     template<typename T, typename U>
-    std::shared_ptr<InPin<T>> BaseNode::addIN_uid(const U& uid, const std::string& name, std::function<bool(Pin*, Pin*)> filter, std::shared_ptr<PinStyle> style)
+    std::shared_ptr<InPin<T>> BaseNode::addIN_uid(const U& uid, const std::string& name)
     {
         PinUID h = std::hash<U>{}(uid);
-        auto p = std::make_shared<InPin<T>>(h, name, std::move(filter), std::move(style), this, &m_inf);
+        auto p = std::make_shared<InPin<T>>(h, name, ConnectionFilter::SameType(), get_pin_style<T>(), this, &m_inf);
         m_ins.emplace_back(p);
         return p;
     }
@@ -141,16 +166,16 @@ namespace ImFlow
     }
 
     template<typename T>
-    std::shared_ptr<OutPin<T>> BaseNode::addOUT(const std::string& name, std::shared_ptr<PinStyle> style)
+    std::shared_ptr<OutPin<T>> BaseNode::addOUT(const std::string& name)
     {
-        return addOUT_uid<T>(name, name, std::move(style));
+        return addOUT_uid<T>(name, name);
     }
 
     template<typename T, typename U>
-    std::shared_ptr<OutPin<T>> BaseNode::addOUT_uid(const U& uid, const std::string& name, std::shared_ptr<PinStyle> style)
+    std::shared_ptr<OutPin<T>> BaseNode::addOUT_uid(const U& uid, const std::string& name)
     {
         PinUID h = std::hash<U>{}(uid);
-        auto p = std::make_shared<OutPin<T>>(h, name, std::move(style), this, &m_inf);
+        auto p = std::make_shared<OutPin<T>>(h, name, get_pin_style<T>(), this, &m_inf);
         m_outs.emplace_back(p);
         return p;
     }
