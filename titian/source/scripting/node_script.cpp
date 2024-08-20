@@ -3,12 +3,12 @@
 
 namespace titian {
 	template<typename T, typename... Args>
-	static constexpr Pair<String, Function<std::shared_ptr<Node>()>> serial_generator_helper(const Args&... args)
+	static constexpr Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>> serial_generator_helper(const Args&... args)
 	{
-		return { typeid(T).name(), [=]() { return std::shared_ptr<T>(new T(args...)); } };
+		return { typeid(T).name(), [=](NodeScript* script) { return std::shared_ptr<T>(new T(script, args...)); } };
 	}
 
-	static const Map<String, Function<std::shared_ptr<Node>()>> serial_node_generators
+	static const Map<String, Function<std::shared_ptr<Node>(NodeScript*)>> serial_node_generators
 	{
 		// base node
 		serial_generator_helper<Node>("", ne::NodeStyle::red()),
@@ -19,6 +19,7 @@ namespace titian {
 
 		// bool
 		serial_generator_helper<LiteralNode<bool>>(""),
+		serial_generator_helper<VariableNode<bool>>("", ""),
 		serial_generator_helper<CastNode<bool, int32_t>>(""),
 		serial_generator_helper<CastNode<bool, float>>(""),
 		serial_generator_helper<CastNode<bool, String>>(""),
@@ -26,6 +27,7 @@ namespace titian {
 
 		// int
 		serial_generator_helper<LiteralNode<int32_t>>(""),
+		serial_generator_helper<VariableNode<int32_t>>("", ""),
 		serial_generator_helper<CastNode<int32_t, bool>>(""),
 		serial_generator_helper<CastNode<int32_t, float>>(""),
 		serial_generator_helper<CastNode<int32_t, String>>(""),
@@ -39,6 +41,7 @@ namespace titian {
 
 		// int2
 		serial_generator_helper<LiteralNode<Int2>>(""),
+		serial_generator_helper<VariableNode<Int2>>("", ""),
 		serial_generator_helper<ConstructNode<Int2>>(""),
 		serial_generator_helper<DeconstructNode<Int2>>(""),
 		serial_generator_helper<CastNode<Int2, Float2>>(""),
@@ -50,6 +53,7 @@ namespace titian {
 
 		// float
 		serial_generator_helper<LiteralNode<float>>(""),
+		serial_generator_helper<VariableNode<float>>("", ""),
 		serial_generator_helper<CastNode<float, bool>>(""),
 		serial_generator_helper<CastNode<float, int32_t>>(""),
 		serial_generator_helper<CastNode<float, String>>(""),
@@ -63,6 +67,7 @@ namespace titian {
 
 		// float2
 		serial_generator_helper<LiteralNode<Float2>>(""),
+		serial_generator_helper<VariableNode<Float2>>("", ""),
 		serial_generator_helper<ConstructNode<Float2>>(""),
 		serial_generator_helper<DeconstructNode<Float2>>(""),
 		serial_generator_helper<CastNode<Float2, Int2>>(""),
@@ -75,6 +80,7 @@ namespace titian {
 
 		// float3
 		serial_generator_helper<LiteralNode<Float3>>(""),
+		serial_generator_helper<VariableNode<Float3>>("", ""),
 		serial_generator_helper<ConstructNode<Float3>>(""),
 		serial_generator_helper<DeconstructNode<Float3>>(""),
 		serial_generator_helper<CastNode<Float3, Quaternion>>(""),
@@ -87,6 +93,7 @@ namespace titian {
 
 		// float4
 		serial_generator_helper<LiteralNode<Float4>>(""),
+		serial_generator_helper<VariableNode<Float4>>("", ""),
 		serial_generator_helper<ConstructNode<Float4>>(""),
 		serial_generator_helper<DeconstructNode<Float4>>(""),
 		serial_generator_helper<CastNode<Float4, Quaternion>>(""),
@@ -99,6 +106,7 @@ namespace titian {
 
 		// complex
 		serial_generator_helper<LiteralNode<Complex>>(""),
+		serial_generator_helper<VariableNode<Complex>>("", ""),
 		serial_generator_helper<ConstructNode<Complex>>(""),
 		serial_generator_helper<DeconstructNode<Complex>>(""),
 		serial_generator_helper<CastNode<Complex, Float2>>(""),
@@ -109,6 +117,7 @@ namespace titian {
 
 		// quaternion
 		serial_generator_helper<LiteralNode<Quaternion>>(""),
+		serial_generator_helper<VariableNode<Quaternion>>("", ""),
 		serial_generator_helper<ConstructNode<Quaternion>>(""),
 		serial_generator_helper<DeconstructNode<Quaternion>>(""),
 		serial_generator_helper<CastNode<Quaternion, Float3>>(""),
@@ -120,6 +129,7 @@ namespace titian {
 
 		// color
 		serial_generator_helper<LiteralNode<kl::Color>>(""),
+		serial_generator_helper<VariableNode<kl::Color>>("", ""),
 		serial_generator_helper<ConstructNode<kl::Color>>(""),
 		serial_generator_helper<DeconstructNode<kl::Color>>(""),
 		serial_generator_helper<CastNode<kl::Color, Float3>>(""),
@@ -127,6 +137,7 @@ namespace titian {
 
 		// string
 		serial_generator_helper<LiteralNode<String>>(""),
+		serial_generator_helper<VariableNode<String>>("", ""),
 		serial_generator_helper<CastNode<String, bool>>(""),
 		serial_generator_helper<CastNode<String, int32_t>>(""),
 		serial_generator_helper<CastNode<String, float>>(""),
@@ -151,12 +162,12 @@ namespace titian {
 
 namespace titian {
 	template<typename T, typename... Args>
-	static constexpr Pair<String, Function<std::shared_ptr<Node>()>> ui_generator_helper(const char* name, const Args&... args)
+	static constexpr Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>> ui_generator_helper(const char* name, const Args&... args)
 	{
-		return { name, [=]() { return std::shared_ptr<T>(new T(args...)); } };
+		return { name, [=](NodeScript* script) { return std::shared_ptr<T>(new T(script, args...)); } };
 	}
 
-	static const std::map<String, Vector<Pair<String, Function<std::shared_ptr<Node>()>>>> ui_node_generators = {
+	static const std::map<String, Vector<Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>>>> ui_node_generators = {
 		{ "Pointer",
 		{
 		ui_generator_helper<CastNode<void*, bool>>("Pointer -> Bool", "Pointer -> Bool"),
@@ -166,7 +177,8 @@ namespace titian {
 		
 		{ "Bool",
 		{
-		ui_generator_helper<LiteralNode<bool>>("Bool", "Bool"),
+		ui_generator_helper<LiteralNode<bool>>("Bool Literal", "Bool Literal"),
+		ui_generator_helper<VariableNode<bool>>("Bool Variable", "Bool Variable", "bool_var"),
 		ui_generator_helper<CastNode<bool, int32_t>>("Bool -> Int", "Bool -> Int"),
 		ui_generator_helper<CastNode<bool, float>>("Bool -> Float", "Bool -> Float"),
 		ui_generator_helper<CastNode<bool, String>>("Bool -> String", "Bool -> String"),
@@ -176,7 +188,8 @@ namespace titian {
 
 		{ "Int",
 		{
-		ui_generator_helper<LiteralNode<int32_t>>("Int", "Int"),
+		ui_generator_helper<LiteralNode<int32_t>>("Int Literal", "Int Literal"),
+		ui_generator_helper<VariableNode<int32_t>>("Int Variable", "Int Variable", "int_var"),
 		ui_generator_helper<CastNode<int32_t, bool>>("Int -> Bool", "Int -> Bool"),
 		ui_generator_helper<CastNode<int32_t, float>>("Int -> Float", "Int -> Float"),
 		ui_generator_helper<CastNode<int32_t, String>>("Int -> String", "Int -> String"),
@@ -192,7 +205,8 @@ namespace titian {
 
 		{ "Int2",
 		{
-		ui_generator_helper<LiteralNode<Int2>>("Int2", "Int2"),
+		ui_generator_helper<LiteralNode<Int2>>("Int2 Literal", "Int2 Literal"),
+		ui_generator_helper<VariableNode<Int2>>("Int2 Variable", "Int2 Variable", "int2_var"),
 		ui_generator_helper<ConstructNode<Int2>>("Construct Int2", "Construct Int2"),
 		ui_generator_helper<DeconstructNode<Int2>>("Deconstruct Int2", "Deconstruct Int2"),
 		ui_generator_helper<CastNode<Int2, Float2>>("Int2 -> Float2", "Int2 -> Float2"),
@@ -206,7 +220,8 @@ namespace titian {
 
 		{ "Float",
 		{
-		ui_generator_helper<LiteralNode<float>>("Float", "Float"),
+		ui_generator_helper<LiteralNode<float>>("Float Literal", "Float Literal"),
+		ui_generator_helper<VariableNode<float>>("Float Variable", "Float Variable", "float_var"),
 		ui_generator_helper<CastNode<float, bool>>("Float -> Bool", "Float -> Bool"),
 		ui_generator_helper<CastNode<float, int32_t>>("Float -> Int", "Float -> Int"),
 		ui_generator_helper<CastNode<float, String>>("Float -> String", "Float -> String"),
@@ -222,7 +237,8 @@ namespace titian {
 
 		{ "Float2",
 		{
-		ui_generator_helper<LiteralNode<Float2>>("Float2", "Float2"),
+		ui_generator_helper<LiteralNode<Float2>>("Float2 Literal", "Float2 Literal"),
+		ui_generator_helper<VariableNode<Float2>>("Float2 Variable", "Float2 Variable", "float2_var"),
 		ui_generator_helper<ConstructNode<Float2>>("Construct Float2", "Construct Float2"),
 		ui_generator_helper<DeconstructNode<Float2>>("Deconstruct Float2", "Deconstruct Float2"),
 		ui_generator_helper<CastNode<Float2, Int2>>("Float2 -> Int2", "Float2 -> Int2"),
@@ -237,7 +253,8 @@ namespace titian {
 
 		{ "Float3",
 		{
-		ui_generator_helper<LiteralNode<Float3>>("Float3", "Float3"),
+		ui_generator_helper<LiteralNode<Float3>>("Float3 Literal", "Float3 Literal"),
+		ui_generator_helper<VariableNode<Float3>>("Float3 Variable", "Float3 Variable", "float3_var"),
 		ui_generator_helper<ConstructNode<Float3>>("Construct Float3", "Construct Float3"),
 		ui_generator_helper<DeconstructNode<Float3>>("Deconstruct Float3", "Deconstruct Float3"),
 		ui_generator_helper<CastNode<Float3, Quaternion>>("Float3 -> Quaternion", "Float3 -> Quaternion"),
@@ -252,7 +269,8 @@ namespace titian {
 
 		{ "Float4",
 		{
-		ui_generator_helper<LiteralNode<Float4>>("Float4", "Float4"),
+		ui_generator_helper<LiteralNode<Float4>>("Float4 Literal", "Float4 Literal"),
+		ui_generator_helper<VariableNode<Float4>>("Float4 Variable", "Float4 Variable", "float4_var"),
 		ui_generator_helper<ConstructNode<Float4>>("Construct Float4", "Construct Float4"),
 		ui_generator_helper<DeconstructNode<Float4>>("Deconstruct Float4", "Deconstruct Float4"),
 		ui_generator_helper<CastNode<Float4, Quaternion>>("Float4 -> Quaternion", "Float4 -> Quaternion"),
@@ -267,7 +285,8 @@ namespace titian {
 
 		{ "Complex",
 		{
-		ui_generator_helper<LiteralNode<Complex>>("Complex", "Complex"),
+		ui_generator_helper<LiteralNode<Complex>>("Complex Literal", "Complex Literal"),
+		ui_generator_helper<VariableNode<Complex>>("Complex Variable", "Complex Variable", "complex_var"),
 		ui_generator_helper<ConstructNode<Complex>>("Construct Complex", "Construct Complex"),
 		ui_generator_helper<DeconstructNode<Complex>>("Deconstruct Complex", "Deconstruct Complex"),
 		ui_generator_helper<CastNode<Complex, Float2>>("Complex -> Float2", "Complex -> Float2"),
@@ -280,7 +299,8 @@ namespace titian {
 
 		{ "Quaternion",
 		{
-		ui_generator_helper<LiteralNode<Quaternion>>("Quaternion", "Quaternion"),
+		ui_generator_helper<LiteralNode<Quaternion>>("Quaternion Literal", "Quaternion Literal"),
+		ui_generator_helper<VariableNode<Quaternion>>("Quaternion Variable", "Quaternion Variable", "quaternion_var"),
 		ui_generator_helper<ConstructNode<Quaternion>>("Construct Quaternion", "Construct Quaternion"),
 		ui_generator_helper<DeconstructNode<Quaternion>>("Deconstruct Quaternion", "Deconstruct Quaternion"),
 		ui_generator_helper<CastNode<Quaternion, Float3>>("Quaternion -> Float3", "Quaternion -> Float3"),
@@ -294,7 +314,8 @@ namespace titian {
 
 		{ "Color",
 		{
-		ui_generator_helper<LiteralNode<kl::Color>>("Color", "Color"),
+		ui_generator_helper<LiteralNode<kl::Color>>("Color Literal", "Color Literal"),
+		ui_generator_helper<VariableNode<kl::Color>>("Color Variable", "Color Variable", "color_var"),
 		ui_generator_helper<ConstructNode<kl::Color>>("Construct Color", "Construct Color"),
 		ui_generator_helper<DeconstructNode<kl::Color>>("Deconstruct Color", "Deconstruct Color"),
 		ui_generator_helper<CastNode<kl::Color, Float3>>("Color -> Float3", "Color -> Float3"),
@@ -304,7 +325,8 @@ namespace titian {
 
 		{ "String",
 		{
-		ui_generator_helper<LiteralNode<String>>("String", "String"),
+		ui_generator_helper<LiteralNode<String>>("String Literal", "String Literal"),
+		ui_generator_helper<VariableNode<String>>("String Variable", "String Variable", "string_var"),
 		ui_generator_helper<CastNode<String, bool>>("String -> Bool", "String -> Bool"),
 		ui_generator_helper<CastNode<String, int32_t>>("String -> Int", "String -> Int"),
 		ui_generator_helper<CastNode<String, float>>("String -> Float", "String -> Float"),
@@ -341,10 +363,10 @@ titian::NodeScript::NodeScript()
 {
 	kl::Timer* timer = &Layers::get<AppLayer>()->timer;
 
-	auto temp_start_node = std::make_shared<FlowNode>("On Start", false, true);
-	auto temp_update_node = std::make_shared<FlowNode>("On Update", false, true);
-	auto temp_collision_node = std::make_shared<FlowNode>("On Collision", false, true);
-	auto temp_ui_node = std::make_shared<FlowNode>("On UI", false, true);
+	auto temp_start_node = std::make_shared<FlowNode>(this, "On Start", false, true);
+	auto temp_update_node = std::make_shared<FlowNode>(this, "On Update", false, true);
+	auto temp_collision_node = std::make_shared<FlowNode>(this, "On Collision", false, true);
+	auto temp_ui_node = std::make_shared<FlowNode>(this, "On UI", false, true);
 
 	temp_start_node->setUID(1);
 	temp_update_node->setUID(2);
@@ -389,7 +411,7 @@ titian::NodeScript::NodeScript()
 			if (im::BeginMenu(tab_name.c_str())) {
 				for (auto& [node_name, generator] : tab) {
 					if (im::Selectable(node_name.c_str())) {
-						m_editor.insertNode(m_editor.screen2grid(im::GetMousePos()), generator());
+						m_editor.insertNode(m_editor.screen2grid(im::GetMousePos()), generator(this));
 						im::CloseCurrentPopup();
 					}
 				}
@@ -481,7 +503,7 @@ void titian::NodeScript::deserialize(const Serializer* serializer, const void* h
 		std::shared_ptr<Node> node;
 		for (auto& [type, generator] : serial_node_generators) {
 			if (node_type == type) {
-				node = generator();
+				node = generator(this);
 				break;
 			}
 		}

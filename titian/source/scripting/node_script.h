@@ -19,6 +19,21 @@ namespace titian {
 		FlowNode* on_collision_node = nullptr;
 		FlowNode* on_ui_node = nullptr;
 
+		template<typename T>
+		using VarStorage = Map<String, Pair<bool, T>>;
+
+		VarStorage<bool> bool_storage;
+		VarStorage<int32_t> int_storage;
+		VarStorage<Int2> int2_storage;
+		VarStorage<float> float_storage;
+		VarStorage<Float2> float2_storage;
+		VarStorage<Float3> float3_storage;
+		VarStorage<Float4> float4_storage;
+		VarStorage<Complex> complex_storage;
+		VarStorage<Quaternion> quaternion_storage;
+		VarStorage<kl::Color> color_storage;
+		VarStorage<String> string_storage;
+
 		NodeScript();
 
 		void serialize(Serializer* serializer, const void* helper_data) const override;
@@ -93,9 +108,11 @@ namespace titian {
 namespace titian {
 	struct Node : ne::BaseNode, Serializable
 	{
+		NodeScript* parent = nullptr;
 		byte user_data[16] = {};
 
-		inline Node(const String& title, const std::shared_ptr<ne::NodeStyle>& style)
+		inline Node(NodeScript* parent, const String& title, const std::shared_ptr<ne::NodeStyle>& style)
+			: parent(parent)
 		{
 			setTitle(title);
 			setStyle(style);
@@ -145,8 +162,8 @@ namespace titian {
 	{
 		T value = {};
 
-		inline LiteralNode(const String& title)
-			: Node(title, ne::NodeStyle::green())
+		inline LiteralNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::green())
 		{
 			addOUT<T>("result", get_pin_style<T>())->behaviour([this] { return this->value; });
 		}
@@ -285,8 +302,8 @@ namespace titian {
 	template<typename T>
 	struct ConstructNode : Node
 	{
-		inline ConstructNode(const String& title)
-			: Node(title, ne::NodeStyle::cyan())
+		inline ConstructNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::cyan())
 		{
 			if constexpr (std::is_same_v<T, Int2>) {
 				addIN<int32_t>("x", get_pin_style<int32_t>());
@@ -365,8 +382,8 @@ namespace titian {
 	template<typename T>
 	struct DeconstructNode : Node
 	{
-		inline DeconstructNode(const String& title)
-			: Node(title, ne::NodeStyle::cyan())
+		inline DeconstructNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::cyan())
 		{
 			if constexpr (std::is_same_v<T, Int2>) {
 				addIN<T>("in", get_pin_style<T>());
@@ -484,8 +501,8 @@ namespace titian {
 	template<typename From, typename To>
 	struct CastNode : Node
 	{
-		inline CastNode(const String& title)
-			: Node(title, ne::NodeStyle::orange())
+		inline CastNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::orange())
 		{
 			addIN<From>("from", get_pin_style<From>());
 			addOUT<To>("to", get_pin_style<To>())->behaviour([this]
@@ -520,8 +537,8 @@ namespace titian {
 	template<typename T>
 	struct CompareNode : Node
 	{
-		inline CompareNode(const String& title)
-			: Node(title, ne::NodeStyle::yellow())
+		inline CompareNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::yellow())
 		{
 			addIN<T>("left", get_pin_style<T>());
 			addIN<T>("right", get_pin_style<T>());
@@ -544,8 +561,8 @@ namespace titian {
 namespace titian {
 	struct LogicNotNode : Node
 	{
-		inline LogicNotNode()
-			: Node("Not", ne::NodeStyle::pink())
+		inline LogicNotNode(NodeScript* parent)
+			: Node(parent, "Not", ne::NodeStyle::pink())
 		{
 			addIN<bool>("in", get_pin_style<bool>());
 			addOUT<bool>("out", get_pin_style<bool>())->behaviour([this]
@@ -557,8 +574,8 @@ namespace titian {
 
 	struct LogicAndNode : Node
 	{
-		inline LogicAndNode()
-			: Node("And", ne::NodeStyle::pink())
+		inline LogicAndNode(NodeScript* parent)
+			: Node(parent, "And", ne::NodeStyle::pink())
 		{
 			addIN<bool>("left", get_pin_style<bool>());
 			addIN<bool>("right", get_pin_style<bool>());
@@ -571,8 +588,8 @@ namespace titian {
 
 	struct LogicOrNode : Node
 	{
-		inline LogicOrNode()
-			: Node("Or", ne::NodeStyle::pink())
+		inline LogicOrNode(NodeScript* parent)
+			: Node(parent, "Or", ne::NodeStyle::pink())
 		{
 			addIN<bool>("left", get_pin_style<bool>());
 			addIN<bool>("right", get_pin_style<bool>());
@@ -588,8 +605,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorPlusNode : Node
 	{
-		inline OperatorPlusNode()
-			: Node("Plus", ne::NodeStyle::blue())
+		inline OperatorPlusNode(NodeScript* parent)
+			: Node(parent, "Plus", ne::NodeStyle::blue())
 		{
 			addIN<T>("left", get_pin_style<T>());
 			addIN<T>("right", get_pin_style<T>());
@@ -603,8 +620,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorMinusNode : Node
 	{
-		inline OperatorMinusNode()
-			: Node("Minus", ne::NodeStyle::blue())
+		inline OperatorMinusNode(NodeScript* parent)
+			: Node(parent, "Minus", ne::NodeStyle::blue())
 		{
 			addIN<T>("left", get_pin_style<T>());
 			addIN<T>("right", get_pin_style<T>());
@@ -618,8 +635,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorTimesNode : Node
 	{
-		inline OperatorTimesNode()
-			: Node("Times", ne::NodeStyle::blue())
+		inline OperatorTimesNode(NodeScript* parent)
+			: Node(parent, "Times", ne::NodeStyle::blue())
 		{
 			addIN<T>("left", get_pin_style<T>());
 			addIN<T>("right", get_pin_style<T>());
@@ -633,8 +650,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorDivideNode : Node
 	{
-		inline OperatorDivideNode()
-			: Node("Divide", ne::NodeStyle::blue())
+		inline OperatorDivideNode(NodeScript* parent)
+			: Node(parent, "Divide", ne::NodeStyle::blue())
 		{
 			addIN<T>("left", get_pin_style<T>());
 			addIN<T>("right", get_pin_style<T>());
@@ -648,8 +665,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorPowerNode : Node
 	{
-		inline OperatorPowerNode()
-			: Node("Power", ne::NodeStyle::blue())
+		inline OperatorPowerNode(NodeScript* parent)
+			: Node(parent, "Power", ne::NodeStyle::blue())
 		{
 			addIN<T>("left", get_pin_style<T>());
 			addIN<T>("right", get_pin_style<T>());
@@ -678,8 +695,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorModuloNode : Node
 	{
-		inline OperatorModuloNode()
-			: Node("Modulo", ne::NodeStyle::blue())
+		inline OperatorModuloNode(NodeScript* parent)
+			: Node(parent, "Modulo", ne::NodeStyle::blue())
 		{
 			addIN<T>("left", get_pin_style<T>());
 			addIN<T>("right", get_pin_style<T>());
@@ -712,8 +729,8 @@ namespace titian {
 		bool has_input = false;
 		bool has_output = false;
 
-		inline FlowNode(const String& title, bool has_input, bool has_output)
-			: Node(title, ne::NodeStyle::red()), has_input(has_input), has_output(has_output)
+		inline FlowNode(NodeScript* parent, const String& title, bool has_input, bool has_output)
+			: Node(parent, title, ne::NodeStyle::red()), has_input(has_input), has_output(has_output)
 		{
 			if (has_input) {
 				addIN<FlowNode*>("in_flow", get_pin_style<FlowNode*>());
@@ -777,8 +794,8 @@ namespace titian {
 namespace titian {
 	struct IfNode : FlowNode
 	{
-		inline IfNode()
-			: FlowNode("If", true, false)
+		inline IfNode(NodeScript* parent)
+			: FlowNode(parent, "If", true, false)
 		{
 			addIN<bool>("value", get_pin_style<bool>());
 			addOUT<FlowNode*>("if", get_pin_style<FlowNode*>())->behaviour([this] { return this; });
@@ -796,13 +813,11 @@ namespace titian {
 			}
 		}
 	};
-}
 
-namespace titian {
 	struct WhileNode : FlowNode
 	{
-		inline WhileNode()
-			: FlowNode("While", true, true)
+		inline WhileNode(NodeScript* parent)
+			: FlowNode(parent, "While", true, true)
 		{
 			addIN<bool>("value", get_pin_style<bool>());
 		}
@@ -820,13 +835,11 @@ namespace titian {
 			}
 		}
 	};
-}
 
-namespace titian {
 	struct ForNode : FlowNode
 	{
-		inline ForNode()
-			: FlowNode("For", true, true)
+		inline ForNode(NodeScript* parent)
+			: FlowNode(parent, "For", true, true)
 		{
 			addIN<int32_t>("from_incl", get_pin_style<int32_t>());
 			addIN<int32_t>("to_excl", get_pin_style<int32_t>());
@@ -849,10 +862,125 @@ namespace titian {
 }
 
 namespace titian {
+	template<typename T>
+	struct VariableNode : FlowNode, kl::NoCopy, kl::NoMove
+	{
+		String name;
+		bool* visibility_ptr = nullptr;
+		T* value_ptr = nullptr;
+
+		inline VariableNode(NodeScript* parent, const String& title, const String& var_name)
+			: FlowNode(parent, title, true, true)
+		{
+			rename(var_name);
+			addIN<T>("write", get_pin_style<T>());
+			addOUT<T>("read", get_pin_style<T>())->behaviour([this]()
+			{
+				return *value_ptr;
+			});
+		}
+
+		~VariableNode() override
+		{
+			storage().erase(name);
+		}
+
+		void serialize(Serializer* serializer, const void* helper_data) const override
+		{
+			FlowNode::serialize(serializer, helper_data);
+			serializer->write_string("var_name", name);
+			serializer->write_bool("is_public", *visibility_ptr);
+		}
+
+		void deserialize(const Serializer* serializer, const void* helper_data) override
+		{
+			FlowNode::deserialize(serializer, helper_data);
+			String temp_name;
+			serializer->read_string("var_name", temp_name);
+			rename(temp_name);
+			serializer->read_bool("is_public", *visibility_ptr);
+		}
+
+		void draw() override
+		{
+			String temp_name = name;
+			im::SetNextItemWidth(100.0f);
+			if (im::InputText("##name", &temp_name)) {
+				rename(temp_name);
+			}
+			im::Checkbox("public", visibility_ptr);
+		}
+
+		void call() override
+		{
+			*value_ptr = get_value<T>("write");
+			call_next();
+		}
+
+		inline void rename(const String& new_name)
+		{
+			bool old_vis = false;
+			if (visibility_ptr) {
+				old_vis = *visibility_ptr;
+			}
+			storage().erase(name);
+			name = !new_name.empty() ? new_name : kl::random::gen_string(10);
+			for (int i = 1; storage().contains(name); i++) {
+				name = kl::format(new_name, '_', i);
+			}
+			visibility_ptr = &storage()[name].first;
+			value_ptr = &storage()[name].second;
+			*visibility_ptr = old_vis;
+		}
+
+	private:
+		NodeScript::VarStorage<T>& storage() const
+		{
+			if constexpr (std::is_same_v<T, bool>) {
+				return parent->bool_storage;
+			}
+			else if constexpr (std::is_same_v<T, int32_t>) {
+				return parent->int_storage;
+			}
+			else if constexpr (std::is_same_v<T, Int2>) {
+				return parent->int2_storage;
+			}
+			else if constexpr (std::is_same_v<T, float>) {
+				return parent->float_storage;
+			}
+			else if constexpr (std::is_same_v<T, Float2>) {
+				return parent->float2_storage;
+			}
+			else if constexpr (std::is_same_v<T, Float3>) {
+				return parent->float3_storage;
+			}
+			else if constexpr (std::is_same_v<T, Float4>) {
+				return parent->float4_storage;
+			}
+			else if constexpr (std::is_same_v<T, Complex>) {
+				return parent->complex_storage;
+			}
+			else if constexpr (std::is_same_v<T, Quaternion>) {
+				return parent->quaternion_storage;
+			}
+			else if constexpr (std::is_same_v<T, kl::Color>) {
+				return parent->color_storage;
+			}
+			else if constexpr (std::is_same_v<T, String>) {
+				return parent->string_storage;
+			}
+			else {
+				static_assert(false, "Unknown var node storage type");
+			}
+		}
+	};
+}
+
+namespace titian {
 	struct PrintNode : FlowNode
 	{
-		inline PrintNode()
-			: FlowNode("Print", true, true)
+		inline PrintNode(NodeScript* parent)
+			: FlowNode(parent, "Print", true, true)
 		{
 			addIN<String>("value", get_pin_style<String>());
 		}

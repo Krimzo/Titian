@@ -12,18 +12,39 @@ void titian::GUISectionScriptingParameters::render_gui()
 	GUILayer* gui_layer = Layers::get<GUILayer>();
 	Scene* scene = &Layers::get<GameLayer>()->scene;
 
-	Vector<Pair<String, Map<String, cs::Boxed_Value>>> scripts;
+	Vector<Pair<String, Map<String, Pair<const std::type_info*, void*>>>> scripts;
 	scripts.reserve(scene->scripts.size());
 	for (auto& [name, script] : scene->scripts) {
-		InterpScript* interp_script = dynamic_cast<InterpScript*>(&script);
-		if (!interp_script) {
-			continue;
+		Map<String, Pair<const std::type_info*, void*>> parameters;
+		if (InterpScript* interp_script = dynamic_cast<InterpScript*>(&script)) {
+			for (auto& [name, value] : interp_script->get_parameters()) {
+				parameters[name] = { value.get_type_info().bare_type_info(), value.get_ptr() };
+			}
 		}
-		Map<String, cs::Boxed_Value> parameters = interp_script->get_parameters();
-		if (parameters.empty()) {
-			continue;
+		else if (NodeScript* node_script = dynamic_cast<NodeScript*>(&script)) {
+			auto helper = [&]<typename T>(NodeScript::VarStorage<T>& storage)
+			{
+				for (auto& [name, value] : storage) {
+					if (value.first) {
+						parameters[name] = { &typeid(T), &value.second };
+					}
+				}
+			};
+			helper(node_script->bool_storage);
+			helper(node_script->int_storage);
+			helper(node_script->int2_storage);
+			helper(node_script->float_storage);
+			helper(node_script->float2_storage);
+			helper(node_script->float3_storage);
+			helper(node_script->float4_storage);
+			helper(node_script->complex_storage);
+			helper(node_script->quaternion_storage);
+			helper(node_script->color_storage);
+			helper(node_script->string_storage);
 		}
-		scripts.emplace_back(name, parameters);
+		if (!parameters.empty()) {
+			scripts.emplace_back(name, parameters);
+		}
 	}
 
 	im::PushFont(gui_layer->roboto_font_small);
@@ -35,8 +56,8 @@ void titian::GUISectionScriptingParameters::render_gui()
 				im::Separator();
 			}
 			im::Text(kl::format("Script ", name).c_str());
-			for (auto& [name, parameter] : parameters) {
-				display_parameter_editor(script_counter, name, parameter);
+			for (auto& [name, pair] : parameters) {
+				display_parameter_editor(script_counter, name, *pair.first, pair.second);
 			}
 			script_counter += 1;
 		}
@@ -46,10 +67,8 @@ void titian::GUISectionScriptingParameters::render_gui()
 	im::PopFont();
 }
 
-void titian::GUISectionScriptingParameters::display_parameter_editor(const int script_id, const String& name, const cs::Boxed_Value& parameter)
+void titian::GUISectionScriptingParameters::display_parameter_editor(const int script_id, const String& name, const std::type_info& type, void* ptr)
 {
-	const cs::Type_Info& type = parameter.get_type_info();
-	void* ptr = parameter.get_ptr();
 	if (!ptr) {
 		return;
 	}
