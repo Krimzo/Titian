@@ -280,11 +280,13 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
         }
         im::SliderInt("Frame", &m_frame_index, 0, kl::max<int>((int) animation->meshes.size() - 1, 0));
 
-        const float duration_seconds = animation->duration_in_ticks / animation->ticks_per_second;
+        const float duration_seconds = (animation->animation_type == AnimationType::SKELETAL)
+            ? (animation->duration_in_ticks / animation->ticks_per_second)
+            : (animation->meshes.size() / animation->ticks_per_second);
         float temp_anim_time = fmod(m_timer.elapsed(), duration_seconds);
 		im::SliderFloat("Time", &temp_anim_time, 0.0f, duration_seconds);
 
-        if (im::Checkbox("Animating?", &m_animating)) {
+        if (im::Checkbox("Animating", &m_animating)) {
             if (m_animating) {
                 m_timer.restart();
             }
@@ -301,7 +303,7 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
         im::SameLine();
         gui_colored_text(selected_animation, gui_layer->special_color);
 
-        static const Map<AnimationType, String> animation_type_names{
+        static const Map<int32_t, String> animation_type_names{
             { AnimationType::SEQUENTIAL, "Sequential" },
             { AnimationType::SKELETAL, "Skeletal" },
 		};
@@ -310,17 +312,22 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
             for (auto& [type, name] : animation_type_names) {
 				if (im::Selectable(name.c_str(), animation->animation_type == type)) {
 					animation->animation_type = type;
+                    m_start_mesh_index = 0;
 				}
 			}
 			im::EndCombo();
         }
 
         im::DragFloat("Ticks Per Second", &animation->ticks_per_second, 1.0f, 0.0f, 10'000.0f);
-        im::DragFloat("Duration in Ticks", &animation->duration_in_ticks, 1.0f, 0.0f, 10'000.0f);
-
-        int mesh_count = (int) animation->meshes.size();
-        if (im::DragInt("Mesh Count", &mesh_count, 1.0f, 0, 10'000)) {
-            animation->meshes.resize(mesh_count);
+        if (animation->animation_type == AnimationType::SKELETAL) {
+            im::DragFloat("Duration in Ticks", &animation->duration_in_ticks, 1.0f, 1.0f, 10'000.0f);
+            animation->meshes.resize(1);
+        }
+        else {
+            int mesh_count = (int) animation->meshes.size();
+            if (im::DragInt("Mesh Count", &mesh_count, 1.0f, 0, 10'000)) {
+                animation->meshes.resize(mesh_count);
+            }
         }
 
         for (int i = m_start_mesh_index; i < (m_start_mesh_index + 10) && i < (int) animation->meshes.size(); i++) {

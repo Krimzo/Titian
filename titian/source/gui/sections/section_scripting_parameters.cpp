@@ -30,7 +30,7 @@ void titian::GUISectionScriptingParameters::render_gui()
 		Map<String, Pair<const std::type_info*, void*>> parameters;
 		if (InterpScript* interp_script = dynamic_cast<InterpScript*>(&script)) {
 			for (auto& [name, value] : interp_script->get_parameters()) {
-				parameters[name] = { value.get_type_info().bare_type_info(), value.get_ptr() };
+				parameters[name.substr(2)] = { value.get_type_info().bare_type_info(), value.get_ptr() };
 			}
 		}
 		else if (NodeScript* node_script = dynamic_cast<NodeScript*>(&script)) {

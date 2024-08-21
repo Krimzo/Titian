@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::Shader::Shader(ShaderType type, kl::GPU* gpu)
-	: type(type), m_gpu(gpu)
+titian::Shader::Shader(kl::GPU* gpu, ShaderType type)
+	: m_gpu(gpu), shader_type(type)
 {
 	switch (type)
 	{
@@ -13,23 +13,23 @@ titian::Shader::Shader(ShaderType type, kl::GPU* gpu)
 
 void titian::Shader::serialize(Serializer* serializer, const void* helper_data) const
 {
-	serializer->write_int("type", type);
+	serializer->write_int("shader_type", shader_type);
 	serializer->write_string("data_buffer", data_buffer);
 }
 
 void titian::Shader::deserialize(const Serializer* serializer, const void* helper_data)
 {
-	serializer->read_int("type", (int32_t&) type);
+	serializer->read_int("shader_type", shader_type);
 	serializer->read_string("data_buffer", data_buffer);
 	this->reload();
 }
 
 void titian::Shader::reload()
 {
-	if (type == ShaderType::MATERIAL) {
+	if (shader_type == ShaderType::MATERIAL) {
 		reload_for_material();
 	}
-	else if (type == ShaderType::CAMERA) {
+	else if (shader_type == ShaderType::CAMERA) {
 		reload_for_camera();
 	}
 }

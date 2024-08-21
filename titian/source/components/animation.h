@@ -42,9 +42,9 @@ namespace titian {
 	class Animation : public Serializable
 	{
 	public:
-		AnimationType animation_type = AnimationType::SEQUENTIAL;
+		int32_t animation_type = AnimationType::SEQUENTIAL;
 		float ticks_per_second = 30.0f;
-		float duration_in_ticks = 0.0f;
+		float duration_in_ticks = 1.0f;
 
 		Vector<String> meshes;
 

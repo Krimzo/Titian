@@ -29,7 +29,7 @@ namespace titian {
 		return { typeid(T).name(), [=](NodeScript* script) { return std::shared_ptr<T>(new T(script, args...)); } };
 	}
 
-	static const Map<String, Function<std::shared_ptr<Node>(NodeScript*)>> serial_node_generators
+	static const Vector<Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>>> serial_node_generators
 	{
 		// base node
 		serial_generator_helper<Node>("", ne::NodeStyle::red()),
@@ -177,6 +177,12 @@ namespace titian {
 		serial_generator_helper<WhileNode>(),
 		serial_generator_helper<ForNode>(),
 
+		// is
+		serial_generator_helper<IsTypeNode<Entity, Camera>>(""),
+		serial_generator_helper<IsTypeNode<Entity, AmbientLight>>(""),
+		serial_generator_helper<IsTypeNode<Entity, PointLight>>(""),
+		serial_generator_helper<IsTypeNode<Entity, DirectionalLight>>(""),
+
 		// getters
 		serial_generator_helper<GetSceneNode>(),
 		serial_generator_helper<GetMeshNode>(),
@@ -185,6 +191,15 @@ namespace titian {
 		serial_generator_helper<GetMaterialNode>(),
 		serial_generator_helper<GetShaderNode>(),
 		serial_generator_helper<GetEntityNode>(),
+
+		// setters
+		serial_generator_helper<SetSceneNode>(),
+		serial_generator_helper<SetMeshNode>(),
+		serial_generator_helper<SetAnimationNode>(),
+		serial_generator_helper<SetTextureNode>(),
+		serial_generator_helper<SetMaterialNode>(),
+		serial_generator_helper<SetShaderNode>(),
+		serial_generator_helper<SetEntityNode>(),
 
 		// functions
 		serial_generator_helper<PrintNode>(),
@@ -198,7 +213,7 @@ namespace titian {
 		return { name, [=](NodeScript* script) { return std::shared_ptr<T>(new T(script, args...)); } };
 	}
 
-	static const std::map<String, Vector<Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>>>> ui_node_generators = {
+	static const Vector<Pair<String, Vector<Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>>>>> ui_node_generators = {
 		{ "Pointer",
 		{
 		ui_generator_helper<VariableNode<void*>>("Variable Pointer", "Variable Pointer", "ptr_var"),
@@ -383,6 +398,15 @@ namespace titian {
 		},
 		},
 
+		{ "Is",
+		{
+			ui_generator_helper<IsTypeNode<Entity, Camera>>("Is Camera", "Is Camera"),
+			ui_generator_helper<IsTypeNode<Entity, AmbientLight>>("Is Ambient Light", "Is Ambient Light"),
+			ui_generator_helper<IsTypeNode<Entity, PointLight>>("Is Point Light", "Is Point Light"),
+			ui_generator_helper<IsTypeNode<Entity, DirectionalLight>>("Is Directional Light", "Is Directional Light"),
+		},
+		},
+
 		{ "Getters",
 		{
 			ui_generator_helper<GetSceneNode>("Get Scene"),
@@ -392,6 +416,18 @@ namespace titian {
 			ui_generator_helper<GetMaterialNode>("Get Material"),
 			ui_generator_helper<GetShaderNode>("Get Shader"),
 			ui_generator_helper<GetEntityNode>("Get Entity"),
+		},
+		},
+
+		{ "Setters",
+		{
+			ui_generator_helper<SetSceneNode>("Set Scene"),
+			ui_generator_helper<SetMeshNode>("Set Mesh"),
+			ui_generator_helper<SetAnimationNode>("Set Animation"),
+			ui_generator_helper<SetTextureNode>("Set Texture"),
+			ui_generator_helper<SetMaterialNode>("Set Material"),
+			ui_generator_helper<SetShaderNode>("Set Shader"),
+			ui_generator_helper<SetEntityNode>("Set Entity"),
 		},
 		},
 		

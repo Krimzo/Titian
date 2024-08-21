@@ -116,18 +116,24 @@ namespace titian {
 			setStyle(style);
 		}
 
-		template<typename T>
-		const T& get_value(const String& id)
+		inline bool input_connected(const char* uid)
 		{
-			ne::Pin* ptr = this->inPin(id);
+			ne::Pin* ptr = this->inPin(uid);
+			return ptr->isConnected();
+		}
+
+		template<typename T>
+		const T& get_value(const char* uid)
+		{
+			ne::Pin* ptr = this->inPin(uid);
 			ne::InPin<T>* in_ptr = reinterpret_cast<ne::InPin<T>*>(ptr);
 			return in_ptr->val();
 		}
 
 		template<typename From, typename To>
-		To get_casted_value(const String& id)
+		To get_casted_value(const char* uid)
 		{
-			return (To) get_value<From>(id);
+			return (To) get_value<From>(uid);
 		}
 	};
 }
@@ -399,7 +405,9 @@ namespace titian {
 
 		void call() override
 		{
-			var_ptr->store<T>(get_value<T>("write"));
+			if (input_connected("write")) {
+				var_ptr->store<T>(get_value<T>("write"));
+			}
 			call_next();
 		}
 
@@ -930,12 +938,39 @@ namespace titian {
 	};
 }
 
+// is type node
+namespace titian {
+	template<typename From, typename To>
+		requires std::is_base_of_v<From, To>
+	struct IsTypeNode : FlowNode
+	{
+		IsTypeNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, false, ne::NodeStyle::orange())
+		{
+			addIN<void*>("ptr");
+			addOUT<FlowNode*>("is")->behaviour([this]() { return this; });
+			addOUT<FlowNode*>("not")->behaviour([this]() { return this; });
+		}
+
+		void call() override
+		{
+			From* ptr = static_cast<From*>(get_value<void*>("ptr"));
+			if (dynamic_cast<To*>(ptr)) {
+				call_next("is");
+			}
+			else {
+				call_next("not");
+			}
+		}
+	};
+}
+
 // getter nodes
 namespace titian {
 	struct GetSceneNode : Node
 	{
 		GetSceneNode(NodeScript* parent)
-			: Node(parent, "Scene", ne::NodeStyle::purple())
+			: Node(parent, "Get Scene", ne::NodeStyle::purple())
 		{
 			addIN<String>("mesh_name");
 			addOUT<void*>("mesh")->behaviour([this]()
@@ -978,13 +1013,35 @@ namespace titian {
 				Scene& scene = *Layers::get<GameLayer>()->scene;
 				return scene.helper_get_entity(get_value<String>("entity_name"));
 			});
+
+			addOUT<Float3>("gravity")->behaviour([this]()
+			{
+				Scene& scene = *Layers::get<GameLayer>()->scene;
+				return scene.gravity();
+			});
+
+			addOUT<String>("main_camera_name")->behaviour([this]()
+			{
+				Scene& scene = *Layers::get<GameLayer>()->scene;
+				return scene.main_camera_name;
+			});
+			addOUT<String>("main_ambient_light_name")->behaviour([this]()
+			{
+				Scene& scene = *Layers::get<GameLayer>()->scene;
+				return scene.main_ambient_light_name;
+			});
+			addOUT<String>("main_directional_light_name")->behaviour([this]()
+			{
+				Scene& scene = *Layers::get<GameLayer>()->scene;
+				return scene.main_directional_light_name;
+			});
 		}
 	};
 
 	struct GetMeshNode : Node
 	{
 		GetMeshNode(NodeScript* parent)
-			: Node(parent, "Mesh", ne::NodeStyle::purple())
+			: Node(parent, "Get Mesh", ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addOUT<int32_t>("topology")->behaviour([this]()
@@ -1007,10 +1064,10 @@ namespace titian {
 	struct GetAnimationNode : Node
 	{
 		GetAnimationNode(NodeScript* parent)
-			: Node(parent, "Animation", ne::NodeStyle::purple())
+			: Node(parent, "Get Animation", ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
-			addOUT<int32_t>("type")->behaviour([this]()
+			addOUT<int32_t>("animation_type")->behaviour([this]()
 			{
 				if (Animation* ptr = get_casted_value<void*, Animation*>("ptr")) {
 					return (int32_t) ptr->animation_type;
@@ -1037,7 +1094,7 @@ namespace titian {
 	struct GetTextureNode : Node
 	{
 		GetTextureNode(NodeScript* parent)
-			: Node(parent, "Texture", ne::NodeStyle::purple())
+			: Node(parent, "Get Texture", ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addOUT<Int2>("size")->behaviour([this]()
@@ -1053,7 +1110,7 @@ namespace titian {
 	struct GetMaterialNode : Node
 	{
 		GetMaterialNode(NodeScript* parent)
-			: Node(parent, "Material", ne::NodeStyle::purple())
+			: Node(parent, "Get Material", ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addOUT<Float4>("color")->behaviour([this]()
@@ -1125,13 +1182,13 @@ namespace titian {
 	struct GetShaderNode : Node
 	{
 		GetShaderNode(NodeScript* parent)
-			: Node(parent, "Shader", ne::NodeStyle::purple())
+			: Node(parent, "Get Shader", ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
-			addOUT<int32_t>("type")->behaviour([this]()
+			addOUT<int32_t>("shader_type")->behaviour([this]()
 			{
 				if (Shader* ptr = get_casted_value<void*, Shader*>("ptr")) {
-					return (int32_t) ptr->type;
+					return ptr->shader_type;
 				}
 				return int32_t{};
 			});
@@ -1141,7 +1198,7 @@ namespace titian {
 	struct GetEntityNode : Node
 	{
 		GetEntityNode(NodeScript* parent)
-			: Node(parent, "Entity", ne::NodeStyle::purple())
+			: Node(parent, "Get Entity", ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addOUT<Float3>("scale")->behaviour([this]()
@@ -1228,6 +1285,314 @@ namespace titian {
 				}
 				return bool{};
 			});
+		}
+	};
+}
+
+// setter nodes
+namespace titian {
+	struct SetSceneNode : FlowNode
+	{
+		Mesh* mesh_ptr = nullptr;
+		Animation* animation_ptr = nullptr;
+		Texture* texture_ptr = nullptr;
+		Material* material_ptr = nullptr;
+		Shader* shader_ptr = nullptr;
+		Entity* entity_ptr = nullptr;
+
+		SetSceneNode(NodeScript* parent)
+			: FlowNode(parent, "Set Scene", true, true, ne::NodeStyle::purple())
+		{
+			addIN<String>("mesh_name");
+			addOUT<void*>("new mesh")->behaviour([this]() { return mesh_ptr; });
+
+			addIN<String>("animation_name");
+			addOUT<void*>("new animation")->behaviour([this]() { return animation_ptr; });
+
+			addIN<String>("texture_name");
+			addOUT<void*>("new texture")->behaviour([this]() { return texture_ptr; });
+
+			addIN<String>("material_name");
+			addOUT<void*>("new material")->behaviour([this]() { return material_ptr; });
+
+			addIN<String>("shader_name");
+			addOUT<void*>("new shader")->behaviour([this]() { return shader_ptr; });
+
+			addIN<String>("entity_name");
+			addOUT<void*>("new entity")->behaviour([this]() { return entity_ptr; });
+
+			addIN<Float3>("gravity");
+			addIN<String>("main_camera_name");
+			addIN<String>("main_ambient_light_name");
+			addIN<String>("main_directional_light_name");
+		}
+
+		void call() override
+		{
+			Scene* scene = scene = &Layers::get<GameLayer>()->scene;
+			if (input_connected("mesh_name")) {
+				mesh_ptr = scene->helper_new_mesh(get_value<String>("mesh_name"));
+			}
+			if (input_connected("animation_name")) {
+				animation_ptr = scene->helper_new_animation(get_value<String>("animation_name"));
+			}
+			if (input_connected("texture_name")) {
+				texture_ptr = scene->helper_new_texture(get_value<String>("texture_name"));
+			}
+			if (input_connected("material_name")) {
+				material_ptr = scene->helper_new_material(get_value<String>("material_name"));
+			}
+			if (input_connected("shader_name")) {
+				shader_ptr = scene->helper_new_shader(get_value<String>("shader_name"));
+			}
+			if (input_connected("entity_name")) {
+				entity_ptr = scene->helper_new_entity(get_value<String>("entity_name"));
+			}
+			if (input_connected("gravity")) {
+				scene->set_gravity(get_value<Float3>("gravity"));
+			}
+			if (input_connected("main_camera_name")) {
+				scene->main_camera_name = get_value<String>("main_camera_name");
+			}
+			if (input_connected("main_ambient_light_name")) {
+				scene->main_ambient_light_name = get_value<String>("main_ambient_light_name");
+			}
+			if (input_connected("main_directional_light_name")) {
+				scene->main_directional_light_name = get_value<String>("main_directional_light_name");
+			}
+			call_next();
+		}
+	};
+
+	struct SetMeshNode : FlowNode
+	{
+		SetMeshNode(NodeScript* parent)
+			: FlowNode(parent, "Set Mesh", true, true, ne::NodeStyle::purple())
+		{
+			addIN<void*>("ptr");
+			addIN<int32_t>("topology");
+			addIN<bool>("wireframe");
+		}
+
+		void call() override
+		{
+			Mesh* ptr = get_casted_value<void*, Mesh*>("ptr");
+			if (!ptr) {
+				return; // don't call next
+			}
+
+			if (input_connected("topology")) {
+				ptr->topology = get_value<int32_t>("topology");
+			}
+			if (input_connected("wireframe")) {
+				ptr->render_wireframe = get_value<bool>("wireframe");
+			}
+			call_next();
+		}
+	};
+
+	struct SetAnimationNode : FlowNode
+	{
+		SetAnimationNode(NodeScript* parent)
+			: FlowNode(parent, "Set Animation", true, true, ne::NodeStyle::purple())
+		{
+			addIN<void*>("ptr");
+			addIN<int32_t>("animation_type");
+			addIN<float>("ticks per second");
+			addIN<float>("duration ticks");
+		}
+
+		void call() override
+		{
+			Animation* ptr = get_casted_value<void*, Animation*>("ptr");
+			if (!ptr) {
+				return; // don't call next
+			}
+
+			if (input_connected("animation_type")) {
+				ptr->animation_type = get_value<int32_t>("animation_type");
+			}
+			if (input_connected("ticks per second")) {
+				ptr->ticks_per_second = get_value<float>("ticks per second");
+			}
+			if (input_connected("duration ticks")) {
+				ptr->duration_in_ticks = get_value<float>("duration ticks");
+			}
+			call_next();
+		}
+	};
+
+	struct SetTextureNode : FlowNode
+	{
+		SetTextureNode(NodeScript* parent)
+			: FlowNode(parent, "Set Texture", true, true, ne::NodeStyle::purple())
+		{
+			addIN<void*>("ptr");
+			addIN<Int2>("size");
+		}
+
+		void call() override
+		{
+			Texture* ptr = get_casted_value<void*, Texture*>("ptr");
+			if (!ptr) {
+				return; // don't call next
+			}
+
+			if (input_connected("size")) {
+				ptr->data_buffer.resize(get_value<Int2>("size"));
+				if (ptr->is_cube()) {
+					ptr->reload_as_cube();
+				}
+				else {
+					ptr->reload_as_2D();
+				}
+			}
+			call_next();
+		}
+	};
+
+	struct SetMaterialNode : FlowNode
+	{
+		SetMaterialNode(NodeScript* parent)
+			: FlowNode(parent, "Set Material", true, true, ne::NodeStyle::purple())
+		{
+			addIN<void*>("ptr");
+			addIN<Float4>("color");
+			addIN<float>("texture_blend");
+			addIN<float>("reflection_factor");
+			addIN<float>("refraction_factor");
+			addIN<float>("refraction_index");
+			addIN<String>("color_map_name");
+			addIN<String>("normal_map_name");
+			addIN<String>("roughness_map_name");
+			addIN<String>("shader_name");
+		}
+
+		void call() override
+		{
+			Material* ptr = get_casted_value<void*, Material*>("ptr");
+			if (!ptr) {
+				return; // don't call next
+			}
+
+			if (input_connected("color")) {
+				ptr->color = get_value<Float4>("color");
+			}
+			if (input_connected("texture_blend")) {
+				ptr->texture_blend = get_value<float>("texture_blend");
+			}
+			if (input_connected("reflection_factor")) {
+				ptr->reflection_factor = get_value<float>("reflection_factor");
+			}
+			if (input_connected("refraction_factor")) {
+				ptr->refraction_factor = get_value<float>("refraction_factor");
+			}
+			if (input_connected("refraction_index")) {
+				ptr->refraction_index = get_value<float>("refraction_index");
+			}
+			if (input_connected("color_map_name")) {
+				ptr->color_map_name = get_value<String>("color_map_name");
+			}
+			if (input_connected("normal_map_name")) {
+				ptr->normal_map_name = get_value<String>("normal_map_name");
+			}
+			if (input_connected("roughness_map_name")) {
+				ptr->roughness_map_name = get_value<String>("roughness_map_name");
+			}
+			if (input_connected("shader_name")) {
+				ptr->shader_name = get_value<String>("shader_name");
+			}
+			call_next();
+		}
+	};
+
+	struct SetShaderNode : FlowNode
+	{
+		SetShaderNode(NodeScript* parent)
+			: FlowNode(parent, "Set Shader", true, true, ne::NodeStyle::purple())
+		{
+			addIN<void*>("ptr");
+			addIN<int32_t>("shader_type");
+		}
+
+		void call() override
+		{
+			Shader* ptr = get_casted_value<void*, Shader*>("ptr");
+			if (!ptr) {
+				return; // don't call next
+			}
+
+			if (input_connected("shader_type")) {
+				ptr->shader_type = get_value<int32_t>("shader_type");
+			}
+			call_next();
+		}
+	};
+
+	struct SetEntityNode : FlowNode
+	{
+		SetEntityNode(NodeScript* parent)
+			: FlowNode(parent, "Set Entity", true, true, ne::NodeStyle::purple())
+		{
+			addIN<void*>("ptr");
+			addIN<Float3>("scale");
+			addIN<Float3>("rotation");
+			addIN<Float3>("position");
+			addIN<bool>("dynamic");
+			addIN<bool>("gravity");
+			addIN<float>("mass");
+			addIN<Float3>("velocity");
+			addIN<Float3>("angular");
+			addIN<String>("animation_name");
+			addIN<String>("material_name");
+			addIN<String>("collider_mesh_name");
+			addIN<bool>("casts_shadows");
+		}
+
+		void call() override
+		{
+			Entity* ptr = get_casted_value<void*, Entity*>("ptr");
+			if (!ptr) {
+				return; // don't call next
+			}
+
+			if (input_connected("scale")) {
+				ptr->scale = get_value<Float3>("scale");
+			}
+			if (input_connected("rotation")) {
+				ptr->set_rotation(get_value<Float3>("rotation"));
+			}
+			if (input_connected("position")) {
+				ptr->set_position(get_value<Float3>("position"));
+			}
+			if (input_connected("dynamic")) {
+				ptr->set_dynamic(get_value<bool>("dynamic"));
+			}
+			if (input_connected("gravity")) {
+				ptr->set_gravity(get_value<bool>("gravity"));
+			}
+			if (input_connected("mass")) {
+				ptr->set_mass(get_value<float>("mass"));
+			}
+			if (input_connected("velocity")) {
+				ptr->set_velocity(get_value<Float3>("velocity"));
+			}
+			if (input_connected("angular")) {
+				ptr->set_angular(get_value<Float3>("angular"));
+			}
+			if (input_connected("animation_name")) {
+				ptr->animation_name = get_value<String>("animation_name");
+			}
+			if (input_connected("material_name")) {
+				ptr->material_name = get_value<String>("material_name");
+			}
+			if (input_connected("collider_mesh_name")) {
+				ptr->collider_mesh_name = get_value<String>("collider_mesh_name");
+			}
+			if (input_connected("casts_shadows")) {
+				ptr->casts_shadows = get_value<bool>("casts_shadows");
+			}
+			call_next();
 		}
 	};
 }

@@ -112,7 +112,7 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
             camera->shader_name = "/";
         }
         for (auto& [shader_name, shader] : scene->shaders) {
-            if (shader->type != ShaderType::CAMERA) {
+            if (shader->shader_type != ShaderType::CAMERA) {
                 continue;
             }
             if (im::Selectable(shader_name.c_str(), shader_name == camera->shader_name)) {

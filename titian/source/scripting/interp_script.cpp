@@ -847,13 +847,13 @@ const int load_types = [&]
 	cs::utility::add_class<Shader>(*INTERP_SCRIPT_MODULE, "Shader",
 	{},
 	{
-		{ cs::fun(&Shader::type), "type" },
+		{ cs::fun(&Shader::shader_type), "shader_type" },
 		{ cs::fun(&Shader::data_buffer), "data_buffer" },
 
 		{ cs::fun(&Shader::reload), "reload" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Shader"] = "Custom shader override for a material.";
-	INTERP_SCRIPT_MEMBERS["type"] = "Type of the object.";
+	INTERP_SCRIPT_MEMBERS["shader_type"] = "Shader type.";
 
 	// Entity
 	cs::utility::add_class<Entity>(*INTERP_SCRIPT_MODULE, "Entity",

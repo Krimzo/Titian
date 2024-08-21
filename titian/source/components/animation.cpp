@@ -89,7 +89,7 @@ void titian::Animation::serialize(Serializer* serializer, const void* helper_dat
 
 void titian::Animation::deserialize(const Serializer* serializer, const void* helper_data)
 {
-	serializer->read_int("animation_type", (int32_t&) animation_type);
+	serializer->read_int("animation_type", animation_type);
 	serializer->read_float("ticks_per_second", ticks_per_second);
 	serializer->read_float("duration_in_ticks", duration_in_ticks);
 

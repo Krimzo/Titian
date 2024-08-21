@@ -25,11 +25,11 @@ void titian::GUISectionShaderEditor::render_gui()
 				const String name = gui_input_continuous("##CreateShaderInput");
 				if (!name.empty() && !scene->helper_contains_shader(name)) {
 					if (im::MenuItem("New Material Shader")) {
-						scene->shaders[name] = new Shader(ShaderType::MATERIAL, gpu);
+						scene->shaders[name] = new Shader(gpu, ShaderType::MATERIAL);
 						im::CloseCurrentPopup();
 					}
 					if (im::MenuItem("New Camera Shader")) {
-						scene->shaders[name] = new Shader(ShaderType::CAMERA, gpu);
+						scene->shaders[name] = new Shader(gpu, ShaderType::CAMERA);
 						im::CloseCurrentPopup();
 					}
 				}
@@ -68,11 +68,10 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 			continue;
 		}
 
-		// Type
-		if (shader->type == ShaderType::MATERIAL) {
+		if (shader->shader_type == ShaderType::MATERIAL) {
 			im::Button("MATERIAL");
 		}
-		else if (shader->type == ShaderType::CAMERA) {
+		else if (shader->shader_type == ShaderType::CAMERA) {
 			im::Button("CAMERA");
 		}
 		else {
@@ -136,7 +135,7 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 
 void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) const
 {
-	static const Map<ShaderType, String> shader_type_names = {
+	static const Map<int32_t, String> shader_type_names = {
 		{ ShaderType::MATERIAL, "Material" },
 		{ ShaderType::CAMERA, "Camera" },
 	};
@@ -150,10 +149,10 @@ void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) cons
 		im::SameLine();
 		gui_colored_text(selected_shader, gui_layer->special_color);
 
-		if (im::BeginCombo("Shader Type", shader_type_names.at(shader->type).c_str())) {
+		if (im::BeginCombo("Shader Type", shader_type_names.at(shader->shader_type).c_str())) {
 			for (auto& [type, name] : shader_type_names) {
-				if (im::Selectable(name.c_str(), shader->type == type)) {
-					shader->type = type;
+				if (im::Selectable(name.c_str(), shader->shader_type == type)) {
+					shader->shader_type = type;
 				}
 			}
 			im::EndCombo();

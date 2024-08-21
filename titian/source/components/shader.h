@@ -4,7 +4,7 @@
 
 
 namespace titian {
-	enum ShaderType : int
+	enum ShaderType : int32_t
 	{
 		MATERIAL = 0,
 		CAMERA = 1,
@@ -17,11 +17,11 @@ namespace titian {
 	public:
 		using Data = String;
 
-		ShaderType type = ShaderType::MATERIAL;
+		int32_t shader_type = ShaderType::MATERIAL;
 		Data data_buffer = {};
 		kl::RenderShaders graphics_buffer = {};
 
-		Shader(ShaderType type, kl::GPU* gpu);
+		Shader(kl::GPU* gpu, ShaderType type);
 
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;

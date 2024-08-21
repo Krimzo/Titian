@@ -4,7 +4,7 @@
 
 
 namespace titian {
-    enum CameraType : int
+    enum CameraType : int32_t
     {
 		PERSPECTIVE = 0,
 		ORTHOGRAPHIC = 1,
@@ -15,7 +15,7 @@ namespace titian {
     class Camera : public Entity
     {
     public:
-        int camera_type = CameraType::PERSPECTIVE;
+        int32_t camera_type = CameraType::PERSPECTIVE;
 
         float field_of_view = 75.0f;
         float aspect_ratio = 1.7778f;
