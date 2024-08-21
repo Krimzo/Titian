@@ -19,20 +19,39 @@ namespace titian {
 		FlowNode* on_collision_node = nullptr;
 		FlowNode* on_ui_node = nullptr;
 
-		template<typename T>
-		using VarStorage = Map<String, Pair<bool, T>>;
+		struct VarInfo
+		{
+			using ValueType = std::variant<
+				void*,
+				bool,
+				int32_t,
+				Int2,
+				float,
+				Float2,
+				Float3,
+				Float4,
+				Complex,
+				Quaternion,
+				Color,
+				String>;
 
-		VarStorage<bool> bool_storage;
-		VarStorage<int32_t> int_storage;
-		VarStorage<Int2> int2_storage;
-		VarStorage<float> float_storage;
-		VarStorage<Float2> float2_storage;
-		VarStorage<Float3> float3_storage;
-		VarStorage<Float4> float4_storage;
-		VarStorage<Complex> complex_storage;
-		VarStorage<Quaternion> quaternion_storage;
-		VarStorage<Color> color_storage;
-		VarStorage<String> string_storage;
+			bool global = false;
+			ValueType value = {};
+
+			template<typename T>
+			T& get()
+			{
+				return std::get<T>(value);
+			}
+
+			template<typename T>
+			T& store(const T& data)
+			{
+				return value.emplace<T>(data);
+			}
+		};
+
+		Map<String, VarInfo> var_storage;
 
 		NodeScript();
 
@@ -104,6 +123,12 @@ namespace titian {
 			ne::InPin<T>* in_ptr = reinterpret_cast<ne::InPin<T>*>(ptr);
 			return in_ptr->val();
 		}
+
+		template<typename From, typename To>
+		To get_casted_value(const String& id)
+		{
+			return (To) get_value<From>(id);
+		}
 	};
 }
 
@@ -157,6 +182,7 @@ namespace titian {
 			call_next();
 		}
 
+	protected:
 		inline void call_next(const StringView& pin_name = "out_flow")
 		{
 			auto pin = this->outPin(pin_name.data());
@@ -324,18 +350,19 @@ namespace titian {
 	template<typename T>
 	struct VariableNode : FlowNode, kl::NoCopy, kl::NoMove
 	{
+		using VarInfo = NodeScript::VarInfo;
+
 		String name;
-		bool* visibility_ptr = nullptr;
-		T* value_ptr = nullptr;
+		VarInfo* var_ptr = nullptr;
 
 		inline VariableNode(NodeScript* parent, const String& title, const String& var_name)
-			: FlowNode(parent, title, true, true, ne::NodeStyle::gray())
+			: FlowNode(parent, title, true, true, ne::NodeStyle::cyan())
 		{
 			rename(var_name);
 			addIN<T>("write");
 			addOUT<T>("read")->behaviour([this]()
 			{
-				return *value_ptr;
+				return var_ptr->get<T>();
 			});
 		}
 
@@ -348,7 +375,7 @@ namespace titian {
 		{
 			FlowNode::serialize(serializer, helper_data);
 			serializer->write_string("var_name", name);
-			serializer->write_bool("is_public", *visibility_ptr);
+			serializer->write_bool("global", var_ptr->global);
 		}
 
 		void deserialize(const Serializer* serializer, const void* helper_data) override
@@ -357,7 +384,7 @@ namespace titian {
 			String temp_name;
 			serializer->read_string("var_name", temp_name);
 			rename(temp_name);
-			serializer->read_bool("is_public", *visibility_ptr);
+			serializer->read_bool("global", var_ptr->global);
 		}
 
 		void draw() override
@@ -367,70 +394,37 @@ namespace titian {
 			if (im::InputText("##name", &temp_name)) {
 				rename(temp_name);
 			}
-			im::Checkbox("public", visibility_ptr);
+			im::Checkbox("global", &var_ptr->global);
 		}
 
 		void call() override
 		{
-			*value_ptr = get_value<T>("write");
+			var_ptr->store<T>(get_value<T>("write"));
 			call_next();
 		}
 
 		inline void rename(const String& new_name)
 		{
-			bool old_vis = false;
-			if (visibility_ptr) {
-				old_vis = *visibility_ptr;
+			VarInfo old_info;
+			if (var_ptr) {
+				old_info = *var_ptr;
+			}
+			else {
+				old_info.store<T>(T{});
 			}
 			storage().erase(name);
 			name = !new_name.empty() ? new_name : kl::random::gen_string(10);
 			for (int i = 1; storage().contains(name); i++) {
 				name = kl::format(new_name, '_', i);
 			}
-			visibility_ptr = &storage()[name].first;
-			value_ptr = &storage()[name].second;
-			*visibility_ptr = old_vis;
+			var_ptr = &storage()[name];
+			*var_ptr = old_info;
 		}
 
 	private:
-		NodeScript::VarStorage<T>& storage() const
+		inline Map<String, VarInfo>& storage() const
 		{
-			if constexpr (std::is_same_v<T, bool>) {
-				return parent->bool_storage;
-			}
-			else if constexpr (std::is_same_v<T, int32_t>) {
-				return parent->int_storage;
-			}
-			else if constexpr (std::is_same_v<T, Int2>) {
-				return parent->int2_storage;
-			}
-			else if constexpr (std::is_same_v<T, float>) {
-				return parent->float_storage;
-			}
-			else if constexpr (std::is_same_v<T, Float2>) {
-				return parent->float2_storage;
-			}
-			else if constexpr (std::is_same_v<T, Float3>) {
-				return parent->float3_storage;
-			}
-			else if constexpr (std::is_same_v<T, Float4>) {
-				return parent->float4_storage;
-			}
-			else if constexpr (std::is_same_v<T, Complex>) {
-				return parent->complex_storage;
-			}
-			else if constexpr (std::is_same_v<T, Quaternion>) {
-				return parent->quaternion_storage;
-			}
-			else if constexpr (std::is_same_v<T, Color>) {
-				return parent->color_storage;
-			}
-			else if constexpr (std::is_same_v<T, String>) {
-				return parent->string_storage;
-			}
-			else {
-				static_assert(false, "Unknown var node storage type");
-			}
+			return parent->var_storage;
 		}
 	};
 }
@@ -441,7 +435,7 @@ namespace titian {
 	struct ConstructNode : Node
 	{
 		inline ConstructNode(NodeScript* parent, const String& title)
-			: Node(parent, title, ne::NodeStyle::cyan())
+			: Node(parent, title, ne::NodeStyle::teal())
 		{
 			if constexpr (std::is_same_v<T, Int2>) {
 				addIN<int32_t>("x");
@@ -521,7 +515,7 @@ namespace titian {
 	struct DeconstructNode : Node
 	{
 		inline DeconstructNode(NodeScript* parent, const String& title)
-			: Node(parent, title, ne::NodeStyle::cyan())
+			: Node(parent, title, ne::NodeStyle::teal())
 		{
 			if constexpr (std::is_same_v<T, Int2>) {
 				addIN<T>("in");
@@ -943,60 +937,46 @@ namespace titian {
 		GetSceneNode(NodeScript* parent)
 			: Node(parent, "Scene", ne::NodeStyle::purple())
 		{
-			addIN<String>("name");
-			addOUT<void*>("scene")->behaviour([this]()
-			{
-				return &Layers::get<GameLayer>()->scene;
-			});
+			addIN<String>("mesh_name");
 			addOUT<void*>("mesh")->behaviour([this]()
 			{
 				Scene& scene = *Layers::get<GameLayer>()->scene;
-				return scene.helper_get_mesh(get_value<String>("name"));
+				return scene.helper_get_mesh(get_value<String>("mesh_name"));
 			});
+
+			addIN<String>("animation_name");
 			addOUT<void*>("animation")->behaviour([this]()
 			{
 				Scene& scene = *Layers::get<GameLayer>()->scene;
-				return scene.helper_get_animation(get_value<String>("name"));
+				return scene.helper_get_animation(get_value<String>("animation_name"));
 			});
+
+			addIN<String>("texture_name");
 			addOUT<void*>("texture")->behaviour([this]()
 			{
 				Scene& scene = *Layers::get<GameLayer>()->scene;
-				return scene.helper_get_texture(get_value<String>("name"));
+				return scene.helper_get_texture(get_value<String>("texture_name"));
 			});
+
+			addIN<String>("material_name");
 			addOUT<void*>("material")->behaviour([this]()
 			{
 				Scene& scene = *Layers::get<GameLayer>()->scene;
-				return scene.helper_get_material(get_value<String>("name"));
+				return scene.helper_get_material(get_value<String>("material_name"));
 			});
+
+			addIN<String>("shader_name");
 			addOUT<void*>("shader")->behaviour([this]()
 			{
 				Scene& scene = *Layers::get<GameLayer>()->scene;
-				return scene.helper_get_shader(get_value<String>("name"));
+				return scene.helper_get_shader(get_value<String>("shader_name"));
 			});
+
+			addIN<String>("entity_name");
 			addOUT<void*>("entity")->behaviour([this]()
 			{
 				Scene& scene = *Layers::get<GameLayer>()->scene;
-				return scene.helper_get_entity(get_value<String>("name"));
-			});
-			addOUT<void*>("camera")->behaviour([this]()
-			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
-				return scene.get_casted<Camera>(get_value<String>("name"));
-			});
-			addOUT<void*>("ambient light")->behaviour([this]()
-			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
-				return scene.get_casted<AmbientLight>(get_value<String>("name"));
-			});
-			addOUT<void*>("point light")->behaviour([this]()
-			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
-				return scene.get_casted<PointLight>(get_value<String>("name"));
-			});
-			addOUT<void*>("directional light")->behaviour([this]()
-			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
-				return scene.get_casted<DirectionalLight>(get_value<String>("name"));
+				return scene.helper_get_entity(get_value<String>("entity_name"));
 			});
 		}
 	};
@@ -1009,14 +989,14 @@ namespace titian {
 			addIN<void*>("ptr");
 			addOUT<int32_t>("topology")->behaviour([this]()
 			{
-				if (Mesh* ptr = reinterpret_cast<Mesh*>(get_value<void*>("ptr"))) {
+				if (Mesh* ptr = get_casted_value<void*, Mesh*>("ptr")) {
 					return ptr->topology;
 				}
 				return int32_t{};
 			});
 			addOUT<bool>("wireframe")->behaviour([this]()
 			{
-				if (Mesh* ptr = reinterpret_cast<Mesh*>(get_value<void*>("ptr"))) {
+				if (Mesh* ptr = get_casted_value<void*, Mesh*>("ptr")) {
 					return ptr->render_wireframe;
 				}
 				return bool{};
@@ -1032,24 +1012,221 @@ namespace titian {
 			addIN<void*>("ptr");
 			addOUT<int32_t>("type")->behaviour([this]()
 			{
-				if (Animation* ptr = reinterpret_cast<Animation*>(get_value<void*>("ptr"))) {
+				if (Animation* ptr = get_casted_value<void*, Animation*>("ptr")) {
 					return (int32_t) ptr->animation_type;
 				}
 				return int32_t{};
 			});
 			addOUT<float>("ticks per second")->behaviour([this]()
 			{
-				if (Animation* ptr = reinterpret_cast<Animation*>(get_value<void*>("ptr"))) {
+				if (Animation* ptr = get_casted_value<void*, Animation*>("ptr")) {
 					return ptr->ticks_per_second;
 				}
 				return float{};
 			});
 			addOUT<float>("duration ticks")->behaviour([this]()
 			{
-				if (Animation* ptr = reinterpret_cast<Animation*>(get_value<void*>("ptr"))) {
+				if (Animation* ptr = get_casted_value<void*, Animation*>("ptr")) {
 					return ptr->duration_in_ticks;
 				}
 				return float{};
+			});
+		}
+	};
+
+	struct GetTextureNode : Node
+	{
+		GetTextureNode(NodeScript* parent)
+			: Node(parent, "Texture", ne::NodeStyle::purple())
+		{
+			addIN<void*>("ptr");
+			addOUT<Int2>("size")->behaviour([this]()
+			{
+				if (Texture* ptr = get_casted_value<void*, Texture*>("ptr")) {
+					return ptr->graphics_buffer_size();
+				}
+				return Int2{};
+			});
+		}
+	};
+
+	struct GetMaterialNode : Node
+	{
+		GetMaterialNode(NodeScript* parent)
+			: Node(parent, "Material", ne::NodeStyle::purple())
+		{
+			addIN<void*>("ptr");
+			addOUT<Float4>("color")->behaviour([this]()
+			{
+				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
+					return ptr->color;
+				}
+				return Float4{};
+			});
+			addOUT<float>("texture_blend")->behaviour([this]()
+			{
+				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
+					return ptr->texture_blend;
+				}
+				return float{};
+			});
+			addOUT<float>("reflection_factor")->behaviour([this]()
+			{
+				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
+					return ptr->reflection_factor;
+				}
+				return float{};
+			});
+			addOUT<float>("refraction_factor")->behaviour([this]()
+			{
+				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
+					return ptr->refraction_factor;
+				}
+				return float{};
+			});
+			addOUT<float>("refraction_index")->behaviour([this]()
+			{
+				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
+					return ptr->refraction_index;
+				}
+				return float{};
+			});
+			addOUT<String>("color_map_name")->behaviour([this]()
+			{
+				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
+					return ptr->color_map_name;
+				}
+				return String{};
+			});
+			addOUT<String>("normal_map_name")->behaviour([this]()
+			{
+				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
+					return ptr->normal_map_name;
+				}
+				return String{};
+			});
+			addOUT<String>("roughness_map_name")->behaviour([this]()
+			{
+				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
+					return ptr->roughness_map_name;
+				}
+				return String{};
+			});
+			addOUT<String>("shader_name")->behaviour([this]()
+			{
+				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
+					return ptr->shader_name;
+				}
+				return String{};
+			});
+		}
+	};
+
+	struct GetShaderNode : Node
+	{
+		GetShaderNode(NodeScript* parent)
+			: Node(parent, "Shader", ne::NodeStyle::purple())
+		{
+			addIN<void*>("ptr");
+			addOUT<int32_t>("type")->behaviour([this]()
+			{
+				if (Shader* ptr = get_casted_value<void*, Shader*>("ptr")) {
+					return (int32_t) ptr->type;
+				}
+				return int32_t{};
+			});
+		}
+	};
+
+	struct GetEntityNode : Node
+	{
+		GetEntityNode(NodeScript* parent)
+			: Node(parent, "Entity", ne::NodeStyle::purple())
+		{
+			addIN<void*>("ptr");
+			addOUT<Float3>("scale")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->scale;
+				}
+				return Float3{};
+			});
+			addOUT<Float3>("rotation")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->rotation();
+				}
+				return Float3{};
+			});
+			addOUT<Float3>("position")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->position();
+				}
+				return Float3{};
+			});
+			addOUT<bool>("is_dynamic")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->is_dynamic();
+				}
+				return bool{};
+			});
+			addOUT<bool>("has_gravity")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->has_gravity();
+				}
+				return bool{};
+			});
+			addOUT<float>("mass")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->mass();
+				}
+				return float{};
+			});
+			addOUT<Float3>("velocity")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->velocity();
+				}
+				return Float3{};
+			});
+			addOUT<Float3>("angular")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->angular();
+				}
+				return Float3{};
+			});
+			addOUT<String>("animation_name")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->animation_name;
+				}
+				return String{};
+			});
+			addOUT<String>("material_name")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->material_name;
+				}
+				return String{};
+			});
+			addOUT<String>("collider_mesh_name")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->collider_mesh_name;
+				}
+				return String{};
+			});
+			addOUT<bool>("casts_shadows")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->casts_shadows;
+				}
+				return bool{};
 			});
 		}
 	};

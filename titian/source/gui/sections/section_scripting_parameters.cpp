@@ -1,6 +1,18 @@
 #include "titian.h"
 
 
+template<typename V>
+static const std::type_info& variant_type(const V& variant)
+{
+	return std::visit([](auto&& value) -> const std::type_info& { return typeid(value); }, variant);
+}
+
+template<typename V>
+static void* variant_ptr(V& variant)
+{
+	return std::visit([](auto&& value) -> void* { return &value; }, variant);
+}
+
 titian::GUISectionScriptingParameters::GUISectionScriptingParameters()
 	: GUISection("GUISectionScriptingParameters")
 {}
@@ -22,25 +34,11 @@ void titian::GUISectionScriptingParameters::render_gui()
 			}
 		}
 		else if (NodeScript* node_script = dynamic_cast<NodeScript*>(&script)) {
-			auto helper = [&]<typename T>(NodeScript::VarStorage<T>& storage)
-			{
-				for (auto& [name, value] : storage) {
-					if (value.first) {
-						parameters[name] = { &typeid(T), &value.second };
-					}
+			for (auto& [name, info] : node_script->var_storage) {
+				if (info.global) {
+					parameters[name] = { &variant_type(info.value), variant_ptr(info.value) };
 				}
-			};
-			helper(node_script->bool_storage);
-			helper(node_script->int_storage);
-			helper(node_script->int2_storage);
-			helper(node_script->float_storage);
-			helper(node_script->float2_storage);
-			helper(node_script->float3_storage);
-			helper(node_script->float4_storage);
-			helper(node_script->complex_storage);
-			helper(node_script->quaternion_storage);
-			helper(node_script->color_storage);
-			helper(node_script->string_storage);
+			}
 		}
 		if (!parameters.empty()) {
 			scripts.emplace_back(name, parameters);
@@ -73,7 +71,12 @@ void titian::GUISectionScriptingParameters::display_parameter_editor(const int s
 		return;
 	}
 	
-	if (type == typeid(bool)) {
+	if (type == typeid(void*)) {
+		const String identifier = kl::format(name, "##", script_id);
+		String ignored = kl::format("0x", *(void**) ptr);
+		im::InputText(identifier.c_str(), &ignored, ImGuiInputTextFlags_ReadOnly);
+	}
+	else if (type == typeid(bool)) {
 		const String identifier = kl::format(name, "##", script_id);
 		im::Checkbox(identifier.c_str(), (bool*) ptr);
 	}
@@ -89,7 +92,7 @@ void titian::GUISectionScriptingParameters::display_parameter_editor(const int s
 		const String identifier = kl::format(name, "##", script_id);
 		im::DragInt2(identifier.c_str(), (int*) ptr);
 	}
-	else if (type == typeid(Float2)) {
+	else if (type == typeid(Float2) || type == typeid(Complex)) {
 		const String identifier = kl::format(name, "##", script_id);
 		im::DragFloat2(identifier.c_str(), (float*) ptr);
 	}
@@ -97,7 +100,7 @@ void titian::GUISectionScriptingParameters::display_parameter_editor(const int s
 		const String identifier = kl::format(name, "##", script_id);
 		im::DragFloat3(identifier.c_str(), (float*) ptr);
 	}
-	else if (type == typeid(Float4)) {
+	else if (type == typeid(Float4) || type == typeid(Quaternion)) {
 		const String identifier = kl::format(name, "##", script_id);
 		im::DragFloat4(identifier.c_str(), (float*) ptr);
 	}

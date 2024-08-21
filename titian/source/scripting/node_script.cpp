@@ -35,6 +35,7 @@ namespace titian {
 		serial_generator_helper<Node>("", ne::NodeStyle::red()),
 
 		// pointer
+		serial_generator_helper<VariableNode<void*>>("", ""),
 		serial_generator_helper<CastNode<void*, bool>>(""),
 		serial_generator_helper<CastNode<void*, String>>(""),
 
@@ -180,6 +181,10 @@ namespace titian {
 		serial_generator_helper<GetSceneNode>(),
 		serial_generator_helper<GetMeshNode>(),
 		serial_generator_helper<GetAnimationNode>(),
+		serial_generator_helper<GetTextureNode>(),
+		serial_generator_helper<GetMaterialNode>(),
+		serial_generator_helper<GetShaderNode>(),
+		serial_generator_helper<GetEntityNode>(),
 
 		// functions
 		serial_generator_helper<PrintNode>(),
@@ -196,6 +201,7 @@ namespace titian {
 	static const std::map<String, Vector<Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>>>> ui_node_generators = {
 		{ "Pointer",
 		{
+		ui_generator_helper<VariableNode<void*>>("Variable Pointer", "Variable Pointer", "ptr_var"),
 		ui_generator_helper<CastNode<void*, bool>>("Pointer -> Bool", "Pointer -> Bool"),
 		ui_generator_helper<CastNode<void*, String>>("Pointer -> String", "Pointer -> String"),
 		},
@@ -382,6 +388,10 @@ namespace titian {
 			ui_generator_helper<GetSceneNode>("Get Scene"),
 			ui_generator_helper<GetMeshNode>("Get Mesh"),
 			ui_generator_helper<GetAnimationNode>("Get Animation"),
+			ui_generator_helper<GetTextureNode>("Get Texture"),
+			ui_generator_helper<GetMaterialNode>("Get Material"),
+			ui_generator_helper<GetShaderNode>("Get Shader"),
+			ui_generator_helper<GetEntityNode>("Get Entity"),
 		},
 		},
 		
@@ -418,9 +428,9 @@ titian::NodeScript::NodeScript()
 		->behaviour([timer]() { return timer->delta(); });
 
 	on_collision_node->addOUT<void*>("first_entity")
-		->behaviour([this]() { return on_collision_node->user_data + 0; });
+		->behaviour([this]() { return *reinterpret_cast<Entity**>(on_collision_node->user_data + 0); });
 	on_collision_node->addOUT<void*>("second_entity")
-		->behaviour([this]() { return on_collision_node->user_data + 8; });
+		->behaviour([this]() { return *reinterpret_cast<Entity**>(on_collision_node->user_data + 8); });
 
 	m_editor.rightClickPopUpContent([&](ne::BaseNode* node)
 	{

@@ -139,9 +139,8 @@ namespace ImFlow
     /**
      * @brief Defines the visual appearance of a node
      */
-    class NodeStyle
+    struct NodeStyle
     {
-    public:
         NodeStyle(ImU32 header_bg, ImColor header_title_color, float radius) :header_bg(header_bg), header_title_color(header_title_color), radius(radius) {}
 
         /// @brief Body's background color
@@ -164,18 +163,25 @@ namespace ImFlow
         /// @brief Border thickness when selected
         float border_selected_thickness = 2.f;
 
-    public:
-        static std::shared_ptr<NodeStyle> white() { return std::make_shared<NodeStyle>(IM_COL32(200, 200, 200, 255), ImColor(30, 30, 30, 255), 11.0f); }
-        static std::shared_ptr<NodeStyle> gray() { return std::make_shared<NodeStyle>(IM_COL32(100, 100, 100, 255), ImColor(30, 30, 30, 255), 11.0f); }
-        static std::shared_ptr<NodeStyle> red() { return std::make_shared<NodeStyle>(IM_COL32(190, 90, 90, 255), ImColor(30, 30, 30, 255), 6.5f); }
-        static std::shared_ptr<NodeStyle> green() { return std::make_shared<NodeStyle>(IM_COL32(90, 190, 95, 255), ImColor(30, 30, 30, 255), 6.5f); }
-        static std::shared_ptr<NodeStyle> blue() { return std::make_shared<NodeStyle>(IM_COL32(85, 155, 215, 255), ImColor(30, 30, 30, 255), 6.5f); }
-        static std::shared_ptr<NodeStyle> cyan() { return std::make_shared<NodeStyle>(IM_COL32(70, 175, 140, 255), ImColor(30, 30, 30, 255), 6.5f); }
-        static std::shared_ptr<NodeStyle> yellow() { return std::make_shared<NodeStyle>(IM_COL32(220, 220, 70, 255), ImColor(30, 30, 30, 255), 6.5f); }
-        static std::shared_ptr<NodeStyle> orange() { return std::make_shared<NodeStyle>(IM_COL32(210, 155, 90, 255), ImColor(30, 30, 30, 255), 6.5f); }
-        static std::shared_ptr<NodeStyle> pink() { return std::make_shared<NodeStyle>(IM_COL32(215, 160, 225, 255), ImColor(30, 30, 30, 255), 6.5f); }
-        static std::shared_ptr<NodeStyle> purple() { return std::make_shared<NodeStyle>(IM_COL32(125, 70, 180, 255), ImColor(30, 30, 30, 255), 6.5f); }
-        static std::shared_ptr<NodeStyle> magenta() { return std::make_shared<NodeStyle>(IM_COL32(170, 50, 105, 255), ImColor(30, 30, 30, 255), 6.5f); }
+        static std::shared_ptr<NodeStyle> make_style(int r, int g, int b, float radius)
+        {
+            return std::make_shared<NodeStyle>(IM_COL32(r, g, b, 255), ImColor(25, 25, 25, 255), radius);
+        }
+
+        static std::shared_ptr<NodeStyle>   white() { return make_style(200, 200, 200, 12.0f); }
+
+        static std::shared_ptr<NodeStyle>   green() { return make_style( 90, 195,  95, 6.0f); }
+        static std::shared_ptr<NodeStyle>    blue() { return make_style( 85, 155, 215, 6.0f); }
+        static std::shared_ptr<NodeStyle>    cyan() { return make_style( 70, 195, 140, 6.0f); }
+        static std::shared_ptr<NodeStyle>    teal() { return make_style( 65, 175, 175, 6.0f); }
+
+        static std::shared_ptr<NodeStyle>     red() { return make_style(190, 90, 90, 6.0f); }
+        static std::shared_ptr<NodeStyle>  yellow() { return make_style(220, 220,  70, 6.0f); }
+        static std::shared_ptr<NodeStyle>  orange() { return make_style(210, 155,  90, 6.0f); }
+
+        static std::shared_ptr<NodeStyle>    pink() { return make_style(215, 160, 225, 6.0f); }
+        static std::shared_ptr<NodeStyle>  purple() { return make_style(125,  70, 180, 6.0f); }
+        static std::shared_ptr<NodeStyle> magenta() { return make_style(170,  50, 105, 6.0f); }
     };
 
     // -----------------------------------------------------------------------------------------------------------------
