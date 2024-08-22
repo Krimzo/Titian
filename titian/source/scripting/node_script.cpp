@@ -31,8 +31,9 @@ namespace titian {
 
 	static const Vector<Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>>> serial_node_generators
 	{
-		// base node
+		// base nodes
 		serial_generator_helper<Node>("", ne::NodeStyle::red()),
+		serial_generator_helper<FlowNode>("", false, false),
 
 		// pointer
 		serial_generator_helper<VariableNode<void*>>("", ""),
@@ -60,6 +61,9 @@ namespace titian {
 		serial_generator_helper<OperatorDivideNode<int32_t>>(),
 		serial_generator_helper<OperatorPowerNode<int32_t>>(),
 		serial_generator_helper<OperatorModuloNode<int32_t>>(),
+		serial_generator_helper<OperatorMinNode<int32_t>>(),
+		serial_generator_helper<OperatorMaxNode<int32_t>>(),
+		serial_generator_helper<AbsNode<int32_t>>(),
 
 		// int2
 		serial_generator_helper<LiteralNode<Int2>>(""),
@@ -72,6 +76,9 @@ namespace titian {
 		serial_generator_helper<OperatorMinusNode<Int2>>(),
 		serial_generator_helper<OperatorTimesNode<Int2>>(),
 		serial_generator_helper<OperatorDivideNode<Int2>>(),
+		serial_generator_helper<OperatorMinNode<Int2>>(),
+		serial_generator_helper<OperatorMaxNode<Int2>>(),
+		serial_generator_helper<AbsNode<Int2>>(),
 
 		// float
 		serial_generator_helper<LiteralNode<float>>(""),
@@ -86,6 +93,9 @@ namespace titian {
 		serial_generator_helper<OperatorDivideNode<float>>(),
 		serial_generator_helper<OperatorPowerNode<float>>(),
 		serial_generator_helper<OperatorModuloNode<float>>(),
+		serial_generator_helper<OperatorMinNode<float>>(),
+		serial_generator_helper<OperatorMaxNode<float>>(),
+		serial_generator_helper<AbsNode<float>>(),
 
 		// float2
 		serial_generator_helper<LiteralNode<Float2>>(""),
@@ -99,6 +109,9 @@ namespace titian {
 		serial_generator_helper<OperatorMinusNode<Float2>>(),
 		serial_generator_helper<OperatorTimesNode<Float2>>(),
 		serial_generator_helper<OperatorDivideNode<Float2>>(),
+		serial_generator_helper<OperatorMinNode<Float2>>(),
+		serial_generator_helper<OperatorMaxNode<Float2>>(),
+		serial_generator_helper<AbsNode<Float2>>(),
 
 		// float3
 		serial_generator_helper<LiteralNode<Float3>>(""),
@@ -112,6 +125,9 @@ namespace titian {
 		serial_generator_helper<OperatorMinusNode<Float3>>(),
 		serial_generator_helper<OperatorTimesNode<Float3>>(),
 		serial_generator_helper<OperatorDivideNode<Float3>>(),
+		serial_generator_helper<OperatorMinNode<Float3>>(),
+		serial_generator_helper<OperatorMaxNode<Float3>>(),
+		serial_generator_helper<AbsNode<Float3>>(),
 
 		// float4
 		serial_generator_helper<LiteralNode<Float4>>(""),
@@ -125,6 +141,9 @@ namespace titian {
 		serial_generator_helper<OperatorMinusNode<Float4>>(),
 		serial_generator_helper<OperatorTimesNode<Float4>>(),
 		serial_generator_helper<OperatorDivideNode<Float4>>(),
+		serial_generator_helper<OperatorMinNode<Float4>>(),
+		serial_generator_helper<OperatorMaxNode<Float4>>(),
+		serial_generator_helper<AbsNode<Float4>>(),
 
 		// complex
 		serial_generator_helper<LiteralNode<Complex>>(""),
@@ -136,6 +155,9 @@ namespace titian {
 		serial_generator_helper<OperatorPlusNode<Complex>>(),
 		serial_generator_helper<OperatorMinusNode<Complex>>(),
 		serial_generator_helper<OperatorTimesNode<Complex>>(),
+		serial_generator_helper<OperatorMinNode<Complex>>(),
+		serial_generator_helper<OperatorMaxNode<Complex>>(),
+		serial_generator_helper<AbsNode<Complex>>(),
 
 		// quaternion
 		serial_generator_helper<LiteralNode<Quaternion>>(""),
@@ -148,6 +170,9 @@ namespace titian {
 		serial_generator_helper<OperatorPlusNode<Quaternion>>(),
 		serial_generator_helper<OperatorMinusNode<Quaternion>>(),
 		serial_generator_helper<OperatorTimesNode<Quaternion>>(),
+		serial_generator_helper<OperatorMinNode<Quaternion>>(),
+		serial_generator_helper<OperatorMaxNode<Quaternion>>(),
+		serial_generator_helper<AbsNode<Quaternion>>(),
 
 		// color
 		serial_generator_helper<LiteralNode<Color>>(""),
@@ -172,7 +197,6 @@ namespace titian {
 		serial_generator_helper<LogicOrNode>(),
 
 		// flow
-		serial_generator_helper<FlowNode>("", false, false),
 		serial_generator_helper<IfNode>(),
 		serial_generator_helper<WhileNode>(),
 		serial_generator_helper<ForNode>(),
@@ -200,6 +224,12 @@ namespace titian {
 		serial_generator_helper<SetMaterialNode>(),
 		serial_generator_helper<SetShaderNode>(),
 		serial_generator_helper<SetEntityNode>(),
+
+		// math
+		serial_generator_helper<SqrtNode<float>>(),
+		serial_generator_helper<SinNode<float>>(),
+		serial_generator_helper<CosNode<float>>(),
+		serial_generator_helper<TanNode<float>>(),
 
 		// functions
 		serial_generator_helper<PrintNode>(),
@@ -247,6 +277,9 @@ namespace titian {
 		ui_generator_helper<OperatorDivideNode<int32_t>>("Divide Int"),
 		ui_generator_helper<OperatorPowerNode<int32_t>>("Power Int"),
 		ui_generator_helper<OperatorModuloNode<int32_t>>("Modulo Int"),
+		ui_generator_helper<OperatorMinNode<int32_t>>("Min Int"),
+		ui_generator_helper<OperatorMaxNode<int32_t>>("Max Int"),
+		ui_generator_helper<AbsNode<int32_t>>("Abs Int"),
 		},
 		},
 
@@ -262,6 +295,9 @@ namespace titian {
 		ui_generator_helper<OperatorMinusNode<Int2>>("Minus Int2"),
 		ui_generator_helper<OperatorTimesNode<Int2>>("Times Int2"),
 		ui_generator_helper<OperatorDivideNode<Int2>>("Divide Int2"),
+		ui_generator_helper<OperatorMinNode<Int2>>("Min Int2"),
+		ui_generator_helper<OperatorMaxNode<Int2>>("Max Int2"),
+		ui_generator_helper<AbsNode<Int2>>("Abs Int2"),
 		},
 		},
 
@@ -279,6 +315,9 @@ namespace titian {
 		ui_generator_helper<OperatorDivideNode<float>>("Divide Float"),
 		ui_generator_helper<OperatorPowerNode<float>>("Power Float"),
 		ui_generator_helper<OperatorModuloNode<float>>("Modulo Float"),
+		ui_generator_helper<OperatorMinNode<float>>("Min Float"),
+		ui_generator_helper<OperatorMaxNode<float>>("Max Float"),
+		ui_generator_helper<AbsNode<float>>("Abs Float"),
 		},
 		},
 
@@ -295,6 +334,9 @@ namespace titian {
 		ui_generator_helper<OperatorMinusNode<Float2>>("Minus Float2"),
 		ui_generator_helper<OperatorTimesNode<Float2>>("Times Float2"),
 		ui_generator_helper<OperatorDivideNode<Float2>>("Divide Float2"),
+		ui_generator_helper<OperatorMinNode<Float2>>("Min Float2"),
+		ui_generator_helper<OperatorMaxNode<Float2>>("Max Float2"),
+		ui_generator_helper<AbsNode<Float2>>("Abs Float2"),
 		},
 		},
 
@@ -311,6 +353,9 @@ namespace titian {
 		ui_generator_helper<OperatorMinusNode<Float3>>("Minus Float3"),
 		ui_generator_helper<OperatorTimesNode<Float3>>("Times Float3"),
 		ui_generator_helper<OperatorDivideNode<Float3>>("Divide Float3"),
+		ui_generator_helper<OperatorMinNode<Float3>>("Min Float3"),
+		ui_generator_helper<OperatorMaxNode<Float3>>("Max Float3"),
+		ui_generator_helper<AbsNode<Float3>>("Abs Float3"),
 		},
 		},
 
@@ -327,6 +372,9 @@ namespace titian {
 		ui_generator_helper<OperatorMinusNode<Float4>>("Minus Float4"),
 		ui_generator_helper<OperatorTimesNode<Float4>>("Times Float4"),
 		ui_generator_helper<OperatorDivideNode<Float4>>("Divide Float4"),
+		ui_generator_helper<OperatorMinNode<Float4>>("Min Float4"),
+		ui_generator_helper<OperatorMaxNode<Float4>>("Max Float4"),
+		ui_generator_helper<AbsNode<Float4>>("Abs Float4"),
 		},
 		},
 
@@ -341,6 +389,9 @@ namespace titian {
 		ui_generator_helper<OperatorPlusNode<Complex>>("Plus Complex"),
 		ui_generator_helper<OperatorMinusNode<Complex>>("Minus Complex"),
 		ui_generator_helper<OperatorTimesNode<Complex>>("Times Complex"),
+		ui_generator_helper<OperatorMinNode<Complex>>("Min Complex"),
+		ui_generator_helper<OperatorMaxNode<Complex>>("Max Complex"),
+		ui_generator_helper<AbsNode<Complex>>("Abs Complex"),
 		},
 		},
 
@@ -356,6 +407,9 @@ namespace titian {
 		ui_generator_helper<OperatorPlusNode<Quaternion>>("Plus Quaternion"),
 		ui_generator_helper<OperatorMinusNode<Quaternion>>("Minus Quaternion"),
 		ui_generator_helper<OperatorTimesNode<Quaternion>>("Times Quaternion"),
+		ui_generator_helper<OperatorMinNode<Quaternion>>("Min Quaternion"),
+		ui_generator_helper<OperatorMaxNode<Quaternion>>("Max Quaternion"),
+		ui_generator_helper<AbsNode<Quaternion>>("Abs Quaternion"),
 		},
 		},
 
@@ -400,34 +454,43 @@ namespace titian {
 
 		{ "Is",
 		{
-			ui_generator_helper<IsTypeNode<Entity, Camera>>("Is Camera", "Is Camera"),
-			ui_generator_helper<IsTypeNode<Entity, AmbientLight>>("Is Ambient Light", "Is Ambient Light"),
-			ui_generator_helper<IsTypeNode<Entity, PointLight>>("Is Point Light", "Is Point Light"),
-			ui_generator_helper<IsTypeNode<Entity, DirectionalLight>>("Is Directional Light", "Is Directional Light"),
+		ui_generator_helper<IsTypeNode<Entity, Camera>>("Is Camera", "Is Camera"),
+		ui_generator_helper<IsTypeNode<Entity, AmbientLight>>("Is Ambient Light", "Is Ambient Light"),
+		ui_generator_helper<IsTypeNode<Entity, PointLight>>("Is Point Light", "Is Point Light"),
+		ui_generator_helper<IsTypeNode<Entity, DirectionalLight>>("Is Directional Light", "Is Directional Light"),
 		},
 		},
 
 		{ "Getters",
 		{
-			ui_generator_helper<GetSceneNode>("Get Scene"),
-			ui_generator_helper<GetMeshNode>("Get Mesh"),
-			ui_generator_helper<GetAnimationNode>("Get Animation"),
-			ui_generator_helper<GetTextureNode>("Get Texture"),
-			ui_generator_helper<GetMaterialNode>("Get Material"),
-			ui_generator_helper<GetShaderNode>("Get Shader"),
-			ui_generator_helper<GetEntityNode>("Get Entity"),
+		ui_generator_helper<GetSceneNode>("Get Scene"),
+		ui_generator_helper<GetMeshNode>("Get Mesh"),
+		ui_generator_helper<GetAnimationNode>("Get Animation"),
+		ui_generator_helper<GetTextureNode>("Get Texture"),
+		ui_generator_helper<GetMaterialNode>("Get Material"),
+		ui_generator_helper<GetShaderNode>("Get Shader"),
+		ui_generator_helper<GetEntityNode>("Get Entity"),
 		},
 		},
 
 		{ "Setters",
 		{
-			ui_generator_helper<SetSceneNode>("Set Scene"),
-			ui_generator_helper<SetMeshNode>("Set Mesh"),
-			ui_generator_helper<SetAnimationNode>("Set Animation"),
-			ui_generator_helper<SetTextureNode>("Set Texture"),
-			ui_generator_helper<SetMaterialNode>("Set Material"),
-			ui_generator_helper<SetShaderNode>("Set Shader"),
-			ui_generator_helper<SetEntityNode>("Set Entity"),
+		ui_generator_helper<SetSceneNode>("Set Scene"),
+		ui_generator_helper<SetMeshNode>("Set Mesh"),
+		ui_generator_helper<SetAnimationNode>("Set Animation"),
+		ui_generator_helper<SetTextureNode>("Set Texture"),
+		ui_generator_helper<SetMaterialNode>("Set Material"),
+		ui_generator_helper<SetShaderNode>("Set Shader"),
+		ui_generator_helper<SetEntityNode>("Set Entity"),
+		},
+		},
+
+		{ "Math",
+		{
+		ui_generator_helper<SqrtNode<float>>("Sqrt"),
+		ui_generator_helper<SinNode<float>>("Sin"),
+		ui_generator_helper<CosNode<float>>("Cos"),
+		ui_generator_helper<TanNode<float>>("Tan"),
 		},
 		},
 		

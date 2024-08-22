@@ -18,16 +18,16 @@ void titian::GUISectionLogView::render_gui()
     if (im::Begin(kl::format("Log View", title_extension).c_str(), nullptr, ImGuiWindowFlags_HorizontalScrollbar)) {
         last_log_index = Logger::last_log_index;
 
-        uint32_t log_counter = 1;
+        uint32_t log_index = 0;
         for (const auto& log_info : Logger::logs) {
-            gui_colored_text(kl::format(std::setfill('0'), std::setw(3), log_counter, "."), gui_layer->special_color);
+            gui_colored_text(kl::format(std::setfill('0'), std::setw(3), log_index + 1, "."), gui_layer->special_color);
             im::SameLine();
 
             gui_colored_text(kl::format("[", log_info.date, "]:"), { 0.85f, 0.75f, 0.75f, 1.0f });
             im::SameLine();
 
             gui_colored_text(log_info.message, { 0.95f, 0.95f, 0.90f, 1.0f });
-            log_counter += 1;
+            log_index += 1;
         }
 
         if (im::BeginPopupContextWindow()) {
@@ -35,6 +35,10 @@ void titian::GUISectionLogView::render_gui()
                 Logger::logs.clear();
             }
             im::EndPopup();
+        }
+
+        if (unseen_count > 0) {
+            ImGui::SetScrollHereY(1.0f);
         }
     }
     im::End();

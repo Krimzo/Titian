@@ -189,9 +189,9 @@ namespace titian {
 		}
 
 	protected:
-		inline void call_next(const StringView& pin_name = "out_flow")
+		inline void call_next(const char* pin_name = "out_flow")
 		{
-			auto pin = this->outPin(pin_name.data());
+			auto pin = this->outPin(pin_name);
 			if (!pin)
 				return;
 
@@ -747,122 +747,136 @@ namespace titian {
 // operator nodes
 namespace titian {
 	template<typename T>
-	struct OperatorPlusNode : Node
+	struct OperatorNode : Node
+	{
+		inline OperatorNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::blue())
+		{
+			addIN<T>("left");
+			addIN<T>("right");
+			addOUT<T>("out")->behaviour([this] { return this->compute(); });
+		}
+
+		virtual T compute() = 0;
+	};
+
+	template<typename T>
+	struct OperatorPlusNode : OperatorNode<T>
 	{
 		inline OperatorPlusNode(NodeScript* parent)
-			: Node(parent, "Plus", ne::NodeStyle::blue())
+			: OperatorNode<T>(parent, "Plus")
+		{}
+
+		T compute() override
 		{
-			addIN<T>("left");
-			addIN<T>("right");
-			addOUT<T>("out")->behaviour([this]
-			{
-				return get_value<T>("left") + get_value<T>("right");
-			});
+			return this->get_value<T>("left") + this->get_value<T>("right");
 		}
 	};
 
 	template<typename T>
-	struct OperatorMinusNode : Node
+	struct OperatorMinusNode : OperatorNode<T>
 	{
 		inline OperatorMinusNode(NodeScript* parent)
-			: Node(parent, "Minus", ne::NodeStyle::blue())
+			: OperatorNode<T>(parent, "Minus")
+		{}
+
+		T compute() override
 		{
-			addIN<T>("left");
-			addIN<T>("right");
-			addOUT<T>("out")->behaviour([this]
-			{
-				return get_value<T>("left") - get_value<T>("right");
-			});
+			return this->get_value<T>("left") - this->get_value<T>("right");
 		}
 	};
 
 	template<typename T>
-	struct OperatorTimesNode : Node
+	struct OperatorTimesNode : OperatorNode<T>
 	{
 		inline OperatorTimesNode(NodeScript* parent)
-			: Node(parent, "Times", ne::NodeStyle::blue())
+			: OperatorNode<T>(parent, "Times")
+		{}
+
+		T compute() override
 		{
-			addIN<T>("left");
-			addIN<T>("right");
-			addOUT<T>("out")->behaviour([this]
-			{
-				return get_value<T>("left") * get_value<T>("right");
-			});
+			return this->get_value<T>("left") * this->get_value<T>("right");
 		}
 	};
 
 	template<typename T>
-	struct OperatorDivideNode : Node
+	struct OperatorDivideNode : OperatorNode<T>
 	{
 		inline OperatorDivideNode(NodeScript* parent)
-			: Node(parent, "Divide", ne::NodeStyle::blue())
+			: OperatorNode<T>(parent, "Divide")
+		{}
+
+		T compute() override
 		{
-			addIN<T>("left");
-			addIN<T>("right");
-			addOUT<T>("out")->behaviour([this]
-			{
-				return get_value<T>("left") / get_value<T>("right");
-			});
+			return this->get_value<T>("left") / this->get_value<T>("right");
 		}
 	};
 
 	template<typename T>
-	struct OperatorPowerNode : Node
+	struct OperatorPowerNode : OperatorNode<T>
 	{
 		inline OperatorPowerNode(NodeScript* parent)
-			: Node(parent, "Power", ne::NodeStyle::blue())
-		{
-			addIN<T>("left");
-			addIN<T>("right");
-			addOUT<T>("out")->behaviour([this]
-			{
-				return helper_pow<T>(get_value<T>("left"), get_value<T>("right"));
-			});
-		}
+			: OperatorNode<T>(parent, "Power")
+		{}
 
-	private:
-		template<typename T>
-		static T helper_pow(T left, T right)
+		T compute() override
 		{
-			if constexpr (std::is_same_v<T, int32_t>) {
-				return (int32_t) ::pow((double) left, (double) right);
-			}
-			else if constexpr (std::is_same_v<T, float>) {
-				return (float) ::pow(left, right);
-			}
-			else {
-				static_assert(false, "Unsupported helper pow type");
-			}
+			const T left = this->get_value<T>("left");
+			const T right = this->get_value<T>("right");
+			return static_cast<T>(::pow((double) left, (double) right));
 		}
 	};
 
 	template<typename T>
-	struct OperatorModuloNode : Node
+	struct OperatorModuloNode : OperatorNode<T>
 	{
 		inline OperatorModuloNode(NodeScript* parent)
-			: Node(parent, "Modulo", ne::NodeStyle::blue())
-		{
-			addIN<T>("left");
-			addIN<T>("right");
-			addOUT<T>("out")->behaviour([this]
-			{
-				return helper_mod<T>(get_value<T>("left"), get_value<T>("right"));
-			});
-		}
+			: OperatorNode<T>(parent, "Modulo")
+		{}
 
-	private:
-		template<typename T>
-		static T helper_mod(T left, T right)
+		T compute() override
 		{
+			const T left = this->get_value<T>("left");
+			const T right = this->get_value<T>("right");
 			if constexpr (std::is_same_v<T, int32_t>) {
-				return (int32_t) (left % right);
+				return left % right;
 			}
 			else if constexpr (std::is_same_v<T, float>) {
-				return (float) ::fmod(left, right);
+				return static_cast<T>(::fmod(left, right));
 			}
 			else {
 				static_assert(false, "Unsupported helper mod type");
 			}
+		}
+	};
+
+	template<typename T>
+	struct OperatorMinNode : OperatorNode<T>
+	{
+		inline OperatorMinNode(NodeScript* parent)
+			: OperatorNode<T>(parent, "Min")
+		{}
+
+		T compute() override
+		{
+			const T left = this->get_value<T>("left");
+			const T right = this->get_value<T>("right");
+			return kl::min(left, right);
+		}
+	};
+
+	template<typename T>
+	struct OperatorMaxNode : OperatorNode<T>
+	{
+		inline OperatorMaxNode(NodeScript* parent)
+			: OperatorNode<T>(parent, "Max")
+		{}
+
+		T compute() override
+		{
+			const T left = this->get_value<T>("left");
+			const T right = this->get_value<T>("right");
+			return kl::max(left, right);
 		}
 	};
 }
@@ -1597,12 +1611,142 @@ namespace titian {
 	};
 }
 
+// math
+namespace titian {
+	template<typename T>
+	struct MathNode : Node
+	{
+		inline MathNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::magenta())
+		{
+			this->addIN<T>("in");
+			this->addOUT<T>("out")->behaviour([this] { return this->compute(); });
+		}
+
+		virtual T compute() = 0;
+	};
+
+	template<typename T>
+	struct AbsNode : MathNode<T>
+	{
+		inline AbsNode(NodeScript* parent)
+			: MathNode<T>(parent, "Abs")
+		{}
+
+		T compute() override
+		{
+			const T in = this->get_value<T>("in");
+			return kl::abs(in);
+		}
+	};
+
+	template<typename T>
+	struct SqrtNode : MathNode<T>
+	{
+		inline SqrtNode(NodeScript* parent)
+			: MathNode<T>(parent, "Sqrt")
+		{}
+
+		T compute() override
+		{
+			const T in = this->get_value<T>("in");
+			return static_cast<T>(::sqrt(in));
+		}
+	};
+
+	template<typename T>
+	struct TrigNode : MathNode<T>
+	{
+		inline TrigNode(NodeScript* parent, const String& title)
+			: MathNode<T>(parent, title)
+		{
+			this->addIN<bool>("inverse");
+			this->addIN<bool>("degrees");
+		}
+
+	protected:
+		inline bool is_inverse()
+		{
+			return this->get_value<bool>("inverse");
+		}
+
+		inline bool is_degrees()
+		{
+			return this->get_value<bool>("degrees");
+		}
+	};
+
+	template<typename T>
+	struct SinNode : TrigNode<T>
+	{
+		inline SinNode(NodeScript* parent)
+			: TrigNode<T>(parent, "Sin")
+		{}
+
+		T compute() override
+		{
+			const T in = this->get_value<T>("in");
+			if (this->is_inverse()) {
+				return (this->is_degrees() ? kl::asin_d<T> : kl::asin<T>)(in);
+			}
+			else {
+				return (this->is_degrees() ? kl::sin_d<T> : kl::sin<T>)(in);
+			}
+		}
+	};
+
+	template<typename T>
+	struct CosNode : TrigNode<T>
+	{
+		inline CosNode(NodeScript* parent)
+			: TrigNode<T>(parent, "Cos")
+		{}
+
+		T compute() override
+		{
+			const T in = this->get_value<T>("in");
+			if (this->is_inverse()) {
+				return (this->is_degrees() ? kl::acos_d<T> : kl::acos<T>)(in);
+			}
+			else {
+				return (this->is_degrees() ? kl::cos_d<T> : kl::cos<T>)(in);
+			}
+		}
+	};
+
+	template<typename T>
+	struct TanNode : TrigNode<T>
+	{
+		inline TanNode(NodeScript* parent)
+			: TrigNode<T>(parent, "Tan")
+		{}
+
+		T compute() override
+		{
+			const T in = this->get_value<T>("in");
+			if (this->is_inverse()) {
+				return (this->is_degrees() ? kl::atan_d<T> : kl::atan<T>)(in);
+			}
+			else {
+				return (this->is_degrees() ? kl::tan_d<T> : kl::tan<T>)(in);
+			}
+		}
+	};
+}
+
 // functions
 namespace titian {
-	struct PrintNode : FlowNode
+	struct FunctionNode : FlowNode
+	{
+		inline FunctionNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::crimson())
+		{}
+	};
+
+	struct PrintNode : FunctionNode
 	{
 		inline PrintNode(NodeScript* parent)
-			: FlowNode(parent, "Print", true, true, ne::NodeStyle::magenta())
+			: FunctionNode(parent, "Print")
 		{
 			addIN<String>("value");
 		}
