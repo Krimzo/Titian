@@ -6,7 +6,7 @@ titian::Material::Material()
 
 void titian::Material::serialize(Serializer* serializer, const void* helper_data) const
 {
-	serializer->write_float_array("color", color, 4);
+	serializer->write_float_array("color", &color.x, 4);
 	serializer->write_float("texture_blend", texture_blend);
 
 	serializer->write_float("reflection_factor", reflection_factor);
@@ -24,7 +24,7 @@ void titian::Material::serialize(Serializer* serializer, const void* helper_data
 
 void titian::Material::deserialize(const Serializer* serializer, const void* helper_data)
 {
-	serializer->read_float_array("color", color, 4);
+	serializer->read_float_array("color", &color.x, 4);
 	serializer->read_float("texture_blend", texture_blend);
 
 	serializer->read_float("reflection_factor", reflection_factor);

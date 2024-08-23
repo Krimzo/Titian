@@ -175,7 +175,7 @@ bool kl::VideoReader::read_frame(Image& out, int* out_index) const
 
     out.resize(m_frame_size);
     const Color* frame_source = (Color*) frame_data;
-    Color* frame_target = out;
+    Color* frame_target = out.ptr();
 
     kl::async_for(0, out.width() * out.height(), [&](const int i)
     {

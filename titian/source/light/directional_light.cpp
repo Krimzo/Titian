@@ -36,10 +36,10 @@ void titian::DirectionalLight::serialize(Serializer* serializer, const void* hel
     Light::serialize(serializer, helper_data);
 
     serializer->write_int("map_resolution", m_map_resolution);
-    serializer->write_float_array("direction", m_direction, 3);
+    serializer->write_float_array("direction", &m_direction.x, 3);
 
     serializer->write_float("point_size", point_size);
-    serializer->write_float_array("color", color, 3);
+    serializer->write_float_array("color", &color.x, 3);
 }
 
 void titian::DirectionalLight::deserialize(const Serializer* serializer, const void* helper_data)
@@ -47,10 +47,10 @@ void titian::DirectionalLight::deserialize(const Serializer* serializer, const v
     Light::deserialize(serializer, helper_data);
 
     serializer->read_int("map_resolution", (int32_t&) m_map_resolution);
-    serializer->read_float_array("direction", m_direction, 3);
+    serializer->read_float_array("direction", &m_direction.x, 3);
 
     serializer->read_float("point_size", point_size);
-    serializer->read_float_array("color", color, 3);
+    serializer->read_float_array("color", &color.x, 3);
 }
 
 titian::Float3 titian::DirectionalLight::light_at_point(const Float3& point) const

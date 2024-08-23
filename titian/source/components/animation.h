@@ -47,7 +47,6 @@ namespace titian {
 		float duration_in_ticks = 1.0f;
 
 		Vector<String> meshes;
-
 		Vector<AnimationChannel> channels;
 		Ref<AnimationNode> animation_root;
 

@@ -162,7 +162,7 @@ void titian::GUISectionTextureEditor::show_texture_properties(Texture* texture)
         gui_colored_text(selected_texture, gui_layer->special_color);
 
         Int2 size = texture->data_buffer.size();
-        im::DragInt2("Size", size, 0.0f);
+        im::DragInt2("Size", &size.x, 0.0f);
 
         int pixel_count = texture->data_buffer.pixel_count();
         im::DragInt("Pixel Count", &pixel_count, 0.0f);

@@ -327,7 +327,7 @@ void kl::ContextHolder::draw_indexed(const dx::Buffer& vertex_buffer, const dx::
 // Views
 void kl::ContextHolder::clear_target_view(const dx::TargetView& view, const Float4& color) const
 {
-    m_context->ClearRenderTargetView(view.get(), color);
+    m_context->ClearRenderTargetView(view.get(), &color.x);
 }
 
 void kl::ContextHolder::clear_depth_view(const dx::DepthView& view, const float depth, const UINT8 stencil) const

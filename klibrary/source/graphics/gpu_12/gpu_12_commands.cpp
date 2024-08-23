@@ -31,7 +31,7 @@ void kl::GPU12Commands::transition_resource(const dx12::Resource& resource, cons
 
 void kl::GPU12Commands::clear_target_view(const dx12::DescriptorHandle& handle, const Float4& color) const
 {
-	list->ClearRenderTargetView(handle, color, 0, nullptr);
+	list->ClearRenderTargetView(handle, &color.x, 0, nullptr);
 }
 
 void kl::GPU12Commands::copy(dx12::Resource& destination, const dx12::Resource& source) const

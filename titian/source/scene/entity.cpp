@@ -25,11 +25,19 @@ void titian::Entity::serialize(Serializer* serializer, const void* helper_data) 
 
     serializer->write_float("mass", mass());
 
-    serializer->write_float_array("scale", scale, 3);
-    serializer->write_float_array("rotation", rotation(), 3);
-    serializer->write_float_array("position", position(), 3);
-    serializer->write_float_array("velocity", velocity(), 3);
-    serializer->write_float_array("angular", angular(), 3);
+    serializer->write_float_array("scale", &scale.x, 3);
+
+    const Float3 rotation = this->rotation();
+    serializer->write_float_array("rotation", &rotation.x, 3);
+
+    const Float3 position = this->position();
+    serializer->write_float_array("position", &position.x, 3);
+
+    const Float3 velocity = this->velocity();
+    serializer->write_float_array("velocity", &velocity.x, 3);
+
+    const Float3 angular = this->angular();
+    serializer->write_float_array("angular", &angular.x, 3);
 
     serializer->write_string("animation_name", animation_name);
     serializer->write_string("material_name", material_name);
@@ -60,22 +68,22 @@ void titian::Entity::deserialize(const Serializer* serializer, const void* helpe
     serializer->read_float("mass", mass);
     set_mass(mass);
 
-    serializer->read_float_array("scale", scale, 3);
+    serializer->read_float_array("scale", &scale.x, 3);
 
     Float3 rotation;
-    serializer->read_float_array("rotation", rotation, 3);
+    serializer->read_float_array("rotation", &rotation.x, 3);
     set_rotation(rotation);
 
     Float3 position;
-    serializer->read_float_array("position", position, 3);
+    serializer->read_float_array("position", &position.x, 3);
     set_position(position);
 
     Float3 velocity;
-    serializer->read_float_array("velocity", velocity, 3);
+    serializer->read_float_array("velocity", &velocity.x, 3);
     set_velocity(velocity);
 
     Float3 angular;
-    serializer->read_float_array("angular", angular, 3);
+    serializer->read_float_array("angular", &angular.x, 3);
     set_angular(angular);
 
     serializer->read_string("animation_name", animation_name);

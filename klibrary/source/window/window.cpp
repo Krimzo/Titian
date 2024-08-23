@@ -315,13 +315,17 @@ void kl::Window::draw_pixel_data(const Color* data, const Int2& size, const Int2
     bitmap_info.bmiHeader.biPlanes = 1;
     bitmap_info.bmiHeader.biWidth = (LONG) size.x;
     bitmap_info.bmiHeader.biHeight = (LONG) -size.y;
-
-    StretchDIBits(m_device_context, position.x, position.y, size.x, size.y, 0, 0, size.x, size.y, data, &bitmap_info, DIB_RGB_COLORS, SRCCOPY);
+    StretchDIBits(m_device_context,
+        position.x, position.y,
+        size.x, size.y,
+        0, 0,
+        size.x, size.y,
+        data, &bitmap_info, DIB_RGB_COLORS, SRCCOPY);
 }
 
 void kl::Window::draw_image(const Image& image, const Int2& position) const
 {
-    draw_pixel_data(image, image.size(), position);
+    draw_pixel_data(image.ptr(), image.size(), position);
 }
 
 void kl::Window::set_dark_mode(const bool enabled) const

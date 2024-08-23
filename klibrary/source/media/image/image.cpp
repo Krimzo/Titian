@@ -19,7 +19,7 @@ kl::Image::Image()
 kl::Image::Image(const Int2& size)
     : m_size(size)
 {
-    PixelStorage::resize((size_t) size.x * size.y);
+    m_pixels.resize((size_t) size.x * size.y);
 }
 
 kl::Image::Image(const std::string& filepath)
@@ -28,14 +28,14 @@ kl::Image::Image(const std::string& filepath)
 }
 
 // Get
-kl::Image::operator kl::Color* ()
+kl::Color* kl::Image::ptr()
 {
-    return PixelStorage::data();
+    return m_pixels.data();
 }
 
-kl::Image::operator const kl::Color* () const
+const kl::Color* kl::Image::ptr() const
 {
-    return PixelStorage::data();
+    return m_pixels.data();
 }
 
 int kl::Image::pixel_count() const
@@ -50,12 +50,12 @@ uint64_t kl::Image::byte_size() const
 
 kl::Color& kl::Image::operator[](const Int2& coords)
 {
-    return PixelStorage::at((size_t) coords.y * m_size.x + coords.x);
+    return m_pixels.at((size_t) coords.y * m_size.x + coords.x);
 }
 
 const kl::Color& kl::Image::operator[](const Int2& coords) const
 {
-    return PixelStorage::at((size_t) coords.y * m_size.x + coords.x);
+    return m_pixels.at((size_t) coords.y * m_size.x + coords.x);
 }
 
 bool kl::Image::in_bounds(const Int2& coords) const
@@ -73,17 +73,6 @@ kl::Color kl::Image::sample(const Float2& uv) const
         return (*this)[coords];
     }
     return {};
-}
-
-// Iterate
-kl::PixelStorage::iterator kl::Image::begin()
-{
-    return PixelStorage::begin();
-}
-
-kl::PixelStorage::iterator kl::Image::end()
-{
-    return PixelStorage::end();
 }
 
 // Size
@@ -160,7 +149,7 @@ void kl::Image::resize_scaled(const Int2& new_size)
 // Alter
 void kl::Image::fill(const Color& color)
 {
-    for (auto& pixel : (PixelStorage&) *this) {
+    for (auto& pixel : m_pixels) {
         pixel = color;
     }
 }
@@ -212,8 +201,8 @@ std::string kl::Image::as_ascii(const Int2& frame_size) const
 {
     const Int2 increment = m_size / frame_size;
 
-    std::stringstream frame = {};
-    for (Int2 position = {}; position.y < frame_size.y; position.y++) {
+    std::stringstream frame;
+    for (Int2 position; position.y < frame_size.y; position.y++) {
         for (position.x = 0; position.x < frame_size.x; position.x++) {
             const Int2 read_position = { position.x * increment.x, position.y * increment.y };
             if (in_bounds(read_position)) {
@@ -350,17 +339,6 @@ void kl::Image::draw_image(const Int2& top_left, const Image& image, const bool 
     }
 }
 
-// Formats
-static constexpr CLSID bmp_encoder_clsid = {
-    0x557cf400, 0x1a04, 0x11d3, { 0x9a, 0x73, 0x00, 0x00, 0xf8, 0x1e, 0xf3, 0x2e }
-};
-static constexpr CLSID jpg_encoder_clsid = {
-    0x557cf401, 0x1a04, 0x11d3, { 0x9a, 0x73, 0x00, 0x00, 0xf8, 0x1e, 0xf3, 0x2e }
-};
-static constexpr CLSID png_encoder_clsid = {
-    0x557cf406, 0x1a04, 0x11d3, { 0x9a, 0x73, 0x00, 0x00, 0xf8, 0x1e, 0xf3, 0x2e }
-};
-
 // Decoding
 bool kl::Image::load_from_memory(const void* data, const uint64_t byte_size)
 {
@@ -377,7 +355,7 @@ bool kl::Image::load_from_memory(const void* data, const uint64_t byte_size)
     }
 
     resize({ int(bitmap_data.Width), int(bitmap_data.Height) });
-    memcpy(PixelStorage::data(), bitmap_data.Scan0, PixelStorage::size() * sizeof(Color));
+    memcpy(m_pixels.data(), bitmap_data.Scan0, m_pixels.size() * sizeof(Color));
     return true;
 }
 
@@ -395,6 +373,16 @@ bool kl::Image::load_from_file(const std::string_view& filepath)
 // Encoding
 bool kl::Image::save_to_buffer(std::string& buffer, const ImageType type) const
 {
+    static constexpr CLSID bmp_encoder_clsid = {
+        0x557cf400, 0x1a04, 0x11d3, { 0x9a, 0x73, 0x00, 0x00, 0xf8, 0x1e, 0xf3, 0x2e },
+    };
+    static constexpr CLSID jpg_encoder_clsid = {
+        0x557cf401, 0x1a04, 0x11d3, { 0x9a, 0x73, 0x00, 0x00, 0xf8, 0x1e, 0xf3, 0x2e },
+    };
+    static constexpr CLSID png_encoder_clsid = {
+        0x557cf406, 0x1a04, 0x11d3, { 0x9a, 0x73, 0x00, 0x00, 0xf8, 0x1e, 0xf3, 0x2e },
+    };
+
     const CLSID* format_to_use;
     if (type == ImageType::BMP) {
         format_to_use = &bmp_encoder_clsid;
@@ -420,7 +408,7 @@ bool kl::Image::save_to_buffer(std::string& buffer, const ImageType type) const
         return false;
     }
 
-    memcpy(bitmap_data.Scan0, PixelStorage::data(), PixelStorage::size() * sizeof(Color));
+    memcpy(bitmap_data.Scan0, m_pixels.data(), m_pixels.size() * sizeof(Color));
     bitmap.UnlockBits(&bitmap_data);
 
     const ComRef<IStream> stream{ SHCreateMemStream(nullptr, 0) };
@@ -445,7 +433,7 @@ bool kl::Image::save_to_file(const std::string_view& filepath, ImageType type) c
 
         for (int y = 0; y < m_size.y; y++) {
             for (int x = 0; x < m_size.x; x++) {
-                const Color pixel = (*this)[y * m_size.x + x];
+                const Color pixel = m_pixels[(size_t) y * m_size.x + x];
                 write(file, x, " ", y, " => ", (int) pixel.r, " ", (int) pixel.g, " ", (int) pixel.b);
             }
         }
@@ -475,13 +463,12 @@ kl::Image kl::take_screenshot()
     BitBlt(memory_dc, 0, 0, width, height, screen_dc, 0, 0, SRCCOPY);
     bitmap = (HBITMAP) SelectObject(memory_dc, old_bitmap);
 
-    Image result = { Int2{ width, height } };
-    GetBitmapBits(bitmap, width * height * (LONG) sizeof(Color), result);
+    Image result{ Int2{ width, height } };
+    GetBitmapBits(bitmap, width * height * (LONG) sizeof(Color), result.ptr());
 
     DeleteDC(memory_dc);
     DeleteDC(screen_dc);
     DeleteObject(old_bitmap);
     DeleteObject(bitmap);
-
     return result;
 }

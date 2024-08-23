@@ -10,7 +10,7 @@ void titian::GUISectionFuzeRender::render_gui()
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
 
 	if (im::Begin("Render")) {
-		im::DragInt2("Video Resolution", video_resolution, 1.0f, 0, 1'000'000'000);
+		im::DragInt2("Video Resolution", &video_resolution.x, 1.0f, 0, 1'000'000'000);
 		im::DragInt("Video FPS", &video_fps, 1.0f, 0, 1'000'000'000);
 		im::DragInt("Video Bitrate", &video_bitrate, 1.0f, 0, 1'000'000'000);
 		im::DragInt("Audio Rate", &audio_rate, 1.0f, 0, 1'000'000'000);

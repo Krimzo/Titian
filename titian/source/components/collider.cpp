@@ -38,7 +38,7 @@ void titian::Collider::serialize(Serializer* serializer, const void* helper_data
     case px::PxGeometryType::Enum::eBOX: {
         px::PxBoxGeometry geometry = {};
         m_shape->getBoxGeometry(geometry);
-        serializer->write_float_array("half_extents", (Float3&) geometry.halfExtents, 3);
+        serializer->write_float_array("half_extents", &geometry.halfExtents.x, 3);
         break;
     }
     case px::PxGeometryType::Enum::eSPHERE: {
@@ -57,7 +57,7 @@ void titian::Collider::serialize(Serializer* serializer, const void* helper_data
     case px::PxGeometryType::Enum::eTRIANGLEMESH: {
         px::PxTriangleMeshGeometry geometry = {};
         m_shape->getTriangleMeshGeometry(geometry);
-        serializer->write_float_array("scale", (Float3&) geometry.scale.scale, 3);
+        serializer->write_float_array("scale", &geometry.scale.scale.x, 3);
         for (const auto& [name, mesh] : *helper_meshes) {
             if (mesh->physics_buffer == geometry.triangleMesh) {
                 serializer->write_string("mesh_name", name);
@@ -70,8 +70,11 @@ void titian::Collider::serialize(Serializer* serializer, const void* helper_data
 saved_geometry:
     serializer->pop_object();
 
-    serializer->write_float_array("rotation", rotation(), 3);
-    serializer->write_float_array("offset", offset(), 3);
+    const Float3 rotation = this->rotation();
+    serializer->write_float_array("rotation", &rotation.x, 3);
+
+    const Float3 offset = this->offset();
+    serializer->write_float_array("offset", &offset.x, 3);
 
     serializer->write_float("static_friction", static_friction());
     serializer->write_float("dynamic_friction", dynamic_friction());
@@ -89,7 +92,7 @@ void titian::Collider::deserialize(const Serializer* serializer, const void* hel
     switch (geometry_type) {
     case px::PxGeometryType::Enum::eBOX: {
         px::PxBoxGeometry geometry = {};
-        serializer->read_float_array("half_extents", (Float3&) geometry.halfExtents, 3);
+        serializer->read_float_array("half_extents", &geometry.halfExtents.x, 3);
         this->set_geometry(geometry);
         break;
     }
@@ -108,7 +111,7 @@ void titian::Collider::deserialize(const Serializer* serializer, const void* hel
     }
     case px::PxGeometryType::Enum::eTRIANGLEMESH: {
         px::PxTriangleMeshGeometry geometry = {};
-        serializer->read_float_array("scale", (Float3&) geometry.scale.scale, 3);
+        serializer->read_float_array("scale", &geometry.scale.scale.x, 3);
         String mesh_name;
         serializer->read_string("mesh_name", mesh_name);
         geometry.triangleMesh = (*helper_meshes).at(mesh_name)->physics_buffer;
@@ -119,11 +122,11 @@ void titian::Collider::deserialize(const Serializer* serializer, const void* hel
     serializer->unload_object();
 
     Float3 rotation;
-    serializer->read_float_array("rotation", rotation, 3);
+    serializer->read_float_array("rotation", &rotation.x, 3);
     set_rotation(rotation);
 
     Float3 offset;
-    serializer->read_float_array("offset", offset, 3);
+    serializer->read_float_array("offset", &offset.x, 3);
     set_rotation(offset);
 
     float static_friction = 0.0f;

@@ -53,11 +53,10 @@ std::string kl::json::Array::decompile(const int depth) const
     }
 
     std::stringstream stream;
-    const auto last_it = --end();
     stream << Standard::array_start_literal;
-    for (auto it = begin(); it != end(); ++it) {
-        stream << (*it)->decompile(-1);
-        if (it != last_it) {
+    for (size_t i = 0; i < size(); i++) {
+        stream << self[i]->decompile(-1);
+        if ((i + 1) != size()) {
             stream << Standard::splitter_literal << ' ';
         }
     }

@@ -42,9 +42,9 @@ titian::String titian::ImageEffectScaleRotPos::get_name() const
 
 void titian::ImageEffectScaleRotPos::display_gui()
 {
-    im::DragFloat2("Scale", scale(), 0.05f);
+    im::DragFloat2("Scale", &scale().x, 0.05f);
     im::DragFloat("Rotation", &rotation());
-    im::DragFloat2("Position", position());
+    im::DragFloat2("Position", &position().x);
 }
 
 titian::Ref<titian::ImageEffect> titian::ImageEffectScaleRotPos::make_copy() const

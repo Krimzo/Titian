@@ -117,13 +117,13 @@ void titian::Mesh::reload()
     }
 
     // Graphics
-    graphics_buffer = m_gpu->create_vertex_buffer(data_buffer.data(), (UINT) (data_buffer.size() * sizeof(Data::value_type)));
+    graphics_buffer = m_gpu->create_vertex_buffer(data_buffer.data(), (UINT) (data_buffer.size() * sizeof(Vertex)));
 
     // Physics
     free_physics_buffer();
 
     px::PxTriangleMeshDesc mesh_descriptor = {};
-    mesh_descriptor.points.stride = static_cast<px::PxU32>(sizeof(Data::value_type));
+    mesh_descriptor.points.stride = static_cast<px::PxU32>(sizeof(Vertex));
     mesh_descriptor.points.count = static_cast<px::PxU32>(data_buffer.size() / 3 * 3);
     mesh_descriptor.points.data = data_buffer.data();
 

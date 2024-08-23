@@ -3,15 +3,12 @@
 #include "math/math.h"
 
 
-// Class
 namespace kl {
-    using EncryptionKey = std::vector<byte>;
-}
-
-namespace kl {
-    class Encryptor : public std::vector<EncryptionKey>
+    class Encryptor
     {
     public:
+        std::vector<std::vector<byte>> keys;
+
         Encryptor(int key_count = 5);
 
         void run_pass(void* data, uint64_t byte_size) const;
@@ -27,7 +24,6 @@ namespace kl {
     };
 }
 
-// Format
 namespace kl {
     std::ostream& operator<<(std::ostream& stream, const Encryptor& encryptor);
 }

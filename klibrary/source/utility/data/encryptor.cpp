@@ -8,8 +8,8 @@ namespace kl {
 
 kl::Encryptor::Encryptor(const int key_count)
 {
-    this->resize(key_count);
-    for (auto& key : *this) {
+    keys.resize(key_count);
+    for (auto& key : keys) {
         key.resize(random::gen_int(MIN_KEY_SIZE, MAX_KEY_SIZE + 1));
         for (auto& value : key) {
             value = random::gen_byte();
@@ -19,7 +19,7 @@ kl::Encryptor::Encryptor(const int key_count)
 
 void kl::Encryptor::run_pass(void* data, const uint64_t byte_size) const
 {
-    for (auto& key : *this) {
+    for (auto& key : keys) {
         for (uint64_t i = 0; i < byte_size; i++) {
             reinterpret_cast<byte*>(data)[i] ^= key[i % key.size()];
         }
@@ -28,7 +28,7 @@ void kl::Encryptor::run_pass(void* data, const uint64_t byte_size) const
 
 bool kl::Encryptor::key_size_exists(const uint64_t size) const
 {
-    for (const auto& key : *this) {
+    for (const auto& key : keys) {
         if (key.size() == size) {
             return true;
         }
@@ -38,12 +38,12 @@ bool kl::Encryptor::key_size_exists(const uint64_t size) const
 
 std::ostream& kl::operator<<(std::ostream& stream, const Encryptor& encryptor)
 {
-    for (uint64_t i = 0; i < encryptor.size(); i++) {
+    for (uint64_t i = 0; i < encryptor.keys.size(); i++) {
         stream << "keys[" << i << "] = { ";
-        for (uint64_t k = 0; k < (encryptor[i].size() - 1); k++) {
-            stream << int(encryptor[i][k]) << ", ";
+        for (uint64_t k = 0; k < (encryptor.keys[i].size() - 1); k++) {
+            stream << int(encryptor.keys[i][k]) << ", ";
         }
-        stream << int(encryptor[i].back()) << " }" << std::endl;
+        stream << int(encryptor.keys[i].back()) << " }" << std::endl;
     }
     return stream;
 }

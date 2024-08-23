@@ -86,11 +86,11 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
     im::DragFloat("Speed", &camera->speed);
 
     Float3 camera_forward = camera->forward();
-    im::DragFloat3("Forward", camera_forward, 0.01f);
+    im::DragFloat3("Forward", &camera_forward.x, 0.01f);
     camera->set_forward(camera_forward);
 
     Float3 camera_up = camera->up();
-    im::DragFloat3("Up", camera_up, 0.01f);
+    im::DragFloat3("Up", &camera_up.x, 0.01f);
     camera->set_up(camera_up);
 
     // Skybox
@@ -125,7 +125,7 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
     // Background
     if (!scene->textures.contains(camera->skybox_name)) {
         Float4 background = camera->background;
-        if (im::ColorEdit4("Background", background)) {
+        if (im::ColorEdit4("Background", &background.x)) {
             camera->background = background;
         }
     }
@@ -135,7 +135,7 @@ void titian::GUISectionEntityProperties::display_ambient_light_special_info(Scen
 {
     im::Text("Ambient Light Special Info");
 
-    im::ColorEdit3("Color", light->color);
+    im::ColorEdit3("Color", &light->color.x);
     im::DragFloat("Intensity", &light->intensity);
 }
 
@@ -143,7 +143,7 @@ void titian::GUISectionEntityProperties::display_point_light_special_info(Scene*
 {
     im::Text("Point Light Special Info");
 
-    im::ColorEdit3("Color", light->color);
+    im::ColorEdit3("Color", &light->color.x);
 }
 
 void titian::GUISectionEntityProperties::display_directional_light_special_info(Scene* scene, DirectionalLight* light)
@@ -151,10 +151,10 @@ void titian::GUISectionEntityProperties::display_directional_light_special_info(
     im::Text("Directional Light Special Info");
 
     im::DragFloat("Point Size", &light->point_size);
-    im::ColorEdit3("Color", light->color);
+    im::ColorEdit3("Color", &light->color.x);
 
     Float3 direction = light->direction();
-    if (im::DragFloat3("Direction", direction)) {
+    if (im::DragFloat3("Direction", &direction.x)) {
         light->set_direction(direction);
     }
 }
@@ -164,15 +164,15 @@ void titian::GUISectionEntityProperties::edit_entity_transform(Scene* scene, Ent
     im::Separator();
     im::Text("Transform");
 
-    im::DragFloat3("Scale", entity->scale, 0.1f);
+    im::DragFloat3("Scale", &entity->scale.x, 0.1f);
 
     Float3 rotation = entity->rotation();
-    if (im::DragFloat3("Rotation", rotation)) {
+    if (im::DragFloat3("Rotation", &rotation.x)) {
         entity->set_rotation(rotation);
     }
 
     Float3 position = entity->position();
-    if (im::DragFloat3("Position", position)) {
+    if (im::DragFloat3("Position", &position.x)) {
         entity->set_position(position);
     }
 }
@@ -249,12 +249,12 @@ void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const
         }
 
         Float3 velocity = entity->velocity();
-        if (im::DragFloat3("Velocity", velocity)) {
+        if (im::DragFloat3("Velocity", &velocity.x)) {
             entity->set_velocity(velocity);
         }
 
         Float3 angular = entity->angular() * (float) kl::TO_DEGREES;
-        if (im::DragFloat3("Angular", angular)) {
+        if (im::DragFloat3("Angular", &angular.x)) {
             entity->set_angular(angular * (float) kl::TO_RADIANS);
         }
     }
@@ -359,12 +359,12 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     }
 
     Float3 rotation = collider->rotation();
-    if (im::DragFloat3("Offset Rotation", rotation)) {
+    if (im::DragFloat3("Offset Rotation", &rotation.x)) {
         collider->set_rotation(rotation);
     }
 
     Float3 offset = collider->offset();
-    if (im::DragFloat3("Offset Position", offset)) {
+    if (im::DragFloat3("Offset Position", &offset.x)) {
         collider->set_offset(offset);
     }
 

@@ -190,7 +190,7 @@ void kl::GPU::set_fullscreen(const bool enabled) const
 // Internal buffers
 void kl::GPU::clear_internal_color(const Float4& color) const
 {
-    m_context->ClearRenderTargetView(back_target_view().get(), color);
+    m_context->ClearRenderTargetView(back_target_view().get(), &color.x);
 }
 
 void kl::GPU::clear_internal_depth(const float depth, const UINT8 stencil) const

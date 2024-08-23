@@ -303,6 +303,11 @@ bool titian::Scene::contains_entity(const String& name) const
     return m_entities.contains(name);
 }
 
+const titian::Map<titian::String, titian::Ref<titian::Entity>>& titian::Scene::entities_ref() const
+{
+    return m_entities;
+}
+
 size_t titian::Scene::entity_count() const
 {
     return m_entities.size();
@@ -893,7 +898,7 @@ titian::Ref<titian::Texture> titian::Scene::load_assimp_texture(const aiScene* s
 	}
     else {
         texture_object->data_buffer.resize({ (int) texture->mWidth, (int) texture->mHeight });
-        memcpy(texture_object->data_buffer, texture->pcData, (size_t) texture->mWidth * texture->mHeight * 4);
+        memcpy(texture_object->data_buffer.ptr(), texture->pcData, (size_t) texture->mWidth * texture->mHeight * 4);
     }
 
     texture_object->reload_as_2D();

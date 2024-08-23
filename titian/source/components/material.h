@@ -14,7 +14,7 @@ namespace titian {
 		float refraction_factor = 0.0f;
 		float refraction_index = 1.0f;
 
-		Float4x4 custom_data = {};
+		Float4x4 custom_data;
 
 		String color_map_name = "/";
 		String normal_map_name = "/";

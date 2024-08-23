@@ -328,7 +328,7 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
         im::SameLine();
         gui_colored_text(selected_material, Layers::get<GUILayer>()->special_color);
 
-        im::ColorEdit4("Base Color", material->color);
+        im::ColorEdit4("Base Color", &material->color.x);
         im::DragFloat("Texture Blend", &material->texture_blend, 0.05f, 0.0f, 1.0f);
 
         im::DragFloat("Reflection Factor", &material->reflection_factor, 0.05f, 0.0f, 1.0f);

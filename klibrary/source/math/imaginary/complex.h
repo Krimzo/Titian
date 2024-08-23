@@ -24,16 +24,6 @@ namespace kl {
         {}
 
         // Get
-        constexpr operator T* ()
-        {
-            return &r;
-        }
-
-        constexpr operator const T* () const
-        {
-            return &r;
-        }
-
         constexpr T& operator[](int index)
         {
             return (&r)[index];

@@ -4,6 +4,15 @@
 #include "scene/scene.h"
 
 
+template<typename T, typename = void> struct has_less_operator : std::false_type {};
+template<typename T> struct has_less_operator<T, std::void_t<decltype(std::declval<T>() < std::declval<T>())>> : std::true_type {};
+
+template<typename T, typename = void> struct has_equals_operator : std::false_type {};
+template<typename T> struct has_equals_operator<T, std::void_t<decltype(std::declval<T>() == std::declval<T>())>> : std::true_type {};
+
+template<typename T, typename = void> struct has_greater_operator : std::false_type {};
+template<typename T> struct has_greater_operator<T, std::void_t<decltype(std::declval<T>() > std::declval<T>())>> : std::true_type {};
+
 namespace ne = ImFlow;
 
 namespace titian {
@@ -80,7 +89,7 @@ namespace titian {
 		NodeScript* parent = nullptr;
 		byte user_data[16] = {};
 
-		inline Node(NodeScript* parent, const String& title, const std::shared_ptr<ne::NodeStyle>& style)
+		inline Node(NodeScript* parent, const String& title, const std::shared_ptr<ne::NodeStyle>& style = ne::NodeStyle::red())
 			: parent(parent)
 		{
 			setTitle(title);
@@ -145,7 +154,7 @@ namespace titian {
 		bool has_input = false;
 		bool has_output = false;
 
-		inline FlowNode(NodeScript* parent, const String& title, bool has_input, bool has_output, std::shared_ptr<ne::NodeStyle> style = ne::NodeStyle::white())
+		inline FlowNode(NodeScript* parent, const String& title, bool has_input = false, bool has_output = false, std::shared_ptr<ne::NodeStyle> style = ne::NodeStyle::white())
 			: Node(parent, title, style), has_input(has_input), has_output(has_output)
 		{
 			if (has_input) {
@@ -231,32 +240,32 @@ namespace titian {
 			else if constexpr (std::is_same_v<T, int32_t>) {
 				serializer->write_int("value", value);
 			}
+			else if constexpr (std::is_same_v<T, Int2>) {
+				serializer->write_int_array("value", &value.x, 2);
+			}
 			else if constexpr (std::is_same_v<T, float>) {
 				serializer->write_float("value", value);
 			}
-			else if constexpr (std::is_same_v<T, String>) {
-				serializer->write_string("value", value);
-			}
-			else if constexpr (std::is_same_v<T, Int2>) {
-				serializer->write_int_array("value", value, 2);
-			}
 			else if constexpr (std::is_same_v<T, Float2>) {
-				serializer->write_float_array("value", value, 2);
+				serializer->write_float_array("value", &value.x, 2);
 			}
 			else if constexpr (std::is_same_v<T, Float3>) {
-				serializer->write_float_array("value", value, 3);
+				serializer->write_float_array("value", &value.x, 3);
 			}
 			else if constexpr (std::is_same_v<T, Float4>) {
-				serializer->write_float_array("value", value, 4);
+				serializer->write_float_array("value", &value.x, 4);
 			}
 			else if constexpr (std::is_same_v<T, Complex>) {
-				serializer->write_float_array("value", value, 2);
+				serializer->write_float_array("value", &value.r, 2);
 			}
 			else if constexpr (std::is_same_v<T, Quaternion>) {
-				serializer->write_float_array("value", value, 4);
+				serializer->write_float_array("value", &value.w, 4);
 			}
 			else if constexpr (std::is_same_v<T, Color>) {
 				serializer->write_byte_array("value", &value, 4);
+			}
+			else if constexpr (std::is_same_v<T, String>) {
+				serializer->write_string("value", value);
 			}
 			else {
 				static_assert(false, "Unknown serialize literal node type");
@@ -273,32 +282,32 @@ namespace titian {
 			else if constexpr (std::is_same_v<T, int32_t>) {
 				serializer->read_int("value", value);
 			}
+			else if constexpr (std::is_same_v<T, Int2>) {
+				serializer->read_int_array("value", &value.x, 2);
+			}
 			else if constexpr (std::is_same_v<T, float>) {
 				serializer->read_float("value", value);
 			}
-			else if constexpr (std::is_same_v<T, String>) {
-				serializer->read_string("value", value);
-			}
-			else if constexpr (std::is_same_v<T, Int2>) {
-				serializer->read_int_array("value", value, 2);
-			}
 			else if constexpr (std::is_same_v<T, Float2>) {
-				serializer->read_float_array("value", value, 2);
+				serializer->read_float_array("value", &value.x, 2);
 			}
 			else if constexpr (std::is_same_v<T, Float3>) {
-				serializer->read_float_array("value", value, 3);
+				serializer->read_float_array("value", &value.x, 3);
 			}
 			else if constexpr (std::is_same_v<T, Float4>) {
-				serializer->read_float_array("value", value, 4);
+				serializer->read_float_array("value", &value.x, 4);
 			}
 			else if constexpr (std::is_same_v<T, Complex>) {
-				serializer->read_float_array("value", value, 2);
+				serializer->read_float_array("value", &value.r, 2);
 			}
 			else if constexpr (std::is_same_v<T, Quaternion>) {
-				serializer->read_float_array("value", value, 4);
+				serializer->read_float_array("value", &value.w, 4);
 			}
 			else if constexpr (std::is_same_v<T, Color>) {
 				serializer->read_byte_array("value", &value, 4);
+			}
+			else if constexpr (std::is_same_v<T, String>) {
+				serializer->read_string("value", value);
 			}
 			else {
 				static_assert(false, "Unknown deserialize literal node type");
@@ -314,35 +323,35 @@ namespace titian {
 			else if constexpr (std::is_same_v<T, int32_t>) {
 				im::InputInt("##value", &value);
 			}
+			else if constexpr (std::is_same_v<T, Int2>) {
+				im::InputInt2("##value", &value.x);
+			}
 			else if constexpr (std::is_same_v<T, float>) {
 				im::InputFloat("##value", &value);
 			}
-			else if constexpr (std::is_same_v<T, String>) {
-				im::InputText("##value", &value);
-			}
-			else if constexpr (std::is_same_v<T, Int2>) {
-				im::InputInt2("##value", value);
-			}
 			else if constexpr (std::is_same_v<T, Float2>) {
-				im::InputFloat2("##value", value);
+				im::InputFloat2("##value", &value.x);
 			}
 			else if constexpr (std::is_same_v<T, Float3>) {
-				im::InputFloat3("##value", value);
+				im::InputFloat3("##value", &value.x);
 			}
 			else if constexpr (std::is_same_v<T, Float4>) {
-				im::InputFloat4("##value", value);
+				im::InputFloat4("##value", &value.x);
 			}
 			else if constexpr (std::is_same_v<T, Complex>) {
-				im::InputFloat2("##value", value);
+				im::InputFloat2("##value", &value.r);
 			}
 			else if constexpr (std::is_same_v<T, Quaternion>) {
-				im::InputFloat4("##value", value);
+				im::InputFloat4("##value", &value.w);
 			}
 			else if constexpr (std::is_same_v<T, Color>) {
 				Float4 temp = value;
-				if (im::ColorEdit4("##value", temp)) {
+				if (im::ColorEdit4("##value", &temp.x)) {
 					value = temp;
 				}
+			}
+			else if constexpr (std::is_same_v<T, String>) {
+				im::InputText("##value", &value);
 			}
 			else {
 				static_assert(false, "Unknown draw literal node type");
@@ -361,10 +370,10 @@ namespace titian {
 		String name;
 		VarInfo* var_ptr = nullptr;
 
-		inline VariableNode(NodeScript* parent, const String& title, const String& var_name)
+		inline VariableNode(NodeScript* parent, const String& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::cyan())
 		{
-			rename(var_name);
+			rename("variable");
 			addIN<T>("write");
 			addOUT<T>("read")->behaviour([this]()
 			{
@@ -674,9 +683,37 @@ namespace titian {
 	};
 }
 
+// is type node
+namespace titian {
+	template<typename From, typename To>
+		requires std::is_base_of_v<From, To>
+	struct IsTypeNode : FlowNode
+	{
+		IsTypeNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, false, ne::NodeStyle::orange())
+		{
+			addIN<void*>("ptr");
+			addOUT<FlowNode*>("is")->behaviour([this]() { return this; });
+			addOUT<FlowNode*>("not")->behaviour([this]() { return this; });
+		}
+
+		void call() override
+		{
+			From* ptr = static_cast<From*>(get_value<void*>("ptr"));
+			if (dynamic_cast<To*>(ptr)) {
+				call_next("is");
+			}
+			else {
+				call_next("not");
+			}
+		}
+	};
+}
+
 // compare node
 namespace titian {
 	template<typename T>
+		requires has_less_operator<T>::value or has_equals_operator<T>::value or has_greater_operator<T>::value
 	struct CompareNode : Node
 	{
 		inline CompareNode(NodeScript* parent, const String& title)
@@ -684,17 +721,40 @@ namespace titian {
 		{
 			addIN<T>("left");
 			addIN<T>("right");
-			addOUT<bool>("less")->behaviour([this]
+			if constexpr (has_less_operator<T>::value) {
+				addOUT<bool>("less")->behaviour([this]
+				{
+					return get_value<T>("left") < get_value<T>("right");
+				});
+			}
+			if constexpr (has_equals_operator<T>::value) {
+				addOUT<bool>("equal")->behaviour([this]
+				{
+					return get_value<T>("left") == get_value<T>("right");
+				});
+			}
+			if constexpr (has_greater_operator<T>::value) {
+				addOUT<bool>("greater")->behaviour([this]
+				{
+					return get_value<T>("left") > get_value<T>("right");
+				});
+			}
+		}
+	};
+
+	template<typename T>
+	struct ContainsNode : Node
+	{
+		inline ContainsNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::yellow())
+		{
+			addIN<T>("left");
+			addIN<T>("right");
+			addOUT<bool>("contains")->behaviour([this]
 			{
-				return get_value<T>("left") < get_value<T>("right");
-			});
-			addOUT<bool>("equal")->behaviour([this]
-			{
-				return get_value<T>("left") == get_value<T>("right");
-			});
-			addOUT<bool>("greater")->behaviour([this]
-			{
-				return get_value<T>("left") > get_value<T>("right");
+				const auto& left = get_value<T>("left");
+				const auto& right = get_value<T>("right");
+				return left.find(right) != -1;
 			});
 		}
 	};
@@ -704,8 +764,8 @@ namespace titian {
 namespace titian {
 	struct LogicNotNode : Node
 	{
-		inline LogicNotNode(NodeScript* parent)
-			: Node(parent, "Not", ne::NodeStyle::pink())
+		inline LogicNotNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::pink())
 		{
 			addIN<bool>("in");
 			addOUT<bool>("out")->behaviour([this]
@@ -717,8 +777,8 @@ namespace titian {
 
 	struct LogicAndNode : Node
 	{
-		inline LogicAndNode(NodeScript* parent)
-			: Node(parent, "And", ne::NodeStyle::pink())
+		inline LogicAndNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::pink())
 		{
 			addIN<bool>("left");
 			addIN<bool>("right");
@@ -731,8 +791,8 @@ namespace titian {
 
 	struct LogicOrNode : Node
 	{
-		inline LogicOrNode(NodeScript* parent)
-			: Node(parent, "Or", ne::NodeStyle::pink())
+		inline LogicOrNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::pink())
 		{
 			addIN<bool>("left");
 			addIN<bool>("right");
@@ -763,8 +823,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorPlusNode : OperatorNode<T>
 	{
-		inline OperatorPlusNode(NodeScript* parent)
-			: OperatorNode<T>(parent, "Plus")
+		inline OperatorPlusNode(NodeScript* parent, const String& title)
+			: OperatorNode<T>(parent, title)
 		{}
 
 		T compute() override
@@ -776,8 +836,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorMinusNode : OperatorNode<T>
 	{
-		inline OperatorMinusNode(NodeScript* parent)
-			: OperatorNode<T>(parent, "Minus")
+		inline OperatorMinusNode(NodeScript* parent, const String& title)
+			: OperatorNode<T>(parent, title)
 		{}
 
 		T compute() override
@@ -789,8 +849,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorTimesNode : OperatorNode<T>
 	{
-		inline OperatorTimesNode(NodeScript* parent)
-			: OperatorNode<T>(parent, "Times")
+		inline OperatorTimesNode(NodeScript* parent, const String& title)
+			: OperatorNode<T>(parent, title)
 		{}
 
 		T compute() override
@@ -802,8 +862,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorDivideNode : OperatorNode<T>
 	{
-		inline OperatorDivideNode(NodeScript* parent)
-			: OperatorNode<T>(parent, "Divide")
+		inline OperatorDivideNode(NodeScript* parent, const String& title)
+			: OperatorNode<T>(parent, title)
 		{}
 
 		T compute() override
@@ -815,8 +875,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorPowerNode : OperatorNode<T>
 	{
-		inline OperatorPowerNode(NodeScript* parent)
-			: OperatorNode<T>(parent, "Power")
+		inline OperatorPowerNode(NodeScript* parent, const String& title)
+			: OperatorNode<T>(parent, title)
 		{}
 
 		T compute() override
@@ -830,8 +890,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorModuloNode : OperatorNode<T>
 	{
-		inline OperatorModuloNode(NodeScript* parent)
-			: OperatorNode<T>(parent, "Modulo")
+		inline OperatorModuloNode(NodeScript* parent, const String& title)
+			: OperatorNode<T>(parent, title)
 		{}
 
 		T compute() override
@@ -853,8 +913,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorMinNode : OperatorNode<T>
 	{
-		inline OperatorMinNode(NodeScript* parent)
-			: OperatorNode<T>(parent, "Min")
+		inline OperatorMinNode(NodeScript* parent, const String& title)
+			: OperatorNode<T>(parent, title)
 		{}
 
 		T compute() override
@@ -868,8 +928,8 @@ namespace titian {
 	template<typename T>
 	struct OperatorMaxNode : OperatorNode<T>
 	{
-		inline OperatorMaxNode(NodeScript* parent)
-			: OperatorNode<T>(parent, "Max")
+		inline OperatorMaxNode(NodeScript* parent, const String& title)
+			: OperatorNode<T>(parent, title)
 		{}
 
 		T compute() override
@@ -885,8 +945,8 @@ namespace titian {
 namespace titian {
 	struct IfNode : FlowNode
 	{
-		inline IfNode(NodeScript* parent)
-			: FlowNode(parent, "If", true, false, ne::NodeStyle::red())
+		inline IfNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, false, ne::NodeStyle::red())
 		{
 			addIN<bool>("value");
 			addOUT<FlowNode*>("if")->behaviour([this] { return this; });
@@ -907,33 +967,36 @@ namespace titian {
 
 	struct WhileNode : FlowNode
 	{
-		inline WhileNode(NodeScript* parent)
-			: FlowNode(parent, "While", true, true, ne::NodeStyle::red())
+		inline WhileNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::red())
 		{
 			addIN<bool>("value");
+			addOUT<FlowNode*>("call")->behaviour([this] { return this; });
 		}
 
 		void call() override
 		{
 			while (true) {
-				auto& value = get_value<bool>("value");
+				bool value = get_value<bool>("value");
 				if (value) {
-					call_next();
+					call_next("call");
 				}
 				else {
 					break;
 				}
 			}
+			call_next();
 		}
 	};
 
 	struct ForNode : FlowNode
 	{
-		inline ForNode(NodeScript* parent)
-			: FlowNode(parent, "For", true, true, ne::NodeStyle::red())
+		inline ForNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::red())
 		{
 			addIN<int32_t>("from_incl");
 			addIN<int32_t>("to_excl");
+			addOUT<FlowNode*>("call")->behaviour([this] { return this; });
 			addOUT<int32_t>("i")->behaviour([this]()
 			{
 				return *reinterpret_cast<int32_t*>(user_data);
@@ -946,34 +1009,171 @@ namespace titian {
 			auto& to = get_value<int32_t>("to_excl");
 			for (int32_t i = from; i < to; i++) {
 				*reinterpret_cast<int32_t*>(user_data) = i;
-				call_next();
+				call_next("call");
 			}
+			call_next();
 		}
 	};
 }
 
-// is type node
+// debug
 namespace titian {
-	template<typename From, typename To>
-		requires std::is_base_of_v<From, To>
-	struct IsTypeNode : FlowNode
+	struct FunctionNode : FlowNode
 	{
-		IsTypeNode(NodeScript* parent, const String& title)
-			: FlowNode(parent, title, true, false, ne::NodeStyle::orange())
+		inline FunctionNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::crimson())
+		{}
+	};
+
+	struct PrintNode : FunctionNode
+	{
+		inline PrintNode(NodeScript* parent, const String& title)
+			: FunctionNode(parent, title)
 		{
-			addIN<void*>("ptr");
-			addOUT<FlowNode*>("is")->behaviour([this]() { return this; });
-			addOUT<FlowNode*>("not")->behaviour([this]() { return this; });
+			addIN<String>("value");
 		}
 
 		void call() override
 		{
-			From* ptr = static_cast<From*>(get_value<void*>("ptr"));
-			if (dynamic_cast<To*>(ptr)) {
-				call_next("is");
+			auto& value = get_value<String>("value");
+			Logger::log(value);
+			call_next();
+		}
+	};
+}
+
+// math
+namespace titian {
+	template<typename T>
+	struct MathNode : Node
+	{
+		inline MathNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::magenta())
+		{
+			this->addIN<T>("in");
+			this->addOUT<T>("out")->behaviour([this] { return this->compute(); });
+		}
+
+		virtual T compute() = 0;
+	};
+
+	template<typename T>
+	struct AbsNode : MathNode<T>
+	{
+		inline AbsNode(NodeScript* parent, const String& title)
+			: MathNode<T>(parent, title)
+		{}
+
+		T compute() override
+		{
+			const T in = this->get_value<T>("in");
+			return kl::abs(in);
+		}
+	};
+
+	template<typename T>
+	struct SqrtNode : MathNode<T>
+	{
+		inline SqrtNode(NodeScript* parent, const String& title)
+			: MathNode<T>(parent, title)
+		{}
+
+		T compute() override
+		{
+			const T in = this->get_value<T>("in");
+			return static_cast<T>(::sqrt(in));
+		}
+	};
+
+	template<typename T>
+	struct LogNode : MathNode<T>
+	{
+		inline LogNode(NodeScript* parent, const String& title)
+			: MathNode<T>(parent, title)
+		{}
+
+		T compute() override
+		{
+			const T in = this->get_value<T>("in");
+			return static_cast<T>(::log(in));
+		}
+	};
+
+	template<typename T>
+	struct TrigNode : MathNode<T>
+	{
+		inline TrigNode(NodeScript* parent, const String& title)
+			: MathNode<T>(parent, title)
+		{
+			this->addIN<bool>("inverse");
+			this->addIN<bool>("degrees");
+		}
+
+	protected:
+		inline bool is_inverse()
+		{
+			return this->get_value<bool>("inverse");
+		}
+
+		inline bool is_degrees()
+		{
+			return this->get_value<bool>("degrees");
+		}
+	};
+
+	template<typename T>
+	struct SinNode : TrigNode<T>
+	{
+		inline SinNode(NodeScript* parent, const String& title)
+			: TrigNode<T>(parent, title)
+		{}
+
+		T compute() override
+		{
+			const T in = this->get_value<T>("in");
+			if (this->is_inverse()) {
+				return (this->is_degrees() ? kl::asin_d<T> : kl::asin<T>)(in);
 			}
 			else {
-				call_next("not");
+				return (this->is_degrees() ? kl::sin_d<T> : kl::sin<T>)(in);
+			}
+		}
+	};
+
+	template<typename T>
+	struct CosNode : TrigNode<T>
+	{
+		inline CosNode(NodeScript* parent, const String& title)
+			: TrigNode<T>(parent, title)
+		{}
+
+		T compute() override
+		{
+			const T in = this->get_value<T>("in");
+			if (this->is_inverse()) {
+				return (this->is_degrees() ? kl::acos_d<T> : kl::acos<T>)(in);
+			}
+			else {
+				return (this->is_degrees() ? kl::cos_d<T> : kl::cos<T>)(in);
+			}
+		}
+	};
+
+	template<typename T>
+	struct TanNode : TrigNode<T>
+	{
+		inline TanNode(NodeScript* parent, const String& title)
+			: TrigNode<T>(parent, title)
+		{}
+
+		T compute() override
+		{
+			const T in = this->get_value<T>("in");
+			if (this->is_inverse()) {
+				return (this->is_degrees() ? kl::atan_d<T> : kl::atan<T>)(in);
+			}
+			else {
+				return (this->is_degrees() ? kl::tan_d<T> : kl::tan<T>)(in);
 			}
 		}
 	};
@@ -983,8 +1183,8 @@ namespace titian {
 namespace titian {
 	struct GetSceneNode : Node
 	{
-		GetSceneNode(NodeScript* parent)
-			: Node(parent, "Get Scene", ne::NodeStyle::purple())
+		GetSceneNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::purple())
 		{
 			addIN<String>("mesh_name");
 			addOUT<void*>("mesh")->behaviour([this]()
@@ -1054,8 +1254,8 @@ namespace titian {
 
 	struct GetMeshNode : Node
 	{
-		GetMeshNode(NodeScript* parent)
-			: Node(parent, "Get Mesh", ne::NodeStyle::purple())
+		GetMeshNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addOUT<int32_t>("topology")->behaviour([this]()
@@ -1077,8 +1277,8 @@ namespace titian {
 
 	struct GetAnimationNode : Node
 	{
-		GetAnimationNode(NodeScript* parent)
-			: Node(parent, "Get Animation", ne::NodeStyle::purple())
+		GetAnimationNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addOUT<int32_t>("animation_type")->behaviour([this]()
@@ -1107,8 +1307,8 @@ namespace titian {
 
 	struct GetTextureNode : Node
 	{
-		GetTextureNode(NodeScript* parent)
-			: Node(parent, "Get Texture", ne::NodeStyle::purple())
+		GetTextureNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addOUT<Int2>("size")->behaviour([this]()
@@ -1123,8 +1323,8 @@ namespace titian {
 
 	struct GetMaterialNode : Node
 	{
-		GetMaterialNode(NodeScript* parent)
-			: Node(parent, "Get Material", ne::NodeStyle::purple())
+		GetMaterialNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addOUT<Float4>("color")->behaviour([this]()
@@ -1195,8 +1395,8 @@ namespace titian {
 
 	struct GetShaderNode : Node
 	{
-		GetShaderNode(NodeScript* parent)
-			: Node(parent, "Get Shader", ne::NodeStyle::purple())
+		GetShaderNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addOUT<int32_t>("shader_type")->behaviour([this]()
@@ -1211,8 +1411,8 @@ namespace titian {
 
 	struct GetEntityNode : Node
 	{
-		GetEntityNode(NodeScript* parent)
-			: Node(parent, "Get Entity", ne::NodeStyle::purple())
+		GetEntityNode(NodeScript* parent, const String& title)
+			: Node(parent, title, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addOUT<Float3>("scale")->behaviour([this]()
@@ -1314,8 +1514,8 @@ namespace titian {
 		Shader* shader_ptr = nullptr;
 		Entity* entity_ptr = nullptr;
 
-		SetSceneNode(NodeScript* parent)
-			: FlowNode(parent, "Set Scene", true, true, ne::NodeStyle::purple())
+		SetSceneNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::purple())
 		{
 			addIN<String>("mesh_name");
 			addOUT<void*>("new mesh")->behaviour([this]() { return mesh_ptr; });
@@ -1380,8 +1580,8 @@ namespace titian {
 
 	struct SetMeshNode : FlowNode
 	{
-		SetMeshNode(NodeScript* parent)
-			: FlowNode(parent, "Set Mesh", true, true, ne::NodeStyle::purple())
+		SetMeshNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addIN<int32_t>("topology");
@@ -1407,8 +1607,8 @@ namespace titian {
 
 	struct SetAnimationNode : FlowNode
 	{
-		SetAnimationNode(NodeScript* parent)
-			: FlowNode(parent, "Set Animation", true, true, ne::NodeStyle::purple())
+		SetAnimationNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addIN<int32_t>("animation_type");
@@ -1438,8 +1638,8 @@ namespace titian {
 
 	struct SetTextureNode : FlowNode
 	{
-		SetTextureNode(NodeScript* parent)
-			: FlowNode(parent, "Set Texture", true, true, ne::NodeStyle::purple())
+		SetTextureNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addIN<Int2>("size");
@@ -1467,8 +1667,8 @@ namespace titian {
 
 	struct SetMaterialNode : FlowNode
 	{
-		SetMaterialNode(NodeScript* parent)
-			: FlowNode(parent, "Set Material", true, true, ne::NodeStyle::purple())
+		SetMaterialNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addIN<Float4>("color");
@@ -1522,8 +1722,8 @@ namespace titian {
 
 	struct SetShaderNode : FlowNode
 	{
-		SetShaderNode(NodeScript* parent)
-			: FlowNode(parent, "Set Shader", true, true, ne::NodeStyle::purple())
+		SetShaderNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addIN<int32_t>("shader_type");
@@ -1545,8 +1745,8 @@ namespace titian {
 
 	struct SetEntityNode : FlowNode
 	{
-		SetEntityNode(NodeScript* parent)
-			: FlowNode(parent, "Set Entity", true, true, ne::NodeStyle::purple())
+		SetEntityNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
 			addIN<Float3>("scale");
@@ -1611,151 +1811,108 @@ namespace titian {
 	};
 }
 
-// math
+// iterators
 namespace titian {
 	template<typename T>
-	struct MathNode : Node
+	struct IteratorNode : FunctionNode
 	{
-		inline MathNode(NodeScript* parent, const String& title)
-			: Node(parent, title, ne::NodeStyle::magenta())
+		inline IteratorNode(NodeScript* parent, const String& title)
+			: FunctionNode(parent, title)
 		{
-			this->addIN<T>("in");
-			this->addOUT<T>("out")->behaviour([this] { return this->compute(); });
+			addOUT<FlowNode*>("call")->behaviour([this] { return this; });
+			addOUT<String>("name")->behaviour([this]()
+			{
+				return **reinterpret_cast<const String**>(user_data + 0);
+			});
+			addOUT<void*>("ptr")->behaviour([this]()
+			{
+				return *reinterpret_cast<void**>(user_data + 8);
+			});
 		}
 
-		virtual T compute() = 0;
-	};
-
-	template<typename T>
-	struct AbsNode : MathNode<T>
-	{
-		inline AbsNode(NodeScript* parent)
-			: MathNode<T>(parent, "Abs")
-		{}
-
-		T compute() override
+		void call() final
 		{
-			const T in = this->get_value<T>("in");
-			return kl::abs(in);
-		}
-	};
-
-	template<typename T>
-	struct SqrtNode : MathNode<T>
-	{
-		inline SqrtNode(NodeScript* parent)
-			: MathNode<T>(parent, "Sqrt")
-		{}
-
-		T compute() override
-		{
-			const T in = this->get_value<T>("in");
-			return static_cast<T>(::sqrt(in));
-		}
-	};
-
-	template<typename T>
-	struct TrigNode : MathNode<T>
-	{
-		inline TrigNode(NodeScript* parent, const String& title)
-			: MathNode<T>(parent, title)
-		{
-			this->addIN<bool>("inverse");
-			this->addIN<bool>("degrees");
+			for (const auto& [name, ref] : get_collection()) {
+				*reinterpret_cast<const String**>(user_data + 0) = &name;
+				*reinterpret_cast<void**>(user_data + 8) = (void*) &ref;
+				call_next("call");
+			}
+			call_next();
 		}
 
 	protected:
-		inline bool is_inverse()
-		{
-			return this->get_value<bool>("inverse");
-		}
-
-		inline bool is_degrees()
-		{
-			return this->get_value<bool>("degrees");
-		}
+		virtual const Map<String, Ref<T>>& get_collection() = 0;
 	};
 
-	template<typename T>
-	struct SinNode : TrigNode<T>
+	struct IterateMeshesNode : IteratorNode<Mesh>
 	{
-		inline SinNode(NodeScript* parent)
-			: TrigNode<T>(parent, "Sin")
+		inline IterateMeshesNode(NodeScript* parent, const String& title)
+			: IteratorNode<Mesh>(parent, title)
 		{}
 
-		T compute() override
+		const Map<String, Ref<Mesh>>& get_collection() override
 		{
-			const T in = this->get_value<T>("in");
-			if (this->is_inverse()) {
-				return (this->is_degrees() ? kl::asin_d<T> : kl::asin<T>)(in);
-			}
-			else {
-				return (this->is_degrees() ? kl::sin_d<T> : kl::sin<T>)(in);
-			}
+			return Layers::get<GameLayer>()->scene->meshes;
 		}
 	};
 
-	template<typename T>
-	struct CosNode : TrigNode<T>
+	struct IterateAnimationsNode : IteratorNode<Animation>
 	{
-		inline CosNode(NodeScript* parent)
-			: TrigNode<T>(parent, "Cos")
+		inline IterateAnimationsNode(NodeScript* parent, const String& title)
+			: IteratorNode<Animation>(parent, title)
 		{}
 
-		T compute() override
+		const Map<String, Ref<Animation>>& get_collection() override
 		{
-			const T in = this->get_value<T>("in");
-			if (this->is_inverse()) {
-				return (this->is_degrees() ? kl::acos_d<T> : kl::acos<T>)(in);
-			}
-			else {
-				return (this->is_degrees() ? kl::cos_d<T> : kl::cos<T>)(in);
-			}
+			return Layers::get<GameLayer>()->scene->animations;
 		}
 	};
 
-	template<typename T>
-	struct TanNode : TrigNode<T>
+	struct IterateTexturesNode : IteratorNode<Texture>
 	{
-		inline TanNode(NodeScript* parent)
-			: TrigNode<T>(parent, "Tan")
+		inline IterateTexturesNode(NodeScript* parent, const String& title)
+			: IteratorNode<Texture>(parent, title)
 		{}
 
-		T compute() override
+		const Map<String, Ref<Texture>>& get_collection() override
 		{
-			const T in = this->get_value<T>("in");
-			if (this->is_inverse()) {
-				return (this->is_degrees() ? kl::atan_d<T> : kl::atan<T>)(in);
-			}
-			else {
-				return (this->is_degrees() ? kl::tan_d<T> : kl::tan<T>)(in);
-			}
+			return Layers::get<GameLayer>()->scene->textures;
 		}
 	};
-}
 
-// functions
-namespace titian {
-	struct FunctionNode : FlowNode
+	struct IterateMaterialsNode : IteratorNode<Material>
 	{
-		inline FunctionNode(NodeScript* parent, const String& title)
-			: FlowNode(parent, title, true, true, ne::NodeStyle::crimson())
+		inline IterateMaterialsNode(NodeScript* parent, const String& title)
+			: IteratorNode<Material>(parent, title)
 		{}
+
+		const Map<String, Ref<Material>>& get_collection() override
+		{
+			return Layers::get<GameLayer>()->scene->materials;
+		}
 	};
 
-	struct PrintNode : FunctionNode
+	struct IterateShadersNode : IteratorNode<Shader>
 	{
-		inline PrintNode(NodeScript* parent)
-			: FunctionNode(parent, "Print")
-		{
-			addIN<String>("value");
-		}
+		inline IterateShadersNode(NodeScript* parent, const String& title)
+			: IteratorNode<Shader>(parent, title)
+		{}
 
-		void call() override
+		const Map<String, Ref<Shader>>& get_collection() override
 		{
-			auto& value = get_value<String>("value");
-			Logger::log(value);
-			call_next();
+			return Layers::get<GameLayer>()->scene->shaders;
+		}
+	};
+
+	struct IterateEntitiesNode : IteratorNode<Entity>
+	{
+		inline IterateEntitiesNode(NodeScript* parent, const String& title)
+			: IteratorNode<Entity>(parent, title)
+		{}
+
+		const Map<String, Ref<Entity>>& get_collection() override
+		{
+			return Layers::get<GameLayer>()->scene->entities_ref();
 		}
 	};
 }

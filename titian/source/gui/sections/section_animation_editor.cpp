@@ -275,7 +275,7 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
 
         /*-*/
         im::Text("Animation Editor");
-        if (im::DragFloat3("Sun Direction", sun_direction, 0.01f)) {
+        if (im::DragFloat3("Sun Direction", &sun_direction.x, 0.01f)) {
             sun_direction = kl::normalize(sun_direction);
         }
         im::SliderInt("Frame", &m_frame_index, 0, kl::max<int>((int) animation->meshes.size() - 1, 0));

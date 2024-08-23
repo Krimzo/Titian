@@ -73,17 +73,17 @@ void titian::ui_input_float(const String& name, float& value)
 
 void titian::ui_input_float2(const String& name, Float2& value)
 {
-	im::InputFloat2(name.c_str(), value);
+	im::InputFloat2(name.c_str(), &value.x);
 }
 
 void titian::ui_input_float3(const String& name, Float3& value)
 {
-	im::InputFloat3(name.c_str(), value);
+	im::InputFloat3(name.c_str(), &value.x);
 }
 
 void titian::ui_input_float4(const String& name, Float4& value)
 {
-	im::InputFloat4(name.c_str(), value);
+	im::InputFloat4(name.c_str(), &value.x);
 }
 
 void titian::ui_input_text(const String& name, String& value)
@@ -99,12 +99,12 @@ void titian::ui_input_text_multiline(const String& name, String& value)
 // edit
 void titian::ui_edit_color3(const String& name, Float3& value)
 {
-	im::ColorEdit3(name.c_str(), value);
+	im::ColorEdit3(name.c_str(), &value.x);
 }
 
 void titian::ui_edit_color4(const String& name, Float4& value)
 {
-	im::ColorEdit4(name.c_str(), value);
+	im::ColorEdit4(name.c_str(), &value.x);
 }
 
 // drag

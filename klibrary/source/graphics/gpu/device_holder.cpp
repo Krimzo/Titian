@@ -279,7 +279,7 @@ kl::dx::Texture kl::DeviceHolder::create_texture(const Image& image, const bool 
         (is_target ? D3D11_BIND_RENDER_TARGET : NULL);
 
     dx::SubresourceDescriptor data{};
-    data.pSysMem = flipped_image;
+    data.pSysMem = flipped_image.ptr();
     data.SysMemPitch = image.width() * sizeof(Color);
 
     return create_texture(&descriptor, &data);
@@ -308,14 +308,13 @@ kl::dx::Texture kl::DeviceHolder::create_cube_texture(const Image& front, const 
 
     const UINT mem_pitch = (UINT) (front.width() * sizeof(Color));
     const dx::SubresourceDescriptor data[6] = {
-        { right,  mem_pitch, 0 },
-        { left,   mem_pitch, 0 },
-        { top,    mem_pitch, 0 },
-        { bottom, mem_pitch, 0 },
-        { front,  mem_pitch, 0 },
-        { back,   mem_pitch, 0 },
+        { right.ptr(),  mem_pitch, 0 },
+        { left.ptr(),   mem_pitch, 0 },
+        { top.ptr(),    mem_pitch, 0 },
+        { bottom.ptr(), mem_pitch, 0 },
+        { front.ptr(),  mem_pitch, 0 },
+        { back.ptr(),   mem_pitch, 0 },
     };
-
     return create_texture(&descriptor, data);
 }
 

@@ -105,7 +105,7 @@ bool kl::VideoWriter::add_frame(const Image& frame)
     media_sample->SetSampleDuration((LONGLONG) m_frame_duration) >> verify_result;
 
     Color* out_buffer = nullptr;
-    const Color* in_buffer = frame;
+    const Color* in_buffer = frame.ptr();
     media_buffer->Lock((BYTE**) &out_buffer, nullptr, nullptr) >> verify_result;
     for (uint32_t y = 0; y < m_height; y++) {
         memcpy(out_buffer + (m_height - 1 - y) * m_width, in_buffer + y * m_width, frame_byte_width);

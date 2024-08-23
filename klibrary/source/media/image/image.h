@@ -4,10 +4,6 @@
 
 
 namespace kl {
-    using PixelStorage = std::vector<Color>;
-}
-
-namespace kl {
     enum class ImageType
     {
         BMP = 0,
@@ -18,19 +14,16 @@ namespace kl {
 }
 
 namespace kl {
-    class Image : private PixelStorage
+    class Image
     {
-        Int2 m_size = {};
-
     public:
-        // Construct
         Image();
         Image(const Int2& size);
         Image(const std::string& filepath);
 
         // Get
-        operator kl::Color* ();
-        operator const kl::Color* () const;
+        Color* ptr();
+        const Color* ptr() const;
 
         int pixel_count() const;
         uint64_t byte_size() const;
@@ -42,8 +35,10 @@ namespace kl {
         Color sample(const Float2& uv) const;
 
         // Iterate
-        PixelStorage::iterator begin();
-        PixelStorage::iterator end();
+        inline auto begin() { return m_pixels.begin(); };
+        inline auto end() { return m_pixels.end(); };
+        inline auto begin() const { return m_pixels.begin(); };
+        inline auto end() const { return m_pixels.end(); };
 
         // Size
         int width() const;
@@ -81,6 +76,10 @@ namespace kl {
         // Encoding
         bool save_to_buffer(std::string& buffer, ImageType type) const;
         bool save_to_file(const std::string_view& filepath, ImageType type) const;
+
+    private:
+        std::vector<Color> m_pixels;
+        Int2 m_size;
     };
 }
 

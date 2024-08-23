@@ -27,12 +27,10 @@ namespace titian {
     class Mesh : public Serializable
     {
     public:
-        using Data = Vector<Vertex>;
-
         int topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
         bool render_wireframe = false;
 
-        Data data_buffer = {};
+        Vector<Vertex> data_buffer;
         dx::Buffer graphics_buffer;
         px::PxTriangleMesh* physics_buffer = nullptr;
 

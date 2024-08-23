@@ -9,14 +9,14 @@ void titian::PointLight::serialize(Serializer* serializer, const void* helper_da
 {
 	Light::serialize(serializer, helper_data);
 
-	serializer->write_float_array("color", color, 3);
+	serializer->write_float_array("color", &color.x, 3);
 }
 
 void titian::PointLight::deserialize(const Serializer* serializer, const void* helper_data)
 {
 	Light::deserialize(serializer, helper_data);
 
-	serializer->read_float_array("color", color, 3);
+	serializer->read_float_array("color", &color.x, 3);
 }
 
 titian::Float3 titian::PointLight::light_at_point(const Float3& point) const

@@ -252,7 +252,7 @@ void titian::GUISectionMeshEditor::render_gizmos(Mesh* mesh)
 {
     kl::Window* window = &Layers::get<AppLayer>()->window;
 
-    Mesh::Data& mesh_data = mesh->data_buffer;
+    auto& mesh_data = mesh->data_buffer;
     if (m_selected_vertex_index < 0 || m_selected_vertex_index >= mesh_data.size()) {
         return;
     }
@@ -278,12 +278,12 @@ void titian::GUISectionMeshEditor::render_gizmos(Mesh* mesh)
     ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
         ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
         transform_matrix.data, nullptr,
-        selected_snap);
+        &selected_snap.x);
 
     if (ImGuizmo::IsUsing()) {
         Float3 decomposed_parts[3] = {};
         ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
-            decomposed_parts[2], decomposed_parts[1], decomposed_parts[0]);
+            &decomposed_parts[2].x, &decomposed_parts[1].x, &decomposed_parts[0].x);
 
         selected_vertex->world = decomposed_parts[2];
         mesh->reload();
@@ -300,7 +300,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
     if (im::Begin("Mesh Properties") && mesh) {
         /*-*/
         im::Text("Mesh Editor");
-        if (im::DragFloat3("Sun Direction", sun_direction, 0.01f)) {
+        if (im::DragFloat3("Sun Direction", &sun_direction.x, 0.01f)) {
             sun_direction = kl::normalize(sun_direction);
         }
 
@@ -365,9 +365,9 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
                     im::EndPopup();
                 }
 
-                const bool world_edited = im::DragFloat3(kl::format("World##MeshEditor", i).c_str(), vertex.world, 0.1f);
-                const bool texture_edited = im::DragFloat2(kl::format("Texture##MeshEditor", i).c_str(), vertex.texture, 0.1f);
-                const bool normal_edited = im::DragFloat3(kl::format("Normal##MeshEditor", i).c_str(), vertex.normal, 0.1f);
+                const bool world_edited = im::DragFloat3(kl::format("World##MeshEditor", i).c_str(), &vertex.world.x, 0.1f);
+                const bool texture_edited = im::DragFloat2(kl::format("Texture##MeshEditor", i).c_str(), &vertex.texture.x, 0.1f);
+                const bool normal_edited = im::DragFloat3(kl::format("Normal##MeshEditor", i).c_str(), &vertex.normal.x, 0.1f);
 
                 for (int j = 0; j < MAX_BONE_REFS; j++) {
                     int bone_index = vertex.bone_indices[j];

@@ -32,5 +32,5 @@ namespace kl::json {
 }
 
 namespace kl::json {
-	using ContainerWrap = Wrap<Container, IS_DEBUG ? 56 : 48>;
+	using ContainerWrap = Wrap<Container, sizeof(std::string) + 8 /* std::variant */ + 8 /* vfptr */>;
 }

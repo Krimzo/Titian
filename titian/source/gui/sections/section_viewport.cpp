@@ -271,12 +271,12 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
     ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
         (ImGuizmo::OPERATION) editor_layer->gizmo_operation, (ImGuizmo::MODE) editor_layer->gizmo_mode,
         transform_matrix.data, nullptr,
-        selected_snap);
+        &selected_snap.x);
 
     if (ImGuizmo::IsUsing()) {
         Float3 decomposed_parts[3] = {};
         ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
-            decomposed_parts[2], decomposed_parts[1], decomposed_parts[0]);
+            &decomposed_parts[2].x, &decomposed_parts[1].x, &decomposed_parts[0].x);
 
         if (entities.size() == 1) {
             Entity* entity = *entities.begin();

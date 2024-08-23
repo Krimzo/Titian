@@ -75,6 +75,7 @@ namespace titian {
         void add_entity(const String& name, const Ref<Entity>& entity);
         void remove_entity(const String& name);
         bool contains_entity(const String& name) const;
+        const Map<String, Ref<Entity>>& entities_ref() const;
         size_t entity_count() const;
 
         Map<String, Ref<Entity>>::iterator begin();

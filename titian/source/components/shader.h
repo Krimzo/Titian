@@ -15,11 +15,10 @@ namespace titian {
 	class Shader : public Serializable
 	{
 	public:
-		using Data = String;
-
 		int32_t shader_type = ShaderType::MATERIAL;
-		Data data_buffer = {};
-		kl::RenderShaders graphics_buffer = {};
+
+		String data_buffer;
+		kl::RenderShaders graphics_buffer;
 
 		Shader(kl::GPU* gpu, ShaderType type);
 

@@ -20,8 +20,8 @@ void titian::Camera::serialize(Serializer* serializer, const void* helper_data) 
     serializer->write_float("sensitivity", sensitivity);
     serializer->write_float("speed", speed);
 
-    serializer->write_float_array("forward", m_forward, 3);
-    serializer->write_float_array("up", m_up, 3);
+    serializer->write_float_array("forward", &m_forward.x, 3);
+    serializer->write_float_array("up", &m_up.x, 3);
 
     serializer->write_byte_array("background", &background, 4);
     serializer->write_float_array("custom_data", custom_data.data, 16);
@@ -45,8 +45,8 @@ void titian::Camera::deserialize(const Serializer* serializer, const void* helpe
     serializer->read_float("sensitivity", sensitivity);
     serializer->read_float("speed", speed);
 
-    serializer->read_float_array("forward", m_forward, 3);
-    serializer->read_float_array("up", m_up, 3);
+    serializer->read_float_array("forward", &m_forward.x, 3);
+    serializer->read_float_array("up", &m_up.x, 3);
 
     serializer->read_byte_array("background", &background, 4);
     serializer->read_float_array("custom_data", custom_data.data, 16);
