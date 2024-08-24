@@ -65,9 +65,9 @@ void kl::console::set_height(int height)
     set_size({ width(), height });
 }
 
-void kl::console::set_title(const std::string& text)
+void kl::console::set_title(const std::string_view& text)
 {
-    SetConsoleTitleA(text.c_str());
+    SetConsoleTitleA(text.data());
 }
 
 kl::Int2 kl::console::size()
@@ -83,7 +83,7 @@ void kl::console::set_size(const Int2& size)
     SetConsoleWindowInfo(CONSOLE_HANDLE, true, &rect);
 }
 
-void kl::console::set_font(const Int2& size, const std::string& font_name)
+void kl::console::set_font(const Int2& size, const std::string_view& font_name)
 {
     CONSOLE_FONT_INFOEX cfi = {};
     cfi.cbSize = sizeof(CONSOLE_FONT_INFOEX);
@@ -91,7 +91,7 @@ void kl::console::set_font(const Int2& size, const std::string& font_name)
     cfi.dwFontSize.Y = (SHORT) size.y;
     cfi.FontFamily = FF_DONTCARE;
     cfi.FontWeight = FW_NORMAL;
-    wcscpy_s(cfi.FaceName, convert_string(font_name).c_str());
+    wcscpy_s(cfi.FaceName, convert_string(font_name).data());
     SetCurrentConsoleFontEx(CONSOLE_HANDLE, false, &cfi);
 }
 
@@ -127,13 +127,13 @@ char kl::console::wait_for_any(const bool echo)
     return (char) _getch();
 }
 
-void kl::console::dump(const std::string& data, const Int2& location)
+void kl::console::dump(const std::string_view& data, const Int2& location)
 {
     static DWORD ignored = 0;
-    WriteConsoleOutputCharacterA(CONSOLE_HANDLE, data.c_str(), (DWORD) data.length(), { (SHORT) location.x, (SHORT) location.y }, &ignored);
+    WriteConsoleOutputCharacterA(CONSOLE_HANDLE, data.data(), (DWORD) data.length(), { (SHORT) location.x, (SHORT) location.y }, &ignored);
 }
 
-void kl::console::progress_bar(const std::string& message, int output_y, float percentage)
+void kl::console::progress_bar(const std::string_view& message, int output_y, float percentage)
 {
     percentage = clamp(percentage, 0.0f, 1.0f);
 
@@ -151,5 +151,5 @@ void kl::console::progress_bar(const std::string& message, int output_y, float p
     }
     move_cursor({ 0, output_y });
 
-    printf("%s] %3d%% ", stream.str().c_str(), (int) (percentage * 100.0f));
+    printf("%s] %3d%% ", stream.str().data(), (int) (percentage * 100.0f));
 }

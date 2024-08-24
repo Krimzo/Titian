@@ -78,7 +78,7 @@ static float video_fps(const ComRef<IMFSourceReader>& reader)
 }
 
 // Video reader
-kl::VideoReader::VideoReader(const std::string& filepath, const Int2& output_size, const bool use_gpu)
+kl::VideoReader::VideoReader(const std::string_view& filepath, const Int2& output_size, const bool use_gpu)
 {
     // Init
     ComRef<IMFAttributes> attributes;
@@ -101,7 +101,7 @@ kl::VideoReader::VideoReader(const std::string& filepath, const Int2& output_siz
     }
 
     const std::wstring converted_path = convert_string(filepath);
-    MFCreateSourceReaderFromURL(converted_path.c_str(), attributes.get(), &m_reader) >> verify_result;
+    MFCreateSourceReaderFromURL(converted_path.data(), attributes.get(), &m_reader) >> verify_result;
     configure_reader(m_reader, output_size);
 
     // Getting info

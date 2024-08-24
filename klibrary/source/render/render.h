@@ -5,7 +5,6 @@
 #include "render/components/mesh.h"
 #include "render/components/texture.h"
 #include "render/components/material.h"
-#include "render/components/collider.h"
 
 // Light
 #include "render/light/ambient_light.h"

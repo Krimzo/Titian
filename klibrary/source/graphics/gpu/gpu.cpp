@@ -274,31 +274,31 @@ void kl::GPU::bind_internal_views() const
 }
 
 // Shader helper
-kl::ShaderHolder<kl::dx::VertexShader> kl::GPU::create_vertex_shader(const std::string& shader_source) const
+kl::ShaderHolder<kl::dx::VertexShader> kl::GPU::create_vertex_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_vertex_shader(shader_source);
     return { this, DeviceHolder::create_vertex_shader(compiled_shader) };
 }
 
-kl::ShaderHolder<kl::dx::GeometryShader> kl::GPU::create_geometry_shader(const std::string& shader_source) const
+kl::ShaderHolder<kl::dx::GeometryShader> kl::GPU::create_geometry_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_geometry_shader(shader_source);
     return { this, DeviceHolder::create_geometry_shader(compiled_shader) };
 }
 
-kl::ShaderHolder<kl::dx::PixelShader> kl::GPU::create_pixel_shader(const std::string& shader_source) const
+kl::ShaderHolder<kl::dx::PixelShader> kl::GPU::create_pixel_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_pixel_shader(shader_source);
     return { this, DeviceHolder::create_pixel_shader(compiled_shader) };
 }
 
-kl::ShaderHolder<kl::dx::ComputeShader> kl::GPU::create_compute_shader(const std::string& shader_source) const
+kl::ShaderHolder<kl::dx::ComputeShader> kl::GPU::create_compute_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_compute_shader(shader_source);
     return { this, DeviceHolder::create_compute_shader(compiled_shader) };
 }
 
-kl::RenderShaders kl::GPU::create_render_shaders(const std::string& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors) const
+kl::RenderShaders kl::GPU::create_render_shaders(const std::string_view& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors) const
 {
     const CompiledShader compiled_vertex_shader = compile_vertex_shader(shader_sources);
     const CompiledShader compiled_pixel_shader = compile_pixel_shader(shader_sources);

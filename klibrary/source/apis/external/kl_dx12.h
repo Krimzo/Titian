@@ -3431,7 +3431,7 @@ private:
                 {
                     m_Strings.push_back(string);
                 }
-                return m_Strings.back().c_str();
+                return m_Strings.back().data();
             }
             else
             {

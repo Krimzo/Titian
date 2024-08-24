@@ -133,7 +133,7 @@ namespace kl {
 		// Helpers
 		dx12::PipelineState create_default_rasterization_pipeline(
 			const kl::dx12::RootSignature& root_signature,
-			const std::string& shader_source,
+			const std::string_view& shader_source,
 			const std::vector<std::pair<std::string, DXGI_FORMAT>>& input_layout_parts = {
 				{ "KL_Position", DXGI_FORMAT_R32G32B32_FLOAT },
 				{ "KL_Texture", DXGI_FORMAT_R32G32_FLOAT },
@@ -143,7 +143,7 @@ namespace kl {
 		) const;
 
 		dx12::StateObject create_default_raytracing_pipeline(
-			const std::string& compiled_shaders,
+			const std::string_view& compiled_shaders,
 			const dx12::RootSignature& root_signature,
 			UINT max_recursion_depth = 5,
 			UINT max_attribute_size = sizeof(kl::Vertex<float>),

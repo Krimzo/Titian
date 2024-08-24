@@ -19,7 +19,7 @@ namespace kl {
     public:
         Image();
         Image(const Int2& size);
-        Image(const std::string& filepath);
+        Image(const std::string_view& filepath);
 
         // Get
         Color* ptr();

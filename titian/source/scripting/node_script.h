@@ -690,7 +690,7 @@ namespace titian {
 		requires std::is_base_of_v<From, To>
 	struct IsTypeNode : FlowNode
 	{
-		IsTypeNode(NodeScript* parent, const String& title)
+		inline IsTypeNode(NodeScript* parent, const String& title)
 			: FlowNode(parent, title, true, false, ne::NodeStyle::orange())
 		{
 			addIN<void*>("ptr");

@@ -367,7 +367,7 @@ void kl::GPU12::dispatch_rays(const D3D12_GPU_VIRTUAL_ADDRESS shader_address, co
 }
 
 // Helpers
-kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline(const dx12::RootSignature& root_signature, const std::string& shader_source, const std::vector<std::pair<std::string, DXGI_FORMAT>>& input_layout_parts, const D3D12_PRIMITIVE_TOPOLOGY_TYPE primitive_topology) const
+kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline(const dx12::RootSignature& root_signature, const std::string_view& shader_source, const std::vector<std::pair<std::string, DXGI_FORMAT>>& input_layout_parts, const D3D12_PRIMITIVE_TOPOLOGY_TYPE primitive_topology) const
 {
 	// Shaders
 	const CompiledShader vertex_shader = compile_vertex_shader(shader_source);
@@ -377,7 +377,7 @@ kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline(const d
 	std::vector<dx12::InputLayout> input_layout{};
 	input_layout.reserve(input_layout_parts.size());
 	for (const auto& part : input_layout_parts) {
-		input_layout.emplace_back(part.first.c_str(), 0, part.second, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0);
+		input_layout.emplace_back(part.first.data(), 0, part.second, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0);
 	}
 
 	// Pipeline
@@ -394,7 +394,7 @@ kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline(const d
 	return create_pipeline_state(&pipeline_desc);
 }
 
-kl::dx12::StateObject kl::GPU12::create_default_raytracing_pipeline(const std::string& compiled_shaders, const dx12::RootSignature& root_signature, const UINT max_recursion_depth, const UINT max_attribute_size, const UINT max_payload_size) const
+kl::dx12::StateObject kl::GPU12::create_default_raytracing_pipeline(const std::string_view& compiled_shaders, const dx12::RootSignature& root_signature, const UINT max_recursion_depth, const UINT max_attribute_size, const UINT max_payload_size) const
 {
 	const D3D12_DXIL_LIBRARY_DESC dxil_lib{
 		.DXILLibrary{

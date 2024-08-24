@@ -1,7 +1,6 @@
 #include "klibrary.h"
 
 
-// Creation
 kl::DirectionalLight::DirectionalLight(GPU* gpu, const UINT map_resolution)
     : map_resolution(map_resolution)
 {

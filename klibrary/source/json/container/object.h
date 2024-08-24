@@ -8,7 +8,7 @@ namespace kl::json {
 	{
 	public:
 		Object();
-		Object(const std::string& data);
+		Object(const std::string_view& data);
 
 		bool compile(std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last) override;
 		std::string decompile(int depth = 0) const override;

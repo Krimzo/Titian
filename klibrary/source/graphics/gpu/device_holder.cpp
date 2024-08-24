@@ -138,7 +138,7 @@ kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::vector<Vertex<f
     return create_vertex_buffer(vertices.data(), (UINT) (vertices.size() * sizeof(Vertex<float>)));
 }
 
-kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::string& filepath) const
+kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::string_view& filepath) const
 {
     const auto data = parse_obj_file(filepath, true);
     return create_vertex_buffer(data);

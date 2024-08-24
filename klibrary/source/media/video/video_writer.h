@@ -49,7 +49,7 @@ namespace kl {
         uint64_t m_audio_time = 0;
 
     public:
-        VideoWriter(const std::string& filepath, const VideoType& video_type, const Int2& frame_size, int fps, int video_bit_rate, int audio_sample_rate);
+        VideoWriter(const std::string_view& filepath, const VideoType& video_type, const Int2& frame_size, int fps, int video_bit_rate, int audio_sample_rate);
 
         Int2 frame_size() const;
         int fps() const;

@@ -8,7 +8,7 @@ namespace kl::json {
 	{
 	public:
 		Literal();
-		Literal(const std::string& data);
+		Literal(const std::string_view& data);
 
 		bool compile(std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last) override;
 		std::string decompile(int depth = 0) const override;
@@ -26,7 +26,7 @@ namespace kl::json {
 		std::optional<int16_t> get_short() const override;
 		std::optional<uint8_t> get_byte() const override;
 
-		void put_string(const std::string& value) override;
+		void put_string(const std::string_view& value) override;
 		std::optional<std::string> get_string() const override;
 
 	private:
@@ -65,7 +65,7 @@ namespace kl::json {
 		return result;
 	}
 
-	static inline Wrap<Literal> make_string(const std::string& value)
+	static inline Wrap<Literal> make_string(const std::string_view& value)
 	{
 		Wrap result = Wrap<Literal>::make();
 		result->put_string(value);

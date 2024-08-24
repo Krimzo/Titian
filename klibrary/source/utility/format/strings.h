@@ -4,11 +4,11 @@
 
 
 namespace kl {
-    std::string convert_string(const std::wstring& data);
-    std::wstring convert_string(const std::string& data);
+    std::string convert_string(const std::wstring_view& data);
+    std::wstring convert_string(const std::string_view& data);
 
-    std::vector<std::string> split_string(const std::string& data, char delimiter);
-    std::vector<std::wstring> split_string(const std::wstring& data, wchar_t delimiter);
+    std::vector<std::string> split_string(const std::string_view& data, char delimiter);
+    std::vector<std::wstring> split_string(const std::wstring_view& data, wchar_t delimiter);
 
     void replace_all(std::string& str, const std::string_view& from, const std::string_view& to);
     void replace_all(std::wstring& str, const std::wstring_view& from, const std::wstring_view& to);
@@ -53,7 +53,7 @@ namespace kl {
         std::osyncstream synced_stream(stream);
         (synced_stream << ... << args);
         if constexpr (NewLine) {
-            synced_stream << std::endl;
+            synced_stream << '\n';
         }
     }
 
@@ -78,7 +78,7 @@ namespace kl {
         std::wosyncstream w_synced_stream(w_stream);
         (w_synced_stream << ... << args);
         if constexpr (NewLine) {
-            w_synced_stream << std::endl;
+            w_synced_stream << '\n';
         }
     }
 

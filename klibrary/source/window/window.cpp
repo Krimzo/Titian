@@ -2,7 +2,7 @@
 
 
 // Class
-kl::Window::Window(const std::string& name, const Int2& size)
+kl::Window::Window(const std::string_view& name, const Int2& size)
     : m_name(name)
 {
     // Instance
@@ -17,7 +17,7 @@ kl::Window::Window(const std::string& name, const Int2& size)
         return ((Window*) GetWindowLongPtrA(window_handle, GWLP_USERDATA))->window_procedure(window_handle, message, w_param, l_param);
     };
     window_class.hInstance = m_instance;
-    window_class.lpszClassName = name.c_str();
+    window_class.lpszClassName = name.data();
     assert(RegisterClassExA(&window_class), "Failed to register window class");
 
     // Creating the window
@@ -35,7 +35,7 @@ kl::Window::Window(const std::string& name, const Int2& size)
         screen::SIZE.y / 2 - new_size.y / 2,
     };
 
-    m_window = CreateWindowExA(NULL, name.c_str(), name.c_str(), m_window_style, new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, m_instance, nullptr);
+    m_window = CreateWindowExA(NULL, name.data(), name.data(), m_window_style, new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, m_instance, nullptr);
     assert(m_window, "Failed to create window");
 
     // Getting data
@@ -57,7 +57,7 @@ kl::Window::~Window()
 
     // Clearing window
     DestroyWindow(m_window);
-    UnregisterClassA(m_name.c_str(), m_instance);
+    UnregisterClassA(m_name.data(), m_instance);
 
 	m_window = nullptr;
 }

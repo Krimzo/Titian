@@ -31,7 +31,7 @@ namespace kl {
         
         dx::Buffer create_vertex_buffer(const void* data, UINT byte_size) const;
         dx::Buffer create_vertex_buffer(const std::vector<Vertex<float>>& vertices) const;
-        dx::Buffer create_vertex_buffer(const std::string& filepath) const;
+        dx::Buffer create_vertex_buffer(const std::string_view& filepath) const;
 
         dx::Buffer create_index_buffer(const uint32_t* data, UINT element_count) const;
         dx::Buffer create_index_buffer(const std::vector<uint32_t>& indices) const;

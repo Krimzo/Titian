@@ -833,7 +833,7 @@ namespace ImFlow
          * @brief <BR>Set node's name
          * @param name New title
          */
-        BaseNode* setTitle(const std::string& title) { m_title = title; return this; }
+        BaseNode* setTitle(const std::string_view& title) { m_title = title; return this; }
 
         /**
          * @brief <BR>Set node's position

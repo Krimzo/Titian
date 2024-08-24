@@ -47,7 +47,7 @@ namespace kl {
         Mouse mouse = {};
 
         // Creation
-        Window(const std::string& name, const Int2& size);
+        Window(const std::string_view& name, const Int2& size);
         virtual ~Window();
 
         // Methods

@@ -327,7 +327,7 @@ void TextEditor::Redo(int aSteps)
 		mUndoBuffer[mUndoIndex++].Redo(this);
 }
 
-void TextEditor::SetText(const std::string& aText)
+void TextEditor::SetText(const std::string_view& aText)
 {
 	mLines.clear();
 	mLines.emplace_back(Line());

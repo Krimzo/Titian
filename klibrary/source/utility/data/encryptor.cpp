@@ -43,7 +43,7 @@ std::ostream& kl::operator<<(std::ostream& stream, const Encryptor& encryptor)
         for (uint64_t k = 0; k < (encryptor.keys[i].size() - 1); k++) {
             stream << int(encryptor.keys[i][k]) << ", ";
         }
-        stream << int(encryptor.keys[i].back()) << " }" << std::endl;
+        stream << int(encryptor.keys[i].back()) << " }" << '\n';
     }
     return stream;
 }

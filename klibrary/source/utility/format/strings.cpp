@@ -1,7 +1,7 @@
 #include "klibrary.h"
 
 
-std::string kl::convert_string(const std::wstring& data)
+std::string kl::convert_string(const std::wstring_view& data)
 {
     std::string temp;
     temp.resize(data.size());
@@ -11,7 +11,7 @@ std::string kl::convert_string(const std::wstring& data)
     return temp;
 }
 
-std::wstring kl::convert_string(const std::string& data)
+std::wstring kl::convert_string(const std::string_view& data)
 {
     std::wstring temp;
     temp.resize(data.size());
@@ -21,9 +21,9 @@ std::wstring kl::convert_string(const std::string& data)
     return temp;
 }
 
-std::vector<std::string> kl::split_string(const std::string& data, const char delimiter)
+std::vector<std::string> kl::split_string(const std::string_view& data, const char delimiter)
 {
-    std::stringstream stream{ data };
+    std::istringstream stream{ data.data() };
     std::vector<std::string> parts;
     for (std::string part; std::getline(stream, part, delimiter);) {
         parts.push_back(part);
@@ -31,9 +31,9 @@ std::vector<std::string> kl::split_string(const std::string& data, const char de
     return parts;
 }
 
-std::vector<std::wstring> kl::split_string(const std::wstring& data, const wchar_t delimiter)
+std::vector<std::wstring> kl::split_string(const std::wstring_view& data, const wchar_t delimiter)
 {
-    std::wstringstream stream{ data };
+    std::wistringstream stream{ data.data() };
     std::vector<std::wstring> parts;
     for (std::wstring part; std::getline(stream, part, delimiter);) {
         parts.push_back(part);

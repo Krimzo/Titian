@@ -22,7 +22,7 @@ kl::Image::Image(const Int2& size)
     m_pixels.resize((size_t) size.x * size.y);
 }
 
-kl::Image::Image(const std::string& filepath)
+kl::Image::Image(const std::string_view& filepath)
 {
     load_from_file(filepath);
 }

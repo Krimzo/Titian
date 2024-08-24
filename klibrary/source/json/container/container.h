@@ -26,7 +26,7 @@ namespace kl::json {
 		virtual std::optional<int16_t> get_short() const { return std::nullopt; }
 		virtual std::optional<uint8_t> get_byte() const { return std::nullopt; }
 
-		virtual void put_string(const std::string& value) {}
+		virtual void put_string(const std::string_view& value) {}
 		virtual std::optional<std::string> get_string() const { return std::nullopt; }
 	};
 }

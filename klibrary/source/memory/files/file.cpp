@@ -202,7 +202,7 @@ std::optional<std::string> kl::choose_file(const bool save, const std::vector<st
     dialog_info.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
     dialog_info.lpstrFile = file_buffer;
     dialog_info.nMaxFile = sizeof(file_buffer);
-    dialog_info.lpstrFilter = filter_data.c_str();
+    dialog_info.lpstrFilter = filter_data.data();
     dialog_info.nFilterIndex = 1;
 
     std::optional<std::string> result;

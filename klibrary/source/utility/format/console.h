@@ -20,15 +20,15 @@ namespace kl::console {
     Int2 size();
     void set_size(const Int2& size);
 
-    void set_title(const std::string& text);
-    void set_font(const Int2& size, const std::string& font_name = "Consolas");
+    void set_title(const std::string_view& text);
+    void set_font(const Int2& size, const std::string_view& font_name = "Consolas");
 
     char read();
     void wait(char to_wait_for, bool echo = false);
     char wait_for_any(bool echo = false);
 
-    void dump(const std::string& data, const Int2& location = {});
-    void progress_bar(const std::string& message, int output_y, float percentage);
+    void dump(const std::string_view& data, const Int2& location = {});
+    void progress_bar(const std::string_view& message, int output_y, float percentage);
 }
 
 namespace kl {
@@ -57,7 +57,7 @@ namespace kl {
     {
         if (!value) {
             const std::string message = format(args...);
-            MessageBoxA(nullptr, message.c_str(), "Assertion failed!", MB_ICONERROR | MB_OK);
+            MessageBoxA(nullptr, message.data(), "Assertion failed!", MB_ICONERROR | MB_OK);
             exit(EXIT_FAILURE);
         }
     }

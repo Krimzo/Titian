@@ -13,22 +13,22 @@ namespace kl {
         using Function = Return(__stdcall*)(Args...);
 
         DLL();
-        DLL(const std::string& path);
+        DLL(const std::string_view& path);
         ~DLL();
 
         operator bool() const;
 
-        void load(const std::string& path);
+        void load(const std::string_view& path);
         void reload();
         void unload();
 
         template<typename Return, typename... Args>
-        Function<Return, Args...> read_function(const std::string& function_name)
+        Function<Return, Args...> read_function(const std::string_view& function_name)
         {
             if (!m_module) {
                 return nullptr;
             }
-            auto function_address = GetProcAddress(m_module, function_name.c_str());
+            auto function_address = GetProcAddress(m_module, function_name.data());
             return (Function<Return, Args...>) function_address;
         }
 

@@ -61,7 +61,7 @@ void kl::TextRaster::draw_text(const UINT target_index) const
 
 		// Draw
 		target->DrawText(
-			text.data.c_str(),
+			text.data.data(),
 			(UINT) text.data.size(),
 			text.format.get(),
 			layout_rect,

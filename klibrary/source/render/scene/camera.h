@@ -8,9 +8,6 @@
 namespace kl {
     class Camera
     {
-        Float3 m_forward = { 0.0f, 0.0f, 1.0f };
-        Float3 m_up = { 0.0f, 1.0f, 0.0f };
-
     public:
         Float3 origin;
 
@@ -47,5 +44,9 @@ namespace kl {
         Float4x4 view_matrix() const;
         Float4x4 projection_matrix() const;
         Float4x4 matrix() const;
+
+    private:
+        Float3 m_forward = { 0.0f, 0.0f, 1.0f };
+        Float3 m_up = { 0.0f, 1.0f, 0.0f };
     };
 }

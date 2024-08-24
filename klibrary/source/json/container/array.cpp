@@ -4,7 +4,7 @@
 kl::json::Array::Array()
 {}
 
-kl::json::Array::Array(const std::string& data)
+kl::json::Array::Array(const std::string_view& data)
 {
     const auto tokens = Lexer::parse(data);
     compile(tokens.begin(), tokens.end());

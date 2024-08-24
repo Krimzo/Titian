@@ -1,7 +1,7 @@
 #include "klibrary.h"
 
 
-std::vector<kl::json::Token> kl::json::Lexer::parse(const std::string& data)
+std::vector<kl::json::Token> kl::json::Lexer::parse(const std::string_view& data)
 {
 	std::vector<Token> tokens;
 	for (size_t i = 0; i < data.size(); i++) {
@@ -57,7 +57,7 @@ std::vector<kl::json::Token> kl::json::Lexer::parse(const std::string& data)
 	return tokens;
 }
 
-void kl::json::Lexer::parse_string(const std::string& data, std::vector<Token>& tokens, size_t& i)
+void kl::json::Lexer::parse_string(const std::string_view& data, std::vector<Token>& tokens, size_t& i)
 {
 	std::string buffer;
 	int in_string = 0;
@@ -86,7 +86,7 @@ void kl::json::Lexer::parse_string(const std::string& data, std::vector<Token>& 
 	i = j;
 }
 
-void kl::json::Lexer::parse_number(const std::string& data, std::vector<Token>& tokens, size_t& i)
+void kl::json::Lexer::parse_number(const std::string_view& data, std::vector<Token>& tokens, size_t& i)
 {
 	std::string buffer;
 	size_t j = i;
@@ -102,7 +102,7 @@ void kl::json::Lexer::parse_number(const std::string& data, std::vector<Token>& 
 	i = j - 1;
 }
 
-void kl::json::Lexer::parse_null(const std::string& data, std::vector<Token>& tokens, size_t& i)
+void kl::json::Lexer::parse_null(const std::string_view& data, std::vector<Token>& tokens, size_t& i)
 {
 	if (data.substr(i, Standard::null_value.size()) == Standard::null_value) {
 		tokens.push_back(Token{ .type = TokenType::_NULL });
@@ -110,7 +110,7 @@ void kl::json::Lexer::parse_null(const std::string& data, std::vector<Token>& to
 	}
 }
 
-void kl::json::Lexer::parse_false(const std::string& data, std::vector<Token>& tokens, size_t& i)
+void kl::json::Lexer::parse_false(const std::string_view& data, std::vector<Token>& tokens, size_t& i)
 {
 	if (data.substr(i, Standard::false_value.size()) == Standard::false_value) {
 		tokens.push_back(Token{ .type = TokenType::_FALSE });
@@ -118,7 +118,7 @@ void kl::json::Lexer::parse_false(const std::string& data, std::vector<Token>& t
 	}
 }
 
-void kl::json::Lexer::parse_true(const std::string& data, std::vector<Token>& tokens, size_t& i)
+void kl::json::Lexer::parse_true(const std::string_view& data, std::vector<Token>& tokens, size_t& i)
 {
 	if (data.substr(i, Standard::true_value.size()) == Standard::true_value) {
 		tokens.push_back(Token{ .type = TokenType::_TRUE });
