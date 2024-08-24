@@ -9,11 +9,11 @@ namespace titian {
 	public:
 		CodeEditor();
 
-		void load(const String& source);
+		void load(const StringView& source);
 		void edit(String* source);
 
 		String get_word_at_cursor() const;
-		void replace_word_at_cursor(const String& text);
+		void replace_word_at_cursor(const StringView& text);
 
 		const TextEditor::LanguageDefinition* get_definition() const;
 		const TextEditor::Palette* get_palette() const;

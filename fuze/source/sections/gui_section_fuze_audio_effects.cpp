@@ -20,9 +20,9 @@ void titian::GUISectionFuzeAudioEffects::render_gui()
 			im::Text("New Effect");
 			for (const auto& [title, provider] : audio_effects) {
 				counter += 1;
-				im::Text(kl::format(counter, '.').c_str());
+				im::Text(kl::format(counter, '.').data());
 				im::SameLine();
-				if (im::Button(title.c_str())) {
+				if (im::Button(title.data())) {
 					selected_media->audio_effects.push_back(provider());
 					im::CloseCurrentPopup();
 				}
@@ -38,11 +38,11 @@ void titian::GUISectionFuzeAudioEffects::render_gui()
 				im::Separator();
 			}
 
-			im::Text(kl::format(counter + 1, '.').c_str());
+			im::Text(kl::format(counter + 1, '.').data());
 			im::SameLine();
 
-			im::Selectable(effect->get_name().c_str());
-			if (im::BeginPopupContextItem(kl::format("##AudioEffectPopup", counter).c_str())) {
+			im::Selectable(effect->get_name().data());
+			if (im::BeginPopupContextItem(kl::format("##AudioEffectPopup", counter).data())) {
 				if (counter > 0) {
 					if (im::Button("Move Up")) {
 						std::swap(selected_media->audio_effects[counter], selected_media->audio_effects[(size_t) counter - 1]);

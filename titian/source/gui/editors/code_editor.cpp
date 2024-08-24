@@ -16,7 +16,7 @@ titian::CodeEditor::CodeEditor()
 		}
 
 		// hlsl
-		Map<String, String> HLSL_IDENTIFIERS;
+		StringMap<String> HLSL_IDENTIFIERS;
 		HLSL_IDENTIFIERS["VS_OUT"] = "Computed vertex data.";
 		HLSL_IDENTIFIERS["PS_OUT"] = "Computed pixel data.";
 
@@ -87,7 +87,7 @@ titian::CodeEditor::CodeEditor()
 	m_text_editor.SetPalette(TextEditor::PaletteId::Dark);
 }
 
-void titian::CodeEditor::load(const String& source)
+void titian::CodeEditor::load(const StringView& source)
 {
 	m_text_editor.SetText(source);
 }
@@ -103,7 +103,7 @@ titian::String titian::CodeEditor::get_word_at_cursor() const
 	return m_text_editor.get_word_at_cursor();
 }
 
-void titian::CodeEditor::replace_word_at_cursor(const String& text)
+void titian::CodeEditor::replace_word_at_cursor(const StringView& text)
 {
 	m_text_editor.replace_word_at_cursor(text);
 }

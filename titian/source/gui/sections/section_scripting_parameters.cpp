@@ -24,10 +24,10 @@ void titian::GUISectionScriptingParameters::render_gui()
 	GUILayer* gui_layer = Layers::get<GUILayer>();
 	Scene* scene = &Layers::get<GameLayer>()->scene;
 
-	Vector<Pair<String, Map<String, Pair<const std::type_info*, void*>>>> scripts;
+	Vector<Pair<String, StringMap<Pair<const std::type_info*, void*>>>> scripts;
 	scripts.reserve(scene->scripts.size());
 	for (auto& [name, script] : scene->scripts) {
-		Map<String, Pair<const std::type_info*, void*>> parameters;
+		StringMap<Pair<const std::type_info*, void*>> parameters;
 		if (InterpScript* interp_script = dynamic_cast<InterpScript*>(&script)) {
 			for (auto& [name, value] : interp_script->get_parameters()) {
 				parameters[name.substr(2)] = { value.get_type_info().bare_type_info(), value.get_ptr() };
@@ -53,7 +53,7 @@ void titian::GUISectionScriptingParameters::render_gui()
 			if (script_counter > 1) {
 				im::Separator();
 			}
-			im::Text(kl::format("Script ", name).c_str());
+			im::Text(kl::format("Script ", name).data());
 			for (auto& [name, pair] : parameters) {
 				display_parameter_editor(script_counter, name, *pair.first, pair.second);
 			}
@@ -65,7 +65,7 @@ void titian::GUISectionScriptingParameters::render_gui()
 	im::PopFont();
 }
 
-void titian::GUISectionScriptingParameters::display_parameter_editor(const int script_id, const String& name, const std::type_info& type, void* ptr)
+void titian::GUISectionScriptingParameters::display_parameter_editor(const int script_id, const StringView& name, const std::type_info& type, void* ptr)
 {
 	if (!ptr) {
 		return;
@@ -74,41 +74,41 @@ void titian::GUISectionScriptingParameters::display_parameter_editor(const int s
 	if (type == typeid(void*)) {
 		const String identifier = kl::format(name, "##", script_id);
 		String ignored = kl::format("0x", *(void**) ptr);
-		im::InputText(identifier.c_str(), &ignored, ImGuiInputTextFlags_ReadOnly);
+		im::InputText(identifier.data(), &ignored, ImGuiInputTextFlags_ReadOnly);
 	}
 	else if (type == typeid(bool)) {
 		const String identifier = kl::format(name, "##", script_id);
-		im::Checkbox(identifier.c_str(), (bool*) ptr);
+		im::Checkbox(identifier.data(), (bool*) ptr);
 	}
 	else if (type == typeid(int)) {
 		const String identifier = kl::format(name, "##", script_id);
-		im::DragInt(identifier.c_str(), (int*) ptr);
+		im::DragInt(identifier.data(), (int*) ptr);
 	}
 	else if (type == typeid(float)) {
 		const String identifier = kl::format(name, "##", script_id);
-		im::DragFloat(identifier.c_str(), (float*) ptr);
+		im::DragFloat(identifier.data(), (float*) ptr);
 	}
 	else if (type == typeid(Int2)) {
 		const String identifier = kl::format(name, "##", script_id);
-		im::DragInt2(identifier.c_str(), (int*) ptr);
+		im::DragInt2(identifier.data(), (int*) ptr);
 	}
 	else if (type == typeid(Float2) || type == typeid(Complex)) {
 		const String identifier = kl::format(name, "##", script_id);
-		im::DragFloat2(identifier.c_str(), (float*) ptr);
+		im::DragFloat2(identifier.data(), (float*) ptr);
 	}
 	else if (type == typeid(Float3)) {
 		const String identifier = kl::format(name, "##", script_id);
-		im::DragFloat3(identifier.c_str(), (float*) ptr);
+		im::DragFloat3(identifier.data(), (float*) ptr);
 	}
 	else if (type == typeid(Float4) || type == typeid(Quaternion)) {
 		const String identifier = kl::format(name, "##", script_id);
-		im::DragFloat4(identifier.c_str(), (float*) ptr);
+		im::DragFloat4(identifier.data(), (float*) ptr);
 	}
 	else if (type == typeid(Color)) {
 		Color* color_ptr = (Color*) ptr;
 		Float4 color_as_float = *color_ptr;
 		const String identifier = kl::format(name, "##", script_id);
-		if (im::ColorEdit4(identifier.c_str(), &color_as_float.x)) {
+		if (im::ColorEdit4(identifier.data(), &color_as_float.x)) {
 			*color_ptr = color_as_float;
 		}
 	}
@@ -116,16 +116,16 @@ void titian::GUISectionScriptingParameters::display_parameter_editor(const int s
 		char* char_ptr = (char*) ptr;
 		char buffer[2] = { *char_ptr, 0 };
 		const String identifier = kl::format(name, "##", script_id);
-		if (im::InputText(identifier.c_str(), buffer, 2)) {
+		if (im::InputText(identifier.data(), buffer, 2)) {
 			*char_ptr = buffer[0];
 		}
 	}
 	else if (type == typeid(String)) {
 		const String identifier = kl::format(name, "##", script_id);
-		im::InputText(identifier.c_str(), (String*) ptr);
+		im::InputText(identifier.data(), (String*) ptr);
 	}
 	else {
 		const String identifier = kl::format(name, " [unknown]");
-		im::Text(identifier.c_str());
+		im::Text(identifier.data());
 	}
 }

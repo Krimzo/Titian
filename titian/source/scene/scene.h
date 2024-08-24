@@ -28,12 +28,12 @@ namespace titian {
     class Scene : kl::NoCopy, public Serializable, public px::PxSimulationEventCallback
     {
     public:
-        Map<String, Ref<Mesh>> meshes;
-        Map<String, Ref<Animation>> animations;
-        Map<String, Ref<Texture>> textures;
-        Map<String, Ref<Material>> materials;
-        Map<String, Ref<Shader>> shaders;
-        Map<String, Ref<Script>> scripts;
+        StringMap<Ref<Mesh>> meshes;
+        StringMap<Ref<Animation>> animations;
+        StringMap<Ref<Texture>> textures;
+        StringMap<Ref<Material>> materials;
+        StringMap<Ref<Shader>> shaders;
+        StringMap<Ref<Script>> scripts;
 
         Ref<DefaultMeshes> default_meshes = nullptr;
         Ref<DefaultAnimations> default_animations = nullptr;
@@ -72,25 +72,25 @@ namespace titian {
 
         // Entity
         Ref<Entity> new_entity(bool dynamic) const;
-        void add_entity(const String& name, const Ref<Entity>& entity);
-        void remove_entity(const String& name);
-        bool contains_entity(const String& name) const;
-        const Map<String, Ref<Entity>>& entities_ref() const;
+        void add_entity(const StringView& name, const Ref<Entity>& entity);
+        void remove_entity(const StringView& name);
+        bool contains_entity(const StringView& name) const;
+        const StringMap<Ref<Entity>>& entities_ref() const;
         size_t entity_count() const;
 
-        Map<String, Ref<Entity>>::iterator begin();
-        Map<String, Ref<Entity>>::iterator end();
-        Map<String, Ref<Entity>>::const_iterator begin() const;
-        Map<String, Ref<Entity>>::const_iterator end() const;
+        StringMap<Ref<Entity>>::iterator begin();
+        StringMap<Ref<Entity>>::iterator end();
+        StringMap<Ref<Entity>>::const_iterator begin() const;
+        StringMap<Ref<Entity>>::const_iterator end() const;
 
         // Get types
-        Ref<Mesh> get_mesh(const String& id) const;
-        Ref<Animation> get_animation(const String& id) const;
-        Ref<Texture> get_texture(const String& id) const;
-        Ref<Material> get_material(const String& id) const;
-        Ref<Shader> get_shader(const String& id) const;
-        Ref<Script> get_script(const String& id) const;
-        Ref<Entity> get_entity(const String& id) const;
+        Ref<Mesh> get_mesh(const StringView& id) const;
+        Ref<Animation> get_animation(const StringView& id) const;
+        Ref<Texture> get_texture(const StringView& id) const;
+        Ref<Material> get_material(const StringView& id) const;
+        Ref<Shader> get_shader(const StringView& id) const;
+        Ref<Script> get_script(const StringView& id) const;
+        Ref<Entity> get_entity(const StringView& id) const;
 
         // Casted
         template<typename T, typename... Args>
@@ -100,14 +100,14 @@ namespace titian {
         }
 
         template<typename T>
-        T* get_casted(const String& id)
+        T* get_casted(const StringView& id)
         {
             Entity* entity = &get_entity(id);
             return dynamic_cast<T*>(entity);
         }
 
         template<typename T>
-        const T* get_casted(const String& id) const
+        const T* get_casted(const StringView& id) const
         {
             const Entity* entity = &get_entity(id);
             return dynamic_cast<const T*>(entity);
@@ -125,36 +125,36 @@ namespace titian {
         Ref<Collider> new_default_collider(px::PxGeometryType::Enum type, const Mesh* optional_mesh) const;
 
         // Helper new
-        Mesh* helper_new_mesh(const String& id);
-        Animation* helper_new_animation(const String& id);
-        Texture* helper_new_texture(const String& id);
-        Material* helper_new_material(const String& id);
-        Shader* helper_new_shader(const String& id);
-        Entity* helper_new_entity(const String& id);
+        Mesh* helper_new_mesh(const StringView& id);
+        Animation* helper_new_animation(const StringView& id);
+        Texture* helper_new_texture(const StringView& id);
+        Material* helper_new_material(const StringView& id);
+        Shader* helper_new_shader(const StringView& id);
+        Entity* helper_new_entity(const StringView& id);
 
         // Helper get
-        Mesh* helper_get_mesh(const String& id);
-        Animation* helper_get_animation(const String& id);
-        Texture* helper_get_texture(const String& id);
-        Material* helper_get_material(const String& id);
-        Shader* helper_get_shader(const String& id);
-        Entity* helper_get_entity(const String& id);
+        Mesh* helper_get_mesh(const StringView& id);
+        Animation* helper_get_animation(const StringView& id);
+        Texture* helper_get_texture(const StringView& id);
+        Material* helper_get_material(const StringView& id);
+        Shader* helper_get_shader(const StringView& id);
+        Entity* helper_get_entity(const StringView& id);
 
         // Helper remove
-        void helper_remove_mesh(const String& id);
-        void helper_remove_animation(const String& id);
-        void helper_remove_texture(const String& id);
-        void helper_remove_material(const String& id);
-        void helper_remove_shader(const String& id);
-        void helper_remove_entity(const String& id);
+        void helper_remove_mesh(const StringView& id);
+        void helper_remove_animation(const StringView& id);
+        void helper_remove_texture(const StringView& id);
+        void helper_remove_material(const StringView& id);
+        void helper_remove_shader(const StringView& id);
+        void helper_remove_entity(const StringView& id);
 
         // Helper contains
-        bool helper_contains_mesh(const String& id) const;
-        bool helper_contains_animation(const String& id) const;
-        bool helper_contains_texture(const String& id) const;
-        bool helper_contains_material(const String& id) const;
-        bool helper_contains_shader(const String& id) const;
-        bool helper_contains_entity(const String& id) const;
+        bool helper_contains_mesh(const StringView& id) const;
+        bool helper_contains_animation(const StringView& id) const;
+        bool helper_contains_texture(const StringView& id) const;
+        bool helper_contains_material(const StringView& id) const;
+        bool helper_contains_shader(const StringView& id) const;
+        bool helper_contains_entity(const StringView& id) const;
 
         // Helper count
         int helper_mesh_count() const;
@@ -165,15 +165,15 @@ namespace titian {
         int helper_entity_count() const;
 
         // Helper get all
-        Map<String, Mesh*> helper_get_all_meshes();
-        Map<String, Animation*> helper_get_all_animations();
-        Map<String, Texture*> helper_get_all_textures();
-        Map<String, Material*> helper_get_all_materials();
-        Map<String, Shader*> helper_get_all_shaders();
-        Map<String, Entity*> helper_get_all_entities();
+        StringMap<Mesh*> helper_get_all_meshes();
+        StringMap<Animation*> helper_get_all_animations();
+        StringMap<Texture*> helper_get_all_textures();
+        StringMap<Material*> helper_get_all_materials();
+        StringMap<Shader*> helper_get_all_shaders();
+        StringMap<Entity*> helper_get_all_entities();
 
         // Loading
-        Optional<AssimpData> get_assimp_data(const String& path) const;
+        Optional<AssimpData> get_assimp_data(const StringView& path) const;
         void load_assimp_data(const AssimpData& data);
 
         Ref<Mesh> load_assimp_mesh(const aiScene* scene, const aiMesh* mesh);
@@ -182,10 +182,10 @@ namespace titian {
 		Ref<Material> load_assimp_material(const aiScene* scene, const aiMaterial* material);
 
         template<typename T>
-        static inline String generate_unique_name(const String& name, const Map<String, T>& map)
+        static inline String generate_unique_name(const StringView& name, const StringMap<T>& map)
         {
             if (!map.contains(name))
-                return name;
+                return String{ name };
 
             int i = 0;
             String result;
@@ -208,6 +208,6 @@ namespace titian {
         px::PxScene* m_scene = nullptr;
 
         kl::GPU* m_gpu = nullptr;
-        Map<String, Ref<Entity>> m_entities = {};
+        StringMap<Ref<Entity>> m_entities;
     };
 }

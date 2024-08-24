@@ -26,7 +26,7 @@ namespace titian {
         RenderLayer render_layer = {};
         GUILayer gui_layer = {};
 
-        TitianGame(const String& entry_scene);
+        TitianGame(const StringView& entry_scene);
         ~TitianGame() override;
 
         bool is_valid() const;

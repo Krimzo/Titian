@@ -15,7 +15,7 @@ void titian::GUISectionLogView::render_gui()
     const uint64_t unseen_count = Logger::last_log_index - last_log_index;
     const String title_extension = unseen_count > 0 ? kl::format(" [", unseen_count, "]###") : "###";
 
-    if (im::Begin(kl::format("Log View", title_extension).c_str(), nullptr, ImGuiWindowFlags_HorizontalScrollbar)) {
+    if (im::Begin(kl::format("Log View", title_extension).data(), nullptr, ImGuiWindowFlags_HorizontalScrollbar)) {
         last_log_index = Logger::last_log_index;
 
         uint32_t log_index = 0;

@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-titian::RenderPass::RenderPass(const String& name)
+titian::RenderPass::RenderPass(const StringView& name)
 	: BenchmarkInfo(name)
 {}
 

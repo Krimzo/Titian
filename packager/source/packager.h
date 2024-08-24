@@ -7,7 +7,7 @@
 namespace titian {
 	int packager_entry(int argc, const char** argv, bool package);
 
-	Set<String> list_files(const String& input);
-	bool create_package(const String& input, const String& output_file);
-	bool open_package(const String& input_file, const String& output_dir);
+	StringSet list_files(const StringView& input);
+	bool create_package(const StringView& input, const StringView& output_file);
+	bool open_package(const StringView& input_file, const StringView& output_dir);
 }

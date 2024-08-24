@@ -83,7 +83,7 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
         im::Text("New Mesh");
 
         if (Optional opt_name = gui_input_waited("##CreateMeshInput", {})) {
-            const String& name = opt_name.value();
+            const auto& name = opt_name.value();
             if (!name.empty() && !scene->meshes.contains(name)) {
                 Ref mesh = new Mesh(gpu, scene->physics(), scene->cooking());
                 mesh->reload();
@@ -101,16 +101,16 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
             continue;
         }
 
-        if (im::Selectable(mesh_name.c_str(), mesh_name == this->selected_mesh)) {
+        if (im::Selectable(mesh_name.data(), mesh_name == this->selected_mesh)) {
             this->selected_mesh = mesh_name;
         }
 
-        if (im::BeginPopupContextItem(mesh_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+        if (im::BeginPopupContextItem(mesh_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
             bool should_break = false;
             im::Text("Edit Mesh");
 
             if (Optional opt_name = gui_input_waited("##RenameMeshInput", mesh_name)) {
-                const String& name = opt_name.value();
+                const auto& name = opt_name.value();
                 if (!name.empty() && !scene->meshes.contains(name)) {
                     if (this->selected_mesh == mesh_name) {
                         this->selected_mesh = name;
@@ -323,7 +323,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
             topology_name = "Triangle";
         }
 
-        if (im::BeginCombo("Topology", topology_name.c_str())) {
+        if (im::BeginCombo("Topology", topology_name.data())) {
             if (im::Selectable("Point", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_POINTLIST)) {
                 mesh->topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
             }
@@ -352,11 +352,11 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
                 Vertex& vertex = mesh->data_buffer[i];
 
                 const String vertex_name = kl::format(i + 1, ". Vertex");
-                if (im::Selectable(vertex_name.c_str(), m_selected_vertex_index == i)) {
+                if (im::Selectable(vertex_name.data(), m_selected_vertex_index == i)) {
                     m_selected_vertex_index = (m_selected_vertex_index != i) ? i : -1;
                 }
 
-                if (im::BeginPopupContextItem(vertex_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+                if (im::BeginPopupContextItem(vertex_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
                     if (im::Button("Delete")) {
                         mesh->data_buffer.erase(mesh->data_buffer.begin() + i);
                         mesh->reload();
@@ -365,16 +365,16 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
                     im::EndPopup();
                 }
 
-                const bool world_edited = im::DragFloat3(kl::format("World##MeshEditor", i).c_str(), &vertex.world.x, 0.1f);
-                const bool texture_edited = im::DragFloat2(kl::format("Texture##MeshEditor", i).c_str(), &vertex.texture.x, 0.1f);
-                const bool normal_edited = im::DragFloat3(kl::format("Normal##MeshEditor", i).c_str(), &vertex.normal.x, 0.1f);
+                const bool world_edited = im::DragFloat3(kl::format("World##MeshEditor", i).data(), &vertex.world.x, 0.1f);
+                const bool texture_edited = im::DragFloat2(kl::format("Texture##MeshEditor", i).data(), &vertex.texture.x, 0.1f);
+                const bool normal_edited = im::DragFloat3(kl::format("Normal##MeshEditor", i).data(), &vertex.normal.x, 0.1f);
 
                 for (int j = 0; j < MAX_BONE_REFS; j++) {
                     int bone_index = vertex.bone_indices[j];
-                    if (im::SliderInt(kl::format("BoneIndex##MeshEditor", i, "_", j).c_str(), &bone_index, 0, 255)) {
+                    if (im::SliderInt(kl::format("BoneIndex##MeshEditor", i, "_", j).data(), &bone_index, 0, 255)) {
                         vertex.bone_indices[j] = (uint8_t) bone_index;
                     }
-                    im::DragFloat(kl::format("BoneWeight##MeshEditor", i, "_", j).c_str(), &vertex.bone_weights[j], 0.01f, 0.0f, 1.0f);
+                    im::DragFloat(kl::format("BoneWeight##MeshEditor", i, "_", j).data(), &vertex.bone_weights[j], 0.01f, 0.0f, 1.0f);
                 }
 
                 if (normal_edited) {

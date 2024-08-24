@@ -4,6 +4,13 @@
 
 
 namespace kl {
+    struct string_hash : std::hash<std::string_view>
+    {
+        using is_transparent = void;
+    };
+}
+
+namespace kl {
     std::string convert_string(const std::wstring_view& data);
     std::wstring convert_string(const std::string_view& data);
 

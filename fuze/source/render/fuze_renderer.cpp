@@ -2,7 +2,7 @@
 
 
 titian::FuzeRenderer::FuzeRenderer(
-	const String& filepath,
+	const StringView& filepath,
 	const kl::VideoType& video_type,
 	const Int2& frame_size,
 	const int fps,
@@ -15,7 +15,7 @@ titian::FuzeRenderer::FuzeRenderer(
 }
 
 titian::FuzeRenderer::FuzeRenderer(
-	const String& filepath,
+	const StringView& filepath,
 	const kl::AudioType audio_type,
 	const int audio_sample_rate)
 	: m_path(filepath), m_audio_type(audio_type)

@@ -149,7 +149,7 @@ void titian::GUISectionMainMenu::render_gui()
                         if (!filter.empty() && name.find(filter) == -1) {
                             continue;
                         }
-                        if (im::MenuItem(name.c_str())) {
+                        if (im::MenuItem(name.data())) {
                             int type_index = 0;
                             if (Optional file = kl::choose_file(true, { { "Texture File",  FILE_EXTENSION_JPG }, { "Texture File",  FILE_EXTENSION_PNG } }, &type_index)) {
                                 const String extension = fs::path(file.value()).extension().string();
@@ -176,7 +176,7 @@ void titian::GUISectionMainMenu::render_gui()
                         if (!filter.empty() && name.find(filter) == -1) {
                             continue;
                         }
-                        if (im::MenuItem(name.c_str())) {
+                        if (im::MenuItem(name.data())) {
                             Pair<String, String> type_info;
                             if (script.is<InterpScript>()) {
                                 type_info = Pair{ "Interp Script", FILE_EXTENSION_CHAI };
@@ -220,7 +220,7 @@ void titian::GUISectionMainMenu::render_gui()
                         if (!filter.empty() && name.find(filter) == -1) {
                             continue;
                         }
-                        if (im::MenuItem(name.c_str())) {
+                        if (im::MenuItem(name.data())) {
                             if (Optional file = kl::choose_file(true, { { "Shader File", FILE_EXTENSION_HLSL } })) {
                                 const String extension = fs::path(file.value()).extension().string();
                                 if (extension.empty()) {
@@ -300,25 +300,25 @@ void titian::GUISectionMainMenu::render_gui()
             if (im::Begin("GLTF Import")) {
                 im::Text("Meshes:");
                 for (size_t i = 0; i < assimp_data.meshes.size(); i++) {
-                    im::Text(kl::format(i + 1, ". \"", assimp_data.meshes[i], "\"").c_str());
+                    im::Text(kl::format(i + 1, ". \"", assimp_data.meshes[i], "\"").data());
                 }
                 im::Separator();
 
                 im::Text("Animations:");
                 for (size_t i = 0; i < assimp_data.animations.size(); i++) {
-                    im::Text(kl::format(i + 1, ". \"", assimp_data.animations[i], "\"").c_str());
+                    im::Text(kl::format(i + 1, ". \"", assimp_data.animations[i], "\"").data());
                 }
                 im::Separator();
 
                 im::Text("Textures:");
                 for (size_t i = 0; i < assimp_data.textures.size(); i++) {
-                    im::Text(kl::format(i + 1, ". \"", assimp_data.textures[i], "\"").c_str());
+                    im::Text(kl::format(i + 1, ". \"", assimp_data.textures[i], "\"").data());
                 }
                 im::Separator();
 
                 im::Text("Materials:");
                 for (size_t i = 0; i < assimp_data.materials.size(); i++) {
-                    im::Text(kl::format(i + 1, ". \"", assimp_data.materials[i], "\"").c_str());
+                    im::Text(kl::format(i + 1, ". \"", assimp_data.materials[i], "\"").data());
                 }
                 im::Separator();
 
@@ -386,7 +386,7 @@ void titian::GUISectionMainMenu::render_gui()
         if (im::BeginMenu("About")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             im::Text("Titian 0.67v");
-            im::Text(kl::format("Serial ", SERIAL_VERSION_STR).c_str());
+            im::Text(kl::format("Serial ", SERIAL_VERSION_STR).data());
             im::PopStyleVar();
             im::EndMenu();
         }

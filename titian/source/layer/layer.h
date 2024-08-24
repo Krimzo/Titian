@@ -7,7 +7,7 @@ namespace titian {
 	class Layer : kl::NoCopy, public BenchmarkInfo
 	{
 	public:
-		Layer(const String& name);
+		Layer(const StringView& name);
 		virtual ~Layer() = default;
 
 		virtual bool update() = 0;

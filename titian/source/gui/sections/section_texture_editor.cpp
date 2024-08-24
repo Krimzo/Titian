@@ -63,7 +63,7 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
         im::Text("New Texture");
 
         if (Optional opt_name = gui_input_waited("##CreateTextureInput", {})) {
-            const String& name = opt_name.value();
+            const auto& name = opt_name.value();
             if (!name.empty() && !scene->textures.contains(name)) {
                 Ref texture = new Texture(gpu);
                 scene->textures[name] = texture;
@@ -80,16 +80,16 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
             continue;
         }
 
-        if (im::Selectable(texture_name.c_str(), texture_name == this->selected_texture)) {
+        if (im::Selectable(texture_name.data(), texture_name == this->selected_texture)) {
             this->selected_texture = texture_name;
         }
 
-        if (im::BeginPopupContextItem(texture_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+        if (im::BeginPopupContextItem(texture_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
             bool should_break = false;
             im::Text("Edit Texture");
 
             if (Optional opt_name = gui_input_waited("##RenameTextureInput", texture_name)) {
-                const String& name = opt_name.value();
+                const auto& name = opt_name.value();
                 if (!name.empty() && !scene->textures.contains(name)) {
                     for (auto& [_, material] : scene->materials) {
                         if (material->color_map_name == texture_name) {

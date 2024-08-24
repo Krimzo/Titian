@@ -123,13 +123,13 @@ void titian::InterpScript::call_ui(Scene* scene)
 	}
 }
 
-titian::Map<titian::String, cs::Boxed_Value> titian::InterpScript::get_parameters()
+titian::StringMap<cs::Boxed_Value> titian::InterpScript::get_parameters()
 {
 	if (!m_engine) {
 		return {};
 	}
 
-	Map<String, cs::Boxed_Value> result;
+	StringMap<cs::Boxed_Value> result;
 	for (auto& [name, value] : m_engine->get_state().engine_state.m_global_objects) {
 		if (name.starts_with("p_")) {
 			result[name] = value;
@@ -154,11 +154,11 @@ const int load_types = [&]
 	cs::bootstrap::standard_library::vector_type<Vector<Material*>>("MaterialVector", *INTERP_SCRIPT_MODULE);
 	cs::bootstrap::standard_library::vector_type<Vector<Entity*>>("EntityVector", *INTERP_SCRIPT_MODULE);
 
-	cs::bootstrap::standard_library::map_type<Map<String, Mesh*>>("MeshMap", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::map_type<Map<String, Animation*>>("AnimationMap", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::map_type<Map<String, Texture*>>("TextureMap", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::map_type<Map<String, Material*>>("MaterialMap", *INTERP_SCRIPT_MODULE);
-	cs::bootstrap::standard_library::map_type<Map<String, Entity*>>("EntityMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<StringMap<Mesh*>>("MeshMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<StringMap<Animation*>>("AnimationMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<StringMap<Texture*>>("TextureMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<StringMap<Material*>>("MaterialMap", *INTERP_SCRIPT_MODULE);
+	cs::bootstrap::standard_library::map_type<StringMap<Entity*>>("EntityMap", *INTERP_SCRIPT_MODULE);
 
 	// Derived
 	INTERP_SCRIPT_MODULE->add(cs::base_class<Entity, Camera>());
@@ -168,18 +168,19 @@ const int load_types = [&]
 	INTERP_SCRIPT_MODULE->add(cs::base_class<Light, DirectionalLight>());
 
 	// Casts
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Int2, Float2>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float2, Int2>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float2, Complex>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float3, Color>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float3, Quaternion>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float4, Color>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Float4, Quaternion>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Complex, Float2>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Quaternion, Float3>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Quaternion, Float4>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Color, Float3>());
-	INTERP_SCRIPT_MODULE->add(cs::type_conversion<Color, Float4>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Int2&, Float2>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Float2&, Int2>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Float2&, Complex>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Float3&, Color>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Float3&, Quaternion>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Float4&, Color>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Float4&, Quaternion>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Complex&, Float2>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Quaternion&, Float3>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Quaternion&, Float4>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Color&, Float3>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const Color&, Float4>());
+	INTERP_SCRIPT_MODULE->add(cs::type_conversion<const String&, StringView>());
 
 	// Int2
 	cs::utility::add_class<Int2>(*INTERP_SCRIPT_MODULE, "Int2",
@@ -1086,10 +1087,10 @@ const int load_types = [&]
 		{ cs::fun(&Scene::helper_get_all_shaders), "get_all_shaders" },
 		{ cs::fun(&Scene::helper_get_all_entities), "get_all_entities" },
 
-		{ cs::fun<Camera* (Scene::*)(const String&)>(&Scene::get_casted<Camera>), "get_camera"},
-		{ cs::fun<AmbientLight* (Scene::*)(const String&)>(&Scene::get_casted<AmbientLight>), "get_ambient_light" },
-		{ cs::fun<PointLight* (Scene::*)(const String&)>(&Scene::get_casted<PointLight>), "get_point_light" },
-		{ cs::fun<DirectionalLight* (Scene::*)(const String&)>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
+		{ cs::fun<Camera* (Scene::*)(const StringView&)>(&Scene::get_casted<Camera>), "get_camera"},
+		{ cs::fun<AmbientLight* (Scene::*)(const StringView&)>(&Scene::get_casted<AmbientLight>), "get_ambient_light" },
+		{ cs::fun<PointLight* (Scene::*)(const StringView&)>(&Scene::get_casted<PointLight>), "get_point_light" },
+		{ cs::fun<DirectionalLight* (Scene::*)(const StringView&)>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
 	});
 	INTERP_SCRIPT_IDENTIFIERS["Scene"] = "Collection of meshes, textures, materials, scripts and entities.";
 	INTERP_SCRIPT_MEMBERS["main_camera_name"] = "main_camera_name";
@@ -1467,7 +1468,7 @@ const int load_functions = [&]
 	INTERP_SCRIPT_IDENTIFIERS["on_ui"] = "Called every frame of the UI.";
 
 	// Logging
-	INTERP_SCRIPT_MODULE->add(cs::fun(&Logger::log<const String&>), "log");
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Logger::log<const StringView&>), "log");
 	INTERP_SCRIPT_MODULE->eval("global print = fun(object) { return log(to_string(object)); }");
 	INTERP_SCRIPT_IDENTIFIERS["log"] = "Outputs the given string to the log window.";
 	INTERP_SCRIPT_IDENTIFIERS["print"] = "Converts the given object to a string and logs it.";

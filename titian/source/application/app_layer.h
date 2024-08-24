@@ -14,7 +14,7 @@ namespace titian {
 
 		AppLayer();
 
-		void init(const String& name);
+		void init(const StringView& name);
 		bool update() override;
 
 	private:

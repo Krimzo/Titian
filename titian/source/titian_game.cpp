@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-titian::TitianGame::TitianGame(const String& entry_scene)
+titian::TitianGame::TitianGame(const StringView& entry_scene)
 {
     // Binds
     Layers::bind<AppLayer>(&app_layer);

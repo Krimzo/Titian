@@ -82,7 +82,7 @@ void titian::GUISectionSceneEntities::render_gui()
 			im::SameLine();
 
 			// Entity name
-			if (im::Selectable(entity_name.c_str(), editor_layer->selected_entities.contains(entity_name))) {
+			if (im::Selectable(entity_name.data(), editor_layer->selected_entities.contains(entity_name))) {
 				if (im::IsKeyDown(ImGuiKey_LeftCtrl)) {
 					if (editor_layer->selected_entities.contains(entity_name)) {
 						editor_layer->selected_entities.erase(entity_name);
@@ -118,12 +118,12 @@ void titian::GUISectionSceneEntities::render_gui()
 			}
 
 			// Item popup
-			if (im::BeginPopupContextItem(entity_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+			if (im::BeginPopupContextItem(entity_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
 				bool should_break = false;
 				im::Text("Edit Entity");
 
 				if (Optional opt_name = gui_input_waited("##RenameEntityInput", entity_name)) {
-					const String& name = opt_name.value();
+					const auto& name = opt_name.value();
 					if (!name.empty() && !scene->contains_entity(name)) {
 						Ref temp_holder = entity;
 						scene->remove_entity(entity_name);

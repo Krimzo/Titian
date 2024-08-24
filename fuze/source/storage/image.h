@@ -15,7 +15,7 @@ namespace titian {
 		RAWImage out_frame;
 
 		Image();
-		Image(const String& path);
+		Image(const StringView& path);
 
 		void cache_frame(const Int2& size);
 

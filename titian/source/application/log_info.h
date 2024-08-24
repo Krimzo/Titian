@@ -4,15 +4,13 @@
 
 
 namespace titian {
-	class LogInfo
+	struct LogInfo
     {
-    public:
         String date = kl::format(kl::Date());
-        String message = {};
+        String message;
 
         LogInfo();
-        LogInfo(const char* message);
-        LogInfo(const String& message);
+        LogInfo(const StringView& message);
 
         template<typename... Args>
         LogInfo(const Args&... objects)

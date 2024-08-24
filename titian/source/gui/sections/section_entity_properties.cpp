@@ -28,7 +28,7 @@ void titian::GUISectionEntityProperties::render_gui()
     im::End();
 }
 
-void titian::GUISectionEntityProperties::display_entity_info(Scene* scene, const String& entity_name, Entity* entity)
+void titian::GUISectionEntityProperties::display_entity_info(Scene* scene, const StringView& entity_name, Entity* entity)
 {
     GUILayer* gui_layer = Layers::get<GUILayer>();
 
@@ -94,12 +94,12 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
     camera->set_up(camera_up);
 
     // Skybox
-    if (im::BeginCombo("Bound Skybox", camera->skybox_name.c_str())) {
+    if (im::BeginCombo("Bound Skybox", camera->skybox_name.data())) {
         if (im::Selectable("/", camera->skybox_name == "/")) {
             camera->skybox_name = "/";
         }
         for (auto& [texture_name, _] : scene->textures) {
-            if (im::Selectable(texture_name.c_str(), texture_name == camera->skybox_name)) {
+            if (im::Selectable(texture_name.data(), texture_name == camera->skybox_name)) {
                 camera->skybox_name = texture_name;
             }
         }
@@ -107,7 +107,7 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
     }
 
     // Shader
-    if (im::BeginCombo("Bound Shader", camera->shader_name.c_str())) {
+    if (im::BeginCombo("Bound Shader", camera->shader_name.data())) {
         if (im::Selectable("/", camera->shader_name == "/")) {
             camera->shader_name = "/";
         }
@@ -115,7 +115,7 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
             if (shader->shader_type != ShaderType::CAMERA) {
                 continue;
             }
-            if (im::Selectable(shader_name.c_str(), shader_name == camera->shader_name)) {
+            if (im::Selectable(shader_name.data(), shader_name == camera->shader_name)) {
                 camera->shader_name = shader_name;
             }
         }
@@ -184,7 +184,7 @@ void titian::GUISectionEntityProperties::edit_entity_animation(Scene* scene, Ent
 
     // Selector
     auto& bound_animation = entity->animation_name;
-    if (im::BeginCombo("Bound Animation", bound_animation.c_str())) {
+    if (im::BeginCombo("Bound Animation", bound_animation.data())) {
         const String filter = gui_input_continuous("Search###EntityPropsMesh");
         if (im::Selectable("/", bound_animation == "/")) {
             bound_animation = "/";
@@ -193,7 +193,7 @@ void titian::GUISectionEntityProperties::edit_entity_animation(Scene* scene, Ent
             if (!filter.empty() && name.find(filter) == -1) {
                 continue;
             }
-            if (im::Selectable(name.c_str(), name == bound_animation)) {
+            if (im::Selectable(name.data(), name == bound_animation)) {
                 bound_animation = name;
             }
         }
@@ -206,9 +206,8 @@ void titian::GUISectionEntityProperties::edit_entity_material(Scene* scene, Enti
     im::Separator();
     im::Text("Material");
 
-    // Selector
     String& bound_material = entity->material_name;
-    if (im::BeginCombo("Bound Material", bound_material.c_str())) {
+    if (im::BeginCombo("Bound Material", bound_material.data())) {
         const String filter = gui_input_continuous("Search###EntityPropsMaterial");
         if (im::Selectable("/", bound_material == "/")) {
             bound_material = "/";
@@ -217,7 +216,7 @@ void titian::GUISectionEntityProperties::edit_entity_material(Scene* scene, Enti
             if (!filter.empty() && material.find(filter) == -1) {
                 continue;
             }
-            if (im::Selectable(material.c_str(), material == bound_material)) {
+            if (im::Selectable(material.data(), material == bound_material)) {
                 bound_material = material;
             }
         }
@@ -225,7 +224,7 @@ void titian::GUISectionEntityProperties::edit_entity_material(Scene* scene, Enti
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const String& entity_name, Ref<Entity>& entity)
+void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const StringView& entity_name, Ref<Entity>& entity)
 {
     im::Separator();
     im::Text("Physics");
@@ -277,16 +276,16 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     String collider_name = possible_colliders.contains(collider_type) ? possible_colliders.at(collider_type) : ("mesh_" + entity->collider_mesh_name);
 
     // Choose type
-    if (im::BeginCombo("Bound Collider", collider_name.c_str())) {
+    if (im::BeginCombo("Bound Collider", collider_name.data())) {
         for (auto& [type, name] : possible_colliders) {
-            if (im::Selectable(name.c_str(), type == collider_type)) {
+            if (im::Selectable(name.data(), type == collider_type)) {
                 collider = scene->new_default_collider(type, nullptr);
                 collider_type = (collider ? collider->type() : px::PxGeometryType::Enum::eINVALID);
                 entity->set_collider(collider);
             }
         }
         for (auto& [name, mesh] : scene->meshes) {
-            if (im::Selectable(("mesh_" + name).c_str(), entity->collider_mesh_name == name)) {
+            if (im::Selectable(("mesh_" + name).data(), entity->collider_mesh_name == name)) {
                 entity->collider_mesh_name = name;
 
                 Mesh* mesh = &scene->get_mesh(entity->collider_mesh_name);

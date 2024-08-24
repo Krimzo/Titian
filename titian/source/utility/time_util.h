@@ -32,7 +32,7 @@ namespace titian {
 		const String benchmark_name;
 		float benchmark_time = 0.0f;
 
-		inline BenchmarkInfo(const String& benchmark_name)
+		inline BenchmarkInfo(const StringView& benchmark_name)
 			: benchmark_name(benchmark_name)
 		{}
 

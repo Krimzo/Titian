@@ -4,9 +4,9 @@
 
 
 namespace titian {
-    inline Map<String, Any> _DRAG_DROP_DATA = {};
-    inline Map<String, String> _INPUT_CONTINUOUS_DATA = {};
-    inline Map<String, String> _INPUT_WAITED_DATA = {};
+    inline StringMap<Any> _DRAG_DROP_DATA;
+    inline StringMap<String> _INPUT_CONTINUOUS_DATA;
+    inline StringMap<String> _INPUT_WAITED_DATA;
 
     inline const String FILE_EXTENSION_OBJ = ".obj";
     inline const String FILE_EXTENSION_GLB = ".glb";
@@ -26,9 +26,9 @@ namespace titian {
     inline const String DRAG_FILE_ID = "DragFileID";
     inline const String DRAG_DIR_ID = "DragDirID";
 
-    inline void gui_colored_text(const String& message, const Float4& color)
+    inline void gui_colored_text(const StringView& message, const Float4& color)
     {
-        im::TextColored(reinterpret_cast<const ImVec4&>(color), message.c_str());
+        im::TextColored(reinterpret_cast<const ImVec4&>(color), message.data());
     }
 
     inline Pair<ImVec2, ImVec2> gui_window_rect()
@@ -39,9 +39,9 @@ namespace titian {
         return { win_content_min, win_content_max };
     }
 
-    inline float gui_calculate_item_with(const String& label)
+    inline float gui_calculate_item_with(const StringView& label)
     {
-        return im::CalcTextSize(label.c_str()).x;
+        return im::CalcTextSize(label.data()).x;
     }
 
     inline void gui_align_horizontally(const float width, const float alignment)
@@ -53,19 +53,18 @@ namespace titian {
         }
     }
 
-    inline String gui_input_continuous(const String& id)
+    inline String gui_input_continuous(const StringView& id)
     {
-        auto& buffer = _INPUT_CONTINUOUS_DATA[id];
-        im::InputText(id.c_str(), &buffer);
+        auto& buffer = _INPUT_CONTINUOUS_DATA[String{ id }];
+        im::InputText(id.data(), &buffer);
         return buffer;
     }
 
-    inline Optional<String> gui_input_waited(const String& id, const String& to_copy)
+    inline Optional<String> gui_input_waited(const StringView& id, const StringView& to_copy)
     {
-        auto& buffer = _INPUT_WAITED_DATA[id];
+        auto& buffer = _INPUT_WAITED_DATA[String{ id }];
         buffer = to_copy;
-
-        if (im::InputText(id.c_str(), &buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
+        if (im::InputText(id.data(), &buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
             const String result = buffer;
             buffer.clear();
             return { result };
@@ -74,13 +73,13 @@ namespace titian {
     }
 
     template<typename T>
-    void gui_set_drag_drop(const String& id, const T& data, const dx::ShaderView& texture = nullptr)
+    void gui_set_drag_drop(const StringView& id, const T& data, const dx::ShaderView& texture = nullptr)
     {
         im::PushStyleColor(ImGuiCol_PopupBg, {});
         im::PushStyleColor(ImGuiCol_Border, {});
         if (im::BeginDragDropSource()) {
-            im::SetDragDropPayload(id.c_str(), nullptr, 0);
-            _DRAG_DROP_DATA[id] = Any{ data };
+            im::SetDragDropPayload(id.data(), nullptr, 0);
+            _DRAG_DROP_DATA.emplace(id, Any{ data });
             if (texture) {
                 im::Image(texture.get(), { 50.0f, 50.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
             }
@@ -90,14 +89,17 @@ namespace titian {
     }
 
     template<typename T>
-    Optional<T> gui_get_drag_drop(const String& id)
+    Optional<T> gui_get_drag_drop(const StringView& id)
     {
-        Optional<T> result{};
+        auto it = _DRAG_DROP_DATA.find(id);
+        if (it == _DRAG_DROP_DATA.end())
+            return std::nullopt;
+
+        Optional<T> result;
         if (im::BeginDragDropTarget()) {
-            if (im::AcceptDragDropPayload(id.c_str())) {
-                const Any data = _DRAG_DROP_DATA[id];
-                result = std::any_cast<T>(data);
-                _DRAG_DROP_DATA.erase(id);
+            if (im::AcceptDragDropPayload(id.data())) {
+                result = std::any_cast<T>(it->second);
+                _DRAG_DROP_DATA.erase(it);
             }
             im::EndDragDropTarget();
         }

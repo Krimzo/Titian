@@ -5,7 +5,7 @@
 
 namespace kl::json {
     template<typename K, typename V>
-    using ObjectStorageType = std::map<K, V>;
+    using ObjectStorageType = std::map<K, V, std::less<>>;
 
 	template<typename T>
 	using ArrayStorageType = std::vector<T>;

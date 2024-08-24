@@ -15,7 +15,7 @@ namespace titian {
 		RAWAudio out_audio;
 
 		Audio();
-		Audio(const String& path);
+		Audio(const StringView& path);
 
 		float duration() const;
 		float sample(float time) const;

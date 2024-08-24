@@ -13,10 +13,10 @@ void titian::GUISectionTimeInfo::render_gui()
     TitianEditor* editor = static_cast<TitianEditor*>(this->editor);
     kl::Timer* timer = &editor->app_layer.timer;
 
-    static auto display_time = [](const String& name, const float time, const float multi = 1000.0f)
+    static auto display_time = [](const StringView& name, const float time, const float multi = 1000.0f)
     {
         float time_ms = time * multi;
-        im::DragFloat(name.c_str(), &time_ms, 0.0f);
+        im::DragFloat(name.data(), &time_ms, 0.0f);
     };
 
     if (im::Begin("Time Info")) {

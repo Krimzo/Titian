@@ -15,7 +15,7 @@ namespace titian {
         int32_t gizmo_operation = 0;
         int32_t outline_size = 1;
 
-        Set<String> selected_entities;
+        StringSet selected_entities;
 
         EditorLayer();
 

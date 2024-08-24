@@ -37,7 +37,7 @@ void titian::GUISectionSceneInfo::main_camera_info(Scene* scene)
     im::Text("Main Camera");
 
     String& bound_camera = scene->main_camera_name;
-    if (im::BeginCombo("Bound Camera", bound_camera.c_str())) {
+    if (im::BeginCombo("Bound Camera", bound_camera.data())) {
         const String filter = gui_input_continuous("Search###SceneInfoCamera");
         if (im::Selectable("/", bound_camera == "/")) {
             bound_camera = "/";
@@ -49,7 +49,7 @@ void titian::GUISectionSceneInfo::main_camera_info(Scene* scene)
             if (!filter.empty() && entity_name.find(filter) == -1) {
                 continue;
             }
-            if (im::Selectable(entity_name.c_str(), entity_name == bound_camera)) {
+            if (im::Selectable(entity_name.data(), entity_name == bound_camera)) {
                 bound_camera = entity_name;
             }
         }
@@ -62,7 +62,7 @@ void titian::GUISectionSceneInfo::main_ambient_info(Scene* scene)
     im::Text("Main Ambient Light");
 
     String& bound_light = scene->main_ambient_light_name;
-    if (im::BeginCombo("Bound Ambient Light", bound_light.c_str())) {
+    if (im::BeginCombo("Bound Ambient Light", bound_light.data())) {
         const String filter = gui_input_continuous("Search###SceneInfoAmbientLight");
         if (im::Selectable("/", bound_light == "/")) {
             bound_light = "/";
@@ -74,7 +74,7 @@ void titian::GUISectionSceneInfo::main_ambient_info(Scene* scene)
             if (!filter.empty() && entity_name.find(filter) == -1) {
                 continue;
             }
-            if (im::Selectable(entity_name.c_str(), entity_name == bound_light)) {
+            if (im::Selectable(entity_name.data(), entity_name == bound_light)) {
                 bound_light = entity_name;
             }
         }
@@ -87,7 +87,7 @@ void titian::GUISectionSceneInfo::main_directional_info(Scene* scene)
     im::Text("Main Directional Light");
 
     String& bound_light = scene->main_directional_light_name;
-    if (im::BeginCombo("Bound Directional Light", bound_light.c_str())) {
+    if (im::BeginCombo("Bound Directional Light", bound_light.data())) {
         const String filter = gui_input_continuous("Search###SceneInfoDirectionalLight");
         if (im::Selectable("/", bound_light == "/")) {
             bound_light = "/";
@@ -99,7 +99,7 @@ void titian::GUISectionSceneInfo::main_directional_info(Scene* scene)
             if (!filter.empty() && entity_name.find(filter) == -1) {
                 continue;
             }
-            if (im::Selectable(entity_name.c_str(), entity_name == bound_light)) {
+            if (im::Selectable(entity_name.data(), entity_name == bound_light)) {
                 bound_light = entity_name;
             }
         }

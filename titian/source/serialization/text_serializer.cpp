@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-titian::TextSerializer::TextSerializer(const String& path, const bool write)
+titian::TextSerializer::TextSerializer(const StringView& path, const bool write)
 	: m_path(path), m_writing(write)
 {
 	if (write) {
@@ -43,10 +43,10 @@ titian::TextSerializer::operator bool() const
 }
 
 // top object
-void titian::TextSerializer::push_object(const String& name)
+void titian::TextSerializer::push_object(const StringView& name)
 {
-	current()[name] = kl::Wrap<js::Object>::make();
-	js::Object* ptr = current().at(name).as<js::Object>();
+	auto it = current().emplace(name, kl::Wrap<js::Object>::make()).first;
+	js::Object* ptr = it->second.as<js::Object>();
 	m_stack.push_back(ptr);
 }
 
@@ -57,10 +57,11 @@ void titian::TextSerializer::pop_object()
 	}
 }
 
-void titian::TextSerializer::load_object(const String& name) const
+void titian::TextSerializer::load_object(const StringView& name) const
 {
-	if (current().contains(name)) {
-		js::Object* ptr = (js::Object*) current().at(name).as<js::Object>();
+	auto it = current().find(name);
+	if (it != current().end()) {
+		js::Object* ptr = (js::Object*) it->second.as<js::Object>();
 		m_stack.push_back(ptr);
 	}
 }
@@ -73,60 +74,64 @@ void titian::TextSerializer::unload_object() const
 }
 
 // basic
-void titian::TextSerializer::write_bool(const String& name, bool value)
+void titian::TextSerializer::write_bool(const StringView& name, bool value)
 {
-	current()[name] = js::make_bool(value);
+	current().emplace(name, js::make_bool(value));
 }
 
-void titian::TextSerializer::read_bool(const String& name, bool& value) const
+void titian::TextSerializer::read_bool(const StringView& name, bool& value) const
 {
-	if (current().contains(name)) {
-		value = current().at(name)->get_bool().value_or(value);
+	auto it = current().find(name);
+	if (it != current().end()) {
+		value = it->second->get_bool().value_or(value);
 	}
 }
 
-void titian::TextSerializer::write_int(const String& name, int32_t value)
+void titian::TextSerializer::write_int(const StringView& name, int32_t value)
 {
-	current()[name] = js::make_number(value);
+	current().emplace(name, js::make_number(value));
 }
 
-void titian::TextSerializer::read_int(const String& name, int32_t& value) const
+void titian::TextSerializer::read_int(const StringView& name, int32_t& value) const
 {
-	if (current().contains(name)) {
-		value = current().at(name)->get_int().value_or(value);
+	auto it = current().find(name);
+	if (it != current().end()) {
+		value = it->second->get_int().value_or(value);
 	}
 }
 
-void titian::TextSerializer::write_float(const String& name, float value)
+void titian::TextSerializer::write_float(const StringView& name, float value)
 {
-	current()[name] = js::make_number(value);
+	current().emplace(name, js::make_number(value));
 }
 
-void titian::TextSerializer::read_float(const String& name, float& value) const
+void titian::TextSerializer::read_float(const StringView& name, float& value) const
 {
-	if (current().contains(name)) {
-		value = current().at(name)->get_float().value_or(value);
+	auto it = current().find(name);
+	if (it != current().end()) {
+		value = it->second->get_float().value_or(value);
 	}
 }
 
 // array
-void titian::TextSerializer::write_byte_array(const String& name, const void* data, int32_t count)
+void titian::TextSerializer::write_byte_array(const StringView& name, const void* data, int32_t count)
 {
 	const byte* ptr = (const byte*) data;
 	kl::Wrap result = kl::Wrap<js::Array>::make();
 	for (int32_t i = 0; i < count; i++) {
 		result->push_back(js::make_number(ptr[i]));
 	}
-	current()[name] = std::move(result);
+	current().emplace(name, std::move(result));
 }
 
-void titian::TextSerializer::read_byte_array(const String& name, void* data, int32_t count) const
+void titian::TextSerializer::read_byte_array(const StringView& name, void* data, int32_t count) const
 {
-	if (!current().contains(name)) {
+	auto it = current().find(name);
+	if (it == current().end()) {
 		return;
 	}
 	byte* ptr = (byte*) data;
-	if (const js::Array* container = current().at(name).as<js::Array>()) {
+	if (const js::Array* container = it->second.as<js::Array>()) {
 		const int32_t min_count = kl::min((int32_t) container->size(), count);
 		for (int32_t i = 0; i < min_count; i++) {
 			ptr[i] = container->at(i)->get_int().value_or(0);
@@ -134,21 +139,22 @@ void titian::TextSerializer::read_byte_array(const String& name, void* data, int
 	}
 }
 
-void titian::TextSerializer::write_int_array(const String& name, const int32_t* data, int32_t count)
+void titian::TextSerializer::write_int_array(const StringView& name, const int32_t* data, int32_t count)
 {
 	kl::Wrap result = kl::Wrap<js::Array>::make();
 	for (int32_t i = 0; i < count; i++) {
 		result->push_back(js::make_number(data[i]));
 	}
-	current()[name] = std::move(result);
+	current().emplace(name, std::move(result));
 }
 
-void titian::TextSerializer::read_int_array(const String& name, int32_t* data, int32_t count) const
+void titian::TextSerializer::read_int_array(const StringView& name, int32_t* data, int32_t count) const
 {
-	if (!current().contains(name)) {
+	auto it = current().find(name);
+	if (it == current().end()) {
 		return;
 	}
-	if (const js::Array* container = current().at(name).as<js::Array>()) {
+	if (const js::Array* container = it->second.as<js::Array>()) {
 		const int32_t min_count = kl::min((int32_t) container->size(), count);
 		for (int32_t i = 0; i < min_count; i++) {
 			data[i] = container->at(i)->get_int().value_or(0);
@@ -156,21 +162,22 @@ void titian::TextSerializer::read_int_array(const String& name, int32_t* data, i
 	}
 }
 
-void titian::TextSerializer::write_float_array(const String& name, const float* data, int32_t count)
+void titian::TextSerializer::write_float_array(const StringView& name, const float* data, int32_t count)
 {
 	kl::Wrap result = kl::Wrap<js::Array>::make();
 	for (int32_t i = 0; i < count; i++) {
 		result->push_back(js::make_number(data[i]));
 	}
-	current()[name] = std::move(result);
+	current().emplace(name, std::move(result));
 }
 
-void titian::TextSerializer::read_float_array(const String& name, float* data, int32_t count) const
+void titian::TextSerializer::read_float_array(const StringView& name, float* data, int32_t count) const
 {
-	if (!current().contains(name)) {
+	auto it = current().find(name);
+	if (it == current().end()) {
 		return;
 	}
-	if (const js::Array* container = current().at(name).as<js::Array>()) {
+	if (const js::Array* container = it->second.as<js::Array>()) {
 		const int32_t min_count = kl::min((int32_t) container->size(), count);
 		for (int32_t i = 0; i < min_count; i++) {
 			data[i] = container->at(i)->get_float().value_or(0.0f);
@@ -179,14 +186,15 @@ void titian::TextSerializer::read_float_array(const String& name, float* data, i
 }
 
 // complex
-void titian::TextSerializer::write_string(const String& name, const String& value)
+void titian::TextSerializer::write_string(const StringView& name, const StringView& value)
 {
-	current()[name] = js::make_string(value);
+	current().emplace(name, js::make_string(value));
 }
 
-void titian::TextSerializer::read_string(const String& name, String& value) const
+void titian::TextSerializer::read_string(const StringView& name, String& value) const
 {
-	if (current().contains(name)) {
-		value = current().at(name)->get_string().value_or(value);
+	auto it = current().find(name);
+	if (it != current().end()) {
+		value = it->second->get_string().value_or(value);
 	}
 }

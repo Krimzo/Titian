@@ -77,7 +77,7 @@ void titian::Scene::serialize(Serializer* serializer, const void* helper_data) c
     serializer->write_string("main_ambient_light_name", main_ambient_light_name);
     serializer->write_string("main_directional_light_name", main_directional_light_name);
 
-    auto write_map = [&]<typename T>(const String& map_name, const Map<String, Ref<T>>& data, const void* helper_data)
+    auto write_map = [&]<typename T>(const StringView& map_name, const StringMap<Ref<T>>& data, const void* helper_data)
     {
         serializer->push_object(map_name);
         serializer->write_int("data_size", (int32_t) data.size());
@@ -107,7 +107,7 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     serializer->read_string("main_ambient_light_name", main_ambient_light_name);
     serializer->read_string("main_directional_light_name", main_directional_light_name);
 
-    auto read_map = [&]<typename T>(const String& map_name, Map<String, Ref<T>>& data, const Function<T*()>& provider, const void* helper_data)
+    auto read_map = [&]<typename T>(const StringView& map_name, StringMap<Ref<T>>& data, const Function<T*()>& provider, const void* helper_data)
     {
         serializer->load_object(map_name);
         int32_t data_size = 0;
@@ -284,26 +284,27 @@ titian::Ref<titian::Entity> titian::Scene::new_entity(const bool dynamic) const
     return new Entity(m_physics, dynamic);
 }
 
-void titian::Scene::add_entity(const String& name, const Ref<Entity>& entity)
+void titian::Scene::add_entity(const StringView& name, const Ref<Entity>& entity)
 {
-    m_entities[name] = entity;
+    m_entities.emplace(name, entity);
     m_scene->addActor(*entity->actor());
 }
 
-void titian::Scene::remove_entity(const String& name)
+void titian::Scene::remove_entity(const StringView& name)
 {
-    if (m_entities.contains(name)) {
-        m_scene->removeActor(*m_entities.at(name)->actor());
-        m_entities.erase(name);
+    const auto it = m_entities.find(name);
+    if (it != m_entities.end()) {
+        m_scene->removeActor(*it->second->actor());
+        m_entities.erase(it);
     }
 }
 
-bool titian::Scene::contains_entity(const String& name) const
+bool titian::Scene::contains_entity(const StringView& name) const
 {
     return m_entities.contains(name);
 }
 
-const titian::Map<titian::String, titian::Ref<titian::Entity>>& titian::Scene::entities_ref() const
+const titian::StringMap<titian::Ref<titian::Entity>>& titian::Scene::entities_ref() const
 {
     return m_entities;
 }
@@ -313,79 +314,86 @@ size_t titian::Scene::entity_count() const
     return m_entities.size();
 }
 
-titian::Map<titian::String, titian::Ref<titian::Entity>>::iterator titian::Scene::begin()
+titian::StringMap<titian::Ref<titian::Entity>>::iterator titian::Scene::begin()
 {
     return m_entities.begin();
 }
 
-titian::Map<titian::String, titian::Ref<titian::Entity>>::iterator titian::Scene::end()
+titian::StringMap<titian::Ref<titian::Entity>>::iterator titian::Scene::end()
 {
     return m_entities.end();
 }
 
-titian::Map<titian::String, titian::Ref<titian::Entity>>::const_iterator titian::Scene::begin() const
+titian::StringMap<titian::Ref<titian::Entity>>::const_iterator titian::Scene::begin() const
 {
     return m_entities.begin();
 }
 
-titian::Map<titian::String, titian::Ref<titian::Entity>>::const_iterator titian::Scene::end() const
+titian::StringMap<titian::Ref<titian::Entity>>::const_iterator titian::Scene::end() const
 {
     return m_entities.end();
 }
 
 // Get types
-titian::Ref<titian::Mesh> titian::Scene::get_mesh(const String& id) const
+titian::Ref<titian::Mesh> titian::Scene::get_mesh(const StringView& id) const
 {
-    if (meshes.contains(id)) {
-        return meshes.at(id);
+    const auto it = meshes.find(id);
+    if (it != meshes.end()) {
+        return it->second;
     }
     return nullptr;
 }
 
-titian::Ref<titian::Animation> titian::Scene::get_animation(const String& id) const
+titian::Ref<titian::Animation> titian::Scene::get_animation(const StringView& id) const
 {
-    if (animations.contains(id)) {
-        return animations.at(id);
+    const auto it = animations.find(id);
+    if (it != animations.end()) {
+        return it->second;
     }
     return nullptr;
 }
 
-titian::Ref<titian::Texture> titian::Scene::get_texture(const String& id) const
+titian::Ref<titian::Texture> titian::Scene::get_texture(const StringView& id) const
 {
-    if (textures.contains(id)) {
-        return textures.at(id);
+    const auto it = textures.find(id);
+    if (it != textures.end()) {
+        return it->second;
     }
     return nullptr;
 }
 
-titian::Ref<titian::Material> titian::Scene::get_material(const String& id) const
+titian::Ref<titian::Material> titian::Scene::get_material(const StringView& id) const
 {
-    if (materials.contains(id)) {
-        return materials.at(id);
+    const auto it = materials.find(id);
+    if (it != materials.end()) {
+        return it->second;
     }
     return nullptr;
 }
 
-titian::Ref<titian::Shader> titian::Scene::get_shader(const String& id) const
+titian::Ref<titian::Shader> titian::Scene::get_shader(const StringView& id) const
 {
-    if (shaders.contains(id)) {
-        return shaders.at(id);
+    const auto it = shaders.find(id);
+    if (it != shaders.end()) {
+        return it->second;
     }
     return nullptr;
 }
 
-titian::Ref<titian::Script> titian::Scene::get_script(const String& id) const
+titian::Ref<titian::Script> titian::Scene::get_script(const StringView& id) const
 {
-    if (scripts.contains(id)) {
-        return scripts.at(id);
+    const auto it = scripts.find(id);
+    if (it != scripts.end()) {
+        return it->second;
     }
     return nullptr;
 }
 
-titian::Ref<titian::Entity> titian::Scene::get_entity(const String& id) const
+titian::Ref<titian::Entity> titian::Scene::get_entity(const StringView& id) const
 {
-    if (m_entities.contains(id)) {
-        return m_entities.at(id);
+    const auto it = m_entities.find(id);
+    if (it != m_entities.end()) {
+        return it->second;
     }
     return nullptr;
 }
@@ -437,42 +445,42 @@ titian::Ref<titian::Collider> titian::Scene::new_default_collider(const px::PxGe
 }
 
 // Helper new
-titian::Mesh* titian::Scene::helper_new_mesh(const String& id)
+titian::Mesh* titian::Scene::helper_new_mesh(const StringView& id)
 {
     Mesh* mesh = new Mesh(m_gpu, m_physics, m_cooking);
-    meshes[id] = mesh;
+    meshes.emplace(id, mesh);
     return mesh;
 }
 
-titian::Animation* titian::Scene::helper_new_animation(const String& id)
+titian::Animation* titian::Scene::helper_new_animation(const StringView& id)
 {
     Animation* animation = new Animation(m_gpu, this);
-    animations[id] = animation;
+    animations.emplace(id, animation);
     return animation;
 }
 
-titian::Texture* titian::Scene::helper_new_texture(const String& id)
+titian::Texture* titian::Scene::helper_new_texture(const StringView& id)
 {
     Texture* texture = new Texture(m_gpu);
-    textures[id] = texture;
+    textures.emplace(id, texture);
     return texture;
 }
 
-titian::Material* titian::Scene::helper_new_material(const String& id)
+titian::Material* titian::Scene::helper_new_material(const StringView& id)
 {
     Material* material = new Material();
-    materials[id] = material;
+    materials.emplace(id, material);
     return material;
 }
 
-titian::Shader* titian::Scene::helper_new_shader(const String& id)
+titian::Shader* titian::Scene::helper_new_shader(const StringView& id)
 {
     Shader* shader = new Shader(m_gpu, ShaderType::MATERIAL);
-    shaders[id] = shader;
+    shaders.emplace(id, shader);
     return shader;
 }
 
-titian::Entity* titian::Scene::helper_new_entity(const String& id)
+titian::Entity* titian::Scene::helper_new_entity(const StringView& id)
 {
     Ref entity = this->new_entity(true);
     this->add_entity(id, entity);
@@ -480,109 +488,129 @@ titian::Entity* titian::Scene::helper_new_entity(const String& id)
 }
 
 // Helper get
-titian::Mesh* titian::Scene::helper_get_mesh(const String& id)
+titian::Mesh* titian::Scene::helper_get_mesh(const StringView& id)
 {
-    if (meshes.contains(id)) {
-        return &meshes.at(id);
+    const auto it = meshes.find(id);
+    if (it != meshes.end()) {
+        return &it->second;
     }
     return nullptr;
 }
 
-titian::Animation* titian::Scene::helper_get_animation(const String& id)
+titian::Animation* titian::Scene::helper_get_animation(const StringView& id)
 {
-    if (animations.contains(id)) {
-        return &animations.at(id);
+    const auto it = animations.find(id);
+    if (it != animations.end()) {
+        return &it->second;
     }
     return nullptr;
 }
 
-titian::Texture* titian::Scene::helper_get_texture(const String& id)
+titian::Texture* titian::Scene::helper_get_texture(const StringView& id)
 {
-    if (textures.contains(id)) {
-        return &textures.at(id);
+    const auto it = textures.find(id);
+    if (it != textures.end()) {
+        return &it->second;
     }
     return nullptr;
 }
 
-titian::Material* titian::Scene::helper_get_material(const String& id)
+titian::Material* titian::Scene::helper_get_material(const StringView& id)
 {
-    if (materials.contains(id)) {
-        return &materials.at(id);
+    const auto it = materials.find(id);
+    if (it != materials.end()) {
+        return &it->second;
     }
     return nullptr;
 }
 
-titian::Shader* titian::Scene::helper_get_shader(const String& id)
+titian::Shader* titian::Scene::helper_get_shader(const StringView& id)
 {
-    if (shaders.contains(id)) {
-        return &shaders.at(id);
+    const auto it = shaders.find(id);
+    if (it != shaders.end()) {
+        return &it->second;
     }
     return nullptr;
 }
 
-titian::Entity* titian::Scene::helper_get_entity(const String& id)
+titian::Entity* titian::Scene::helper_get_entity(const StringView& id)
 {
     return &this->get_entity(id);
 }
 
 // Helper remove
-void titian::Scene::helper_remove_mesh(const String& id)
+void titian::Scene::helper_remove_mesh(const StringView& id)
 {
-    meshes.erase(id);
+    const auto it = meshes.find(id);
+    if (it != meshes.end()) {
+        meshes.erase(it);
+    }
 }
 
-void titian::Scene::helper_remove_animation(const String& id)
+void titian::Scene::helper_remove_animation(const StringView& id)
 {
-    animations.erase(id);
+    const auto it = animations.find(id);
+    if (it != animations.end()) {
+        animations.erase(it);
+    }
 }
 
-void titian::Scene::helper_remove_texture(const String& id)
+void titian::Scene::helper_remove_texture(const StringView& id)
 {
-    textures.erase(id);
+    const auto it = textures.find(id);
+    if (it != textures.end()) {
+        textures.erase(it);
+    }
 }
 
-void titian::Scene::helper_remove_material(const String& id)
+void titian::Scene::helper_remove_material(const StringView& id)
 {
-    materials.erase(id);
+    const auto it = materials.find(id);
+    if (it != materials.end()) {
+        materials.erase(it);
+    }
 }
 
-void titian::Scene::helper_remove_shader(const String& id)
+void titian::Scene::helper_remove_shader(const StringView& id)
 {
-    shaders.erase(id);
+    const auto it = shaders.find(id);
+    if (it != shaders.end()) {
+        shaders.erase(it);
+    }
 }
 
-void titian::Scene::helper_remove_entity(const String& id)
+void titian::Scene::helper_remove_entity(const StringView& id)
 {
     this->remove_entity(id);
 }
 
 // Helper contains
-bool titian::Scene::helper_contains_mesh(const String& id) const
+bool titian::Scene::helper_contains_mesh(const StringView& id) const
 {
     return meshes.contains(id);
 }
 
-bool titian::Scene::helper_contains_animation(const String& id) const
+bool titian::Scene::helper_contains_animation(const StringView& id) const
 {
     return animations.contains(id);
 }
 
-bool titian::Scene::helper_contains_texture(const String& id) const
+bool titian::Scene::helper_contains_texture(const StringView& id) const
 {
     return textures.contains(id);
 }
 
-bool titian::Scene::helper_contains_material(const String& id) const
+bool titian::Scene::helper_contains_material(const StringView& id) const
 {
     return materials.contains(id);
 }
 
-bool titian::Scene::helper_contains_shader(const String& id) const
+bool titian::Scene::helper_contains_shader(const StringView& id) const
 {
     return shaders.contains(id);
 }
 
-bool titian::Scene::helper_contains_entity(const String& id) const
+bool titian::Scene::helper_contains_entity(const StringView& id) const
 {
     return this->contains_entity(id);
 }
@@ -619,61 +647,61 @@ int titian::Scene::helper_entity_count() const
 }
 
 // Helper get all
-titian::Map<titian::String, titian::Mesh*> titian::Scene::helper_get_all_meshes()
+titian::StringMap<titian::Mesh*> titian::Scene::helper_get_all_meshes()
 {
-    Map<String, Mesh*> result = {};
+    StringMap<Mesh*> result;
     for (auto& [name, mesh] : meshes) {
         result[name] = &mesh;
     }
     return result;
 }
 
-titian::Map<titian::String, titian::Animation*> titian::Scene::helper_get_all_animations()
+titian::StringMap<titian::Animation*> titian::Scene::helper_get_all_animations()
 {
-    Map<String, Animation*> result = {};
+    StringMap<Animation*> result;
     for (auto& [name, animation] : animations) {
         result[name] = &animation;
     }
     return result;
 }
 
-titian::Map<titian::String, titian::Texture*> titian::Scene::helper_get_all_textures()
+titian::StringMap<titian::Texture*> titian::Scene::helper_get_all_textures()
 {
-    Map<String, Texture*> result = {};
+    StringMap<Texture*> result;
     for (auto& [name, texture] : textures) {
         result[name] = &texture;
     }
     return result;
 }
 
-titian::Map<titian::String, titian::Material*> titian::Scene::helper_get_all_materials()
+titian::StringMap<titian::Material*> titian::Scene::helper_get_all_materials()
 {
-    Map<String, Material*> result = {};
+    StringMap<Material*> result;
     for (auto& [name, material] : materials) {
         result[name] = &material;
     }
     return result;
 }
 
-titian::Map<titian::String, titian::Shader*> titian::Scene::helper_get_all_shaders()
+titian::StringMap<titian::Shader*> titian::Scene::helper_get_all_shaders()
 {
-    Map<String, Shader*> result = {};
+    StringMap<Shader*> result;
     for (auto& [name, shader] : shaders) {
         result[name] = &shader;
     }
     return result;
 }
 
-titian::Map<titian::String, titian::Entity*> titian::Scene::helper_get_all_entities()
+titian::StringMap<titian::Entity*> titian::Scene::helper_get_all_entities()
 {
-    Map<String, Entity*> result = {};
+    StringMap<Entity*> result;
     for (auto& [name, entity] : m_entities) {
         result[name] = &entity;
     }
     return result;
 }
 
-titian::Optional<titian::AssimpData> titian::Scene::get_assimp_data(const String& path) const
+titian::Optional<titian::AssimpData> titian::Scene::get_assimp_data(const StringView& path) const
 {
     Ref importer = new as::Importer();
     const aiScene* scene = importer->ReadFile(path, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_MakeLeftHanded);

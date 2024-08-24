@@ -79,16 +79,16 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 		}
 		im::SameLine();
 
-		if (im::Selectable(shader_name.c_str(), shader_name == this->selected_shader)) {
+		if (im::Selectable(shader_name.data(), shader_name == this->selected_shader)) {
 			this->selected_shader = shader_name;
 		}
 
-		if (im::BeginPopupContextItem(shader_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+		if (im::BeginPopupContextItem(shader_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
 			bool should_break = false;
 			im::Text("Edit Shader");
 
 			if (Optional opt_name = gui_input_waited("##RenameShaderInput", shader_name)) {
-				const String& name = opt_name.value();
+				const auto& name = opt_name.value();
 				if (!name.empty() && !scene->helper_contains_shader(name)) {
 					for (auto& [_, material] : scene->materials) {
 						if (material->shader_name == shader_name) {
@@ -149,9 +149,9 @@ void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) cons
 		im::SameLine();
 		gui_colored_text(selected_shader, gui_layer->special_color);
 
-		if (im::BeginCombo("Shader Type", shader_type_names.at(shader->shader_type).c_str())) {
+		if (im::BeginCombo("Shader Type", shader_type_names.at(shader->shader_type).data())) {
 			for (auto& [type, name] : shader_type_names) {
-				if (im::Selectable(name.c_str(), shader->shader_type == type)) {
+				if (im::Selectable(name.data(), shader->shader_type == type)) {
 					shader->shader_type = type;
 				}
 			}
@@ -179,7 +179,7 @@ void titian::GUISectionShaderEditor::edit_shader(Shader* shader)
 			im::PushStyleColor(ImGuiCol_Text, palette[1]);
 			for (const auto& keyword : definition->mKeywords) {
 				if (keyword.find(current_word) != -1) {
-					if (im::MenuItem(keyword.c_str())) {
+					if (im::MenuItem(keyword.data())) {
 						m_editor.replace_word_at_cursor(keyword);
 					}
 				}
@@ -187,7 +187,7 @@ void titian::GUISectionShaderEditor::edit_shader(Shader* shader)
 			im::PushStyleColor(ImGuiCol_Text, palette[8]);
 			for (const auto& [identifier, _] : definition->mIdentifiers) {
 				if (identifier.find(current_word) != -1) {
-					if (im::MenuItem(identifier.c_str())) {
+					if (im::MenuItem(identifier.data())) {
 						m_editor.replace_word_at_cursor(identifier);
 					}
 				}

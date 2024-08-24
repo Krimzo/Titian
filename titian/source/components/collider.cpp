@@ -28,7 +28,7 @@ titian::Collider::~Collider()
 
 void titian::Collider::serialize(Serializer* serializer, const void* helper_data) const
 {
-    const auto helper_meshes = static_cast<const Map<String, Ref<Mesh>>*>(helper_data);
+    const auto helper_meshes = static_cast<const StringMap<Ref<Mesh>>*>(helper_data);
 
     const px::PxGeometryType::Enum geometry_type = this->type();
     serializer->write_int("geometry_type", geometry_type);
@@ -83,7 +83,7 @@ saved_geometry:
 
 void titian::Collider::deserialize(const Serializer* serializer, const void* helper_data)
 {
-    const auto helper_meshes = static_cast<const Map<String, Ref<Mesh>>*>(helper_data);
+    const auto helper_meshes = static_cast<const StringMap<Ref<Mesh>>*>(helper_data);
 
     px::PxGeometryType::Enum geometry_type{};
     serializer->read_int("geometry_type", (int&) geometry_type);
@@ -114,7 +114,7 @@ void titian::Collider::deserialize(const Serializer* serializer, const void* hel
         serializer->read_float_array("scale", &geometry.scale.scale.x, 3);
         String mesh_name;
         serializer->read_string("mesh_name", mesh_name);
-        geometry.triangleMesh = (*helper_meshes).at(mesh_name)->physics_buffer;
+        geometry.triangleMesh = helper_meshes->at(mesh_name)->physics_buffer;
         this->set_geometry(geometry);
         break;
     }

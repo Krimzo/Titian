@@ -115,7 +115,7 @@ void titian::GUISectionExplorer::render_gui()
         const float icon_width = icon_size + im::GetStyle().CellPadding.x * 2.0f;
         const int column_count = kl::max((int) (window_width / icon_width), 1);
 
-        im::Text(m_path.c_str());
+        im::Text(m_path.data());
         im::Separator();
 
         im::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2{ 0.0f, 4.0f });
@@ -158,25 +158,25 @@ void titian::GUISectionExplorer::handle_file_entry(const fs::path& file)
     im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
     const float icon_size = m_icon_size * Layers::get<GUILayer>()->dpi_scaling;
-    const float text_height = im::CalcTextSize(path.c_str()).y;
+    const float text_height = im::CalcTextSize(path.data()).y;
 
-    if (im::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
+    if (im::BeginChild(path.data(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
         const ImVec2 cursor_pos = im::GetCursorPos();
-        if (im::ImageButton(path.c_str(), icon.get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
-            ShellExecuteA(nullptr, nullptr, path.c_str(), nullptr, nullptr, 5);
+        if (im::ImageButton(path.data(), icon.get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+            ShellExecuteA(nullptr, nullptr, path.data(), nullptr, nullptr, 5);
         }
         gui_set_drag_drop<String>(DRAG_FILE_ID, path, icon);
 
         im::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
-        im::Text(file.filename().string().c_str());
+        im::Text(file.filename().string().data());
     }
     im::EndChild();
 
     im::PopStyleVar(2);
 
-    if (im::BeginPopupContextItem(file.string().c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+    if (im::BeginPopupContextItem(file.string().data(), ImGuiPopupFlags_MouseButtonRight)) {
         if (Optional opt_name = gui_input_waited("##RenameFileInput", file.filename().string())) {
-            const String& name = opt_name.value();
+            const auto& name = opt_name.value();
             if (!name.empty()) {
                 fs::path new_file = file;
                 new_file.replace_filename(opt_name.value());
@@ -198,7 +198,7 @@ void titian::GUISectionExplorer::handle_file_entry(const fs::path& file)
         }
         else {
             Error ignored{};
-            im::Text(format_byte_size(fs::file_size(file, ignored)).c_str());
+            im::Text(format_byte_size(fs::file_size(file, ignored)).data());
         }
         im::EndPopup();
     }
@@ -214,11 +214,11 @@ void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, con
     im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
     const float icon_size = m_icon_size * Layers::get<GUILayer>()->dpi_scaling;
-    const float text_height = im::CalcTextSize(path.c_str()).y;
+    const float text_height = im::CalcTextSize(path.data()).y;
 
-    if (im::BeginChild(path.c_str(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
+    if (im::BeginChild(path.data(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
         const ImVec2 cursor_pos = im::GetCursorPos();
-        if (im::ImageButton(path.c_str(), icon.get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+        if (im::ImageButton(path.data(), icon.get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
             this->m_path = path;
         }
 
@@ -233,15 +233,15 @@ void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, con
         }
 
         im::SetCursorPos({ cursor_pos.x + padding, cursor_pos.y + icon_size + padding * 3.0f });
-        im::Text(dir.filename().string().c_str());
+        im::Text(dir.filename().string().data());
     }
     im::EndChild();
 
     im::PopStyleVar(2);
 
-    if (!is_parent_dir && im::BeginPopupContextItem(dir.string().c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+    if (!is_parent_dir && im::BeginPopupContextItem(dir.string().data(), ImGuiPopupFlags_MouseButtonRight)) {
         if (Optional opt_name = gui_input_waited("##RenameDirInput", dir.filename().string())) {
-            const String& name = opt_name.value();
+            const auto& name = opt_name.value();
             if (!name.empty()) {
                 fs::path new_dir = dir;
                 new_dir.replace_filename(opt_name.value());
@@ -265,7 +265,7 @@ void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, con
     }
 }
 
-void titian::GUISectionExplorer::handle_item_transfer(const String& item, const String& destination)
+void titian::GUISectionExplorer::handle_item_transfer(const StringView& item, const StringView& destination)
 {
 	const auto item_absolute = fs::absolute(item);
 	const auto destination_absolute = fs::absolute(destination);

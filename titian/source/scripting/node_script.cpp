@@ -610,9 +610,9 @@ titian::NodeScript::NodeScript()
 			if (!filter.empty() && tab_name.find(filter) == -1)
 				continue;
 
-			if (im::BeginMenu(tab_name.c_str())) {
+			if (im::BeginMenu(tab_name.data())) {
 				for (auto& [node_name, generator] : tab) {
-					if (im::Selectable(node_name.c_str())) {
+					if (im::Selectable(node_name.data())) {
 						m_editor.insertNode(m_editor.screen2grid(im::GetMousePos()), generator(this));
 						im::CloseCurrentPopup();
 					}

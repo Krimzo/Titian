@@ -70,7 +70,7 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
         im::Text("New Material");
 
         if (Optional opt_name = gui_input_waited("##CreateMaterialInput", {})) {
-            const String& name = opt_name.value();
+            const auto& name = opt_name.value();
             if (!name.empty() && !scene->materials.contains(name)) {
                 Ref material = new Material();
                 scene->materials[name] = material;
@@ -87,16 +87,16 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
             continue;
         }
 
-        if (im::Selectable(material_name.c_str(), material_name == this->selected_material)) {
+        if (im::Selectable(material_name.data(), material_name == this->selected_material)) {
             this->selected_material = material_name;
         }
 
-        if (im::BeginPopupContextItem(material_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+        if (im::BeginPopupContextItem(material_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
             bool should_break = false;
             im::Text("Edit Material");
 
             if (Optional opt_name = gui_input_waited("##RenameMaterialInput", material_name)) {
-                const String& name = opt_name.value();
+                const auto& name = opt_name.value();
                 if (!name.empty() && !scene->materials.contains(name)) {
                     for (auto& [_, entity] : *scene) {
                         if (entity->material_name == material_name) {
@@ -335,43 +335,43 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
         im::DragFloat("Refraction Factor", &material->refraction_factor, 0.05f, 0.0f, 1.0f);
         im::DragFloat("Refraction Index", &material->refraction_index, 0.05f, 0.0f, 1.0f);
 
-        if (im::BeginCombo("Color Map", material->color_map_name.c_str())) {
+        if (im::BeginCombo("Color Map", material->color_map_name.data())) {
             if (im::Selectable("/", material->color_map_name == "/")) {
                 material->color_map_name = "/";
             }
             for (auto& [texture_name, _] : scene->textures) {
-                if (im::Selectable(texture_name.c_str(), texture_name == material->color_map_name)) {
+                if (im::Selectable(texture_name.data(), texture_name == material->color_map_name)) {
                     material->color_map_name = texture_name;
                 }
             }
             im::EndCombo();
         }
 
-        if (im::BeginCombo("Normal Map", material->normal_map_name.c_str())) {
+        if (im::BeginCombo("Normal Map", material->normal_map_name.data())) {
             if (im::Selectable("/", material->normal_map_name == "/")) {
                 material->normal_map_name = "/";
             }
             for (auto& [texture_name, _] : scene->textures) {
-                if (im::Selectable(texture_name.c_str(), texture_name == material->normal_map_name)) {
+                if (im::Selectable(texture_name.data(), texture_name == material->normal_map_name)) {
                     material->normal_map_name = texture_name;
                 }
             }
             im::EndCombo();
         }
 
-        if (im::BeginCombo("Roughness Map", material->roughness_map_name.c_str())) {
+        if (im::BeginCombo("Roughness Map", material->roughness_map_name.data())) {
             if (im::Selectable("/", material->roughness_map_name == "/")) {
                 material->roughness_map_name = "/";
             }
             for (auto& [texture_name, _] : scene->textures) {
-                if (im::Selectable(texture_name.c_str(), material->roughness_map_name == texture_name)) {
+                if (im::Selectable(texture_name.data(), material->roughness_map_name == texture_name)) {
                     material->roughness_map_name = texture_name;
                 }
             }
             im::EndCombo();
         }
 
-        if (im::BeginCombo("Shader", material->shader_name.c_str())) {
+        if (im::BeginCombo("Shader", material->shader_name.data())) {
             if (im::Selectable("/", material->shader_name == "/")) {
                 material->shader_name = "/";
             }
@@ -379,7 +379,7 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
                 if (shader->shader_type != ShaderType::MATERIAL) {
                     continue;
                 }
-                if (im::Selectable(shader_name.c_str(), material->shader_name == shader_name)) {
+                if (im::Selectable(shader_name.data(), material->shader_name == shader_name)) {
                     material->shader_name = shader_name;
                 }
             }

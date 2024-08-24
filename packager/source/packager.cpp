@@ -23,13 +23,13 @@ int titian::packager_entry(const int argc, const char** argv, const bool package
 	return result ? 0 : 1;
 }
 
-titian::Set<titian::String> titian::list_files(const String& input)
+titian::StringSet titian::list_files(const StringView& input)
 {
 	if (!fs::is_directory(input)) {
-		return { input };
+		return { String{ input } };
 	}
 
-	Set<String> found_files;
+	StringSet found_files;
 	for (const auto& entry : fs::recursive_directory_iterator(input)) {
 		if (!entry.is_directory()) {
 			found_files.insert(entry.path().relative_path().string());
@@ -38,7 +38,7 @@ titian::Set<titian::String> titian::list_files(const String& input)
 	return found_files;
 }
 
-bool titian::create_package(const String& input, const String& output_file)
+bool titian::create_package(const StringView& input, const StringView& output_file)
 {
 	if (!fs::exists(input)) {
 		Logger::log("Create package error. ", input, " doesn't exists.");
@@ -51,7 +51,7 @@ bool titian::create_package(const String& input, const String& output_file)
 		return false;
 	}
 
-	const Set<String> files = list_files(input);
+	const StringSet files = list_files(input);
 	serializer.write_int("files_size", (int32_t) files.size());
 	for (const auto& file : files) {
 		const String file_data = kl::read_file(file);
@@ -65,7 +65,7 @@ bool titian::create_package(const String& input, const String& output_file)
 	return true;
 }
 
-bool titian::open_package(const String& input_file, const String& output_dir)
+bool titian::open_package(const StringView& input_file, const StringView& output_dir)
 {
 	const BinarySerializer serializer{ input_file, false };
 	if (!serializer) {
@@ -78,7 +78,7 @@ bool titian::open_package(const String& input_file, const String& output_dir)
 	for (int32_t i = 0; i < files_size; i++) {
 		String file;
 		serializer.read_string("file", file);
-		file = output_dir + "/" + file;
+		file = kl::format(output_dir, "/", file);
 
 		int32_t file_data_size = 0;
 		serializer.read_int("file_data_size", file_data_size);

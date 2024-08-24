@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-titian::BinarySerializer::BinarySerializer(const String& path, const bool write)
+titian::BinarySerializer::BinarySerializer(const StringView& path, const bool write)
 	: m_path(path), m_writing(write)
 {
 	m_file.open(path, write);
@@ -39,88 +39,88 @@ titian::BinarySerializer::operator bool() const
 	return m_file && m_is_valid;
 }
 
-void titian::BinarySerializer::push_object(const String& name)
+void titian::BinarySerializer::push_object(const StringView& name)
 {}
 
 void titian::BinarySerializer::pop_object()
 {}
 
-void titian::BinarySerializer::load_object(const String& name) const
+void titian::BinarySerializer::load_object(const StringView& name) const
 {}
 
 void titian::BinarySerializer::unload_object() const
 {}
 
 // basic
-void titian::BinarySerializer::write_bool(const String& name, bool value)
+void titian::BinarySerializer::write_bool(const StringView& name, bool value)
 {
 	m_file.write<bool>(value);
 }
 
-void titian::BinarySerializer::read_bool(const String& name, bool& value) const
+void titian::BinarySerializer::read_bool(const StringView& name, bool& value) const
 {
 	m_file.read<bool>(value);
 }
 
-void titian::BinarySerializer::write_int(const String& name, int32_t value)
+void titian::BinarySerializer::write_int(const StringView& name, int32_t value)
 {
 	m_file.write<int32_t>(value);
 }
 
-void titian::BinarySerializer::read_int(const String& name, int32_t& value) const
+void titian::BinarySerializer::read_int(const StringView& name, int32_t& value) const
 {
 	m_file.read<int32_t>(value);
 }
 
-void titian::BinarySerializer::write_float(const String& name, float value)
+void titian::BinarySerializer::write_float(const StringView& name, float value)
 {
 	m_file.write<float>(value);
 }
 
-void titian::BinarySerializer::read_float(const String& name, float& value) const
+void titian::BinarySerializer::read_float(const StringView& name, float& value) const
 {
 	m_file.read<float>(value);
 }
 
 // array
-void titian::BinarySerializer::write_byte_array(const String& name, const void* data, int32_t count)
+void titian::BinarySerializer::write_byte_array(const StringView& name, const void* data, int32_t count)
 {
 	m_file.write((const byte*) data, count);
 }
 
-void titian::BinarySerializer::read_byte_array(const String& name, void* data, int32_t count) const
+void titian::BinarySerializer::read_byte_array(const StringView& name, void* data, int32_t count) const
 {
 	m_file.read((byte*) data, count);
 }
 
-void titian::BinarySerializer::write_int_array(const String& name, const int32_t* data, int32_t count)
+void titian::BinarySerializer::write_int_array(const StringView& name, const int32_t* data, int32_t count)
 {
 	write_byte_array(name, data, count * sizeof(int32_t));
 }
 
-void titian::BinarySerializer::read_int_array(const String& name, int32_t* data, int32_t count) const
+void titian::BinarySerializer::read_int_array(const StringView& name, int32_t* data, int32_t count) const
 {
 	read_byte_array(name, data, count * sizeof(int32_t));
 }
 
-void titian::BinarySerializer::write_float_array(const String& name, const float* data, int32_t count)
+void titian::BinarySerializer::write_float_array(const StringView& name, const float* data, int32_t count)
 {
 	write_byte_array(name, data, count * sizeof(float));
 }
 
-void titian::BinarySerializer::read_float_array(const String& name, float* data, int32_t count) const
+void titian::BinarySerializer::read_float_array(const StringView& name, float* data, int32_t count) const
 {
 	read_byte_array(name, data, count * sizeof(float));
 }
 
 // complex
-void titian::BinarySerializer::write_string(const String& name, const String& value)
+void titian::BinarySerializer::write_string(const StringView& name, const StringView& value)
 {
 	write_int({}, (int32_t) value.size());
 	write_byte_array({}, value.data(), (int32_t) value.size());
 }
 
-void titian::BinarySerializer::read_string(const String& name, String& value) const
+void titian::BinarySerializer::read_string(const StringView& name, String& value) const
 {
 	int32_t size = 0;
 	read_int({}, size);

@@ -47,10 +47,10 @@ namespace titian {
 		dx::ShaderView get_shader_view() const;
 		void retrieve_frame(RAWImage& out_image) const;
 		
-		void load_file(const String& path);
-		void load_image(const String& path);
-		void load_audio(const String& path);
-		void load_video(const String& path);
+		void load_file(const StringView& path);
+		void load_image(const StringView& path);
+		void load_audio(const StringView& path);
+		void load_video(const StringView& path);
 
 		int find_track(const Ref<Track>& track) const;
 		void delete_track(const Ref<Track>& track);
@@ -74,8 +74,8 @@ namespace titian {
 		kl::AudioDevice m_audio_device{ 0 };
 		RAWAudio m_audio{ 48000 };
 
-		static Optional<kl::VideoType> classify_video_format(const String& path);
-		static Optional<kl::AudioType> classify_audio_format(const String& path);
+		static Optional<kl::VideoType> classify_video_format(const StringView& path);
+		static Optional<kl::AudioType> classify_audio_format(const StringView& path);
 
 		void play_audio();
 		void prepare_audio();

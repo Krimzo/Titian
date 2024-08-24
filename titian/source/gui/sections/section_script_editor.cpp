@@ -105,16 +105,16 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 		im::SameLine();
 
 		// Script name
-		if (im::Selectable(script_name.c_str(), script_name == this->selected_script)) {
+		if (im::Selectable(script_name.data(), script_name == this->selected_script)) {
 			this->selected_script = script_name;
 		}
 
-		if (im::BeginPopupContextItem(script_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+		if (im::BeginPopupContextItem(script_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
 			bool should_break = false;
 			im::Text("Edit Script");
 
 			if (Optional opt_name = gui_input_waited("##RenameScriptInput", script_name)) {
-				const String& name = opt_name.value();
+				const auto& name = opt_name.value();
 				if (!name.empty() && !scene->scripts.contains(name)) {
 					if (this->selected_script == script_name) {
 						this->selected_script = name;
@@ -193,7 +193,7 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 			im::PushStyleColor(ImGuiCol_Text, (ImU32) ImColor(220, 206, 125, 255));
 			for (const auto& [member, _] : INTERP_SCRIPT_MEMBERS) {
 				if (member.find(current_word) != -1) {
-					if (im::MenuItem(member.c_str())) {
+					if (im::MenuItem(member.data())) {
 						m_interp_editor.replace_word_at_cursor(member);
 					}
 				}
@@ -201,7 +201,7 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 			im::PushStyleColor(ImGuiCol_Text, palette[1]);
 			for (const auto& keyword : definition->mKeywords) {
 				if (keyword.find(current_word) != -1) {
-					if (im::MenuItem(keyword.c_str())) {
+					if (im::MenuItem(keyword.data())) {
 						m_interp_editor.replace_word_at_cursor(keyword);
 					}
 				}
@@ -209,7 +209,7 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 			im::PushStyleColor(ImGuiCol_Text, palette[8]);
 			for (const auto& [identifier, _] : definition->mIdentifiers) {
 				if (identifier.find(current_word) != -1) {
-					if (im::MenuItem(identifier.c_str())) {
+					if (im::MenuItem(identifier.data())) {
 						m_interp_editor.replace_word_at_cursor(identifier);
 					}
 				}

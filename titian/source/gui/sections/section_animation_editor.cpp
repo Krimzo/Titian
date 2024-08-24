@@ -72,7 +72,7 @@ void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* 
         im::Text("New Animation");
 
         if (Optional opt_name = gui_input_waited("##CreateAnimationInput", {})) {
-            const String& name = opt_name.value();
+            const auto& name = opt_name.value();
             if (!name.empty() && !scene->animations.contains(name)) {
                 Ref animation = new Animation(gpu, scene);
                 scene->animations[name] = animation;
@@ -89,16 +89,16 @@ void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* 
             continue;
         }
 
-        if (im::Selectable(animation_name.c_str(), animation_name == this->selected_animation)) {
+        if (im::Selectable(animation_name.data(), animation_name == this->selected_animation)) {
             this->selected_animation = animation_name;
         }
 
-        if (im::BeginPopupContextItem(animation_name.c_str(), ImGuiPopupFlags_MouseButtonRight)) {
+        if (im::BeginPopupContextItem(animation_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
             bool should_break = false;
             im::Text("Edit Animation");
 
             if (Optional opt_name = gui_input_waited("##RenameAnimationInput", animation_name)) {
-                const String& name = opt_name.value();
+                const auto& name = opt_name.value();
                 if (!name.empty() && !scene->animations.contains(name)) {
                     if (this->selected_animation == animation_name) {
                         this->selected_animation = name;
@@ -308,9 +308,9 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
             { AnimationType::SKELETAL, "Skeletal" },
 		};
 
-        if (im::BeginCombo("Animation Type", animation_type_names.at(animation->animation_type).c_str())) {
+        if (im::BeginCombo("Animation Type", animation_type_names.at(animation->animation_type).data())) {
             for (auto& [type, name] : animation_type_names) {
-				if (im::Selectable(name.c_str(), animation->animation_type == type)) {
+				if (im::Selectable(name.data(), animation->animation_type == type)) {
 					animation->animation_type = type;
                     m_start_mesh_index = 0;
 				}
@@ -331,9 +331,9 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
         }
 
         for (int i = m_start_mesh_index; i < (m_start_mesh_index + 10) && i < (int) animation->meshes.size(); i++) {
-            if (im::BeginCombo(kl::format(i, ". Mesh").c_str(), animation->meshes[i].c_str())) {
+            if (im::BeginCombo(kl::format(i, ". Mesh").data(), animation->meshes[i].data())) {
                 for (auto& [name, _] : game_layer->scene->meshes) {
-                    if (im::Selectable(name.c_str(), name == animation->meshes[i])) {
+                    if (im::Selectable(name.data(), name == animation->meshes[i])) {
                         animation->meshes[i] = name;
                     }
                 }

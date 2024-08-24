@@ -8,7 +8,7 @@ namespace titian {
 	class RenderPass : kl::NoCopy, public BenchmarkInfo
 	{
 	public:
-		RenderPass(const String& name);
+		RenderPass(const StringView& name);
 		virtual ~RenderPass() = default;
 
 		void process();

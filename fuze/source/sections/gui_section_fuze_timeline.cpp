@@ -179,13 +179,13 @@ void titian::GUISectionFuzeTimeline::render_header(const ImVec2 cell_padding, co
 	im::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImColor(45, 45, 45));
 
 	const String text = kl::format(std::fixed, video_layer->current_time);
-	const ImVec2 text_size = im::CalcTextSize(text.c_str());
+	const ImVec2 text_size = im::CalcTextSize(text.data());
 
 	const ImVec2 cursor_pos = im::GetCursorScreenPos();
 	const float vertical_off = (header_height - text_size.y) * 0.5f;
 
 	im::SetCursorScreenPos(ImVec2(cursor_pos.x, cursor_pos.y - cell_padding.y + vertical_off));
-	im::Text(text.c_str());
+	im::Text(text.data());
 
 	im::TableSetColumnIndex(1);
 	im::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImColor(35, 35, 35));
@@ -233,7 +233,7 @@ void titian::GUISectionFuzeTimeline::render_header(const ImVec2 cell_padding, co
 		draw_list->AddLine(ImVec2(x, col_min.y + height_delta), ImVec2(x, col_max.y - height_delta), color, 1.0f);
 
 		if (text) {
-			draw_list->AddText(ImVec2(x, col_min.y + height_delta), color, text.value().c_str());
+			draw_list->AddText(ImVec2(x, col_min.y + height_delta), color, text.value().data());
 		}
 	}
 
@@ -282,13 +282,13 @@ void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, con
 	}
 
 	const String text = kl::format(i + 1, ". ", track->name);
-	const ImVec2 text_size = im::CalcTextSize(text.c_str());
+	const ImVec2 text_size = im::CalcTextSize(text.data());
 
 	const ImVec2 cursor_pos = im::GetCursorScreenPos();
 	const float vertical_off = (row_height - text_size.y) * 0.5f;
 
 	im::SetCursorScreenPos(ImVec2(cursor_pos.x, cursor_pos.y - cell_padding.y + vertical_off));
-	im::Text(text.c_str());
+	im::Text(text.data());
 
 	im::TableSetColumnIndex(1);
 
@@ -381,7 +381,7 @@ void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, con
 			if (video_layer->selected_media == media) {
 				draw_list->AddRect(top_left_clamped, bottom_right_clamped, ImColor(255, 255, 255));
 			}
-			draw_list->AddText(top_left_clamped, ImColor(30, 30, 30), media->name.c_str());
+			draw_list->AddText(top_left_clamped, ImColor(30, 30, 30), media->name.data());
 		}
 		else {
 			if (media->type == MediaType::VIDEO) {
@@ -407,7 +407,7 @@ void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, con
 			if (video_layer->selected_media == media) {
 				draw_list->AddRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), ImColor(255, 255, 255));
 			}
-			draw_list->AddText(ImVec2(left_x, col_min.y), ImColor(30, 30, 30), media->name.c_str());
+			draw_list->AddText(ImVec2(left_x, col_min.y), ImColor(30, 30, 30), media->name.data());
 		}
 	}
 

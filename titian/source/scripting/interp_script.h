@@ -7,7 +7,7 @@
 namespace titian {
 	inline const cs::ModulePtr INTERP_SCRIPT_MODULE = cs::ModulePtr(new cs::Module());
 
-	inline const Set<String> INTERP_SCRIPT_KEYWORDS
+	inline const StringSet INTERP_SCRIPT_KEYWORDS
 	{
 		"attr",
 		"auto",
@@ -27,10 +27,10 @@ namespace titian {
 		"while",
 	};
 
-	inline Map<String, String> INTERP_SCRIPT_IDENTIFIERS
+	inline StringMap<String> INTERP_SCRIPT_IDENTIFIERS
 	{};
 
-	inline Map<String, String> INTERP_SCRIPT_MEMBERS
+	inline StringMap<String> INTERP_SCRIPT_MEMBERS
 	{};
 }
 
@@ -53,7 +53,7 @@ namespace titian {
 		void call_collision(Scene* scene, Entity* first, Entity* second) override;
 		void call_ui(Scene* scene) override;
 
-		Map<String, cs::Boxed_Value> get_parameters();
+		StringMap<cs::Boxed_Value> get_parameters();
 
 	private:
 		Ref<cs::ChaiScript> m_engine = nullptr;

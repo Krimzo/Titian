@@ -14,44 +14,44 @@ namespace titian {
 	void ui_set_cursor_pos(const Float2& pos);
 
 	// window
-	void ui_window(const String& name, const Function<void()>& func);
-	void ui_button(const String& name, const Function<void()>& func);
-	void ui_checkbox(const String& name, bool& value);
+	void ui_window(const StringView& name, const Function<void()>& func);
+	void ui_button(const StringView& name, const Function<void()>& func);
+	void ui_checkbox(const StringView& name, bool& value);
 
 	// text
-	void ui_text(const String& data);
-	void ui_colored_text(const String& data, const Float4& color);
+	void ui_text(const StringView& data);
+	void ui_colored_text(const StringView& data, const Float4& color);
 
 	// input
-	void ui_input_int(const String& name, int& value);
-	void ui_input_int2(const String& name, Int2& value);
-	void ui_input_int3(const String& name, Int3& value);
-	void ui_input_int4(const String& name, Int4& value);
+	void ui_input_int(const StringView& name, int& value);
+	void ui_input_int2(const StringView& name, Int2& value);
+	void ui_input_int3(const StringView& name, Int3& value);
+	void ui_input_int4(const StringView& name, Int4& value);
 
-	void ui_input_float(const String& name, float& value);
-	void ui_input_float2(const String& name, Float2& value);
-	void ui_input_float3(const String& name, Float3& value);
-	void ui_input_float4(const String& name, Float4& value);
+	void ui_input_float(const StringView& name, float& value);
+	void ui_input_float2(const StringView& name, Float2& value);
+	void ui_input_float3(const StringView& name, Float3& value);
+	void ui_input_float4(const StringView& name, Float4& value);
 
-	void ui_input_text(const String& name, String& value);
-	void ui_input_text_multiline(const String& name, String& value);
+	void ui_input_text(const StringView& name, String& value);
+	void ui_input_text_multiline(const StringView& name, String& value);
 
 	// edit
-	void ui_edit_color3(const String& name, Color& value);
-	void ui_edit_color4(const String& name, Color& value);
+	void ui_edit_color3(const StringView& name, Color& value);
+	void ui_edit_color4(const StringView& name, Color& value);
 
 	// drag
-	void ui_drag_int(const String& name, int& value);
-	void ui_drag_int2(const String& name, Int2& value);
-	void ui_drag_int3(const String& name, Int3& value);
-	void ui_drag_int4(const String& name, Int4& value);
+	void ui_drag_int(const StringView& name, int& value);
+	void ui_drag_int2(const StringView& name, Int2& value);
+	void ui_drag_int3(const StringView& name, Int3& value);
+	void ui_drag_int4(const StringView& name, Int4& value);
 
-	void ui_drag_float(const String& name, float& value);
-	void ui_drag_float2(const String& name, Float2& value);
-	void ui_drag_float3(const String& name, Float3& value);
-	void ui_drag_float4(const String& name, Float4& value);
+	void ui_drag_float(const StringView& name, float& value);
+	void ui_drag_float2(const StringView& name, Float2& value);
+	void ui_drag_float3(const StringView& name, Float3& value);
+	void ui_drag_float4(const StringView& name, Float4& value);
 
 	// slide
-	void ui_slide_int(const String& name, int& value, int min, int max);
-	void ui_slide_float(const String& name, float& value, float min, float max);
+	void ui_slide_int(const StringView& name, int& value, int min, int max);
+	void ui_slide_float(const StringView& name, float& value, float min, float max);
 }

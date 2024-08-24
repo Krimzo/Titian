@@ -11,14 +11,14 @@ namespace titian {
 		Vector<Ref<Track>> tracks;
 
 		FuzeRenderer(
-			const String& filepath,
+			const StringView& filepath,
 			const kl::VideoType& video_type,
 			const Int2& frame_size,
 			int fps,
 			int video_bit_rate,
 			int audio_sample_rate);
 		FuzeRenderer(
-			const String& filepath,
+			const StringView& filepath,
 			kl::AudioType audio_type,
 			int audio_sample_rate);
 		~FuzeRenderer();

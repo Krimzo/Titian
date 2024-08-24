@@ -65,8 +65,15 @@ namespace titian {
 	using List = std::list<T>;
 
 	template<typename K>
+		requires (not std::is_same_v<K, String>)
 	using Set = std::unordered_set<K>;
-	
+
+	using StringSet = std::unordered_set<String, kl::string_hash, std::equal_to<>>;
+
 	template<typename K, typename V>
+		requires (not std::is_same_v<K, String>)
 	using Map = std::unordered_map<K, V>;
+
+	template<typename V>
+	using StringMap = std::unordered_map<String, V, kl::string_hash, std::equal_to<>>;
 }

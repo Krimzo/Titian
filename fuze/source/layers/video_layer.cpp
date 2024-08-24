@@ -169,11 +169,11 @@ void titian::VideoLayer::retrieve_frame(RAWImage& out_image) const
 	m_handler.out_frame.retrieve(out_image);
 }
 
-void titian::VideoLayer::load_file(const String& path)
+void titian::VideoLayer::load_file(const StringView& path)
 {
-	static const Set<String> image_extensions = { ".bmp", ".png", ".jpg", ".jpeg" };
-	static const Set<String> audio_extensions = { ".wav", ".m4a", ".mp3" };
-	static const Set<String> video_extensions = { ".mkv", ".mpg", ".mp4" };
+	static const StringSet image_extensions = { ".bmp", ".png", ".jpg", ".jpeg" };
+	static const StringSet audio_extensions = { ".wav", ".m4a", ".mp3" };
+	static const StringSet video_extensions = { ".mkv", ".mpg", ".mp4" };
 
 	const String extension = fs::path(path).extension().string();
 	if (image_extensions.contains(extension)) {
@@ -187,7 +187,7 @@ void titian::VideoLayer::load_file(const String& path)
 	}
 }
 
-void titian::VideoLayer::load_image(const String& path)
+void titian::VideoLayer::load_image(const StringView& path)
 {
 	if (!selected_track) {
 		if (tracks.empty()) {
@@ -206,7 +206,7 @@ void titian::VideoLayer::load_image(const String& path)
 	selected_track->insert_media(current_time, media);
 }
 
-void titian::VideoLayer::load_audio(const String& path)
+void titian::VideoLayer::load_audio(const StringView& path)
 {
 	if (!selected_track) {
 		if (tracks.empty()) {
@@ -223,7 +223,7 @@ void titian::VideoLayer::load_audio(const String& path)
 	selected_track->insert_media(current_time, media);
 }
 
-void titian::VideoLayer::load_video(const String& path)
+void titian::VideoLayer::load_video(const StringView& path)
 {
 	if (!selected_track) {
 		if (tracks.empty()) {
@@ -369,7 +369,7 @@ media_loop_end:
 	tracks[next_track_index]->insert_media(media_offset, new_media);
 }
 
-titian::Optional<kl::VideoType> titian::VideoLayer::classify_video_format(const String& path)
+titian::Optional<kl::VideoType> titian::VideoLayer::classify_video_format(const StringView& path)
 {
 	const String extension = fs::path(path).extension().string();
 	if (extension == ".mp4") {
@@ -378,7 +378,7 @@ titian::Optional<kl::VideoType> titian::VideoLayer::classify_video_format(const 
 	return std::nullopt;
 }
 
-titian::Optional<kl::AudioType> titian::VideoLayer::classify_audio_format(const String& path)
+titian::Optional<kl::AudioType> titian::VideoLayer::classify_audio_format(const StringView& path)
 {
 	const String extension = fs::path(path).extension().string();
 	if (extension == ".wav") {
