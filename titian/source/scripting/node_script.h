@@ -2,6 +2,7 @@
 
 #include "scripting/script.h"
 #include "scene/scene.h"
+#include "ui/ui_funcs.h"
 
 
 template<typename T, typename = void> struct has_less_operator : std::false_type {};
@@ -1913,6 +1914,169 @@ namespace titian {
 		const Map<String, Ref<Entity>>& get_collection() override
 		{
 			return Layers::get<GameLayer>()->scene->entities_ref();
+		}
+	};
+}
+
+// ui
+namespace titian {
+	struct UISeparatorNode : FlowNode
+	{
+		inline UISeparatorNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
+		{}
+
+		void call() override
+		{
+			ui_separator();
+			call_next();
+		}
+	};
+
+	struct UISameLineNode : FlowNode
+	{
+		inline UISameLineNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
+		{}
+
+		void call() override
+		{
+			ui_same_line();
+			call_next();
+		}
+	};
+
+	struct UINextWidthNode : FlowNode
+	{
+		inline UINextWidthNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
+		{
+			addIN<float>("width");
+		}
+
+		void call() override
+		{
+			float width = get_value<float>("width");
+			ui_set_next_width(width);
+			call_next();
+		}
+	};
+
+	struct UICursorPositonNode : FlowNode
+	{
+		inline UICursorPositonNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
+		{
+			addIN<Float2>("position");
+			addOUT<Float2>("position")->behaviour([this]()
+			{
+				return ui_cursor_pos();
+			});
+		}
+
+		void call() override
+		{
+			if (input_connected("position")) {
+				Float2 pos = get_value<Float2>("position");
+				ui_set_cursor_pos(pos);
+			}
+			call_next();
+		}
+	};
+
+	struct UIWindowNode : FlowNode
+	{
+		inline UIWindowNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
+		{
+			addIN<String>("name");
+			addOUT<FlowNode*>("call")->behaviour([this]() { return this; });
+		}
+
+		void call() override
+		{
+			const String name = get_value<String>("name");
+			ui_window(name, [this]()
+			{
+				call_next("call");
+			});
+			call_next();
+		}
+	};
+
+	struct UIButtonNode : FlowNode
+	{
+		inline UIButtonNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
+		{
+			addIN<String>("name");
+			addOUT<FlowNode*>("call")->behaviour([this]() { return this; });
+		}
+
+		void call() override
+		{
+			const String name = get_value<String>("name");
+			ui_button(name, [this]()
+			{
+				call_next("call");
+			});
+			call_next();
+		}
+	};
+
+	template<typename T>
+	struct UIValueNode : FlowNode
+	{
+		T value = {};
+
+		inline UIValueNode(NodeScript* parent, const String& title)
+			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
+		{
+			addIN<String>("name");
+			addIN<T>("value");
+			addOUT<T>("value")->behaviour([this]()
+			{
+				return value;
+			});
+		}
+
+		void call() override
+		{
+			if (input_connected("value")) {
+				value = get_value<T>("value");
+			}
+			const String name = get_value<String>("name");
+			if constexpr (std::is_same_v<T, bool>) {
+				ui_checkbox(name, value);
+			}
+			else if constexpr (std::is_same_v<T, int32_t>) {
+				ui_drag_int(name, value);
+			}
+			else if constexpr (std::is_same_v<T, Int2>) {
+				ui_drag_int2(name, value);
+			}
+			else if constexpr (std::is_same_v<T, float>) {
+				ui_drag_float(name, value);
+			}
+			else if constexpr (std::is_same_v<T, Float2>) {
+				ui_drag_float2(name, value);
+			}
+			else if constexpr (std::is_same_v<T, Float3>) {
+				ui_drag_float3(name, value);
+			}
+			else if constexpr (std::is_same_v<T, Float4>) {
+				ui_drag_float4(name, value);
+			}
+			else if constexpr (std::is_same_v<T, Color>) {
+				ui_edit_color4(name, value);
+			}
+			else if constexpr (std::is_same_v<T, String>) {
+				ui_input_text(name, value);
+			}
+			else {
+				static_assert(false, "Not supported UIValueNode type");
+			}
+			call_next();
 		}
 	};
 }

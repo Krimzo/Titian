@@ -139,7 +139,7 @@ namespace ImFlow
 
     inline void BaseNode::dropIN(const char* uid)
     {
-        dropIN<std::string>(uid);
+        dropIN<std::string_view>(uid);
     }
 
     template<typename T>
@@ -196,7 +196,7 @@ namespace ImFlow
 
     inline void BaseNode::dropOUT(const char* uid)
     {
-        dropOUT<std::string>(uid);
+        dropOUT<std::string_view>(uid);
     }
 
     template<typename T>
@@ -251,7 +251,7 @@ namespace ImFlow
 
     inline Pin* BaseNode::inPin(const char* uid)
     {
-        return inPin<std::string>(uid);
+        return inPin<std::string_view>(uid);
     }
 
     template<typename U>
@@ -267,7 +267,7 @@ namespace ImFlow
 
     inline Pin* BaseNode::outPin(const char* uid)
     {
-        return outPin<std::string>(uid);
+        return outPin<std::string_view>(uid);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -66,6 +66,21 @@ void titian::ui_input_int(const String& name, int& value)
 	im::InputInt(name.c_str(), &value);
 }
 
+void titian::ui_input_int2(const String& name, Int2& value)
+{
+	im::InputInt2(name.c_str(), &value.x);
+}
+
+void titian::ui_input_int3(const String& name, Int3& value)
+{
+	im::InputInt3(name.c_str(), &value.x);
+}
+
+void titian::ui_input_int4(const String& name, Int4& value)
+{
+	im::InputInt4(name.c_str(), &value.x);
+}
+
 void titian::ui_input_float(const String& name, float& value)
 {
 	im::InputFloat(name.c_str(), &value);
@@ -97,14 +112,20 @@ void titian::ui_input_text_multiline(const String& name, String& value)
 }
 
 // edit
-void titian::ui_edit_color3(const String& name, Float3& value)
+void titian::ui_edit_color3(const String& name, Color& value)
 {
-	im::ColorEdit3(name.c_str(), &value.x);
+	Float3 temp_val = value;
+	if (im::ColorEdit3(name.c_str(), &temp_val.x)) {
+		value = temp_val;
+	}
 }
 
-void titian::ui_edit_color4(const String& name, Float4& value)
+void titian::ui_edit_color4(const String& name, Color& value)
 {
-	im::ColorEdit4(name.c_str(), &value.x);
+	Float4 temp_val = value;
+	if (im::ColorEdit4(name.c_str(), &temp_val.x)) {
+		value = temp_val;
+	}
 }
 
 // drag
@@ -113,24 +134,39 @@ void titian::ui_drag_int(const String& name, int& value)
 	im::DragInt(name.c_str(), &value);
 }
 
+void titian::ui_drag_int2(const String& name, Int2& value)
+{
+	im::DragInt2(name.c_str(), &value.x);
+}
+
+void titian::ui_drag_int3(const String& name, Int3& value)
+{
+	im::DragInt3(name.c_str(), &value.x);
+}
+
+void titian::ui_drag_int4(const String& name, Int4& value)
+{
+	im::DragInt4(name.c_str(), &value.x);
+}
+
 void titian::ui_drag_float(const String& name, float& value)
 {
 	im::DragFloat(name.c_str(), &value);
 }
 
-void titian::ui_drag_float2(const String& name, float& value)
+void titian::ui_drag_float2(const String& name, Float2& value)
 {
-	im::DragFloat2(name.c_str(), &value);
+	im::DragFloat2(name.c_str(), &value.x);
 }
 
-void titian::ui_drag_float3(const String& name, float& value)
+void titian::ui_drag_float3(const String& name, Float3& value)
 {
-	im::DragFloat3(name.c_str(), &value);
+	im::DragFloat3(name.c_str(), &value.x);
 }
 
-void titian::ui_drag_float4(const String& name, float& value)
+void titian::ui_drag_float4(const String& name, Float4& value)
 {
-	im::DragFloat4(name.c_str(), &value);
+	im::DragFloat4(name.c_str(), &value.x);
 }
 
 // slide

@@ -244,6 +244,22 @@ namespace titian {
 		serial_generator_helper<CosNode<float>>(),
 		serial_generator_helper<TanNode<float>>(),
 
+		// ui
+		serial_generator_helper<UISeparatorNode>(),
+		serial_generator_helper<UISameLineNode>(),
+		serial_generator_helper<UINextWidthNode>(),
+		serial_generator_helper<UIWindowNode>(),
+		serial_generator_helper<UIButtonNode>(),
+		serial_generator_helper<UIValueNode<bool>>(),
+		serial_generator_helper<UIValueNode<int32_t>>(),
+		serial_generator_helper<UIValueNode<Int2>>(),
+		serial_generator_helper<UIValueNode<float>>(),
+		serial_generator_helper<UIValueNode<Float2>>(),
+		serial_generator_helper<UIValueNode<Float3>>(),
+		serial_generator_helper<UIValueNode<Float4>>(),
+		serial_generator_helper<UIValueNode<Color>>(),
+		serial_generator_helper<UIValueNode<String>>(),
+
 		// debug
 		serial_generator_helper<PrintNode>(),
 	};
@@ -515,6 +531,25 @@ namespace titian {
 		ui_generator_helper<SinNode<float>>("Sin"),
 		ui_generator_helper<CosNode<float>>("Cos"),
 		ui_generator_helper<TanNode<float>>("Tan"),
+		},
+		},
+
+		{ "UI",
+		{
+		ui_generator_helper<UISeparatorNode>("UI Separator"),
+		ui_generator_helper<UISameLineNode>("UI Same Line"),
+		ui_generator_helper<UINextWidthNode>("UI Next Width"),
+		ui_generator_helper<UIWindowNode>("UI Window"),
+		ui_generator_helper<UIButtonNode>("UI Button"),
+		ui_generator_helper<UIValueNode<bool>>("UI Value Bool"),
+		ui_generator_helper<UIValueNode<int32_t>>("UI Value Int"),
+		ui_generator_helper<UIValueNode<Int2>>("UI Value Int2"),
+		ui_generator_helper<UIValueNode<float>>("UI Value Float"),
+		ui_generator_helper<UIValueNode<Float2>>("UI Value Float2"),
+		ui_generator_helper<UIValueNode<Float3>>("UI Value Float3"),
+		ui_generator_helper<UIValueNode<Float4>>("UI Value Float4"),
+		ui_generator_helper<UIValueNode<Color>>("UI Value Color"),
+		ui_generator_helper<UIValueNode<String>>("UI Value String"),
 		},
 		},
 		

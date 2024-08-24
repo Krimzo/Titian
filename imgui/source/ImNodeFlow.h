@@ -170,14 +170,15 @@ namespace ImFlow
 
         static std::shared_ptr<NodeStyle>   white() { return make_style(200, 200, 200, 12.0f); }
 
-        static std::shared_ptr<NodeStyle>   green() { return make_style( 90, 195,  95, 6.0f); }
-        static std::shared_ptr<NodeStyle>    blue() { return make_style( 85, 155, 215, 6.0f); }
-        static std::shared_ptr<NodeStyle>    cyan() { return make_style( 70, 195, 140, 6.0f); }
-        static std::shared_ptr<NodeStyle>    teal() { return make_style( 65, 175, 175, 6.0f); }
+        static std::shared_ptr<NodeStyle>   green() { return make_style(90, 195,  95, 6.0f); }
+        static std::shared_ptr<NodeStyle>    blue() { return make_style(85, 155, 215, 6.0f); }
+        static std::shared_ptr<NodeStyle>    cyan() { return make_style(70, 195, 140, 6.0f); }
+        static std::shared_ptr<NodeStyle>    teal() { return make_style(65, 175, 175, 6.0f); }
 
-        static std::shared_ptr<NodeStyle>     red() { return make_style(190, 90, 90, 6.0f); }
-        static std::shared_ptr<NodeStyle> crimson() { return make_style(180, 50, 90, 6.0f); };
+        static std::shared_ptr<NodeStyle>     red() { return make_style(190,  90,  90, 6.0f); }
+        static std::shared_ptr<NodeStyle> crimson() { return make_style(180,  50,  90, 6.0f); }
         static std::shared_ptr<NodeStyle>  yellow() { return make_style(220, 220,  70, 6.0f); }
+        static std::shared_ptr<NodeStyle>  sunset() { return make_style(240, 200, 155, 6.0f); }
         static std::shared_ptr<NodeStyle>  orange() { return make_style(210, 155,  90, 6.0f); }
 
         static std::shared_ptr<NodeStyle>    pink() { return make_style(215, 160, 225, 6.0f); }
