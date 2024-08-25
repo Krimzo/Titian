@@ -21,7 +21,6 @@
     <ClCompile Include="source\ImCurveEdit.cpp" />
     <ClCompile Include="source\ImGradient.cpp" />
     <ClCompile Include="source\imgui.cpp" />
-    <ClCompile Include="source\ImGuiDebugPanel.cpp" />
     <ClCompile Include="source\ImGuizmo.cpp" />
     <ClCompile Include="source\imgui_canvas.cpp" />
     <ClCompile Include="source\imgui_demo.cpp" />

@@ -224,9 +224,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const Int2& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Int2"] = "Two component integer vector.";
-	INTERP_SCRIPT_MEMBERS["x"] = "x";
-	INTERP_SCRIPT_MEMBERS["x"] = "y";
 
 	// Float2
 	cs::utility::add_class<Float2>(*INTERP_SCRIPT_MODULE, "Float2",
@@ -271,8 +268,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const Float2& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Float2"] = "Two component float vector.";
-	INTERP_SCRIPT_IDENTIFIERS["length"] = "Returns length of this vector.";
 
 	// Float3
 	cs::utility::add_class<Float3>(*INTERP_SCRIPT_MODULE, "Float3",
@@ -324,10 +319,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const Float3& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Float3"] = "Three component float vector.";
-	INTERP_SCRIPT_MEMBERS["z"] = "z";
-	INTERP_SCRIPT_IDENTIFIERS["xy"] = "Returns x and y as a Float2&.";
-	INTERP_SCRIPT_IDENTIFIERS["yz"] = "Returns y and z as a Float2&.";
 
 	// Float4
 	cs::utility::add_class<Float4>(*INTERP_SCRIPT_MODULE, "Float4",
@@ -389,11 +380,6 @@ const int load_types = [&]
 		
 		{ cs::fun([](const Float4& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Float4"] = "Four component float vector.";
-	INTERP_SCRIPT_MEMBERS["w"] = "w";
-	INTERP_SCRIPT_IDENTIFIERS["zw"] = "Returns z and w as a Float2&.";
-	INTERP_SCRIPT_IDENTIFIERS["xyz"] = "Returns x, y and z as a Float3&.";
-	INTERP_SCRIPT_IDENTIFIERS["yzw"] = "Returns y, z and w as a Float3&.";
 
 	// Float2x2
 	cs::utility::add_class<Float2x2>(*INTERP_SCRIPT_MODULE, "Float2x2",
@@ -427,8 +413,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const Float2x2& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Float2x2"] = "Two float wide square matrix.";
-	INTERP_SCRIPT_IDENTIFIERS["determinant"] = "Returns the determinant of this matrix.";
 
 	// Float3x3
 	cs::utility::add_class<Float3x3>(*INTERP_SCRIPT_MODULE, "Float3x3",
@@ -462,7 +446,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const Float3x3& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Float3x3"] = "Three float wide square matrix.";
 
 	// Float4x4
 	cs::utility::add_class<Float4x4>(*INTERP_SCRIPT_MODULE, "Float4x4",
@@ -496,7 +479,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const Float4x4& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Float4x4"] = "Four float wide square matrix.";
 
 	// Complex
 	cs::utility::add_class<Complex>(*INTERP_SCRIPT_MODULE, "Complex",
@@ -535,9 +517,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const Complex& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Complex"] = "Two component imaginary number.";
-	INTERP_SCRIPT_MEMBERS["r"] = "r";
-	INTERP_SCRIPT_MEMBERS["i"] = "i";
 
 	// Quaternion
 	cs::utility::add_class<Quaternion>(*INTERP_SCRIPT_MODULE, "Quaternion",
@@ -579,7 +558,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const Quaternion& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Quaternion"] = "Four component imaginary number.";
 
 	// Vertex
 	cs::utility::add_class<kl::Vertex<float>>(*INTERP_SCRIPT_MODULE, "Vertex",
@@ -601,10 +579,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const kl::Vertex<float>& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Vertex"] = "A 3D point of a mesh.";
-	INTERP_SCRIPT_MEMBERS["world"] = "world";
-	INTERP_SCRIPT_MEMBERS["normal"] = "normal";
-	INTERP_SCRIPT_MEMBERS["texture"] = "texture";
 
 	// Triangle
 	cs::utility::add_class<kl::Triangle<float>>(*INTERP_SCRIPT_MODULE, "Triangle",
@@ -623,10 +597,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const kl::Triangle<float>& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Triangle"] = "A 3D triangle in space.";
-	INTERP_SCRIPT_MEMBERS["a"] = "a";
-	INTERP_SCRIPT_MEMBERS["b"] = "b";
-	INTERP_SCRIPT_MEMBERS["c"] = "c";
 
 	// Plane
 	cs::utility::add_class<kl::Plane<float>>(*INTERP_SCRIPT_MODULE, "Plane",
@@ -648,11 +618,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const kl::Plane<float>& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Plane"] = "A 3D plane in space.";
-	INTERP_SCRIPT_MEMBERS["origin"] = "origin";
-	INTERP_SCRIPT_IDENTIFIERS["set_normal"] = "Normalizes and sets the normal.";
-	INTERP_SCRIPT_IDENTIFIERS["normal"] = "Returns the normalized normal.";
-	INTERP_SCRIPT_IDENTIFIERS["in_front"] = "Checks if a 3D point is in front of the plane.";
 
 	// Sphere
 	cs::utility::add_class<kl::Sphere<float>>(*INTERP_SCRIPT_MODULE, "Sphere",
@@ -670,8 +635,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const kl::Sphere<float>& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Sphere"] = "A 3D sphere in space.";
-	INTERP_SCRIPT_MEMBERS["radius"] = "radius";
 
 	// Ray
 	cs::utility::add_class<kl::Ray<float>>(*INTERP_SCRIPT_MODULE, "Ray",
@@ -698,13 +661,6 @@ const int load_types = [&]
 
 		{ cs::fun([](const kl::Ray<float>& object) { return kl::format(object); }), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Ray"] = "A 3D ray in space.";
-	INTERP_SCRIPT_IDENTIFIERS["set_direction"] = "Sets the normalized direction.";
-	INTERP_SCRIPT_IDENTIFIERS["direction"] = "Returns the normalized direction.";
-	INTERP_SCRIPT_IDENTIFIERS["intersect_plane"] = "Ray intersects plane.";
-	INTERP_SCRIPT_IDENTIFIERS["intersect_triangle"] = "Ray intersects triangle.";
-	INTERP_SCRIPT_IDENTIFIERS["can_intersect_sphere"] = "Checks if this ray can intersect a sphere.";
-	INTERP_SCRIPT_IDENTIFIERS["intersect_sphere"] = "Ray intersects sphere.";
 
 	// Color
 	cs::utility::add_class<Color>(*INTERP_SCRIPT_MODULE, "Color",
@@ -740,15 +696,6 @@ const int load_types = [&]
 				", ", int(object.a), ')');
 		}), "to_string" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Color"] = "Four component byte[0, 255] color.";
-	INTERP_SCRIPT_MEMBERS["r"] = "r";
-	INTERP_SCRIPT_MEMBERS["g"] = "g";
-	INTERP_SCRIPT_MEMBERS["b"] = "b";
-	INTERP_SCRIPT_MEMBERS["a"] = "a";
-	INTERP_SCRIPT_IDENTIFIERS["gray"] = "Returns the color as gray.";
-	INTERP_SCRIPT_IDENTIFIERS["inverted"] = "Inverts the color channels.";
-	INTERP_SCRIPT_IDENTIFIERS["as_ascii"] = "Converts the color to closes ascii char.";
-	INTERP_SCRIPT_IDENTIFIERS["mix"] = "Mixes two colors.";
 
 	// Mesh
 	cs::utility::add_class<Mesh>(*INTERP_SCRIPT_MODULE, "Mesh",
@@ -761,11 +708,6 @@ const int load_types = [&]
 
 		{ cs::fun(&Mesh::reload), "reload" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Mesh"] = "Object that contains triangle data.";
-	INTERP_SCRIPT_MEMBERS["data_buffer"] = "data_buffer";
-	INTERP_SCRIPT_MEMBERS["topology"] = "topology";
-	INTERP_SCRIPT_MEMBERS["render_wireframe"] = "render_wireframe";
-	INTERP_SCRIPT_IDENTIFIERS["reload"] = "Reloads the self.";
 
 	// Animation
 	cs::utility::add_class<Animation>(*INTERP_SCRIPT_MODULE, "Animation",
@@ -782,14 +724,6 @@ const int load_types = [&]
 
 		{ cs::fun(&Animation::update), "update" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Animation"] = "Mesh animation descriptor.";
-	INTERP_SCRIPT_MEMBERS["animation_type"] = "animation_type";
-	INTERP_SCRIPT_MEMBERS["ticks_per_second"] = "ticks_per_second";
-	INTERP_SCRIPT_MEMBERS["duration_in_ticks"] = "duration_in_ticks";
-	INTERP_SCRIPT_MEMBERS["meshes"] = "meshes";
-	INTERP_SCRIPT_MEMBERS["get_index"] = "Returns the index for the given time.";
-	INTERP_SCRIPT_MEMBERS["get_mesh"] = "Returns the mesh for the given time.";
-	INTERP_SCRIPT_MEMBERS["update"] = "Updates the matrices of the animation.";
 
 	// Texture
 	cs::utility::add_class<Texture>(*INTERP_SCRIPT_MODULE, "Texture",
@@ -805,13 +739,6 @@ const int load_types = [&]
 		{ cs::fun(&Texture::create_shader_view), "create_shader_view" },
 		{ cs::fun(&Texture::create_access_view), "create_access_view" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Texture"] = "Object that contains pixel data.";
-	INTERP_SCRIPT_IDENTIFIERS["reload_as_2D"] = "Reloads the texture as 2D.";
-	INTERP_SCRIPT_IDENTIFIERS["reload_as_cube"] = "Reloads the texture as a cube map.";
-	INTERP_SCRIPT_IDENTIFIERS["create_target_view"] = "Creates target view for this texture.";
-	INTERP_SCRIPT_IDENTIFIERS["create_depth_view"] = "Creates depth view for this texture.";
-	INTERP_SCRIPT_IDENTIFIERS["create_shader_view"] = "Creates shader view for this texture.";
-	INTERP_SCRIPT_IDENTIFIERS["create_access_view"] = "Creates access view for this texture.";
 
 	// Material
 	cs::utility::add_class<Material>(*INTERP_SCRIPT_MODULE, "Material",
@@ -832,17 +759,6 @@ const int load_types = [&]
 
 		{ cs::fun(&Material::shader_name), "shader_name" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Material"] = "Object that defines the look of the entity.";
-	INTERP_SCRIPT_MEMBERS["color"] = "color";
-	INTERP_SCRIPT_MEMBERS["texture_blend"] = "texture_blend";
-	INTERP_SCRIPT_MEMBERS["reflection_factor"] = "reflection_factor";
-	INTERP_SCRIPT_MEMBERS["refraction_factor"] = "refraction_factor";
-	INTERP_SCRIPT_MEMBERS["refraction_index"] = "refraction_index";
-	INTERP_SCRIPT_MEMBERS["custom_data"] = "custom_data";
-	INTERP_SCRIPT_MEMBERS["color_map_name"] = "color_map_name";
-	INTERP_SCRIPT_MEMBERS["normal_map_name"] = "normal_map_name";
-	INTERP_SCRIPT_MEMBERS["roughness_map_name"] = "roughness_map_name";
-	INTERP_SCRIPT_MEMBERS["shader_name"] = "shader_name";
 
 	// Shader
 	cs::utility::add_class<Shader>(*INTERP_SCRIPT_MODULE, "Shader",
@@ -853,8 +769,6 @@ const int load_types = [&]
 
 		{ cs::fun(&Shader::reload), "reload" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Shader"] = "Custom shader override for a material.";
-	INTERP_SCRIPT_MEMBERS["shader_type"] = "Shader type.";
 
 	// Entity
 	cs::utility::add_class<Entity>(*INTERP_SCRIPT_MODULE, "Entity",
@@ -891,28 +805,6 @@ const int load_types = [&]
 		{ cs::fun(&Entity::set_angular), "set_angular" },
 		{ cs::fun(&Entity::angular), "angular" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Entity"] = "Base entity that's a part of a scene.";
-	INTERP_SCRIPT_MEMBERS["scale"] = "scale";
-	INTERP_SCRIPT_MEMBERS["casts_shadows"] = "casts_shadows";
-	INTERP_SCRIPT_MEMBERS["animation_name"] = "animation_name";
-	INTERP_SCRIPT_MEMBERS["material_name"] = "material_name";
-	INTERP_SCRIPT_MEMBERS["collider_mesh_name"] = "collider_mesh_name";
-	INTERP_SCRIPT_IDENTIFIERS["model_matrix"] = "Returns the model matrix of entity.";
-	INTERP_SCRIPT_IDENTIFIERS["collider_matrix"] = "Returns the collider matrix of entity.";
-	INTERP_SCRIPT_IDENTIFIERS["set_rotation"] = "Sets the entity rotation.";
-	INTERP_SCRIPT_IDENTIFIERS["rotation"] = "Returns entity rotation.";
-	INTERP_SCRIPT_IDENTIFIERS["set_position"] = "Sets the entity position.";
-	INTERP_SCRIPT_IDENTIFIERS["position"] = "Returns the entity position.";
-	INTERP_SCRIPT_IDENTIFIERS["set_dynamic"] = "Changes the dynamic state of entity.";
-	INTERP_SCRIPT_IDENTIFIERS["is_dynamic"] = "Returns the dynamic state of entity.";
-	INTERP_SCRIPT_IDENTIFIERS["set_gravity"] = "Sets the gravity state.";
-	INTERP_SCRIPT_IDENTIFIERS["has_gravity"] = "Returns the gravity state.";
-	INTERP_SCRIPT_IDENTIFIERS["set_mass"] = "Sets the mass of entity.";
-	INTERP_SCRIPT_IDENTIFIERS["mass"] = "Returns the mass of entity.";
-	INTERP_SCRIPT_IDENTIFIERS["set_velocity"] = "Sets the directional velocity of entity.";
-	INTERP_SCRIPT_IDENTIFIERS["velocity"] = "Returns the directional velocity of entity.";
-	INTERP_SCRIPT_IDENTIFIERS["set_angular"] = "Sets the angular velocity of entity.";
-	INTERP_SCRIPT_IDENTIFIERS["angular"] = "Returns the angular velocity of entity.";
 
 	// Camera
 	cs::utility::add_class<Camera>(*INTERP_SCRIPT_MODULE, "Camera",
@@ -956,36 +848,6 @@ const int load_types = [&]
 		{ cs::fun(&Camera::projection_matrix), "projection_matrix" },
 		{ cs::fun(&Camera::camera_matrix), "camera_matrix" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Camera"] = "Entity that has a view of the scene.";
-	INTERP_SCRIPT_MEMBERS["camera_type"] = "camera_type";
-	INTERP_SCRIPT_MEMBERS["aspect_ratio"] = "aspect_ratio";
-	INTERP_SCRIPT_MEMBERS["field_of_view"] = "field_of_view";
-	INTERP_SCRIPT_MEMBERS["width"] = "width";
-	INTERP_SCRIPT_MEMBERS["height"] = "height";
-	INTERP_SCRIPT_MEMBERS["near_plane"] = "near_plane";
-	INTERP_SCRIPT_MEMBERS["far_plane"] = "far_plane";
-	INTERP_SCRIPT_MEMBERS["sensitivity"] = "sensitivity";
-	INTERP_SCRIPT_MEMBERS["speed"] = "speed";
-	INTERP_SCRIPT_MEMBERS["background"] = "background";
-	INTERP_SCRIPT_MEMBERS["custom_data"] = "custom_data";
-	INTERP_SCRIPT_MEMBERS["skybox_name"] = "skybox_name";
-	INTERP_SCRIPT_MEMBERS["shader_name"] = "shader_name";
-	INTERP_SCRIPT_IDENTIFIERS["update_aspect_ratio"] = "Sets the camera's aspect ratio.";
-	INTERP_SCRIPT_IDENTIFIERS["set_forward"] = "Sets the normalized forward vector of camera.";
-	INTERP_SCRIPT_IDENTIFIERS["forward"] = "Returns the normalized forward vector of camera.";
-	INTERP_SCRIPT_IDENTIFIERS["set_up"] = "Sets the normalized up vector of camera.";
-	INTERP_SCRIPT_IDENTIFIERS["up"] = "Returns the normalized up vector of camera.";
-	INTERP_SCRIPT_IDENTIFIERS["right"] = "Returns the normalized right vector of camera.";
-	INTERP_SCRIPT_IDENTIFIERS["move_forward"] = "Moves the camera forward.";
-	INTERP_SCRIPT_IDENTIFIERS["move_back"] = "Moves the camera back.";
-	INTERP_SCRIPT_IDENTIFIERS["move_right"] = "Moves the camera right.";
-	INTERP_SCRIPT_IDENTIFIERS["move_left"] = "Moves the camera left.";
-	INTERP_SCRIPT_IDENTIFIERS["move_up"] = "Moves the camera up.";
-	INTERP_SCRIPT_IDENTIFIERS["move_down"] = "Moves the camera down.";
-	INTERP_SCRIPT_IDENTIFIERS["rotate"] = "Handles the camera rotation with a mouse.";
-	INTERP_SCRIPT_IDENTIFIERS["view_matrix"] = "Returns the camera's view matrix.";
-	INTERP_SCRIPT_IDENTIFIERS["projection_matrix"] = "Returns the camera's projection matrix.";
-	INTERP_SCRIPT_IDENTIFIERS["camera_matrix"] = "Returns the camera's matrix.";
 
 	// Light
 	cs::utility::add_class<Light>(*INTERP_SCRIPT_MODULE, "Light",
@@ -993,8 +855,6 @@ const int load_types = [&]
 	{
 		{ cs::fun(&Light::light_at_point), "light_at_point" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Light"] = "Base class of every light class.";
-	INTERP_SCRIPT_IDENTIFIERS["light_at_point"] = "Returns the lights intensity at some 3D point.";
 
 	// Ambient light
 	cs::utility::add_class<AmbientLight>(*INTERP_SCRIPT_MODULE, "AmbientLight",
@@ -1003,9 +863,6 @@ const int load_types = [&]
 		{ cs::fun(&AmbientLight::color), "color" },
 		{ cs::fun(&AmbientLight::intensity), "intensity" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["AmbientLight"] = "Non directional light at shines at all points.";
-	INTERP_SCRIPT_MEMBERS["color"] = "color";
-	INTERP_SCRIPT_MEMBERS["intensity"] = "intensity";
 
 	// Point light
 	cs::utility::add_class<PointLight>(*INTERP_SCRIPT_MODULE, "PointLight",
@@ -1013,7 +870,6 @@ const int load_types = [&]
 	{
 		{ cs::fun(&PointLight::color), "color" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["PointLight"] = "Light that shines in all directions.";
 
 	// Directional light
 	cs::utility::add_class<DirectionalLight>(*INTERP_SCRIPT_MODULE, "DirectionalLight",
@@ -1029,10 +885,6 @@ const int load_types = [&]
 
 		{ cs::fun(&DirectionalLight::light_matrix), "light_matrix" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["DirectionalLight"] = "Light that shines in a single direction and is infinitely far away.";
-	INTERP_SCRIPT_MEMBERS["point_size"] = "point_size";
-	INTERP_SCRIPT_IDENTIFIERS["map_resolution"] = "Returns the shadow map resolution of directional light.";
-	INTERP_SCRIPT_IDENTIFIERS["light_matrix"] = "Returns the light matrix.";
 
 	// Scene
 	cs::utility::add_class<Scene>(*INTERP_SCRIPT_MODULE, "Scene",
@@ -1092,50 +944,6 @@ const int load_types = [&]
 		{ cs::fun<PointLight* (Scene::*)(const StringView&)>(&Scene::get_casted<PointLight>), "get_point_light" },
 		{ cs::fun<DirectionalLight* (Scene::*)(const StringView&)>(&Scene::get_casted<DirectionalLight>), "get_directional_light" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Scene"] = "Collection of meshes, textures, materials, scripts and entities.";
-	INTERP_SCRIPT_MEMBERS["main_camera_name"] = "main_camera_name";
-	INTERP_SCRIPT_MEMBERS["main_ambient_light_name"] = "main_ambient_light_name";
-	INTERP_SCRIPT_MEMBERS["main_directional_light_name"] = "main_directional_light_name";
-	INTERP_SCRIPT_IDENTIFIERS["new_mesh"] = "Creates a new mesh in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["new_animation"] = "Creates a new animation in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["new_texture"] = "Creates a new texture in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["new_material"] = "Creates a new material in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["new_shader"] = "Creates a new shader in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["new_entity"] = "Creates a new entity in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["get_mesh"] = "Returns a scene mesh.";
-	INTERP_SCRIPT_IDENTIFIERS["get_animation"] = "Returns a scene animation.";
-	INTERP_SCRIPT_IDENTIFIERS["get_texture"] = "Returns a scene texture.";
-	INTERP_SCRIPT_IDENTIFIERS["get_material"] = "Returns a scene material.";
-	INTERP_SCRIPT_IDENTIFIERS["get_shader"] = "Returns a scene shader.";
-	INTERP_SCRIPT_IDENTIFIERS["get_entity"] = "Returns a scene entity.";
-	INTERP_SCRIPT_IDENTIFIERS["remove_mesh"] = "Removes a mesh from scene.";
-	INTERP_SCRIPT_IDENTIFIERS["remove_animation"] = "Removes an animation from scene.";
-	INTERP_SCRIPT_IDENTIFIERS["remove_texture"] = "Removes a texture from scene.";
-	INTERP_SCRIPT_IDENTIFIERS["remove_material"] = "Removes a material from scene.";
-	INTERP_SCRIPT_IDENTIFIERS["remove_shader"] = "Removes a shader from scene.";
-	INTERP_SCRIPT_IDENTIFIERS["remove_entity"] = "Removes an entity from scene.";
-	INTERP_SCRIPT_IDENTIFIERS["contains_mesh"] = "Returns true if scene contains the mesh.";
-	INTERP_SCRIPT_IDENTIFIERS["contains_animation"] = "Returns true if scene contains the animation.";
-	INTERP_SCRIPT_IDENTIFIERS["contains_texture"] = "Returns true if scene contains the texture.";
-	INTERP_SCRIPT_IDENTIFIERS["contains_material"] = "Returns true if scene contains the material.";
-	INTERP_SCRIPT_IDENTIFIERS["contains_shader"] = "Returns true if scene contains the shader.";
-	INTERP_SCRIPT_IDENTIFIERS["contains_entity"] = "Returns true if scene contains the entity.";
-	INTERP_SCRIPT_IDENTIFIERS["mesh_count"] = "Returns an integer count of meshes in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["animation_count"] = "Returns an integer count of animations in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["texture_count"] = "Returns an integer count of texture in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["material_count"] = "Returns an integer count of materials in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["shader_count"] = "Returns an integer count of shaders in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["entity_count"] = "Returns an integer count of entities in scene.";
-	INTERP_SCRIPT_IDENTIFIERS["get_all_meshes"] = "Returns a map of all scene meshes.";
-	INTERP_SCRIPT_IDENTIFIERS["get_all_animations"] = "Returns a map of all scene animations.";
-	INTERP_SCRIPT_IDENTIFIERS["get_all_textures"] = "Returns a map of all scene textures.";
-	INTERP_SCRIPT_IDENTIFIERS["get_all_materials"] = "Returns a map of all scene materials.";
-	INTERP_SCRIPT_IDENTIFIERS["get_all_shaders"] = "Returns a map of all scene shaders.";
-	INTERP_SCRIPT_IDENTIFIERS["get_all_entities"] = "Returns a map of all scene entities.";
-	INTERP_SCRIPT_IDENTIFIERS["get_camera"] = "Returns a scene camera.";
-	INTERP_SCRIPT_IDENTIFIERS["get_ambient_light"] = "Returns a scene ambient light.";
-	INTERP_SCRIPT_IDENTIFIERS["get_point_light"] = "Returns a scene point light.";
-	INTERP_SCRIPT_IDENTIFIERS["get_directional_light"] = "Returns a scene directional light.";
 
 	// Key
 	cs::utility::add_class<kl::Key>(*INTERP_SCRIPT_MODULE, "Key",
@@ -1143,8 +951,6 @@ const int load_types = [&]
 	{
 		{ cs::fun(&kl::Key::is_down), "is_down" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Key"] = "Class representing a single keyboard or a mouse button.";
-	INTERP_SCRIPT_IDENTIFIERS["is_down"] = "Returns the down state of key.";
 
 	// Keyboard
 	cs::utility::add_class<kl::Keyboard>(*INTERP_SCRIPT_MODULE, "Keyboard",
@@ -1222,73 +1028,6 @@ const int load_types = [&]
 		{ cs::fun(&kl::Keyboard::f11), "f11" },
 		{ cs::fun(&kl::Keyboard::f12), "f12" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Keyboard"] = "Class representing a physical keyboard.";
-	INTERP_SCRIPT_MEMBERS["q"] = "q";
-	INTERP_SCRIPT_MEMBERS["w"] = "w";
-	INTERP_SCRIPT_MEMBERS["e"] = "e";
-	INTERP_SCRIPT_MEMBERS["r"] = "r";
-	INTERP_SCRIPT_MEMBERS["t"] = "t";
-	INTERP_SCRIPT_MEMBERS["z"] = "z";
-	INTERP_SCRIPT_MEMBERS["u"] = "u";
-	INTERP_SCRIPT_MEMBERS["i"] = "i";
-	INTERP_SCRIPT_MEMBERS["o"] = "o";
-	INTERP_SCRIPT_MEMBERS["p"] = "p";
-	INTERP_SCRIPT_MEMBERS["a"] = "a";
-	INTERP_SCRIPT_MEMBERS["s"] = "s";
-	INTERP_SCRIPT_MEMBERS["d"] = "d";
-	INTERP_SCRIPT_MEMBERS["f"] = "f";
-	INTERP_SCRIPT_MEMBERS["g"] = "g";
-	INTERP_SCRIPT_MEMBERS["h"] = "h";
-	INTERP_SCRIPT_MEMBERS["j"] = "j";
-	INTERP_SCRIPT_MEMBERS["k"] = "k";
-	INTERP_SCRIPT_MEMBERS["l"] = "l";
-	INTERP_SCRIPT_MEMBERS["y"] = "y";
-	INTERP_SCRIPT_MEMBERS["x"] = "x";
-	INTERP_SCRIPT_MEMBERS["c"] = "c";
-	INTERP_SCRIPT_MEMBERS["v"] = "v";
-	INTERP_SCRIPT_MEMBERS["b"] = "b";
-	INTERP_SCRIPT_MEMBERS["n"] = "n";
-	INTERP_SCRIPT_MEMBERS["m"] = "m";
-	INTERP_SCRIPT_MEMBERS["num0"] = "num0";
-	INTERP_SCRIPT_MEMBERS["num1"] = "num1";
-	INTERP_SCRIPT_MEMBERS["num2"] = "num2";
-	INTERP_SCRIPT_MEMBERS["num3"] = "num3";
-	INTERP_SCRIPT_MEMBERS["num4"] = "num4";
-	INTERP_SCRIPT_MEMBERS["num5"] = "num5";
-	INTERP_SCRIPT_MEMBERS["num6"] = "num6";
-	INTERP_SCRIPT_MEMBERS["num7"] = "num7";
-	INTERP_SCRIPT_MEMBERS["num8"] = "num8";
-	INTERP_SCRIPT_MEMBERS["num9"] = "num9";
-	INTERP_SCRIPT_MEMBERS["period"] = "period";
-	INTERP_SCRIPT_MEMBERS["comma"] = "comma";
-	INTERP_SCRIPT_MEMBERS["plus"] = "plus";
-	INTERP_SCRIPT_MEMBERS["minus"] = "minus";
-	INTERP_SCRIPT_MEMBERS["esc"] = "esc";
-	INTERP_SCRIPT_MEMBERS["tab"] = "tab";
-	INTERP_SCRIPT_MEMBERS["caps"] = "caps";
-	INTERP_SCRIPT_MEMBERS["shift"] = "shift";
-	INTERP_SCRIPT_MEMBERS["ctrl"] = "ctrl";
-	INTERP_SCRIPT_MEMBERS["alt"] = "alt";
-	INTERP_SCRIPT_MEMBERS["space"] = "space";
-	INTERP_SCRIPT_MEMBERS["enter"] = "enter";
-	INTERP_SCRIPT_MEMBERS["insert"] = "insert";
-	INTERP_SCRIPT_MEMBERS["delet"] = "delet";
-	INTERP_SCRIPT_MEMBERS["up"] = "up";
-	INTERP_SCRIPT_MEMBERS["left"] = "left";
-	INTERP_SCRIPT_MEMBERS["down"] = "down";
-	INTERP_SCRIPT_MEMBERS["right"] = "right";
-	INTERP_SCRIPT_MEMBERS["f1"] = "f1";
-	INTERP_SCRIPT_MEMBERS["f2"] = "f2";
-	INTERP_SCRIPT_MEMBERS["f3"] = "f3";
-	INTERP_SCRIPT_MEMBERS["f4"] = "f4";
-	INTERP_SCRIPT_MEMBERS["f5"] = "f5";
-	INTERP_SCRIPT_MEMBERS["f6"] = "f6";
-	INTERP_SCRIPT_MEMBERS["f7"] = "f7";
-	INTERP_SCRIPT_MEMBERS["f8"] = "f8";
-	INTERP_SCRIPT_MEMBERS["f9"] = "f9";
-	INTERP_SCRIPT_MEMBERS["f10"] = "f10";
-	INTERP_SCRIPT_MEMBERS["f11"] = "f11";
-	INTERP_SCRIPT_MEMBERS["f12"] = "f12";
 
 	// Mouse
 	cs::utility::add_class<kl::Mouse>(*INTERP_SCRIPT_MODULE, "Mouse",
@@ -1307,14 +1046,6 @@ const int load_types = [&]
 		{ cs::fun(&kl::Mouse::normalized_position), "normalized_position" },
 		{ cs::fun(&kl::Mouse::scroll), "scroll" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["Mouse"] = "Class representing a physical mouse.";
-	INTERP_SCRIPT_MEMBERS["left"] = "left";
-	INTERP_SCRIPT_MEMBERS["middle"] = "middle";
-	INTERP_SCRIPT_MEMBERS["right"] = "right";
-	INTERP_SCRIPT_IDENTIFIERS["set_hidden"] = "Sets the mouse hidden state.";
-	INTERP_SCRIPT_IDENTIFIERS["is_hidden"] = "Returns the mouse hidden state.";
-	INTERP_SCRIPT_IDENTIFIERS["normalized_position"] = "Returns the normalized position.";
-	INTERP_SCRIPT_IDENTIFIERS["scroll"] = "Returns the mouse scroll value.";
 
 	// Window
 	cs::utility::add_class<kl::Window>(*INTERP_SCRIPT_MODULE, "Window",
@@ -1342,27 +1073,6 @@ const int load_types = [&]
 		{ cs::fun(&kl::Window::set_title), "set_title" },
 		{ cs::fun(&kl::Window::set_icon), "set_icon" },
 	});
-	INTERP_SCRIPT_IDENTIFIERS["is_open"] = "Returns true if the window is open, false otherwise.";
-	INTERP_SCRIPT_IDENTIFIERS["close"] = "Closes the window.";
-	INTERP_SCRIPT_IDENTIFIERS["is_resizeable"] = "Returns true if the window is resizeable, false otherwise.";
-	INTERP_SCRIPT_IDENTIFIERS["set_resizeable"] = "Enables or disables window resizing feature.";
-	INTERP_SCRIPT_IDENTIFIERS["maximize"] = "Maximizes the window.";
-	INTERP_SCRIPT_IDENTIFIERS["minimize"] = "Minimizes the window.";
-	INTERP_SCRIPT_IDENTIFIERS["restore"] = "Restores the window.";
-	INTERP_SCRIPT_IDENTIFIERS["in_fullscreen"] = "Returns true if the window is in fullscreen mode, false otherwise.";
-	INTERP_SCRIPT_IDENTIFIERS["set_fullscreen"] = "Enables or disables window fullscreen mode.";
-	INTERP_SCRIPT_IDENTIFIERS["position"] = "Returns the window position on screen as Int2.";
-	INTERP_SCRIPT_IDENTIFIERS["set_position"] = "Sets the window position on screen.";
-	INTERP_SCRIPT_IDENTIFIERS["width"] = "Returns the window width. (true for client area, false for full window)";
-	INTERP_SCRIPT_IDENTIFIERS["set_width"] = "Sets the window width. (true for client area, false for full window)";
-	INTERP_SCRIPT_IDENTIFIERS["height"] = "Returns the window height. (true for client area, false for full window)";
-	INTERP_SCRIPT_IDENTIFIERS["set_height"] = "Sets the window height. (true for client area, false for full window)";
-	INTERP_SCRIPT_IDENTIFIERS["size"] = "Returns the window size. (true for client area, false for full window)";
-	INTERP_SCRIPT_IDENTIFIERS["resize"] = "Sets the window size. (true for client area, false for full window)";
-	INTERP_SCRIPT_IDENTIFIERS["aspect_ratio"] = "Returns the window aspect ratio. (width / height)";
-	INTERP_SCRIPT_IDENTIFIERS["frame_center"] = "Returns the window center point as Int2.";
-	INTERP_SCRIPT_IDENTIFIERS["set_title"] = "Sets the window title.";
-	INTERP_SCRIPT_IDENTIFIERS["set_icon"] = "Sets the window icon by passing a path to the icon file.";
 
 	return 0;
 }();
@@ -1377,11 +1087,6 @@ const int load_constants = [&]
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((float) kl::TO_DEGREES), "TO_DEGREES");
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((float) kl::TO_FLOAT_COLOR), "TO_FLOAT_COLOR");
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((float) kl::TO_BYTE_COLOR), "TO_BYTE_COLOR");
-	INTERP_SCRIPT_IDENTIFIERS["PI"] = "Constant of a number PI (3.1415...).";
-	INTERP_SCRIPT_IDENTIFIERS["TO_RADIANS"] = "Constant for converting degrees to radians (PI / 180).";
-	INTERP_SCRIPT_IDENTIFIERS["TO_DEGREES"] = "Constant for converting degrees to radians (180 / PI).";
-	INTERP_SCRIPT_IDENTIFIERS["TO_FLOAT_COLOR"] = "Constant for converting byte color to float color (1 / 255).";
-	INTERP_SCRIPT_IDENTIFIERS["TO_BYTE_COLOR"] = "Constant for converting float color to byte color (255 / 1).";
 
 	// Colors
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::CONSOLE), "CONSOLE");
@@ -1399,47 +1104,23 @@ const int load_constants = [&]
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::CRIMSON), "CRIMSON");
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::WHEAT), "WHEAT");
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((Color) kl::colors::SKY), "SKY");
-	INTERP_SCRIPT_IDENTIFIERS["CONSOLE"] = "Constant color (204, 204, 204).";
-	INTERP_SCRIPT_IDENTIFIERS["BLACK"] = "Constant color (0, 0, 0).";
-	INTERP_SCRIPT_IDENTIFIERS["WHITE"] = "Constant color (255, 255, 255).";
-	INTERP_SCRIPT_IDENTIFIERS["GRAY"] = "Constant color (50, 50, 50).";
-	INTERP_SCRIPT_IDENTIFIERS["RED"] = "Constant color (255, 0, 0).";
-	INTERP_SCRIPT_IDENTIFIERS["GREEN"] = "Constant color (0, 255, 0).";
-	INTERP_SCRIPT_IDENTIFIERS["BLUE"] = "Constant color (0, 0, 255).";
-	INTERP_SCRIPT_IDENTIFIERS["CYAN"] = "Constant color (30, 180, 170).";
-	INTERP_SCRIPT_IDENTIFIERS["PURPLE"] = "Constant color (220, 0, 220).";
-	INTERP_SCRIPT_IDENTIFIERS["YELLOW"] = "Constant color (220, 220, 0).";
-	INTERP_SCRIPT_IDENTIFIERS["ORANGE"] = "Constant color (255, 140, 0).";
-	INTERP_SCRIPT_IDENTIFIERS["MAGENTA"] = "Constant color (155, 0, 155).";
-	INTERP_SCRIPT_IDENTIFIERS["CRIMSON"] = "Constant color (100, 0, 0).";
-	INTERP_SCRIPT_IDENTIFIERS["WHEAT"] = "Constant color (245, 220, 180).";
-	INTERP_SCRIPT_IDENTIFIERS["SKY"] = "Constant color (190, 245, 255).";
 
 	// Mesh
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) D3D_PRIMITIVE_TOPOLOGY_POINTLIST), "TOPOLOGY_POINTS");
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) D3D_PRIMITIVE_TOPOLOGY_LINELIST), "TOPOLOGY_LINES");
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST), "TOPOLOGY_TRIANGLES");
-	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_POINTS"] = "Makes the rasterizer rasterize this mesh as an array of POINTS.";
-	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_LINES"] = "Makes the rasterizer rasterize this mesh as an array of LINES.";
-	INTERP_SCRIPT_IDENTIFIERS["TOPOLOGY_TRIANGLES"] = "Makes the rasterizer rasterize this mesh as an array of TRIANGLES.";
 
 	// Animation
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) AnimationType::SEQUENTIAL), "ANIMATION_SEQUENTIAL");
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) AnimationType::SKELETAL), "ANIMATION_SKELETAL");
-	INTERP_SCRIPT_IDENTIFIERS["ANIMATION_SEQUENTIAL"] = "Sequential animation.";
-	INTERP_SCRIPT_IDENTIFIERS["ANIMATION_SKELETAL"] = "Skeletal animation.";
 
 	// Shader
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) ShaderType::MATERIAL), "SHADER_MATERIAL");
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) ShaderType::CAMERA), "SHADER_CAMERA");
-	INTERP_SCRIPT_IDENTIFIERS["SHADER_MATERIAL"] = "Shader that can be applied to a mesh.";
-	INTERP_SCRIPT_IDENTIFIERS["SHADER_CAMERA"] = "Shader that can be applied to a camera.";
 
 	// Camera
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) CameraType::PERSPECTIVE), "CAMERA_PERSPECTIVE");
 	INTERP_SCRIPT_MODULE->add_global_const(cs::const_var((int) CameraType::ORTHOGRAPHIC), "CAMERA_ORTHOGRAPHIC");
-	INTERP_SCRIPT_IDENTIFIERS["CAMERA_PERSPECTIVE"] = "Camera that has a perspective view of the scene.";
-	INTERP_SCRIPT_IDENTIFIERS["CAMERA_ORTHOGRAPHIC"] = "Camera that has an orthographic view of the scene.";
 
 	return 0;
 }();
@@ -1449,51 +1130,27 @@ const int load_functions = [&]
 	using namespace titian;
 
 	// Var info
-	INTERP_SCRIPT_MODULE->eval("global is_null = fun(object) { return is_var_null(object); }");
-	INTERP_SCRIPT_MODULE->eval("global is_valid = fun(object) { return !is_null(object); }");
-	INTERP_SCRIPT_MODULE->eval("global get_type = fun(object) { return type_name(object); }");
-	INTERP_SCRIPT_IDENTIFIERS["is_null"] = "Returns true if the given object IS null, false otherwise.";
-	INTERP_SCRIPT_IDENTIFIERS["is_valid"] = "Returns true if the given object IS NOT null, false otherwise.";
-	INTERP_SCRIPT_IDENTIFIERS["get_type"] = "Returns the type name (string) of the given object.";
-
-	// Casting
-	INTERP_SCRIPT_IDENTIFIERS["to_string"] = "Converts the given object to a string.";
-	INTERP_SCRIPT_IDENTIFIERS["to_float"] = "Converts the given object to a float.";
-	INTERP_SCRIPT_IDENTIFIERS["to_int"] = "Converts the given object to an int.";
-
-	// Calls
-	INTERP_SCRIPT_IDENTIFIERS["on_start"] = "Called once at the start of the game.";
-	INTERP_SCRIPT_IDENTIFIERS["on_update"] = "Called every frame of the game.";
-	INTERP_SCRIPT_IDENTIFIERS["on_collision"] = "Called every time a collision happens.";
-	INTERP_SCRIPT_IDENTIFIERS["on_ui"] = "Called every frame of the UI.";
+	INTERP_SCRIPT_MODULE->eval("def is_null(object) { return is_var_null(object); }");
+	INTERP_SCRIPT_MODULE->eval("def is_valid(object) { return !is_null(object); }");
+	INTERP_SCRIPT_MODULE->eval("def get_type(object) { return type_name(object); }");
 
 	// Logging
-	INTERP_SCRIPT_MODULE->add(cs::fun(&Logger::log<const StringView&>), "log");
-	INTERP_SCRIPT_MODULE->eval("global print = fun(object) { return log(to_string(object)); }");
-	INTERP_SCRIPT_IDENTIFIERS["log"] = "Outputs the given string to the log window.";
-	INTERP_SCRIPT_IDENTIFIERS["print"] = "Converts the given object to a string and logs it.";
+	INTERP_SCRIPT_MODULE->add(cs::fun(&Logger::log<const StringView&>), "log_str");
+	INTERP_SCRIPT_MODULE->eval("def log(object) { return log_str(to_string(object)); }");
 
 	// Time
 	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> float { return Layers::get<AppLayer>()->timer.elapsed(); }), "get_elapsed_t");
 	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> float { return Layers::get<AppLayer>()->timer.delta(); }), "get_delta_t");
-	INTERP_SCRIPT_IDENTIFIERS["get_elapsed_t"] = "Returns the elapsed time since the game start.";
-	INTERP_SCRIPT_IDENTIFIERS["get_delta_t"] = "Returns the time since the last frame.";
 
 	// Input
 	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Keyboard* { return &Layers::get<AppLayer>()->window.keyboard; }), "get_keyboard");
 	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Mouse* { return &Layers::get<AppLayer>()->window.mouse; }), "get_mouse");
 	INTERP_SCRIPT_MODULE->add(cs::fun([&]() -> kl::Window* { return &Layers::get<AppLayer>()->window; }), "get_window");
-	INTERP_SCRIPT_IDENTIFIERS["get_keyboard"] = "Returns a reference to the game keyboard.";
-	INTERP_SCRIPT_IDENTIFIERS["get_mouse"] = "Returns a reference to the game mouse.";
-	INTERP_SCRIPT_IDENTIFIERS["get_window"] = "Returns a reference to the game window.";
 
 	// Float3x3
 	INTERP_SCRIPT_MODULE->add(cs::fun(&Float3x3::translation), "Float3x3_translation");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&Float3x3::rotation), "Float3x3_rotation");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&Float3x3::scaling), "Float3x3_scaling");
-	INTERP_SCRIPT_IDENTIFIERS["Float3x3_translation"] = "Creates a 3x3 translation matrix.";
-	INTERP_SCRIPT_IDENTIFIERS["Float3x3_rotation"] = "Creates a 3x3 rotation matrix.";
-	INTERP_SCRIPT_IDENTIFIERS["Float3x3_scaling"] = "Creates a 3x3 scaling matrix.";
 
 	// Float4x4
 	INTERP_SCRIPT_MODULE->add(cs::fun(&Float4x4::translation), "Float4x4_translation");
@@ -1502,76 +1159,45 @@ const int load_functions = [&]
 	INTERP_SCRIPT_MODULE->add(cs::fun(&Float4x4::look_at), "Float4x4_look_at");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&Float4x4::perspective), "Float4x4_perspective");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&Float4x4::orthographic), "Float4x4_orthographic");
-	INTERP_SCRIPT_IDENTIFIERS["Float4x4_translation"] = "Creates a 4x4 translation matrix.";
-	INTERP_SCRIPT_IDENTIFIERS["Float4x4_rotation"] = "Creates a 4x4 rotation matrix.";
-	INTERP_SCRIPT_IDENTIFIERS["Float4x4_scaling"] = "Creates a 4x4 scaling matrix.";
-	INTERP_SCRIPT_IDENTIFIERS["Float4x4_look_at"] = "Creates a 4x4 look at matrix.";
-	INTERP_SCRIPT_IDENTIFIERS["Float4x4_perspective"] = "Creates a 4x4 perspective matrix.";
-	INTERP_SCRIPT_IDENTIFIERS["Float4x4_orthographic"] = "Creates a 4x4 orthographic matrix.";
 
 	// Math
 	INTERP_SCRIPT_MODULE->add(cs::fun<int (*)(int)>(&kl::abs), "abs");
 	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::abs), "abs");
-	INTERP_SCRIPT_IDENTIFIERS["abs"] = "Returns absolute value of the given value.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::sin), "sin");
 	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::cos), "cos");
 	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::tan), "tan");
-	INTERP_SCRIPT_IDENTIFIERS["sin"] = "Returns sin of the given angle in radians.";
-	INTERP_SCRIPT_IDENTIFIERS["cos"] = "Returns cos of the given angle in radians.";
-	INTERP_SCRIPT_IDENTIFIERS["tan"] = "Returns tan of the given angle in radians.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::asin), "asin");
 	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::acos), "acos");
 	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(float)>(&kl::atan), "atan");
-	INTERP_SCRIPT_IDENTIFIERS["asin"] = "Returns angle in radians of the given sin.";
-	INTERP_SCRIPT_IDENTIFIERS["acos"] = "Returns angle in radians of the given cos.";
-	INTERP_SCRIPT_IDENTIFIERS["atan"] = "Returns angle in radians of the given tan.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::sin_d<float>), "sin_d");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::cos_d<float>), "cos_d");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::tan_d<float>), "tan_d");
-	INTERP_SCRIPT_IDENTIFIERS["sin_d"] = "Returns sin of the given angle in degrees.";
-	INTERP_SCRIPT_IDENTIFIERS["cos_d"] = "Returns cos of the given angle in degrees.";
-	INTERP_SCRIPT_IDENTIFIERS["tan_d"] = "Returns tan of the given angle in degrees.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::asin_d<float>), "asin_d");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::acos_d<float>), "acos_d");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::atan_d<float>), "atan_d");
-	INTERP_SCRIPT_IDENTIFIERS["asin_d"] = "Returns angle in degrees of the given sin.";
-	INTERP_SCRIPT_IDENTIFIERS["acos_d"] = "Returns angle in degrees of the given cos.";
-	INTERP_SCRIPT_IDENTIFIERS["atan_d"] = "Returns angle in degrees of the given tan.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::calc_ndc<float>), "calc_ndc");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::calc_ndc_ar<float>), "calc_ndc_ar");
-	INTERP_SCRIPT_IDENTIFIERS["calc_ndc"] = "Converts coordinates into ndc.";
-	INTERP_SCRIPT_IDENTIFIERS["calc_ndc_ar"] = "Converts coordinates into ndc and applies aspect ratio.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::line_x<float>), "line_x");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::line_y<float>), "line_y");
-	INTERP_SCRIPT_IDENTIFIERS["line_x"] = "Calculates line x.";
-	INTERP_SCRIPT_IDENTIFIERS["line_y"] = "Calculates line y.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::lerp<float>), "lerp");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::unlerp<float>), "unlerp");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::clamp<float>), "clamp");
-	INTERP_SCRIPT_IDENTIFIERS["lerp"] = "Lerps the given value to the range [lower, upper].";
-	INTERP_SCRIPT_IDENTIFIERS["unlerp"] = "Unlerps the given value to the range [0, 1].";
-	INTERP_SCRIPT_IDENTIFIERS["clamp"] = "Clamps the given value between the given min and max.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun<Quaternion (*)(const Float3&)>(&kl::to_quaternion<float>), "to_quaternion");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Quaternion (*)(const Float3&, const Float3&)>(&kl::to_quaternion<float>), "to_quaternion");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Quaternion&)>(&kl::to_euler<float>), "to_euler");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&, const Float3&)>(&kl::to_euler<float>), "to_euler");
-	INTERP_SCRIPT_IDENTIFIERS["to_quaternion"] = "Converts the given euler angles to a quaternion.";
-	INTERP_SCRIPT_IDENTIFIERS["to_euler"] = "Converts the given quaternion to euler angles.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun<Complex (*)(const Complex&)>(&kl::abs), "abs");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Complex (*)(const Complex&)>(&kl::normalize), "normalize");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Complex (*)(const Complex&)>(&kl::inverse), "inverse");
-	INTERP_SCRIPT_IDENTIFIERS["abs"] = "Returns the absolute value.";
-	INTERP_SCRIPT_IDENTIFIERS["normalize"] = "Normalizes the given vector.";
-	INTERP_SCRIPT_IDENTIFIERS["inverse"] = "Returns the inverse of the given math object.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun<Quaternion (*)(const Quaternion&)>(&kl::abs), "abs");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Quaternion (*)(const Quaternion&)>(&kl::normalize), "normalize");
@@ -1585,10 +1211,6 @@ const int load_functions = [&]
 	INTERP_SCRIPT_MODULE->add(cs::fun<float (*)(Float2, Float2, bool)>(&kl::angle), "angle");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float2 (*)(const Float2&, float)>(&kl::rotate<float>), "rotate");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float2 (*)(const Float2&, const Float2&)>(&kl::reflect<float>), "reflect");
-	INTERP_SCRIPT_IDENTIFIERS["dot"] = "Returns the dot product of two vectors.";
-	INTERP_SCRIPT_IDENTIFIERS["angle"] = "Returns the angle in degrees between two vectors.";
-	INTERP_SCRIPT_IDENTIFIERS["rotate"] = "Returns the rotated vector.";
-	INTERP_SCRIPT_IDENTIFIERS["reflect"] = "Returns the reflected vector.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&)>(&kl::abs), "abs");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&)>(&kl::normalize), "normalize");
@@ -1597,7 +1219,6 @@ const int load_functions = [&]
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&, const Float3&, float)>(&kl::rotate<float>), "rotate");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&, Float3)>(&kl::reflect<float>), "reflect");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float3 (*)(const Float3&, const Float3&)>(&kl::cross<float>), "cross");
-	INTERP_SCRIPT_IDENTIFIERS["cross"] = "Returns the cross product of two vectors.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float4 (*)(const Float4&)>(&kl::abs), "abs");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float4 (*)(const Float4&)>(&kl::normalize), "normalize");
@@ -1607,7 +1228,6 @@ const int load_functions = [&]
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float2x2 (*)(const Float2x2&)>(&kl::abs), "abs");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float2x2 (*)(const Float2x2&)>(&kl::inverse), "inverse");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float2x2 (*)(const Float2x2&)>(&kl::transpose), "transpose");
-	INTERP_SCRIPT_IDENTIFIERS["transpose"] = "Returns the transposed matrix.";
 
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float3x3 (*)(const Float3x3&)>(&kl::abs), "abs");
 	INTERP_SCRIPT_MODULE->add(cs::fun<Float3x3 (*)(const Float3x3&)>(&kl::inverse), "inverse");
@@ -1628,25 +1248,13 @@ const int load_functions = [&]
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_color), "gen_random_color");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_char), "gen_random_char");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::random::gen_string), "gen_random_string");
-	INTERP_SCRIPT_IDENTIFIERS["gen_random_bool"] = "Generates a random bool.";
-	INTERP_SCRIPT_IDENTIFIERS["gen_random_int"] = "Generates a random integer (start_inclusive, end_exclusive).";
-	INTERP_SCRIPT_IDENTIFIERS["gen_random_float"] = "Generates a random float (start_inclusive, end_inclusive).";
-	INTERP_SCRIPT_IDENTIFIERS["gen_random_float2"] = "Generates a random float2 (start_inclusive, end_inclusive).";
-	INTERP_SCRIPT_IDENTIFIERS["gen_random_float3"] = "Generates a random float3 (start_inclusive, end_inclusive).";
-	INTERP_SCRIPT_IDENTIFIERS["gen_random_float4"] = "Generates a random float4 (start_inclusive, end_inclusive).";
-	INTERP_SCRIPT_IDENTIFIERS["gen_random_color"] = "Generates a random color (is_grayscale).";
-	INTERP_SCRIPT_IDENTIFIERS["gen_random_char"] = "Generates a random char (can_be_upper).";
-	INTERP_SCRIPT_IDENTIFIERS["gen_random_string"] = "Generates a random string (length).";
 
 	// Files
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::read_file), "read_file");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&kl::parse_obj_file), "parse_obj_file");
-	INTERP_SCRIPT_IDENTIFIERS["read_file"] = "Reads a file and returns a string.";
-	INTERP_SCRIPT_IDENTIFIERS["parse_obj_file"] = "Parses the 3D data file and returns vector<Vertex<float>>.";
 
 	// Threading
 	INTERP_SCRIPT_MODULE->add(cs::fun<void (*)(int, int, const Function<void(int)>&)>(&kl::async_for), "async_for");
-	INTERP_SCRIPT_IDENTIFIERS["async_for"] = "Async for.";
 
 	// UI
 	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_separator), "ui_separator");
@@ -1675,32 +1283,56 @@ const int load_functions = [&]
 	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_drag_float4), "ui_drag_float4");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_slide_int), "ui_slide_int");
 	INTERP_SCRIPT_MODULE->add(cs::fun(&ui_slide_float), "ui_slide_float");
-	INTERP_SCRIPT_IDENTIFIERS["ui_separator"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_same_line"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_set_next_width"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_cursor_pos"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_set_cursor_pos"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_window"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_button"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_checkbox"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_text"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_colored_text"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_input_int"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_input_float"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_input_float2"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_input_float3"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_input_float4"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_input_text"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_input_text_multiline"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_edit_color3"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_edit_color4"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_drag_int"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_drag_float"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_drag_float2"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_drag_float3"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_drag_float4"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_slide_int"] = "...";
-	INTERP_SCRIPT_IDENTIFIERS["ui_slide_float"] = "...";
+
+	return 0;
+}();
+
+const int load_names = [&]
+{
+	using namespace titian;
+
+	cs::ChaiScript temp_engine{};
+	temp_engine.add(INTERP_SCRIPT_MODULE);
+
+	CHAI_KEYWORDS = {
+		"attr",
+		"auto",
+		"break",
+		"continue",
+		"def",
+		"else",
+		"false",
+		"for",
+		"fun",
+		"global",
+		"if",
+		"return",
+		"true",
+		"try",
+		"var",
+		"while",
+	};
+
+	for (auto& [name, _] : temp_engine.get_state().engine_state.m_types) {
+		CHAI_TYPES.insert(name);
+	}
+
+	for (auto& [name, func] : temp_engine.get_state().engine_state.m_function_objects) {
+		auto it = std::find_if(name.begin(), name.end(), [](char c) { return !isalnum(c) && c != '_'; });
+		if (it != name.end())
+			continue;
+
+		if (func->is_attribute_function()) {
+			CHAI_MEMBERS.insert(name);
+		}
+		else {
+			CHAI_FUNCTIONS.insert(name);
+		}
+	}
+
+	for (auto& [name, _] : temp_engine.get_state().engine_state.m_global_objects) {
+		CHAI_MEMBERS.insert(name);
+	}
 
 	return 0;
 }();

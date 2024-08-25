@@ -186,36 +186,41 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 	m_interp_editor.edit(&script->source);
 
 	if (im::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-		const TextEditor::LanguageDefinition* definition = m_interp_editor.get_definition();
 		const String current_word = m_interp_editor.get_word_at_cursor();
-		if (definition && !current_word.empty()) {
-			const TextEditor::Palette& palette = *m_interp_editor.get_palette();
-			im::PushStyleColor(ImGuiCol_Text, (ImU32) ImColor(220, 206, 125, 255));
-			for (const auto& [member, _] : INTERP_SCRIPT_MEMBERS) {
-				if (member.find(current_word) != -1) {
-					if (im::MenuItem(member.data())) {
-						m_interp_editor.replace_word_at_cursor(member);
-					}
+		const auto& language = *m_interp_editor.get_definition();
+		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Keyword]);
+		for (const auto& name : CHAI_KEYWORDS) {
+			if (name.find(current_word) != -1) {
+				if (im::MenuItem(name.data())) {
+					m_interp_editor.replace_word_at_cursor(name);
 				}
 			}
-			im::PushStyleColor(ImGuiCol_Text, palette[1]);
-			for (const auto& keyword : definition->mKeywords) {
-				if (keyword.find(current_word) != -1) {
-					if (im::MenuItem(keyword.data())) {
-						m_interp_editor.replace_word_at_cursor(keyword);
-					}
-				}
-			}
-			im::PushStyleColor(ImGuiCol_Text, palette[8]);
-			for (const auto& [identifier, _] : definition->mIdentifiers) {
-				if (identifier.find(current_word) != -1) {
-					if (im::MenuItem(identifier.data())) {
-						m_interp_editor.replace_word_at_cursor(identifier);
-					}
-				}
-			}
-			im::PopStyleColor(3);
 		}
+		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Type]);
+		for (const auto& name : CHAI_TYPES) {
+			if (name.find(current_word) != -1) {
+				if (im::MenuItem(name.data())) {
+					m_interp_editor.replace_word_at_cursor(name);
+				}
+			}
+		}
+		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Member]);
+		for (const auto& name : CHAI_MEMBERS) {
+			if (name.find(current_word) != -1) {
+				if (im::MenuItem(name.data())) {
+					m_interp_editor.replace_word_at_cursor(name);
+				}
+			}
+		}
+		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Function]);
+		for (const auto& name : CHAI_FUNCTIONS) {
+			if (name.find(current_word) != -1) {
+				if (im::MenuItem(name.data())) {
+					m_interp_editor.replace_word_at_cursor(name);
+				}
+			}
+		}
+		im::PopStyleColor(4);
 	}
 	im::End();
 	im::PopFont();

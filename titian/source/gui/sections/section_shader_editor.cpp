@@ -172,28 +172,41 @@ void titian::GUISectionShaderEditor::edit_shader(Shader* shader)
 	m_editor.edit(&shader->data_buffer);
 
 	if (im::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-		const TextEditor::LanguageDefinition* definition = m_editor.get_definition();
 		const String current_word = m_editor.get_word_at_cursor();
-		if (definition && !current_word.empty()) {
-			const TextEditor::Palette& palette = *m_editor.get_palette();
-			im::PushStyleColor(ImGuiCol_Text, palette[1]);
-			for (const auto& keyword : definition->mKeywords) {
-				if (keyword.find(current_word) != -1) {
-					if (im::MenuItem(keyword.data())) {
-						m_editor.replace_word_at_cursor(keyword);
-					}
+		const auto& language = *m_editor.get_definition();
+		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Keyword]);
+		for (const auto& name : HLSL_KEYWORDS) {
+			if (name.find(current_word) != -1) {
+				if (im::MenuItem(name.data())) {
+					m_editor.replace_word_at_cursor(name);
 				}
 			}
-			im::PushStyleColor(ImGuiCol_Text, palette[8]);
-			for (const auto& [identifier, _] : definition->mIdentifiers) {
-				if (identifier.find(current_word) != -1) {
-					if (im::MenuItem(identifier.data())) {
-						m_editor.replace_word_at_cursor(identifier);
-					}
-				}
-			}
-			im::PopStyleColor(2);
 		}
+		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Type]);
+		for (const auto& name : HLSL_TYPES) {
+			if (name.find(current_word) != -1) {
+				if (im::MenuItem(name.data())) {
+					m_editor.replace_word_at_cursor(name);
+				}
+			}
+		}
+		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Member]);
+		for (const auto& name : HLSL_MEMBERS) {
+			if (name.find(current_word) != -1) {
+				if (im::MenuItem(name.data())) {
+					m_editor.replace_word_at_cursor(name);
+				}
+			}
+		}
+		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Function]);
+		for (const auto& name : HLSL_FUNCTIONS) {
+			if (name.find(current_word) != -1) {
+				if (im::MenuItem(name.data())) {
+					m_editor.replace_word_at_cursor(name);
+				}
+			}
+		}
+		im::PopStyleColor(4);
 	}
 	im::End();
 	im::PopFont();

@@ -4,6 +4,13 @@
 
 
 namespace titian {
+	inline std::set<String, std::less<>> HLSL_KEYWORDS;
+	inline std::set<String, std::less<>> HLSL_TYPES;
+	inline std::set<String, std::less<>> HLSL_MEMBERS;
+	inline std::set<String, std::less<>> HLSL_FUNCTIONS;
+}
+
+namespace titian {
 	enum ShaderType : int32_t
 	{
 		MATERIAL = 0,
