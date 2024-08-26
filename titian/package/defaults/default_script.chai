@@ -6,7 +6,7 @@ def on_update(Scene scene)
 {
 }
 
-def on_collision(Scene scene, Entity first, Entity second)
+def on_collision(Scene scene, Entity attacker, Entity target)
 {
 }
 

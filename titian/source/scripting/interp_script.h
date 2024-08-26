@@ -29,7 +29,7 @@ namespace titian {
 
 		void call_start(Scene* scene) override;
 		void call_update(Scene* scene) override;
-		void call_collision(Scene* scene, Entity* first, Entity* second) override;
+		void call_collision(Scene* scene, Entity* attacker, Entity* target) override;
 		void call_ui(Scene* scene) override;
 
 		StringMap<cs::Boxed_Value> get_parameters();

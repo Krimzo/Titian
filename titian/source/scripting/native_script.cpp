@@ -55,10 +55,10 @@ void titian::NativeScript::call_update(Scene* scene)
 	}
 }
 
-void titian::NativeScript::call_collision(Scene* scene, Entity* first, Entity* second)
+void titian::NativeScript::call_collision(Scene* scene, Entity* attacker, Entity* target)
 {
 	if (m_collision_function) {
-		m_collision_function(scene, first, second);
+		m_collision_function(scene, attacker, target);
 	}
 }
 

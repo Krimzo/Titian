@@ -585,9 +585,9 @@ titian::NodeScript::NodeScript()
 	on_update_node->addOUT<float>("delta_time")
 		->behaviour([timer]() { return timer->delta(); });
 
-	on_collision_node->addOUT<void*>("first_entity")
+	on_collision_node->addOUT<void*>("attacker_entity")
 		->behaviour([this]() { return *reinterpret_cast<Entity**>(on_collision_node->user_data + 0); });
-	on_collision_node->addOUT<void*>("second_entity")
+	on_collision_node->addOUT<void*>("target_entity")
 		->behaviour([this]() { return *reinterpret_cast<Entity**>(on_collision_node->user_data + 8); });
 
 	m_editor.rightClickPopUpContent([&](ne::BaseNode* node)
@@ -768,10 +768,10 @@ void titian::NodeScript::call_update(Scene* scene)
 	on_update_node->call();
 }
 
-void titian::NodeScript::call_collision(Scene* scene, Entity* first, Entity* second)
+void titian::NodeScript::call_collision(Scene* scene, Entity* attacker, Entity* target)
 {
-	*reinterpret_cast<Entity**>(on_collision_node->user_data + 0) = first;
-	*reinterpret_cast<Entity**>(on_collision_node->user_data + 8) = second;
+	*reinterpret_cast<Entity**>(on_collision_node->user_data + 0) = attacker;
+	*reinterpret_cast<Entity**>(on_collision_node->user_data + 8) = target;
 	on_collision_node->call();
 }
 

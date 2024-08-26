@@ -5,7 +5,7 @@ titian::TextSerializer::TextSerializer(const StringView& path, const bool write)
 	: m_path(path), m_writing(write)
 {
 	if (write) {
-		current()["version"] = js::make_string(SERIAL_VERSION_STR);
+		current()["serial_version"] = js::make_string(SERIAL_VERSION_STR);
 		m_is_valid = true;
 		Logger::log("Opened TEXT serialization file [", path, "]", " (", SERIAL_VERSION_STR, ")");
 	}
@@ -13,8 +13,8 @@ titian::TextSerializer::TextSerializer(const StringView& path, const bool write)
 		current() = { kl::read_file(path) };
 
 		String version;
-		if (current().contains("version")) {
-			version = current().at("version")->get_string().value_or(version);
+		if (current().contains("serial_version")) {
+			version = current().at("serial_version")->get_string().value_or(version);
 		}
 
 		if (version == SERIAL_VERSION_STR) {
@@ -45,6 +45,7 @@ titian::TextSerializer::operator bool() const
 // top object
 void titian::TextSerializer::push_object(const StringView& name)
 {
+	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	auto it = current().emplace(name, kl::Wrap<js::Object>::make()).first;
 	js::Object* ptr = it->second.as<js::Object>();
 	m_stack.push_back(ptr);
@@ -76,6 +77,7 @@ void titian::TextSerializer::unload_object() const
 // basic
 void titian::TextSerializer::write_bool(const StringView& name, bool value)
 {
+	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	current().emplace(name, js::make_bool(value));
 }
 
@@ -89,6 +91,7 @@ void titian::TextSerializer::read_bool(const StringView& name, bool& value) cons
 
 void titian::TextSerializer::write_int(const StringView& name, int32_t value)
 {
+	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	current().emplace(name, js::make_number(value));
 }
 
@@ -102,6 +105,7 @@ void titian::TextSerializer::read_int(const StringView& name, int32_t& value) co
 
 void titian::TextSerializer::write_float(const StringView& name, float value)
 {
+	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	current().emplace(name, js::make_number(value));
 }
 
@@ -116,6 +120,7 @@ void titian::TextSerializer::read_float(const StringView& name, float& value) co
 // array
 void titian::TextSerializer::write_byte_array(const StringView& name, const void* data, int32_t count)
 {
+	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	const byte* ptr = (const byte*) data;
 	kl::Wrap result = kl::Wrap<js::Array>::make();
 	for (int32_t i = 0; i < count; i++) {
@@ -141,6 +146,7 @@ void titian::TextSerializer::read_byte_array(const StringView& name, void* data,
 
 void titian::TextSerializer::write_int_array(const StringView& name, const int32_t* data, int32_t count)
 {
+	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	kl::Wrap result = kl::Wrap<js::Array>::make();
 	for (int32_t i = 0; i < count; i++) {
 		result->push_back(js::make_number(data[i]));
@@ -164,6 +170,7 @@ void titian::TextSerializer::read_int_array(const StringView& name, int32_t* dat
 
 void titian::TextSerializer::write_float_array(const StringView& name, const float* data, int32_t count)
 {
+	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	kl::Wrap result = kl::Wrap<js::Array>::make();
 	for (int32_t i = 0; i < count; i++) {
 		result->push_back(js::make_number(data[i]));
@@ -188,6 +195,7 @@ void titian::TextSerializer::read_float_array(const StringView& name, float* dat
 // complex
 void titian::TextSerializer::write_string(const StringView& name, const StringView& value)
 {
+	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	current().emplace(name, js::make_string(value));
 }
 

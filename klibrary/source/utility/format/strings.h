@@ -73,7 +73,7 @@ namespace kl {
     template <typename... Args>
     std::string format(const Args&... args)
     {
-        std::stringstream stream = {};
+        std::stringstream stream;
         write<false>(stream, args...);
         return stream.str();
     }

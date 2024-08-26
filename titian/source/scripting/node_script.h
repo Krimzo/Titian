@@ -73,7 +73,7 @@ namespace titian {
 
 		void call_start(Scene* scene) override;
 		void call_update(Scene* scene) override;
-		void call_collision(Scene* scene, Entity* first, Entity* second) override;
+		void call_collision(Scene* scene, Entity* attacker, Entity* target) override;
 		void call_ui(Scene* scene) override;
 
 		void update_editor();
@@ -391,7 +391,8 @@ namespace titian {
 		{
 			FlowNode::serialize(serializer, helper_data);
 			serializer->write_string("var_name", name);
-			serializer->write_bool("global", var_ptr->global);
+			serializer->write_bool("var_global", var_ptr->global);
+			serializer->write_byte_array("var_value", &var_ptr->get<T>(), sizeof(T));
 		}
 
 		void deserialize(const Serializer* serializer, const void* helper_data) override
@@ -400,7 +401,8 @@ namespace titian {
 			String temp_name;
 			serializer->read_string("var_name", temp_name);
 			rename(temp_name);
-			serializer->read_bool("global", var_ptr->global);
+			serializer->read_bool("var_global", var_ptr->global);
+			serializer->read_byte_array("var_value", &var_ptr->get<T>(), sizeof(T));
 		}
 
 		void draw() override

@@ -95,14 +95,14 @@ void titian::InterpScript::call_update(Scene* scene)
 	}
 }
 
-void titian::InterpScript::call_collision(Scene* scene, Entity* first, Entity* second)
+void titian::InterpScript::call_collision(Scene* scene, Entity* attacker, Entity* target)
 {
 	if (!m_collision_function) {
 		return;
 	}
 
 	try {
-		m_collision_function(scene, first, second);
+		m_collision_function(scene, attacker, target);
 	}
 	catch (Exception& e) {
 		Logger::log(e.what());
