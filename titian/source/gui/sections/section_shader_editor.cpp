@@ -51,7 +51,7 @@ void titian::GUISectionShaderEditor::render_gui()
 			}
 		}
 
-		Shader* shader = &scene->get_shader(selected_shader);
+		Shader* shader = scene->helper_get_shader(selected_shader);
 		if (shader) {
 			edit_shader(shader);
 		}

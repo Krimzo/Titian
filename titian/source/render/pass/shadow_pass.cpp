@@ -7,8 +7,8 @@ titian::ShadowPass::ShadowPass()
 
 bool titian::ShadowPass::is_renderable() const
 {
-    const Scene* scene = &Layers::get<GameLayer>()->scene;
-    const DirectionalLight* dir_light = scene->get_casted<DirectionalLight>(scene->main_directional_light_name);
+    Scene* scene = &Layers::get<GameLayer>()->scene;
+    DirectionalLight* dir_light = scene->get_casted<DirectionalLight>(scene->main_directional_light_name);
     return static_cast<bool>(dir_light);
 }
 
@@ -61,19 +61,19 @@ void titian::ShadowPass::render_self(StatePackage& package)
         gpu->clear_depth_view(shadow_map, 1.0f, 0xFF);
 
         // Draw
-        for (auto& [_, entity] : *scene) {
+        for (const auto& [_, entity] : scene->entities()) {
             // Skip
             if (!entity->casts_shadows) {
 				continue;
 			}
 
-            Animation* animation = &scene->get_animation(entity->animation_name);
+            Animation* animation = scene->helper_get_animation(entity->animation_name);
 			if (!animation) {
 				continue;
 			}
 
             Mesh* mesh = animation->get_mesh(timer->elapsed());
-            Material* material = &scene->get_material(entity->material_name);
+            Material* material = scene->helper_get_material(entity->material_name);
             if (!mesh || !material || material->is_transparent()) {
                 continue;
             }

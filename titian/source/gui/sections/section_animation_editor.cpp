@@ -26,7 +26,11 @@ void titian::GUISectionAnimationEditor::render_gui()
 
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
-    Ref animation = scene->get_animation(this->selected_animation);
+
+    Ref<Animation> animation;
+    if (scene->animations.contains(this->selected_animation)) {
+        animation = scene->animations.at(this->selected_animation);
+    }
 
     if (im::Begin("Animation Editor")) {
         const float available_width = im::GetContentRegionAvail().x;

@@ -11,7 +11,11 @@ void titian::GUISectionTextureEditor::render_gui()
 
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
-    Ref texture = scene->get_texture(this->selected_texture);
+
+    Ref<Texture> texture;
+    if (scene->textures.contains(this->selected_texture)) {
+        texture = scene->textures.at(this->selected_texture);
+    }
 
     if (im::Begin("Texture Editor")) {
         const float available_width = im::GetContentRegionAvail().x;

@@ -95,7 +95,7 @@ void titian::GUISectionViewport::render_gui()
                     
                     if (entity_ids.size() == 1) {
                         uint32_t counter = 0;
-                        for (const auto& [name, _] : *scene) {
+                        for (const auto& [name, _] : scene->entities()) {
                             counter += 1;
                             if (!entity_ids.contains(counter)) {
                                 continue;
@@ -112,7 +112,7 @@ void titian::GUISectionViewport::render_gui()
                     }
                     else if (entity_ids.size() > 1) {
                         uint32_t counter = 0;
-                        for (const auto& [name, _] : *scene) {
+                        for (const auto& [name, _] : scene->entities()) {
                             counter += 1;
                             if (!entity_ids.contains(counter)) {
                                 continue;
@@ -135,7 +135,7 @@ void titian::GUISectionViewport::render_gui()
         }
         Set<Entity*> entities;
         for (const auto& sel_ent : editor_layer->selected_entities) {
-            if (Entity* entity = &scene->get_entity(sel_ent)) {
+            if (Entity* entity = scene->helper_get_entity(sel_ent)) {
 				entities.insert(entity);
             }
         }

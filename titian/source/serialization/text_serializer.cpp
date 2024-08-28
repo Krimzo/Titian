@@ -7,7 +7,7 @@ titian::TextSerializer::TextSerializer(const StringView& path, const bool write)
 	if (write) {
 		current()["serial_version"] = js::make_string(SERIAL_VERSION_STR);
 		m_is_valid = true;
-		Logger::log("Opened TEXT serialization file [", path, "]", " (", SERIAL_VERSION_STR, ")");
+		Logger::log("Opened TEXT serialization file [", path, "] (", SERIAL_VERSION_STR, ")");
 	}
 	else {
 		current() = { kl::read_file(path) };
@@ -19,7 +19,7 @@ titian::TextSerializer::TextSerializer(const StringView& path, const bool write)
 
 		if (version == SERIAL_VERSION_STR) {
 			m_is_valid = true;
-			Logger::log("Opened TEXT deserialization file [", path, "]", " (", SERIAL_VERSION_STR, ")");
+			Logger::log("Opened TEXT deserialization file [", path, "] (", SERIAL_VERSION_STR, ")");
 		}
 		else {
 			Logger::log("Failed to verify [", path, "] serial version (", version, "), expected version (", SERIAL_VERSION_STR, ")");
@@ -29,7 +29,7 @@ titian::TextSerializer::TextSerializer(const StringView& path, const bool write)
 
 titian::TextSerializer::~TextSerializer()
 {
-	if (*this) {
+	if (self) {
 		if (m_writing) {
 			kl::write_file(m_path, m_container.decompile());
 		}

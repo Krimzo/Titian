@@ -11,11 +11,15 @@ void titian::GUISectionEntityProperties::render_gui()
 
     EditorLayer* editor_layer = Layers::get<EditorLayer>();
 	GameLayer* game_layer = Layers::get<GameLayer>();
+    Scene* scene = &game_layer->scene;
 
     if (im::Begin("Entity properties") && !editor_layer->selected_entities.empty()) {
-        Scene* scene = &game_layer->scene;
         const String entity_name = *(--editor_layer->selected_entities.end());
-        if (Ref entity = scene->get_entity(entity_name)) {
+        Ref<Entity> entity;
+        if (scene->entities().contains(entity_name)) {
+            entity = scene->entities().at(entity_name);
+        }
+        if (entity) {
             display_entity_info(scene, entity_name, &entity);
             edit_entity_transform(scene, &entity);
             edit_entity_animation(scene, &entity);
@@ -288,7 +292,7 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
             if (im::Selectable(("mesh_" + name).data(), entity->collider_mesh_name == name)) {
                 entity->collider_mesh_name = name;
 
-                Mesh* mesh = &scene->get_mesh(entity->collider_mesh_name);
+                Mesh* mesh = scene->helper_get_mesh(entity->collider_mesh_name);
                 collider = scene->new_default_collider(px::PxGeometryType::Enum::eTRIANGLEMESH, mesh);
                 collider_type = (collider ? collider->type() : px::PxGeometryType::Enum::eINVALID);
                 entity->set_collider(collider);

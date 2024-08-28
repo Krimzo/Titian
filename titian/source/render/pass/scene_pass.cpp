@@ -45,7 +45,7 @@ void titian::ScenePass::render_self(StatePackage& package)
     gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 2);
 
     // Bind skybox
-    if (Texture* skybox = &scene->get_texture(camera->skybox_name)) {
+    if (Texture* skybox = scene->helper_get_texture(camera->skybox_name)) {
         gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
     }
     else {
@@ -146,17 +146,17 @@ void titian::ScenePass::render_self(StatePackage& package)
     uint32_t id_counter = 0;
 
     // Render opaque objects
-    for (auto& [_, entity] : *scene) {
+    for (const auto& [_, entity] : scene->entities()) {
         id_counter += 1;
 
         // Skip
-        Animation* animation = &scene->get_animation(entity->animation_name);
+        Animation* animation = scene->helper_get_animation(entity->animation_name);
 		if (!animation) {
 			continue;
 		}
 
         Mesh* mesh = animation->get_mesh(timer->elapsed());
-        Material* material = &scene->get_material(entity->material_name);
+        Material* material = scene->helper_get_material(entity->material_name);
         if (!mesh || !material) {
             continue;
         }
@@ -173,7 +173,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         }
 
         // Bind textures
-        const Texture* color_map = &scene->get_texture(material->color_map_name);
+        const Texture* color_map = scene->helper_get_texture(material->color_map_name);
         if (color_map) {
             gpu->bind_shader_view_for_pixel_shader(color_map->shader_view, 5);
         }
@@ -181,7 +181,7 @@ void titian::ScenePass::render_self(StatePackage& package)
             gpu->unbind_shader_view_for_pixel_shader(5);
         }
 
-        const Texture* normal_map = &scene->get_texture(material->normal_map_name);
+        const Texture* normal_map = scene->helper_get_texture(material->normal_map_name);
         if (normal_map) {
             gpu->bind_shader_view_for_pixel_shader(normal_map->shader_view, 6);
             global_cb.HAS_NORMAL_MAP = 1.0f;
@@ -190,7 +190,7 @@ void titian::ScenePass::render_self(StatePackage& package)
             global_cb.HAS_NORMAL_MAP = 0.0f;
         }
 
-        const Texture* roughness_map = &scene->get_texture(material->roughness_map_name);
+        const Texture* roughness_map = scene->helper_get_texture(material->roughness_map_name);
         if (roughness_map) {
             gpu->bind_shader_view_for_pixel_shader(roughness_map->shader_view, 7);
             global_cb.HAS_ROUGHNESS_MAP = 1.0f;
@@ -225,7 +225,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.CUSTOM_DATA = material->custom_data;
 
         kl::RenderShaders* render_shaders = &package.shader_state;
-        if (Shader* shader = &scene->get_shader(material->shader_name)) {
+        if (Shader* shader = scene->helper_get_shader(material->shader_name)) {
             render_shaders = &shader->graphics_buffer;
         }
         if (render_shaders && *render_shaders) {
@@ -261,12 +261,12 @@ void titian::ScenePass::render_self(StatePackage& package)
         }
 
         // Bind textures
-        const Texture* color_map = &scene->get_texture(material->color_map_name);
+        const Texture* color_map = scene->helper_get_texture(material->color_map_name);
         if (color_map) {
             gpu->bind_shader_view_for_pixel_shader(color_map->shader_view, 5);
         }
 
-        const Texture* normal_map = &scene->get_texture(material->normal_map_name);
+        const Texture* normal_map = scene->helper_get_texture(material->normal_map_name);
         if (normal_map) {
             gpu->bind_shader_view_for_pixel_shader(normal_map->shader_view, 6);
             global_cb.HAS_NORMAL_MAP = 1.0f;
@@ -275,7 +275,7 @@ void titian::ScenePass::render_self(StatePackage& package)
             global_cb.HAS_NORMAL_MAP = 0.0f;
         }
 
-        const Texture* roughness_map = &scene->get_texture(material->roughness_map_name);
+        const Texture* roughness_map = scene->helper_get_texture(material->roughness_map_name);
         if (roughness_map) {
             gpu->bind_shader_view_for_pixel_shader(roughness_map->shader_view, 7);
             global_cb.HAS_ROUGHNESS_MAP = 1.0f;
@@ -308,7 +308,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         }
 
         kl::RenderShaders* render_shaders = &package.shader_state;
-        if (Shader* shader = &scene->get_shader(material->shader_name)) {
+        if (Shader* shader = scene->helper_get_shader(material->shader_name)) {
             render_shaders = &shader->graphics_buffer;
         }
         render_shaders->vertex_shader.update_cbuffer(global_cb);

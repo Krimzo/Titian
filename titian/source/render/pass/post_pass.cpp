@@ -43,7 +43,7 @@ void titian::PostPass::render_self(StatePackage& package)
     Float4x4 custom_data;
     if (Camera* camera = scene->get_casted<Camera>(scene->main_camera_name)) {
         custom_data = camera->custom_data;
-        if (Shader* shader = &scene->get_shader(camera->shader_name)) {
+        if (Shader* shader = scene->helper_get_shader(camera->shader_name)) {
             if (shader->graphics_buffer) {
                 gpu->bind_render_shaders(shader->graphics_buffer);
             }

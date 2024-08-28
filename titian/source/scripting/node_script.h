@@ -1822,6 +1822,7 @@ namespace titian {
 		inline IteratorNode(NodeScript* parent, const StringView& title)
 			: FunctionNode(parent, title)
 		{
+			addIN<bool>("async");
 			addOUT<FlowNode*>("call")->behaviour([this] { return this; });
 			addOUT<String>("name")->behaviour([this]()
 			{
@@ -1835,16 +1836,18 @@ namespace titian {
 
 		void call() final
 		{
-			for (const auto& [name, ref] : get_collection()) {
-				*reinterpret_cast<const String**>(user_data + 0) = &name;
-				*reinterpret_cast<void**>(user_data + 8) = (void*) &ref;
+			iterate_collection([this](const String* name, void* ptr)
+			{
+				*reinterpret_cast<const String**>(user_data + 0) = name;
+				*reinterpret_cast<void**>(user_data + 8) = ptr;
 				call_next("call");
-			}
+			});
 			call_next();
 		}
 
 	protected:
-		virtual const StringMap<Ref<T>>& get_collection() = 0;
+		virtual void iterate_collection(const Function<void(const String*, void*)>& func) = 0;
+		inline bool is_async() { return false; } //this->get_value<bool>("async"); }
 	};
 
 	struct IterateMeshesNode : IteratorNode<Mesh>
@@ -1853,9 +1856,10 @@ namespace titian {
 			: IteratorNode<Mesh>(parent, title)
 		{}
 
-		const StringMap<Ref<Mesh>>& get_collection() override
+		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			return Layers::get<GameLayer>()->scene->meshes;
+			Layers::get<GameLayer>()->scene->helper_iterate_meshes(is_async(), [&](const String* name, Mesh* ptr)
+				{ func(name, static_cast<void*>(ptr)); });
 		}
 	};
 
@@ -1865,9 +1869,10 @@ namespace titian {
 			: IteratorNode<Animation>(parent, title)
 		{}
 
-		const StringMap<Ref<Animation>>& get_collection() override
+		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			return Layers::get<GameLayer>()->scene->animations;
+			Layers::get<GameLayer>()->scene->helper_iterate_animations(is_async(), [&](const String* name, Animation* ptr)
+				{ func(name, static_cast<void*>(ptr)); });
 		}
 	};
 
@@ -1877,9 +1882,10 @@ namespace titian {
 			: IteratorNode<Texture>(parent, title)
 		{}
 
-		const StringMap<Ref<Texture>>& get_collection() override
+		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			return Layers::get<GameLayer>()->scene->textures;
+			Layers::get<GameLayer>()->scene->helper_iterate_textures(is_async(), [&](const String* name, Texture* ptr)
+				{ func(name, static_cast<void*>(ptr)); });
 		}
 	};
 
@@ -1889,9 +1895,10 @@ namespace titian {
 			: IteratorNode<Material>(parent, title)
 		{}
 
-		const StringMap<Ref<Material>>& get_collection() override
+		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			return Layers::get<GameLayer>()->scene->materials;
+			Layers::get<GameLayer>()->scene->helper_iterate_materials(is_async(), [&](const String* name, Material* ptr)
+				{ func(name, static_cast<void*>(ptr)); });
 		}
 	};
 
@@ -1901,9 +1908,10 @@ namespace titian {
 			: IteratorNode<Shader>(parent, title)
 		{}
 
-		const StringMap<Ref<Shader>>& get_collection() override
+		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			return Layers::get<GameLayer>()->scene->shaders;
+			Layers::get<GameLayer>()->scene->helper_iterate_shaders(is_async(), [&](const String* name, Shader* ptr)
+				{ func(name, static_cast<void*>(ptr)); });
 		}
 	};
 
@@ -1913,9 +1921,10 @@ namespace titian {
 			: IteratorNode<Entity>(parent, title)
 		{}
 
-		const StringMap<Ref<Entity>>& get_collection() override
+		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			return Layers::get<GameLayer>()->scene->entities_ref();
+			Layers::get<GameLayer>()->scene->helper_iterate_entities(is_async(), [&](const String* name, Entity* ptr)
+				{ func(name, static_cast<void*>(ptr)); });
 		}
 	};
 }

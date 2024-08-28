@@ -14,7 +14,11 @@ void titian::GUISectionScriptEditor::render_gui()
 	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 	Scene* scene = &Layers::get<GameLayer>()->scene;
 
-	Ref script = scene->get_script(selected_script);
+	Ref<Script> script;
+	if (scene->scripts.contains(selected_script)) {
+		script = scene->scripts.at(selected_script);
+	}
+
 	NativeScript* native_script = &script.as<NativeScript>();
 	InterpScript* interp_script = &script.as<InterpScript>();
 	NodeScript* node_script = &script.as<NodeScript>();

@@ -30,7 +30,7 @@ void titian::OutlinePass::render_self(StatePackage& package)
     GUILayer* gui_layer = Layers::get<GUILayer>();
 
     Vector<float> entitiy_indices;
-    for (uint32_t counter_id = 0; const auto& [name, _] : *game_layer->scene) {
+    for (uint32_t counter_id = 0; const auto& [name, _] : game_layer->scene->entities()) {
         counter_id += 1;
         if (editor_layer->selected_entities.contains(name)) {
 			entitiy_indices.push_back((float) counter_id);

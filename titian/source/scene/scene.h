@@ -71,28 +71,12 @@ namespace titian {
         void update_ui();
 
         // Entity
+        inline const auto& entities() const { return m_entities; };
         Ref<Entity> new_entity(bool dynamic) const;
         void add_entity(const StringView& name, const Ref<Entity>& entity);
         void remove_entity(const StringView& name);
-        bool contains_entity(const StringView& name) const;
-        const StringMap<Ref<Entity>>& entities_ref() const;
-        size_t entity_count() const;
 
-        StringMap<Ref<Entity>>::iterator begin();
-        StringMap<Ref<Entity>>::iterator end();
-        StringMap<Ref<Entity>>::const_iterator begin() const;
-        StringMap<Ref<Entity>>::const_iterator end() const;
-
-        // Get types
-        Ref<Mesh> get_mesh(const StringView& id) const;
-        Ref<Animation> get_animation(const StringView& id) const;
-        Ref<Texture> get_texture(const StringView& id) const;
-        Ref<Material> get_material(const StringView& id) const;
-        Ref<Shader> get_shader(const StringView& id) const;
-        Ref<Script> get_script(const StringView& id) const;
-        Ref<Entity> get_entity(const StringView& id) const;
-
-        // Casted
+        // Casted entity
         template<typename T, typename... Args>
         Ref<T> new_casted(const bool dynamic, const Args&... args) const
         {
@@ -102,26 +86,14 @@ namespace titian {
         template<typename T>
         T* get_casted(const StringView& id)
         {
-            Entity* entity = &get_entity(id);
-            return dynamic_cast<T*>(entity);
+            return dynamic_cast<T*>(helper_get_entity(id));
         }
 
-        template<typename T>
-        const T* get_casted(const StringView& id) const
-        {
-            const Entity* entity = &get_entity(id);
-            return dynamic_cast<const T*>(entity);
-        }
-
-        // Dynamic colliders
+        // Colliders
         Ref<Collider> new_box_collider(const Float3& scale) const;
         Ref<Collider> new_sphere_collider(float radius) const;
         Ref<Collider> new_capsule_collider(float radius, float height) const;
-
-        // Static colliders
         Ref<Collider> new_mesh_collider(const Mesh& mesh, const Float3& scale) const;
-
-        // Default collider
         Ref<Collider> new_default_collider(px::PxGeometryType::Enum type, const Mesh* optional_mesh) const;
 
         // Helper new
@@ -156,21 +128,13 @@ namespace titian {
         bool helper_contains_shader(const StringView& id) const;
         bool helper_contains_entity(const StringView& id) const;
 
-        // Helper count
-        int helper_mesh_count() const;
-        int helper_animation_count() const;
-        int helper_texture_count() const;
-        int helper_material_count() const;
-        int helper_shader_count() const;
-        int helper_entity_count() const;
-
-        // Helper get all
-        StringMap<Mesh*> helper_get_all_meshes();
-        StringMap<Animation*> helper_get_all_animations();
-        StringMap<Texture*> helper_get_all_textures();
-        StringMap<Material*> helper_get_all_materials();
-        StringMap<Shader*> helper_get_all_shaders();
-        StringMap<Entity*> helper_get_all_entities();
+        // Helper iterate
+        void helper_iterate_meshes(bool async, const Function<void(const String*, Mesh*)>& func);
+        void helper_iterate_animations(bool async, const Function<void(const String*, Animation*)>& func);
+        void helper_iterate_textures(bool async, const Function<void(const String*, Texture*)>& func);
+        void helper_iterate_materials(bool async, const Function<void(const String*, Material*)>& func);
+        void helper_iterate_shaders(bool async, const Function<void(const String*, Shader*)>& func);
+        void helper_iterate_entities(bool async, const Function<void(const String*, Entity*)>& func);
 
         // Loading
         Optional<AssimpData> get_assimp_data(const StringView& path) const;

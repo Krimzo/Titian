@@ -110,32 +110,17 @@ namespace kl {
         }
 
         // access
-        T* operator&()
+        T* operator&() const
         {
             return m_instance;
         }
 
-        const T* operator&() const
-        {
-            return m_instance;
-        }
-
-        T& operator*()
+        T& operator*() const
         {
             return *m_instance;
         }
 
-        const T& operator*() const
-        {
-            return *m_instance;
-        }
-
-        T* operator->()
-        {
-            return m_instance;
-        }
-
-        const T* operator->() const
+        T* operator->() const
         {
             return m_instance;
         }

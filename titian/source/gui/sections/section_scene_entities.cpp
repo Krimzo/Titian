@@ -17,7 +17,7 @@ void titian::GUISectionSceneEntities::render_gui()
 		// Window popup
 		if (im::BeginPopupContextWindow("NewEntity", ImGuiPopupFlags_MouseButtonMiddle)) {
 			const String name = gui_input_continuous("##CreateEntityInput");
-			if (!name.empty() && !scene->contains_entity(name)) {
+			if (!name.empty() && !scene->helper_contains_entity(name)) {
 				if (im::MenuItem("New Entity")) {
 					Ref entity = scene->new_entity(false);
 					scene->add_entity(name, entity);
@@ -58,7 +58,7 @@ void titian::GUISectionSceneEntities::render_gui()
 
 		// Entities
 		const String filter = gui_input_continuous("Search###SceneEntities");
-		for (auto& [entity_name, entity] : *scene) {
+		for (auto& [entity_name, entity] : scene->entities()) {
 			if (!filter.empty() && entity_name.find(filter) == -1) {
 				continue;
 			}
@@ -98,7 +98,7 @@ void titian::GUISectionSceneEntities::render_gui()
 					else {
 						int find_counter = 0;
 						Vector<String> needed_entities;
-						for (const auto& [name, _] : *scene) {
+						for (const auto& [name, _] : scene->entities()) {
 							if (name == entity_name || name == *--editor_layer->selected_entities.end()) {
 								find_counter += 1;
 							}
@@ -124,7 +124,7 @@ void titian::GUISectionSceneEntities::render_gui()
 
 				if (Optional opt_name = gui_input_waited("##RenameEntityInput", entity_name)) {
 					const auto& name = opt_name.value();
-					if (!name.empty() && !scene->contains_entity(name)) {
+					if (!name.empty() && !scene->helper_contains_entity(name)) {
 						Ref temp_holder = entity;
 						scene->remove_entity(entity_name);
 						scene->add_entity(name, temp_holder);

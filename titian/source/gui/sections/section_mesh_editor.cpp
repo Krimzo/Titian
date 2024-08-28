@@ -24,7 +24,11 @@ void titian::GUISectionMeshEditor::render_gui()
 
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
-    Ref mesh = scene->get_mesh(this->selected_mesh);
+
+    Ref<Mesh> mesh;
+    if (scene->meshes.contains(selected_mesh)) {
+		mesh = scene->meshes.at(selected_mesh);
+	}
 
     if (im::Begin("Mesh Editor")) {
         const float available_width = im::GetContentRegionAvail().x;

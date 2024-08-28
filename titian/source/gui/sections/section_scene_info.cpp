@@ -12,7 +12,7 @@ void titian::GUISectionSceneInfo::render_gui()
     if (im::Begin("Scene Info")) {
         Scene* scene = &Layers::get<GameLayer>()->scene;
 
-        int entity_count = static_cast<int>(scene->entity_count());
+        int entity_count = static_cast<int>(scene->entities().size());
         im::DragInt("Entity count", &entity_count, 0.0f);
 
         Float3 gravity = scene->gravity();
@@ -42,7 +42,7 @@ void titian::GUISectionSceneInfo::main_camera_info(Scene* scene)
         if (im::Selectable("/", bound_camera == "/")) {
             bound_camera = "/";
         }
-        for (const auto& [entity_name, entity] : *scene) {
+        for (const auto& [entity_name, entity] : scene->entities()) {
             if (!entity.is<const Camera>()) {
                 continue;
             }
@@ -67,7 +67,7 @@ void titian::GUISectionSceneInfo::main_ambient_info(Scene* scene)
         if (im::Selectable("/", bound_light == "/")) {
             bound_light = "/";
         }
-        for (const auto& [entity_name, entity] : *scene) {
+        for (const auto& [entity_name, entity] : scene->entities()) {
             if (!entity.is<const AmbientLight>()) {
                 continue;
             }
@@ -92,7 +92,7 @@ void titian::GUISectionSceneInfo::main_directional_info(Scene* scene)
         if (im::Selectable("/", bound_light == "/")) {
             bound_light = "/";
         }
-        for (const auto& [entity_name, entity] : *scene) {
+        for (const auto& [entity_name, entity] : scene->entities()) {
             if (!entity.is<const DirectionalLight>()) {
                 continue;
             }

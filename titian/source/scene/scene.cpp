@@ -299,106 +299,7 @@ void titian::Scene::remove_entity(const StringView& name)
     }
 }
 
-bool titian::Scene::contains_entity(const StringView& name) const
-{
-    return m_entities.contains(name);
-}
-
-const titian::StringMap<titian::Ref<titian::Entity>>& titian::Scene::entities_ref() const
-{
-    return m_entities;
-}
-
-size_t titian::Scene::entity_count() const
-{
-    return m_entities.size();
-}
-
-titian::StringMap<titian::Ref<titian::Entity>>::iterator titian::Scene::begin()
-{
-    return m_entities.begin();
-}
-
-titian::StringMap<titian::Ref<titian::Entity>>::iterator titian::Scene::end()
-{
-    return m_entities.end();
-}
-
-titian::StringMap<titian::Ref<titian::Entity>>::const_iterator titian::Scene::begin() const
-{
-    return m_entities.begin();
-}
-
-titian::StringMap<titian::Ref<titian::Entity>>::const_iterator titian::Scene::end() const
-{
-    return m_entities.end();
-}
-
-// Get types
-titian::Ref<titian::Mesh> titian::Scene::get_mesh(const StringView& id) const
-{
-    const auto it = meshes.find(id);
-    if (it != meshes.end()) {
-        return it->second;
-    }
-    return nullptr;
-}
-
-titian::Ref<titian::Animation> titian::Scene::get_animation(const StringView& id) const
-{
-    const auto it = animations.find(id);
-    if (it != animations.end()) {
-        return it->second;
-    }
-    return nullptr;
-}
-
-titian::Ref<titian::Texture> titian::Scene::get_texture(const StringView& id) const
-{
-    const auto it = textures.find(id);
-    if (it != textures.end()) {
-        return it->second;
-    }
-    return nullptr;
-}
-
-titian::Ref<titian::Material> titian::Scene::get_material(const StringView& id) const
-{
-    const auto it = materials.find(id);
-    if (it != materials.end()) {
-        return it->second;
-    }
-    return nullptr;
-}
-
-titian::Ref<titian::Shader> titian::Scene::get_shader(const StringView& id) const
-{
-    const auto it = shaders.find(id);
-    if (it != shaders.end()) {
-        return it->second;
-    }
-    return nullptr;
-}
-
-titian::Ref<titian::Script> titian::Scene::get_script(const StringView& id) const
-{
-    const auto it = scripts.find(id);
-    if (it != scripts.end()) {
-        return it->second;
-    }
-    return nullptr;
-}
-
-titian::Ref<titian::Entity> titian::Scene::get_entity(const StringView& id) const
-{
-    const auto it = m_entities.find(id);
-    if (it != m_entities.end()) {
-        return it->second;
-    }
-    return nullptr;
-}
-
-// Dynamic colliders
+// Colliders
 titian::Ref<titian::Collider> titian::Scene::new_box_collider(const Float3& scale) const
 {
     return new Collider(m_physics, px::PxBoxGeometry(reinterpret_cast<const px::PxVec3&>(scale)));
@@ -414,7 +315,6 @@ titian::Ref<titian::Collider> titian::Scene::new_capsule_collider(const float ra
     return new Collider(m_physics, px::PxCapsuleGeometry(radius, height));
 }
 
-// Static colliders
 titian::Ref<titian::Collider> titian::Scene::new_mesh_collider(const Mesh& mesh, const Float3& scale) const
 {
     if (mesh.physics_buffer) {
@@ -423,7 +323,6 @@ titian::Ref<titian::Collider> titian::Scene::new_mesh_collider(const Mesh& mesh,
     return nullptr;
 }
 
-// Default collider
 titian::Ref<titian::Collider> titian::Scene::new_default_collider(const px::PxGeometryType::Enum type, const Mesh* optional_mesh) const
 {
     switch (type) {
@@ -535,7 +434,11 @@ titian::Shader* titian::Scene::helper_get_shader(const StringView& id)
 
 titian::Entity* titian::Scene::helper_get_entity(const StringView& id)
 {
-    return &this->get_entity(id);
+    const auto it = m_entities.find(id);
+    if (it != m_entities.end()) {
+        return &it->second;
+    }
+    return nullptr;
 }
 
 // Helper remove
@@ -612,93 +515,44 @@ bool titian::Scene::helper_contains_shader(const StringView& id) const
 
 bool titian::Scene::helper_contains_entity(const StringView& id) const
 {
-    return this->contains_entity(id);
+    return m_entities.contains(id);
 }
 
-// Helper count
-int titian::Scene::helper_mesh_count() const
+// Helper iterate
+void titian::Scene::helper_iterate_meshes(const bool async, const Function<void(const String*, Mesh*)>& func)
 {
-    return static_cast<int>(meshes.size());
+    if (async) std::for_each(std::execution::par, meshes.begin(), meshes.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    else std::for_each(std::execution::seq, meshes.begin(), meshes.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
 }
 
-int titian::Scene::helper_animation_count() const
+void titian::Scene::helper_iterate_animations(const bool async, const Function<void(const String*, Animation*)>& func)
 {
-    return static_cast<int>(animations.size());
+    if (async) std::for_each(std::execution::par, animations.begin(), animations.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    else std::for_each(std::execution::seq, animations.begin(), animations.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
 }
 
-int titian::Scene::helper_texture_count() const
+void titian::Scene::helper_iterate_textures(const bool async, const Function<void(const String*, Texture*)>& func)
 {
-    return static_cast<int>(textures.size());
+    if (async) std::for_each(std::execution::par, textures.begin(), textures.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    else std::for_each(std::execution::seq, textures.begin(), textures.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
 }
 
-int titian::Scene::helper_material_count() const
+void titian::Scene::helper_iterate_materials(const bool async, const Function<void(const String*, Material*)>& func)
 {
-    return static_cast<int>(materials.size());
+    if (async) std::for_each(std::execution::par, materials.begin(), materials.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    else std::for_each(std::execution::seq, materials.begin(), materials.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
 }
 
-int titian::Scene::helper_shader_count() const
+void titian::Scene::helper_iterate_shaders(const bool async, const Function<void(const String*, Shader*)>& func)
 {
-    return static_cast<int>(shaders.size());
+    if (async) std::for_each(std::execution::par, shaders.begin(), shaders.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    else std::for_each(std::execution::seq, shaders.begin(), shaders.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
 }
 
-int titian::Scene::helper_entity_count() const
+void titian::Scene::helper_iterate_entities(const bool async, const Function<void(const String*, Entity*)>& func)
 {
-    return static_cast<int>(m_entities.size());
-}
-
-// Helper get all
-titian::StringMap<titian::Mesh*> titian::Scene::helper_get_all_meshes()
-{
-    StringMap<Mesh*> result;
-    for (auto& [name, mesh] : meshes) {
-        result[name] = &mesh;
-    }
-    return result;
-}
-
-titian::StringMap<titian::Animation*> titian::Scene::helper_get_all_animations()
-{
-    StringMap<Animation*> result;
-    for (auto& [name, animation] : animations) {
-        result[name] = &animation;
-    }
-    return result;
-}
-
-titian::StringMap<titian::Texture*> titian::Scene::helper_get_all_textures()
-{
-    StringMap<Texture*> result;
-    for (auto& [name, texture] : textures) {
-        result[name] = &texture;
-    }
-    return result;
-}
-
-titian::StringMap<titian::Material*> titian::Scene::helper_get_all_materials()
-{
-    StringMap<Material*> result;
-    for (auto& [name, material] : materials) {
-        result[name] = &material;
-    }
-    return result;
-}
-
-titian::StringMap<titian::Shader*> titian::Scene::helper_get_all_shaders()
-{
-    StringMap<Shader*> result;
-    for (auto& [name, shader] : shaders) {
-        result[name] = &shader;
-    }
-    return result;
-}
-
-titian::StringMap<titian::Entity*> titian::Scene::helper_get_all_entities()
-{
-    StringMap<Entity*> result;
-    for (auto& [name, entity] : m_entities) {
-        result[name] = &entity;
-    }
-    return result;
+    if (async) std::for_each(std::execution::par, m_entities.begin(), m_entities.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    else std::for_each(std::execution::seq, m_entities.begin(), m_entities.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
 }
 
 titian::Optional<titian::AssimpData> titian::Scene::get_assimp_data(const StringView& path) const

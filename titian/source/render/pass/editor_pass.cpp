@@ -106,7 +106,7 @@ void titian::EditorPass::render_self(StatePackage& package)
                 break;
 
             case px::PxGeometryType::Enum::eTRIANGLEMESH:
-                if (Mesh* mesh = &scene->get_mesh(selected_entity->collider_mesh_name)) {
+                if (Mesh* mesh = scene->helper_get_mesh(selected_entity->collider_mesh_name)) {
                     gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
                 }
                 break;

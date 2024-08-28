@@ -22,7 +22,11 @@ void titian::GUISectionMaterialEditor::render_gui()
 
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
-    Ref material = scene->get_material(this->selected_material);
+
+    Ref<Material> material;
+    if (scene->materials.contains(this->selected_material)) {
+        material = scene->materials.at(this->selected_material);
+    }
 
     if (im::Begin("Material Editor")) {
         const float available_width = im::GetContentRegionAvail().x;
@@ -98,7 +102,7 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
             if (Optional opt_name = gui_input_waited("##RenameMaterialInput", material_name)) {
                 const auto& name = opt_name.value();
                 if (!name.empty() && !scene->materials.contains(name)) {
-                    for (auto& [_, entity] : *scene) {
+                    for (const auto& [_, entity] : scene->entities()) {
                         if (entity->material_name == material_name) {
                             entity->material_name = name;
                         }
@@ -114,7 +118,7 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
             }
 
             if (im::Button("Delete", { -1.0f, 0.0f })) {
-                for (auto& [_, entity] : *scene) {
+                for (const auto& [_, entity] : scene->entities()) {
                     if (entity->material_name == material_name) {
                         entity->material_name = "/";
                     }
@@ -242,7 +246,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     global_cb.VP = camera->camera_matrix();
 
     // Bind textures
-    Texture* skybox_texture = &scene->get_texture(scene_camera->skybox_name);
+    Texture* skybox_texture = scene->helper_get_texture(scene_camera->skybox_name);
     if (skybox_texture) {
         gpu->bind_shader_view_for_pixel_shader(skybox_texture->shader_view, 0);
     }
@@ -250,7 +254,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         gpu->unbind_shader_view_for_pixel_shader(0);
     }
 
-    Texture* color_map_texture = &scene->get_texture(material->color_map_name);
+    Texture* color_map_texture = scene->helper_get_texture(material->color_map_name);
     if (color_map_texture) {
         gpu->bind_shader_view_for_pixel_shader(color_map_texture->shader_view, 5);
     }
@@ -258,7 +262,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         gpu->unbind_shader_view_for_pixel_shader(5);
     }
 
-    Texture* normal_map_texture = &scene->get_texture(material->normal_map_name);
+    Texture* normal_map_texture = scene->helper_get_texture(material->normal_map_name);
     if (normal_map_texture) {
         gpu->bind_shader_view_for_pixel_shader(normal_map_texture->shader_view, 6);
         global_cb.HAS_NORMAL_MAP = 1.0f;
@@ -267,7 +271,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         global_cb.HAS_NORMAL_MAP = 0.0f;
     }
 
-    Texture* roughness_map_texture = &scene->get_texture(material->roughness_map_name);
+    Texture* roughness_map_texture = scene->helper_get_texture(material->roughness_map_name);
     if (roughness_map_texture) {
         gpu->bind_shader_view_for_pixel_shader(roughness_map_texture->shader_view, 7);
         global_cb.HAS_ROUGHNESS_MAP = 1.0f;
@@ -299,7 +303,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     global_cb.RECEIVES_SHADOWS = false;
 
     kl::RenderShaders* render_shaders = &states->shader_states->scene_pass;
-    if (Shader* shader = &scene->get_shader(material->shader_name)) {
+    if (Shader* shader = scene->helper_get_shader(material->shader_name)) {
         render_shaders = &shader->graphics_buffer;
     }
     if (render_shaders && *render_shaders) {

@@ -7,8 +7,8 @@ titian::SkyboxPass::SkyboxPass()
 
 bool titian::SkyboxPass::is_renderable() const
 {
-    const Scene* scene = &Layers::get<GameLayer>()->scene;
-    const Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
+    Scene* scene = &Layers::get<GameLayer>()->scene;
+    Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
     return static_cast<bool>(camera);
 }
 
@@ -35,7 +35,7 @@ void titian::SkyboxPass::render_self(StatePackage& package)
     if (!camera)
         return;
 
-    Texture* skybox = &scene->get_texture(camera->skybox_name);
+    Texture* skybox = scene->helper_get_texture(camera->skybox_name);
     if (!skybox)
         return;
 
