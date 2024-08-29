@@ -31,9 +31,9 @@ const TextEditor::LanguageDefinition* titian::CodeEditor::get_definition() const
 	return m_text_editor.mLanguageDefinition.get();
 }
 
-void titian::CodeEditor::load_chai_standard()
+void titian::CodeEditor::load_lua_standard()
 {
-	auto ptr = TextEditor::LanguageDefinition::chai(CHAI_KEYWORDS, CHAI_TYPES, CHAI_MEMBERS, CHAI_FUNCTIONS);
+	auto ptr = TextEditor::LanguageDefinition::lua(LUA_KEYWORDS, LUA_TYPES, LUA_MEMBERS, LUA_FUNCTIONS);
 	m_text_editor.SetLanguageDefinition(ptr);
 }
 

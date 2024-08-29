@@ -317,7 +317,7 @@ public:
 		std::vector<TokenRegexString> mTokenRegexStrings;
 		bool mCaseSensitive = true;
 
-		static std::shared_ptr<LanguageDefinition> chai(
+		static std::shared_ptr<LanguageDefinition> lua(
 			const std::set<std::string, std::less<>>& keywords,
 			const std::set<std::string, std::less<>>& types,
 			const std::set<std::string, std::less<>>& members,

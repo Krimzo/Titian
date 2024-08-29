@@ -23,7 +23,7 @@ namespace titian {
 
 		Float4 background = Color{ 30, 30, 30 };
 		bool render_wireframe = false;
-		bool v_sync = false;
+		bool v_sync = true;
 
 		RenderLayer();
 

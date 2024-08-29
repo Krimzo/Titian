@@ -25,7 +25,7 @@ namespace titian {
         if (extension == FILE_EXTENSION_JPG || extension == FILE_EXTENSION_PNG || extension == FILE_EXTENSION_BMP) {
             return FileType::TEXTURE;
         }
-        if (extension == FILE_EXTENSION_CHAI || extension == FILE_EXTENSION_DLL) {
+        if (extension == FILE_EXTENSION_LUA || extension == FILE_EXTENSION_DLL) {
             return FileType::SCRIPT;
         }
         if (extension == FILE_EXTENSION_HLSL) {

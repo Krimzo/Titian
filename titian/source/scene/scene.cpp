@@ -519,40 +519,34 @@ bool titian::Scene::helper_contains_entity(const StringView& id) const
 }
 
 // Helper iterate
-void titian::Scene::helper_iterate_meshes(const bool async, const Function<void(const String*, Mesh*)>& func)
+void titian::Scene::helper_iterate_meshes(const Function<void(const String&, Mesh*)>& func)
 {
-    if (async) std::for_each(std::execution::par, meshes.begin(), meshes.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
-    else std::for_each(std::execution::seq, meshes.begin(), meshes.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    std::for_each(meshes.begin(), meshes.end(), [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
-void titian::Scene::helper_iterate_animations(const bool async, const Function<void(const String*, Animation*)>& func)
+void titian::Scene::helper_iterate_animations(const Function<void(const String&, Animation*)>& func)
 {
-    if (async) std::for_each(std::execution::par, animations.begin(), animations.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
-    else std::for_each(std::execution::seq, animations.begin(), animations.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    std::for_each(animations.begin(), animations.end(), [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
-void titian::Scene::helper_iterate_textures(const bool async, const Function<void(const String*, Texture*)>& func)
+void titian::Scene::helper_iterate_textures(const Function<void(const String&, Texture*)>& func)
 {
-    if (async) std::for_each(std::execution::par, textures.begin(), textures.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
-    else std::for_each(std::execution::seq, textures.begin(), textures.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    std::for_each(textures.begin(), textures.end(), [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
-void titian::Scene::helper_iterate_materials(const bool async, const Function<void(const String*, Material*)>& func)
+void titian::Scene::helper_iterate_materials(const Function<void(const String&, Material*)>& func)
 {
-    if (async) std::for_each(std::execution::par, materials.begin(), materials.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
-    else std::for_each(std::execution::seq, materials.begin(), materials.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    std::for_each(materials.begin(), materials.end(), [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
-void titian::Scene::helper_iterate_shaders(const bool async, const Function<void(const String*, Shader*)>& func)
+void titian::Scene::helper_iterate_shaders(const Function<void(const String&, Shader*)>& func)
 {
-    if (async) std::for_each(std::execution::par, shaders.begin(), shaders.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
-    else std::for_each(std::execution::seq, shaders.begin(), shaders.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    std::for_each(shaders.begin(), shaders.end(), [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
-void titian::Scene::helper_iterate_entities(const bool async, const Function<void(const String*, Entity*)>& func)
+void titian::Scene::helper_iterate_entities(const Function<void(const String&, Entity*)>& func)
 {
-    if (async) std::for_each(std::execution::par, m_entities.begin(), m_entities.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
-    else std::for_each(std::execution::seq, m_entities.begin(), m_entities.end(), [&](auto& entry) { func(&entry.first, &entry.second); });
+    std::for_each(m_entities.begin(), m_entities.end(), [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
 titian::Optional<titian::AssimpData> titian::Scene::get_assimp_data(const StringView& path) const

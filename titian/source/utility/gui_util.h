@@ -17,11 +17,10 @@ namespace titian {
     inline const String FILE_EXTENSION_BMP = ".bmp";
 
     inline const String FILE_EXTENSION_DLL = ".dll";
-    inline const String FILE_EXTENSION_CHAI = ".chai";
-
+    inline const String FILE_EXTENSION_LUA = ".lua";
     inline const String FILE_EXTENSION_HLSL = ".hlsl";
-    inline const String FILE_EXTENSION_TITIAN = ".titian";
     inline const String FILE_EXTENSION_JSON = ".json";
+    inline const String FILE_EXTENSION_TITIAN = ".titian";
 
     inline const String DRAG_FILE_ID = "DragFileID";
     inline const String DRAG_DIR_ID = "DragDirID";

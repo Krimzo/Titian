@@ -69,8 +69,8 @@ void titian::GUISectionExplorer::render_gui()
                 if (im::MenuItem("Script File")) {
                     StringStream stream{};
                     stream << m_path << "/" << name_input;
-                    if (name_input.find(FILE_EXTENSION_CHAI) == -1) {
-                        stream << FILE_EXTENSION_CHAI;
+                    if (name_input.find(FILE_EXTENSION_LUA) == -1) {
+                        stream << FILE_EXTENSION_LUA;
                     }
                     const String full_path = stream.str();
                     if (!fs::exists(full_path)) {

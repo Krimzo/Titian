@@ -4,7 +4,7 @@
 titian::GUISectionScriptEditor::GUISectionScriptEditor()
 	: GUISection("GUISectionScriptEditor")
 {
-	m_interp_editor.load_chai_standard();
+	m_interp_editor.load_lua_standard();
 }
 
 void titian::GUISectionScriptEditor::render_gui()
@@ -47,7 +47,7 @@ void titian::GUISectionScriptEditor::render_gui()
 		if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
 			const fs::path path = file.value();
 			const String extension = path.extension().string();
-			if (extension == FILE_EXTENSION_CHAI) {
+			if (extension == FILE_EXTENSION_LUA) {
 				Ref script = new InterpScript();
 				script->source = kl::read_file(path.string());
 				script->reload();
@@ -193,7 +193,7 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 		const String current_word = m_interp_editor.get_word_at_cursor();
 		const auto& language = *m_interp_editor.get_definition();
 		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Keyword]);
-		for (const auto& name : CHAI_KEYWORDS) {
+		for (const auto& name : LUA_KEYWORDS) {
 			if (name.find(current_word) != -1) {
 				if (im::MenuItem(name.data())) {
 					m_interp_editor.replace_word_at_cursor(name);
@@ -201,7 +201,7 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 			}
 		}
 		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Type]);
-		for (const auto& name : CHAI_TYPES) {
+		for (const auto& name : LUA_TYPES) {
 			if (name.find(current_word) != -1) {
 				if (im::MenuItem(name.data())) {
 					m_interp_editor.replace_word_at_cursor(name);
@@ -209,7 +209,7 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 			}
 		}
 		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Member]);
-		for (const auto& name : CHAI_MEMBERS) {
+		for (const auto& name : LUA_MEMBERS) {
 			if (name.find(current_word) != -1) {
 				if (im::MenuItem(name.data())) {
 					m_interp_editor.replace_word_at_cursor(name);
@@ -217,7 +217,7 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 			}
 		}
 		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Function]);
-		for (const auto& name : CHAI_FUNCTIONS) {
+		for (const auto& name : LUA_FUNCTIONS) {
 			if (name.find(current_word) != -1) {
 				if (im::MenuItem(name.data())) {
 					m_interp_editor.replace_word_at_cursor(name);

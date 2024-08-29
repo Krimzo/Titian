@@ -87,7 +87,7 @@ void titian::Shader::reload_for_camera()
 	graphics_buffer = m_gpu->create_render_shaders(data_buffer);
 }
 
-const int load_names = [&]
+static const int load_names = [&]
 {
 	using namespace titian;
 

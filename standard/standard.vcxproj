@@ -58,14 +58,14 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)chaiscript\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)lua\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)chaiscript\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)lua\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -79,7 +79,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)chaiscript\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)lua\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -88,7 +88,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)chaiscript\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)lua\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -102,7 +102,7 @@
     <ProjectReference Include="..\assimp\assimp.vcxproj">
       <Project>{1c6b6176-003d-4cbe-bc5b-21be73f184f9}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\chaiscript\chaiscript.vcxproj">
+    <ProjectReference Include="..\lua\lua.vcxproj">
       <Project>{f5fdc0a3-ab55-46ef-b5ba-cbba0ffef1c1}</Project>
     </ProjectReference>
     <ProjectReference Include="..\klibrary\klibrary.vcxproj">

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\lapi.c" />
+    <ClCompile Include="source\lauxlib.c" />
+    <ClCompile Include="source\lbaselib.c" />
+    <ClCompile Include="source\lcode.c" />
+    <ClCompile Include="source\lcorolib.c" />
+    <ClCompile Include="source\lctype.c" />
+    <ClCompile Include="source\ldblib.c" />
+    <ClCompile Include="source\ldebug.c" />
+    <ClCompile Include="source\ldo.c" />
+    <ClCompile Include="source\ldump.c" />
+    <ClCompile Include="source\lfunc.c" />
+    <ClCompile Include="source\lgc.c" />
+    <ClCompile Include="source\linit.c" />
+    <ClCompile Include="source\liolib.c" />
+    <ClCompile Include="source\llex.c" />
+    <ClCompile Include="source\lmathlib.c" />
+    <ClCompile Include="source\lmem.c" />
+    <ClCompile Include="source\loadlib.c" />
+    <ClCompile Include="source\lobject.c" />
+    <ClCompile Include="source\lopcodes.c" />
+    <ClCompile Include="source\loslib.c" />
+    <ClCompile Include="source\lparser.c" />
+    <ClCompile Include="source\lstate.c" />
+    <ClCompile Include="source\lstring.c" />
+    <ClCompile Include="source\lstrlib.c" />
+    <ClCompile Include="source\ltable.c" />
+    <ClCompile Include="source\ltablib.c" />
+    <ClCompile Include="source\ltm.c" />
+    <ClCompile Include="source\lundump.c" />
+    <ClCompile Include="source\lutf8lib.c" />
+    <ClCompile Include="source\lvm.c" />
+    <ClCompile Include="source\lzio.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\lapi.h" />
+    <ClInclude Include="source\lauxlib.h" />
+    <ClInclude Include="source\lcode.h" />
+    <ClInclude Include="source\lctype.h" />
+    <ClInclude Include="source\ldebug.h" />
+    <ClInclude Include="source\ldo.h" />
+    <ClInclude Include="source\lfunc.h" />
+    <ClInclude Include="source\lgc.h" />
+    <ClInclude Include="source\ljumptab.h" />
+    <ClInclude Include="source\llex.h" />
+    <ClInclude Include="source\llimits.h" />
+    <ClInclude Include="source\lmem.h" />
+    <ClInclude Include="source\lobject.h" />
+    <ClInclude Include="source\lopcodes.h" />
+    <ClInclude Include="source\lopnames.h" />
+    <ClInclude Include="source\lparser.h" />
+    <ClInclude Include="source\lprefix.h" />
+    <ClInclude Include="source\lstate.h" />
+    <ClInclude Include="source\lstring.h" />
+    <ClInclude Include="source\ltable.h" />
+    <ClInclude Include="source\ltm.h" />
+    <ClInclude Include="source\lua.h" />
+    <ClInclude Include="source\lua.hpp" />
+    <ClInclude Include="source\luaconf.h" />
+    <ClInclude Include="source\lualib.h" />
+    <ClInclude Include="source\lundump.h" />
+    <ClInclude Include="source\lvm.h" />
+    <ClInclude Include="source\lzio.h" />
+    <ClInclude Include="source\sol.hpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{f5fdc0a3-ab55-46ef-b5ba-cbba0ffef1c1}</ProjectGuid>
+    <RootNamespace>lua</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)lua\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)lua\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;KL_USING_IMGUI;PX_PHYSX_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)lua\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)assimp\library\;$(SolutionDir)lua\library\;$(SolutionDir)fuze\library\;$(SolutionDir)imgui\library\;$(SolutionDir)klibrary\library\;$(SolutionDir)main\library\;$(SolutionDir)mmodule\library\;$(SolutionDir)packager\library\;$(SolutionDir)physx\library\;$(SolutionDir)sandbox\library\;$(SolutionDir)standard\library\;$(SolutionDir)titian\library\</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

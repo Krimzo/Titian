@@ -23,7 +23,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "physx", "physx\physx.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "assimp", "assimp\assimp.vcxproj", "{1C6B6176-003D-4CBE-BC5B-21BE73F184F9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chaiscript", "chaiscript\chaiscript.vcxproj", "{F5FDC0A3-AB55-46EF-B5BA-CBBA0FFEF1C1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua", "lua\lua.vcxproj", "{F5FDC0A3-AB55-46EF-B5BA-CBBA0FFEF1C1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mmodule", "mmodule\mmodule.vcxproj", "{FE941003-8180-4824-A733-773690B2BF16}"
 EndProject

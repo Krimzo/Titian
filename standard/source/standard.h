@@ -1,8 +1,10 @@
 #pragma once
 
+#define SOL_ALL_SAFETIES_ON 1
+
 #include "klibrary.h"
 #include "physx.h"
-#include "chaiscript.hpp"
+#include "sol.hpp"
 #include "assimp.h"
 
 #undef min
@@ -16,7 +18,7 @@ namespace dx = kl::dx;
 namespace js = kl::json;
 namespace im = imgui;
 namespace px = physx;
-namespace cs = chaiscript;
+namespace sl = sol;
 namespace as = Assimp;
 
 namespace titian {

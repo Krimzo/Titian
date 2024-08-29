@@ -129,12 +129,12 @@ namespace titian {
         bool helper_contains_entity(const StringView& id) const;
 
         // Helper iterate
-        void helper_iterate_meshes(bool async, const Function<void(const String*, Mesh*)>& func);
-        void helper_iterate_animations(bool async, const Function<void(const String*, Animation*)>& func);
-        void helper_iterate_textures(bool async, const Function<void(const String*, Texture*)>& func);
-        void helper_iterate_materials(bool async, const Function<void(const String*, Material*)>& func);
-        void helper_iterate_shaders(bool async, const Function<void(const String*, Shader*)>& func);
-        void helper_iterate_entities(bool async, const Function<void(const String*, Entity*)>& func);
+        void helper_iterate_meshes(const Function<void(const String&, Mesh*)>& func);
+        void helper_iterate_animations(const Function<void(const String&, Animation*)>& func);
+        void helper_iterate_textures(const Function<void(const String&, Texture*)>& func);
+        void helper_iterate_materials(const Function<void(const String&, Material*)>& func);
+        void helper_iterate_shaders(const Function<void(const String&, Shader*)>& func);
+        void helper_iterate_entities(const Function<void(const String&, Entity*)>& func);
 
         // Loading
         Optional<AssimpData> get_assimp_data(const StringView& path) const;

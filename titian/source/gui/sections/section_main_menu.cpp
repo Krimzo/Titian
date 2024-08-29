@@ -82,7 +82,7 @@ void titian::GUISectionMainMenu::render_gui()
                 }
                 if (im::MenuItem("Script")) {
                     int type_index = 0;
-                    if (Optional file = kl::choose_file(false, { { "Script File", FILE_EXTENSION_CHAI }, { "Script File", FILE_EXTENSION_JSON }, { "Script File", FILE_EXTENSION_DLL } }, &type_index)) {
+                    if (Optional file = kl::choose_file(false, { { "Script File", FILE_EXTENSION_LUA }, { "Script File", FILE_EXTENSION_JSON }, { "Script File", FILE_EXTENSION_DLL } }, &type_index)) {
                         const String stem_name = fs::path(file.value()).stem().string();
 
                         if (type_index == 0) {
@@ -179,7 +179,7 @@ void titian::GUISectionMainMenu::render_gui()
                         if (im::MenuItem(name.data())) {
                             Pair<String, String> type_info;
                             if (script.is<InterpScript>()) {
-                                type_info = Pair{ "Interp Script", FILE_EXTENSION_CHAI };
+                                type_info = Pair{ "Interp Script", FILE_EXTENSION_LUA };
                             }
                             else if (script.is<NodeScript>()) {
                                 type_info = Pair{ "Node Script", FILE_EXTENSION_JSON };
@@ -191,7 +191,7 @@ void titian::GUISectionMainMenu::render_gui()
                                 const String extension = fs::path(file.value()).extension().string();
                                 if (InterpScript* interp_script = &script.as<InterpScript>()) {
                                     if (extension.empty()) {
-                                        file.value() += FILE_EXTENSION_CHAI;
+                                        file.value() += FILE_EXTENSION_LUA;
                                     }
                                     kl::write_file(file.value(), interp_script->source);
                                 }

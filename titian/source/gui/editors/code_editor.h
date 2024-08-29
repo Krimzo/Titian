@@ -17,7 +17,7 @@ namespace titian {
 
 		const TextEditor::LanguageDefinition* get_definition() const;
 
-		void load_chai_standard();
+		void load_lua_standard();
 		void load_hlsl_standard();
 
 	private:

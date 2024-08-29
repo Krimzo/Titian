@@ -5,12 +5,10 @@
 
 
 namespace titian {
-	inline const cs::ModulePtr INTERP_SCRIPT_MODULE = cs::ModulePtr(new cs::Module());
-
-	inline std::set<String, std::less<>> CHAI_KEYWORDS;
-	inline std::set<String, std::less<>> CHAI_TYPES;
-	inline std::set<String, std::less<>> CHAI_MEMBERS;
-	inline std::set<String, std::less<>> CHAI_FUNCTIONS;
+	inline std::set<String, std::less<>> LUA_KEYWORDS;
+	inline std::set<String, std::less<>> LUA_TYPES;
+	inline std::set<String, std::less<>> LUA_MEMBERS;
+	inline std::set<String, std::less<>> LUA_FUNCTIONS;
 }
 
 namespace titian {
@@ -32,13 +30,46 @@ namespace titian {
 		void call_collision(Scene* scene, Entity* attacker, Entity* target) override;
 		void call_ui(Scene* scene) override;
 
-		StringMap<cs::Boxed_Value> get_parameters();
+		struct Parameter
+		{
+			InterpScript* parent = nullptr;
+			String name;
+
+			inline Parameter(InterpScript* parent, String name)
+				: parent(parent), name(std::move(name))
+			{}
+
+			template<typename T>
+			bool is() const
+			{
+				return (*parent->m_engine)[name].is<T>();
+			}
+
+			template<typename T>
+			T get() const
+			{
+				return (*parent->m_engine)[name];
+			}
+
+			template<typename T>
+			void set(const T& value)
+			{
+				(*parent->m_engine)[name] = value;
+			}
+		};
+
+		StringMap<Parameter> get_parameters();
+
+		inline const auto& get_engine() const { return *m_engine; };
 
 	private:
-		Ref<cs::ChaiScript> m_engine;
-		Function<void(Scene*)> m_start_function;
-		Function<void(Scene*)> m_update_function;
-		Function<void(Scene*, Entity*, Entity*)> m_collision_function;
-		Function<void(Scene*)> m_ui_function;
+		Ref<sl::state> m_engine;
+		
+		Ref<sl::function> m_start_function;
+		Ref<sl::function> m_update_function;
+		Ref<sl::function> m_collision_function;
+		Ref<sl::function> m_ui_function;
+
+		void load_engine_parts();
 	};
 }

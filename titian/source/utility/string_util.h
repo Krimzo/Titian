@@ -6,7 +6,7 @@
 namespace titian {
 	inline String get_default_script()
 	{
-		return kl::read_file("package/defaults/default_script.chai");
+		return kl::read_file("package/defaults/default_script.lua");
 	}
 
 	inline String get_default_material_shader()
