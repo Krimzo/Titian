@@ -18,54 +18,54 @@ namespace kl {
             : m_instance(instance)
         {
             if (m_instance) {
-                self.allocate();
+                allocate();
             }
         }
 
         // destroy
         ~Ref() noexcept
         {
-            self.free();
+            free();
         }
 
         void free()
         {
-            if (self.decrease_count() == 0) {
-                self.destroy();
+            if (decrease_count() == 0) {
+                destroy();
             }
-            self.clear();
+            clear();
         }
 
         // copy
         Ref(const Ref& other)
             : m_instance(other.m_instance), m_count(other.m_count)
         {
-            self.increase_count();
+            increase_count();
         }
 
         Ref& operator=(const Ref& other)
         {
             if (other.m_instance != m_instance) {
-                self.free();
+                free();
                 m_instance = other.m_instance;
                 m_count = other.m_count;
-                self.increase_count();
+                increase_count();
             }
-            return self;
+            return *this;
         }
 
         // move
         Ref(Ref&& other) noexcept
         {
-            self = other;
+            *this = other;
             other.free();
         }
 
         Ref& operator=(Ref&& other) noexcept
         {
-            self = other;
+            *this = other;
             other.free();
-            return self;
+            return *this;
         }
 
         // cast
@@ -76,7 +76,7 @@ namespace kl {
             Ref<B, C> result;
             result.m_instance = m_instance;
             result.m_count = m_count;
-            self.increase_count();
+            increase_count();
             return result;
         }
 
@@ -92,7 +92,7 @@ namespace kl {
             Ref<D, C> result;
             result.m_instance = derived;
             result.m_count = m_count;
-            self.increase_count();
+            increase_count();
             return result;
         }
 
@@ -106,7 +106,7 @@ namespace kl {
 
         bool operator!=(const Ref& other) const
         {
-            return !(self == other);
+            return !(*this == other);
         }
 
         // access

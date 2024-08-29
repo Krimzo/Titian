@@ -53,16 +53,16 @@ namespace titian {
         }
     }
 
-    inline String gui_input_continuous(const StringView& id)
+    inline String gui_input_continuous(const String& id)
     {
-        auto& buffer = _INPUT_CONTINUOUS_DATA[String{ id }];
+        auto& buffer = _INPUT_CONTINUOUS_DATA[id];
         im::InputText(id.data(), &buffer);
         return buffer;
     }
 
-    inline Optional<String> gui_input_waited(const StringView& id, const StringView& to_copy)
+    inline Optional<String> gui_input_waited(const String& id, const StringView& to_copy)
     {
-        auto& buffer = _INPUT_WAITED_DATA[String{ id }];
+        auto& buffer = _INPUT_WAITED_DATA[id];
         buffer = to_copy;
         if (im::InputText(id.data(), &buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
             const String result = buffer;
@@ -73,13 +73,13 @@ namespace titian {
     }
 
     template<typename T>
-    void gui_set_drag_drop(const StringView& id, const T& data, const dx::ShaderView& texture = nullptr)
+    void gui_set_drag_drop(const String& id, const T& data, const dx::ShaderView& texture = nullptr)
     {
         im::PushStyleColor(ImGuiCol_PopupBg, {});
         im::PushStyleColor(ImGuiCol_Border, {});
         if (im::BeginDragDropSource()) {
             im::SetDragDropPayload(id.data(), nullptr, 0);
-            _DRAG_DROP_DATA.emplace(id, Any{ data });
+            _DRAG_DROP_DATA[id] = Any{ data };
             if (texture) {
                 im::Image(texture.get(), { 50.0f, 50.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
             }

@@ -73,8 +73,8 @@ namespace titian {
         // Entity
         inline const auto& entities() const { return m_entities; };
         Ref<Entity> new_entity(bool dynamic) const;
-        void add_entity(const StringView& name, const Ref<Entity>& entity);
-        void remove_entity(const StringView& name);
+        void add_entity(const String& id, const Ref<Entity>& entity);
+        void remove_entity(const StringView& id);
 
         // Casted entity
         template<typename T, typename... Args>
@@ -97,12 +97,12 @@ namespace titian {
         Ref<Collider> new_default_collider(px::PxGeometryType::Enum type, const Mesh* optional_mesh) const;
 
         // Helper new
-        Mesh* helper_new_mesh(const StringView& id);
-        Animation* helper_new_animation(const StringView& id);
-        Texture* helper_new_texture(const StringView& id);
-        Material* helper_new_material(const StringView& id);
-        Shader* helper_new_shader(const StringView& id);
-        Entity* helper_new_entity(const StringView& id);
+        Mesh* helper_new_mesh(const String& id);
+        Animation* helper_new_animation(const String& id);
+        Texture* helper_new_texture(const String& id);
+        Material* helper_new_material(const String& id);
+        Shader* helper_new_shader(const String& id);
+        Entity* helper_new_entity(const String& id);
 
         // Helper get
         Mesh* helper_get_mesh(const StringView& id);

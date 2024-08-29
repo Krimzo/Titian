@@ -284,15 +284,15 @@ titian::Ref<titian::Entity> titian::Scene::new_entity(const bool dynamic) const
     return new Entity(m_physics, dynamic);
 }
 
-void titian::Scene::add_entity(const StringView& name, const Ref<Entity>& entity)
+void titian::Scene::add_entity(const String& id, const Ref<Entity>& entity)
 {
-    m_entities.emplace(name, entity);
+    m_entities[id] = entity;
     m_scene->addActor(*entity->actor());
 }
 
-void titian::Scene::remove_entity(const StringView& name)
+void titian::Scene::remove_entity(const StringView& id)
 {
-    const auto it = m_entities.find(name);
+    const auto it = m_entities.find(id);
     if (it != m_entities.end()) {
         m_scene->removeActor(*it->second->actor());
         m_entities.erase(it);
@@ -344,42 +344,42 @@ titian::Ref<titian::Collider> titian::Scene::new_default_collider(const px::PxGe
 }
 
 // Helper new
-titian::Mesh* titian::Scene::helper_new_mesh(const StringView& id)
+titian::Mesh* titian::Scene::helper_new_mesh(const String& id)
 {
     Mesh* mesh = new Mesh(m_gpu, m_physics, m_cooking);
-    meshes.emplace(id, mesh);
+    meshes[id] = mesh;
     return mesh;
 }
 
-titian::Animation* titian::Scene::helper_new_animation(const StringView& id)
+titian::Animation* titian::Scene::helper_new_animation(const String& id)
 {
     Animation* animation = new Animation(m_gpu, this);
-    animations.emplace(id, animation);
+    animations[id] = animation;
     return animation;
 }
 
-titian::Texture* titian::Scene::helper_new_texture(const StringView& id)
+titian::Texture* titian::Scene::helper_new_texture(const String& id)
 {
     Texture* texture = new Texture(m_gpu);
-    textures.emplace(id, texture);
+    textures[id] = texture;
     return texture;
 }
 
-titian::Material* titian::Scene::helper_new_material(const StringView& id)
+titian::Material* titian::Scene::helper_new_material(const String& id)
 {
     Material* material = new Material();
-    materials.emplace(id, material);
+    materials[id] = material;
     return material;
 }
 
-titian::Shader* titian::Scene::helper_new_shader(const StringView& id)
+titian::Shader* titian::Scene::helper_new_shader(const String& id)
 {
     Shader* shader = new Shader(m_gpu, ShaderType::MATERIAL);
-    shaders.emplace(id, shader);
+    shaders[id] = shader;
     return shader;
 }
 
-titian::Entity* titian::Scene::helper_new_entity(const StringView& id)
+titian::Entity* titian::Scene::helper_new_entity(const String& id)
 {
     Ref entity = this->new_entity(true);
     this->add_entity(id, entity);

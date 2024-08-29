@@ -99,7 +99,7 @@ namespace titian {
 
 		void serialize(Serializer* serializer, const void* helper_data) const override
 		{
-			serializer->write_string("node_type", typeid(self).name()); // must be read from outside
+			serializer->write_string("node_type", typeid(*this).name()); // must be read from outside
 
 			serializer->write_byte_array("user_data", user_data, sizeof(user_data));
 			serializer->write_string("title", getName());

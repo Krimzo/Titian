@@ -30,7 +30,7 @@ bool kl::json::Array::compile(std::vector<Token>::const_iterator first, std::vec
                 container = Wrap<Literal>::make();
             }
             if (container->compile(it, last)) {
-                self.push_back(std::move(container));
+                push_back(std::move(container));
             }
         }
         if (it->type == TokenType::_OBJECT_START || it->type == TokenType::_ARRAY_START) {
@@ -55,7 +55,7 @@ std::string kl::json::Array::decompile(const int depth) const
     std::stringstream stream;
     stream << Standard::array_start_literal;
     for (size_t i = 0; i < size(); i++) {
-        stream << self[i]->decompile(-1);
+        stream << (*this)[i]->decompile(-1);
         if ((i + 1) != size()) {
             stream << Standard::splitter_literal << ' ';
         }

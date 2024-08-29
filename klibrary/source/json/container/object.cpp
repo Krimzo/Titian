@@ -32,7 +32,7 @@ bool kl::json::Object::compile(std::vector<Token>::const_iterator first, std::ve
                     container = Wrap<Literal>::make();
                 }
                 if (container->compile(it, last)) {
-                    self[key.value()] = std::move(container);
+                    (*this)[key.value()] = std::move(container);
                 }
                 key.reset();
             }
@@ -65,7 +65,7 @@ std::string kl::json::Object::decompile(const int depth) const
         const std::string map_depth(depth * 2, ' ');
         const std::string content_depth((depth + 1) * 2, ' ');
         stream << Standard::object_start_literal << '\n';
-        for (const auto& [key, value] : self) {
+        for (const auto& [key, value] : *this) {
             std::string name = key;
             Lexer::from_escaping(name);
             stream << content_depth << Standard::string_literal << name << Standard::string_literal;
@@ -80,7 +80,7 @@ std::string kl::json::Object::decompile(const int depth) const
     }
     else {
         stream << Standard::object_start_literal << ' ';
-        for (const auto& [key, value] : self) {
+        for (const auto& [key, value] : *this) {
             std::string name = key;
             Lexer::from_escaping(name);
             stream << Standard::string_literal << name << Standard::string_literal;

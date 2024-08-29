@@ -29,7 +29,7 @@ titian::TextSerializer::TextSerializer(const StringView& path, const bool write)
 
 titian::TextSerializer::~TextSerializer()
 {
-	if (self) {
+	if (*this) {
 		if (m_writing) {
 			kl::write_file(m_path, m_container.decompile());
 		}

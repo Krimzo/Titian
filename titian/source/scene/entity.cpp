@@ -17,7 +17,7 @@ titian::Entity::~Entity()
 
 void titian::Entity::serialize(Serializer* serializer, const void* helper_data) const
 {
-    serializer->write_string("entity_type", typeid(self).name()); // must be read from outside
+    serializer->write_string("entity_type", typeid(*this).name()); // must be read from outside
 
     serializer->write_bool("is_dynamic", is_dynamic());
     serializer->write_bool("has_gravity", has_gravity());

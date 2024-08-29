@@ -42,7 +42,7 @@ namespace kl {
         // destroy
         inline ~ComRef() noexcept
         {
-            this->free();
+            free();
         }
 
         inline void free()
@@ -57,15 +57,15 @@ namespace kl {
         inline ComRef(const ComRef& other)
             : m_instance(other.m_instance)
         {
-            this->increase_count();
+            increase_count();
         }
 
         inline ComRef& operator=(const ComRef& other)
         {
             if (other.m_instance != m_instance) {
-                this->free();
+                free();
                 m_instance = other.m_instance;
-                this->increase_count();
+                increase_count();
             }
             return *this;
         }
@@ -89,7 +89,7 @@ namespace kl {
             requires std::is_base_of_v<B, T>
         inline operator ComRef<B>() const
         {
-            this->increase_count();
+            increase_count();
             return ComRef<B>{m_instance};
         }
 
@@ -102,7 +102,7 @@ namespace kl {
         // access
         inline T** operator&()
         {
-            this->free();
+            free();
             return &m_instance;
         }
 
@@ -119,11 +119,6 @@ namespace kl {
         inline T* get() const
         {
 			return m_instance;
-        }
-
-        inline T** address()
-        {
-            return &m_instance;
         }
 
         inline T*const* address() const

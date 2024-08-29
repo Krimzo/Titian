@@ -26,7 +26,7 @@ namespace kl {
 		// destroy
 		~Wrap() noexcept
 		{
-			self.destroy();
+			destroy();
 		}
 
 		// copy
@@ -47,12 +47,12 @@ namespace kl {
 			requires std::is_base_of_v<T, D> and (S >= DS)
 		Wrap& operator=(Wrap<D, DS>&& other)
 		{
-			self.destroy();
-			self.clear();
+			destroy();
+			clear();
 			m_valid = other.m_valid;
 			memcpy(m_buffer, other.m_buffer, DS);
 			other.clear();
-			return self;
+			return *this;
 		}
 
 		// cast
@@ -61,7 +61,7 @@ namespace kl {
 		D* as()
 		{
 			if (m_valid) {
-				return dynamic_cast<D*>(&self);
+				return dynamic_cast<D*>(&*this);
 			}
 			return nullptr;
 		}
@@ -71,7 +71,7 @@ namespace kl {
 		const D* as() const
 		{
 			if (m_valid) {
-				return dynamic_cast<const D*>(&self);
+				return dynamic_cast<const D*>(&*this);
 			}
 			return nullptr;
 		}
@@ -89,22 +89,22 @@ namespace kl {
 
 		T& operator*()
 		{
-			return *(&self);
+			return *(&*this);
 		}
 
 		const T& operator*() const
 		{
-			return *(&self);
+			return *(&*this);
 		}
 
 		T* operator->()
 		{
-			return &self;
+			return &*this;
 		}
 
 		const T* operator->() const
 		{
-			return &self;
+			return &*this;
 		}
 
 		// info
@@ -120,7 +120,7 @@ namespace kl {
 		inline void destroy()
 		{
 			if (m_valid) {
-				(*self).~T();
+				(**this).~T();
 			}
 		}
 

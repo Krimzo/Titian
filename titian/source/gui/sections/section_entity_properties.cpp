@@ -228,7 +228,7 @@ void titian::GUISectionEntityProperties::edit_entity_material(Scene* scene, Enti
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const StringView& entity_name, Ref<Entity>& entity)
+void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const String& entity_name, Ref<Entity>& entity)
 {
     im::Separator();
     im::Text("Physics");
