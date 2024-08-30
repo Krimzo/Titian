@@ -28,17 +28,14 @@ namespace kl {
         int pixel_count() const;
         uint64_t byte_size() const;
 
+        Color& operator[](int index);
+        const Color& operator[](int index) const;
+
         Color& operator[](const Int2& coords);
         const Color& operator[](const Int2& coords) const;
 
         bool in_bounds(const Int2& coords) const;
         Color sample(const Float2& uv) const;
-
-        // Iterate
-        inline auto begin() { return m_pixels.begin(); };
-        inline auto end() { return m_pixels.end(); };
-        inline auto begin() const { return m_pixels.begin(); };
-        inline auto end() const { return m_pixels.end(); };
 
         // Size
         int width() const;

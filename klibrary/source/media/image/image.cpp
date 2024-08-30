@@ -48,19 +48,29 @@ uint64_t kl::Image::byte_size() const
     return pixel_count() * sizeof(Color);
 }
 
+kl::Color& kl::Image::operator[](const int index)
+{
+    return m_pixels[index];
+}
+
+const kl::Color& kl::Image::operator[](const int index) const
+{
+    return m_pixels[index];
+}
+
 kl::Color& kl::Image::operator[](const Int2& coords)
 {
-    return m_pixels.at((size_t) coords.y * m_size.x + coords.x);
+    return m_pixels[coords.to_index(m_size.x)];
 }
 
 const kl::Color& kl::Image::operator[](const Int2& coords) const
 {
-    return m_pixels.at((size_t) coords.y * m_size.x + coords.x);
+    return m_pixels[coords.to_index(m_size.x)];
 }
 
 bool kl::Image::in_bounds(const Int2& coords) const
 {
-    return (coords.x >= 0 && coords.y >= 0 && coords.x < m_size.x && coords.y < m_size.y);
+    return coords.in_bounds(m_size);
 }
 
 kl::Color kl::Image::sample(const Float2& uv) const

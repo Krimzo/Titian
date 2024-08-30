@@ -52,22 +52,38 @@ void titian::InterpScript::reload()
 
 void titian::InterpScript::call_start(Scene* scene)
 {
-	m_start_function->call(scene);
+	const auto result = m_start_function->call(scene);
+	if (!result.valid()) {
+		const sol::error err = result;
+		Logger::log("On start error: ", err.what());
+	}
 }
 
 void titian::InterpScript::call_update(Scene* scene)
 {
-	m_update_function->call(scene);
+	const auto result = m_update_function->call(scene);
+	if (!result.valid()) {
+		const sol::error err = result;
+		Logger::log("On update error: ", err.what());
+	}
 }
 
 void titian::InterpScript::call_collision(Scene* scene, Entity* attacker, Entity* target)
 {
-	m_collision_function->call(scene, attacker, target);
+	const auto result = m_collision_function->call(scene, attacker, target);
+	if (!result.valid()) {
+		const sol::error err = result;
+		Logger::log("On collision error: ", err.what());
+	}
 }
 
 void titian::InterpScript::call_ui(Scene* scene)
 {
-	m_ui_function->call(scene);
+	const auto result = m_ui_function->call(scene);
+	if (!result.valid()) {
+		const sol::error err = result;
+		Logger::log("On ui error: ", err.what());
+	}
 }
 
 titian::StringMap<titian::InterpScript::Parameter> titian::InterpScript::get_parameters()
@@ -288,6 +304,33 @@ void titian::InterpScript::load_engine_parts()
 		sl::meta_function::equal_to, &Color::operator==
 	);
 
+	m_engine->new_usertype<kl::Image>(
+		"Image",
+		sl::constructors<kl::Image(),
+			kl::Image(Int2), kl::Image(StringView)>(),
+		"pixel_count", &kl::Image::pixel_count,
+		"byte_size", &kl::Image::byte_size,
+		sl::meta_function::index, METHOD(kl::Image, Color&, operator[], const Int2&),
+		"in_bounds", &kl::Image::in_bounds,
+		"sample", &kl::Image::sample,
+		"width", sl::property(&kl::Image::width, &kl::Image::set_width),
+		"height", sl::property(&kl::Image::height, &kl::Image::set_height),
+		"size", sl::property(&kl::Image::size, &kl::Image::resize),
+		"fill", &kl::Image::fill,
+		"flip_horizontal", &kl::Image::flip_horizontal,
+		"flip_vertical", &kl::Image::flip_vertical,
+		"rectangle", &kl::Image::rectangle,
+		"as_ascii", &kl::Image::as_ascii,
+		"draw_line", &kl::Image::draw_line,
+		"draw_triangle", &kl::Image::draw_triangle,
+		"draw_rectangle", &kl::Image::draw_rectangle,
+		"draw_circle", sl::overload(METHOD(kl::Image, void, draw_circle, const Int2&, float, const Color&, bool),
+			METHOD(kl::Image, void, draw_circle, const Int2&, const Int2&, const Color&, bool)),
+		"draw_image", &kl::Image::draw_image,
+		"load_from_file", &kl::Image::load_from_file,
+		"save_to_file", &kl::Image::save_to_file
+	);
+
 	m_engine->new_usertype<Mesh>(
 		"Mesh",
 		"data_buffer", &Mesh::data_buffer,
@@ -309,7 +352,8 @@ void titian::InterpScript::load_engine_parts()
 
 	m_engine->new_usertype<Texture>(
 		"Texture",
-		//"data_buffer", &Texture::data_buffer,
+		"data_buffer", &Texture::data_buffer,
+		"is_cube", &Texture::is_cube,
 		"reload_as_2D", &Texture::reload_as_2D,
 		"reload_as_cube", &Texture::reload_as_cube,
 		"create_target_view", &Texture::create_target_view,
@@ -821,13 +865,33 @@ static const int load_names = [&]
 
 		const String name = key.as<String>();
 		const auto type = value.get_type();
-		if (type == sl::type::table || type == sl::type::userdata) {
-			LUA_TYPES.insert(name);
-		}
-		else if (type == sl::type::function) {
+		if (type == sl::type::function) {
 			LUA_FUNCTIONS.insert(name);
 		}
 		else {
+			LUA_TYPES.insert(name);
+		}
+	}
+	for (auto& [key, value] : temp.get_engine().registry()) {
+		if (!key.is<std::string>())
+			continue;
+
+		const std::string name = key.as<std::string>();
+		if (name.starts_with('_'))
+			continue;
+
+		if (!value.is<sl::table>())
+			continue;
+		const sol::table tbl = value;
+
+		for (auto& [key, value] : tbl) {
+			if (!key.is<std::string>())
+				continue;
+
+			const std::string name = key.as<std::string>();
+			if (name.starts_with('_'))
+				continue;
+
 			LUA_MEMBERS.insert(name);
 		}
 	}

@@ -139,6 +139,29 @@ namespace kl {
 		{
 			return (T) std::sqrt(x * x + y * y);
 		}
+
+		// 2D Index
+		constexpr T to_index(T width) const
+		{
+			return x + y * width;
+		}
+
+		constexpr T from_index(T index, T width)
+		{
+			x = index % width;
+			y = index / width;
+		}
+
+		constexpr bool in_bounds(const Vector2<T>& lower_incl, const Vector2<T>& upper_excl) const
+		{
+			return x >= lower_incl.x && x < upper_excl.x
+				&& y >= lower_incl.y && y < upper_excl.y;
+		}
+
+		constexpr bool in_bounds(const Vector2<T>& upper_excl) const
+		{
+			return in_bounds({}, upper_excl);
+		}
     };
 }
 
