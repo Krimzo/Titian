@@ -146,10 +146,9 @@ namespace kl {
 			return x + y * width;
 		}
 
-		constexpr T from_index(T index, T width)
+		static constexpr Vector2<T> from_index(T index, T width)
 		{
-			x = index % width;
-			y = index / width;
+			return { index % width, index / width };
 		}
 
 		constexpr bool in_bounds(const Vector2<T>& lower_incl, const Vector2<T>& upper_excl) const
