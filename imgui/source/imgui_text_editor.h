@@ -26,11 +26,6 @@ public:
 	void SelectAll();
 	void SelectLine(int aLine);
 	void SelectRegion(int aStartLine, int aStartChar, int aEndLine, int aEndChar);
-	void SelectNextOccurrenceOf(const char* aText, int aTextSize, bool aCaseSensitive = true);
-	void SelectAllOccurrencesOf(const char* aText, int aTextSize, bool aCaseSensitive = true);
-	bool AnyCursorHasSelection() const;
-	bool AllCursorsHaveSelection() const;
-	void ClearExtraCursors();
 	void ClearSelections();
 	void SetCursorPosition(int aLine, int aCharIndex);
 
@@ -105,22 +100,18 @@ public:
 			((in >> IM_COL32_G_SHIFT) & 0xFF) * s,
 			((in >> IM_COL32_R_SHIFT) & 0xFF) * s);
 	}
+
 	static inline bool IsUTFSequence(char c)
 	{
 		return (c & 0xC0) == 0x80;
 	}
+
 	static inline float Distance(const ImVec2& a, const ImVec2& b)
 	{
 		float x = a.x - b.x;
 		float y = a.y - b.y;
 		return sqrt(x * x + y * y);
 	}
-	template<typename T>
-	static inline T Max(T a, T b) { return a > b ? a : b; }
-	template<typename T>
-	static inline T Min(T a, T b) { return a < b ? a : b; }
-
-	// ------------- Internal ------------- //
 
 	enum class PaletteIndex : int8_t
 	{
@@ -179,13 +170,6 @@ public:
 		IM_COL32( 89,  89,  89, 255), // Current line edge
 	};
 
-	// Represents a character coordinate from the user's point of view,
-	// i. e. consider an uniform grid (assuming fixed-width font) on the
-	// screen as it is rendered, and each cell has its own coordinate, starting from 0.
-	// Tabs are counted as [1..mTabSize] count empty spaces, depending on
-	// how many space is necessary to reach the next tab stop.
-	// For example, coordinate (1, 5) represents the character 'B' in a line "\tABC", when mTabSize = 4,
-	// because it is rendered as "    ABC" on the screen.
 	struct Coordinates
 	{
 		int mLine, mColumn;
@@ -252,21 +236,14 @@ public:
 
 	struct Cursor
 	{
-		Coordinates mInteractiveStart = { 0, 0 };
-		Coordinates mInteractiveEnd = { 0, 0 };
-		inline Coordinates GetSelectionStart() const { return mInteractiveStart < mInteractiveEnd ? mInteractiveStart : mInteractiveEnd; }
-		inline Coordinates GetSelectionEnd() const { return mInteractiveStart > mInteractiveEnd ? mInteractiveStart : mInteractiveEnd; }
-		inline bool HasSelection() const { return mInteractiveStart != mInteractiveEnd; }
-	};
+		Coordinates mStart = { 0, 0 };
+		Coordinates mEnd = { 0, 0 };
 
-	struct EditorState // state to be restored with undo/redo
-	{
-		int mCurrentCursor = 0;
-		int mLastAddedCursor = 0;
-		std::vector<Cursor> mCursors = { {{0,0}} };
-		void AddCursor();
-		int GetLastAddedCursorIndex();
-		void SortCursorsFromTopToBottom();
+		Cursor() = default;
+
+		inline Coordinates GetSelectionStart() const { return mStart < mEnd ? mStart : mEnd; }
+		inline Coordinates GetSelectionEnd() const { return mStart > mEnd ? mStart : mEnd; }
+		inline bool HasSelection() const { return mStart != mEnd; }
 	};
 
 	struct Glyph
@@ -282,7 +259,7 @@ public:
 		{}
 	};
 
-	typedef std::vector<Glyph> Line;
+	using Line = std::vector<Glyph>;
 
 	struct LanguageDefinition
 	{
@@ -312,7 +289,12 @@ public:
 			const std::set<std::string, std::less<>>& functions);
 	};
 
-	enum class UndoOperationType { Add, Delete };
+	enum class UndoOperationType
+	{
+		Add,
+		Delete,
+	};
+
 	struct UndoOperation
 	{
 		std::string mText;
@@ -321,37 +303,30 @@ public:
 		UndoOperationType mType;
 	};
 
-	class UndoRecord
+	struct UndoRecord
 	{
-	public:
-		UndoRecord() {}
-		~UndoRecord() {}
+		std::vector<UndoOperation> mOperations;
+		Cursor mBefore;
+		Cursor mAfter;
 
-		UndoRecord(
-			const std::vector<UndoOperation>& aOperations,
-			TextEditor::EditorState& aBefore,
-			TextEditor::EditorState& aAfter);
+		UndoRecord() = default;
+		UndoRecord(const std::vector<UndoOperation>& aOperations, const Cursor& aBefore, const Cursor& aAfter);
 
 		void Undo(TextEditor* aEditor);
 		void Redo(TextEditor* aEditor);
-
-		std::vector<UndoOperation> mOperations;
-
-		EditorState mBefore;
-		EditorState mAfter;
 	};
 
 	void SetLanguageDefinition(std::shared_ptr<LanguageDefinition> aValue);
 
 	std::string GetText(const Coordinates& aStart, const Coordinates& aEnd) const;
 	std::string GetClipboardText() const;
-	std::string GetSelectedText(int aCursor = -1) const;
+	std::string GetSelectedText() const;
 
-	void SetCursorPosition(const Coordinates& aPosition, int aCursor = -1, bool aClearSelection = true);
+	void SetCursorPosition(const Coordinates& aPosition, bool aClearSelection = true);
 
 	int InsertTextAt(Coordinates& aWhere, const char* aValue);
-	void InsertTextAtCursor(const std::string& aValue, int aCursor = -1);
-	void InsertTextAtCursor(const char* aValue, int aCursor = -1);
+	void InsertTextAtCursor(const std::string& aValue);
+	void InsertTextAtCursor(const char* aValue);
 
 	enum class MoveDirection { Right = 0, Left = 1, Up = 2, Down = 3 };
 	bool Move(int& aLine, int& aCharIndex, bool aLeft = false, bool aLockLine = false) const;
@@ -368,14 +343,11 @@ public:
 	void MoveEnd(bool aSelect = false);
 	void EnterCharacter(ImWchar aChar, bool aShift);
 	void Backspace(bool aWordMode = false);
-	void Delete(bool aWordMode = false, const EditorState* aEditorState = nullptr);
+	void Delete(bool aWordMode = false, const Cursor* aEditorState = nullptr);
 
-	void SetSelection(Coordinates aStart, Coordinates aEnd, int aCursor = -1);
-	void SetSelection(int aStartLine, int aStartChar, int aEndLine, int aEndChar, int aCursor = -1);
+	void SetSelection(Coordinates aStart, Coordinates aEnd);
+	void SetSelection(int aStartLine, int aStartChar, int aEndLine, int aEndChar);
 
-	void SelectNextOccurrenceOf(const char* aText, int aTextSize, int aCursor = -1, bool aCaseSensitive = true);
-	void AddCursorForNextOccurrence(bool aCaseSensitive = true);
-	bool FindNextOccurrence(const char* aText, int aTextSize, const Coordinates& aFrom, Coordinates& outStart, Coordinates& outEnd, bool aCaseSensitive = true);
 	bool FindMatchingBracket(int aLine, int aCharIndex, Coordinates& out);
 	void ChangeCurrentLinesIndentation(bool aIncrease);
 	void MoveUpCurrentLines();
@@ -384,10 +356,10 @@ public:
 	void RemoveCurrentLines();
 
 	float TextDistanceToLineStart(const Coordinates& aFrom, bool aSanitizeCoords = true) const;
-	void EnsureCursorVisible(int aCursor = -1, bool aStartToo = false);
+	void EnsureCursorVisible(bool aStartToo = false);
 
 	Coordinates SanitizeCoordinates(const Coordinates& aValue) const;
-	Coordinates GetActualCursorCoordinates(int aCursor = -1, bool aStart = false) const;
+	Coordinates GetActualCursorCoordinates(bool aStart = false) const;
 	Coordinates ScreenPosToCoordinates(const ImVec2& aPosition, bool* isOverLineNumber = nullptr) const;
 	Coordinates FindWordStart(const Coordinates& aFrom) const;
 	Coordinates FindWordEnd(const Coordinates& aFrom) const;
@@ -398,10 +370,10 @@ public:
 	int GetLineMaxColumn(int aLine, int aLimit = -1) const;
 
 	Line& InsertLine(int aIndex);
-	void RemoveLine(int aIndex, const std::unordered_set<int>* aHandledCursors = nullptr);
+	void RemoveLine(int aIndex);
 	void RemoveLines(int aStart, int aEnd);
 	void DeleteRange(const Coordinates& aStart, const Coordinates& aEnd);
-	void DeleteSelection(int aCursor = -1);
+	void DeleteSelection();
 
 	void RemoveGlyphsFromLine(int aLine, int aStartChar, int aEndChar = -1);
 	void AddGlyphsToLine(int aLine, int aTargetIndex, Line::iterator aSourceStart, Line::iterator aSourceEnd);
@@ -412,10 +384,9 @@ public:
 	void HandleMouseInputs();
 	void UpdateViewVariables(float aScrollX, float aScrollY);
 	void Render(bool aParentIsFocused = false);
+	void DisplayPopup(bool aParentIsFocused);
 
 	void OnCursorPositionChanged();
-	void OnLineChanged(bool aBeforeChange, int aLine, int aColumn, int aCharCount, bool aDeleted);
-	void MergeCursorsIfPossible();
 
 	void AddUndo(UndoRecord& aValue);
 
@@ -423,9 +394,10 @@ public:
 	void ColorizeRange(int aFromLine = 0, int aToLine = 0);
 	void ColorizeInternal();
 
-	std::vector<Line> mLines;
-	EditorState mState;
-	std::vector<UndoRecord> mUndoBuffer;
+	std::vector<Line> mLines{};
+	Cursor mCursor{};
+
+	std::vector<UndoRecord> mUndoBuffer{};
 	int mUndoIndex = 0;
 
 	int mTabSize = 4;
@@ -437,9 +409,8 @@ public:
 	SetViewAtLineMode mSetViewAtLineMode = {};
 	int mEnsureCursorVisible = -1;
 	bool mEnsureCursorVisibleStartToo = false;
-	bool mScrollToTop = false;
 
-	float mTextStart = 20.0f; // position (in pixels) where a code line starts relative to the left of the TextEditor.
+	float mTextStart = 20.0f;
 	int mLeftMargin = 10;
 	ImVec2 mCharAdvance;
 	float mCurrentSpaceHeight = 20.0f;

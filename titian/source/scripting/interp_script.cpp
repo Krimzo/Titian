@@ -52,6 +52,9 @@ void titian::InterpScript::reload()
 
 void titian::InterpScript::call_start(Scene* scene)
 {
+	if (!m_start_function->valid())
+		return;
+
 	const auto result = m_start_function->call(scene);
 	if (!result.valid()) {
 		const sol::error err = result;
@@ -61,6 +64,9 @@ void titian::InterpScript::call_start(Scene* scene)
 
 void titian::InterpScript::call_update(Scene* scene)
 {
+	if (!m_update_function->valid())
+		return;
+
 	const auto result = m_update_function->call(scene);
 	if (!result.valid()) {
 		const sol::error err = result;
@@ -70,6 +76,9 @@ void titian::InterpScript::call_update(Scene* scene)
 
 void titian::InterpScript::call_collision(Scene* scene, Entity* attacker, Entity* target)
 {
+	if (!m_collision_function->valid())
+		return;
+
 	const auto result = m_collision_function->call(scene, attacker, target);
 	if (!result.valid()) {
 		const sol::error err = result;
@@ -79,6 +88,9 @@ void titian::InterpScript::call_collision(Scene* scene, Entity* attacker, Entity
 
 void titian::InterpScript::call_ui(Scene* scene)
 {
+	if (!m_ui_function->valid())
+		return;
+
 	const auto result = m_ui_function->call(scene);
 	if (!result.valid()) {
 		const sol::error err = result;
