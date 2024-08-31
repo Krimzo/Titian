@@ -39,6 +39,16 @@ namespace kl {
 			return data[x + y * 3];
 		}
 
+		constexpr T get(int index) const
+		{
+			return data[index];
+		}
+
+		constexpr void set(int index, T value)
+		{
+			data[index] = value;
+		}
+
         template<typename O>
         constexpr operator Matrix3x3<O>() const
         {

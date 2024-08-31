@@ -118,12 +118,14 @@ void titian::InterpScript::load_engine_parts()
 			Int2(int), Int2(int, int)>(),
 		"x", &Int2::x,
 		"y", &Int2::y,
-		sl::meta_function::index, METHOD(Int2, int&, operator[], int),
 		sl::meta_function::equal_to, &Int2::operator==,
 		sl::meta_function::addition, &Int2::operator+,
-		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Int2, Int2, operator-), CONST_METHOD(Int2, Int2, operator-, const Int2&)),
-		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Int2, Int2, operator*, int), CONST_METHOD(Int2, Int2, operator*, const Int2&)),
-		sl::meta_function::division, sl::overload(CONST_METHOD(Int2, Int2, operator/, int), CONST_METHOD(Int2, Int2, operator/, const Int2&))
+		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Int2, Int2, operator-),
+			CONST_METHOD(Int2, Int2, operator-, const Int2&)),
+		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Int2, Int2, operator*, int),
+			CONST_METHOD(Int2, Int2, operator*, const Int2&)),
+		sl::meta_function::division, sl::overload(CONST_METHOD(Int2, Int2, operator/, int),
+			CONST_METHOD(Int2, Int2, operator/, const Int2&))
 	);
 
 	m_engine->new_usertype<Float2>(
@@ -133,12 +135,14 @@ void titian::InterpScript::load_engine_parts()
 		"x", &Float2::x,
 		"y", &Float2::y,
 		"length", &Float2::length,
-		sl::meta_function::index, METHOD(Float2, float&, operator[], int),
 		sl::meta_function::equal_to, &Float2::operator==,
 		sl::meta_function::addition, &Float2::operator+,
-		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Float2, Float2, operator-), CONST_METHOD(Float2, Float2, operator-, const Float2&)),
-		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float2, Float2, operator*, float), CONST_METHOD(Float2, Float2, operator*, const Float2&)),
-		sl::meta_function::division, sl::overload(CONST_METHOD(Float2, Float2, operator/, float), CONST_METHOD(Float2, Float2, operator/, const Float2&))
+		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Float2, Float2, operator-),
+			CONST_METHOD(Float2, Float2, operator-, const Float2&)),
+		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float2, Float2, operator*, float),
+			CONST_METHOD(Float2, Float2, operator*, const Float2&)),
+		sl::meta_function::division, sl::overload(CONST_METHOD(Float2, Float2, operator/, float),
+			CONST_METHOD(Float2, Float2, operator/, const Float2&))
 	);
 
 	m_engine->new_usertype<Float3>(
@@ -150,12 +154,14 @@ void titian::InterpScript::load_engine_parts()
 		"y", &Float3::y,
 		"z", &Float3::z,
 		"length", &Float3::length,
-		sl::meta_function::index, METHOD(Float3, float&, operator[], int),
 		sl::meta_function::equal_to, &Float3::operator==,
 		sl::meta_function::addition, &Float3::operator+,
-		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Float3, Float3, operator-), CONST_METHOD(Float3, Float3, operator-, const Float3&)),
-		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float3, Float3, operator*, float), CONST_METHOD(Float3, Float3, operator*, const Float3&)),
-		sl::meta_function::division, sl::overload(CONST_METHOD(Float3, Float3, operator/, float), CONST_METHOD(Float3, Float3, operator/, const Float3&))
+		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Float3, Float3, operator-),
+			CONST_METHOD(Float3, Float3, operator-, const Float3&)),
+		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float3, Float3, operator*, float),
+			CONST_METHOD(Float3, Float3, operator*, const Float3&)),
+		sl::meta_function::division, sl::overload(CONST_METHOD(Float3, Float3, operator/, float),
+			CONST_METHOD(Float3, Float3, operator/, const Float3&))
 	);
 
 	m_engine->new_usertype<Float4>(
@@ -169,45 +175,56 @@ void titian::InterpScript::load_engine_parts()
 		"z", &Float4::z,
 		"w", &Float4::w,
 		"length", &Float4::length,
-		sl::meta_function::index, METHOD(Float4, float&, operator[], int),
 		sl::meta_function::equal_to, &Float4::operator==,
 		sl::meta_function::addition, &Float4::operator+,
-		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Float4, Float4, operator-), CONST_METHOD(Float4, Float4, operator-, const Float4&)),
-		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float4, Float4, operator*, float), CONST_METHOD(Float4, Float4, operator*, const Float4&)),
-		sl::meta_function::division, sl::overload(CONST_METHOD(Float4, Float4, operator/, float), CONST_METHOD(Float4, Float4, operator/, const Float4&))
+		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Float4, Float4, operator-),
+			CONST_METHOD(Float4, Float4, operator-, const Float4&)),
+		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float4, Float4, operator*, float),
+			CONST_METHOD(Float4, Float4, operator*, const Float4&)),
+		sl::meta_function::division, sl::overload(CONST_METHOD(Float4, Float4, operator/, float),
+		CONST_METHOD(Float4, Float4, operator/, const Float4&))
 	);
 
 	m_engine->new_usertype<Float2x2>(
 		"Float2x2",
 		sl::constructors<Float2x2()>(),
+		"get", &Float2x2::get,
+		"set", &Float2x2::set,
 		"determinant", &Float2x2::determinant,
-		sl::meta_function::index, METHOD(Float2x2, float&, operator[], int),
 		sl::meta_function::equal_to, &Float2x2::operator==,
 		sl::meta_function::addition, &Float2x2::operator+,
 		sl::meta_function::subtraction, &Float2x2::operator-,
-		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float2x2, Float2x2, operator*, float), CONST_METHOD(Float2x2, Float2, operator*, const Float2&), CONST_METHOD(Float2x2, Float2x2, operator*, const Float2x2&))
+		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float2x2, Float2x2, operator*, float),
+			CONST_METHOD(Float2x2, Float2, operator*, const Float2&),
+			CONST_METHOD(Float2x2, Float2x2, operator*, const Float2x2&))
 	);
 
 	m_engine->new_usertype<Float3x3>(
 		"Float3x3",
 		sl::constructors<Float3x3()>(),
+		"get", &Float3x3::get,
+		"set", &Float3x3::set,
 		"determinant", &Float3x3::determinant,
-		sl::meta_function::index, METHOD(Float3x3, float&, operator[], int),
 		sl::meta_function::equal_to, &Float3x3::operator==,
 		sl::meta_function::addition, &Float3x3::operator+,
 		sl::meta_function::subtraction, &Float3x3::operator-,
-		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float3x3, Float3x3, operator*, float), CONST_METHOD(Float3x3, Float3, operator*, const Float3&), CONST_METHOD(Float3x3, Float3x3, operator*, const Float3x3&))
+		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float3x3, Float3x3, operator*, float),
+			CONST_METHOD(Float3x3, Float3, operator*, const Float3&),
+			CONST_METHOD(Float3x3, Float3x3, operator*, const Float3x3&))
 	);
 
 	m_engine->new_usertype<Float4x4>(
 		"Float4x4",
 		sl::constructors<Float4x4()>(),
+		"get", &Float4x4::get,
+		"set", &Float4x4::set,
 		"determinant", &Float4x4::determinant,
-		sl::meta_function::index, METHOD(Float4x4, float&, operator[], int),
 		sl::meta_function::equal_to, &Float4x4::operator==,
 		sl::meta_function::addition, &Float4x4::operator+,
 		sl::meta_function::subtraction, &Float4x4::operator-,
-		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float4x4, Float4x4, operator*, float), CONST_METHOD(Float4x4, Float4, operator*, const Float4&), CONST_METHOD(Float4x4, Float4x4, operator*, const Float4x4&))
+		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Float4x4, Float4x4, operator*, float),
+			CONST_METHOD(Float4x4, Float4, operator*, const Float4&),
+			CONST_METHOD(Float4x4, Float4x4, operator*, const Float4x4&))
 	);
 
 	m_engine->new_usertype<Complex>(
@@ -217,11 +234,12 @@ void titian::InterpScript::load_engine_parts()
 		"r", &Complex::r,
 		"i", &Complex::i,
 		"length", &Complex::length,
-		sl::meta_function::index, METHOD(Complex, float&, operator[], int),
 		sl::meta_function::equal_to, &Complex::operator==,
 		sl::meta_function::addition, &Complex::operator+,
-		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Complex, Complex, operator-), CONST_METHOD(Complex, Complex, operator-, const Complex&)),
-		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Complex, Complex, operator*, float), CONST_METHOD(Complex, Complex, operator*, const Complex&))
+		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Complex, Complex, operator-),
+			CONST_METHOD(Complex, Complex, operator-, const Complex&)),
+		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Complex, Complex, operator*, float),
+			CONST_METHOD(Complex, Complex, operator*, const Complex&))
 	);
 
 	m_engine->new_usertype<Quaternion>(
@@ -234,11 +252,12 @@ void titian::InterpScript::load_engine_parts()
 		"y", &Quaternion::y,
 		"z", &Quaternion::z,
 		"length", &Quaternion::length,
-		sl::meta_function::index, METHOD(Quaternion, float&, operator[], int),
 		sl::meta_function::equal_to, &Quaternion::operator==,
 		sl::meta_function::addition, &Quaternion::operator+,
-		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Quaternion, Quaternion, operator-), CONST_METHOD(Quaternion, Quaternion, operator-, const Quaternion&)),
-		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Quaternion, Quaternion, operator*, float), CONST_METHOD(Quaternion, Quaternion, operator*, const Quaternion&))
+		sl::meta_function::subtraction, sl::overload(CONST_METHOD(Quaternion, Quaternion, operator-),
+			CONST_METHOD(Quaternion, Quaternion, operator-, const Quaternion&)),
+		sl::meta_function::multiplication, sl::overload(CONST_METHOD(Quaternion, Quaternion, operator*, float),
+			CONST_METHOD(Quaternion, Quaternion, operator*, const Quaternion&))
 	);
 
 	m_engine->new_usertype<kl::Vertex<float>>(
@@ -300,7 +319,8 @@ void titian::InterpScript::load_engine_parts()
 		"gray", &Color::gray,
 		"inverted", &Color::inverted,
 		"as_ascii", &Color::as_ascii,
-		"mix", sl::overload(CONST_METHOD(Color, Color, mix, const Color&, float), CONST_METHOD(Color, Color, mix, const Color&)),
+		"mix", sl::overload(CONST_METHOD(Color, Color, mix, const Color&, float),
+			CONST_METHOD(Color, Color, mix, const Color&)),
 		sl::meta_function::equal_to, &Color::operator==
 	);
 
@@ -310,7 +330,10 @@ void titian::InterpScript::load_engine_parts()
 			kl::Image(Int2), kl::Image(StringView)>(),
 		"pixel_count", &kl::Image::pixel_count,
 		"byte_size", &kl::Image::byte_size,
-		sl::meta_function::index, METHOD(kl::Image, Color&, operator[], const Int2&),
+		sl::meta_function::index, sl::overload(METHOD(kl::Image, Color&, operator[], int),
+			METHOD(kl::Image, Color&, operator[], const Int2&)),
+		sl::meta_function::new_index, sl::overload(METHOD(kl::Image, Color&, operator[], int),
+			METHOD(kl::Image, Color&, operator[], const Int2&)),
 		"in_bounds", &kl::Image::in_bounds,
 		"sample", &kl::Image::sample,
 		"width", sl::property(&kl::Image::width, &kl::Image::set_width),
@@ -699,8 +722,10 @@ void titian::InterpScript::load_engine_parts()
 	(*m_engine)["unlerp"] = &kl::unlerp<float>;
 	(*m_engine)["clamp"] = &kl::clamp<float>;
 
-	(*m_engine)["to_quaternion"] = sl::overload(FUNCTION(Quaternion, kl::to_quaternion, const Float3&), FUNCTION(Quaternion, kl::to_quaternion, const Float3&, const Float3&));
-	(*m_engine)["to_euler"] = sl::overload(FUNCTION(Float3, kl::to_euler, const Quaternion&), FUNCTION(Float3, kl::to_euler, const Float3&, const Float3&));
+	(*m_engine)["to_quaternion"] = sl::overload(FUNCTION(Quaternion, kl::to_quaternion, const Float3&),
+		FUNCTION(Quaternion, kl::to_quaternion, const Float3&, const Float3&));
+	(*m_engine)["to_euler"] = sl::overload(FUNCTION(Float3, kl::to_euler, const Quaternion&),
+		FUNCTION(Float3, kl::to_euler, const Float3&, const Float3&));
 
 	(*m_engine)["abs"] = sl::overload(
 		FUNCTION(int, kl::abs, int),

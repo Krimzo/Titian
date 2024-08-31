@@ -15,8 +15,6 @@ namespace titian {
 		String get_word_at_cursor() const;
 		void replace_word_at_cursor(const StringView& text);
 
-		const TextEditor::LanguageDefinition* get_definition() const;
-
 		void load_lua_standard();
 		void load_hlsl_standard();
 

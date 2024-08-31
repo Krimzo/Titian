@@ -8,8 +8,8 @@
 #include <memory>
 #include <unordered_set>
 #include <unordered_map>
+#include <set>
 #include <map>
-#include <boost/regex.hpp>
 #include "imgui.h"
 
 
@@ -23,25 +23,6 @@ public:
 		FirstVisibleLine, Centered, LastVisibleLine
 	};
 
-	inline void SetReadOnlyEnabled(bool aValue) { mReadOnly = aValue; }
-	inline bool IsReadOnlyEnabled() const { return mReadOnly; }
-	inline void SetAutoIndentEnabled(bool aValue) { mAutoIndent = aValue; }
-	inline bool IsAutoIndentEnabled() const { return mAutoIndent; }
-	inline void SetShowWhitespacesEnabled(bool aValue) { mShowWhitespaces = aValue; }
-	inline bool IsShowWhitespacesEnabled() const { return mShowWhitespaces; }
-	inline void SetShowLineNumbersEnabled(bool aValue) { mShowLineNumbers = aValue; }
-	inline bool IsShowLineNumbersEnabled() const { return mShowLineNumbers; }
-	inline void SetShortTabsEnabled(bool aValue) { mShortTabs = aValue; }
-	inline bool IsShortTabsEnabled() const { return mShortTabs; }
-	inline int GetLineCount() const { return (int) mLines.size(); }
-	inline bool IsOverwriteEnabled() const { return mOverwrite; }
-
-	const char* GetLanguageDefinitionName() const;
-	void SetTabSize(int aValue);
-	inline int GetTabSize() const { return mTabSize; }
-	void SetLineSpacing(float aValue);
-	inline float GetLineSpacing() const { return mLineSpacing;  }
-
 	void SelectAll();
 	void SelectLine(int aLine);
 	void SelectRegion(int aStartLine, int aStartChar, int aEndLine, int aEndChar);
@@ -52,12 +33,14 @@ public:
 	void ClearExtraCursors();
 	void ClearSelections();
 	void SetCursorPosition(int aLine, int aCharIndex);
+
 	inline void GetCursorPosition(int& outLine, int& outColumn) const
 	{
 		auto coords = GetActualCursorCoordinates();
 		outLine = coords.mLine;
 		outColumn = coords.mColumn;
 	}
+
 	int GetFirstVisibleLine();
 	int GetLastVisibleLine();
 	void SetViewAtLine(int aLine, SetViewAtLineMode aMode);
@@ -67,8 +50,8 @@ public:
 	void Paste();
 	void Undo(int aSteps = 1);
 	void Redo(int aSteps = 1);
-	inline bool CanUndo() const { return !mReadOnly && mUndoIndex > 0; };
-	inline bool CanRedo() const { return !mReadOnly && mUndoIndex < (int)mUndoBuffer.size(); };
+	inline bool CanUndo() const { return mUndoIndex > 0; };
+	inline bool CanRedo() const { return mUndoIndex < (int)mUndoBuffer.size(); };
 	inline int GetUndoIndex() const { return mUndoIndex; };
 
 	void SetText(const std::string_view& aText);
@@ -139,7 +122,7 @@ public:
 
 	// ------------- Internal ------------- //
 
-	enum class PaletteIndex
+	enum class PaletteIndex : int8_t
 	{
 		Default,
 		Keyword,
@@ -290,20 +273,20 @@ public:
 	{
 		char mChar;
 		PaletteIndex mColorIndex = PaletteIndex::Default;
-		bool mComment : 1;
-		bool mMultiLineComment : 1;
-		bool mPreprocessor : 1;
+		bool mComment : 1 = false;
+		bool mMultiLineComment : 1 = false;
+		bool mPreprocessor : 1 = false;
 
-		Glyph(char aChar, PaletteIndex aColorIndex) : mChar(aChar), mColorIndex(aColorIndex),
-			mComment(false), mMultiLineComment(false), mPreprocessor(false) {}
+		Glyph(char aChar, PaletteIndex aColorIndex)
+			: mChar(aChar), mColorIndex(aColorIndex)
+		{}
 	};
 
 	typedef std::vector<Glyph> Line;
 
 	struct LanguageDefinition
 	{
-		typedef std::pair<std::string, PaletteIndex> TokenRegexString;
-		typedef bool(*TokenizeCallback)(const char* in_begin, const char* in_end, const char*& out_begin, const char*& out_end, PaletteIndex& paletteIndex);
+		typedef void(*TokenizeCallback)(const char* in_begin, const char* in_end, const char*& out_begin, const char*& out_end, PaletteIndex& paletteIndex);
 
 		std::string mName;
 		std::set<std::string> mKeywords;
@@ -313,9 +296,8 @@ public:
 		std::map<std::string, Coordinates> mPreprocIdentifiers;
 		std::string mCommentStart, mCommentEnd, mSingleLineComment;
 		char mPreprocChar = '#';
+
 		TokenizeCallback mTokenize = nullptr;
-		std::vector<TokenRegexString> mTokenRegexStrings;
-		bool mCaseSensitive = true;
 
 		static std::shared_ptr<LanguageDefinition> lua(
 			const std::set<std::string, std::less<>>& keywords,
@@ -338,8 +320,6 @@ public:
 		TextEditor::Coordinates mEnd;
 		UndoOperationType mType;
 	};
-
-	typedef std::vector<std::pair<boost::regex, PaletteIndex>> RegexList;
 
 	class UndoRecord
 	{
@@ -408,7 +388,7 @@ public:
 
 	Coordinates SanitizeCoordinates(const Coordinates& aValue) const;
 	Coordinates GetActualCursorCoordinates(int aCursor = -1, bool aStart = false) const;
-	Coordinates ScreenPosToCoordinates(const ImVec2& aPosition, bool aInsertionMode = false, bool* isOverLineNumber = nullptr) const;
+	Coordinates ScreenPosToCoordinates(const ImVec2& aPosition, bool* isOverLineNumber = nullptr) const;
 	Coordinates FindWordStart(const Coordinates& aFrom) const;
 	Coordinates FindWordEnd(const Coordinates& aFrom) const;
 	int GetCharacterIndexL(const Coordinates& aCoordinates) const;
@@ -450,12 +430,8 @@ public:
 
 	int mTabSize = 4;
 	float mLineSpacing = 1.0f;
-	bool mOverwrite = false;
-	bool mReadOnly = false;
-	bool mAutoIndent = true;
 	bool mShowWhitespaces = true;
 	bool mShowLineNumbers = true;
-	bool mShortTabs = false;
 
 	int mSetViewAtLine = -1;
 	SetViewAtLineMode mSetViewAtLineMode = {};
@@ -491,7 +467,6 @@ public:
 	int mColorRangeMax = 0;
 	bool mCheckComments = true;
 	std::shared_ptr<LanguageDefinition> mLanguageDefinition;
-	RegexList mRegexList;
 
 	inline bool IsHorizontalScrollbarVisible() const { return mCurrentSpaceWidth > mContentWidth; }
 	inline bool IsVerticalScrollbarVisible() const { return mCurrentSpaceHeight > mContentHeight; }

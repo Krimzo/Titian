@@ -191,7 +191,6 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 
 	if (im::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const String current_word = m_interp_editor.get_word_at_cursor();
-		const auto& language = *m_interp_editor.get_definition();
 		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Keyword]);
 		for (const auto& name : LUA_KEYWORDS) {
 			if (name.find(current_word) != -1) {

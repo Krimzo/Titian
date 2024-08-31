@@ -30,10 +30,10 @@ namespace kl {
         void set_hidden(bool enabled);
         bool is_hidden() const;
 
-        void set_position(const Int2& position, bool client = true);
-        Int2 position(bool client = true) const;
+        void set_position(const Int2& position);
+        Int2 position() const;
 
-        Float2 normalized_position(bool client = true) const;
+        Float2 normalized_position() const;
         int scroll() const;
     };
 }

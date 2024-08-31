@@ -39,10 +39,10 @@ namespace kl {
 
         // Size
         int width() const;
-        void set_width(int width, bool scale = false);
+        void set_width(int width);
 
         int height() const;
-        void set_height(int height, bool scale = false);
+        void set_height(int height);
 
         Int2 size() const;
         void resize(const Int2& new_size);

@@ -196,24 +196,22 @@ void kl::Window::set_fullscreen(const bool enabled)
     }
 }
 
-kl::Int2 kl::Window::position(const bool client) const
+kl::Int2 kl::Window::position() const
 {
     RECT rect{};
-    if (client) {
-        GetClientRect(m_window, &rect);
-    }
-    else {
-        GetWindowRect(m_window, &rect);
-    }
+    GetWindowRect(m_window, &rect);
     return { rect.left, rect.top };
 }
 
 void kl::Window::set_position(const Int2& position) const
 {
-    if (!m_in_fullscreen) {
-        const Int2 size = this->size(false);
-        MoveWindow(m_window, position.x, position.y, size.x, size.y, false);
-    }
+    if (m_in_fullscreen)
+        return;
+
+    RECT rect{};
+    GetWindowRect(m_window, &rect);
+    MoveWindow(m_window, position.x, position.y,
+        rect.right - rect.left, rect.bottom - rect.top, false);
 }
 
 int kl::Window::width() const
@@ -236,32 +234,23 @@ void kl::Window::set_height(int height) const
     resize({ width(), height });
 }
 
-kl::Int2 kl::Window::size(const bool client) const
+kl::Int2 kl::Window::size() const
 {
-    RECT rect = {};
-    if (client) {
-        GetClientRect(m_window, &rect);
-    }
-    else {
-        GetWindowRect(m_window, &rect);
-    }
+    RECT rect{};
+    GetClientRect(m_window, &rect);
     return { rect.right - rect.left, rect.bottom - rect.top };
 }
 
-void kl::Window::resize(const Int2& size, const bool client) const
+void kl::Window::resize(const Int2& size) const
 {
-    if (m_in_fullscreen) { return; }
+    if (m_in_fullscreen)
+        return;
 
-    const Int2 position = this->position();
-    Int2 new_size = size;
-
-    if (client) {
-        RECT rect = { (LONG) position.x, (LONG) position.y, (LONG) (position.x + size.x), (LONG) (position.y + size.y) };
-        AdjustWindowRect(&rect, m_window_style, false);
-        new_size = { rect.right - rect.left, rect.bottom - rect.top };
-    }
-
-    MoveWindow(m_window, position.x, position.y, new_size.x, new_size.y, false);
+    const Int2 pos = position();
+    RECT rect{ pos.x, pos.y, pos.x + size.x, pos.y + size.y };
+    AdjustWindowRect(&rect, m_window_style, false);
+    MoveWindow(m_window, pos.x, pos.y, 
+        rect.right - rect.left, rect.bottom - rect.top, false);
 }
 
 float kl::Window::aspect_ratio() const

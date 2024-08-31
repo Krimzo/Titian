@@ -396,6 +396,7 @@ std::shared_ptr<TextEditor::LanguageDefinition> TextEditor::LanguageDefinition::
 	const std::set<std::string, std::less<>>& functions)
 {
 	auto ptr = std::make_shared<LanguageDefinition>();
+	ptr->mName = "LUA";
 
 	for (auto& name : keywords) {
 		ptr->mKeywords.insert(name);
@@ -410,10 +411,12 @@ std::shared_ptr<TextEditor::LanguageDefinition> TextEditor::LanguageDefinition::
 		ptr->mFunctions[name] = {};
 	}
 
-	ptr->mTokenize = [](const char* in_begin, const char* in_end, const char*& out_begin, const char*& out_end, PaletteIndex& paletteIndex) -> bool
-	{
-		paletteIndex = PaletteIndex::Max;
+	ptr->mCommentStart = "--[[";
+	ptr->mCommentEnd = "]]";
+	ptr->mSingleLineComment = "--";
 
+	ptr->mTokenize = [](const char* in_begin, const char* in_end, const char*& out_begin, const char*& out_end, PaletteIndex& paletteIndex)
+	{
 		while (in_begin < in_end && isascii(*in_begin) && isblank(*in_begin))
 			in_begin++;
 
@@ -426,16 +429,7 @@ std::shared_ptr<TextEditor::LanguageDefinition> TextEditor::LanguageDefinition::
 		else if (TokenizeLuaStyleIdentifier(in_begin, in_end, out_begin, out_end)) paletteIndex = PaletteIndex::Identifier;
 		else if (TokenizeLuaStyleNumber(in_begin, in_end, out_begin, out_end)) paletteIndex = PaletteIndex::Number;
 		else if (TokenizeLuaStylePunctuation(in_begin, in_end, out_begin, out_end)) paletteIndex = PaletteIndex::Punctuation;
-
-		return paletteIndex != PaletteIndex::Max;
 	};
-
-	ptr->mCommentStart = "--[[";
-	ptr->mCommentEnd = "]]";
-	ptr->mSingleLineComment = "--";
-
-	ptr->mCaseSensitive = true;
-	ptr->mName = "LUA";
 
 	return ptr;
 }
@@ -447,6 +441,7 @@ std::shared_ptr<TextEditor::LanguageDefinition> TextEditor::LanguageDefinition::
 	const std::set<std::string, std::less<>>& functions)
 {
 	auto ptr = std::make_shared<LanguageDefinition>();
+	ptr->mName = "HLSL";
 
 	for (auto& name : keywords) {
 		ptr->mKeywords.insert(name);
@@ -461,22 +456,25 @@ std::shared_ptr<TextEditor::LanguageDefinition> TextEditor::LanguageDefinition::
 		ptr->mFunctions[name] = {};
 	}
 
-	ptr->mTokenRegexStrings.push_back(std::make_pair<std::string, PaletteIndex>(R"##([ \t]*#[ \t]*[a-zA-Z_]+)##", PaletteIndex::Preprocessor));
-	ptr->mTokenRegexStrings.push_back(std::make_pair<std::string, PaletteIndex>(R"##(L?\"(\\.|[^\"])*\")##", PaletteIndex::String));
-	ptr->mTokenRegexStrings.push_back(std::make_pair<std::string, PaletteIndex>(R"##(\'\\?[^\']\')##", PaletteIndex::CharLiteral));
-	ptr->mTokenRegexStrings.push_back(std::make_pair<std::string, PaletteIndex>(R"##([+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?[fF]?)##", PaletteIndex::Number));
-	ptr->mTokenRegexStrings.push_back(std::make_pair<std::string, PaletteIndex>(R"##([+-]?[0-9]+[Uu]?[lL]?[lL]?)##", PaletteIndex::Number));
-	ptr->mTokenRegexStrings.push_back(std::make_pair<std::string, PaletteIndex>(R"##(0[0-7]+[Uu]?[lL]?[lL]?)##", PaletteIndex::Number));
-	ptr->mTokenRegexStrings.push_back(std::make_pair<std::string, PaletteIndex>(R"##(0[xX][0-9a-fA-F]+[uU]?[lL]?[lL]?)##", PaletteIndex::Number));
-	ptr->mTokenRegexStrings.push_back(std::make_pair<std::string, PaletteIndex>(R"##([a-zA-Z_][a-zA-Z0-9_]*)##", PaletteIndex::Identifier));
-	ptr->mTokenRegexStrings.push_back(std::make_pair<std::string, PaletteIndex>(R"##([\[\]\{\}\!\%\^\&\*\(\)\-\+\=\~\|\<\>\?\/\;\,\.])##", PaletteIndex::Punctuation));
-
 	ptr->mCommentStart = "/*";
 	ptr->mCommentEnd = "*/";
 	ptr->mSingleLineComment = "//";
 
-	ptr->mCaseSensitive = true;
-	ptr->mName = "HLSL";
+	ptr->mTokenize = [](const char* in_begin, const char* in_end, const char*& out_begin, const char*& out_end, PaletteIndex& paletteIndex)
+	{
+		while (in_begin < in_end && isascii(*in_begin) && isblank(*in_begin))
+			in_begin++;
+
+		if (in_begin == in_end) {
+			out_begin = in_end;
+			out_end = in_end;
+			paletteIndex = PaletteIndex::Default;
+		}
+		else if (TokenizeCStyleString(in_begin, in_end, out_begin, out_end)) paletteIndex = PaletteIndex::String;
+		else if (TokenizeCStyleIdentifier(in_begin, in_end, out_begin, out_end)) paletteIndex = PaletteIndex::Identifier;
+		else if (TokenizeCStyleNumber(in_begin, in_end, out_begin, out_end)) paletteIndex = PaletteIndex::Number;
+		else if (TokenizeCStylePunctuation(in_begin, in_end, out_begin, out_end)) paletteIndex = PaletteIndex::Punctuation;
+	};
 
 	return ptr;
 }

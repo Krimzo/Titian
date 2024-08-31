@@ -30,45 +30,27 @@ bool kl::Mouse::is_hidden() const
     return m_hidden;
 }
 
-void kl::Mouse::set_position(const Int2& position, const bool client)
+void kl::Mouse::set_position(const Int2& position)
 {
-    POINT client_position = { position.x, position.y };
-    POINT screen_position = { position.x, position.y };
-
-    if (client) {
-        ClientToScreen(m_window, &screen_position);
-    }
-    else {
-        ScreenToClient(m_window, &client_position);
-    }
-
-    m_position = { client_position.x, client_position.y };
+    m_position = position;
+    POINT screen_position{ position.x, position.y };
+    ClientToScreen(m_window, &screen_position);
     SetCursorPos(screen_position.x, screen_position.y);
 }
 
-kl::Int2 kl::Mouse::position(const bool client) const
+kl::Int2 kl::Mouse::position() const
 {
-    if (client) {
-        return m_position;
-    }
-
-    POINT client_position = { m_position.x, m_position.y };
-    ClientToScreen(m_window, &client_position);
-    return { client_position.x, client_position.y };
+    return m_position;
 }
 
-kl::Float2 kl::Mouse::normalized_position(const bool client) const
+kl::Float2 kl::Mouse::normalized_position() const
 {
-    Int2 frame_size = screen::SIZE;
-    if (client) {
-        RECT client_area = {};
-        GetClientRect(m_window, &client_area);
-        frame_size = {
-            client_area.right - client_area.left,
-            client_area.bottom - client_area.top,
-        };
-    }
-
+    RECT client_area{};
+    GetClientRect(m_window, &client_area);
+    const Int2 frame_size{
+        client_area.right - client_area.left,
+        client_area.bottom - client_area.top,
+    };
     Float2 result = {
         (float) m_position.x / (float) frame_size.x,
         (float) (frame_size.y - m_position.y) / (float) frame_size.y,

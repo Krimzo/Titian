@@ -173,7 +173,6 @@ void titian::GUISectionShaderEditor::edit_shader(Shader* shader)
 
 	if (im::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const String current_word = m_editor.get_word_at_cursor();
-		const auto& language = *m_editor.get_definition();
 		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Keyword]);
 		for (const auto& name : HLSL_KEYWORDS) {
 			if (name.find(current_word) != -1) {

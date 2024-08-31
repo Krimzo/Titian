@@ -91,14 +91,9 @@ int kl::Image::width() const
     return m_size.x;
 }
 
-void kl::Image::set_width(const int width, const bool scale)
+void kl::Image::set_width(const int width)
 {
-    if (scale) {
-        resize_scaled({ width, m_size.y });
-    }
-    else {
-        resize({ width, m_size.y });
-    }
+    resize({ width, m_size.y });
 }
 
 int kl::Image::height() const
@@ -106,14 +101,9 @@ int kl::Image::height() const
     return m_size.y;
 }
 
-void kl::Image::set_height(const int height, const bool scale)
+void kl::Image::set_height(const int height)
 {
-    if (scale) {
-        resize_scaled({ m_size.x, height });
-    }
-    else {
-        resize({ m_size.x, height });
-    }
+    resize({ m_size.x, height });
 }
 
 kl::Int2 kl::Image::size() const

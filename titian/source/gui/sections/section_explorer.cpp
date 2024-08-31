@@ -39,7 +39,7 @@ void titian::GUISectionExplorer::render_gui()
             (entry.is_directory() ? directories : files).push_back(entry);
         }
     }
-    catch (Exception&) {
+    catch (...) {
     }
 
     if (im::Begin("Explorer", nullptr, ImGuiWindowFlags_NoScrollbar)) {

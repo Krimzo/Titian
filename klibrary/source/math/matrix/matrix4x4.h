@@ -40,6 +40,16 @@ namespace kl {
 			return data[x + y * 4];
         }
 
+        constexpr T get(int index) const
+        {
+            return data[index];
+        }
+
+        constexpr void set(int index, T value)
+        {
+            data[index] = value;
+        }
+
         template<typename O>
         constexpr operator Matrix4x4<O>() const
         {

@@ -76,7 +76,7 @@ namespace kl {
         bool in_fullscreen() const;
         void set_fullscreen(bool enabled);
 
-        Int2 position(bool client = false) const;
+        Int2 position() const;
         void set_position(const Int2& position) const;
 
         int width() const;
@@ -85,8 +85,8 @@ namespace kl {
         int height() const;
         void set_height(int height) const;
 
-        Int2 size(bool client = true) const;
-        void resize(const Int2& size, bool client = true) const;
+        Int2 size() const;
+        void resize(const Int2& size) const;
 
         float aspect_ratio() const;
         Int2 frame_center() const;
