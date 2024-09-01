@@ -390,26 +390,18 @@ static bool TokenizeLuaStylePunctuation(const char* in_begin, const char* in_end
 }
 
 std::shared_ptr<TextEditor::LanguageDefinition> TextEditor::LanguageDefinition::lua(
-	const std::set<std::string, std::less<>>& keywords,
-	const std::set<std::string, std::less<>>& types,
-	const std::set<std::string, std::less<>>& members,
-	const std::set<std::string, std::less<>>& functions)
+	const std::set<std::string>& keywords,
+	const std::set<std::string>& types,
+	const std::set<std::string>& members,
+	const std::set<std::string>& functions)
 {
 	auto ptr = std::make_shared<LanguageDefinition>();
 	ptr->mName = "LUA";
 
-	for (auto& name : keywords) {
-		ptr->mKeywords.insert(name);
-	}
-	for (auto& name : types) {
-		ptr->mTypes[name] = {};
-	}
-	for (auto& name : members) {
-		ptr->mMembers[name] = {};
-	}
-	for (auto& name : functions) {
-		ptr->mFunctions[name] = {};
-	}
+	ptr->mKeywords = keywords;
+	ptr->mTypes = types;
+	ptr->mMembers = members;
+	ptr->mFunctions = functions;
 
 	ptr->mCommentStart = "--[[";
 	ptr->mCommentEnd = "]]";
@@ -435,26 +427,18 @@ std::shared_ptr<TextEditor::LanguageDefinition> TextEditor::LanguageDefinition::
 }
 
 std::shared_ptr<TextEditor::LanguageDefinition> TextEditor::LanguageDefinition::hlsl(
-	const std::set<std::string, std::less<>>& keywords,
-	const std::set<std::string, std::less<>>& types,
-	const std::set<std::string, std::less<>>& members,
-	const std::set<std::string, std::less<>>& functions)
+	const std::set<std::string>& keywords,
+	const std::set<std::string>& types,
+	const std::set<std::string>& members,
+	const std::set<std::string>& functions)
 {
 	auto ptr = std::make_shared<LanguageDefinition>();
 	ptr->mName = "HLSL";
 
-	for (auto& name : keywords) {
-		ptr->mKeywords.insert(name);
-	}
-	for (auto& name : types) {
-		ptr->mTypes[name] = {};
-	}
-	for (auto& name : members) {
-		ptr->mMembers[name] = {};
-	}
-	for (auto& name : functions) {
-		ptr->mFunctions[name] = {};
-	}
+	ptr->mKeywords = keywords;
+	ptr->mTypes = types;
+	ptr->mMembers = members;
+	ptr->mFunctions = functions;
 
 	ptr->mCommentStart = "/*";
 	ptr->mCommentEnd = "*/";

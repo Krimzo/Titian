@@ -16,102 +16,12 @@
 class IMGUI_API TextEditor
 {
 public:
-	TextEditor();
-
-	enum class SetViewAtLineMode
+	enum class SetViewAtLineMode : int8_t
 	{
-		FirstVisibleLine, Centered, LastVisibleLine
+		FirstVisibleLine,
+		Centered,
+		LastVisibleLine,
 	};
-
-	void SelectAll();
-	void SelectLine(int aLine);
-	void SelectRegion(int aStartLine, int aStartChar, int aEndLine, int aEndChar);
-	void ClearSelections();
-	void SetCursorPosition(int aLine, int aCharIndex);
-
-	inline void GetCursorPosition(int& outLine, int& outColumn) const
-	{
-		auto coords = GetActualCursorCoordinates();
-		outLine = coords.mLine;
-		outColumn = coords.mColumn;
-	}
-
-	int GetFirstVisibleLine();
-	int GetLastVisibleLine();
-	void SetViewAtLine(int aLine, SetViewAtLineMode aMode);
-
-	void Copy();
-	void Cut();
-	void Paste();
-	void Undo(int aSteps = 1);
-	void Redo(int aSteps = 1);
-	inline bool CanUndo() const { return mUndoIndex > 0; };
-	inline bool CanRedo() const { return mUndoIndex < (int)mUndoBuffer.size(); };
-	inline int GetUndoIndex() const { return mUndoIndex; };
-
-	void SetText(const std::string_view& aText);
-	std::string GetText() const;
-
-	void SetTextLines(const std::vector<std::string>& aLines);
-	std::vector<std::string> GetTextLines() const;
-
-	bool Render(const char* aTitle, bool aParentIsFocused = false, const ImVec2& aSize = ImVec2(), bool aBorder = false);
-
-	inline std::string get_word_at_cursor() const
-	{
-		Coordinates cursor_coords{};
-		this->GetCursorPosition(cursor_coords.mLine, cursor_coords.mColumn);
-		if (cursor_coords.mColumn > 0) {
-			cursor_coords.mColumn -= 1;
-		}
-		const Coordinates start = this->FindWordStart(cursor_coords);
-		const Coordinates end = this->FindWordEnd(cursor_coords);
-		if (start >= end) {
-			return "";
-		}
-		return this->GetText(start, end);
-	}
-
-	inline void replace_word_at_cursor(const std::string_view& text)
-	{
-		Coordinates cursor_coords{};
-		this->GetCursorPosition(cursor_coords.mLine, cursor_coords.mColumn);
-		if (cursor_coords.mColumn > 0) {
-			cursor_coords.mColumn -= 1;
-		}
-
-		Coordinates word_start = this->FindWordStart(cursor_coords);
-		Coordinates word_end = this->FindWordEnd(cursor_coords);
-		const int word_start_index = this->GetCharacterIndexL(word_start);
-		const int word_end_index = this->GetCharacterIndexL(word_end);
-		if (word_start_index < word_end_index) {
-			RemoveGlyphsFromLine(cursor_coords.mLine, word_start_index, word_end_index);
-		}
-		this->InsertTextAt(word_start, text.data());
-		this->Colorize(cursor_coords.mLine, 1);
-	}
-
-	static inline ImVec4 U32ColorToVec4(ImU32 in)
-	{
-		float s = 1.0f / 255.0f;
-		return ImVec4(
-			((in >> IM_COL32_A_SHIFT) & 0xFF) * s,
-			((in >> IM_COL32_B_SHIFT) & 0xFF) * s,
-			((in >> IM_COL32_G_SHIFT) & 0xFF) * s,
-			((in >> IM_COL32_R_SHIFT) & 0xFF) * s);
-	}
-
-	static inline bool IsUTFSequence(char c)
-	{
-		return (c & 0xC0) == 0x80;
-	}
-
-	static inline float Distance(const ImVec2& a, const ImVec2& b)
-	{
-		float x = a.x - b.x;
-		float y = a.y - b.y;
-		return sqrt(x * x + y * y);
-	}
 
 	enum class PaletteIndex : int8_t
 	{
@@ -142,44 +52,32 @@ public:
 		Max,
 	};
 
-	static constexpr std::array<ImU32, (int) PaletteIndex::Max> PALETTE
+	enum class MoveDirection : int8_t
 	{
-		IM_COL32(220, 220, 220, 255), // Default
-		IM_COL32(216, 160, 223, 255), // Keyword
-		IM_COL32(181, 206, 168, 255), // Number
-		IM_COL32(232, 201, 187, 255), // String
-		IM_COL32(232, 201, 187, 255), // Char literal
-		IM_COL32(225, 225, 225, 255), // Punctuation
-		IM_COL32(190, 183, 255, 255), // Preprocessor
-		IM_COL32(210, 210, 210, 255), // Identifier
-		IM_COL32( 86, 156, 214, 255), // Type
-		IM_COL32(220, 205, 125, 255), // Member
-		IM_COL32(185, 215, 160, 255), // Function
-		IM_COL32(190, 183, 255, 255), // Preproc identifier
-		IM_COL32( 87, 166,  74, 255), // Comment (single line)
-		IM_COL32( 87, 166,  74, 255), // Comment (multi line)
-		IM_COL32( 30,  30,  30, 255), // Background
-		IM_COL32(220, 220, 220, 255), // Cursor
-		IM_COL32( 70,  70,  70, 255), // Selection
-		IM_COL32(196,  57,  57, 255), // ErrorMarker
-		IM_COL32(255, 255, 255,  20), // ControlCharacter
-		IM_COL32(222,  73,  73, 255), // Breakpoint
-		IM_COL32(175, 175, 175, 255), // Line number
-		IM_COL32( 51,  51,  51,  10), // Current line fill
-		IM_COL32( 51,  51,  51,  20), // Current line fill (inactive)
-		IM_COL32( 89,  89,  89, 255), // Current line edge
+		Right = 0,
+		Left = 1,
+		Up = 2,
+		Down = 3,
+	};
+
+	enum class UndoOperationType : int8_t
+	{
+		Add,
+		Delete,
 	};
 
 	struct Coordinates
 	{
-		int mLine, mColumn;
-		Coordinates() : mLine(0), mColumn(0) {}
-		Coordinates(int aLine, int aColumn) : mLine(aLine), mColumn(aColumn)
+		int mLine = 0, mColumn = 0;
+
+		Coordinates() = default;
+
+		inline Coordinates(int aLine, int aColumn)
+			: mLine(aLine), mColumn(aColumn)
 		{
 			assert(aLine >= 0);
 			assert(aColumn >= 0);
 		}
-		static Coordinates Invalid() { static Coordinates invalid(-1, -1); return invalid; }
 
 		bool operator ==(const Coordinates& o) const
 		{
@@ -232,6 +130,11 @@ public:
 		{
 			return Coordinates(mLine + o.mLine, mColumn + o.mColumn);
 		}
+
+		static Coordinates Invalid()
+		{
+			return { -1, -1 };
+		}
 	};
 
 	struct Cursor
@@ -254,7 +157,7 @@ public:
 		bool mMultiLineComment : 1 = false;
 		bool mPreprocessor : 1 = false;
 
-		Glyph(char aChar, PaletteIndex aColorIndex)
+		inline Glyph(char aChar, PaletteIndex aColorIndex)
 			: mChar(aChar), mColorIndex(aColorIndex)
 		{}
 	};
@@ -263,36 +166,54 @@ public:
 
 	struct LanguageDefinition
 	{
-		typedef void(*TokenizeCallback)(const char* in_begin, const char* in_end, const char*& out_begin, const char*& out_end, PaletteIndex& paletteIndex);
-
 		std::string mName;
 		std::set<std::string> mKeywords;
-		std::map<std::string, Coordinates> mTypes;
-		std::map<std::string, Coordinates> mMembers;
-		std::map<std::string, Coordinates> mFunctions;
-		std::map<std::string, Coordinates> mPreprocIdentifiers;
+		std::set<std::string> mTypes;
+		std::set<std::string> mMembers;
+		std::set<std::string> mFunctions;
+		std::set<std::string> mPreprocIdentifiers;
 		std::string mCommentStart, mCommentEnd, mSingleLineComment;
 		char mPreprocChar = '#';
 
+		using TokenizeCallback = void(*)(const char* in_begin, const char* in_end, const char*& out_begin, const char*& out_end, PaletteIndex& paletteIndex);
 		TokenizeCallback mTokenize = nullptr;
 
+		inline bool can_contain_word(const std::string& word) const
+		{
+			for (const auto& name : mKeywords) {
+				if (name.find(word) != -1) {
+					return true;
+				}
+			}
+			for (const auto& name : mTypes) {
+				if (name.find(word) != -1) {
+					return true;
+				}
+			}
+			for (const auto& name : mMembers) {
+				if (name.find(word) != -1) {
+					return true;
+				}
+			}
+			for (const auto& name : mFunctions) {
+				if (name.find(word) != -1) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		static std::shared_ptr<LanguageDefinition> lua(
-			const std::set<std::string, std::less<>>& keywords,
-			const std::set<std::string, std::less<>>& types,
-			const std::set<std::string, std::less<>>& members,
-			const std::set<std::string, std::less<>>& functions);
+			const std::set<std::string>& keywords,
+			const std::set<std::string>& types,
+			const std::set<std::string>& members,
+			const std::set<std::string>& functions);
 
 		static std::shared_ptr<LanguageDefinition> hlsl(
-			const std::set<std::string, std::less<>>& keywords,
-			const std::set<std::string, std::less<>>& types,
-			const std::set<std::string, std::less<>>& members,
-			const std::set<std::string, std::less<>>& functions);
-	};
-
-	enum class UndoOperationType
-	{
-		Add,
-		Delete,
+			const std::set<std::string>& keywords,
+			const std::set<std::string>& types,
+			const std::set<std::string>& members,
+			const std::set<std::string>& functions);
 	};
 
 	struct UndoOperation
@@ -316,7 +237,116 @@ public:
 		void Redo(TextEditor* aEditor);
 	};
 
+	static constexpr std::array<ImU32, (int) PaletteIndex::Max> PALETTE
+	{
+		IM_COL32(220, 220, 220, 255), // Default
+		IM_COL32(216, 160, 223, 255), // Keyword
+		IM_COL32(181, 206, 168, 255), // Number
+		IM_COL32(232, 201, 187, 255), // String
+		IM_COL32(232, 201, 187, 255), // Char literal
+		IM_COL32(225, 225, 225, 255), // Punctuation
+		IM_COL32(190, 183, 255, 255), // Preprocessor
+		IM_COL32(210, 210, 210, 255), // Identifier
+		IM_COL32( 86, 156, 214, 255), // Type
+		IM_COL32(220, 205, 125, 255), // Member
+		IM_COL32(185, 215, 160, 255), // Function
+		IM_COL32(190, 183, 255, 255), // Preproc identifier
+		IM_COL32( 87, 166,  74, 255), // Comment (single line)
+		IM_COL32( 87, 166,  74, 255), // Comment (multi line)
+		IM_COL32( 30,  30,  30, 255), // Background
+		IM_COL32(220, 220, 220, 255), // Cursor
+		IM_COL32( 70,  70,  70, 255), // Selection
+		IM_COL32(196,  57,  57, 255), // ErrorMarker
+		IM_COL32(255, 255, 255,  20), // ControlCharacter
+		IM_COL32(222,  73,  73, 255), // Breakpoint
+		IM_COL32(175, 175, 175, 255), // Line number
+		IM_COL32( 51,  51,  51,  10), // Current line fill
+		IM_COL32( 51,  51,  51,  20), // Current line fill (inactive)
+		IM_COL32( 89,  89,  89, 255), // Current line edge
+	};
+
+	TextEditor() = default;
+
 	void SetLanguageDefinition(std::shared_ptr<LanguageDefinition> aValue);
+
+	void SelectAll();
+	void SelectLine(int aLine);
+	void SelectRegion(int aStartLine, int aStartChar, int aEndLine, int aEndChar);
+	void ClearSelections();
+	void SetCursorPosition(int aLine, int aCharIndex);
+
+	void Copy();
+	void Cut();
+	void Paste();
+	void Undo(int aSteps = 1);
+	void Redo(int aSteps = 1);
+
+	inline bool CanUndo() const { return mUndoIndex > 0; };
+	inline bool CanRedo() const { return mUndoIndex < (int)mUndoBuffer.size(); };
+	inline int GetUndoIndex() const { return mUndoIndex; };
+
+	void SetText(const std::string_view& aText);
+	std::string GetText() const;
+
+	void SetTextLines(const std::vector<std::string>& aLines);
+	std::vector<std::string> GetTextLines() const;
+
+	bool Update(const char* aTitle, bool aParentIsFocused = false, const ImVec2& aSize = ImVec2(), bool aBorder = false);
+
+	inline std::string get_word_at_cursor() const
+	{
+		Coordinates cursor_coords = GetActualCursorCoordinates();
+		if (cursor_coords.mColumn > 0) {
+			cursor_coords.mColumn -= 1;
+		}
+		const Coordinates start = FindWordStart(cursor_coords);
+		const Coordinates end = FindWordEnd(cursor_coords);
+		if (start >= end) {
+			return "";
+		}
+		return GetText(start, end);
+	}
+
+	inline void replace_word_at_cursor(const std::string_view& text)
+	{
+		Coordinates cursor_coords = GetActualCursorCoordinates();
+		if (cursor_coords.mColumn > 0) {
+			cursor_coords.mColumn -= 1;
+		}
+		Coordinates word_start = FindWordStart(cursor_coords);
+		const Coordinates word_end = FindWordEnd(cursor_coords);
+		const int word_start_index = GetCharacterIndexL(word_start);
+		const int word_end_index = GetCharacterIndexL(word_end);
+		if (word_start_index < word_end_index) {
+			RemoveGlyphsFromLine(cursor_coords.mLine, word_start_index, word_end_index);
+		}
+		InsertTextAt(word_start, text.data());
+		Colorize(cursor_coords.mLine, 1);
+		mCursor.mEnd = Coordinates{ cursor_coords.mLine, cursor_coords.mColumn + (int) text.length() };
+		mCursor.mStart = mCursor.mEnd;
+	}
+
+	static inline ImVec4 U32ColorToVec4(ImU32 in)
+	{
+		float s = 1.0f / 255.0f;
+		return ImVec4(
+			((in >> IM_COL32_A_SHIFT) & 0xFF) * s,
+			((in >> IM_COL32_B_SHIFT) & 0xFF) * s,
+			((in >> IM_COL32_G_SHIFT) & 0xFF) * s,
+			((in >> IM_COL32_R_SHIFT) & 0xFF) * s);
+	}
+
+	static inline bool IsUTFSequence(char c)
+	{
+		return (c & 0xC0) == 0x80;
+	}
+
+	static inline float Distance(const ImVec2& a, const ImVec2& b)
+	{
+		float x = a.x - b.x;
+		float y = a.y - b.y;
+		return sqrt(x * x + y * y);
+	}
 
 	std::string GetText(const Coordinates& aStart, const Coordinates& aEnd) const;
 	std::string GetClipboardText() const;
@@ -328,7 +358,6 @@ public:
 	void InsertTextAtCursor(const std::string& aValue);
 	void InsertTextAtCursor(const char* aValue);
 
-	enum class MoveDirection { Right = 0, Left = 1, Up = 2, Down = 3 };
 	bool Move(int& aLine, int& aCharIndex, bool aLeft = false, bool aLockLine = false) const;
 	void MoveCharIndexAndColumn(int aLine, int& aCharIndex, int& aColumn) const;
 	void MoveCoords(Coordinates& aCoords, MoveDirection aDirection, bool aWordMode = false, int aLineCount = 1) const;
@@ -383,7 +412,7 @@ public:
 	void HandleKeyboardInputs(bool aParentIsFocused = false);
 	void HandleMouseInputs();
 	void UpdateViewVariables(float aScrollX, float aScrollY);
-	void Render(bool aParentIsFocused = false);
+	void RenderEditor(bool aParentIsFocused = false);
 	void DisplayPopup(bool aParentIsFocused);
 
 	void OnCursorPositionChanged();
@@ -394,7 +423,11 @@ public:
 	void ColorizeRange(int aFromLine = 0, int aToLine = 0);
 	void ColorizeInternal();
 
-	std::vector<Line> mLines{};
+	inline bool IsHorizontalScrollbarVisible() const { return mCurrentSpaceWidth > mContentWidth; }
+	inline bool IsVerticalScrollbarVisible() const { return mCurrentSpaceHeight > mContentHeight; }
+	inline int TabSizeAtColumn(int aColumn) const { return mTabSize - (aColumn % mTabSize); }
+
+	std::vector<Line> mLines{ Line{} };
 	Cursor mCursor{};
 
 	std::vector<UndoRecord> mUndoBuffer{};
@@ -404,6 +437,10 @@ public:
 	float mLineSpacing = 1.0f;
 	bool mShowWhitespaces = true;
 	bool mShowLineNumbers = true;
+
+	bool mShowPopup = false;
+	int mPopupIndex = -1;
+	ImVec2 mPopupPos{};
 
 	int mSetViewAtLine = -1;
 	SetViewAtLineMode mSetViewAtLineMode = {};
@@ -438,10 +475,6 @@ public:
 	int mColorRangeMax = 0;
 	bool mCheckComments = true;
 	std::shared_ptr<LanguageDefinition> mLanguageDefinition;
-
-	inline bool IsHorizontalScrollbarVisible() const { return mCurrentSpaceWidth > mContentWidth; }
-	inline bool IsVerticalScrollbarVisible() const { return mCurrentSpaceHeight > mContentHeight; }
-	inline int TabSizeAtColumn(int aColumn) const { return mTabSize - (aColumn % mTabSize); }
 
 	static const std::unordered_map<char, char> OPEN_TO_CLOSE_CHAR;
 	static const std::unordered_map<char, char> CLOSE_TO_OPEN_CHAR;

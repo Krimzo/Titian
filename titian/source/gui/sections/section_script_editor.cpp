@@ -188,44 +188,6 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
 
 	im::PushFont(Layers::get<GUILayer>()->roboto_font_large);
 	m_interp_editor.edit(&script->source);
-
-	if (im::Begin("Code Suggestion", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-		const String current_word = m_interp_editor.get_word_at_cursor();
-		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Keyword]);
-		for (const auto& name : LUA_KEYWORDS) {
-			if (name.find(current_word) != -1) {
-				if (im::MenuItem(name.data())) {
-					m_interp_editor.replace_word_at_cursor(name);
-				}
-			}
-		}
-		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Type]);
-		for (const auto& name : LUA_TYPES) {
-			if (name.find(current_word) != -1) {
-				if (im::MenuItem(name.data())) {
-					m_interp_editor.replace_word_at_cursor(name);
-				}
-			}
-		}
-		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Member]);
-		for (const auto& name : LUA_MEMBERS) {
-			if (name.find(current_word) != -1) {
-				if (im::MenuItem(name.data())) {
-					m_interp_editor.replace_word_at_cursor(name);
-				}
-			}
-		}
-		im::PushStyleColor(ImGuiCol_Text, TextEditor::PALETTE[(int) TextEditor::PaletteIndex::Function]);
-		for (const auto& name : LUA_FUNCTIONS) {
-			if (name.find(current_word) != -1) {
-				if (im::MenuItem(name.data())) {
-					m_interp_editor.replace_word_at_cursor(name);
-				}
-			}
-		}
-		im::PopStyleColor(4);
-	}
-	im::End();
 	im::PopFont();
 }
 

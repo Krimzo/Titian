@@ -4,10 +4,10 @@
 
 
 namespace titian {
-	inline std::set<String, std::less<>> HLSL_KEYWORDS;
-	inline std::set<String, std::less<>> HLSL_TYPES;
-	inline std::set<String, std::less<>> HLSL_MEMBERS;
-	inline std::set<String, std::less<>> HLSL_FUNCTIONS;
+	inline std::set<String> HLSL_KEYWORDS;
+	inline std::set<String> HLSL_TYPES;
+	inline std::set<String> HLSL_MEMBERS;
+	inline std::set<String> HLSL_FUNCTIONS;
 }
 
 namespace titian {

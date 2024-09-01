@@ -12,9 +12,6 @@ namespace titian {
 		void load(const StringView& source);
 		void edit(String* source);
 
-		String get_word_at_cursor() const;
-		void replace_word_at_cursor(const StringView& text);
-
 		void load_lua_standard();
 		void load_hlsl_standard();
 

@@ -5,10 +5,10 @@
 
 
 namespace titian {
-	inline std::set<String, std::less<>> LUA_KEYWORDS;
-	inline std::set<String, std::less<>> LUA_TYPES;
-	inline std::set<String, std::less<>> LUA_MEMBERS;
-	inline std::set<String, std::less<>> LUA_FUNCTIONS;
+	inline std::set<String> LUA_KEYWORDS;
+	inline std::set<String> LUA_TYPES;
+	inline std::set<String> LUA_MEMBERS;
+	inline std::set<String> LUA_FUNCTIONS;
 }
 
 namespace titian {
