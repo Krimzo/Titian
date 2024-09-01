@@ -677,17 +677,21 @@ void titian::InterpScript::load_engine_parts()
 	(*m_engine)["CAMERA_ORTHOGRAPHIC"] = (int) CameraType::ORTHOGRAPHIC;
 
 	(*m_engine)["log"] = sl::overload(
+		&Logger::log<const StringView&>,
 		&Logger::log<bool>,
 		&Logger::log<int>,
 		&Logger::log<Int2>,
 		&Logger::log<float>,
 		&Logger::log<Float2>,
-		&Logger::log<Float3>,
-		&Logger::log<Float4>,
+		&Logger::log<const Float3&>,
+		&Logger::log<const Float4&>,
 		&Logger::log<Complex>,
-		&Logger::log<Quaternion>,
-		&Logger::log<const StringView&>
-	);
+		&Logger::log<const Quaternion&>,
+		&Logger::log<const kl::Vertex<float>&>,
+		&Logger::log<const kl::Triangle<float>&>,
+		&Logger::log<const kl::Plane<float>&>,
+		&Logger::log<const kl::Sphere<float>&>,
+		&Logger::log<const kl::Ray<float>&>);
 	(*m_engine)["print"] = (*m_engine)["log"];
 
 	(*m_engine)["elapsed_t"] = [] { return Layers::get<AppLayer>()->timer.elapsed(); };
@@ -932,6 +936,18 @@ static const int load_names = [&]
 			LUA_MEMBERS.insert(name);
 		}
 	}
+
+	constexpr auto name_eraser = [](const String& name) -> bool
+	{
+		return name.end() != std::find_if_not(name.begin(), name.end(), [](const char c)
+		{
+			return std::isalnum(c) || c == '_';
+		});
+	};
+	std::erase_if(LUA_TYPES, name_eraser);
+	std::erase_if(LUA_MEMBERS, name_eraser);
+	std::erase_if(LUA_FUNCTIONS, name_eraser);
+	std::erase_if(LUA_KEYWORDS, name_eraser);
 
 	return 0;
 }();

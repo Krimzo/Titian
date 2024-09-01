@@ -1828,10 +1828,10 @@ void TextEditor::DisplayPopup(const bool aParentIsFocused)
 		ImGui::SetWindowPos(mPopupPos);
 		
 		int name_counter = 0;
-		auto helper_func = [&](const PaletteIndex col_index, const auto& map)
+		auto helper_func = [&](const PaletteIndex col_index, const auto& data_set)
 		{
 			ImGui::PushStyleColor(ImGuiCol_Text, PALETTE[(int) col_index]);
-			for (const auto& name : map) {
+			for (const auto& name : data_set) {
 				if (name.find(current_word) == -1)
 					continue;
 

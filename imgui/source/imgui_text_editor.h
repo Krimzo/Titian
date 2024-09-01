@@ -322,7 +322,7 @@ public:
 		}
 		InsertTextAt(word_start, text.data());
 		Colorize(cursor_coords.mLine, 1);
-		mCursor.mEnd = Coordinates{ cursor_coords.mLine, cursor_coords.mColumn + (int) text.length() };
+		mCursor.mEnd = FindWordEnd(cursor_coords);
 		mCursor.mStart = mCursor.mEnd;
 	}
 
