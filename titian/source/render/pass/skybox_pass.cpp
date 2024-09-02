@@ -25,7 +25,7 @@ titian::StatePackage titian::SkyboxPass::get_state_package()
 
 void titian::SkyboxPass::render_self(StatePackage& package)
 {
-    // Helper
+    // prepare
     RenderLayer* render_layer = Layers::get<RenderLayer>();
     RenderStates* render_states = &render_layer->states;
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
@@ -39,22 +39,19 @@ void titian::SkyboxPass::render_self(StatePackage& package)
     if (!skybox)
         return;
 
-    // Target
-    gpu->bind_target_depth_view(render_layer->game_color_texture->target_view, {});
-
-    // Set cb data
+    // render
     struct VS_CB
     {
         Float4x4 VP;
     };
 
-    const VS_CB vs_cb{
-        .VP = camera->camera_matrix(),
-    };
+    VS_CB vs_cb{};
+    vs_cb.VP = camera->camera_matrix();
     package.shader_state.vertex_shader.update_cbuffer(vs_cb);
 
-    // Draw
+    gpu->bind_target_depth_view(render_layer->game_color_texture->target_view, {});
     gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);
     gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
+   
     gpu->draw(scene->default_meshes->cube->graphics_buffer, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(Vertex));
 }

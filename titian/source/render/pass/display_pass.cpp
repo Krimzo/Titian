@@ -23,6 +23,7 @@ titian::StatePackage titian::DisplayPass::get_state_package()
 
 void titian::DisplayPass::render_self(StatePackage& package)
 {
+    // prepare
     RenderLayer* render_layer = Layers::get<RenderLayer>();
     kl::Window* window = &Layers::get<AppLayer>()->window;
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
@@ -30,10 +31,9 @@ void titian::DisplayPass::render_self(StatePackage& package)
     const Int2 window_size = window->size();
     render_layer->resize(window_size);
 
-    // Target
+    // render
     gpu->bind_internal_views();
     gpu->set_viewport_size(window_size);
-
     gpu->bind_shader_view_for_pixel_shader(render_layer->screen_texture->shader_view, 0);
     gpu->draw(render_layer->screen_mesh);
 }

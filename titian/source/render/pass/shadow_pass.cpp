@@ -84,11 +84,8 @@ void titian::ShadowPass::render_self(StatePackage& package)
     // render
     gpu->set_viewport_size(Int2{ (int) dir_light->map_resolution() });
 
-    bool wireframe_bound = false;
-    if (render_layer->render_wireframe) {
-        gpu->bind_raster_state(render_states->raster_states->wireframe);
-        wireframe_bound = true;
-    }
+    bool wireframe_bound = render_layer->render_wireframe;
+    gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->shadow);
 
     for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
         const Float4x4 VP = dir_light->light_matrix(camera, i);
@@ -100,9 +97,10 @@ void titian::ShadowPass::render_self(StatePackage& package)
         for (const auto& info : to_render) {
             const bool should_wireframe = render_layer->render_wireframe || info.mesh->render_wireframe;
             if (should_wireframe != wireframe_bound) {
-				gpu->bind_raster_state(should_wireframe ? render_states->raster_states->wireframe : render_states->raster_states->shadow);
-				wireframe_bound = should_wireframe;
+                wireframe_bound = should_wireframe;
+                gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->shadow);
             }
+
             if (info.animation->animation_type == AnimationType::SKELETAL) {
                 info.animation->bind_matrices(0);
             }

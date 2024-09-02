@@ -23,28 +23,27 @@ titian::StatePackage titian::OutlinePass::get_state_package()
 
 void titian::OutlinePass::render_self(StatePackage& package)
 {
+    // prepare
     AppLayer* app_layer = Layers::get<AppLayer>();
 	EditorLayer* editor_layer = Layers::get<EditorLayer>();
 	GameLayer* game_layer = Layers::get<GameLayer>();
 	RenderLayer* render_layer = Layers::get<RenderLayer>();
     GUILayer* gui_layer = Layers::get<GUILayer>();
+    kl::GPU* gpu = &app_layer->gpu;
 
     Vector<float> entitiy_indices;
-    for (uint32_t counter_id = 0; const auto& [name, _] : game_layer->scene->entities()) {
-        counter_id += 1;
+    for (uint32_t counter = 0; const auto& [name, _] : game_layer->scene->entities()) {
+        counter += 1;
         if (editor_layer->selected_entities.contains(name)) {
-			entitiy_indices.push_back((float) counter_id);
+			entitiy_indices.push_back(static_cast<float>(counter));
 		}
     }
     if (entitiy_indices.empty())
         return;
 
-    kl::GPU* gpu = &app_layer->gpu;
-
-    // Target
-    gpu->bind_target_depth_view(render_layer->screen_texture->target_view, render_layer->game_depth_texture->depth_view);
-
+    // render
     load_selected_entities(entitiy_indices);
+    gpu->bind_target_depth_view(render_layer->screen_texture->target_view, render_layer->game_depth_texture->depth_view);
     gpu->bind_shader_view_for_pixel_shader(render_layer->editor_picking_texture->shader_view, 0);
     gpu->bind_shader_view_for_pixel_shader(m_selected_entities_view, 1);
 
@@ -55,14 +54,15 @@ void titian::OutlinePass::render_self(StatePackage& package)
         uint32_t SELECTED_COUNT;
     };
 
-    const PS_CB ps_cb{
-        .OUTLINE_COLOR = gui_layer->special_color,
-        .OUTLINE_SIZE = editor_layer->outline_size,
-		.SELECTED_COUNT = (uint32_t) entitiy_indices.size(),
-    };
+    PS_CB ps_cb{};
+    ps_cb.OUTLINE_COLOR = gui_layer->special_color;
+    ps_cb.OUTLINE_SIZE = editor_layer->outline_size;
+    ps_cb.SELECTED_COUNT = (uint32_t) entitiy_indices.size();
     package.shader_state.pixel_shader.update_cbuffer(ps_cb);
 
     gpu->draw(render_layer->screen_mesh);
+
+    // finalize
     gpu->unbind_shader_view_for_pixel_shader(1);
     gpu->unbind_shader_view_for_pixel_shader(0);
 }

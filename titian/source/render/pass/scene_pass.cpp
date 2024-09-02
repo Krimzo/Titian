@@ -25,34 +25,17 @@ titian::StatePackage titian::ScenePass::get_state_package()
 
 void titian::ScenePass::render_self(StatePackage& package)
 {
-    // Helper
+    // prepare
 	RenderLayer* render_layer = Layers::get<RenderLayer>();
     RenderStates* render_states = &render_layer->states;
+    kl::Timer* timer = &Layers::get<AppLayer>()->timer;
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
-    // Skip if no camera
     Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
     if (!camera)
         return;
 
-    // Target
-    gpu->bind_target_depth_views({ render_layer->game_color_texture->target_view.get(), render_layer->editor_picking_texture->target_view.get() }, render_layer->game_depth_texture->depth_view);
-
-    // Bind shader views
-    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);
-    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->shadow, 1);
-    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 2);
-
-    // Bind skybox
-    if (Texture* skybox = scene->helper_get_texture(camera->skybox_name)) {
-        gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
-    }
-    else {
-        gpu->unbind_shader_view_for_pixel_shader(0);
-    }
-
-    // Set cb data
     struct GLOBAL_CB
     {
         float ELAPSED_TIME{};
@@ -98,6 +81,7 @@ void titian::ScenePass::render_self(StatePackage& package)
 
         Float4x4 CUSTOM_DATA;
     };
+
     GLOBAL_CB global_cb{};
 
     global_cb.V = camera->view_matrix();
@@ -106,16 +90,11 @@ void titian::ScenePass::render_self(StatePackage& package)
     global_cb.CAMERA_HAS_SKYBOX = static_cast<float>(scene->textures.contains(camera->skybox_name));
     global_cb.CAMERA_BACKGROUND = camera->background;
 
-    // Ambient light
-    AmbientLight* ambient_light = scene->get_casted<AmbientLight>(scene->main_ambient_light_name);
-    if (ambient_light) {
+    if (AmbientLight* ambient_light = scene->get_casted<AmbientLight>(scene->main_ambient_light_name)) {
         global_cb.AMBIENT_COLOR = ambient_light->color;
         global_cb.AMBIENT_INTENSITY = ambient_light->intensity;
     }
-
-    // Directional light
-    DirectionalLight* directional_light = scene->get_casted<DirectionalLight>(scene->main_directional_light_name);
-    if (directional_light) {
+    if (DirectionalLight* directional_light = scene->get_casted<DirectionalLight>(scene->main_directional_light_name)) {
         ID3D11ShaderResourceView* dir_light_views[DirectionalLight::CASCADE_COUNT] = {};
         for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
             dir_light_views[i] = directional_light->shader_view(i).get();
@@ -136,190 +115,160 @@ void titian::ScenePass::render_self(StatePackage& package)
     }
     global_cb.RECEIVES_SHADOWS = true;
 
-    // Set cb time data
-    const kl::Timer* timer = &Layers::get<AppLayer>()->timer;
     global_cb.ELAPSED_TIME = timer->elapsed();
     global_cb.DELTA_TIME = timer->delta();
 
-    // Preapare opaque objects
-    Vector<std::tuple<uint32_t, Entity*, Animation*, Material*>> transparent_objects;
-    uint32_t id_counter = 0;
+    gpu->bind_target_depth_views({ render_layer->game_color_texture->target_view.get(), render_layer->editor_picking_texture->target_view.get() }, render_layer->game_depth_texture->depth_view);
+    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);
+    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->shadow, 1);
+    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 2);
+    if (Texture* skybox = scene->helper_get_texture(camera->skybox_name)) {
+        gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
+    }
+    else {
+        gpu->unbind_shader_view_for_pixel_shader(0);
+    }
 
-    // Render opaque objects
-    for (const auto& [_, entity] : scene->entities()) {
-        id_counter += 1;
+    // collect
+    struct RenderInfo
+    {
+        int id = 0;
+        Entity* entity = nullptr;
+        Animation* animation = nullptr;
+		Mesh* mesh = nullptr;
+		Material* material = nullptr;
+        const Texture* color_map = nullptr;
+		const Texture* normal_map = nullptr;
+		const Texture* roughness_map = nullptr;
+        kl::RenderShaders* render_shaders = nullptr;
+        float camera_distance = 0.0f;
+    };
 
-        // Skip
-        Animation* animation = scene->helper_get_animation(entity->animation_name);
-		if (!animation) {
-			continue;
-		}
+    Vector<RenderInfo> to_render;
+    to_render.reserve(scene->entities().size());
 
-        Mesh* mesh = animation->get_mesh(timer->elapsed());
-        Material* material = scene->helper_get_material(entity->material_name);
-        if (!mesh || !material) {
+    for (int counter = 0; const auto & [_, entity] : scene->entities()) {
+        counter += 1;
+
+        RenderInfo info{};
+        info.id = counter;
+        info.entity = &entity;
+
+        info.animation = scene->helper_get_animation(entity->animation_name);
+        if (!info.animation) {
             continue;
         }
 
-        // Cache transparent objects
-        if (material->is_transparent()) {
-            transparent_objects.emplace_back(id_counter, &entity, animation, material);
+        info.mesh = info.animation->get_mesh(timer->elapsed());
+        info.material = scene->helper_get_material(entity->material_name);
+        if (!info.mesh || !info.material) {
             continue;
         }
 
-        // Bind raster state
-        if (!render_layer->render_wireframe) {
-            gpu->bind_raster_state(mesh->render_wireframe ? render_states->raster_states->wireframe : render_states->raster_states->solid);
+        info.color_map = scene->helper_get_texture(info.material->color_map_name);
+        info.normal_map = scene->helper_get_texture(info.material->normal_map_name);
+        info.roughness_map = scene->helper_get_texture(info.material->roughness_map_name);
+
+        if (Shader* shader = scene->helper_get_shader(info.material->shader_name)) {
+            info.render_shaders = &shader->graphics_buffer;
+        }
+        else {
+            info.render_shaders = &package.shader_state;
         }
 
-        // Bind textures
-        const Texture* color_map = scene->helper_get_texture(material->color_map_name);
-        if (color_map) {
-            gpu->bind_shader_view_for_pixel_shader(color_map->shader_view, 5);
+        info.camera_distance = (entity->position() - camera->position()).length();
+		to_render.push_back(info);
+    }
+
+	std::sort(to_render.begin(), to_render.end(), [](const RenderInfo& a, const RenderInfo& b)
+    {
+        return a.camera_distance < b.camera_distance;
+    });
+    
+    // render helpers
+    bool wireframe_bound = render_layer->render_wireframe;
+    gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->solid);
+
+    const auto render_helper = [&](const RenderInfo& info)
+    {
+        const bool should_wireframe = render_layer->render_wireframe || info.mesh->render_wireframe;
+        if (should_wireframe != wireframe_bound) {
+            wireframe_bound = should_wireframe;
+            gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->solid);
+        }
+
+        if (info.color_map) {
+            gpu->bind_shader_view_for_pixel_shader(info.color_map->shader_view, 5);
         }
         else {
             gpu->unbind_shader_view_for_pixel_shader(5);
         }
-
-        const Texture* normal_map = scene->helper_get_texture(material->normal_map_name);
-        if (normal_map) {
-            gpu->bind_shader_view_for_pixel_shader(normal_map->shader_view, 6);
+        if (info.normal_map) {
+            gpu->bind_shader_view_for_pixel_shader(info.normal_map->shader_view, 6);
             global_cb.HAS_NORMAL_MAP = 1.0f;
         }
         else {
             global_cb.HAS_NORMAL_MAP = 0.0f;
         }
-
-        const Texture* roughness_map = scene->helper_get_texture(material->roughness_map_name);
-        if (roughness_map) {
-            gpu->bind_shader_view_for_pixel_shader(roughness_map->shader_view, 7);
+        if (info.roughness_map) {
+            gpu->bind_shader_view_for_pixel_shader(info.roughness_map->shader_view, 7);
             global_cb.HAS_ROUGHNESS_MAP = 1.0f;
         }
         else {
             global_cb.HAS_ROUGHNESS_MAP = 0.0f;
         }
 
-        // Bind cbuffer
-        global_cb.W = entity->model_matrix();
+        global_cb.W = info.entity->model_matrix();
 
-        global_cb.OBJECT_INDEX = static_cast<float>(id_counter);
-        global_cb.OBJECT_SCALE = entity->scale;
-        global_cb.OBJECT_ROTATION = entity->rotation();
-        global_cb.OBJECT_POSITION = entity->position();
+        global_cb.OBJECT_INDEX = static_cast<float>(info.id);
+        global_cb.OBJECT_SCALE = info.entity->scale;
+        global_cb.OBJECT_ROTATION = info.entity->rotation();
+        global_cb.OBJECT_POSITION = info.entity->position();
 
-        global_cb.OBJECT_COLOR = material->color;
-        global_cb.TEXTURE_BLEND = material->texture_blend;
+        global_cb.OBJECT_COLOR = info.material->color;
+        global_cb.TEXTURE_BLEND = info.material->texture_blend;
 
-        global_cb.REFLECTION_FACTOR = material->reflection_factor;
-        global_cb.REFRACTION_FACTOR = material->refraction_factor;
-        global_cb.REFRACTION_INDEX = material->refraction_index;
+        global_cb.REFLECTION_FACTOR = info.material->reflection_factor;
+        global_cb.REFRACTION_FACTOR = info.material->refraction_factor;
+        global_cb.REFRACTION_INDEX = info.material->refraction_index;
 
-        if (animation->animation_type == AnimationType::SKELETAL) {
-            animation->bind_matrices(0);
+        if (info.animation->animation_type == AnimationType::SKELETAL) {
+            info.animation->bind_matrices(0);
             global_cb.IS_SKELETAL = 1.0f;
         }
         else {
             global_cb.IS_SKELETAL = 0.0f;
         }
 
-        global_cb.CUSTOM_DATA = material->custom_data;
+        global_cb.CUSTOM_DATA = info.material->custom_data;
 
-        kl::RenderShaders* render_shaders = &package.shader_state;
-        if (Shader* shader = scene->helper_get_shader(material->shader_name)) {
-            render_shaders = &shader->graphics_buffer;
+        if (*info.render_shaders) {
+            info.render_shaders->vertex_shader.update_cbuffer(global_cb);
+            info.render_shaders->pixel_shader.update_cbuffer(global_cb);
+            gpu->bind_render_shaders(*info.render_shaders);
+            gpu->draw(info.mesh->graphics_buffer, info.mesh->casted_topology(), sizeof(Vertex));
         }
-        if (render_shaders && *render_shaders) {
-            render_shaders->vertex_shader.update_cbuffer(global_cb);
-            render_shaders->pixel_shader.update_cbuffer(global_cb);
-            gpu->bind_render_shaders(*render_shaders);
+    };
 
-            // Draw
-            gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
+    // render opaque
+    for (const auto& info : to_render) {
+        if (!info.material->is_transparent()) {
+            render_helper(info);
         }
     }
 
-    // Prepare transparent objects
-    std::sort(transparent_objects.begin(), transparent_objects.end(), [&](const auto& first, const auto& second)
-    {
-        const float first_distance = (std::get<1>(first)->position() - camera->position()).length();
-        const float second_distance = (std::get<1>(second)->position() - camera->position()).length();
-        return first_distance > second_distance;
-    });
+    // render transparent
     gpu->bind_depth_state(render_states->depth_states->only_compare);
     global_cb.RECEIVES_SHADOWS = false;
 
-    // Render transparent objects
-    for (const auto& [object_id, entity, animation, material] : transparent_objects) {
-        Mesh* mesh = animation->get_mesh(timer->elapsed());
-		if (!mesh) {
-			continue;
-		}
-
-        // Bind raster state
-        if (!render_layer->render_wireframe) {
-            gpu->bind_raster_state(mesh->render_wireframe ? render_states->raster_states->wireframe : render_states->raster_states->solid);
+    for (int i = (int) to_render.size() - 1; i >= 0; i--) {
+        const auto& info = to_render[i];
+        if (info.material->is_transparent()) {
+            render_helper(info);
         }
-
-        // Bind textures
-        const Texture* color_map = scene->helper_get_texture(material->color_map_name);
-        if (color_map) {
-            gpu->bind_shader_view_for_pixel_shader(color_map->shader_view, 5);
-        }
-
-        const Texture* normal_map = scene->helper_get_texture(material->normal_map_name);
-        if (normal_map) {
-            gpu->bind_shader_view_for_pixel_shader(normal_map->shader_view, 6);
-            global_cb.HAS_NORMAL_MAP = 1.0f;
-        }
-        else {
-            global_cb.HAS_NORMAL_MAP = 0.0f;
-        }
-
-        const Texture* roughness_map = scene->helper_get_texture(material->roughness_map_name);
-        if (roughness_map) {
-            gpu->bind_shader_view_for_pixel_shader(roughness_map->shader_view, 7);
-            global_cb.HAS_ROUGHNESS_MAP = 1.0f;
-        }
-        else {
-            global_cb.HAS_ROUGHNESS_MAP = 0.0f;
-        }
-
-        // Bind cbuffer
-        global_cb.W = entity->model_matrix();
-
-        global_cb.OBJECT_INDEX = static_cast<float>(object_id);
-        global_cb.OBJECT_SCALE = entity->scale;
-        global_cb.OBJECT_ROTATION = entity->rotation();
-        global_cb.OBJECT_POSITION = entity->position();
-
-        global_cb.OBJECT_COLOR = material->color;
-        global_cb.TEXTURE_BLEND = material->texture_blend;
-
-        global_cb.REFLECTION_FACTOR = material->reflection_factor;
-        global_cb.REFRACTION_FACTOR = material->refraction_factor;
-        global_cb.REFRACTION_INDEX = material->refraction_index;
-
-        if (animation->animation_type == AnimationType::SKELETAL) {
-            animation->bind_matrices(0);
-            global_cb.IS_SKELETAL = 1.0f;
-        }
-        else {
-            global_cb.IS_SKELETAL = 0.0f;
-        }
-
-        kl::RenderShaders* render_shaders = &package.shader_state;
-        if (Shader* shader = scene->helper_get_shader(material->shader_name)) {
-            render_shaders = &shader->graphics_buffer;
-        }
-        render_shaders->vertex_shader.update_cbuffer(global_cb);
-        render_shaders->pixel_shader.update_cbuffer(global_cb);
-        gpu->bind_render_shaders(*render_shaders);
-
-        // Draw
-        gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
     }
 
-    // Unbinds
+    // finalize
     {
         ID3D11ShaderResourceView* dir_light_views[DirectionalLight::CASCADE_COUNT] = {};
         gpu->context()->PSSetShaderResources(1, DirectionalLight::CASCADE_COUNT, dir_light_views);
