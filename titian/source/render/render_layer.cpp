@@ -26,7 +26,7 @@ void titian::RenderLayer::init()
 
 bool titian::RenderLayer::update()
 {
-	const TimeBomb _ = this->time_it();
+	const TimeBomb _ = bench_time_bomb();
 
 	AppLayer* app_layer = Layers::get<AppLayer>();
 	GameLayer* game_layer = Layers::get<GameLayer>();

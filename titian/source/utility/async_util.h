@@ -6,8 +6,6 @@
 namespace titian {
 	class WorkQueue
 	{
-		Vector<std::future<void>> m_queue;
-
 	public:
 		inline WorkQueue()
 		{}
@@ -21,5 +19,8 @@ namespace titian {
 		{
 			m_queue.clear();
 		}
+
+	private:
+		Vector<std::future<void>> m_queue;
 	};
 }

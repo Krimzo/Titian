@@ -7,7 +7,7 @@ titian::GUISectionEntityProperties::GUISectionEntityProperties()
 
 void titian::GUISectionEntityProperties::render_gui()
 {
-    const TimeBomb _ = this->time_it();
+    const TimeBomb _ = bench_time_bomb();
 
     EditorLayer* editor_layer = Layers::get<EditorLayer>();
 	GameLayer* game_layer = Layers::get<GameLayer>();

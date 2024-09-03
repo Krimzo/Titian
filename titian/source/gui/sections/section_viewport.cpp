@@ -7,7 +7,7 @@ titian::GUISectionViewport::GUISectionViewport()
 
 void titian::GUISectionViewport::render_gui()
 {
-    const TimeBomb _ = this->time_it();
+    const TimeBomb _ = bench_time_bomb();
 
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 

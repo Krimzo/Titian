@@ -99,19 +99,23 @@ void titian::EditorPass::render_self(StatePackage& package)
             {
             case px::PxGeometryType::Enum::eBOX:
                 gpu->draw(cube->graphics_buffer, cube->casted_topology(), sizeof(Vertex));
+                bench_add_draw_call();
                 break;
 
             case px::PxGeometryType::Enum::eSPHERE:
                 gpu->draw(sphere->graphics_buffer, sphere->casted_topology(), sizeof(Vertex));
+                bench_add_draw_call();
                 break;
 
             case px::PxGeometryType::Enum::eCAPSULE:
                 gpu->draw(capsule->graphics_buffer, capsule->casted_topology(), sizeof(Vertex));
+                bench_add_draw_call();
                 break;
 
             case px::PxGeometryType::Enum::eTRIANGLEMESH:
                 if (Mesh* mesh = scene->helper_get_mesh(entity->collider_mesh_name)) {
                     gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
+                    bench_add_draw_call();
                 }
                 break;
             }
@@ -129,6 +133,7 @@ void titian::EditorPass::render_self(StatePackage& package)
             package.shader_state.pixel_shader.update_cbuffer(ps_cb);
 
             gpu->draw(frustum_mesh, D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+            bench_add_draw_call();
         }
     }
 }

@@ -153,7 +153,7 @@
     <ClCompile Include="source\gui\sections\section_script_editor.cpp" />
     <ClCompile Include="source\gui\sections\section_shader_editor.cpp" />
     <ClCompile Include="source\gui\sections\section_texture_editor.cpp" />
-    <ClCompile Include="source\gui\sections\section_time_info.cpp" />
+    <ClCompile Include="source\gui\sections\section_bench_info.cpp" />
     <ClCompile Include="source\gui\sections\section_viewport.cpp" />
     <ClCompile Include="source\layer\layer.cpp" />
     <ClCompile Include="source\layer\layer_stack.cpp" />
@@ -224,7 +224,7 @@
     <ClInclude Include="source\gui\sections\section_script_editor.h" />
     <ClInclude Include="source\gui\sections\section_shader_editor.h" />
     <ClInclude Include="source\gui\sections\section_texture_editor.h" />
-    <ClInclude Include="source\gui\sections\section_time_info.h" />
+    <ClInclude Include="source\gui\sections\section_bench_info.h" />
     <ClInclude Include="source\gui\sections\section_viewport.h" />
     <ClInclude Include="source\layer\layer.h" />
     <ClInclude Include="source\layer\layer_stack.h" />
@@ -270,7 +270,7 @@
     <ClInclude Include="source\utility\gui_util.h" />
     <ClInclude Include="source\utility\id_util.h" />
     <ClInclude Include="source\utility\string_util.h" />
-    <ClInclude Include="source\utility\time_util.h" />
+    <ClInclude Include="source\utility\bench_util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

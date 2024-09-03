@@ -10,7 +10,7 @@ void titian::EditorLayer::init()
 
 bool titian::EditorLayer::update()
 {
-    const TimeBomb _ = this->time_it();
+    const TimeBomb _ = bench_time_bomb();
 
     AppLayer* app_layer = Layers::get<AppLayer>();
 	GameLayer* game_layer = Layers::get<GameLayer>();

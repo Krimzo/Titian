@@ -7,8 +7,9 @@ titian::RenderPass::RenderPass(const StringView& name)
 
 void titian::RenderPass::process()
 {
-	const TimeBomb _ = this->time_it();
+	const TimeBomb _ = bench_time_bomb();
 
+	bench_reset();
 	if (!is_renderable()) {
 		return;
 	}

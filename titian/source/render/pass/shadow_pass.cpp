@@ -109,6 +109,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
             vs_cb.WVP = VP * vs_cb.WVP;
             package.shader_state.vertex_shader.update_cbuffer(vs_cb);
             gpu->draw(info.mesh->graphics_buffer, info.mesh->casted_topology(), sizeof(Vertex));
+            bench_add_draw_call();
         }
     }
 

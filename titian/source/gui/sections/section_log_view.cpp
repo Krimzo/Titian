@@ -7,7 +7,7 @@ titian::GUISectionLogView::GUISectionLogView()
 
 void titian::GUISectionLogView::render_gui()
 {
-    const TimeBomb _ = this->time_it();
+    const TimeBomb _ = bench_time_bomb();
 
     GUILayer* gui_layer = Layers::get<GUILayer>();
     im::PushFont(gui_layer->roboto_font_large);

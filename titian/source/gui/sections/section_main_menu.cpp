@@ -24,7 +24,7 @@ titian::GUISectionMainMenu::GUISectionMainMenu()
 
 void titian::GUISectionMainMenu::render_gui()
 {
-    const TimeBomb _ = this->time_it();
+    const TimeBomb _ = bench_time_bomb();
 
 	AppLayer* app_layer = Layers::get<AppLayer>();
     RenderLayer* render_layer = Layers::get<RenderLayer>();

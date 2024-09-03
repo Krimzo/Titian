@@ -61,6 +61,7 @@ void titian::OutlinePass::render_self(StatePackage& package)
     package.shader_state.pixel_shader.update_cbuffer(ps_cb);
 
     gpu->draw(render_layer->screen_mesh);
+    bench_add_draw_call();
 
     // finalize
     gpu->unbind_shader_view_for_pixel_shader(1);

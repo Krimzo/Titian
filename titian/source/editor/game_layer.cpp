@@ -12,7 +12,7 @@ void titian::GameLayer::init()
 
 bool titian::GameLayer::update()
 {
-	const TimeBomb _ = this->time_it();
+	const TimeBomb _ = bench_time_bomb();
 
 	if (game_running && !game_paused) {
 		const float delta_time = Layers::get<AppLayer>()->timer.delta();

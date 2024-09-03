@@ -62,6 +62,7 @@ void titian::PostPass::render_self(StatePackage& package)
     gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->non_linear, 1);
 
 	gpu->draw(render_layer->screen_mesh);
+    bench_add_draw_call();
 
     // finalize
     for (int i = 0; i < 3; i++) {

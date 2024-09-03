@@ -7,7 +7,7 @@ titian::GUISectionSceneInfo::GUISectionSceneInfo()
 
 void titian::GUISectionSceneInfo::render_gui()
 {
-    const TimeBomb _ = this->time_it();
+    const TimeBomb _ = bench_time_bomb();
 
     if (im::Begin("Scene Info")) {
         Scene* scene = &Layers::get<GameLayer>()->scene;

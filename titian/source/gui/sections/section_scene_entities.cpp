@@ -7,7 +7,7 @@ titian::GUISectionSceneEntities::GUISectionSceneEntities()
 
 void titian::GUISectionSceneEntities::render_gui()
 {
-	const TimeBomb _ = this->time_it();
+	const TimeBomb _ = bench_time_bomb();
 
 	EditorLayer* editor_layer = Layers::get<EditorLayer>();
 	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;

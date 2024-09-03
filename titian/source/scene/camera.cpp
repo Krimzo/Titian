@@ -143,3 +143,12 @@ titian::Float4x4 titian::Camera::camera_matrix() const
 {
     return projection_matrix() * view_matrix();
 }
+
+bool titian::Camera::can_see(const Float3& point) const
+{
+    return true;
+
+    /* Doesn't work well for big objects */
+    //const kl::Plane plane{ position(), m_forward };
+    //return plane.in_front(point);
+}

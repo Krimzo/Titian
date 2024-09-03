@@ -19,7 +19,7 @@ titian::GUISectionScriptingParameters::GUISectionScriptingParameters()
 
 void titian::GUISectionScriptingParameters::render_gui()
 {
-	const TimeBomb _ = this->time_it();
+	const TimeBomb _ = bench_time_bomb();
 
 	GUILayer* gui_layer = Layers::get<GUILayer>();
 	Scene* scene = &Layers::get<GameLayer>()->scene;

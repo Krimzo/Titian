@@ -6,17 +6,14 @@
 namespace titian {
 	inline int generate_id() noexcept
 	{
-		static int _counter = 0;
-		return ++_counter;
+		static int id = 0;
+		return ++id;
 	}
 }
 
 namespace titian {
-	class Unique
+	struct Unique
 	{
-	public:
 		const int id = generate_id();
-
-		inline Unique() = default;
 	};
 }

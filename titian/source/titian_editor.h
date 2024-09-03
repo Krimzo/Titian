@@ -30,7 +30,7 @@
 #include "gui/sections/section_log_view.h"
 #include "gui/sections/section_explorer.h"
 #include "gui/sections/section_entity_properties.h"
-#include "gui/sections/section_time_info.h"
+#include "gui/sections/section_bench_info.h"
 
 
 namespace titian {

@@ -5,12 +5,12 @@
 
 
 namespace titian {
-    class GUISectionTimeInfo : public GUISection
+    class GUISectionBenchInfo : public GUISection
     {
     public:
         void* editor = nullptr;
 
-        GUISectionTimeInfo(void* editor);
+        GUISectionBenchInfo(void* editor);
 
         void render_gui() override;
     };

@@ -150,6 +150,10 @@ void titian::ScenePass::render_self(StatePackage& package)
     for (int counter = 0; const auto & [_, entity] : scene->entities()) {
         counter += 1;
 
+        if (!camera->can_see(entity->position())) {
+            continue;
+		}
+
         RenderInfo info{};
         info.id = counter;
         info.entity = &entity;
@@ -187,14 +191,14 @@ void titian::ScenePass::render_self(StatePackage& package)
     
     // render helpers
     bool wireframe_bound = render_layer->render_wireframe;
-    gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->solid);
+    gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->solid_cull);
 
     const auto render_helper = [&](const RenderInfo& info)
     {
         const bool should_wireframe = render_layer->render_wireframe || info.mesh->render_wireframe;
         if (should_wireframe != wireframe_bound) {
             wireframe_bound = should_wireframe;
-            gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->solid);
+            gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->solid_cull);
         }
 
         if (info.color_map) {
@@ -247,6 +251,7 @@ void titian::ScenePass::render_self(StatePackage& package)
             info.render_shaders->pixel_shader.update_cbuffer(global_cb);
             gpu->bind_render_shaders(*info.render_shaders);
             gpu->draw(info.mesh->graphics_buffer, info.mesh->casted_topology(), sizeof(Vertex));
+            bench_add_draw_call();
         }
     };
 

@@ -54,4 +54,5 @@ void titian::SkyboxPass::render_self(StatePackage& package)
     gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
    
     gpu->draw(scene->default_meshes->cube->graphics_buffer, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(Vertex));
+    bench_add_draw_call();
 }

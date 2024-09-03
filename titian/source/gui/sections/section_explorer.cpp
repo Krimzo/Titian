@@ -29,7 +29,7 @@ titian::GUISectionExplorer::GUISectionExplorer()
 
 void titian::GUISectionExplorer::render_gui()
 {
-    const TimeBomb _ = this->time_it();
+    const TimeBomb _ = bench_time_bomb();
 
     List<fs::path> directories{};
     List<fs::path> files{};

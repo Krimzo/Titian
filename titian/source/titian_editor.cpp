@@ -28,6 +28,7 @@ titian::TitianEditor::TitianEditor()
     // Init editor sections
     gui_layer.sections.emplace_back(new GUISectionMainMenu());
     gui_layer.sections.emplace_back(new GUISectionSceneEntities());
+    gui_layer.sections.emplace_back(new GUISectionBenchInfo(this));
     gui_layer.sections.emplace_back(new GUISectionSceneInfo());
     gui_layer.sections.emplace_back(new GUISectionMeshEditor());
     gui_layer.sections.emplace_back(new GUISectionAnimationEditor());
@@ -36,11 +37,10 @@ titian::TitianEditor::TitianEditor()
     gui_layer.sections.emplace_back(new GUISectionShaderEditor());
     gui_layer.sections.emplace_back(new GUISectionScriptEditor());
     gui_layer.sections.emplace_back(new GUISectionViewport());
-    gui_layer.sections.emplace_back(new GUISectionScriptingParameters());
     gui_layer.sections.emplace_back(new GUISectionLogView());
     gui_layer.sections.emplace_back(new GUISectionExplorer());
     gui_layer.sections.emplace_back(new GUISectionEntityProperties());
-    gui_layer.sections.emplace_back(new GUISectionTimeInfo(this));
+    gui_layer.sections.emplace_back(new GUISectionScriptingParameters());
 
     // Push layers
     push_layer(&app_layer);

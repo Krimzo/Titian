@@ -60,6 +60,8 @@ namespace titian {
         Float4x4 view_matrix() const;
         Float4x4 projection_matrix() const;
         Float4x4 camera_matrix() const;
+
+        bool can_see(const Float3& point) const;
         
     private:
         Float3 m_forward = { 0.0f, 0.0f, 1.0f };

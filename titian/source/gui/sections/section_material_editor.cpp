@@ -18,7 +18,7 @@ titian::GUISectionMaterialEditor::GUISectionMaterialEditor()
 
 void titian::GUISectionMaterialEditor::render_gui()
 {
-    const TimeBomb _ = this->time_it();
+    const TimeBomb _ = bench_time_bomb();
 
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
