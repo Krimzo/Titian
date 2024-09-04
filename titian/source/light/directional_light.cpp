@@ -1,56 +1,36 @@
 #include "titian.h"
 
 
-titian::DirectionalLight::DirectionalLight(px::PxPhysics* physics, const bool dynamic, kl::GPU* gpu, const uint32_t map_resolution)
-    : Light(physics, dynamic), m_map_resolution(map_resolution)
+titian::DirectionalLight::DirectionalLight(px::PxPhysics* physics, const bool dynamic, kl::GPU* gpu)
+    : Light(physics, dynamic), m_gpu(gpu)
 {
-    dx::TextureDescriptor shadow_map_descriptor = {};
-    shadow_map_descriptor.Width = map_resolution;
-    shadow_map_descriptor.Height = map_resolution;
-    shadow_map_descriptor.MipLevels = 1;
-    shadow_map_descriptor.ArraySize = 1;
-    shadow_map_descriptor.Format = DXGI_FORMAT_R32_TYPELESS;
-    shadow_map_descriptor.SampleDesc.Count = 1;
-    shadow_map_descriptor.Usage = D3D11_USAGE_DEFAULT;
-    shadow_map_descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-
-    dx::DepthViewDescriptor shadow_depth_view_descriptor = {};
-    shadow_depth_view_descriptor.Format = DXGI_FORMAT_D32_FLOAT;
-    shadow_depth_view_descriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-
-    dx::ShaderViewDescriptor shadow_shader_view_descriptor = {};
-    shadow_shader_view_descriptor.Format = DXGI_FORMAT_R32_FLOAT;
-    shadow_shader_view_descriptor.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    shadow_shader_view_descriptor.Texture2D.MipLevels = 1;
-
-    for (auto& cascade : m_cascades) {
-        cascade = new Texture(gpu);
-        cascade->graphics_buffer = gpu->create_texture(&shadow_map_descriptor, nullptr);
-        cascade->create_depth_view(&shadow_depth_view_descriptor);
-        cascade->create_shader_view(&shadow_shader_view_descriptor);
-    }
+    set_resolution(2500); // default resolution
 }
 
 void titian::DirectionalLight::serialize(Serializer* serializer, const void* helper_data) const
 {
     Light::serialize(serializer, helper_data);
 
-    serializer->write_int("map_resolution", m_map_resolution);
-    serializer->write_float_array("direction", &m_direction.x, 3);
-
-    serializer->write_float("point_size", point_size);
     serializer->write_float_array("color", &color.x, 3);
+    serializer->write_float("point_size", point_size);
+    serializer->write_float_array("cascade_splits", cascade_splits, (int) std::size(cascade_splits));
+
+    serializer->write_int("resolution", m_resolution);
+    serializer->write_float_array("direction", &m_direction.x, 3);
 }
 
 void titian::DirectionalLight::deserialize(const Serializer* serializer, const void* helper_data)
 {
     Light::deserialize(serializer, helper_data);
 
-    serializer->read_int("map_resolution", (int32_t&) m_map_resolution);
+    serializer->read_float_array("color", &color.x, 3);
+    serializer->read_float("point_size", point_size);
+    serializer->read_float_array("cascade_splits", cascade_splits, (int) std::size(cascade_splits));
+
+    serializer->read_int("resolution", m_resolution);
     serializer->read_float_array("direction", &m_direction.x, 3);
 
-    serializer->read_float("point_size", point_size);
-    serializer->read_float_array("color", &color.x, 3);
+    set_resolution(m_resolution);
 }
 
 titian::Float3 titian::DirectionalLight::light_at_point(const Float3& point) const
@@ -58,9 +38,40 @@ titian::Float3 titian::DirectionalLight::light_at_point(const Float3& point) con
     return color; // Change later
 }
 
-uint32_t titian::DirectionalLight::map_resolution() const
+void titian::DirectionalLight::set_resolution(const int resolution)
 {
-    return m_map_resolution;
+	m_resolution = resolution;
+
+    dx::TextureDescriptor shadow_map_descriptor{};
+    shadow_map_descriptor.Width = resolution;
+    shadow_map_descriptor.Height = resolution;
+    shadow_map_descriptor.MipLevels = 1;
+    shadow_map_descriptor.ArraySize = 1;
+    shadow_map_descriptor.Format = DXGI_FORMAT_R32_TYPELESS;
+    shadow_map_descriptor.SampleDesc.Count = 1;
+    shadow_map_descriptor.Usage = D3D11_USAGE_DEFAULT;
+    shadow_map_descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+
+    dx::DepthViewDescriptor shadow_depth_view_descriptor{};
+    shadow_depth_view_descriptor.Format = DXGI_FORMAT_D32_FLOAT;
+    shadow_depth_view_descriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+    dx::ShaderViewDescriptor shadow_shader_view_descriptor{};
+    shadow_shader_view_descriptor.Format = DXGI_FORMAT_R32_FLOAT;
+    shadow_shader_view_descriptor.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    shadow_shader_view_descriptor.Texture2D.MipLevels = 1;
+
+    for (auto& cascade : m_cascades) {
+        cascade = new Texture(m_gpu);
+        cascade->graphics_buffer = m_gpu->create_texture(&shadow_map_descriptor, nullptr);
+        cascade->create_depth_view(&shadow_depth_view_descriptor);
+        cascade->create_shader_view(&shadow_shader_view_descriptor);
+    }
+}
+
+int titian::DirectionalLight::resolution() const
+{
+    return m_resolution;
 }
 
 void titian::DirectionalLight::set_direction(const Float3& direction)
@@ -73,21 +84,21 @@ titian::Float3 titian::DirectionalLight::direction() const
     return m_direction;
 }
 
-dx::DepthView titian::DirectionalLight::depth_view(const uint32_t cascade_index) const
+dx::DepthView titian::DirectionalLight::depth_view(const int cascade_index) const
 {
     return m_cascades[cascade_index]->depth_view;
 }
 
-dx::ShaderView titian::DirectionalLight::shader_view(const uint32_t cascade_index) const
+dx::ShaderView titian::DirectionalLight::shader_view(const int cascade_index) const
 {
     return m_cascades[cascade_index]->shader_view;
 }
 
-titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const uint32_t cascade_index) const
+titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const int cascade_index) const
 {
     const Float2 old_camera_planes = { camera->near_plane, camera->far_plane };
-    camera->near_plane = kl::lerp(CASCADE_SPLITS[cascade_index + 0], old_camera_planes.x, old_camera_planes.y);
-    camera->far_plane = kl::lerp(CASCADE_SPLITS[cascade_index + 1], old_camera_planes.x, old_camera_planes.y);
+    camera->near_plane = kl::lerp(cascade_splits[cascade_index + 0], old_camera_planes.x, old_camera_planes.y);
+    camera->far_plane = kl::lerp(cascade_splits[cascade_index + 1], old_camera_planes.x, old_camera_planes.y);
     const Float4x4 inverse_camera_matrix = kl::inverse(camera->camera_matrix());
     camera->near_plane = old_camera_planes.x;
     camera->far_plane = old_camera_planes.y;
@@ -95,14 +106,14 @@ titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const ui
     // Calculate 8 corners in world-space
     Float4 frustum_corners[8] = {
         inverse_camera_matrix * Float4(-1, -1, -1, 1),
-        inverse_camera_matrix * Float4(1, -1, -1, 1),
+        inverse_camera_matrix * Float4( 1, -1, -1, 1),
         inverse_camera_matrix * Float4(-1,  1, -1, 1),
-        inverse_camera_matrix * Float4(1,  1, -1, 1),
+        inverse_camera_matrix * Float4( 1,  1, -1, 1),
 
         inverse_camera_matrix * Float4(-1, -1,  1, 1),
-        inverse_camera_matrix * Float4(1, -1,  1, 1),
+        inverse_camera_matrix * Float4( 1, -1,  1, 1),
         inverse_camera_matrix * Float4(-1,  1,  1, 1),
-        inverse_camera_matrix * Float4(1,  1,  1, 1),
+        inverse_camera_matrix * Float4( 1,  1,  1, 1),
     };
 
     for (auto& corner : frustum_corners) {

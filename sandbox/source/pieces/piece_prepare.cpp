@@ -26,7 +26,7 @@ void titian::SandboxPiecePrepare::setup_self()
     scene->add_entity(scene->main_ambient_light_name, ambient_light);
 
     // Directional
-    Ref directional_light = new DirectionalLight(scene->physics(), false, gpu, 4096);
+    Ref directional_light = new DirectionalLight(scene->physics(), false, gpu);
     directional_light->set_direction({ 0.26f, -0.335f, 0.9f });
     scene->main_directional_light_name = "default_directional";
     scene->add_entity(scene->main_directional_light_name, directional_light);

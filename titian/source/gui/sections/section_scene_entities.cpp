@@ -39,7 +39,7 @@ void titian::GUISectionSceneEntities::render_gui()
 					im::CloseCurrentPopup();
 				}
 				if (im::MenuItem("New Directional Light")) {
-					Ref entity = scene->new_casted<DirectionalLight>(false, gpu, 4096);
+					Ref entity = scene->new_casted<DirectionalLight>(false, gpu);
 					scene->add_entity(name, entity);
 					im::CloseCurrentPopup();
 				}

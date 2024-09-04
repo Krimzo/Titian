@@ -195,7 +195,7 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
                 entity = new PointLight(m_physics, false);
             }
             else if (typeid(DirectionalLight).name() == entity_type) {
-                entity = new DirectionalLight(m_physics, false, m_gpu, 4096);
+                entity = new DirectionalLight(m_physics, false, m_gpu);
             }
             else {
                 kl::assert(false, "Unknown entity type: ", entity_type);

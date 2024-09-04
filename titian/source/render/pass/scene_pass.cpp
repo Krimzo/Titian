@@ -107,10 +107,10 @@ void titian::ScenePass::render_self(StatePackage& package)
         global_cb.SUN_COLOR = directional_light->color;
         global_cb.SUN_POINT_SIZE = directional_light->point_size;
 
-        global_cb.SHADOW_MAP_SIZE = Float2((float) directional_light->map_resolution());
-        global_cb.SHADOW_MAP_TEXEL_SIZE = Float2(1.0f / directional_light->map_resolution());
+        global_cb.SHADOW_MAP_SIZE = Float2{ (float) directional_light->resolution() };
+        global_cb.SHADOW_MAP_TEXEL_SIZE = Float2{ 1.0f / directional_light->resolution() };
         for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
-            global_cb.SHADOW_CASCADES[i] = kl::lerp(directional_light->CASCADE_SPLITS[i + 1], camera->near_plane, camera->far_plane);
+            global_cb.SHADOW_CASCADES[i] = kl::lerp(directional_light->cascade_splits[i + 1], camera->near_plane, camera->far_plane);
         }
     }
     global_cb.RECEIVES_SHADOWS = true;

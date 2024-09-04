@@ -154,8 +154,18 @@ void titian::GUISectionEntityProperties::display_directional_light_special_info(
 {
     im::Text("Directional Light Special Info");
 
-    im::DragFloat("Point Size", &light->point_size);
     im::ColorEdit3("Color", &light->color.x);
+    im::DragFloat("Point Size", &light->point_size);
+
+    for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
+        im::DragFloat2(kl::format("Cascade ", i).data(), light->cascade_splits + i, 0.01f, 0.0f, 1.0f);
+    }
+    std::sort(light->cascade_splits, light->cascade_splits + std::size(light->cascade_splits));
+
+    int resolution = light->resolution();
+	if (im::DragInt("Resolution", &resolution, 1.0f, 10, 8192)) {
+		light->set_resolution(resolution);
+	}
 
     Float3 direction = light->direction();
     if (im::DragFloat3("Direction", &direction.x)) {

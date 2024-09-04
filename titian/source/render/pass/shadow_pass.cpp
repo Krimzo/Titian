@@ -82,7 +82,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
     }
 
     // render
-    gpu->set_viewport_size(Int2{ (int) dir_light->map_resolution() });
+    gpu->set_viewport_size(Int2{ dir_light->resolution() });
 
     bool wireframe_bound = render_layer->render_wireframe;
     gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->shadow);

@@ -371,6 +371,7 @@ void titian::InterpScript::load_engine_parts()
 		"data_buffer", &Mesh::data_buffer,
 		"topology", &Mesh::topology,
 		"render_wireframe", &Mesh::render_wireframe,
+		"load", &Mesh::load,
 		"reload", &Mesh::reload
 	);
 
@@ -490,9 +491,10 @@ void titian::InterpScript::load_engine_parts()
 	m_engine->new_usertype<DirectionalLight>(
 		"DirectionalLight",
 		sl::base_classes, sl::bases<Light>(),
-		"point_size", &DirectionalLight::point_size,
 		"color", &DirectionalLight::color,
-		"map_resolution", &DirectionalLight::map_resolution,
+		"point_size", &DirectionalLight::point_size,
+		"cascade_splits", &DirectionalLight::cascade_splits,
+		"resolution", sl::property(&DirectionalLight::resolution, &DirectionalLight::set_resolution),
 		"direction", sl::property(&DirectionalLight::direction, &DirectionalLight::set_direction),
 		"light_matrix", &DirectionalLight::light_matrix
 	);
@@ -641,6 +643,23 @@ void titian::InterpScript::load_engine_parts()
 		"set_title", &kl::Window::set_title,
 		"set_icon", &kl::Window::set_icon
 	);
+
+	(*m_engine)["new_bool_vector"] = []() { return Vector<bool>{}; };
+	(*m_engine)["new_int_vector"] = []() { return Vector<int>{}; };
+	(*m_engine)["new_int2_vector"] = []() { return Vector<Int2>{}; };
+	(*m_engine)["new_float_vector"] = []() { return Vector<float>{}; };
+	(*m_engine)["new_float2_vector"] = []() { return Vector<Float2>{}; };
+	(*m_engine)["new_float3_vector"] = []() { return Vector<Float3>{}; };
+	(*m_engine)["new_float4_vector"] = []() { return Vector<Float4>{}; };
+	(*m_engine)["new_complex_vector"] = []() { return Vector<Complex>{}; };
+	(*m_engine)["new_quat_vector"] = []() { return Vector<Quaternion>{}; };
+	(*m_engine)["new_vertex_vector"] = []() { return Vector<kl::Vertex<float>>{}; };
+	(*m_engine)["new_triangle_vector"] = []() { return Vector<kl::Triangle<float>>{}; };
+	(*m_engine)["new_plane_vector"] = []() { return Vector<kl::Plane<float>>{}; };
+	(*m_engine)["new_sphere_vector"] = []() { return Vector<kl::Sphere<float>>{}; };
+	(*m_engine)["new_ray_vector"] = []() { return Vector<kl::Ray<float>>{}; };
+	(*m_engine)["new_color_vector"] = []() { return Vector<Color>{}; };
+	(*m_engine)["new_string_vector"] = []() { return Vector<String>{}; };
 
 	(*m_engine)["PI"] = kl::PI;
 	(*m_engine)["TO_RADIANS"] = kl::TO_RADIANS;
