@@ -757,7 +757,7 @@ void titian::InterpScript::load_engine_parts()
 	(*m_engine)["unlerp"] = &kl::unlerp<float>;
 	(*m_engine)["clamp"] = &kl::clamp<float>;
 
-	(*m_engine)["to_quaternion"] = sl::overload(FUNCTION(Quaternion, kl::to_quaternion, const Float3&),
+	(*m_engine)["to_quat"] = sl::overload(FUNCTION(Quaternion, kl::to_quaternion, const Float3&),
 		FUNCTION(Quaternion, kl::to_quaternion, const Float3&, const Float3&));
 	(*m_engine)["to_euler"] = sl::overload(FUNCTION(Float3, kl::to_euler, const Quaternion&),
 		FUNCTION(Float3, kl::to_euler, const Float3&, const Float3&));
@@ -841,49 +841,41 @@ void titian::InterpScript::load_engine_parts()
 	(*m_engine)["ui_set_cursor_pos"] = &ui_set_cursor_pos;
 	(*m_engine)["ui_window"] = &ui_window;
 	(*m_engine)["ui_button"] = &ui_button;
-	//(*m_engine)["ui_checkbox"] = &ui_checkbox;
+	(*m_engine)["ui_bool"] = &ui_bool;
+	(*m_engine)["ui_int"] = &ui_int;
+	(*m_engine)["ui_int2"] = &ui_int2;
+	(*m_engine)["ui_float"] = &ui_float;
+	(*m_engine)["ui_float2"] = &ui_float2;
+	(*m_engine)["ui_float3"] = &ui_float3;
+	(*m_engine)["ui_float4"] = &ui_float4;
+	(*m_engine)["ui_color"] = &ui_color;
+	(*m_engine)["ui_string"] = &ui_string;
 	(*m_engine)["ui_text"] = &ui_text;
 	(*m_engine)["ui_colored_text"] = &ui_colored_text;
-	//(*m_engine)["ui_input_int"] = &ui_input_int;
-	//(*m_engine)["ui_input_float"] = &ui_input_float;
-	(*m_engine)["ui_input_float2"] = &ui_input_float2;
-	(*m_engine)["ui_input_float3"] = &ui_input_float3;
-	(*m_engine)["ui_input_float4"] = &ui_input_float4;
-	//(*m_engine)["ui_input_text"] = &ui_input_text;
-	//(*m_engine)["ui_input_text_multiline"] = &ui_input_text_multiline;
-	(*m_engine)["ui_edit_color3"] = &ui_edit_color3;
-	(*m_engine)["ui_edit_color4"] = &ui_edit_color4;
-	//(*m_engine)["ui_drag_int"] = &ui_drag_int;
-	//(*m_engine)["ui_drag_float"] = &ui_drag_float;
-	(*m_engine)["ui_drag_float2"] = &ui_drag_float2;
-	(*m_engine)["ui_drag_float3"] = &ui_drag_float3;
-	(*m_engine)["ui_drag_float4"] = &ui_drag_float4;
-	//(*m_engine)["ui_slide_int"] = &ui_slide_int;
-	//(*m_engine)["ui_slide_float"] = &ui_slide_float;
 	
-	(*m_engine)["to_int2"] = sl::overload(
+	(*m_engine)["toint2"] = sl::overload(
 		[](const Float2& value) -> Int2 { return value; }
 	);
-	(*m_engine)["to_float2"] = sl::overload(
+	(*m_engine)["tofloat2"] = sl::overload(
 		[](const Int2& value) -> Float2 { return value; },
 		[](const Complex& value) -> Float2 { return value; }
 	);
-	(*m_engine)["to_float3"] = sl::overload(
+	(*m_engine)["tofloat3"] = sl::overload(
 		[](const Color& value) -> Float3 { return value; },
 		[](const Quaternion& value) -> Float3 { return value; }
 	);
-	(*m_engine)["to_float4"] = sl::overload(
+	(*m_engine)["tofloat4"] = sl::overload(
 		[](const Color& value) -> Float4 { return value; },
 		[](const Quaternion& value) -> Float4 { return value; }
 	);
-	(*m_engine)["to_complex"] = sl::overload(
+	(*m_engine)["tocomplex"] = sl::overload(
 		[](const Float2& value) -> Complex { return value; }
 	);
-	(*m_engine)["to_quaternion"] = sl::overload(
+	(*m_engine)["toquaternion"] = sl::overload(
 		[](const Float3& value) -> Quaternion { return value; },
 		[](const Float4& value) -> Quaternion { return value; }
 	);
-	(*m_engine)["to_color"] = sl::overload(
+	(*m_engine)["tocolor"] = sl::overload(
 		[](const Float3& value) -> Color { return value; },
 		[](const Float4& value) -> Color { return value; }
 	);

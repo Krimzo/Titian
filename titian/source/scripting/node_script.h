@@ -376,6 +376,10 @@ namespace titian {
 		{
 			rename("variable");
 			addIN<T>("write");
+			addOUT<String>("name")->behaviour([this]()
+			{
+				return name;
+			});
 			addOUT<T>("read")->behaviour([this]()
 			{
 				return var_ptr->get<T>();
@@ -2037,12 +2041,13 @@ namespace titian {
 	struct UIValueNode : FlowNode
 	{
 		T value = {};
-
+		
 		inline UIValueNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
 		{
 			addIN<String>("name");
 			addIN<T>("value");
+			addOUT<FlowNode*>("on_change")->behaviour([this]() { return this; });
 			addOUT<T>("value")->behaviour([this]()
 			{
 				return value;
@@ -2051,36 +2056,41 @@ namespace titian {
 
 		void call() override
 		{
+			const auto on_set = [this](T new_val)
+			{
+				this->value = new_val;
+				call_next("on_change");
+			};
 			if (input_connected("value")) {
 				value = get_value<T>("value");
 			}
 			const String name = get_value<String>("name");
 			if constexpr (std::is_same_v<T, bool>) {
-				ui_checkbox(name, value);
+				ui_bool(name, value, on_set);
 			}
 			else if constexpr (std::is_same_v<T, int32_t>) {
-				ui_drag_int(name, value);
+				ui_int(name, value, on_set);
 			}
 			else if constexpr (std::is_same_v<T, Int2>) {
-				ui_drag_int2(name, value);
+				ui_int2(name, value, on_set);
 			}
 			else if constexpr (std::is_same_v<T, float>) {
-				ui_drag_float(name, value);
+				ui_float(name, value, on_set);
 			}
 			else if constexpr (std::is_same_v<T, Float2>) {
-				ui_drag_float2(name, value);
+				ui_float2(name, value, on_set);
 			}
 			else if constexpr (std::is_same_v<T, Float3>) {
-				ui_drag_float3(name, value);
+				ui_float3(name, value, on_set);
 			}
 			else if constexpr (std::is_same_v<T, Float4>) {
-				ui_drag_float4(name, value);
+				ui_float4(name, value, on_set);
 			}
 			else if constexpr (std::is_same_v<T, Color>) {
-				ui_edit_color4(name, value);
+				ui_color(name, value, on_set);
 			}
 			else if constexpr (std::is_same_v<T, String>) {
-				ui_input_text(name, value);
+				ui_string(name, value, on_set);
 			}
 			else {
 				static_assert(false, "Not supported UIValueNode type");
