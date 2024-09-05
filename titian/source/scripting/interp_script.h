@@ -35,7 +35,7 @@ namespace titian {
 			InterpScript* parent = nullptr;
 			String name;
 
-			inline Parameter(InterpScript* parent, String name)
+			Parameter(InterpScript* parent, String name)
 				: parent(parent), name(std::move(name))
 			{}
 

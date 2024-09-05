@@ -148,3 +148,8 @@ kl::Hash kl::hash(const void* data, const uint64_t data_size)
 	update_context(&context, reinterpret_cast<const uint8_t*>(data), data_size);
 	return finalize_context(&context);
 }
+
+kl::Hash kl::hash_str(const std::string_view& data)
+{
+	return hash(data.data(), data.size());
+}

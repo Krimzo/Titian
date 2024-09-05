@@ -74,10 +74,10 @@ namespace kl {
 		constexpr operator Color() const
 		{
 			return {
-				(byte) clamp(T(x * TO_BYTE_COLOR), T(0), T(255)),
-				(byte) clamp(T(y * TO_BYTE_COLOR), T(0), T(255)),
-				(byte) clamp(T(z * TO_BYTE_COLOR), T(0), T(255)),
-				(byte) clamp(T(w * TO_BYTE_COLOR), T(0), T(255)),
+				(byte) clamp(x * to_byte_rgb<T>(), T(0), T(255)),
+				(byte) clamp(y * to_byte_rgb<T>(), T(0), T(255)),
+				(byte) clamp(z * to_byte_rgb<T>(), T(0), T(255)),
+				(byte) clamp(w * to_byte_rgb<T>(), T(0), T(255)),
 			};
 		}
 

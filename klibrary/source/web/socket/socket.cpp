@@ -1,6 +1,15 @@
 #include "klibrary.h"
 
 
+// init
+static const int _socket_init = []
+{
+    WSADATA wsa_data{};
+    const int result = ::WSAStartup(MAKEWORD(2, 2), &wsa_data);
+    kl::assert(result == 0, "Failed to initialize WSA");
+    return result;
+}();
+
 // Address
 kl::Address::Address()
     : sockaddr_in()

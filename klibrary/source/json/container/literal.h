@@ -44,28 +44,28 @@ namespace kl::json {
 }
 
 namespace kl::json {
-	static inline Wrap<Literal> make_null()
+	inline Wrap<Literal> make_null()
 	{
 		Wrap result = Wrap<Literal>::make();
 		result->put_null();
 		return result;
 	}
 
-	static inline Wrap<Literal> make_bool(bool value)
+	inline Wrap<Literal> make_bool(bool value)
 	{
 		Wrap result = Wrap<Literal>::make();
 		result->put_bool(value);
 		return result;
 	}
 
-	static inline Wrap<Literal> make_number(double value)
+	inline Wrap<Literal> make_number(double value)
 	{
 		Wrap result = Wrap<Literal>::make();
 		result->put_number(value);
 		return result;
 	}
 
-	static inline Wrap<Literal> make_string(const std::string_view& value)
+	inline Wrap<Literal> make_string(const std::string_view& value)
 	{
 		Wrap result = Wrap<Literal>::make();
 		result->put_string(value);

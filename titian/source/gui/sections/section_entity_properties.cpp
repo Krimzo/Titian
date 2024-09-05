@@ -266,9 +266,9 @@ void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const
             entity->set_velocity(velocity);
         }
 
-        Float3 angular = entity->angular() * (float) kl::TO_DEGREES;
+        Float3 angular = entity->angular() * kl::to_degrees();
         if (im::DragFloat3("Angular", &angular.x)) {
-            entity->set_angular(angular * (float) kl::TO_RADIANS);
+            entity->set_angular(angular * kl::to_radians());
         }
     }
 }

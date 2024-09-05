@@ -51,12 +51,7 @@ namespace titian {
 		mutable Vector<js::Object*> m_stack = { &m_container };
 		bool m_is_valid = false;
 
-		inline js::Object& current()
-		{
-			return *m_stack.back();
-		}
-
-		inline const js::Object& current() const
+		auto& current() const
 		{
 			return *m_stack.back();
 		}

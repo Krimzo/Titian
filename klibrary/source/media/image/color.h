@@ -4,11 +4,8 @@
 
 
 namespace kl {
-    template<typename T>
-    class Vector3;
-
-    template<typename T>
-    class Vector4;
+    template<typename T> class Vector3;
+    template<typename T> class Vector4;
 }
 
 namespace kl {
@@ -20,19 +17,15 @@ namespace kl {
         byte r = 0;
         byte a = 255;
 
-        // Construct
         Color();
         Color(byte r, byte g, byte b, byte a = 255);
 
-        // Get
         operator Vector3<float>() const;
         operator Vector4<float>() const;
 
-        // Compare
         bool operator==(const Color& other) const;
         bool operator!=(const Color& other) const;
 
-        // Methods
         Color gray() const;
         Color inverted() const;
         char as_ascii() const;
@@ -47,7 +40,7 @@ namespace kl {
 }
 
 namespace kl::colors {
-    inline const Color CONSOLE = { 204, 204, 204 };
+    inline const Color CONSOLE = { 205, 205, 205 };
     inline const Color   BLACK = {   0,   0,   0 };
     inline const Color   WHITE = { 255, 255, 255 };
     inline const Color    GRAY = {  50,  50,  50 };

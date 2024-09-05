@@ -661,11 +661,11 @@ void titian::InterpScript::load_engine_parts()
 	(*m_engine)["new_color_vector"] = []() { return Vector<Color>{}; };
 	(*m_engine)["new_string_vector"] = []() { return Vector<String>{}; };
 
-	(*m_engine)["PI"] = kl::PI;
-	(*m_engine)["TO_RADIANS"] = kl::TO_RADIANS;
-	(*m_engine)["TO_DEGREES"] = kl::TO_DEGREES;
-	(*m_engine)["TO_FLOAT_COLOR"] = kl::TO_FLOAT_COLOR;
-	(*m_engine)["TO_BYTE_COLOR"] = kl::TO_BYTE_COLOR;
+	(*m_engine)["PI"] = kl::pi();
+	(*m_engine)["TO_RADIANS"] = kl::to_radians();
+	(*m_engine)["TO_DEGREES"] = kl::to_degrees();
+	(*m_engine)["TO_FLOAT_RGB"] = kl::to_float_rgb();
+	(*m_engine)["TO_BYTE_RGB"] = kl::to_byte_rgb();
 
 	(*m_engine)["BLACK"] = kl::colors::BLACK;
 	(*m_engine)["WHITE"] = kl::colors::WHITE;

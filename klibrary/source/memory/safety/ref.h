@@ -151,7 +151,7 @@ namespace kl {
         T* m_instance = nullptr;
         C* m_count = nullptr;
 
-        inline void increase_count() const
+        void increase_count() const
         {
             if (m_count) {
                 ++(*m_count);
@@ -159,7 +159,7 @@ namespace kl {
         }
 
         template<typename T = uint32_t>
-        inline T decrease_count() const
+        T decrease_count() const
         {
             if (m_count) {
                 return static_cast<T>(--(*m_count));
@@ -167,7 +167,7 @@ namespace kl {
             return static_cast<T>(-1);
         }
 
-        inline void allocate()
+        void allocate()
         {
             m_count = new C();
             if (!m_count) {
@@ -176,7 +176,7 @@ namespace kl {
             *m_count = 1;
         }
 
-        inline void destroy()
+        void destroy()
         {
             if (m_instance) {
                 delete m_instance;
@@ -186,7 +186,7 @@ namespace kl {
             }
         }
 
-        inline void clear()
+        void clear()
         {
             m_instance = nullptr;
             m_count = nullptr;

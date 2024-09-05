@@ -117,14 +117,14 @@ namespace kl {
 		bool m_valid = false;
 		uint8_t m_buffer[S] = {};
 
-		inline void destroy()
+		void destroy()
 		{
 			if (m_valid) {
 				(**this).~T();
 			}
 		}
 
-		inline void clear()
+		void clear()
 		{
 			m_valid = false;
 			memset(m_buffer, 0, S);

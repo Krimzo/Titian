@@ -7,23 +7,16 @@ namespace kl {
     class VideoType
     {
     public:
-        static inline VideoType h264(eAVEncH264VProfile profile = eAVEncH264VProfile::eAVEncH264VProfile_Main)
+        static VideoType h264(eAVEncH264VProfile profile = eAVEncH264VProfile::eAVEncH264VProfile_Main)
         {
             return { MFVideoFormat_H264, (int) profile };
         }
 
-        inline GUID type() const
-        {
-            return m_type;
-        }
-
-        inline int profile() const
-        {
-            return m_profile;
-        }
+        GUID type() const { return m_type; }
+        int profile() const { return m_profile; }
 
     private:
-        inline VideoType(const GUID type, const int profile)
+        VideoType(const GUID type, const int profile)
             : m_type(type), m_profile(profile)
         {}
 

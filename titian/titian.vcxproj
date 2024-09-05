@@ -187,6 +187,7 @@
     <ClCompile Include="source\scripting\node_script.cpp" />
     <ClCompile Include="source\scripting\script.cpp" />
     <ClCompile Include="source\serialization\binary_serializer.cpp" />
+    <ClCompile Include="source\serialization\serialization.cpp" />
     <ClCompile Include="source\serialization\text_serializer.cpp" />
     <ClCompile Include="source\titian_editor.cpp" />
     <ClCompile Include="source\titian_game.cpp" />
@@ -195,6 +196,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\ui\ui_funcs.cpp" />
+    <ClCompile Include="source\utility\async_util.cpp" />
+    <ClCompile Include="source\utility\bench_util.cpp" />
+    <ClCompile Include="source\utility\file_util.cpp" />
+    <ClCompile Include="source\utility\gui_util.cpp" />
+    <ClCompile Include="source\utility\string_util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\application\app_layer.h" />
@@ -268,7 +274,6 @@
     <ClInclude Include="source\utility\async_util.h" />
     <ClInclude Include="source\utility\file_util.h" />
     <ClInclude Include="source\utility\gui_util.h" />
-    <ClInclude Include="source\utility\id_util.h" />
     <ClInclude Include="source\utility\string_util.h" />
     <ClInclude Include="source\utility\bench_util.h" />
   </ItemGroup>

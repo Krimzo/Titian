@@ -7,18 +7,14 @@ namespace titian {
 	class WorkQueue
 	{
 	public:
-		inline WorkQueue()
-		{}
+		WorkQueue() = default;
 
-		inline void add_task(auto task)
+		void add_task(auto&& task)
 		{
-			m_queue.push_back(std::async(std::launch::async, task));
+			m_queue.push_back(std::async(task));
 		}
 
-		inline void finalize()
-		{
-			m_queue.clear();
-		}
+		void finalize();
 
 	private:
 		Vector<std::future<void>> m_queue;

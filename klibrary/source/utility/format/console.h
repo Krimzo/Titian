@@ -38,11 +38,6 @@ namespace kl {
         print(colors::ORANGE, "Failed to verify: ", message, colors::CONSOLE);
     };
 
-    inline int get()
-    {
-        return std::cin.get();
-    }
-
     template<typename... Args>
     constexpr bool verify(const bool value, const Args&... args)
     {

@@ -4,14 +4,7 @@
 
 
 namespace titian {
-	inline String format_serial_version(const int32_t version)
-	{
-		String result = kl::format(std::hex, std::setfill('0'), std::setw(8), version);
-		result.insert(result.begin() + 2, '\'');
-		result.insert(result.begin() + 5, '\'');
-		return result;
-	}
-
+	String format_serial_version(int32_t version);
 	inline constexpr int32_t SERIAL_VERSION_INT = 0x04'09'2024;
 	inline const String SERIAL_VERSION_STR = format_serial_version(SERIAL_VERSION_INT);
 }

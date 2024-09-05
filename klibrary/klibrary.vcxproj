@@ -126,6 +126,7 @@
     <ClCompile Include="source\media\audio\audio_device.cpp" />
     <ClCompile Include="source\media\image\color.cpp" />
     <ClCompile Include="source\media\image\image.cpp" />
+    <ClCompile Include="source\media\media.cpp" />
     <ClCompile Include="source\media\video\video_reader.cpp" />
     <ClCompile Include="source\media\video\video_writer.cpp" />
     <ClCompile Include="source\memory\files\file.cpp" />

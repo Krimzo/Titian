@@ -24,53 +24,18 @@ namespace titian {
 
     inline const String DRAG_FILE_ID = "DragFileID";
     inline const String DRAG_DIR_ID = "DragDirID";
+}
 
-    inline void gui_colored_text(const StringView& message, const Float4& color)
-    {
-        im::TextColored(reinterpret_cast<const ImVec4&>(color), message.data());
-    }
+namespace titian {
+    void gui_colored_text(const StringView& message, const Float4& color);
+    Pair<ImVec2, ImVec2> gui_window_rect();
+    float gui_calculate_item_with(const StringView& label);
+    void gui_align_horizontally(float width, float alignment);
+    String gui_input_continuous(const String& id);
+    Optional<String> gui_input_waited(const String& id, const StringView& to_copy);
+}
 
-    inline Pair<ImVec2, ImVec2> gui_window_rect()
-    {
-        const ImVec2 content_region = im::GetContentRegionAvail();
-        const ImVec2 win_content_min = im::GetWindowPos() + im::GetWindowContentRegionMin();
-        const ImVec2 win_content_max = win_content_min + content_region;
-        return { win_content_min, win_content_max };
-    }
-
-    inline float gui_calculate_item_with(const StringView& label)
-    {
-        return im::CalcTextSize(label.data()).x;
-    }
-
-    inline void gui_align_horizontally(const float width, const float alignment)
-    {
-        const float available = im::GetContentRegionAvail().x;
-        const float offset = (available - width) * alignment;
-        if (offset > 0.0f) {
-            im::SetCursorPosX(im::GetCursorPosX() + offset);
-        }
-    }
-
-    inline String gui_input_continuous(const String& id)
-    {
-        auto& buffer = _INPUT_CONTINUOUS_DATA[id];
-        im::InputText(id.data(), &buffer);
-        return buffer;
-    }
-
-    inline Optional<String> gui_input_waited(const String& id, const StringView& to_copy)
-    {
-        auto& buffer = _INPUT_WAITED_DATA[id];
-        buffer = to_copy;
-        if (im::InputText(id.data(), &buffer, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            const String result = buffer;
-            buffer.clear();
-            return { result };
-        }
-        return {};
-    }
-
+namespace titian {
     template<typename T>
     void gui_set_drag_drop(const String& id, const T& data, const dx::ShaderView& texture = nullptr)
     {

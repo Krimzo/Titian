@@ -32,20 +32,20 @@ namespace kl {
     struct ComRef
     {
         // create
-        inline ComRef()
+        ComRef()
         {}
 
-        inline explicit ComRef(T* instance)
+        explicit ComRef(T* instance)
             : m_instance(instance)
         {}
 
         // destroy
-        inline ~ComRef() noexcept
+        ~ComRef() noexcept
         {
             free();
         }
 
-        inline void free()
+        void free()
         {
             if (m_instance) {
                 m_instance->Release();
@@ -54,13 +54,13 @@ namespace kl {
         }
 
         // copy
-        inline ComRef(const ComRef& other)
+        ComRef(const ComRef& other)
             : m_instance(other.m_instance)
         {
             increase_count();
         }
 
-        inline ComRef& operator=(const ComRef& other)
+        ComRef& operator=(const ComRef& other)
         {
             if (other.m_instance != m_instance) {
                 free();
@@ -71,13 +71,13 @@ namespace kl {
         }
 
         // move
-        inline ComRef(ComRef&& other) noexcept
+        ComRef(ComRef&& other) noexcept
         {
             *this = other;
             other.free();
         }
 
-        inline ComRef& operator=(ComRef&& other) noexcept
+        ComRef& operator=(ComRef&& other) noexcept
         {
             *this = other;
             other.free();
@@ -87,47 +87,47 @@ namespace kl {
         // cast 
         template<typename B>
             requires std::is_base_of_v<B, T>
-        inline operator ComRef<B>() const
+        operator ComRef<B>() const
         {
             increase_count();
             return ComRef<B>{m_instance};
         }
 
         template<typename U>
-        inline HRESULT as(ComRef<U>& out) const
+        HRESULT as(ComRef<U>& out) const
         {
             return m_instance->QueryInterface(__uuidof(U), (void**) &out);
         }
 
         // access
-        inline T** operator&()
+        T** operator&()
         {
             free();
             return &m_instance;
         }
 
-        inline T& operator*() const
+        T& operator*() const
         {
             return *m_instance;
         }
         
-        inline T* operator->() const
+        T* operator->() const
         {
             return m_instance;
         }
 
-        inline T* get() const
+        T* get() const
         {
 			return m_instance;
         }
 
-        inline T*const* address() const
+        T*const* address() const
         {
             return &m_instance;
         }
 
         // info
-        inline operator bool() const
+        operator bool() const
         {
             return static_cast<bool>(m_instance);
         }
@@ -135,7 +135,7 @@ namespace kl {
     private:
         T* m_instance = nullptr;
 
-        inline void increase_count() const
+        void increase_count() const
         {
             if (m_instance) {
                 m_instance->AddRef();

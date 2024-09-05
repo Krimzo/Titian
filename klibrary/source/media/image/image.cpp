@@ -1,16 +1,14 @@
 #include "klibrary.h"
 
 
-// Init
-namespace kl_ignore {
-    [[maybe_unused]] static const int DONT_CARE = []()
-    {
-        ULONG_PTR token = NULL;
-        const Gdiplus::GdiplusStartupInput startup_input = {};
-        kl::assert(!GdiplusStartup(&token, &startup_input, nullptr), "Failed to init GDIPlus");
-        return 0;
-    }();
-}
+// init
+static const int _image_init = []
+{
+    ULONG_PTR token = NULL;
+    const Gdiplus::GdiplusStartupInput startup_input = {};
+    kl::assert(!GdiplusStartup(&token, &startup_input, nullptr), "Failed to init GDIPlus");
+    return 0;
+}();
 
 // Construct
 kl::Image::Image()

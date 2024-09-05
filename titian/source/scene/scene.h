@@ -146,7 +146,7 @@ namespace titian {
 		Ref<Material> load_assimp_material(const aiScene* scene, const aiMaterial* material);
 
         template<typename T>
-        static inline String generate_unique_name(const StringView& name, const StringMap<T>& map)
+        static String generate_unique_name(const StringView& name, const StringMap<T>& map)
         {
             if (!map.contains(name))
                 return String{ name };

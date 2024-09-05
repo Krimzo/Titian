@@ -5,11 +5,7 @@
 
 namespace kl {
     Hash hash(const void* data, uint64_t byte_size);
-
-    inline Hash hash_str(const std::string_view& data)
-    {
-        return hash(data.data(), data.size());
-    }
+    Hash hash_str(const std::string_view& data);
 
     template<typename T>
     Hash hash_obj(const T& object)

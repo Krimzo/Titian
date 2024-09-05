@@ -99,13 +99,3 @@ namespace kl {
         int exhaust(std::vector<byte>* output, int buffer_size = 16384) const;
     };
 }
-
-namespace kl_ignored {
-    [[maybe_unused]] inline static const int SOCKET_DONT_CARE = []()
-    {
-        WSADATA wsa_data{};
-        const int result = ::WSAStartup(MAKEWORD(2, 2), &wsa_data);
-        kl::assert(result == 0, "Failed to initialize WSA");
-        return result;
-    }();
-}

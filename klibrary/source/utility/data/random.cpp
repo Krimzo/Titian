@@ -1,28 +1,23 @@
 #include "klibrary.h"
 
 
-// Init
-namespace kl_ignore {
-    [[maybe_unused]] static const int DONT_CARE = []
-    {
-        std::srand(std::random_device{}());
-        return 0;
-    }();
-}
-
-namespace kl {
-    static thread_local std::mt19937 ENGINE{ std::random_device{}() };
-}
+// init
+static thread_local std::mt19937 _random_init = []
+{
+    std::random_device device{};
+    std::srand(device());
+    return std::mt19937{ device() };
+}();
 
 // Byte
 bool kl::random::gen_bool()
 {
-    return static_cast<bool>(ENGINE() % 2);
+    return static_cast<bool>(_random_init() % 2);
 }
 
 byte kl::random::gen_byte()
 {
-    return static_cast<byte>(ENGINE() % 256);
+    return static_cast<byte>(_random_init() % 256);
 }
 
 kl::Color kl::random::gen_color(const bool gray)
@@ -37,7 +32,7 @@ kl::Color kl::random::gen_color(const bool gray)
 // Int
 int kl::random::gen_int(const int start_inclusive, const int end_exclusive)
 {
-    return start_inclusive + (ENGINE() % (end_exclusive - start_inclusive));
+    return start_inclusive + (_random_init() % (end_exclusive - start_inclusive));
 }
 
 int kl::random::gen_int(const int end_exclusive)
@@ -68,7 +63,7 @@ float kl::random::gen_float(const float end_inclusive)
 
 float kl::random::gen_float()
 {
-    return static_cast<float>(ENGINE()) / std::numeric_limits<uint32_t>::max();
+    return static_cast<float>(_random_init()) / std::numeric_limits<uint32_t>::max();
 }
 
 kl::Float2 kl::random::gen_float2(const float start_inclusive, const float end_inclusive)

@@ -4,13 +4,35 @@
 
 
 namespace kl {
-    inline constexpr double PI = 3.1415926535897932385;
+    template<typename T = float>
+    consteval T pi() noexcept
+    {
+        return static_cast<T>(3.1415926535897932385);
+    }
 
-    inline constexpr double TO_RADIANS = PI / 180.0;
-    inline constexpr double TO_DEGREES = 180.0 / PI;
+    template<typename T = float>
+    consteval T to_radians() noexcept
+    {
+        return static_cast<T>(pi<double>() / 180.0);
+    }
 
-    inline constexpr double TO_FLOAT_COLOR = 1.0 / 255.0;
-    inline constexpr double TO_BYTE_COLOR = 255.0 / 1.0;
+    template<typename T = float>
+    consteval T to_degrees() noexcept
+    {
+        return static_cast<T>(180.0 / pi<double>());
+    }
+
+    template<typename T = float>
+    consteval T to_float_rgb() noexcept
+    {
+        return static_cast<T>(1.0 / 255.0);
+    }
+
+    template<typename T = float>
+    consteval T to_byte_rgb() noexcept
+    {
+        return static_cast<T>(255.0 / 1.0);
+    }
 }
 
 namespace kl {
@@ -55,37 +77,37 @@ namespace kl {
     template<typename T>
     constexpr T sin_d(T angle_in_deg) noexcept
     {
-        return (T) sin(angle_in_deg * TO_RADIANS);
+        return sin(angle_in_deg * to_radians<T>());
     }
 
     template<typename T>
     constexpr T cos_d(T angle_in_deg) noexcept
     {
-        return (T) cos(angle_in_deg * TO_RADIANS);
+        return cos(angle_in_deg * to_radians<T>());
     }
 
     template<typename T>
     constexpr T tan_d(T angle_in_deg) noexcept
     {
-        return (T) tan(angle_in_deg * TO_RADIANS);
+        return tan(angle_in_deg * to_radians<T>());
     }
 
     template<typename T>
     constexpr T asin_d(T value) noexcept
     {
-        return T(asin(value) * TO_DEGREES);
+        return asin(value) * to_degrees<T>();
     }
 
     template<typename T>
     constexpr T acos_d(T value) noexcept
     {
-        return T(acos(value) * TO_DEGREES);
+        return acos(value) * to_degrees<T>();
     }
 
     template<typename T>
     constexpr T atan_d(T value) noexcept
     {
-        return T(atan(value) * TO_DEGREES);
+        return atan(value) * to_degrees<T>();
     }
 
     // Clamp

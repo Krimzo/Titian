@@ -90,7 +90,7 @@ namespace titian {
 		NodeScript* parent = nullptr;
 		byte user_data[16] = {};
 
-		inline Node(NodeScript* parent, const StringView& title, const std::shared_ptr<ne::NodeStyle>& style = ne::NodeStyle::red())
+		Node(NodeScript* parent, const StringView& title, const std::shared_ptr<ne::NodeStyle>& style = ne::NodeStyle::red())
 			: parent(parent)
 		{
 			setTitle(title);
@@ -126,7 +126,7 @@ namespace titian {
 			setStyle(style);
 		}
 
-		inline bool input_connected(const char* uid)
+		bool input_connected(const char* uid)
 		{
 			ne::Pin* ptr = this->inPin(uid);
 			return ptr->isConnected();
@@ -155,7 +155,7 @@ namespace titian {
 		bool has_input = false;
 		bool has_output = false;
 
-		inline FlowNode(NodeScript* parent, const StringView& title, bool has_input = false, bool has_output = false, std::shared_ptr<ne::NodeStyle> style = ne::NodeStyle::white())
+		FlowNode(NodeScript* parent, const StringView& title, bool has_input = false, bool has_output = false, std::shared_ptr<ne::NodeStyle> style = ne::NodeStyle::white())
 			: Node(parent, title, style), has_input(has_input), has_output(has_output)
 		{
 			if (has_input) {
@@ -199,7 +199,7 @@ namespace titian {
 		}
 
 	protected:
-		inline void call_next(const char* pin_name = "out_flow")
+		void call_next(const char* pin_name = "out_flow")
 		{
 			auto pin = this->outPin(pin_name);
 			if (!pin)
@@ -225,7 +225,7 @@ namespace titian {
 	{
 		T value = {};
 
-		inline LiteralNode(NodeScript* parent, const StringView& title)
+		LiteralNode(NodeScript* parent, const StringView& title)
 			: Node(parent, title, ne::NodeStyle::green())
 		{
 			addOUT<T>("result")->behaviour([this] { return this->value; });
@@ -371,7 +371,7 @@ namespace titian {
 		String name;
 		VarInfo* var_ptr = nullptr;
 
-		inline VariableNode(NodeScript* parent, const StringView& title)
+		VariableNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::cyan())
 		{
 			rename("variable");
@@ -427,7 +427,7 @@ namespace titian {
 			call_next();
 		}
 
-		inline void rename(const StringView& new_name)
+		void rename(const StringView& new_name)
 		{
 			VarInfo old_info;
 			if (var_ptr) {
@@ -446,7 +446,7 @@ namespace titian {
 		}
 
 	private:
-		inline StringMap<VarInfo>& storage() const
+		StringMap<VarInfo>& storage() const
 		{
 			return parent->var_storage;
 		}
@@ -458,7 +458,7 @@ namespace titian {
 	template<typename T>
 	struct ConstructNode : Node
 	{
-		inline ConstructNode(NodeScript* parent, const StringView& title)
+		ConstructNode(NodeScript* parent, const StringView& title)
 			: Node(parent, title, ne::NodeStyle::teal())
 		{
 			if constexpr (std::is_same_v<T, Int2>) {
@@ -538,7 +538,7 @@ namespace titian {
 	template<typename T>
 	struct DeconstructNode : Node
 	{
-		inline DeconstructNode(NodeScript* parent, const StringView& title)
+		DeconstructNode(NodeScript* parent, const StringView& title)
 			: Node(parent, title, ne::NodeStyle::teal())
 		{
 			if constexpr (std::is_same_v<T, Int2>) {
@@ -658,7 +658,7 @@ namespace titian {
 	template<typename From, typename To>
 	struct CastNode : Node
 	{
-		inline CastNode(NodeScript* parent, const StringView& title)
+		CastNode(NodeScript* parent, const StringView& title)
 			: Node(parent, title, ne::NodeStyle::orange())
 		{
 			addIN<From>("from");
@@ -696,7 +696,7 @@ namespace titian {
 		requires std::is_base_of_v<From, To>
 	struct IsTypeNode : FlowNode
 	{
-		inline IsTypeNode(NodeScript* parent, const StringView& title)
+		IsTypeNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, false, ne::NodeStyle::orange())
 		{
 			addIN<void*>("ptr");
@@ -723,7 +723,7 @@ namespace titian {
 		requires has_less_operator<T>::value or has_equals_operator<T>::value or has_greater_operator<T>::value
 	struct CompareNode : Node
 	{
-		inline CompareNode(NodeScript* parent, const StringView& title)
+		CompareNode(NodeScript* parent, const StringView& title)
 			: Node(parent, title, ne::NodeStyle::yellow())
 		{
 			addIN<T>("left");
@@ -752,7 +752,7 @@ namespace titian {
 	template<typename T>
 	struct ContainsNode : Node
 	{
-		inline ContainsNode(NodeScript* parent, const StringView& title)
+		ContainsNode(NodeScript* parent, const StringView& title)
 			: Node(parent, title, ne::NodeStyle::yellow())
 		{
 			addIN<T>("left");
@@ -771,7 +771,7 @@ namespace titian {
 namespace titian {
 	struct LogicNotNode : Node
 	{
-		inline LogicNotNode(NodeScript* parent, const StringView& title)
+		LogicNotNode(NodeScript* parent, const StringView& title)
 			: Node(parent, title, ne::NodeStyle::pink())
 		{
 			addIN<bool>("in");
@@ -784,7 +784,7 @@ namespace titian {
 
 	struct LogicAndNode : Node
 	{
-		inline LogicAndNode(NodeScript* parent, const StringView& title)
+		LogicAndNode(NodeScript* parent, const StringView& title)
 			: Node(parent, title, ne::NodeStyle::pink())
 		{
 			addIN<bool>("left");
@@ -798,7 +798,7 @@ namespace titian {
 
 	struct LogicOrNode : Node
 	{
-		inline LogicOrNode(NodeScript* parent, const StringView& title)
+		LogicOrNode(NodeScript* parent, const StringView& title)
 			: Node(parent, title, ne::NodeStyle::pink())
 		{
 			addIN<bool>("left");
@@ -816,7 +816,7 @@ namespace titian {
 	template<typename T>
 	struct OperatorNode : Node
 	{
-		inline OperatorNode(NodeScript* parent, const StringView& title)
+		OperatorNode(NodeScript* parent, const StringView& title)
 			: Node(parent, title, ne::NodeStyle::blue())
 		{
 			addIN<T>("left");
@@ -830,7 +830,7 @@ namespace titian {
 	template<typename T>
 	struct OperatorPlusNode : OperatorNode<T>
 	{
-		inline OperatorPlusNode(NodeScript* parent, const StringView& title)
+		OperatorPlusNode(NodeScript* parent, const StringView& title)
 			: OperatorNode<T>(parent, title)
 		{}
 
@@ -843,7 +843,7 @@ namespace titian {
 	template<typename T>
 	struct OperatorMinusNode : OperatorNode<T>
 	{
-		inline OperatorMinusNode(NodeScript* parent, const StringView& title)
+		OperatorMinusNode(NodeScript* parent, const StringView& title)
 			: OperatorNode<T>(parent, title)
 		{}
 
@@ -856,7 +856,7 @@ namespace titian {
 	template<typename T>
 	struct OperatorTimesNode : OperatorNode<T>
 	{
-		inline OperatorTimesNode(NodeScript* parent, const StringView& title)
+		OperatorTimesNode(NodeScript* parent, const StringView& title)
 			: OperatorNode<T>(parent, title)
 		{}
 
@@ -869,7 +869,7 @@ namespace titian {
 	template<typename T>
 	struct OperatorDivideNode : OperatorNode<T>
 	{
-		inline OperatorDivideNode(NodeScript* parent, const StringView& title)
+		OperatorDivideNode(NodeScript* parent, const StringView& title)
 			: OperatorNode<T>(parent, title)
 		{}
 
@@ -882,7 +882,7 @@ namespace titian {
 	template<typename T>
 	struct OperatorPowerNode : OperatorNode<T>
 	{
-		inline OperatorPowerNode(NodeScript* parent, const StringView& title)
+		OperatorPowerNode(NodeScript* parent, const StringView& title)
 			: OperatorNode<T>(parent, title)
 		{}
 
@@ -897,7 +897,7 @@ namespace titian {
 	template<typename T>
 	struct OperatorModuloNode : OperatorNode<T>
 	{
-		inline OperatorModuloNode(NodeScript* parent, const StringView& title)
+		OperatorModuloNode(NodeScript* parent, const StringView& title)
 			: OperatorNode<T>(parent, title)
 		{}
 
@@ -920,7 +920,7 @@ namespace titian {
 	template<typename T>
 	struct OperatorMinNode : OperatorNode<T>
 	{
-		inline OperatorMinNode(NodeScript* parent, const StringView& title)
+		OperatorMinNode(NodeScript* parent, const StringView& title)
 			: OperatorNode<T>(parent, title)
 		{}
 
@@ -935,7 +935,7 @@ namespace titian {
 	template<typename T>
 	struct OperatorMaxNode : OperatorNode<T>
 	{
-		inline OperatorMaxNode(NodeScript* parent, const StringView& title)
+		OperatorMaxNode(NodeScript* parent, const StringView& title)
 			: OperatorNode<T>(parent, title)
 		{}
 
@@ -952,7 +952,7 @@ namespace titian {
 namespace titian {
 	struct IfNode : FlowNode
 	{
-		inline IfNode(NodeScript* parent, const StringView& title)
+		IfNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, false, ne::NodeStyle::red())
 		{
 			addIN<bool>("value");
@@ -974,7 +974,7 @@ namespace titian {
 
 	struct WhileNode : FlowNode
 	{
-		inline WhileNode(NodeScript* parent, const StringView& title)
+		WhileNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::red())
 		{
 			addIN<bool>("value");
@@ -998,7 +998,7 @@ namespace titian {
 
 	struct ForNode : FlowNode
 	{
-		inline ForNode(NodeScript* parent, const StringView& title)
+		ForNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::red())
 		{
 			addIN<int32_t>("from_incl");
@@ -1027,14 +1027,14 @@ namespace titian {
 namespace titian {
 	struct FunctionNode : FlowNode
 	{
-		inline FunctionNode(NodeScript* parent, const StringView& title)
+		FunctionNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::crimson())
 		{}
 	};
 
 	struct PrintNode : FunctionNode
 	{
-		inline PrintNode(NodeScript* parent, const StringView& title)
+		PrintNode(NodeScript* parent, const StringView& title)
 			: FunctionNode(parent, title)
 		{
 			addIN<String>("value");
@@ -1054,7 +1054,7 @@ namespace titian {
 	template<typename T>
 	struct MathNode : Node
 	{
-		inline MathNode(NodeScript* parent, const StringView& title)
+		MathNode(NodeScript* parent, const StringView& title)
 			: Node(parent, title, ne::NodeStyle::magenta())
 		{
 			this->addIN<T>("in");
@@ -1067,7 +1067,7 @@ namespace titian {
 	template<typename T>
 	struct AbsNode : MathNode<T>
 	{
-		inline AbsNode(NodeScript* parent, const StringView& title)
+		AbsNode(NodeScript* parent, const StringView& title)
 			: MathNode<T>(parent, title)
 		{}
 
@@ -1081,7 +1081,7 @@ namespace titian {
 	template<typename T>
 	struct SqrtNode : MathNode<T>
 	{
-		inline SqrtNode(NodeScript* parent, const StringView& title)
+		SqrtNode(NodeScript* parent, const StringView& title)
 			: MathNode<T>(parent, title)
 		{}
 
@@ -1095,7 +1095,7 @@ namespace titian {
 	template<typename T>
 	struct LogNode : MathNode<T>
 	{
-		inline LogNode(NodeScript* parent, const StringView& title)
+		LogNode(NodeScript* parent, const StringView& title)
 			: MathNode<T>(parent, title)
 		{}
 
@@ -1109,7 +1109,7 @@ namespace titian {
 	template<typename T>
 	struct TrigNode : MathNode<T>
 	{
-		inline TrigNode(NodeScript* parent, const StringView& title)
+		TrigNode(NodeScript* parent, const StringView& title)
 			: MathNode<T>(parent, title)
 		{
 			this->addIN<bool>("inverse");
@@ -1117,12 +1117,12 @@ namespace titian {
 		}
 
 	protected:
-		inline bool is_inverse()
+		bool is_inverse()
 		{
 			return this->get_value<bool>("inverse");
 		}
 
-		inline bool is_degrees()
+		bool is_degrees()
 		{
 			return this->get_value<bool>("degrees");
 		}
@@ -1131,7 +1131,7 @@ namespace titian {
 	template<typename T>
 	struct SinNode : TrigNode<T>
 	{
-		inline SinNode(NodeScript* parent, const StringView& title)
+		SinNode(NodeScript* parent, const StringView& title)
 			: TrigNode<T>(parent, title)
 		{}
 
@@ -1150,7 +1150,7 @@ namespace titian {
 	template<typename T>
 	struct CosNode : TrigNode<T>
 	{
-		inline CosNode(NodeScript* parent, const StringView& title)
+		CosNode(NodeScript* parent, const StringView& title)
 			: TrigNode<T>(parent, title)
 		{}
 
@@ -1169,7 +1169,7 @@ namespace titian {
 	template<typename T>
 	struct TanNode : TrigNode<T>
 	{
-		inline TanNode(NodeScript* parent, const StringView& title)
+		TanNode(NodeScript* parent, const StringView& title)
 			: TrigNode<T>(parent, title)
 		{}
 
@@ -1823,7 +1823,7 @@ namespace titian {
 	template<typename T>
 	struct IteratorNode : FunctionNode
 	{
-		inline IteratorNode(NodeScript* parent, const StringView& title)
+		IteratorNode(NodeScript* parent, const StringView& title)
 			: FunctionNode(parent, title)
 		{
 			addOUT<FlowNode*>("call")->behaviour([this] { return this; });
@@ -1854,7 +1854,7 @@ namespace titian {
 
 	struct IterateMeshesNode : IteratorNode<Mesh>
 	{
-		inline IterateMeshesNode(NodeScript* parent, const StringView& title)
+		IterateMeshesNode(NodeScript* parent, const StringView& title)
 			: IteratorNode<Mesh>(parent, title)
 		{}
 
@@ -1867,7 +1867,7 @@ namespace titian {
 
 	struct IterateAnimationsNode : IteratorNode<Animation>
 	{
-		inline IterateAnimationsNode(NodeScript* parent, const StringView& title)
+		IterateAnimationsNode(NodeScript* parent, const StringView& title)
 			: IteratorNode<Animation>(parent, title)
 		{}
 
@@ -1880,7 +1880,7 @@ namespace titian {
 
 	struct IterateTexturesNode : IteratorNode<Texture>
 	{
-		inline IterateTexturesNode(NodeScript* parent, const StringView& title)
+		IterateTexturesNode(NodeScript* parent, const StringView& title)
 			: IteratorNode<Texture>(parent, title)
 		{}
 
@@ -1893,7 +1893,7 @@ namespace titian {
 
 	struct IterateMaterialsNode : IteratorNode<Material>
 	{
-		inline IterateMaterialsNode(NodeScript* parent, const StringView& title)
+		IterateMaterialsNode(NodeScript* parent, const StringView& title)
 			: IteratorNode<Material>(parent, title)
 		{}
 
@@ -1906,7 +1906,7 @@ namespace titian {
 
 	struct IterateShadersNode : IteratorNode<Shader>
 	{
-		inline IterateShadersNode(NodeScript* parent, const StringView& title)
+		IterateShadersNode(NodeScript* parent, const StringView& title)
 			: IteratorNode<Shader>(parent, title)
 		{}
 
@@ -1919,7 +1919,7 @@ namespace titian {
 
 	struct IterateEntitiesNode : IteratorNode<Entity>
 	{
-		inline IterateEntitiesNode(NodeScript* parent, const StringView& title)
+		IterateEntitiesNode(NodeScript* parent, const StringView& title)
 			: IteratorNode<Entity>(parent, title)
 		{}
 
@@ -1935,7 +1935,7 @@ namespace titian {
 namespace titian {
 	struct UISeparatorNode : FlowNode
 	{
-		inline UISeparatorNode(NodeScript* parent, const StringView& title)
+		UISeparatorNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
 		{}
 
@@ -1948,7 +1948,7 @@ namespace titian {
 
 	struct UISameLineNode : FlowNode
 	{
-		inline UISameLineNode(NodeScript* parent, const StringView& title)
+		UISameLineNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
 		{}
 
@@ -1961,7 +1961,7 @@ namespace titian {
 
 	struct UINextWidthNode : FlowNode
 	{
-		inline UINextWidthNode(NodeScript* parent, const StringView& title)
+		UINextWidthNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
 		{
 			addIN<float>("width");
@@ -1977,7 +1977,7 @@ namespace titian {
 
 	struct UICursorPositonNode : FlowNode
 	{
-		inline UICursorPositonNode(NodeScript* parent, const StringView& title)
+		UICursorPositonNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
 		{
 			addIN<Float2>("position");
@@ -1999,7 +1999,7 @@ namespace titian {
 
 	struct UIWindowNode : FlowNode
 	{
-		inline UIWindowNode(NodeScript* parent, const StringView& title)
+		UIWindowNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
 		{
 			addIN<String>("name");
@@ -2019,7 +2019,7 @@ namespace titian {
 
 	struct UIButtonNode : FlowNode
 	{
-		inline UIButtonNode(NodeScript* parent, const StringView& title)
+		UIButtonNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
 		{
 			addIN<String>("name");
@@ -2042,7 +2042,7 @@ namespace titian {
 	{
 		T value = {};
 		
-		inline UIValueNode(NodeScript* parent, const StringView& title)
+		UIValueNode(NodeScript* parent, const StringView& title)
 			: FlowNode(parent, title, true, true, ne::NodeStyle::sunset())
 		{
 			addIN<String>("name");
