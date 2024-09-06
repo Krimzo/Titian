@@ -14,12 +14,12 @@ bool titian::ShadowPass::is_renderable() const
 
 titian::StatePackage titian::ShadowPass::get_state_package()
 {
-    RenderStates* render_states = &Layers::get<RenderLayer>()->states;
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
 
-    StatePackage package = {};
-    package.raster_state = render_states->raster_states->shadow;
-    package.depth_state = render_states->depth_states->enabled;
-    package.shader_state = render_states->shader_states->shadow_pass;
+    StatePackage package{};
+    package.raster_state = render_layer->raster_states->shadow;
+    package.depth_state = render_layer->depth_states->enabled;
+    package.shader_state = render_layer->shader_states->shadow_pass;
     return package;
 }
 
@@ -27,7 +27,6 @@ void titian::ShadowPass::render_self(StatePackage& package)
 {
     // prep
     RenderLayer* render_layer = Layers::get<RenderLayer>();
-    RenderStates* render_states = &render_layer->states;
     kl::Timer* timer = &Layers::get<AppLayer>()->timer;
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
@@ -85,7 +84,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
     gpu->set_viewport_size(Int2{ dir_light->resolution() });
 
     bool wireframe_bound = render_layer->render_wireframe;
-    gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->shadow);
+    gpu->bind_raster_state(wireframe_bound ? render_layer->raster_states->wireframe : render_layer->raster_states->shadow);
 
     for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
         const Float4x4 VP = dir_light->light_matrix(camera, i);
@@ -98,7 +97,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
             const bool should_wireframe = render_layer->render_wireframe || info.mesh->render_wireframe;
             if (should_wireframe != wireframe_bound) {
                 wireframe_bound = should_wireframe;
-                gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->shadow);
+                gpu->bind_raster_state(wireframe_bound ? render_layer->raster_states->wireframe : render_layer->raster_states->shadow);
             }
 
             if (info.animation->animation_type == AnimationType::SKELETAL) {

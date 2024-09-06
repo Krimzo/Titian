@@ -187,10 +187,9 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     gpu->set_viewport_size(viewport_size);
 
     // Bind states
-    RenderStates* states = &render_layer->states;
-    gpu->bind_raster_state(states->raster_states->solid);
-    gpu->bind_depth_state(material->is_transparent() ? states->depth_states->only_compare : states->depth_states->enabled);
-    gpu->bind_blend_state(states->blend_states->enabled);
+    gpu->bind_raster_state(render_layer->raster_states->solid);
+    gpu->bind_depth_state(material->is_transparent() ? render_layer->depth_states->only_compare : render_layer->depth_states->enabled);
+    gpu->bind_blend_state(render_layer->blend_states->enabled);
 
     // Set global constants
     struct GLOBAL_CB
@@ -302,7 +301,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
 
     global_cb.RECEIVES_SHADOWS = false;
 
-    kl::RenderShaders* render_shaders = &states->shader_states->scene_pass;
+    kl::RenderShaders* render_shaders = &render_layer->shader_states->scene_pass;
     if (Shader* shader = scene->helper_get_shader(material->shader_name)) {
         render_shaders = &shader->graphics_buffer;
     }

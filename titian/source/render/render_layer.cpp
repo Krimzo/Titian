@@ -9,16 +9,19 @@ void titian::RenderLayer::init()
 {
 	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 
-	// Meshes
-	screen_mesh = gpu->create_screen_mesh();
+	raster_states = new RasterStates(gpu);
+	depth_states = new DepthStates(gpu);
+	sampler_states = new SamplerStates(gpu);
+	shader_states = new ShaderStates(gpu);
+	blend_states = new BlendStates(gpu);
 
-	// Textures
-	states = new RenderStates(gpu);
 	screen_texture = new Texture(gpu);
 	game_color_texture = new Texture(gpu);
 	game_depth_texture = new Texture(gpu);
 	editor_picking_texture = new Texture(gpu);
 	editor_staging_texture = new Texture(gpu);
+
+	screen_mesh = gpu->create_screen_mesh();
 
 	resize({ 1, 1 });
 	resize_staging({ 1, 1 });

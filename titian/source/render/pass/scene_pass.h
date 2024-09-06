@@ -1,9 +1,8 @@
 #pragma once
 
 #include "render/render_pass.h"
-#include "editor/editor_layer.h"
 #include "render/render_layer.h"
-#include "render/render_states.h"
+#include "editor/editor_layer.h"
 
 #include "light/ambient_light.h"
 #include "light/directional_light.h"

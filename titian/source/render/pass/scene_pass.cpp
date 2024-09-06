@@ -13,13 +13,12 @@ bool titian::ScenePass::is_renderable() const
 titian::StatePackage titian::ScenePass::get_state_package()
 {
     RenderLayer* render_layer = Layers::get<RenderLayer>();
-    RenderStates* render_states = &render_layer->states;
 
     StatePackage package{};
-    package.raster_state = render_layer->render_wireframe ? render_states->raster_states->wireframe : dx::RasterState{};
-    package.depth_state = render_states->depth_states->enabled;
-    package.shader_state = render_states->shader_states->scene_pass;
-    package.blend_state = render_states->blend_states->enabled;
+    package.raster_state = render_layer->render_wireframe ? render_layer->raster_states->wireframe : dx::RasterState{};
+    package.depth_state = render_layer->depth_states->enabled;
+    package.shader_state = render_layer->shader_states->scene_pass;
+    package.blend_state = render_layer->blend_states->enabled;
     return package;
 }
 
@@ -27,7 +26,6 @@ void titian::ScenePass::render_self(StatePackage& package)
 {
     // prepare
 	RenderLayer* render_layer = Layers::get<RenderLayer>();
-    RenderStates* render_states = &render_layer->states;
     kl::Timer* timer = &Layers::get<AppLayer>()->timer;
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
@@ -119,9 +117,9 @@ void titian::ScenePass::render_self(StatePackage& package)
     global_cb.DELTA_TIME = timer->delta();
 
     gpu->bind_target_depth_views({ render_layer->game_color_texture->target_view.get(), render_layer->editor_picking_texture->target_view.get() }, render_layer->game_depth_texture->depth_view);
-    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);
-    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->shadow, 1);
-    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 2);
+    gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->linear, 0);
+    gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->shadow, 1);
+    gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->linear, 2);
     if (Texture* skybox = scene->helper_get_texture(camera->skybox_name)) {
         gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
     }
@@ -191,14 +189,14 @@ void titian::ScenePass::render_self(StatePackage& package)
     
     // render helpers
     bool wireframe_bound = render_layer->render_wireframe;
-    gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->solid_cull);
+    gpu->bind_raster_state(wireframe_bound ? render_layer->raster_states->wireframe : render_layer->raster_states->solid_cull);
 
     const auto render_helper = [&](const RenderInfo& info)
     {
         const bool should_wireframe = render_layer->render_wireframe || info.mesh->render_wireframe;
         if (should_wireframe != wireframe_bound) {
             wireframe_bound = should_wireframe;
-            gpu->bind_raster_state(wireframe_bound ? render_states->raster_states->wireframe : render_states->raster_states->solid_cull);
+            gpu->bind_raster_state(wireframe_bound ? render_layer->raster_states->wireframe : render_layer->raster_states->solid_cull);
         }
 
         if (info.color_map) {
@@ -263,7 +261,7 @@ void titian::ScenePass::render_self(StatePackage& package)
     }
 
     // render transparent
-    gpu->bind_depth_state(render_states->depth_states->only_compare);
+    gpu->bind_depth_state(render_layer->depth_states->only_compare);
     global_cb.RECEIVES_SHADOWS = false;
 
     for (int i = (int) to_render.size() - 1; i >= 0; i--) {

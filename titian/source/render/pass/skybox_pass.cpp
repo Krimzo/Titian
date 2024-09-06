@@ -14,12 +14,12 @@ bool titian::SkyboxPass::is_renderable() const
 
 titian::StatePackage titian::SkyboxPass::get_state_package()
 {
-    RenderStates* render_states = &Layers::get<RenderLayer>()->states;
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
 
-    StatePackage package = {};
-    package.raster_state = render_states->raster_states->solid;
-    package.depth_state = render_states->depth_states->disabled;
-    package.shader_state = render_states->shader_states->skybox_pass;
+    StatePackage package{};
+    package.raster_state = render_layer->raster_states->solid;
+    package.depth_state = render_layer->depth_states->disabled;
+    package.shader_state = render_layer->shader_states->skybox_pass;
     return package;
 }
 
@@ -27,7 +27,6 @@ void titian::SkyboxPass::render_self(StatePackage& package)
 {
     // prepare
     RenderLayer* render_layer = Layers::get<RenderLayer>();
-    RenderStates* render_states = &render_layer->states;
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
@@ -50,7 +49,7 @@ void titian::SkyboxPass::render_self(StatePackage& package)
     package.shader_state.vertex_shader.update_cbuffer(vs_cb);
 
     gpu->bind_target_depth_view(render_layer->game_color_texture->target_view, {});
-    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);
+    gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->linear, 0);
     gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
    
     gpu->draw(scene->default_meshes->cube->graphics_buffer, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(Vertex));

@@ -212,11 +212,10 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
     const Int2 old_viewport_size = gpu->viewport_size();
     gpu->set_viewport_size(viewport_size);
 
-    RenderStates* states = &render_layer->states;
-    gpu->bind_raster_state(mesh->render_wireframe ? states->raster_states->wireframe : states->raster_states->solid);
-    gpu->bind_depth_state(states->depth_states->enabled);
+    gpu->bind_raster_state(mesh->render_wireframe ? render_layer->raster_states->wireframe : render_layer->raster_states->solid);
+    gpu->bind_depth_state(render_layer->depth_states->enabled);
 
-    kl::RenderShaders& render_shaders = states->shader_states->solid_lit_pass;
+    kl::RenderShaders& render_shaders = render_layer->shader_states->solid_lit_pass;
     gpu->bind_render_shaders(render_shaders);
 
     camera->update_aspect_ratio(viewport_size);

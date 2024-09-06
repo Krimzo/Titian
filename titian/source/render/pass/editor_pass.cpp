@@ -39,12 +39,12 @@ bool titian::EditorPass::is_renderable() const
 
 titian::StatePackage titian::EditorPass::get_state_package()
 {
-    RenderStates* render_states = &Layers::get<RenderLayer>()->states;
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
 
-    StatePackage package = {};
-    package.raster_state = render_states->raster_states->wireframe;
-    package.depth_state = render_states->depth_states->enabled;
-    package.shader_state = render_states->shader_states->solid_pass;
+    StatePackage package{};
+    package.raster_state = render_layer->raster_states->wireframe;
+    package.depth_state = render_layer->depth_states->enabled;
+    package.shader_state = render_layer->shader_states->solid_pass;
     return package;
 }
 

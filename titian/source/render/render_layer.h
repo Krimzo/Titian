@@ -1,9 +1,14 @@
 #pragma once
 
 #include "editor/game_layer.h"
-#include "render/render_states.h"
 #include "render/render_pass.h"
 #include "scene/camera.h"
+
+#include "render/states/raster_states.h"
+#include "render/states/depth_states.h"
+#include "render/states/sampler_states.h"
+#include "render/states/shader_states.h"
+#include "render/states/blend_states.h"
 
 
 namespace titian {
@@ -11,7 +16,12 @@ namespace titian {
 	{
 	public:
 		Vector<Ref<RenderPass>> passes;
-		Ref<RenderStates> states;
+		
+		Ref<RasterStates> raster_states;
+		Ref<DepthStates> depth_states;
+		Ref<SamplerStates> sampler_states;
+		Ref<ShaderStates> shader_states;
+		Ref<BlendStates> blend_states;
 
 		Ref<Texture> screen_texture;
 		Ref<Texture> game_color_texture;

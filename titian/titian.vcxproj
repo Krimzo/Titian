@@ -170,7 +170,6 @@
     <ClCompile Include="source\render\pass\skybox_pass.cpp" />
     <ClCompile Include="source\render\render_layer.cpp" />
     <ClCompile Include="source\render\render_pass.cpp" />
-    <ClCompile Include="source\render\render_states.cpp" />
     <ClCompile Include="source\render\states\blend_states.cpp" />
     <ClCompile Include="source\render\states\depth_states.cpp" />
     <ClCompile Include="source\render\states\raster_states.cpp" />
@@ -247,13 +246,11 @@
     <ClInclude Include="source\render\pass\skybox_pass.h" />
     <ClInclude Include="source\render\render_layer.h" />
     <ClInclude Include="source\render\render_pass.h" />
-    <ClInclude Include="source\render\render_states.h" />
     <ClInclude Include="source\render\states\blend_states.h" />
     <ClInclude Include="source\render\states\depth_states.h" />
     <ClInclude Include="source\render\states\raster_states.h" />
     <ClInclude Include="source\render\states\sampler_states.h" />
     <ClInclude Include="source\render\states\shader_states.h" />
-    <ClInclude Include="source\render\state_package.h" />
     <ClInclude Include="source\scene\camera.h" />
     <ClInclude Include="source\scene\default\default_animations.h" />
     <ClInclude Include="source\scene\default\default_materials.h" />

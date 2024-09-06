@@ -1,8 +1,19 @@
 #pragma once
 
-#include "render/state_package.h"
 #include "editor/game_layer.h"
 
+
+namespace titian {
+	struct StatePackage
+	{
+		dx::RasterState raster_state;
+		dx::DepthState depth_state;
+		kl::RenderShaders shader_state;
+		dx::BlendState blend_state;
+
+		StatePackage() = default;
+	};
+}
 
 namespace titian {
 	class RenderPass : kl::NoCopy, public BenchmarkInfo

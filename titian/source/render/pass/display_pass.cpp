@@ -12,12 +12,12 @@ bool titian::DisplayPass::is_renderable() const
 
 titian::StatePackage titian::DisplayPass::get_state_package()
 {
-    RenderStates* render_states = &Layers::get<RenderLayer>()->states;
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
 
-    StatePackage package = {};
-    package.raster_state = render_states->raster_states->solid;
-    package.depth_state = render_states->depth_states->disabled;
-    package.shader_state = render_states->shader_states->display_pass;
+    StatePackage package{};
+    package.raster_state = render_layer->raster_states->solid;
+    package.depth_state = render_layer->depth_states->disabled;
+    package.shader_state = render_layer->shader_states->display_pass;
     return package;
 }
 

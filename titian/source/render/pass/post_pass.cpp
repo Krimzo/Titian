@@ -12,13 +12,13 @@ bool titian::PostPass::is_renderable() const
 
 titian::StatePackage titian::PostPass::get_state_package()
 {
-    RenderStates* render_states = &Layers::get<RenderLayer>()->states;
+    RenderLayer* render_layer = Layers::get<RenderLayer>();
 
     StatePackage package{};
-    package.raster_state = render_states->raster_states->solid;
-    package.depth_state = render_states->depth_states->disabled;
-    package.shader_state = render_states->shader_states->post_pass;
-    package.blend_state = render_states->blend_states->disabled;
+    package.raster_state = render_layer->raster_states->solid;
+    package.depth_state = render_layer->depth_states->disabled;
+    package.shader_state = render_layer->shader_states->post_pass;
+    package.blend_state = render_layer->blend_states->disabled;
     return package;
 }
 
@@ -26,7 +26,6 @@ void titian::PostPass::render_self(StatePackage& package)
 {
     // prepare
     RenderLayer* render_layer = Layers::get<RenderLayer>();
-    RenderStates* render_states = &render_layer->states;
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
@@ -58,8 +57,8 @@ void titian::PostPass::render_self(StatePackage& package)
     gpu->bind_shader_view_for_pixel_shader(render_layer->game_depth_texture->shader_view, 1);
     gpu->bind_shader_view_for_pixel_shader(render_layer->editor_picking_texture->shader_view, 2);
 
-    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->linear, 0);
-    gpu->bind_sampler_state_for_pixel_shader(render_states->sampler_states->non_linear, 1);
+    gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->linear, 0);
+    gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->non_linear, 1);
 
 	gpu->draw(render_layer->screen_mesh);
     bench_add_draw_call();
