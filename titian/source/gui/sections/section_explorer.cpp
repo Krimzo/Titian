@@ -10,7 +10,7 @@ titian::GUISectionExplorer::GUISectionExplorer()
     {
         texture = new Texture(&app_layer->gpu);
         texture->data_buffer.load_from_file(filename);
-        texture->reload_as_2D(false, false);
+        texture->reload_as_2D();
         texture->create_shader_view(nullptr);
         kl::assert(texture->shader_view, "Failed to init texture: ", filename);
     };
@@ -162,7 +162,7 @@ void titian::GUISectionExplorer::handle_file_entry(const fs::path& file)
 
     if (im::BeginChild(path.data(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
         const ImVec2 cursor_pos = im::GetCursorPos();
-        if (im::ImageButton(path.data(), icon.get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+        if (im::ImageButton(path.data(), icon.get(), { icon_size, icon_size })) {
             ShellExecuteA(nullptr, nullptr, path.data(), nullptr, nullptr, 5);
         }
         gui_set_drag_drop<String>(DRAG_FILE_ID, path, icon);
@@ -218,7 +218,7 @@ void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, con
 
     if (im::BeginChild(path.data(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
         const ImVec2 cursor_pos = im::GetCursorPos();
-        if (im::ImageButton(path.data(), icon.get(), { icon_size, icon_size }, ImVec2(0, 1), ImVec2(1, 0))) {
+        if (im::ImageButton(path.data(), icon.get(), { icon_size, icon_size })) {
             this->m_path = path;
         }
 

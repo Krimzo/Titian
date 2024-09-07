@@ -186,7 +186,7 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
                 entity = new Entity(m_physics, false);
             }
             else if (typeid(Camera).name() == entity_type) {
-                entity = new Camera(m_physics, false);
+                entity = new Camera(m_physics, false, m_gpu);
             }
             else if (typeid(AmbientLight).name() == entity_type) {
                 entity = new AmbientLight(m_physics, false);

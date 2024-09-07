@@ -11,7 +11,7 @@ void titian::SandboxPiecePrepare::setup_self()
     kl::GPU* gpu = &editor->app_layer.gpu;
 
     // Camera
-    Ref camera = new Camera(scene->physics(), false);
+    Ref camera = new Camera(scene->physics(), false, gpu);
     camera->far_plane = 75.0f;
     camera->set_position({ 0.0f, 1.0f, -4.0f });
     camera->skybox_name = "sky";

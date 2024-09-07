@@ -39,6 +39,7 @@ void titian::SandboxPieceMonkes::setup_self()
         // Entity
         Ref monke = scene->new_entity(false);
         monke->scale = Float3{ 0.5f };
+        monke->set_rotation({ 0.0f, 180.0f, 0.0f });
         monke->set_position({
             (float) (x - half_size) + x_offset,
             (float) (y - half_size),

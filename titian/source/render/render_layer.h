@@ -23,17 +23,7 @@ namespace titian {
 		Ref<ShaderStates> shader_states;
 		Ref<BlendStates> blend_states;
 
-		Ref<Texture> screen_texture;
-		Ref<Texture> game_color_texture;
-		Ref<Texture> game_depth_texture;
-		Ref<Texture> editor_picking_texture;
-		Ref<Texture> editor_staging_texture;
-
 		dx::Buffer screen_mesh;
-
-		Float4 background = Color{ 30, 30, 30 };
-		bool render_wireframe = false;
-		bool v_sync = true;
 
 		RenderLayer();
 
@@ -41,9 +31,5 @@ namespace titian {
 		bool update() override;
 
 		void present() const;
-		void resize(const Int2& new_size);
-		void resize_staging(const Int2& new_size);
-
-		Int2 get_render_texture_size() const;
 	};
 }

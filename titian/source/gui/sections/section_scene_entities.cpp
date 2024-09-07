@@ -24,7 +24,7 @@ void titian::GUISectionSceneEntities::render_gui()
 					im::CloseCurrentPopup();
 				}
 				if (im::MenuItem("New Camera")) {
-					Ref entity = scene->new_casted<Camera>(false);
+					Ref entity = scene->new_casted<Camera>(false, gpu);
 					scene->add_entity(name, entity);
 					im::CloseCurrentPopup();
 				}

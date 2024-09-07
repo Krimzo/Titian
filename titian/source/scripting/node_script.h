@@ -1318,12 +1318,19 @@ namespace titian {
 			: Node(parent, title, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
-			addOUT<Int2>("size")->behaviour([this]()
+			addOUT<Int2>("resolution")->behaviour([this]()
 			{
 				if (Texture* ptr = get_casted_value<void*, Texture*>("ptr")) {
-					return ptr->graphics_buffer_size();
+					return ptr->resolution();
 				}
 				return Int2{};
+			});
+			addOUT<bool>("is_cube")->behaviour([this]()
+			{
+				if (Texture* ptr = get_casted_value<void*, Texture*>("ptr")) {
+					return ptr->is_cube();
+				}
+				return false;
 			});
 		}
 	};

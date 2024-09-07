@@ -30,14 +30,14 @@ void titian::Texture::deserialize(const Serializer* serializer, const void* help
 		reload_as_cube();
 	}
 	else {
-		reload_as_2D(false, false);
+		reload_as_2D();
 	}
 	create_shader_view(nullptr);
 }
 
-void titian::Texture::reload_as_2D(bool has_unordered_access, bool is_target)
+void titian::Texture::reload_as_2D()
 {
-	graphics_buffer = m_gpu->create_texture(data_buffer, has_unordered_access, is_target);
+	graphics_buffer = m_gpu->create_texture(data_buffer);
 	m_is_cube = false;
 }
 
@@ -87,16 +87,23 @@ bool titian::Texture::is_cube() const
 	return m_is_cube;
 }
 
-titian::Int2 titian::Texture::graphics_buffer_size() const
+titian::Int2 titian::Texture::resolution() const
 {
 	if (!graphics_buffer) {
 		return {};
 	}
-
-	dx::TextureDescriptor descriptor = {};
+	dx::TextureDescriptor descriptor{};
 	graphics_buffer->GetDesc(&descriptor);
-	return {
-		static_cast<int>(descriptor.Width),
-		static_cast<int>(descriptor.Height),
-	};
+	return { int(descriptor.Width), int(descriptor.Height) };
+}
+
+void titian::Texture::copy_other(const dx::Texture& texture)
+{
+	if (m_gpu->texture_size(graphics_buffer) != m_gpu->texture_size(texture)) {
+		dx::TextureDescriptor descriptor{};
+		texture->GetDesc(&descriptor);
+		graphics_buffer = m_gpu->create_texture(&descriptor, nullptr);
+		create_shader_view(nullptr);
+	}
+	m_gpu->copy_resource(graphics_buffer, texture);
 }

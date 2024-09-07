@@ -74,6 +74,15 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
         im::EndCombo();
     }
 
+    im::Checkbox("Enabled", &camera->enabled);
+    im::Checkbox("vSync", &camera->v_sync);
+    im::Checkbox("Wireframe", &camera->render_wireframe);
+    
+    Int2 resolution = camera->resolution();
+    if (im::DragInt2("Resolution", &resolution.x, 1.0f, 1, 8192)) {
+        camera->resize(resolution);
+    }
+
     if (camera->camera_type == CameraType::ORTHOGRAPHIC) {
         im::DragFloat("Width", &camera->width);
         im::DragFloat("Height", &camera->height);
@@ -102,7 +111,7 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
         if (im::Selectable("/", camera->skybox_name == "/")) {
             camera->skybox_name = "/";
         }
-        for (auto& [texture_name, _] : scene->textures) {
+        for (const auto& [texture_name, _] : scene->textures) {
             if (im::Selectable(texture_name.data(), texture_name == camera->skybox_name)) {
                 camera->skybox_name = texture_name;
             }
@@ -115,12 +124,25 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
         if (im::Selectable("/", camera->shader_name == "/")) {
             camera->shader_name = "/";
         }
-        for (auto& [shader_name, shader] : scene->shaders) {
+        for (const auto& [shader_name, shader] : scene->shaders) {
             if (shader->shader_type != ShaderType::CAMERA) {
                 continue;
             }
             if (im::Selectable(shader_name.data(), shader_name == camera->shader_name)) {
                 camera->shader_name = shader_name;
+            }
+        }
+        im::EndCombo();
+    }
+
+    // Target texture
+    if (im::BeginCombo("Bound Target", camera->target_name.data())) {
+        if (im::Selectable("/", camera->target_name == "/")) {
+            camera->target_name = "/";
+        }
+        for (const auto& [texture_name, _] : scene->textures) {
+            if (im::Selectable(texture_name.data(), texture_name == camera->target_name)) {
+                camera->target_name = texture_name;
             }
         }
         im::EndCombo();

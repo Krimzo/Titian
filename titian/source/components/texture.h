@@ -24,7 +24,7 @@ namespace titian {
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;
 
-		void reload_as_2D(bool has_unordered_access = false, bool is_target = false);
+		void reload_as_2D();
 		bool reload_as_cube();
 
 		void create_target_view(const dx::TargetViewDescriptor* descriptor = nullptr);
@@ -33,7 +33,9 @@ namespace titian {
 		void create_access_view(const dx::AccessViewDescriptor* descriptor = nullptr);
 
 		bool is_cube() const;
-		Int2 graphics_buffer_size() const;
+		Int2 resolution() const;
+
+		void copy_other(const dx::Texture& texture);
 
 	private:
 		kl::GPU* m_gpu = nullptr;

@@ -7,7 +7,7 @@ titian::GUISectionAnimationEditor::GUISectionAnimationEditor()
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
-    camera = new Camera(scene->physics(), true);
+    camera = new Camera(scene->physics(), true, gpu);
     render_texture = new Texture(gpu);
     depth_texture = new Texture(gpu);
 
@@ -169,12 +169,12 @@ void titian::GUISectionAnimationEditor::render_selected_animation(kl::GPU* gpu, 
     GameLayer* game_layer = Layers::get<GameLayer>();
     RenderLayer* render_layer = Layers::get<RenderLayer>();
 
-    if (render_texture->graphics_buffer_size() != viewport_size) {
+    if (render_texture->resolution() != viewport_size) {
         render_texture->graphics_buffer = gpu->create_target_texture(viewport_size);
         render_texture->create_target_view(nullptr);
         render_texture->create_shader_view(nullptr);
     }
-    if (depth_texture->graphics_buffer_size() != viewport_size) {
+    if (depth_texture->resolution() != viewport_size) {
         dx::TextureDescriptor descriptor = {};
         descriptor.Width = viewport_size.x;
         descriptor.Height = viewport_size.y;

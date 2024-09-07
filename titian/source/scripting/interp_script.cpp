@@ -395,7 +395,8 @@ void titian::InterpScript::load_engine_parts()
 		"create_target_view", &Texture::create_target_view,
 		"create_depth_view", &Texture::create_depth_view,
 		"create_shader_view", &Texture::create_shader_view,
-		"create_access_view", &Texture::create_access_view
+		"create_access_view", &Texture::create_access_view,
+		"resolution", &Texture::resolution
 	);
 
 	m_engine->new_usertype<Material>(
@@ -441,8 +442,11 @@ void titian::InterpScript::load_engine_parts()
 		"Camera",
 		sl::base_classes, sl::bases<Entity>(),
 		"camera_type", &Camera::camera_type,
-		"aspect_ratio", &Camera::aspect_ratio,
+		"enabled", &Camera::enabled,
+		"v_sync", &Camera::v_sync,
+		"render_wireframe", &Camera::render_wireframe,
 		"field_of_view", &Camera::field_of_view,
+		"aspect_ratio", &Camera::aspect_ratio,
 		"width", &Camera::width,
 		"height", &Camera::height,
 		"near_plane", &Camera::near_plane,
@@ -453,6 +457,7 @@ void titian::InterpScript::load_engine_parts()
 		"custom_data", &Camera::custom_data,
 		"skybox_name", &Camera::skybox_name,
 		"shader_name", &Camera::shader_name,
+		"target_name", &Camera::target_name,
 		"update_aspect_ratio", &Camera::update_aspect_ratio,
 		"forward", sl::property(&Camera::forward, &Camera::set_forward),
 		"up", sl::property(&Camera::up, &Camera::set_up),
@@ -466,7 +471,9 @@ void titian::InterpScript::load_engine_parts()
 		"rotate", &Camera::rotate,
 		"view_matrix", &Camera::view_matrix,
 		"projection_matrix", &Camera::projection_matrix,
-		"camera_matrix", &Camera::camera_matrix
+		"camera_matrix", &Camera::camera_matrix,
+		"resize", &Camera::resize,
+		"resolution", &Camera::resolution
 	);
 
 	m_engine->new_usertype<Light>(

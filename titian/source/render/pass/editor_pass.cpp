@@ -32,23 +32,15 @@ titian::EditorPass::EditorPass()
     frustum_mesh = gpu->create_vertex_buffer(frustum_data);
 }
 
-bool titian::EditorPass::is_renderable() const
-{
-    return !Layers::get<EditorLayer>()->selected_entities.empty();
-}
-
-titian::StatePackage titian::EditorPass::get_state_package()
+void titian::EditorPass::state_package(StatePackage* package)
 {
     RenderLayer* render_layer = Layers::get<RenderLayer>();
-
-    StatePackage package{};
-    package.raster_state = render_layer->raster_states->wireframe;
-    package.depth_state = render_layer->depth_states->enabled;
-    package.shader_state = render_layer->shader_states->solid_pass;
-    return package;
+    package->raster_state = render_layer->raster_states->wireframe;
+    package->depth_state = render_layer->depth_states->enabled;
+    package->shader_state = render_layer->shader_states->solid_pass;
 }
 
-void titian::EditorPass::render_self(StatePackage& package)
+void titian::EditorPass::render_self(StatePackage* package)
 {
     // preapre
     EditorLayer* editor_layer = Layers::get<EditorLayer>();
@@ -57,13 +49,11 @@ void titian::EditorPass::render_self(StatePackage& package)
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
-    Camera* main_camera = scene->get_casted<Camera>(scene->main_camera_name);
-    if (!main_camera) {
+    if (editor_layer->selected_entities.empty())
         return;
-    }
 
     // render
-    gpu->bind_target_depth_view(render_layer->screen_texture->target_view, render_layer->game_depth_texture->depth_view);
+    gpu->bind_target_depth_view(package->camera->screen_texture->target_view, package->camera->game_depth_texture->depth_view);
 
     for (auto& name : editor_layer->selected_entities) {
         Entity* entity = scene->helper_get_entity(name);
@@ -87,13 +77,13 @@ void titian::EditorPass::render_self(StatePackage& package)
 			const auto& capsule = scene->default_meshes->capsule;
 
             const VS_CB vs_cb{
-                .WVP = main_camera->camera_matrix() * entity->collider_matrix(),
+                .WVP = package->camera->camera_matrix() * entity->collider_matrix(),
             };
             const PS_CB ps_cb{
                 .SOLID_COLOR = gui_layer->alternate_color,
             };
-            package.shader_state.vertex_shader.update_cbuffer(vs_cb);
-            package.shader_state.pixel_shader.update_cbuffer(ps_cb);
+            package->shader_state.vertex_shader.update_cbuffer(vs_cb);
+            package->shader_state.pixel_shader.update_cbuffer(ps_cb);
 
             switch (collider->type())
             {
@@ -124,16 +114,19 @@ void titian::EditorPass::render_self(StatePackage& package)
         // camera frustum
         if (Camera* camera = dynamic_cast<Camera*>(entity)) {
             const VS_CB vs_cb{
-                .WVP = main_camera->camera_matrix() * kl::inverse(camera->camera_matrix()),
+                .WVP = package->camera->camera_matrix() * kl::inverse(camera->camera_matrix()),
             };
             const PS_CB ps_cb{
                 .SOLID_COLOR = gui_layer->special_color,
             };
-            package.shader_state.vertex_shader.update_cbuffer(vs_cb);
-            package.shader_state.pixel_shader.update_cbuffer(ps_cb);
+            package->shader_state.vertex_shader.update_cbuffer(vs_cb);
+            package->shader_state.pixel_shader.update_cbuffer(ps_cb);
 
             gpu->draw(frustum_mesh, D3D_PRIMITIVE_TOPOLOGY_LINELIST);
             bench_add_draw_call();
         }
     }
+
+    // finalize
+    gpu->unbind_target_depth_views();
 }

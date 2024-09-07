@@ -18,19 +18,23 @@ void titian::GUISectionViewport::render_gui()
 
     kl::GPU* gpu = &app_layer->gpu;
     Ref<Scene>& scene = game_layer->scene;
+    Camera* main_camera = scene->get_casted<Camera>(scene->main_camera_name);
 
     if (im::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
-        // Pre-display
         const ImVec2 content_region = im::GetContentRegionAvail();
-        render_layer->resize({ (int) content_region.x, (int) content_region.y });
         editor_layer->is_viewport_focused = im::IsWindowFocused();
 
         const ImVec2 win_content_min = im::GetWindowPos() + im::GetWindowContentRegionMin();
         const ImVec2 win_content_max = win_content_min + content_region;
         editor_layer->is_over_viewport = im::IsMouseHoveringRect(win_content_min, win_content_max);
 
-        // Display rendered texture
-        im::Image(render_layer->screen_texture->shader_view.get(), content_region);
+        if (main_camera) {
+            main_camera->resize({ (int) content_region.x, (int) content_region.y });
+            im::Image(main_camera->screen_texture->shader_view.get(), content_region);
+        }
+        else {
+            im::Image(nullptr, content_region);
+        }
 
         // Scene loading
         if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
@@ -175,16 +179,22 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_entity_ids(const Int2& fi
     if (min_coords.x < 0 || min_coords.y < 0) {
         return {};
     }
+    const Int2 size = max_coords - min_coords;
 
     RenderLayer* render_layer = Layers::get<RenderLayer>();
-    const Int2 size = max_coords - min_coords;
+    GameLayer* game_layer = Layers::get<GameLayer>();
     const kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &game_layer->scene;
 
-    render_layer->resize_staging(size);
-    gpu->copy_resource_region(render_layer->editor_staging_texture->graphics_buffer, render_layer->editor_picking_texture->graphics_buffer, min_coords, max_coords);
+    Camera* main_camera = scene->get_casted<Camera>(scene->main_camera_name);
+    if (!main_camera)
+        return {};
+
+    main_camera->resize_staging(size);
+    gpu->copy_resource_region(main_camera->editor_staging_texture->graphics_buffer, main_camera->editor_picking_texture->graphics_buffer, min_coords, max_coords);
 
     Vector<float> values(size.x * size.y);
-    gpu->read_from_texture(values.data(), render_layer->editor_staging_texture->graphics_buffer, size, sizeof(float));
+    gpu->read_from_texture(values.data(), main_camera->editor_staging_texture->graphics_buffer, size, sizeof(float));
 
     Set<uint32_t> results;
     for (float value : values) {

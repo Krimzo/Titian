@@ -248,8 +248,8 @@ kl::dx::Buffer kl::DeviceHolder::create_plane_mesh(const float size, size_t num_
 kl::dx::Buffer kl::DeviceHolder::create_screen_mesh() const
 {
     return create_vertex_buffer({
-        Vertex({ -1.0f, -1.0f, 0.5f }, { 0.0f, 0.0f }), Vertex({ -1.0f,  1.0f, 0.5f }, { 0.0f, 1.0f }), Vertex({  1.0f,  1.0f, 0.5f }, { 1.0f, 1.0f }),
-        Vertex({  1.0f,  1.0f, 0.5f }, { 1.0f, 1.0f }), Vertex({  1.0f, -1.0f, 0.5f }, { 1.0f, 0.0f }), Vertex({ -1.0f, -1.0f, 0.5f }, { 0.0f, 0.0f }),
+        Vertex({ -1.0f, 1.0f, 0.5f }, { 0.0f, 0.0f }), Vertex({ 1.0f,  1.0f, 0.5f }, { 1.0f, 0.0f }), Vertex({  1.0f, -1.0f, 0.5f }, { 1.0f, 1.0f }),
+        Vertex({ -1.0f, 1.0f, 0.5f }, { 0.0f, 0.0f }), Vertex({ 1.0f, -1.0f, 0.5f }, { 1.0f, 1.0f }), Vertex({ -1.0f, -1.0f, 0.5f }, { 0.0f, 1.0f }),
     });
 }
 
@@ -264,8 +264,6 @@ kl::dx::Texture kl::DeviceHolder::create_texture(const dx::TextureDescriptor* de
 
 kl::dx::Texture kl::DeviceHolder::create_texture(const Image& image, const bool has_unordered_access, const bool is_target) const
 {
-    const kl::Image flipped_image = image.flip_vertical();
-
     dx::TextureDescriptor descriptor{};
     descriptor.Width = image.width();
     descriptor.Height = image.height();
@@ -279,7 +277,7 @@ kl::dx::Texture kl::DeviceHolder::create_texture(const Image& image, const bool 
         (is_target ? D3D11_BIND_RENDER_TARGET : NULL);
 
     dx::SubresourceDescriptor data{};
-    data.pSysMem = flipped_image.ptr();
+    data.pSysMem = image.ptr();
     data.SysMemPitch = image.width() * sizeof(Color);
 
     return create_texture(&descriptor, &data);

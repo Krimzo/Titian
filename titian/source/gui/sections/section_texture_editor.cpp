@@ -33,9 +33,8 @@ void titian::GUISectionTextureEditor::render_gui()
         im::PushStyleColor(ImGuiCol_Border, ImVec4{ 1.0f, 1.0f, 1.0f, 0.5f });
 
         if (im::BeginChild("Texture View", {})) {
-            const Int2 viewport_size = { (int) im::GetContentRegionAvail().x, (int) im::GetContentRegionAvail().y };
             if (texture) {
-                render_selected_texture(&texture, viewport_size);
+                render_selected_texture(&texture);
             }
         }
         im::EndChild();
@@ -144,14 +143,14 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
     }
 }
 
-void titian::GUISectionTextureEditor::render_selected_texture(Texture* texture, const Int2 viewport_size)
+void titian::GUISectionTextureEditor::render_selected_texture(Texture* texture)
 {
-    const float min_size = (float) kl::min(viewport_size.x, viewport_size.y);
-    im::SetCursorPos(ImVec2{
-        (im::GetWindowWidth() - min_size) * 0.5f,
-        (im::GetWindowHeight() - min_size) * 0.5f,
-    });
-    im::Image(texture->shader_view.get(), { min_size, min_size }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+    const ImVec2 region_size = im::GetContentRegionAvail();
+    const Int2 image_res = texture->resolution();
+    ImVec2 image_scale{ (float) image_res.x, (float) image_res.y };
+    image_scale *= kl::min(region_size.x / image_scale.x, region_size.y / image_scale.y);
+    im::SetCursorPos(im::GetCursorPos() + (region_size - image_scale) * 0.5f);
+    im::Image(texture->shader_view.get(), image_scale);
 }
 
 void titian::GUISectionTextureEditor::show_texture_properties(Texture* texture)
@@ -165,10 +164,10 @@ void titian::GUISectionTextureEditor::show_texture_properties(Texture* texture)
         im::SameLine();
         gui_colored_text(selected_texture, gui_layer->special_color);
 
-        Int2 size = texture->data_buffer.size();
+        Int2 size = texture->resolution();
         im::DragInt2("Size", &size.x, 0.0f);
 
-        int pixel_count = texture->data_buffer.pixel_count();
+        int pixel_count = size.x * size.y;
         im::DragInt("Pixel Count", &pixel_count, 0.0f);
 
         bool cube_map = texture->is_cube();
@@ -179,7 +178,7 @@ void titian::GUISectionTextureEditor::show_texture_properties(Texture* texture)
                 }
             }
             else {
-                texture->reload_as_2D(false, false);
+                texture->reload_as_2D();
                 texture->create_shader_view(nullptr);
             }
         }

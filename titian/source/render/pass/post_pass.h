@@ -10,8 +10,7 @@ namespace titian {
     public:
         PostPass();
 
-        bool is_renderable() const override;
-        StatePackage get_state_package() override;
-        void render_self(StatePackage& package) override;
+        void state_package(StatePackage* package) override;
+        void render_self(StatePackage* package) override;
     };
 }

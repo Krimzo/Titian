@@ -10,7 +10,7 @@ titian::GUISectionMainMenu::GUISectionMainMenu()
     {
         texture = new Texture(&app_layer->gpu);
         texture->data_buffer.load_from_file(filename);
-        texture->reload_as_2D(false, false);
+        texture->reload_as_2D();
         texture->create_shader_view(nullptr);
         kl::assert(texture->shader_view, "Failed to init texture: ", filename);
     };
@@ -341,11 +341,6 @@ void titian::GUISectionMainMenu::render_gui()
         if (im::BeginMenu("View")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
 
-            if (im::BeginMenu("Features")) {
-                im::Checkbox("Wireframe", &render_layer->render_wireframe);
-                im::Checkbox("vSync", &render_layer->v_sync);
-                im::EndMenu();
-            }
             if (im::BeginMenu("Values")) {
                 im::SetNextItemWidth(75.0f);
                 im::DragInt("Outline Size", &editor_layer->outline_size);
