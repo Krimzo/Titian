@@ -26,11 +26,11 @@ namespace kl {
         HWND m_window = nullptr;
         HDC m_device_context = nullptr;
 
-        bool m_in_fullscreen = false;
-        bool m_resizeable = true;
-        LONG m_window_style = NULL;
-        LONG m_window_ex_style = NULL;
         WINDOWPLACEMENT m_placement = {};
+        LONG m_window_ex_style = NULL;
+        LONG m_window_style = NULL;
+        bool m_resizeable = true;
+        bool m_in_fullscreen = false;
 
         // System
         LRESULT CALLBACK window_procedure(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param) const;

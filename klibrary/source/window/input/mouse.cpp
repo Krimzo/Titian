@@ -69,7 +69,7 @@ void kl::Mouse::_set_window(HWND window)
 
 void kl::Mouse::_update_scroll(const int scroll)
 {
-    m_scroll = scroll;
+    m_scroll = (int16_t) scroll;
 }
 
 void kl::Mouse::_update_position(const Int2 & position)

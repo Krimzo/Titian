@@ -9,8 +9,8 @@ namespace kl {
     {
     private:
         HWND m_window = nullptr;
-        Int2 m_position;
-        int m_scroll = 0;
+        Int2 m_position = {};
+        int16_t m_scroll = 0;
         bool m_hidden = false;
 
     public:
