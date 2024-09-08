@@ -11,15 +11,13 @@ void titian::GUISectionFuzeTimeline::render_gui()
 	VideoLayer* video_layer = Layers::get<VideoLayer>();
 
 	kl::Window* window = &app_layer->window;
-	const int current_scroll = window->mouse.scroll();
-	const int scroll = current_scroll - m_last_scroll;
 
 	im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
 	if (im::Begin("Timeline", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
 		const float available_height = im::GetContentRegionAvail().y;
 
-		handle_input(scroll);
+		handle_input(window->mouse.scroll());
 
 		constexpr ImVec2 cell_padding{ 4.0f, 4.0f };
 		im::PushStyleVar(ImGuiStyleVar_CellPadding, cell_padding);
@@ -52,8 +50,6 @@ void titian::GUISectionFuzeTimeline::render_gui()
 	im::End();
 
 	im::PopStyleVar(1);
-
-	m_last_scroll = current_scroll;
 }
 
 void titian::GUISectionFuzeTimeline::handle_input(const int scroll)

@@ -10,7 +10,7 @@ static const int _image_init = []
     return 0;
 }();
 
-// Construct
+// construct
 kl::Image::Image()
 {}
 
@@ -25,7 +25,7 @@ kl::Image::Image(const std::string_view& filepath)
     load_from_file(filepath);
 }
 
-// Get
+// get
 kl::Color* kl::Image::ptr()
 {
     return m_pixels.data();

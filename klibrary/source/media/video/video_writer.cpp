@@ -1,6 +1,16 @@
 #include "klibrary.h"
 
 
+// init
+static const int _media_init = []
+{
+    constexpr DWORD init_args = COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY;
+    CoInitializeEx(nullptr, init_args) >> kl::verify_result;
+    MFStartup(MF_VERSION) >> kl::verify_result;
+    return 0;
+}();
+
+// construct
 kl::VideoWriter::VideoWriter(const std::string_view& filepath, const VideoType& video_type, const Int2& frame_size, const int fps, const int video_bit_rate, const int audio_sample_rate)
     : m_width(frame_size.x)
     , m_height(frame_size.y)

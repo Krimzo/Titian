@@ -93,7 +93,6 @@
     <ClInclude Include="source\utility\utility.h" />
     <ClInclude Include="source\web\socket\socket.h" />
     <ClInclude Include="source\web\web.h" />
-    <ClInclude Include="source\window\draw\frame_buffer.h" />
     <ClInclude Include="source\window\hooks\keyboard_hook.h" />
     <ClInclude Include="source\window\hooks\mouse_hook.h" />
     <ClInclude Include="source\window\input\key.h" />
@@ -126,7 +125,6 @@
     <ClCompile Include="source\media\audio\audio_device.cpp" />
     <ClCompile Include="source\media\image\color.cpp" />
     <ClCompile Include="source\media\image\image.cpp" />
-    <ClCompile Include="source\media\media.cpp" />
     <ClCompile Include="source\media\video\video_reader.cpp" />
     <ClCompile Include="source\media\video\video_writer.cpp" />
     <ClCompile Include="source\memory\files\file.cpp" />
@@ -148,7 +146,6 @@
     <ClCompile Include="source\utility\hash\sha256.cpp" />
     <ClCompile Include="source\web\socket\socket.cpp" />
     <ClCompile Include="source\web\web.cpp" />
-    <ClCompile Include="source\window\draw\frame_buffer.cpp" />
     <ClCompile Include="source\window\hooks\keyboard_hook.cpp" />
     <ClCompile Include="source\window\hooks\mouse_hook.cpp" />
     <ClCompile Include="source\window\input\key.cpp" />

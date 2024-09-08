@@ -4,31 +4,28 @@
 
 
 namespace kl {
-    class Key
+    enum class KeyState : int8_t
     {
-    protected:
-        bool m_state = false;
+        UP = 0,
+        PRESSED,
+		DOWN,
+		RELEASED,
+    };
+}
 
-        void update(bool new_state);
-        void process() const;
+namespace kl {
+    struct Key
+    {
+        Key() = default;
 
-        void call_on_press() const;
-        void call_on_down() const;
-        void call_on_release() const;
-
-    public:
-        friend class Keyboard;
-        friend class Mouse;
-        friend class KeyboardHook;
-        friend class MouseHook;
-        friend class Window;
-
-        std::vector<std::function<void()>> on_press = {};
-        std::vector<std::function<void()>> on_down = {};
-        std::vector<std::function<void()>> on_release = {};
-
+        bool pressed() const;
+        bool released() const;
         operator bool() const;
 
-        bool is_down() const;
+        void _reload();
+        void _update(bool state);
+
+    private:
+        KeyState m_state = KeyState::UP;
     };
 }

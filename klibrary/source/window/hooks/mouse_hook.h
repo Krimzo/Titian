@@ -10,7 +10,7 @@ namespace kl {
         MouseHook();
         ~MouseHook();
 
-        void process(bool wait = true);
+        void process();
 
     private:
         static inline MouseHook* m_self = nullptr;

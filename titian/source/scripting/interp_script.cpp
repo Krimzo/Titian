@@ -550,7 +550,9 @@ void titian::InterpScript::load_engine_parts()
 
 	m_engine->new_usertype<kl::Key>(
 		"Key",
-		"is_down", &kl::Key::is_down
+		"pressed", &kl::Key::pressed,
+		"down", &kl::Key::operator bool,
+		"released", &kl::Key::released
 	);
 
 	m_engine->new_usertype<kl::Keyboard>(
@@ -628,10 +630,10 @@ void titian::InterpScript::load_engine_parts()
 		"left", &kl::Mouse::left,
 		"middle", &kl::Mouse::middle,
 		"right", &kl::Mouse::right,
-		"hidden", sl::property(&kl::Mouse::set_hidden, &kl::Mouse::is_hidden),
-		"position", sl::property(&kl::Mouse::set_position, &kl::Mouse::position),
-		"normalized_position", &kl::Mouse::normalized_position,
-		"scroll", &kl::Mouse::scroll
+		"position", sl::property(&kl::Mouse::position, &kl::Mouse::set_position),
+		"norm_position", &kl::Mouse::norm_position,
+		"scroll", &kl::Mouse::scroll,
+		"hidden", sl::property(&kl::Mouse::is_hidden, &kl::Mouse::set_hidden)
 	);
 
 	m_engine->new_usertype<kl::Window>(

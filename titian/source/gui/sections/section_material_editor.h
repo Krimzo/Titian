@@ -14,7 +14,6 @@ namespace titian {
         Ref<Texture> depth_texture = nullptr;
 
         bool was_focused = true;
-        int last_scroll = 0;
         Float2 initial_camera_info = { 40, 30 };
         Float2 camera_info = initial_camera_info;
 

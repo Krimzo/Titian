@@ -150,10 +150,9 @@ void titian::GUISectionAnimationEditor::update_animation_camera()
             kl::cos_d(camera_info.x),
         });
 
-        camera->speed += (last_scroll - scroll) * 0.1f;
+        camera->speed -= scroll * 0.1f;
         camera->speed = kl::max(camera->speed, 0.1f);
     }
-    last_scroll = scroll;
 
     const float camera_distance = camera->speed;
     camera->set_position(kl::normalize(camera->position()) * camera_distance);
@@ -268,11 +267,9 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
     GUILayer* gui_layer = Layers::get<GUILayer>();
     kl::Window* window = &Layers::get<AppLayer>()->window;
 
-    const int current_scroll = window->mouse.scroll();
-
     if (im::Begin("Animation Properties") && animation) {
         if (im::IsWindowFocused()) {
-            m_start_mesh_index += m_last_scroll - current_scroll;
+            m_start_mesh_index += window->mouse.scroll();
             m_start_mesh_index = kl::clamp(m_start_mesh_index, 0, kl::max<int>((int) animation->meshes.size() - 1, 0));
         }
 
@@ -346,6 +343,4 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
 
     }
     im::End();
-
-    m_last_scroll = current_scroll;
 }

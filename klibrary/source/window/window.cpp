@@ -46,7 +46,7 @@ kl::Window::Window(const std::string_view& name, const Int2& size)
     SetWindowLongPtrA(m_window, GWLP_USERDATA, (LONG_PTR) this);
     ShowWindow(m_window, SW_SHOW);
     SetCursor(LoadCursorA(nullptr, (LPCSTR) IDC_ARROW));
-    mouse.m_window = m_window;
+    mouse._set_window(m_window);
 }
 
 kl::Window::~Window()
@@ -67,20 +67,14 @@ kl::Window::operator HWND() const
     return m_window;
 }
 
-bool kl::Window::process(const bool wait)
+bool kl::Window::process()
 {
+    keyboard._reload();
+    mouse._reload();
     MSG message{};
-    if (wait) {
-        GetMessageA(&message, m_window, 0, 0);
+    while (PeekMessageA(&message, m_window, 0, 0, PM_REMOVE)) {
         handle_message(message);
     }
-    else {
-        while (PeekMessageA(&message, m_window, 0, 0, PM_REMOVE)) {
-            handle_message(message);
-        }
-    }
-    keyboard.process();
-    mouse.process();
     return is_open();
 }
 
@@ -378,56 +372,48 @@ void kl::Window::handle_message(const MSG& message)
         break;
 #endif
 
-        // Keyboard
     case WM_KEYDOWN:
-        keyboard.update(message.wParam, true);
+	case WM_SYSKEYDOWN:
+        keyboard._update(message.wParam, true);
         break;
     case WM_KEYUP:
-        keyboard.update(message.wParam, false);
+	case WM_SYSKEYUP:
+        keyboard._update(message.wParam, false);
         break;
 
-        // LMB
     case WM_LBUTTONDOWN:
-        mouse.left.update(true);
+        mouse._update(1, true);
         break;
     case WM_LBUTTONUP:
-        mouse.left.update(false);
+        mouse._update(1, false);
         break;
 
-        // MMB
-    case WM_MBUTTONDOWN:
-        mouse.middle.update(true);
-        break;
-    case WM_MBUTTONUP:
-        mouse.middle.update(false);
-        break;
-
-        // RMB
     case WM_RBUTTONDOWN:
-        mouse.right.update(true);
+        mouse._update(2, true);
         break;
     case WM_RBUTTONUP:
-        mouse.right.update(false);
+        mouse._update(2, false);
         break;
 
-        // Mouse
+    case WM_MBUTTONDOWN:
+        mouse._update(3, true);
+        break;
+    case WM_MBUTTONUP:
+        mouse._update(3, false);
+        break;
+
+    case WM_XBUTTONDOWN:
+        mouse._update(GET_XBUTTON_WPARAM(message.wParam) + 3, true);
+		break;
+    case WM_XBUTTONUP:
+        mouse._update(GET_XBUTTON_WPARAM(message.wParam) + 3, false);
+        break;
+
     case WM_MOUSEMOVE:
-    {
-        const Int2 pos{ (int) GET_X_LPARAM(message.lParam), (int) GET_Y_LPARAM(message.lParam) };
-        mouse.m_position = pos;
-        for (const auto& func : mouse.on_move) {
-			func(pos);
-        }
-    }
+        mouse._update_position({ GET_X_LPARAM(message.lParam), GET_Y_LPARAM(message.lParam) });
         break;
     case WM_MOUSEWHEEL:
-    {
-        const int delta = (int) (GET_WHEEL_DELTA_WPARAM(message.wParam) / WHEEL_DELTA);
-        mouse.m_scroll += delta;
-		for (const auto& func : mouse.on_scroll) {
-			func(delta);
-		}
-    }
+        mouse._update_scroll(GET_WHEEL_DELTA_WPARAM(message.wParam) / WHEEL_DELTA);
         break;
     }
     DispatchMessageA(&message);

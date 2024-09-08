@@ -17,7 +17,6 @@ namespace titian {
         Float3 sun_direction = { 0.0f, -1.0f, 0.0f };
 
         bool was_focused = true;
-        int last_scroll = 0;
         Float2 initial_camera_info = { 200.0f, 10.0f };
         Float2 camera_info = initial_camera_info;
 
@@ -31,7 +30,6 @@ namespace titian {
         kl::Timer m_timer = {};
         bool m_animating = false;
         int m_frame_index = 0;
-        int m_last_scroll = 0;
         int m_start_mesh_index = 0;
 
         void display_animations(kl::GPU* gpu, Scene* scene);

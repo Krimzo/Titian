@@ -411,10 +411,9 @@ void titian::GUISectionMaterialEditor::update_material_camera()
             kl::cos_d(camera_info.x),
         });
 
-        camera->speed += (last_scroll - scroll) * 0.1f;
+        camera->speed -= scroll * 0.1f;
         camera->speed = kl::max(camera->speed, 0.1f);
     }
-    last_scroll = scroll;
 
     const float camera_distance = camera->speed;
     camera->set_position(kl::normalize(camera->position()) * camera_distance);

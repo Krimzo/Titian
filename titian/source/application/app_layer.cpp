@@ -20,7 +20,7 @@ bool titian::AppLayer::update()
 	const TimeBomb _ = bench_time_bomb();
 
 	timer.update_delta();
-	return window.process(false);
+	return window.process();
 }
 
 void titian::AppLayer::handle_resize(const Int2 size)

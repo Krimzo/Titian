@@ -1,16 +1,13 @@
 #pragma once
 
-// Input
+// input
 #include "window/input/key.h"
 #include "window/input/keyboard.h"
 #include "window/input/mouse.h"
 
-// Hooks
+// hooks
 #include "window/hooks/keyboard_hook.h"
 #include "window/hooks/mouse_hook.h"
-
-// Draw
-#include "window/draw/frame_buffer.h"
 
 
 namespace kl::screen {
@@ -53,7 +50,7 @@ namespace kl {
         // Methods
         operator HWND() const;
 
-        bool process(bool wait = true);
+        bool process();
 
         bool is_open() const;
         void close() const;

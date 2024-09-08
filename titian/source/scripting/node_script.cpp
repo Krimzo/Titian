@@ -2,7 +2,7 @@
 
 
 namespace titian {
-	static const int _ignored = [&]
+	static const int _pin_init = []
 	{
 		using namespace ne;
 		register_pin_style<FlowNode*>(255, 255, 255, 3);

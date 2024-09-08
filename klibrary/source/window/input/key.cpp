@@ -1,54 +1,37 @@
 #include "klibrary.h"
 
 
-// Window private
-void kl::Key::update(const bool new_state)
+bool kl::Key::pressed() const
 {
-    if (!m_state && new_state) {
-        call_on_press();
-    }
-    else if (m_state && !new_state) {
-        call_on_release();
-    }
-    m_state = new_state;
+    return m_state == KeyState::PRESSED;
 }
 
-void kl::Key::process() const
+bool kl::Key::released() const
 {
-    if (m_state) {
-        call_on_down();
-    }
+    return m_state == KeyState::RELEASED;
 }
 
-// Callers
-void kl::Key::call_on_press() const
-{
-    for (auto& callback : on_press) {
-        callback();
-    }
-}
-
-void kl::Key::call_on_down() const
-{
-    for (auto& callback : on_down) {
-        callback();
-    }
-}
-
-void kl::Key::call_on_release() const
-{
-    for (auto& callback : on_release) {
-        callback();
-    }
-}
-
-// User access
 kl::Key::operator bool() const
 {
-    return m_state;
+    return m_state == KeyState::DOWN;
 }
 
-bool kl::Key::is_down() const
+void kl::Key::_reload()
 {
-    return m_state;
+    if (m_state == KeyState::PRESSED) {
+		m_state = KeyState::DOWN;
+	}
+	else if (m_state == KeyState::RELEASED) {
+		m_state = KeyState::UP;
+	}
+}
+
+void kl::Key::_update(const bool new_state)
+{
+	if (new_state && m_state != KeyState::DOWN) {
+		m_state = KeyState::PRESSED;
+	}
+	else if (!new_state) {
+		m_state = KeyState::RELEASED;
+	}
 }

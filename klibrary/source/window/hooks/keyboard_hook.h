@@ -10,7 +10,7 @@ namespace kl {
         KeyboardHook();
         ~KeyboardHook();
 
-        void process(bool wait = true);
+        void process();
 
     private:
         static inline KeyboardHook* m_self = nullptr;
