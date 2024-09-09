@@ -4,13 +4,12 @@
 
 
 namespace titian {
-    class Scene;
+    struct Scene;
 }
 
 namespace titian {
-    class DefaultAnimations
+    struct DefaultAnimations
     {
-    public:
         Ref<Animation> cube = nullptr;
         Ref<Animation> sphere = nullptr;
         Ref<Animation> capsule = nullptr;

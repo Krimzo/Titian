@@ -1,10 +1,6 @@
 #pragma once
 
-
-// Timer
 #include "time/timer/timer.h"
-
-// Date
 #include "time/date/date.h"
 
 

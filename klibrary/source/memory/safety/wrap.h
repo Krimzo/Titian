@@ -10,7 +10,6 @@ namespace kl {
 	{
 		friend struct Wrap;
 
-		// create
 		Wrap()
 		{}
 
@@ -23,17 +22,14 @@ namespace kl {
 			return wrap;
 		}
 
-		// destroy
 		~Wrap() noexcept
 		{
 			destroy();
 		}
 
-		// copy
 		Wrap(const Wrap&) = delete;
 		Wrap& operator=(const Wrap&) = delete;
 
-		// move
 		template<typename D, size_t DS>
 			requires std::is_base_of_v<T, D> and (S >= DS)
 		Wrap(Wrap<D, DS>&& other) noexcept
@@ -55,7 +51,6 @@ namespace kl {
 			return *this;
 		}
 
-		// cast
 		template<typename D>
 			requires std::is_base_of_v<T, D>
 		D* as()
@@ -76,7 +71,6 @@ namespace kl {
 			return nullptr;
 		}
 
-		// access
 		T* operator&()
 		{
 			return reinterpret_cast<T*>(m_buffer);
@@ -107,7 +101,6 @@ namespace kl {
 			return &*this;
 		}
 
-		// info
 		operator bool() const
 		{
 			return m_valid;

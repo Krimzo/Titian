@@ -13,7 +13,6 @@ kl::Audio::Audio(const std::string_view& path)
 	load_from_file(path);
 }
 
-// Alter
 uint64_t kl::Audio::duration_100ns() const
 {
 	return (size() * 10'000'000) / sample_rate;
@@ -42,7 +41,6 @@ void kl::Audio::decrease_volume(const float amount)
 		sample *= inv_amount;
 }
 
-// Helper
 float kl::Audio::index_to_time(const int at_index) const
 {
 	return at_index / (float) sample_rate;
@@ -53,7 +51,6 @@ int kl::Audio::time_to_index(const float at_time) const
 	return (int) (at_time * sample_rate);
 }
 
-// Read
 float kl::Audio::sample_at_index(const int index) const
 {
 	if (index >= 0 && index < (int) size()) {
@@ -73,7 +70,6 @@ float kl::Audio::sample_at_time(const float time) const
 	return lerp(unlerp(time, first_time, second_time), first_sample, second_sample);
 }
 
-// Decoding
 bool kl::Audio::load_from_memory(const void* data, const uint64_t byte_size)
 {
 	HRESULT hr = 0;
@@ -135,7 +131,7 @@ bool kl::Audio::load_from_memory(const void* data, const uint64_t byte_size)
 
 	 	const int64_t sample_index = int64_t(time_stamp * 1e-7 * sample_rate);
 		if (sample_index >= (int64_t) this->size()) {
-			this->resize(sample_index); // NOT (sample_index + 1) since the next lines will also resize
+			this->resize(sample_index);
 		}
 
 		BYTE* sample_data = nullptr;
@@ -159,7 +155,6 @@ bool kl::Audio::load_from_file(const std::string_view& filepath)
 	return load_from_buffer(data);
 }
 
-// Encoding
 bool kl::Audio::save_to_buffer(std::string& buffer, const AudioType type) const
 {
 	HRESULT hr = 0;

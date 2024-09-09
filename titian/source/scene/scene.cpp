@@ -70,7 +70,6 @@ titian::Scene::~Scene()
     m_physics->release();
 }
 
-// Overrides
 void titian::Scene::serialize(Serializer* serializer, const void* helper_data) const
 {
     serializer->write_string("main_camera_name", main_camera_name);
@@ -139,7 +138,6 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     Function shader_provider = [&] { return new Shader(m_gpu, ShaderType::MATERIAL); };
     read_map("shaders", shaders, shader_provider, nullptr);
 
-    /* SCRIPTS */
     {
         serializer->load_object("scripts");
         int32_t data_size = 0;
@@ -170,7 +168,6 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
         serializer->unload_object();
     }
 
-    /* ENTITIES */
     {
         serializer->load_object("entities");
         int32_t data_size = 0;
@@ -219,8 +216,8 @@ void titian::Scene::onSleep(px::PxActor** actors, px::PxU32 count)
 
 void titian::Scene::onContact(const px::PxContactPairHeader& pairHeader, const px::PxContactPair* pairs, px::PxU32 nbPairs)
 {
-    Entity* entity_0 = static_cast<Entity*>(pairHeader.actors[0]->userData);
-    Entity* entity_1 = static_cast<Entity*>(pairHeader.actors[1]->userData);
+    Entity* entity_0 = (Entity*) pairHeader.actors[0]->userData;
+    Entity* entity_1 = (Entity*) pairHeader.actors[1]->userData;
     if (entity_0 && entity_1) {
         for (auto& [_, script] : scripts) {
             script->call_collision(this, entity_0, entity_1);
@@ -234,7 +231,6 @@ void titian::Scene::onTrigger(px::PxTriggerPair* pairs, px::PxU32 count)
 void titian::Scene::onAdvance(const px::PxRigidBody* const* bodyBuffer, const px::PxTransform* poseBuffer, const px::PxU32 count)
 {}
 
-// Get ptrs
 px::PxPhysics* titian::Scene::physics() const
 {
     return m_physics;
@@ -245,7 +241,6 @@ px::PxCooking* titian::Scene::cooking() const
     return m_cooking;
 }
 
-// Gravity
 void titian::Scene::set_gravity(const Float3& gravity)
 {
     m_scene->setGravity(reinterpret_cast<const px::PxVec3&>(gravity));
@@ -257,7 +252,6 @@ titian::Float3 titian::Scene::gravity() const
     return reinterpret_cast<const Float3&>(gravity);
 }
 
-// Update
 void titian::Scene::update_physics(const float delta_t)
 {
     m_scene->simulate(delta_t);
@@ -278,7 +272,6 @@ void titian::Scene::update_ui()
     }
 }
 
-// Entity
 titian::Ref<titian::Entity> titian::Scene::new_entity(const bool dynamic) const
 {
     return new Entity(m_physics, dynamic);
@@ -299,7 +292,6 @@ void titian::Scene::remove_entity(const StringView& id)
     }
 }
 
-// Colliders
 titian::Ref<titian::Collider> titian::Scene::new_box_collider(const Float3& scale) const
 {
     return new Collider(m_physics, px::PxBoxGeometry(reinterpret_cast<const px::PxVec3&>(scale)));
@@ -326,15 +318,12 @@ titian::Ref<titian::Collider> titian::Scene::new_mesh_collider(const Mesh& mesh,
 titian::Ref<titian::Collider> titian::Scene::new_default_collider(const px::PxGeometryType::Enum type, const Mesh* optional_mesh) const
 {
     switch (type) {
-        // Dynamic
     case px::PxGeometryType::Enum::eBOX:
         return new_box_collider(Float3{ 1.0f });
     case px::PxGeometryType::Enum::eSPHERE:
         return new_sphere_collider(1.0f);
     case px::PxGeometryType::Enum::eCAPSULE:
         return new_capsule_collider(1.0f, 2.0f);
-
-        // Static
     case px::PxGeometryType::Enum::eTRIANGLEMESH:
         if (optional_mesh) {
             return new_mesh_collider(*optional_mesh, Float3{ 1.0f });
@@ -343,7 +332,6 @@ titian::Ref<titian::Collider> titian::Scene::new_default_collider(const px::PxGe
     return nullptr;
 }
 
-// Helper new
 titian::Mesh* titian::Scene::helper_new_mesh(const String& id)
 {
     Mesh* mesh = new Mesh(m_gpu, m_physics, m_cooking);
@@ -386,7 +374,6 @@ titian::Entity* titian::Scene::helper_new_entity(const String& id)
     return &entity;
 }
 
-// Helper get
 titian::Mesh* titian::Scene::helper_get_mesh(const StringView& id)
 {
     const auto it = meshes.find(id);
@@ -441,7 +428,6 @@ titian::Entity* titian::Scene::helper_get_entity(const StringView& id)
     return nullptr;
 }
 
-// Helper remove
 void titian::Scene::helper_remove_mesh(const StringView& id)
 {
     const auto it = meshes.find(id);
@@ -487,7 +473,6 @@ void titian::Scene::helper_remove_entity(const StringView& id)
     this->remove_entity(id);
 }
 
-// Helper contains
 bool titian::Scene::helper_contains_mesh(const StringView& id) const
 {
     return meshes.contains(id);
@@ -518,7 +503,6 @@ bool titian::Scene::helper_contains_entity(const StringView& id) const
     return m_entities.contains(id);
 }
 
-// Helper iterate
 void titian::Scene::helper_iterate_meshes(const Function<void(const String&, Mesh*)>& func)
 {
     std::for_each(meshes.begin(), meshes.end(), [&](auto& entry) { func(entry.first, &entry.second); });
@@ -594,7 +578,6 @@ titian::Optional<titian::AssimpData> titian::Scene::get_assimp_data(const String
     return data;
 }
 
-// Other
 void titian::Scene::load_assimp_data(const AssimpData& data)
 {
     const aiScene* scene = data.importer->GetScene();
@@ -637,7 +620,6 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, 
             Logger::log("Mesh has too many bones: ", mesh->mNumBones, " > ", MAX_BONE_COUNT);
         }
 
-        // bone vertex data
         for (uint32_t i = 0; i < mesh->mNumBones; i++) {
             auto& bone = mesh->mBones[i];
             for (uint32_t j = 0; j < bone->mNumWeights; j++) {
@@ -653,7 +635,6 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, 
             }
         }
 
-        // bone data
         mesh_object->bone_matrices.resize(mesh->mNumBones);
         for (uint32_t i = 0; i < mesh->mNumBones; i++) {
             auto& bone = mesh->mBones[i];
@@ -663,12 +644,10 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, 
             }
         }
 
-        // bone nodes
         Function<Ref<SkeletonNode>(const aiNode*)> recur_helper;
         recur_helper = [&](const aiNode* node)
         {
             Ref<SkeletonNode> skeleton_node = new SkeletonNode();
-            // bone index
             skeleton_node->bone_index = -1;
             for (uint32_t i = 0; i < mesh->mNumBones; i++) {
 				if (mesh->mBones[i]->mName == node->mName) {
@@ -676,13 +655,9 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, 
 					break;
 				}
             }
-
-            // transform
             for (int i = 0; i < 4; i++) {
                 memcpy(&skeleton_node->transformation(0, i), node->mTransformation[i], 4 * sizeof(float));
             }
-
-            // children
             skeleton_node->children.resize(node->mNumChildren);
 			for (uint32_t i = 0; i < node->mNumChildren; i++) {
                 skeleton_node->children[i] = recur_helper(node->mChildren[i]);
@@ -739,12 +714,10 @@ titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScen
 		}
 	}
 
-    // animation nodes
     Function<Ref<AnimationNode>(const aiNode*)> recur_helper;
     recur_helper = [&](const aiNode* node)
     {
         Ref<AnimationNode> animation_node = new AnimationNode();
-        // channel index
         animation_node->channel_index = -1;
         for (uint32_t i = 0; i < animation->mNumChannels; i++) {
             if (animation->mChannels[i]->mNodeName == node->mName) {
@@ -752,8 +725,6 @@ titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScen
                 break;
             }
         }
-
-        // children
         animation_node->children.resize(node->mNumChildren);
         for (uint32_t i = 0; i < node->mNumChildren; i++) {
             animation_node->children[i] = recur_helper(node->mChildren[i]);
@@ -786,11 +757,9 @@ titian::Ref<titian::Texture> titian::Scene::load_assimp_texture(const aiScene* s
 titian::Ref<titian::Material> titian::Scene::load_assimp_material(const aiScene* scene, const aiMaterial* material)
 {
 	Ref material_object = new Material();
-
     material->Get(AI_MATKEY_COLOR_DIFFUSE, material_object->color);
 	material->Get(AI_MATKEY_COLOR_TRANSPARENT, material_object->color.w);
 	material->Get(AI_MATKEY_REFLECTIVITY, material_object->reflection_factor);
 	material->Get(AI_MATKEY_REFRACTI, material_object->refraction_index);
-
 	return material_object;
 }

@@ -7,9 +7,8 @@
 
 
 namespace titian {
-	class GUISectionViewport : public GUISection
+    struct GUISectionViewport : GUISection
 	{
-	public:
         GUISectionViewport();
 
         void render_gui() override;

@@ -7,9 +7,8 @@
 
 
 namespace kl {
-    class DirectionalLight : NoCopy
+    struct DirectionalLight : NoCopy
     {
-    public:
         static constexpr UINT CASCADE_COUNT = 4;
         static constexpr float CASCADE_SPLITS[CASCADE_COUNT + 1] = { 0.0f, 0.075f, 0.2f, 0.5f, 1.0f };
 

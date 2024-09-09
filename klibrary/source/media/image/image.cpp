@@ -1,7 +1,6 @@
 #include "klibrary.h"
 
 
-// init
 static const int _image_init = []
 {
     ULONG_PTR token = NULL;
@@ -10,7 +9,6 @@ static const int _image_init = []
     return 0;
 }();
 
-// construct
 kl::Image::Image()
 {}
 
@@ -25,7 +23,6 @@ kl::Image::Image(const std::string_view& filepath)
     load_from_file(filepath);
 }
 
-// get
 kl::Color* kl::Image::ptr()
 {
     return m_pixels.data();
@@ -83,7 +80,6 @@ kl::Color kl::Image::sample(const Float2& uv) const
     return {};
 }
 
-// Size
 int kl::Image::width() const
 {
     return m_size.x;
@@ -144,7 +140,6 @@ void kl::Image::resize_scaled(const Int2& new_size)
     *this = result;
 }
 
-// Alter
 void kl::Image::fill(const Color& color)
 {
     for (auto& pixel : m_pixels) {
@@ -211,7 +206,6 @@ std::string kl::Image::as_ascii(const Int2& frame_size) const
     return frame.str();
 }
 
-// Draw
 void kl::Image::draw_line(const Int2& from, const Int2& to, const Color& color)
 {
     const int length = max(abs(to.x - from.x), abs(to.y - from.y));
@@ -295,7 +289,6 @@ void kl::Image::draw_circle(const Int2& center, const float radius, const Color&
     const int end = (int) (2 * radius);
 
     for (int i = 0; i < end; i++) {
-        // First pass
         const int x1 = (int) (f_center.x - radius + i);
         const int y1 = (int) (f_center.y + sqrt(radius * radius - (x1 - f_center.x) * (x1 - f_center.x)));
 
@@ -306,7 +299,6 @@ void kl::Image::draw_circle(const Int2& center, const float radius, const Color&
             (*this)[write_position] = color;
         }
 
-        // Second pass
         const int y2 = (int) (f_center.y - radius + i);
         const int x2 = (int) (f_center.x + sqrt(radius * radius - (y2 - f_center.y) * (y2 - f_center.y)));
 
@@ -337,7 +329,6 @@ void kl::Image::draw_image(const Int2& top_left, const Image& image, const bool 
     }
 }
 
-// Decoding
 bool kl::Image::load_from_memory(const void* data, const uint64_t byte_size)
 {
     const ComRef<IStream> stream{ SHCreateMemStream(reinterpret_cast<const BYTE*>(data), UINT(byte_size)) };
@@ -368,7 +359,6 @@ bool kl::Image::load_from_file(const std::string_view& filepath)
     return load_from_buffer(file_data);
 }
 
-// Encoding
 bool kl::Image::save_to_buffer(std::string& buffer, const ImageType type) const
 {
     static constexpr CLSID bmp_encoder_clsid = {
@@ -446,7 +436,6 @@ bool kl::Image::save_to_file(const std::string_view& filepath, ImageType type) c
     return false;
 }
 
-// Static
 kl::Image kl::take_screenshot()
 {
     const HDC screen_dc = GetDC(nullptr);

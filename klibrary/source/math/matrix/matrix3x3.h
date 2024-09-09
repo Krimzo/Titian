@@ -5,20 +5,17 @@
 
 namespace kl {
     template<typename T>
-    class Matrix3x3
+    struct Matrix3x3
     {
-    public:
         T data[9] = {
             T(1), T(0), T(0),
             T(0), T(1), T(0),
             T(0), T(0), T(1),
         };
 
-        // Construct
         constexpr Matrix3x3()
         {}
 
-        // Get
         constexpr T& operator[](int index)
 		{
 			return data[index];
@@ -54,12 +51,11 @@ namespace kl {
         {
             Matrix3x3<O> result;
             for (int i = 0; i < 9; i++) {
-                result[i] = static_cast<O>(data[i]);
+                result[i] = O(data[i]);
             }
             return result;
         }
 
-        // Compare
         constexpr bool operator==(const Matrix3x3<T>& other) const
 		{
 			for (int i = 0; i < 9; i++) {
@@ -75,7 +71,6 @@ namespace kl {
 			return !(*this == other);
 		}
 
-        // Math
         constexpr Matrix3x3<T> operator+(const Matrix3x3<T>& other) const
 		{
 			Matrix3x3<T> result;
@@ -163,7 +158,6 @@ namespace kl {
 			return T(1) / result;
 		}
 
-        // Static
 		static constexpr Matrix3x3<T> scaling(const Vector2<T>& scale)
 		{
 			Matrix3x3<T> result;

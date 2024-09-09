@@ -15,7 +15,6 @@ void titian::OutlinePass::state_package(StatePackage* package)
 
 void titian::OutlinePass::render_self(StatePackage* package)
 {
-    // prepare
     AppLayer* app_layer = Layers::get<AppLayer>();
 	EditorLayer* editor_layer = Layers::get<EditorLayer>();
 	GameLayer* game_layer = Layers::get<GameLayer>();
@@ -36,7 +35,6 @@ void titian::OutlinePass::render_self(StatePackage* package)
     if (entitiy_indices.empty())
         return;
 
-    // render
     load_selected_entities(entitiy_indices);
     gpu->bind_target_depth_view(package->camera->screen_texture->target_view, package->camera->game_depth_texture->depth_view);
     gpu->bind_shader_view_for_pixel_shader(package->camera->editor_picking_texture->shader_view, 0);
@@ -58,7 +56,6 @@ void titian::OutlinePass::render_self(StatePackage* package)
     gpu->draw(render_layer->screen_mesh);
     bench_add_draw_call();
 
-    // finalize
     gpu->unbind_shader_view_for_pixel_shader(1);
     gpu->unbind_shader_view_for_pixel_shader(0);
     gpu->unbind_target_depth_views();

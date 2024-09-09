@@ -82,7 +82,6 @@ void titian::GUISectionMeshEditor::render_gui()
 
 void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
 {
-    // New mesh
     if (im::BeginPopupContextWindow("NewMesh", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Mesh");
 
@@ -97,8 +96,6 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
         }
         im::EndPopup();
     }
-
-    // Meshes
     const String filter = gui_input_continuous("Search###MeshEditor");
     for (auto& [mesh_name, mesh] : scene->meshes) {
         if (!filter.empty() && mesh_name.find(filter) == -1) {
@@ -301,7 +298,6 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
     const int current_scroll = window->mouse.scroll();
 
     if (im::Begin("Mesh Properties") && mesh) {
-        /*-*/
         im::Text("Mesh Editor");
         if (im::DragFloat3("Sun Direction", &sun_direction.x, 0.01f)) {
             sun_direction = kl::normalize(sun_direction);
@@ -309,13 +305,12 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
 
         im::Separator();
 
-        /*-*/
         im::Text("Info");
         im::Text("Name: ");
         im::SameLine();
         gui_colored_text(selected_mesh, gui_layer->special_color);
 
-        int vertex_count = static_cast<int>(mesh->data_buffer.size());
+        int vertex_count = int(mesh->data_buffer.size());
         im::DragInt("Vertex Count", &vertex_count, 0);
 
         String topology_name = "Point";
@@ -379,14 +374,13 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
                     }
                     im::DragFloat(kl::format("BoneWeight##MeshEditor", i, "_", j).data(), &vertex.bone_weights[j], 0.01f, 0.0f, 1.0f);
                 }
-
                 if (normal_edited) {
                     vertex.normal = kl::normalize(vertex.normal);
                 }
 
-                change_counter += static_cast<int>(world_edited);
-                change_counter += static_cast<int>(texture_edited);
-                change_counter += static_cast<int>(normal_edited);
+                change_counter += int(world_edited);
+                change_counter += int(texture_edited);
+                change_counter += int(normal_edited);
             }
             if (change_counter > 0) {
                 mesh->reload();
@@ -402,7 +396,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
             im::Text("New Vertex");
             im::SliderInt("Index", &m_new_vertex_index, 0, vertex_count);
             if (im::Button("Create New")) {
-                if (m_new_vertex_index >= 0 && m_new_vertex_index <= vertex_count /* This works dw */) {
+                if (m_new_vertex_index >= 0 && m_new_vertex_index <= vertex_count) {
                     mesh->data_buffer.insert(mesh->data_buffer.begin() + m_new_vertex_index, Vertex());
                     mesh->reload();
                     im::CloseCurrentPopup();

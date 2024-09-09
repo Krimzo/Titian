@@ -5,13 +5,11 @@
 
 namespace kl {
     template<typename T = float>
-    class Complex
+    struct Complex
     {
-    public:
         T r = {};
         T i = {};
 
-        // Construct
         constexpr Complex()
         {}
 
@@ -23,7 +21,6 @@ namespace kl {
             : r(cos_d(angle)), i(sin_d(angle))
         {}
 
-        // Get
         constexpr T& operator[](int index)
         {
             return (&r)[index];
@@ -39,7 +36,6 @@ namespace kl {
             return { r, i };
         }
 
-        // Compare
         constexpr bool operator==(const Complex<T>& other) const
         {
             return r == other.r && i == other.i;
@@ -50,7 +46,6 @@ namespace kl {
             return !(*this == other);
         }
 
-        // Math
         constexpr Complex<T> operator+(const Complex<T>& other) const
         {
             return { r + other.r, i + other.i };
@@ -97,7 +92,6 @@ namespace kl {
             *this = *this * other;
         }
 
-        // Other
         constexpr Complex<T> operator-() const
         {
             return { -r, -i };

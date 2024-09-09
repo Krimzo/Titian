@@ -1,14 +1,12 @@
 #include "klibrary.h"
 
 
-// Class
 kl::Window::Window(const std::string_view& name, const Int2& size)
     : m_name(name)
 {
-    // Instance
+    SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
     m_instance = GetModuleHandleA(nullptr);
 
-    // Registering window class
     WNDCLASSEXA window_class = {};
     window_class.cbSize = sizeof(WNDCLASSEXA);
     window_class.style = CS_OWNDC;
@@ -20,7 +18,6 @@ kl::Window::Window(const std::string_view& name, const Int2& size)
     window_class.lpszClassName = name.data();
     assert(RegisterClassExA(&window_class), "Failed to register window class");
 
-    // Creating the window
     m_window_style = WS_OVERLAPPEDWINDOW;
 
     RECT size_buffer = { 0, 0, (LONG) size.x, (LONG) size.y };
@@ -38,11 +35,9 @@ kl::Window::Window(const std::string_view& name, const Int2& size)
     m_window = CreateWindowExA(NULL, name.data(), name.data(), m_window_style, new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, m_instance, nullptr);
     assert(m_window, "Failed to create window");
 
-    // Getting data
     m_device_context = GetDC(m_window);
     m_window_style = GetWindowLongA(m_window, GWL_STYLE);
 
-    // Setting data
     SetWindowLongPtrA(m_window, GWLP_USERDATA, (LONG_PTR) this);
     ShowWindow(m_window, SW_SHOW);
     SetCursor(LoadCursorA(nullptr, (LPCSTR) IDC_ARROW));
@@ -51,14 +46,10 @@ kl::Window::Window(const std::string_view& name, const Int2& size)
 
 kl::Window::~Window()
 {
-    // Clearing DC
     ReleaseDC(m_window, m_device_context);
     DeleteDC(m_device_context);
-
-    // Clearing window
     DestroyWindow(m_window);
     UnregisterClassA(m_name.data(), m_instance);
-
 	m_window = nullptr;
 }
 
@@ -313,7 +304,7 @@ void kl::Window::draw_image(const Image& image, const Int2& position) const
 
 void kl::Window::set_dark_mode(const bool enabled) const
 {
-    const BOOL mode = static_cast<BOOL>(enabled);
+    const BOOL mode = BOOL(enabled);
     DwmSetWindowAttribute(m_window,
         DWMWINDOWATTRIBUTE::DWMWA_USE_IMMERSIVE_DARK_MODE,
         &mode, sizeof(BOOL));
@@ -325,7 +316,6 @@ void kl::Window::notify() const
     PostMessageA(m_window, WM_NULL, NULL, NULL);
 }
 
-// System
 #ifdef KL_USING_IMGUI
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif

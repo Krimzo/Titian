@@ -5,9 +5,8 @@
 
 
 namespace kl {
-    class Entity
+    struct Entity
     {
-    public:
         Float3 scale{ 1.0f };
         Float3 rotation;
         Float3 position;

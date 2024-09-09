@@ -4,15 +4,14 @@
 
 
 namespace kl {
-    class CompiledShader
+    struct CompiledShader
     {
-    public:
         dx::DataBlob data;
         dx::DataBlob error;
         
         operator bool() const;
 
-        const void* data_val() const;
+        const void* data_ptr() const;
         SIZE_T data_size() const;
 
         std::string error_val() const;

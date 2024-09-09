@@ -4,9 +4,8 @@
 
 
 namespace titian {
-    class ShaderStates
+    struct ShaderStates
     {
-    public:
         kl::RenderShaders solid_pass;
         kl::RenderShaders solid_lit_pass;
 

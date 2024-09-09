@@ -6,9 +6,8 @@
 
 
 namespace titian {
-    class GUISectionTextureEditor : public GUISection
+    struct GUISectionTextureEditor : GUISection
     {
-    public:
         String selected_texture = {};
 
         GUISectionTextureEditor();

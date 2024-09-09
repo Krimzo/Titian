@@ -5,9 +5,8 @@
 
 
 namespace titian {
-    class GUISectionFuzeTimeline : public GUISection
+    struct GUISectionFuzeTimeline : GUISection
     {
-    public:
         int vertical_offset = 0;
         float horizontal_offset = 0.0f;
 

@@ -15,7 +15,7 @@ void titian::GUILayer::init()
 	im::CreateContext();
 	im::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-	ImGui_ImplWin32_Init(static_cast<HWND>(*window));
+	ImGui_ImplWin32_Init(HWND(*window));
 	ImGui_ImplDX11_Init(gpu->device().get(), gpu->context().get());
 	dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(*window);
 

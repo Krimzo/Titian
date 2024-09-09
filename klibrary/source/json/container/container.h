@@ -5,9 +5,8 @@
 
 
 namespace kl::json {
-	class Container
+	struct Container
 	{
-	public:
 		virtual ~Container() = default;
 
 		virtual bool compile(std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last) = 0;
@@ -32,5 +31,5 @@ namespace kl::json {
 }
 
 namespace kl::json {
-	using ContainerWrap = Wrap<Container, sizeof(std::string) + 8 /* std::variant */ + 8 /* vfptr */>;
+	using ContainerWrap = Wrap<Container, sizeof(std::string) + 16>;
 }

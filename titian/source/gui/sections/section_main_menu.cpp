@@ -55,7 +55,6 @@ void titian::GUISectionMainMenu::render_gui()
     if (im::BeginMainMenuBar()) {
         const ImVec2 menu_size = im::GetContentRegionAvail();
 
-        // File
         if (im::BeginMenu("File")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (im::BeginMenu("Import")) {
@@ -271,7 +270,6 @@ void titian::GUISectionMainMenu::render_gui()
             im::EndMenu();
         }
 
-        // Edit
         if (im::BeginMenu("Edit")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (im::MenuItem("Undo")) {
@@ -282,7 +280,6 @@ void titian::GUISectionMainMenu::render_gui()
             im::EndMenu();
         }
 
-        // Tools
         static Optional<AssimpData> opt_assimp_data;
         if (im::BeginMenu("Tools")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
@@ -337,7 +334,6 @@ void titian::GUISectionMainMenu::render_gui()
             im::PopStyleVar();
         }
 
-        // View
         if (im::BeginMenu("View")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
 
@@ -377,7 +373,6 @@ void titian::GUISectionMainMenu::render_gui()
             im::EndMenu();
         }
 
-        // About
         if (im::BeginMenu("About")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             im::Text("Titian 0.67v");
@@ -386,7 +381,6 @@ void titian::GUISectionMainMenu::render_gui()
             im::EndMenu();
         }
 
-        // Game control
         im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.0f, 5.0f));
         im::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
         im::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
@@ -444,7 +438,6 @@ void titian::GUISectionMainMenu::render_gui()
         im::PopStyleVar(3);
 
 #if 0
-        // Gizmo control
         im::SetCursorPosX(menu_size.x - m_gizmo_buttons_width);
         m_gizmo_buttons_width = 0.0f;
 

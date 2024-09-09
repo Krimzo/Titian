@@ -10,9 +10,8 @@
 
 
 namespace titian {
-	class GUISectionSceneEntities : public GUISection
+	struct GUISectionSceneEntities : GUISection
 	{
-	public:
 		GUISectionSceneEntities();
 
 		void render_gui() override;

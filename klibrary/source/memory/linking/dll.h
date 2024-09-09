@@ -6,9 +6,8 @@
 
 
 namespace kl {
-    class DLL : NoCopy
+    struct DLL : NoCopy
     {
-    public:
         template<typename Return, typename... Args>
         using Function = Return(__stdcall*)(Args...);
 

@@ -1,7 +1,6 @@
 #include "klibrary.h"
 
 
-// Creation
 kl::GPU::GPU(const bool debug, const bool single_threaded, const bool video_support)
     : creation_type(GPUCreationType::COMPUTE)
 {
@@ -103,7 +102,6 @@ kl::GPU::~GPU()
     }
 }
 
-// Get
 kl::dx::Device kl::GPU::device() const
 {
     return m_device;
@@ -166,11 +164,10 @@ kl::dx::DepthView kl::GPU::back_depth_view() const
 	return depth_view(back_index());
 }
 
-// Chain
 void kl::GPU::swap_buffers(const bool v_sync) const
 {
     const UINT interval = v_sync ? 1 : 0;
-    const UINT flags = (!v_sync && !in_fullscreen()) ? DXGI_PRESENT_ALLOW_TEARING : NULL;
+    const UINT flags = (v_sync || in_fullscreen()) ? NULL : DXGI_PRESENT_ALLOW_TEARING;
     m_chain->Present(interval, flags) >> verify_result;
     bind_internal_views();
 }
@@ -179,7 +176,7 @@ bool kl::GPU::in_fullscreen() const
 {
     BOOL result = false;
     m_chain->GetFullscreenState(&result, nullptr);
-    return static_cast<bool>(result);
+    return bool(result);
 }
 
 void kl::GPU::set_fullscreen(const bool enabled) const
@@ -187,7 +184,6 @@ void kl::GPU::set_fullscreen(const bool enabled) const
     m_chain->SetFullscreenState(enabled, nullptr) >> verify_result;
 }
 
-// Internal buffers
 void kl::GPU::clear_internal_color(const Float4& color) const
 {
     m_context->ClearRenderTargetView(back_target_view().get(), &color.x);
@@ -207,7 +203,6 @@ void kl::GPU::clear_internal(const Float4& color) const
 
 void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
 {
-    // Cleanup
     unbind_target_depth_views();
     for (auto& view : m_target_views) {
         view = {};
@@ -220,28 +215,22 @@ void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
     }
     m_chain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING) >> verify_result;
 
-    // Target buffers
     for (int i = 0; i < GPU_BUFFER_COUNT; i++) {
-        // Render target
         const dx::Texture texture = back_target_buffer();
         m_target_views[i] = create_target_view(texture, nullptr);
 
-        // Surface
         ComRef<IDXGISurface> surface{};
         texture->QueryInterface(IID_PPV_ARGS(&surface)) >> verify_result;
         
-        // Text raster target
         const D2D1_RENDER_TARGET_PROPERTIES target_properties = D2D1::RenderTargetProperties(
             D2D1_RENDER_TARGET_TYPE_DEFAULT,
             D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
         );
         m_d2d1_factory->CreateDxgiSurfaceRenderTarget(surface.get(), target_properties, &m_d2d1_targets[i]) >> verify_result;
 
-        // Swap
         m_chain->Present(0, NULL) >> verify_result;
     }
 
-    // Depth buffers
     dx::TextureDescriptor descriptor{};
     descriptor.Width = (UINT) size.x;
     descriptor.Height = (UINT) size.y;
@@ -256,7 +245,6 @@ void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
         m_depth_views[i] = create_depth_view(m_depth_textures[i], nullptr);
     }
 
-    // Rebind
     bind_internal_views();
 }
 
@@ -273,7 +261,6 @@ void kl::GPU::bind_internal_views() const
     bind_target_depth_view(back_target_view(), back_depth_view());
 }
 
-// Shader helper
 kl::ShaderHolder<kl::dx::VertexShader> kl::GPU::create_vertex_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_vertex_shader(shader_source);

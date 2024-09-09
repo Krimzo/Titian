@@ -27,7 +27,6 @@ bool titian::EditorLayer::update()
     kl::Window* window = &app_layer->window;
     const float delta_time = app_layer->timer.delta();
 
-    // Rotation
     if (window->mouse.right) {
         const Int2 frame_center = window->frame_center();
         if (window->mouse.is_hidden()) {
@@ -42,7 +41,6 @@ bool titian::EditorLayer::update()
         window->mouse.set_hidden(false);
     }
 
-    // Speed
     if (window->keyboard.shift) {
         camera->speed = 5.0f;
     }
@@ -53,7 +51,6 @@ bool titian::EditorLayer::update()
         camera->speed = 2.0f;
     }
 
-    // Movement
     if (window->keyboard.w) {
         camera->move_forward(delta_time);
     }

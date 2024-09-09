@@ -15,7 +15,6 @@ void titian::ShadowPass::state_package(StatePackage* package)
 
 void titian::ShadowPass::render_self(StatePackage* package)
 {
-    // prep
     RenderLayer* render_layer = Layers::get<RenderLayer>();
     kl::Timer* timer = &Layers::get<AppLayer>()->timer;
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
@@ -25,7 +24,6 @@ void titian::ShadowPass::render_self(StatePackage* package)
     if (!dir_light)
         return;
 
-    // collect
     struct alignas(16) VS_CB
     {
         Float4x4 WVP = {};
@@ -66,7 +64,6 @@ void titian::ShadowPass::render_self(StatePackage* package)
         to_render.push_back(info);
     }
 
-    // render
     gpu->set_viewport_size(Int2{ dir_light->resolution() });
 
     bool wireframe_bound = package->camera->render_wireframe;
@@ -98,6 +95,5 @@ void titian::ShadowPass::render_self(StatePackage* package)
         }
     }
 
-    // finalize
     gpu->unbind_shader_view_for_vertex_shader(0);
 }

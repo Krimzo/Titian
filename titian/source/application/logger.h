@@ -4,11 +4,8 @@
 
 
 namespace titian {
-	class Logger
+	struct Logger
 	{
-		static bool m_is_ready;
-
-	public:
 		static List<LogInfo> logs;
 		static uint64_t last_log_index;
 
@@ -28,5 +25,8 @@ namespace titian {
 				kl::print("[", info.date, "]: ", info.message);
 			}
 		}
+
+	private:
+		static bool m_is_ready;
 	};
 }

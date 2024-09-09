@@ -5,9 +5,8 @@
 
 namespace kl {
     template<typename T = float>
-    class Sphere
+    struct Sphere
     {
-    public:
         Vector3<T> origin;
         T radius = {};
 

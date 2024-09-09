@@ -33,7 +33,7 @@ namespace kl::json {
 }
 
 namespace kl::json {
-	enum class TokenType : int32_t
+	enum struct TokenType : int32_t
 	{
 		_NULL = 0,
 		_FALSE,

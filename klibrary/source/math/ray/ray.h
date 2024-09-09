@@ -8,14 +8,10 @@
 
 namespace kl {
     template<typename T = float>
-    class Ray
+    struct Ray
     {
-        Vector3<T> m_direction = { T(0), T(0), T(1) };
-
-    public:
         Vector3<T> origin;
 
-        // Construct
         constexpr Ray()
         {}
 
@@ -33,7 +29,6 @@ namespace kl {
             set_direction(pixel_direction.xyz());
         }
 
-        // Direction
         constexpr void set_direction(const Vector3<T>& direction)
         {
 			m_direction = normalize(direction);
@@ -44,7 +39,6 @@ namespace kl {
 			return m_direction;
         }
 
-        // Intersection
         constexpr bool intersect_plane(const Plane<T>& plane, Vector3<T>* out_intersection) const
         {
             const T denom = dot(plane.normal(), m_direction);
@@ -147,6 +141,9 @@ namespace kl {
             }
             return true;
         }
+
+    private:
+        Vector3<T> m_direction = { T(0), T(0), T(1) };
     };
 }
 

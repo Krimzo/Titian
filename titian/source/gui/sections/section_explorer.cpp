@@ -43,7 +43,6 @@ void titian::GUISectionExplorer::render_gui()
     }
 
     if (im::Begin("Explorer", nullptr, ImGuiWindowFlags_NoScrollbar)) {
-        // New file
         if (im::BeginPopupContextWindow("NewFile", ImGuiPopupFlags_MouseButtonMiddle)) {
             im::Text("Create");
             const String name_input = gui_input_continuous("##CreateFileInput");

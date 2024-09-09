@@ -9,9 +9,8 @@
 
 
 namespace titian {
-    class ScenePass : public RenderPass
+    struct ScenePass : RenderPass
     {
-    public:
         ScenePass();
 
         void state_package(StatePackage* package) override;

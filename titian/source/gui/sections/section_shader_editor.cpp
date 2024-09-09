@@ -20,7 +20,6 @@ void titian::GUISectionShaderEditor::render_gui()
 
 		im::SetColumnWidth(im::GetColumnIndex(), available_width * 0.25f);
 		if (im::BeginChild("ShaderListChild")) {
-			// Create shader
 			if (im::BeginPopupContextWindow("NewShader", ImGuiPopupFlags_MouseButtonMiddle)) {
 				const String name = gui_input_continuous("##CreateShaderInput");
 				if (!name.empty() && !scene->helper_contains_shader(name)) {
@@ -35,8 +34,6 @@ void titian::GUISectionShaderEditor::render_gui()
 				}
 				im::EndPopup();
 			}
-
-			// Shaders
 			display_shaders(scene);
 		}
 		im::EndChild();

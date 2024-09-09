@@ -5,14 +5,12 @@
 
 namespace kl {
     template<typename T = float>
-    class Vertex
+    struct Vertex
     {
-    public:
         Vector3<T> world;
         Vector2<T> texture;
         Vector3<T> normal;
 
-        // Construct
         constexpr Vertex()
         {}
 

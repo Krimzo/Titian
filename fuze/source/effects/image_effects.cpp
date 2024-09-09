@@ -1,7 +1,6 @@
 #include "fuze.h"
 
 
-/* ImageEffectScaleRotPos */
 titian::ImageEffectScaleRotPos::ImageEffectScaleRotPos()
 {
     this->init();

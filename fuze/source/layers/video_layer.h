@@ -5,9 +5,8 @@
 
 
 namespace titian {
-	class VideoLayer : public Layer
+	struct VideoLayer : Layer
 	{
-	public:
 		Vector<Ref<Track>> tracks;
 		float current_time = 0.0f;
 

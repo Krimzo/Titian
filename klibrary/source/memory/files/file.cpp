@@ -1,7 +1,6 @@
 #include "klibrary.h"
 
 
-// File
 kl::File::File()
 {}
 
@@ -72,7 +71,6 @@ int64_t kl::File::tell() const
     return ftell(m_file);
 }
 
-// Helper
 std::string kl::file_extension(const std::string_view& filepath)
 {
     return std::filesystem::path(filepath).extension().string();

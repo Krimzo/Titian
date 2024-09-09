@@ -6,9 +6,8 @@
 
 
 namespace titian {
-	class ImageEffect : kl::NoCopy
+	struct ImageEffect : kl::NoCopy
 	{
-	public:
 		Frame temp_frame;
 		kl::ShaderHolder<dx::ComputeShader> shader{ nullptr };
 		Float4x4 custom_data;

@@ -6,7 +6,7 @@ std::string kl::convert_string(const std::wstring_view& data)
     std::string temp;
     temp.resize(data.size());
     for (size_t i = 0; i < data.size(); i++) {
-        temp[i] = static_cast<char>(data[i]);
+        temp[i] = char(data[i]);
     }
     return temp;
 }
@@ -16,7 +16,7 @@ std::wstring kl::convert_string(const std::string_view& data)
     std::wstring temp;
     temp.resize(data.size());
     for (size_t i = 0; i < data.size(); i++) {
-        temp[i] = static_cast<wchar_t>(data[i]);
+        temp[i] = wchar_t(data[i]);
     }
     return temp;
 }

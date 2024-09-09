@@ -12,9 +12,8 @@ namespace titian {
 }
 
 namespace titian {
-    class Camera : public Entity
+    struct Camera : Entity
     {
-    public:
         int32_t camera_type = CameraType::PERSPECTIVE;
 
         bool enabled = true;

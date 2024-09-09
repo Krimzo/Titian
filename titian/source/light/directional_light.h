@@ -6,9 +6,8 @@
 
 
 namespace titian {
-	class DirectionalLight : public Light
+	struct DirectionalLight : Light
 	{
-	public:
 		static constexpr int CASCADE_COUNT = 4;
 
 		Float3 color{ 1.0f };

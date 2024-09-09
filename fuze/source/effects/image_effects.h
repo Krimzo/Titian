@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class ImageEffectScaleRotPos : public ImageEffect
+	struct ImageEffectScaleRotPos : ImageEffect
 	{
-	public:
 		ImageEffectScaleRotPos();
 
 		bool needs_copy() const override;

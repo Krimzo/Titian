@@ -25,9 +25,8 @@ namespace titian {
 }
 
 namespace titian {
-    class Scene : kl::NoCopy, public Serializable, public px::PxSimulationEventCallback
+    struct Scene : kl::NoCopy, Serializable, px::PxSimulationEventCallback
     {
-    public:
         StringMap<Ref<Mesh>> meshes;
         StringMap<Ref<Animation>> animations;
         StringMap<Ref<Texture>> textures;
@@ -46,7 +45,6 @@ namespace titian {
         Scene(kl::GPU* gpu);
         ~Scene() override;
 
-        // Overrides
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;
         
@@ -57,26 +55,21 @@ namespace titian {
         void onTrigger(px::PxTriggerPair* pairs, px::PxU32 count) override;
         void onAdvance(const px::PxRigidBody* const* bodyBuffer, const px::PxTransform* poseBuffer, const px::PxU32 count) override;
 
-        // Get ptrs
         px::PxPhysics* physics() const;
         px::PxCooking* cooking() const;
 
-        // Gravity
         void set_gravity(const Float3& gravity);
         Float3 gravity() const;
 
-        // Update
         void update_physics(float delta_t);
         void update_scripts();
         void update_ui();
 
-        // Entity
         inline const auto& entities() const { return m_entities; };
         Ref<Entity> new_entity(bool dynamic) const;
         void add_entity(const String& id, const Ref<Entity>& entity);
         void remove_entity(const StringView& id);
 
-        // Casted entity
         template<typename T, typename... Args>
         Ref<T> new_casted(const bool dynamic, const Args&... args) const
         {
@@ -89,14 +82,12 @@ namespace titian {
             return dynamic_cast<T*>(helper_get_entity(id));
         }
 
-        // Colliders
         Ref<Collider> new_box_collider(const Float3& scale) const;
         Ref<Collider> new_sphere_collider(float radius) const;
         Ref<Collider> new_capsule_collider(float radius, float height) const;
         Ref<Collider> new_mesh_collider(const Mesh& mesh, const Float3& scale) const;
         Ref<Collider> new_default_collider(px::PxGeometryType::Enum type, const Mesh* optional_mesh) const;
 
-        // Helper new
         Mesh* helper_new_mesh(const String& id);
         Animation* helper_new_animation(const String& id);
         Texture* helper_new_texture(const String& id);
@@ -104,7 +95,6 @@ namespace titian {
         Shader* helper_new_shader(const String& id);
         Entity* helper_new_entity(const String& id);
 
-        // Helper get
         Mesh* helper_get_mesh(const StringView& id);
         Animation* helper_get_animation(const StringView& id);
         Texture* helper_get_texture(const StringView& id);
@@ -112,7 +102,6 @@ namespace titian {
         Shader* helper_get_shader(const StringView& id);
         Entity* helper_get_entity(const StringView& id);
 
-        // Helper remove
         void helper_remove_mesh(const StringView& id);
         void helper_remove_animation(const StringView& id);
         void helper_remove_texture(const StringView& id);
@@ -120,7 +109,6 @@ namespace titian {
         void helper_remove_shader(const StringView& id);
         void helper_remove_entity(const StringView& id);
 
-        // Helper contains
         bool helper_contains_mesh(const StringView& id) const;
         bool helper_contains_animation(const StringView& id) const;
         bool helper_contains_texture(const StringView& id) const;
@@ -128,7 +116,6 @@ namespace titian {
         bool helper_contains_shader(const StringView& id) const;
         bool helper_contains_entity(const StringView& id) const;
 
-        // Helper iterate
         void helper_iterate_meshes(const Function<void(const String&, Mesh*)>& func);
         void helper_iterate_animations(const Function<void(const String&, Animation*)>& func);
         void helper_iterate_textures(const Function<void(const String&, Texture*)>& func);
@@ -136,7 +123,6 @@ namespace titian {
         void helper_iterate_shaders(const Function<void(const String&, Shader*)>& func);
         void helper_iterate_entities(const Function<void(const String&, Entity*)>& func);
 
-        // Loading
         Optional<AssimpData> get_assimp_data(const StringView& path) const;
         void load_assimp_data(const AssimpData& data);
 

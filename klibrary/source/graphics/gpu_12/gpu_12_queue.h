@@ -4,9 +4,8 @@
 
 
 namespace kl {
-	class GPU12Queue
+	struct GPU12Queue
 	{
-	public:
 		dx12::CommandQueue queue{};
 
 		GPU12Queue();

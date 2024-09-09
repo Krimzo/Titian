@@ -1,7 +1,6 @@
 #include "klibrary.h"
 
 
-// init
 static const int _socket_init = []
 {
     WSADATA wsa_data{};
@@ -10,7 +9,6 @@ static const int _socket_init = []
     return result;
 }();
 
-// Address
 kl::Address::Address()
     : sockaddr_in()
 {
@@ -38,10 +36,8 @@ void kl::Address::set_port(int port)
     sin_port = ::htons((u_short) port);
 }
 
-// Socket
 const std::string kl::Socket::SELF = "127.0.0.1";
 
-// Construct
 kl::Socket::Socket(const bool udp)
 {
     m_socket = ::socket(AF_INET,
@@ -56,7 +52,6 @@ kl::Socket::~Socket()
     ::closesocket(m_socket);
 }
 
-// Properties
 kl::Socket::ID kl::Socket::id() const
 {
     return m_socket;
@@ -87,7 +82,6 @@ void kl::Socket::set_port(const int port)
     m_address.set_port(port);
 }
 
-// Connection
 int kl::Socket::bind()
 {
     return ::bind(m_socket, (sockaddr*) &m_address, sizeof(Address));
@@ -109,7 +103,6 @@ int kl::Socket::connect()
     return ::connect(m_socket, (sockaddr*) &m_address, sizeof(Address));
 }
 
-// Data transfer
 int kl::Socket::send(const void* data, const int byte_size) const
 {
     return ::send(m_socket, (const char*) data, byte_size, NULL);

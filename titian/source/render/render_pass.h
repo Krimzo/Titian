@@ -16,9 +16,8 @@ namespace titian {
 }
 
 namespace titian {
-	class RenderPass : kl::NoCopy, public BenchmarkInfo
+	struct RenderPass : kl::NoCopy, BenchmarkInfo
 	{
-	public:
 		RenderPass(const StringView& name);
 		virtual ~RenderPass() = default;
 

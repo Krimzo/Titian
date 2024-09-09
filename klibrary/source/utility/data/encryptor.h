@@ -4,9 +4,8 @@
 
 
 namespace kl {
-    class Encryptor
+    struct Encryptor
     {
-    public:
         std::vector<std::vector<byte>> keys;
 
         Encryptor(int key_count = 5);

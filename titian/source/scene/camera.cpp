@@ -173,10 +173,6 @@ titian::Float4x4 titian::Camera::camera_matrix() const
 bool titian::Camera::can_see(const Float3& point) const
 {
     return true;
-
-    /* Doesn't work well for big objects */
-    //const kl::Plane plane{ position(), m_forward };
-    //return plane.in_front(point);
 }
 
 void titian::Camera::resize(const Int2& new_size)
@@ -189,7 +185,6 @@ void titian::Camera::resize(const Int2& new_size)
     }
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 
-    // Screen texture
     dx::TextureDescriptor screen_tex_descriptor{};
     screen_tex_descriptor.Width = new_size.x;
     screen_tex_descriptor.Height = new_size.y;
@@ -203,13 +198,11 @@ void titian::Camera::resize(const Int2& new_size)
     screen_texture->create_target_view(nullptr);
     screen_texture->create_shader_view(nullptr);
 
-    // Game color texture
     dx::TextureDescriptor game_col_descriptor = screen_tex_descriptor;
     game_color_texture->graphics_buffer = gpu->create_texture(&game_col_descriptor, nullptr);
     game_color_texture->create_target_view(nullptr);
     game_color_texture->create_shader_view(nullptr);
 
-    // Game depth texture
     dx::TextureDescriptor  game_depth_descriptor = game_col_descriptor;
     game_depth_descriptor.Format = DXGI_FORMAT_R32_TYPELESS;
     game_depth_descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
@@ -226,7 +219,6 @@ void titian::Camera::resize(const Int2& new_size)
     game_depth_sv_descriptor.Texture2D.MipLevels = 1;
     game_depth_texture->create_shader_view(&game_depth_sv_descriptor);
 
-    // Editor picking texture
     dx::TextureDescriptor editor_picking_descriptor = screen_tex_descriptor;
     editor_picking_descriptor.Format = DXGI_FORMAT_R32_FLOAT;
     editor_picking_texture->graphics_buffer = gpu->create_texture(&editor_picking_descriptor, nullptr);
@@ -253,7 +245,6 @@ titian::Int2 titian::Camera::resolution() const
 
 void titian::Camera::clear_targets()
 {
-    //m_gpu->clear_target_view(screen_texture->target_view, background);
     m_gpu->clear_target_view(game_color_texture->target_view, background);
     m_gpu->clear_depth_view(game_depth_texture->depth_view, 1.0f, 0xFF);
     m_gpu->clear_target_view(editor_picking_texture->target_view, {});

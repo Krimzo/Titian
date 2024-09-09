@@ -5,15 +5,13 @@
 
 namespace kl {
     template<typename T = float>
-    class Quaternion
+    struct Quaternion
     {
-    public:
         T w = {};
         T x = {};
         T y = {};
         T z = {};
 
-        // Construct
         constexpr Quaternion()
         {}
 
@@ -31,7 +29,6 @@ namespace kl {
             reinterpret_cast<Vector3<T>&>(x) = normalize(axis) * (T) sin_d(angle * 0.5);
         }
 
-        // Get
         constexpr T& operator[](int index)
         {
             return (&w)[index];
@@ -52,7 +49,6 @@ namespace kl {
             return { x, y, z, w };
         }
 
-        // Compare
         constexpr bool operator==(const Quaternion<T>& other) const
         {
             return w == other.w && x == other.x && y == other.y && z == other.z;
@@ -63,7 +59,6 @@ namespace kl {
 			return !(*this == other);
         }
 
-        // Math
         constexpr Quaternion<T> operator+(const Quaternion<T>& other) const
         {
 			return { w + other.w, x + other.x, y + other.y, z + other.z };
@@ -118,7 +113,6 @@ namespace kl {
             *this = *this * other;
         }
 
-        // Other
         constexpr Quaternion<T> operator-() const
         {
 			return { -w, -x, -y, -z };

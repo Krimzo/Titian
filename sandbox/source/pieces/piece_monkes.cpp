@@ -28,7 +28,6 @@ void titian::SandboxPieceMonkes::setup_self()
         scene->meshes[mesh_name] = scene->default_meshes->monke;
 		scene->animations[animation_name] = scene->default_animations->monke;
 
-        // Material
         const float percentage = (i + 1.0f) / entity_count;
         const float normalized = kl::clamp(percentage, 0.0f, 1.0f);
 
@@ -36,7 +35,6 @@ void titian::SandboxPieceMonkes::setup_self()
         material->color = Float4{ Float3{ normalized }, 1.0f };
         scene->materials[material_name] = material;
 
-        // Entity
         Ref monke = scene->new_entity(false);
         monke->scale = Float3{ 0.5f };
         monke->set_rotation({ 0.0f, 180.0f, 0.0f });
@@ -48,7 +46,6 @@ void titian::SandboxPieceMonkes::setup_self()
 
         monke->animation_name = animation_name;
         monke->material_name = material_name;
-
         scene->add_entity(entity_name, monke);
     }
 }

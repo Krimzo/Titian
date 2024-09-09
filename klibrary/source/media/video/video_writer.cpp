@@ -1,7 +1,6 @@
 #include "klibrary.h"
 
 
-// init
 static const int _media_init = []
 {
     constexpr DWORD init_args = COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY;
@@ -10,7 +9,6 @@ static const int _media_init = []
     return 0;
 }();
 
-// construct
 kl::VideoWriter::VideoWriter(const std::string_view& filepath, const VideoType& video_type, const Int2& frame_size, const int fps, const int video_bit_rate, const int audio_sample_rate)
     : m_width(frame_size.x)
     , m_height(frame_size.y)
@@ -22,7 +20,6 @@ kl::VideoWriter::VideoWriter(const std::string_view& filepath, const VideoType& 
     const std::wstring converted_path = convert_string(filepath);
     MFCreateSinkWriterFromURL(converted_path.data(), nullptr, nullptr, &m_writer) >> verify_result;
 
-    // Video
     ComRef<IMFMediaType> video_out_type;
     MFCreateMediaType(&video_out_type) >> verify_result;
 
@@ -47,7 +44,6 @@ kl::VideoWriter::VideoWriter(const std::string_view& filepath, const VideoType& 
     MFSetAttributeRatio(video_in_type.get(), MF_MT_FRAME_RATE, m_fps, 1) >> verify_result;
     m_writer->SetInputMediaType(m_video_index, video_in_type.get(), nullptr) >> verify_result;
 
-    // Audio
     if (m_sample_rate > 0) {
         ComRef<IMFMediaType> audio_out_type;
         MFCreateMediaType(&audio_out_type) >> verify_result;
@@ -72,7 +68,6 @@ kl::VideoWriter::VideoWriter(const std::string_view& filepath, const VideoType& 
         m_writer->SetInputMediaType(m_audio_index, audio_in_type.get(), nullptr) >> verify_result;
     }
 
-    // Start
     m_writer->BeginWriting() >> verify_result;
 }
 

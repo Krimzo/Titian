@@ -80,7 +80,6 @@ void titian::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
             scene->meshes[mesh_name] = scene->default_meshes->cube;
 			scene->animations[animation_name] = scene->default_animations->cube;
 
-            // Material
             Ref material = new Material();
             material->texture_blend = 0.5f;
             material->color = kl::random::gen_color();
@@ -88,7 +87,6 @@ void titian::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
             material->normal_map_name = normal_map;
             scene->materials[material_name] = material;
 
-            // Entity
             Ref box = scene->new_entity(true);
             box->scale = scale;
             box->set_rotation(kl::random::gen_float3(360.0f));

@@ -5,9 +5,8 @@
 
 
 namespace titian {
-    class GUISectionFuzeAudioEffects : public GUISection
+    struct GUISectionFuzeAudioEffects : GUISection
     {
-    public:
         GUISectionFuzeAudioEffects();
 
         void render_gui() override;

@@ -42,7 +42,6 @@ void titian::EditorPass::state_package(StatePackage* package)
 
 void titian::EditorPass::render_self(StatePackage* package)
 {
-    // preapre
     EditorLayer* editor_layer = Layers::get<EditorLayer>();
     RenderLayer* render_layer = Layers::get<RenderLayer>();
     GUILayer* gui_layer = Layers::get<GUILayer>();
@@ -52,7 +51,6 @@ void titian::EditorPass::render_self(StatePackage* package)
     if (editor_layer->selected_entities.empty())
         return;
 
-    // render
     gpu->bind_target_depth_view(package->camera->screen_texture->target_view, package->camera->game_depth_texture->depth_view);
 
     for (auto& name : editor_layer->selected_entities) {
@@ -70,7 +68,6 @@ void titian::EditorPass::render_self(StatePackage* package)
             Float4 SOLID_COLOR;
         };
 
-        // collider
         if (Collider* collider = &entity->collider()) {
             const auto& cube = scene->default_meshes->cube;
             const auto& sphere = scene->default_meshes->sphere;
@@ -111,7 +108,6 @@ void titian::EditorPass::render_self(StatePackage* package)
             }
         }
 
-        // camera frustum
         if (Camera* camera = dynamic_cast<Camera*>(entity)) {
             const VS_CB vs_cb{
                 .WVP = package->camera->camera_matrix() * kl::inverse(camera->camera_matrix()),
@@ -127,6 +123,5 @@ void titian::EditorPass::render_self(StatePackage* package)
         }
     }
 
-    // finalize
     gpu->unbind_target_depth_views();
 }

@@ -3,11 +3,9 @@
 #include "apis/apis.h"
 
 
-// Class
 namespace kl {
-    class Hash
+    struct Hash
     {
-    public:
         uint8_t buffer[32] = {};
 
         Hash();
@@ -21,7 +19,6 @@ namespace kl {
     };
 }
 
-// Format
 namespace kl {
     std::ostream& operator<<(std::ostream& stream, const Hash& hash);
 }

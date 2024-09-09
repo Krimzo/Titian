@@ -5,9 +5,8 @@
 
 
 namespace kl {
-    class Texture
+    struct Texture
     {
-    public:
         Image data_buffer;
         dx::Texture graphics_buffer;
 

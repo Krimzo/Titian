@@ -5,9 +5,8 @@
 
 
 namespace titian {
-    class GUISectionBenchInfo : public GUISection
+    struct GUISectionBenchInfo : GUISection
     {
-    public:
         void* editor = nullptr;
 
         GUISectionBenchInfo(void* editor);

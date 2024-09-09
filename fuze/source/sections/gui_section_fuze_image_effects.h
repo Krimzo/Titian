@@ -8,9 +8,8 @@
 
 
 namespace titian {
-    class GUISectionFuzeImageEffects : public GUISection
+    struct GUISectionFuzeImageEffects : GUISection
     {
-    public:
         GUISectionFuzeImageEffects();
 
         void render_gui() override;

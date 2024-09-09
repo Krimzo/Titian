@@ -5,11 +5,8 @@
 
 namespace kl {
     template<typename T = float>
-    class Plane
+    struct Plane
     {
-        Vector3<T> m_normal = { T(0), T(1), T(0) };
-
-    public:
         Vector3<T> origin;
 
         constexpr Plane()
@@ -21,7 +18,6 @@ namespace kl {
 			set_normal(normal);
         }
 
-        // Normal
         constexpr void set_normal(const Vector3<T>& normal)
 		{
 			m_normal = normalize(normal);
@@ -32,12 +28,14 @@ namespace kl {
 			return m_normal;
 		}
 
-        // Math
         constexpr bool in_front(const Vector3<T>& point) const
         {
             const T result = dot(point - origin, m_normal);
             return result >= T(0);
         }
+
+    private:
+        Vector3<T> m_normal = { T(0), T(1), T(0) };
     };
 }
 

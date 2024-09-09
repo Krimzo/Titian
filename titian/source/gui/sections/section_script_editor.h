@@ -12,9 +12,8 @@
 
 
 namespace titian {
-	class GUISectionScriptEditor : public GUISection
+	struct GUISectionScriptEditor : GUISection
 	{
-	public:
 		String selected_script = "/";
 
 		GUISectionScriptEditor();

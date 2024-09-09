@@ -4,9 +4,8 @@
 
 
 namespace titian {
-    class SamplerStates
+    struct SamplerStates
     {
-    public:
         dx::SamplerState linear;
         dx::SamplerState non_linear;
         dx::SamplerState shadow;

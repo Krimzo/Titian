@@ -4,16 +4,8 @@
 
 
 namespace kl {
-    class Timer
+    struct Timer
     {
-        uint64_t m_delta_start;
-        uint64_t m_delta_end;
-        uint64_t m_elapsed_start;
-
-        float m_old_elapsed = 0.0f;
-        bool m_is_running = true;
-
-    public:
         Timer();
 
         void update_delta();
@@ -29,5 +21,13 @@ namespace kl {
         void resume();
 
         bool is_running() const;
+
+    private:
+        uint64_t m_delta_start;
+        uint64_t m_delta_end;
+        uint64_t m_elapsed_start;
+
+        float m_old_elapsed = 0.0f;
+        bool m_is_running = true;
     };
 }

@@ -6,9 +6,8 @@
 
 
 namespace titian {
-	class GUISectionLogView : public GUISection
+	struct GUISectionLogView : GUISection
 	{
-	public:
         uint64_t last_log_index = 0;
 
 		GUISectionLogView();

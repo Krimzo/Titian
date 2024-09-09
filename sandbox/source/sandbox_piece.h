@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class SandboxPiece
+	struct SandboxPiece
 	{
-	public:
 		TitianEditor* editor = nullptr;
 
 		SandboxPiece(TitianEditor* editor);

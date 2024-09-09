@@ -2,7 +2,6 @@
 
 #include "json/language/standard.h"
 #include "json/language/lexer.h"
-
 #include "json/container/container.h"
 #include "json/container/literal.h"
 #include "json/container/object.h"
@@ -17,9 +16,8 @@ namespace kl::json {
         virtual void from_container(const Container& container) = 0;
     };
 
-    class ObjectSerializable : public ContainerSerializable
+    struct ObjectSerializable : ContainerSerializable
     {
-    public:
         virtual void to_object(Object& object) const = 0;
         virtual void from_object(const Object& object) = 0;
 
@@ -38,9 +36,8 @@ namespace kl::json {
         }
     };
 
-    class ArraySerializable : public ContainerSerializable
+    struct ArraySerializable : ContainerSerializable
     {
-    public:
         virtual void to_array(Array& array) const = 0;
         virtual void from_array(const Array& array) = 0;
 

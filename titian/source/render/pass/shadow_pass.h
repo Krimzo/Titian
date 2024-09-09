@@ -8,9 +8,8 @@
 
 
 namespace titian {
-    class ShadowPass : public RenderPass
+    struct ShadowPass : RenderPass
     {
-    public:
         ShadowPass();
 
         void state_package(StatePackage* package) override;

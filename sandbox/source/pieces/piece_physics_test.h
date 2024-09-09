@@ -4,9 +4,8 @@
 
 
 namespace titian {
-    class SandboxPiecePhysicsTest : public SandboxPiece
+    struct SandboxPiecePhysicsTest : SandboxPiece
     {
-    public:
         int size = 0;
 
         SandboxPiecePhysicsTest(TitianEditor* editor, int size);

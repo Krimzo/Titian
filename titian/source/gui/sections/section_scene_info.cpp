@@ -12,7 +12,7 @@ void titian::GUISectionSceneInfo::render_gui()
     if (im::Begin("Scene Info")) {
         Scene* scene = &Layers::get<GameLayer>()->scene;
 
-        int entity_count = static_cast<int>(scene->entities().size());
+        int entity_count = int(scene->entities().size());
         im::DragInt("Entity count", &entity_count, 0.0f);
 
         Float3 gravity = scene->gravity();

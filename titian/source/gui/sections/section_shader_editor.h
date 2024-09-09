@@ -8,10 +8,9 @@
 
 
 namespace titian {
-    class GUISectionShaderEditor : public GUISection
+    struct GUISectionShaderEditor : GUISection
     {
-    public:
-        String selected_shader = {};
+        String selected_shader;
 
         GUISectionShaderEditor();
 

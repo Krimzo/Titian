@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class Material : public Serializable
+	struct Material : Serializable
 	{
-	public:
 		Float4 color = kl::colors::WHITE;
 		float texture_blend = 0.0f;
 

@@ -4,9 +4,8 @@
 
 
 namespace titian {
-    class SandboxPieceMonkes : public SandboxPiece
+    struct SandboxPieceMonkes : SandboxPiece
     {
-    public:
         int size = 0;
         float x_offset = -16.0f;
 

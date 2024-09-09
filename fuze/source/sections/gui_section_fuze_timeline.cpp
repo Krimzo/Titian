@@ -290,7 +290,7 @@ void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, con
 
 	col_min = im::TableGetCellBgRect(im::GetCurrentTable(), 1).Min;
 	col_max = im::TableGetCellBgRect(im::GetCurrentTable(), 1).Max;
-	col_min += ImVec2(1.0f, 1.0f); // outline adjust
+	col_min += ImVec2(1.0f, 1.0f);
 	const float col_width = col_max.x - col_min.x;
 	const float col_middle = (col_min.y + col_max.y) * 0.5f;
 

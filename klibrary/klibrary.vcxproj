@@ -17,11 +17,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\apis\apis.h" />
-    <ClInclude Include="source\apis\cpp\kl_cpp.h" />
-    <ClInclude Include="source\apis\external\kl_dx12.h" />
-    <ClInclude Include="source\apis\external\kl_imgui.h" />
-    <ClInclude Include="source\apis\windows\kl_directx.h" />
-    <ClInclude Include="source\apis\windows\kl_windows.h" />
+    <ClInclude Include="source\apis\kl_cpp.h" />
+    <ClInclude Include="source\apis\kl_directx.h" />
+    <ClInclude Include="source\apis\kl_imgui.h" />
+    <ClInclude Include="source\apis\kl_windows.h" />
     <ClInclude Include="source\graphics\gpu\context_holder.h" />
     <ClInclude Include="source\graphics\gpu\device_holder.h" />
     <ClInclude Include="source\graphics\gpu\gpu.h" />

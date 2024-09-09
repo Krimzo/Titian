@@ -1,7 +1,6 @@
 #include "klibrary.h"
 
 
-// Class
 kl::Hash::Hash()
 {}
 
@@ -17,7 +16,7 @@ kl::Hash::Hash(const std::string_view& hash)
 
         uint32_t result = 0;
         stream >> result;
-        buffer[i] = static_cast<uint8_t>(result);
+        buffer[i] = uint8_t(result);
     }
 }
 
@@ -46,12 +45,11 @@ bool kl::Hash::operator!=(const Hash& other) const
     return !(*this == other);
 }
 
-// Format
 std::ostream& kl::operator<<(std::ostream& stream, const Hash& hash)
 {
     stream << std::hex << std::setfill('0');
     for (uint8_t value : hash.buffer) {
-        stream << std::setw(2) << static_cast<int>(value);
+        stream << std::setw(2) << int(value);
     }
     return stream;
 }

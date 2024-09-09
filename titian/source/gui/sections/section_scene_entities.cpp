@@ -14,7 +14,6 @@ void titian::GUISectionSceneEntities::render_gui()
 	Scene* scene = &Layers::get<GameLayer>()->scene;
 
 	if (im::Begin("Scene Entities")) {
-		// Window popup
 		if (im::BeginPopupContextWindow("NewEntity", ImGuiPopupFlags_MouseButtonMiddle)) {
 			const String name = gui_input_continuous("##CreateEntityInput");
 			if (!name.empty() && !scene->helper_contains_entity(name)) {
@@ -56,14 +55,12 @@ void titian::GUISectionSceneEntities::render_gui()
 			}
 		}
 
-		// Entities
 		const String filter = gui_input_continuous("Search###SceneEntities");
 		for (auto& [entity_name, entity] : scene->entities()) {
 			if (!filter.empty() && entity_name.find(filter) == -1) {
 				continue;
 			}
 
-			// Entity type
 			if (entity.is<Camera>()) {
 				im::Button("CAMERA");
 			}
@@ -81,7 +78,6 @@ void titian::GUISectionSceneEntities::render_gui()
 			}
 			im::SameLine();
 
-			// Entity name
 			if (im::Selectable(entity_name.data(), editor_layer->selected_entities.contains(entity_name))) {
 				if (im::IsKeyDown(ImGuiKey_LeftCtrl)) {
 					if (editor_layer->selected_entities.contains(entity_name)) {
@@ -117,7 +113,6 @@ void titian::GUISectionSceneEntities::render_gui()
 				}
 			}
 
-			// Item popup
 			if (im::BeginPopupContextItem(entity_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
 				bool should_break = false;
 				im::Text("Edit Entity");

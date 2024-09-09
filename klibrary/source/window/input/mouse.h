@@ -7,13 +7,6 @@
 namespace kl {
     struct Mouse
     {
-    private:
-        HWND m_window = nullptr;
-        Int2 m_position = {};
-        int16_t m_scroll = 0;
-        bool m_hidden = false;
-
-    public:
         union
         {
             Key keys[5] = {};
@@ -43,5 +36,11 @@ namespace kl {
         void _set_window(HWND window);
         void _update_scroll(int scroll);
         void _update_position(const Int2& position);
+
+    private:
+        bool m_hidden = false;
+        int16_t m_scroll = 0;
+        Int2 m_position = {};
+        HWND m_window = nullptr;
     };
 }

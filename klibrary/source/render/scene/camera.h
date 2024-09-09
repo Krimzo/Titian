@@ -6,9 +6,8 @@
 
 
 namespace kl {
-    class Camera
+    struct Camera
     {
-    public:
         Float3 origin;
 
         float aspect_ratio = 1.7778f;

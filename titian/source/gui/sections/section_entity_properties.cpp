@@ -106,7 +106,6 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
     im::DragFloat3("Up", &camera_up.x, 0.01f);
     camera->set_up(camera_up);
 
-    // Skybox
     if (im::BeginCombo("Bound Skybox", camera->skybox_name.data())) {
         if (im::Selectable("/", camera->skybox_name == "/")) {
             camera->skybox_name = "/";
@@ -118,8 +117,6 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
         }
         im::EndCombo();
     }
-
-    // Shader
     if (im::BeginCombo("Bound Shader", camera->shader_name.data())) {
         if (im::Selectable("/", camera->shader_name == "/")) {
             camera->shader_name = "/";
@@ -134,8 +131,6 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
         }
         im::EndCombo();
     }
-
-    // Target texture
     if (im::BeginCombo("Bound Target", camera->target_name.data())) {
         if (im::Selectable("/", camera->target_name == "/")) {
             camera->target_name = "/";
@@ -147,8 +142,6 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
         }
         im::EndCombo();
     }
-
-    // Background
     if (!scene->textures.contains(camera->skybox_name)) {
         Float4 background = camera->background;
         if (im::ColorEdit4("Background", &background.x)) {
@@ -217,8 +210,6 @@ void titian::GUISectionEntityProperties::edit_entity_animation(Scene* scene, Ent
 {
     im::Separator();
     im::Text("Animation");
-
-    // Selector
     auto& bound_animation = entity->animation_name;
     if (im::BeginCombo("Bound Animation", bound_animation.data())) {
         const String filter = gui_input_continuous("Search###EntityPropsMesh");
@@ -311,7 +302,6 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     px::PxGeometryType::Enum collider_type = collider ? collider->type() : px::PxGeometryType::Enum::eINVALID;
     String collider_name = possible_colliders.contains(collider_type) ? possible_colliders.at(collider_type) : ("mesh_" + entity->collider_mesh_name);
 
-    // Choose type
     if (im::BeginCombo("Bound Collider", collider_name.data())) {
         for (auto& [type, name] : possible_colliders) {
             if (im::Selectable(name.data(), type == collider_type)) {
@@ -336,7 +326,6 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
         return;
     }
 
-    // General info
     float restitution = collider->restitution();
     if (im::DragFloat("Restitution", &restitution, 0.1f, 0.0f, 1e9f)) {
         collider->set_restitution(restitution);
@@ -352,7 +341,6 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
         collider->set_dynamic_friction(dynamic_friction);
     }
 
-    // Specific info
     int geometry_type = 0;
     px::PxBoxGeometry box_geometry = {};
     px::PxTriangleMeshGeometry mesh_geometry = {};
@@ -403,7 +391,6 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
         collider->set_offset(offset);
     }
 
-    // Loading buttons
     if (geometry_type != 0 && im::Button("Load size from scale")) {
         if (geometry_type == 1) {
             box_geometry.halfExtents = reinterpret_cast<px::PxVec3&>(entity->scale);

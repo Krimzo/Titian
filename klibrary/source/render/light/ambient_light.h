@@ -4,9 +4,8 @@
 
 
 namespace kl {
-    class AmbientLight
+    struct AmbientLight
     {
-    public:
         Float3 color{ 1.0f };
         float intensity{ 0.1f };
     };

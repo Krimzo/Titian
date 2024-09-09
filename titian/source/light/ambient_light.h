@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class AmbientLight : public Light
+	struct AmbientLight : Light
 	{
-	public:
 		Float3 color = kl::colors::WHITE;
 		float intensity = 0.1f;
 

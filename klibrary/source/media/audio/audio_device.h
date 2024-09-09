@@ -4,9 +4,8 @@
 
 
 namespace kl {
-	class AudioDevice
+	struct AudioDevice
 	{
-	public:
 		UINT id = 0;
 
 		AudioDevice(UINT id = 0);

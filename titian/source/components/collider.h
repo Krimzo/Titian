@@ -4,9 +4,8 @@
 
 
 namespace titian {
-    class Collider : public Serializable
+    struct Collider : Serializable
     {
-    public:
         Collider(px::PxPhysics* physics);
         Collider(px::PxPhysics* physics, const px::PxGeometry& geometry);
         ~Collider() override;
@@ -14,12 +13,10 @@ namespace titian {
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;
 
-        // Get
         px::PxShape* shape() const;
         px::PxGeometryType::Enum type() const;
         Float4x4 scaling_matrix() const;
 
-        // Geometry
         void set_geometry(const px::PxGeometry& geometry);
 
         void set_rotation(const Float3& rotation);
@@ -28,7 +25,6 @@ namespace titian {
         void set_offset(const Float3& position);
         Float3 offset() const;
 
-        // Material
         void set_static_friction(float friction);
         float static_friction() const;
 

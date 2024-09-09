@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class Layer : kl::NoCopy, public BenchmarkInfo
+	struct Layer : kl::NoCopy, BenchmarkInfo
 	{
-	public:
 		Layer(const StringView& name);
 		virtual ~Layer() = default;
 
@@ -18,9 +17,8 @@ namespace titian {
 }
 
 namespace titian {
-	class Layers
+	struct Layers
 	{
-	public:
 		template<typename T>
 		static constexpr void bind(T* ptr) noexcept
 		{
@@ -30,7 +28,7 @@ namespace titian {
 		template<typename T>
 		static constexpr T* get() noexcept
 		{
-			return static_cast<T*>(m_data[type_id<T>]);
+			return (T*) m_data[type_id<T>];
 		}
 
 	private:

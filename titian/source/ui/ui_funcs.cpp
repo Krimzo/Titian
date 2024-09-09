@@ -94,7 +94,7 @@ void titian::ui_color(const StringView& name, Color value, const Function<void(C
 {
 	Float4 temp_val = value;
 	if (im::ColorEdit4(name.data(), &temp_val.x)) {
-		func(static_cast<Color>(temp_val));
+		func(temp_val);
 	}
 }
 

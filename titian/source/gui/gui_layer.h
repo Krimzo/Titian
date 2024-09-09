@@ -5,9 +5,8 @@
 
 
 namespace titian {
-	class GUILayer : public Layer
+	struct GUILayer : Layer
 	{
-	public:
 		Vector<Ref<GUISection>> sections;
 		float dpi_scaling = 1.0f;
 

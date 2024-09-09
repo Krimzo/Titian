@@ -4,13 +4,12 @@
 
 
 namespace titian {
-	class Scene;
+	struct Scene;
 }
 
 namespace titian {
-	class Script : kl::NoCopy, public Serializable
+	struct Script : kl::NoCopy, Serializable
 	{
-	public:
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;
 

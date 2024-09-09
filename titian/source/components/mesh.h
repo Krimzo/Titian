@@ -24,9 +24,8 @@ namespace titian {
 }
 
 namespace titian {
-    class Mesh : public Serializable
+    struct Mesh : Serializable
     {
-    public:
         int topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
         bool render_wireframe = false;
 

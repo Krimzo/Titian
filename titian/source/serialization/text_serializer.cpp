@@ -42,7 +42,6 @@ titian::TextSerializer::operator bool() const
 	return m_is_valid;
 }
 
-// top object
 void titian::TextSerializer::push_object(const StringView& name)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
@@ -74,7 +73,6 @@ void titian::TextSerializer::unload_object() const
 	}
 }
 
-// basic
 void titian::TextSerializer::write_bool(const StringView& name, bool value)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
@@ -117,7 +115,6 @@ void titian::TextSerializer::read_float(const StringView& name, float& value) co
 	}
 }
 
-// array
 void titian::TextSerializer::write_byte_array(const StringView& name, const void* data, int32_t count)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
@@ -192,7 +189,6 @@ void titian::TextSerializer::read_float_array(const StringView& name, float* dat
 	}
 }
 
-// complex
 void titian::TextSerializer::write_string(const StringView& name, const StringView& value)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);

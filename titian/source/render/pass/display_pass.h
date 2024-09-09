@@ -5,9 +5,8 @@
 
 
 namespace titian {
-    class DisplayPass : public RenderPass
+    struct DisplayPass : RenderPass
     {
-    public:
         DisplayPass();
 
         void state_package(StatePackage* package) override;

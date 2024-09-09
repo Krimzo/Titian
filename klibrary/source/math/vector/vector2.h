@@ -6,18 +6,16 @@
 
 namespace kl {
     template<typename T>
-    class Complex;
+    struct Complex;
 }
 
 namespace kl {
     template<typename T>
-    class Vector2
+    struct Vector2
     {
-    public:
         T x = {};
         T y = {};
 
-        // Construct
         constexpr Vector2()
         {}
 
@@ -29,7 +27,6 @@ namespace kl {
 			: x(x), y(y)
         {}
 
-        // Get
 		constexpr T& operator[](int index)
 		{
 			return (&x)[index];
@@ -43,7 +40,7 @@ namespace kl {
         template<typename O>
         constexpr operator Vector2<O>() const
 		{
-			return { static_cast<O>(x), static_cast<O>(y) };
+			return { O(x), O(y) };
 		}
 
         constexpr operator Complex<T>() const
@@ -51,7 +48,6 @@ namespace kl {
 			return { x, y };
 		}
 
-        // Compare
         constexpr bool operator==(const Vector2<T>& other) const
 		{
 			return x == other.x && y == other.y;
@@ -62,7 +58,6 @@ namespace kl {
 			return !(*this == other);
 		}
 
-        // Math
 		constexpr Vector2<T> operator+(const Vector2<T>& other) const
 		{
 			return { x + other.x, y + other.y };
@@ -129,7 +124,6 @@ namespace kl {
 			y /= other.y;
 		}
 
-        // Other
 		constexpr Vector2<T> operator-() const
 		{
 			return { -x, -y };
@@ -140,7 +134,6 @@ namespace kl {
 			return (T) std::sqrt(x * x + y * y);
 		}
 
-		// 2D Index
 		constexpr T to_index(T width) const
 		{
 			return x + y * width;

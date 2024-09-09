@@ -7,36 +7,35 @@ namespace kl {
     template<typename T = float>
     consteval T pi() noexcept
     {
-        return static_cast<T>(3.1415926535897932385);
+        return T(3.1415926535897932385);
     }
 
     template<typename T = float>
     consteval T to_radians() noexcept
     {
-        return static_cast<T>(pi<double>() / 180.0);
+        return T(pi<double>() / 180.0);
     }
 
     template<typename T = float>
     consteval T to_degrees() noexcept
     {
-        return static_cast<T>(180.0 / pi<double>());
+        return T(180.0 / pi<double>());
     }
 
     template<typename T = float>
     consteval T to_float_rgb() noexcept
     {
-        return static_cast<T>(1.0 / 255.0);
+        return T(1.0 / 255.0);
     }
 
     template<typename T = float>
     consteval T to_byte_rgb() noexcept
     {
-        return static_cast<T>(255.0 / 1.0);
+        return T(255.0 / 1.0);
     }
 }
 
 namespace kl {
-    // Radian trigonometry
 	template<typename T>
 	constexpr T sin(T angle_in_rad) noexcept
 	{
@@ -73,7 +72,6 @@ namespace kl {
 		return (T) std::atan(value);
 	}
 
-    // Degree trigonometry
     template<typename T>
     constexpr T sin_d(T angle_in_deg) noexcept
     {
@@ -110,7 +108,6 @@ namespace kl {
         return atan(value) * to_degrees<T>();
     }
 
-    // Clamp
     template<typename T>
     constexpr T abs(T object) noexcept
     {
@@ -158,7 +155,6 @@ namespace kl {
         return value;
     }
 
-    // Apply
     template<int Count, typename T>
     constexpr T apply(const auto& func, const T& object)
     {

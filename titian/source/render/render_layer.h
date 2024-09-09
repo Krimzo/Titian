@@ -12,9 +12,8 @@
 
 
 namespace titian {
-	class RenderLayer : public Layer
+	struct RenderLayer : Layer
 	{
-	public:
 		Vector<Ref<RenderPass>> passes;
 		
 		Ref<RasterStates> raster_states;

@@ -69,7 +69,6 @@ void titian::GUISectionMaterialEditor::render_gui()
 
 void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* scene)
 {
-    // New material
     if (im::BeginPopupContextWindow("NewMaterial", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Material");
 
@@ -83,8 +82,6 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
         }
         im::EndPopup();
     }
-
-    // Materials
     const String filter = gui_input_continuous("Search###MeterialEditor");
     for (auto& [material_name, material] : scene->materials) {
         if (!filter.empty() && material_name.find(filter) == -1) {
@@ -141,12 +138,10 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
 
 void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl::GPU* gpu, Material* material, const Int2 viewport_size)
 {
-    // Don't render if the viewport is too small
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
         return;
     }
 
-    // Bind camera
     camera->update_aspect_ratio(viewport_size);
     Camera* scene_camera = scene->get_casted<Camera>(scene->main_camera_name);
     if (!scene_camera) {
@@ -157,7 +152,6 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     RenderLayer* render_layer = Layers::get<RenderLayer>();
     GameLayer* game_layer = Layers::get<GameLayer>();
 
-    // Create render texture if needed
     if (render_texture->resolution() != viewport_size) {
         render_texture->graphics_buffer = gpu->create_target_texture(viewport_size);
         render_texture->create_target_view(nullptr);
@@ -177,21 +171,17 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         depth_texture->create_depth_view(nullptr);
     }
 
-    // Bind render target
     gpu->bind_target_depth_view(render_texture->target_view, depth_texture->depth_view);
     gpu->clear_target_view(render_texture->target_view, camera->background);
     gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
 
-    // Set viewport
     const Int2 old_viewport_size = gpu->viewport_size();
     gpu->set_viewport_size(viewport_size);
 
-    // Bind states
     gpu->bind_raster_state(render_layer->raster_states->solid);
     gpu->bind_depth_state(material->is_transparent() ? render_layer->depth_states->only_compare : render_layer->depth_states->enabled);
     gpu->bind_blend_state(render_layer->blend_states->enabled);
 
-    // Set global constants
     struct GLOBAL_CB
     {
         float ELAPSED_TIME{};
@@ -244,7 +234,6 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
     global_cb.W = {};
     global_cb.VP = camera->camera_matrix();
 
-    // Bind textures
     Texture* skybox_texture = scene->helper_get_texture(scene_camera->skybox_name);
     if (skybox_texture) {
         gpu->bind_shader_view_for_pixel_shader(skybox_texture->shader_view, 0);
@@ -279,9 +268,8 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         global_cb.HAS_ROUGHNESS_MAP = 0.0f;
     }
 
-    // Set global constants
     global_cb.CAMERA_POSITION = camera->position();
-    global_cb.CAMERA_HAS_SKYBOX = static_cast<float>(static_cast<bool>(skybox_texture));
+    global_cb.CAMERA_HAS_SKYBOX = float(bool(skybox_texture));
     global_cb.CAMERA_BACKGROUND = camera->background;
 
     global_cb.AMBIENT_COLOR = Float3{ 1.0f };
@@ -313,11 +301,9 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         DefaultMeshes* default_meshes = &game_layer->scene->default_meshes;
         Mesh* material_mesh = &default_meshes->sphere;
 
-        /* NOTE: shaders expect a bound target at index 1 (entity indices), we can discard these here */
         gpu->draw(material_mesh->graphics_buffer, material_mesh->casted_topology(), sizeof(Vertex));
     }
 
-    // Restore
     gpu->bind_internal_views();
     gpu->set_viewport_size(old_viewport_size);
 }

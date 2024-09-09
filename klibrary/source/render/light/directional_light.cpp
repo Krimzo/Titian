@@ -58,7 +58,6 @@ kl::Float4x4 kl::DirectionalLight::matrix(Camera camera, const UINT cascade_inde
     camera.far_plane = lerp(CASCADE_SPLITS[cascade_index + 1], old_camera_planes.x, old_camera_planes.y);
     const Float4x4 inverse_camera_matrix = inverse(camera.matrix());
 
-    // Calculate 8 corners in world-space
     Float4 frustum_corners[8] = {
         inverse_camera_matrix * Float4(-1, -1, -1, 1),
         inverse_camera_matrix * Float4( 1, -1, -1, 1),
@@ -75,13 +74,11 @@ kl::Float4x4 kl::DirectionalLight::matrix(Camera camera, const UINT cascade_inde
         corner *= (1.0f / corner.w);
     }
 
-    // Convert corners to temp light-view-space
     const Float4x4 temp_light_view_matrix = Float4x4::look_at({}, m_direction, { 0, 1, 0 });
     for (auto& corner : frustum_corners) {
         corner = temp_light_view_matrix * corner;
     }
 
-    // Find min-max x and y in light-space
     Float2 min_xy = { std::numeric_limits<float>::infinity(),  std::numeric_limits<float>::infinity() };
     Float2 max_xy = { -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
     float min_z = std::numeric_limits<float>::infinity();
@@ -95,14 +92,12 @@ kl::Float4x4 kl::DirectionalLight::matrix(Camera camera, const UINT cascade_inde
         min_z = min(min_z, corner.z);
     }
 
-    // Find center of near plane in light-space
     Float3 light_position = {
         (min_xy.x + max_xy.x) * 0.5f,
         (min_xy.y + max_xy.y) * 0.5f,
         min_z
     };
 
-    // Convert temp light-space to world-space
     const Float4x4 temp_light_view_matrix_inverse = inverse(temp_light_view_matrix);
     const Float4 new_light_pos = temp_light_view_matrix_inverse * Float4(light_position.x, light_position.y, light_position.z, 1.0f);
     light_position = { new_light_pos.x, new_light_pos.y, new_light_pos.z };
@@ -110,13 +105,11 @@ kl::Float4x4 kl::DirectionalLight::matrix(Camera camera, const UINT cascade_inde
         corner = temp_light_view_matrix_inverse * corner;
     }
 
-    // Convert corners to proper light-view-space
     const Float4x4 light_view_matrix = Float4x4::look_at(light_position, light_position + m_direction, { 0, 1, 0 });
     for (auto& corner : frustum_corners) {
         corner = light_view_matrix * corner;
     }
 
-    // Find proper coordinates of frustum in light-space
     Float3 max_xyz { -std::numeric_limits<float>::infinity() };
     for (const auto& corner : frustum_corners) {
         max_xyz.x = max(max_xyz.x, corner.x);
@@ -124,12 +117,10 @@ kl::Float4x4 kl::DirectionalLight::matrix(Camera camera, const UINT cascade_inde
         max_xyz.z = max(max_xyz.z, corner.z);
     }
 
-    // Calculate final orthographic projection
     const Float4x4 light_projection_matrix = Float4x4::orthographic(
         -max_xyz.x, max_xyz.x,
         -max_xyz.x, max_xyz.x,
         -max_xyz.z, max_xyz.z
     );
-
     return light_projection_matrix * light_view_matrix;
 }

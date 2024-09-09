@@ -111,32 +111,26 @@ void titian::Mesh::load(const Vector<kl::Vertex<float>>& vertices)
 
 void titian::Mesh::reload()
 {
-    // Empty check
     if (data_buffer.empty()) {
         return;
     }
 
-    // Graphics
     graphics_buffer = m_gpu->create_vertex_buffer(data_buffer.data(), (UINT) (data_buffer.size() * sizeof(Vertex)));
 
-    // Physics
     free_physics_buffer();
-
     px::PxTriangleMeshDesc mesh_descriptor = {};
-    mesh_descriptor.points.stride = static_cast<px::PxU32>(sizeof(Vertex));
-    mesh_descriptor.points.count = static_cast<px::PxU32>(data_buffer.size() / 3 * 3);
+    mesh_descriptor.points.stride = px::PxU32(sizeof(Vertex));
+    mesh_descriptor.points.count = px::PxU32(data_buffer.size() / 3 * 3);
     mesh_descriptor.points.data = data_buffer.data();
-
     px::PxDefaultMemoryOutputStream cook_buffer = {};
     m_cooking->cookTriangleMesh(mesh_descriptor, cook_buffer);
-
     px::PxDefaultMemoryInputData cooked_buffer(cook_buffer.getData(), cook_buffer.getSize());
     physics_buffer = m_physics->createTriangleMesh(cooked_buffer);
 }
 
 D3D_PRIMITIVE_TOPOLOGY titian::Mesh::casted_topology() const
 {
-    return static_cast<D3D_PRIMITIVE_TOPOLOGY>(topology);
+    return D3D_PRIMITIVE_TOPOLOGY(topology);
 }
 
 void titian::Mesh::free_physics_buffer()

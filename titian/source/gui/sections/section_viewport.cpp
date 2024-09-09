@@ -36,7 +36,6 @@ void titian::GUISectionViewport::render_gui()
             im::Image(nullptr, content_region);
         }
 
-        // Scene loading
         if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
             if (classify_file(file.value()) == FileType::BINARY_SCENE) {
                 if (const BinarySerializer serializer{ file.value(), false }) {
@@ -58,7 +57,6 @@ void titian::GUISectionViewport::render_gui()
             }
         }
 
-        // Handle entity picking
         const ImVec2 viewport_max = im::GetWindowPos() + im::GetWindowSize();
         if (im::IsWindowFocused() && im::IsMouseHoveringRect(im::GetWindowPos(), viewport_max)) {
             if (im::IsKeyPressed(ImGuiKey_Delete)) {
@@ -131,7 +129,6 @@ void titian::GUISectionViewport::render_gui()
             }
         }
 
-        // Handle gizmos
         if (im::IsWindowFocused()) {
             handle_gizmo_operation_change(ImGuizmo::OPERATION::SCALE, ImGuiKey_1);
             handle_gizmo_operation_change(ImGuizmo::OPERATION::ROTATE, ImGuiKey_2);
@@ -161,8 +158,8 @@ titian::Int2 titian::GUISectionViewport::window_mouse_position()
     const ImVec2 window_position = im::GetWindowPos();
     const ImVec2 mouse_position = im::GetMousePos();
     return {
-        static_cast<int>(mouse_position.x - window_position.x - 0.0f),
-        static_cast<int>(mouse_position.y - window_position.y - tab_size),
+        int(mouse_position.x - window_position.x - 0.0f),
+        int(mouse_position.y - window_position.y - tab_size),
     };
 }
 
@@ -198,7 +195,7 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_entity_ids(const Int2& fi
 
     Set<uint32_t> results;
     for (float value : values) {
-        results.insert(static_cast<uint32_t>(value));
+        results.insert(uint32_t(value));
     }
     return results;
 }
@@ -274,7 +271,7 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
         for (Entity* entity : entities) {
             collective_center += entity->position();
         }
-        collective_center /= static_cast<float>(entities.size());
+        collective_center /= float(entities.size());
         transform_matrix = kl::transpose(Float4x4::translation(collective_center));
     }
 

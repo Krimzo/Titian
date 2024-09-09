@@ -12,9 +12,8 @@ namespace titian {
 }
 
 namespace titian {
-	class InterpScript : public Script
+	struct InterpScript : Script
 	{
-	public:
 		String source;
 
 		InterpScript();

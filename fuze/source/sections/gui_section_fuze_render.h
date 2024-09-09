@@ -5,9 +5,8 @@
 
 
 namespace titian {
-    class GUISectionFuzeRender : public GUISection
+    struct GUISectionFuzeRender : GUISection
     {
-    public:
         Int2 video_resolution = { 1920, 1080 };
         int video_fps = 60;
         int video_bitrate = 10'000'000;

@@ -5,7 +5,7 @@
 
 
 namespace titian {
-    enum class FileType : int32_t
+    enum struct FileType : int32_t
     {
         DEFAULT = 0,
         MESH,

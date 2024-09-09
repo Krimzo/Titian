@@ -1,11 +1,8 @@
 #pragma once
 
-// input
 #include "window/input/key.h"
 #include "window/input/keyboard.h"
 #include "window/input/mouse.h"
-
-// hooks
 #include "window/hooks/keyboard_hook.h"
 #include "window/hooks/mouse_hook.h"
 
@@ -18,36 +15,17 @@ namespace kl::screen {
 }
 
 namespace kl {
-    class Window : NoCopy
+    struct Window : NoCopy
     {
-        std::string m_name = {};
+        Keyboard keyboard;
+        Mouse mouse;
 
-        HINSTANCE m_instance = nullptr;
-        HWND m_window = nullptr;
-        HDC m_device_context = nullptr;
+        std::vector<std::function<void(Int2)>> on_resize;
+		std::vector<std::function<void(Int2)>> on_move;
 
-        WINDOWPLACEMENT m_placement = {};
-        LONG m_window_ex_style = NULL;
-        LONG m_window_style = NULL;
-        bool m_resizeable = true;
-        bool m_in_fullscreen = false;
-
-        // System
-        LRESULT CALLBACK window_procedure(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param) const;
-        void handle_message(const MSG& message);
-
-    public:
-        std::vector<std::function<void(Int2)>> on_resize = {};
-		std::vector<std::function<void(Int2)>> on_move = {};
-
-        Keyboard keyboard = {};
-        Mouse mouse = {};
-
-        // Creation
         Window(const std::string_view& name, const Int2& size);
         virtual ~Window();
 
-        // Methods
         operator HWND() const;
 
         bool process();
@@ -100,5 +78,21 @@ namespace kl {
 
         void set_dark_mode(bool enabled) const;
         void notify() const;
+
+    private:
+        std::string m_name;
+
+        HINSTANCE m_instance = nullptr;
+        HWND m_window = nullptr;
+        HDC m_device_context = nullptr;
+
+        WINDOWPLACEMENT m_placement = {};
+        LONG m_window_ex_style = NULL;
+        LONG m_window_style = NULL;
+        bool m_resizeable = true;
+        bool m_in_fullscreen = false;
+
+        LRESULT CALLBACK window_procedure(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param) const;
+        void handle_message(const MSG& message);
     };
 }

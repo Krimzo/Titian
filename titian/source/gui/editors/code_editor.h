@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class CodeEditor
+	struct CodeEditor
 	{
-	public:
 		CodeEditor();
 
 		void load(const StringView& source);

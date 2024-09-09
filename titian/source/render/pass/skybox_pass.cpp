@@ -15,7 +15,6 @@ void titian::SkyboxPass::state_package(StatePackage* package)
 
 void titian::SkyboxPass::render_self(StatePackage* package)
 {
-    // prepare
     RenderLayer* render_layer = Layers::get<RenderLayer>();
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
@@ -24,7 +23,6 @@ void titian::SkyboxPass::render_self(StatePackage* package)
     if (!skybox)
         return;
 
-    // render
     struct VS_CB
     {
         Float4x4 VP;

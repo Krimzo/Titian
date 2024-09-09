@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class SandboxPieceSkybox : public SandboxPiece
+	struct SandboxPieceSkybox : SandboxPiece
 	{
-	public:
 		SandboxPieceSkybox(TitianEditor* editor);
 
 		void setup_self() override;

@@ -5,9 +5,8 @@
 
 
 namespace titian {
-	class AudioEffect : kl::NoCopy
+	struct AudioEffect : kl::NoCopy
 	{
-	public:
 		AudioEffect();
 		virtual ~AudioEffect();
 

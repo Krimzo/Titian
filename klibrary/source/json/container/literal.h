@@ -4,9 +4,8 @@
 
 
 namespace kl::json {
-	class Literal : public Container
+	struct Literal : Container
 	{
-	public:
 		Literal();
 		Literal(const std::string_view& data);
 

@@ -4,9 +4,8 @@
 
 
 namespace titian {
-    class Entity : kl::NoCopy, public Serializable
+    struct Entity : kl::NoCopy, Serializable
     {
-    public:
         Float3 scale{ 1.0f };
         bool casts_shadows = true;
 
@@ -14,26 +13,22 @@ namespace titian {
         String material_name = "/";
         String collider_mesh_name = "/";
 
-        // Creation
         Entity(px::PxPhysics* physics, bool dynamic);
         ~Entity() override;
 
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;
 
-        // Get
         px::PxRigidActor* actor() const;
         Float4x4 model_matrix() const;
         Float4x4 collider_matrix() const;
 
-        // Geometry
         void set_rotation(const Float3& rotation);
         Float3 rotation() const;
 
         void set_position(const Float3& position);
         Float3 position() const;
 
-        // Physics
         void set_dynamic(bool enabled);
         bool is_dynamic() const;
 
@@ -49,7 +44,6 @@ namespace titian {
         void set_angular(const Float3& angular);
         Float3 angular() const;
 
-        // Collision
         void set_collider(const Ref<Collider>& collider);
         Ref<Collider> collider() const;
 

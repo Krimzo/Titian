@@ -6,9 +6,8 @@
 
 
 namespace titian {
-    class GUISectionMaterialEditor : public GUISection
+    struct GUISectionMaterialEditor : GUISection
     {
-    public:
         Ref<Camera> camera = nullptr;
         Ref<Texture> render_texture = nullptr;
         Ref<Texture> depth_texture = nullptr;

@@ -21,5 +21,5 @@ void titian::PointLight::deserialize(const Serializer* serializer, const void* h
 
 titian::Float3 titian::PointLight::light_at_point(const Float3& point) const
 {
-	return color; // Change later
+	return color;
 }

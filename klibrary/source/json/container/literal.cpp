@@ -89,7 +89,7 @@ std::optional<double> kl::json::Literal::get_double() const
 std::optional<float> kl::json::Literal::get_float() const
 {
     if (std::optional value = get_double()) {
-        return static_cast<float>(value.value());
+        return float(value.value());
     }
     return std::nullopt;
 }
@@ -97,7 +97,7 @@ std::optional<float> kl::json::Literal::get_float() const
 std::optional<int64_t> kl::json::Literal::get_long() const
 {
     if (std::optional value = get_double()) {
-        return static_cast<int64_t>(value.value());
+        return int64_t(value.value());
     }
     return std::nullopt;
 }
@@ -105,7 +105,7 @@ std::optional<int64_t> kl::json::Literal::get_long() const
 std::optional<int32_t> kl::json::Literal::get_int() const
 {
     if (std::optional value = get_double()) {
-        return static_cast<int32_t>(value.value());
+        return int32_t(value.value());
     }
     return std::nullopt;
 }
@@ -113,7 +113,7 @@ std::optional<int32_t> kl::json::Literal::get_int() const
 std::optional<int16_t> kl::json::Literal::get_short() const
 {
     if (std::optional value = get_double()) {
-        return static_cast<int16_t>(value.value());
+        return int16_t(value.value());
     }
     return std::nullopt;
 }
@@ -121,7 +121,7 @@ std::optional<int16_t> kl::json::Literal::get_short() const
 std::optional<uint8_t> kl::json::Literal::get_byte() const
 {
     if (std::optional value = get_double()) {
-        return static_cast<uint8_t>(value.value());
+        return uint8_t(value.value());
     }
     return std::nullopt;
 }

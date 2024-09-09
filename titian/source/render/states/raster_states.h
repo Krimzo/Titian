@@ -4,9 +4,8 @@
 
 
 namespace titian {
-    class RasterStates
+    struct RasterStates
     {
-    public:
         dx::RasterState wireframe;
         dx::RasterState solid_cull;
         dx::RasterState solid;

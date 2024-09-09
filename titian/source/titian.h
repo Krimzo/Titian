@@ -6,7 +6,7 @@
 
 
 namespace titian {
-	enum class EntryType
+	enum struct EntryType : int32_t
 	{
 		GAME = 0,
 		GAME_EDITOR = 1,

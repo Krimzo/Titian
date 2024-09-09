@@ -16,7 +16,6 @@ void titian::PostPass::state_package(StatePackage* package)
 
 void titian::PostPass::render_self(StatePackage* package)
 {
-    // prepare
     RenderLayer* render_layer = Layers::get<RenderLayer>();
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
@@ -28,7 +27,6 @@ void titian::PostPass::render_self(StatePackage* package)
         }
     }
 
-    // render
     struct PS_CB
     {
         Float2 FRAME_SIZE;
@@ -52,7 +50,6 @@ void titian::PostPass::render_self(StatePackage* package)
 	gpu->draw(render_layer->screen_mesh);
     bench_add_draw_call();
 
-    // finalize
     for (int i = 0; i < 3; i++) {
         gpu->unbind_shader_view_for_pixel_shader(i);
     }

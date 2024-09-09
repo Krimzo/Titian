@@ -4,7 +4,7 @@
 titian::DirectionalLight::DirectionalLight(px::PxPhysics* physics, const bool dynamic, kl::GPU* gpu)
     : Light(physics, dynamic), m_gpu(gpu)
 {
-    set_resolution(2500); // default resolution
+    set_resolution(2500);
 }
 
 void titian::DirectionalLight::serialize(Serializer* serializer, const void* helper_data) const
@@ -35,7 +35,7 @@ void titian::DirectionalLight::deserialize(const Serializer* serializer, const v
 
 titian::Float3 titian::DirectionalLight::light_at_point(const Float3& point) const
 {
-    return color; // Change later
+    return color;
 }
 
 void titian::DirectionalLight::set_resolution(const int resolution)
@@ -103,7 +103,6 @@ titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const in
     camera->near_plane = old_camera_planes.x;
     camera->far_plane = old_camera_planes.y;
 
-    // Calculate 8 corners in world-space
     Float4 frustum_corners[8] = {
         inverse_camera_matrix * Float4(-1, -1, -1, 1),
         inverse_camera_matrix * Float4( 1, -1, -1, 1),
@@ -120,13 +119,11 @@ titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const in
         corner *= (1.0f / corner.w);
     }
 
-    // Convert corners to temp light-view-space
     const Float4x4 temp_light_view_matrix = Float4x4::look_at({}, m_direction, { 0, 1, 0 });
     for (auto& corner : frustum_corners) {
         corner = temp_light_view_matrix * corner;
     }
 
-    // Find min-max x and y in light-space
     Float2 min_xy = { std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity() };
     Float2 max_xy = { -std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
     float min_z = std::numeric_limits<float>::infinity();
@@ -140,14 +137,12 @@ titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const in
         min_z = kl::min(min_z, corner.z);
     }
 
-    // Find center of near plane in light-space
     Float3 light_position = {
         (min_xy.x + max_xy.x) * 0.5f,
         (min_xy.y + max_xy.y) * 0.5f,
         min_z
     };
 
-    // Convert temp light-space to world-space
     const Float4x4 temp_light_view_matrix_inverse = inverse(temp_light_view_matrix);
     const Float4 new_light_pos = temp_light_view_matrix_inverse * Float4(light_position.x, light_position.y, light_position.z, 1.0f);
     light_position = { new_light_pos.x, new_light_pos.y, new_light_pos.z };
@@ -155,13 +150,11 @@ titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const in
         corner = temp_light_view_matrix_inverse * corner;
     }
 
-    // Convert corners to proper light-view-space
     const Float4x4 light_view_matrix = Float4x4::look_at(light_position, light_position + m_direction, { 0, 1, 0 });
     for (auto& corner : frustum_corners) {
         corner = light_view_matrix * corner;
     }
 
-    // Find proper coordinates of frustum in light-space
     Float3 max_xyz{ -std::numeric_limits<float>::infinity() };
     for (const auto& corner : frustum_corners) {
         max_xyz.x = std::max(max_xyz.x, corner.x);
@@ -169,7 +162,6 @@ titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const in
         max_xyz.z = std::max(max_xyz.z, corner.z);
     }
 
-    // Calculate final orthographic projection
     const Float4x4 light_projection_matrix = Float4x4::orthographic(
         -max_xyz.x, max_xyz.x,
         -max_xyz.x, max_xyz.x,

@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class WorkQueue
+	struct WorkQueue
 	{
-	public:
 		WorkQueue() = default;
 
 		void add_task(auto&& task)

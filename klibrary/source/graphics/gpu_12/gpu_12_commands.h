@@ -4,9 +4,8 @@
 
 
 namespace kl {
-	class GPU12Commands
+	struct GPU12Commands
 	{
-	public:
 		dx12::CommandAllocator allocator{};
 		dx12::CommandList list{};
 
@@ -33,5 +32,8 @@ namespace kl {
 
 		void set_render_target(const dx12::DescriptorHandle* render_target, const dx12::DescriptorHandle* depth_target) const;
 		void draw(UINT vertex_count, UINT instance_count = 1) const;
+
+		void update_tlas(const dx12::AccelerationStructure& tlas, const dx12::AccelerationStructure& tlas_update_scratch, const dx12::Resource& instances) const;
+		void dispatch_rays(D3D12_GPU_VIRTUAL_ADDRESS shader_address, UINT width, UINT height) const;
 	};
 }

@@ -6,37 +6,27 @@
 #include "graphics/shaders/shader_compiler.h"
 
 
-namespace kl {
-	class GPU12 : NoCopy, public ShaderCompiler
+namespace kl::dx12 {
+	template<D3D12_PIPELINE_STATE_SUBOBJECT_TYPE Type, typename Value>
+	struct alignas(void*) SubobjectPair
 	{
-	public:
+		const D3D12_PIPELINE_STATE_SUBOBJECT_TYPE type = Type;
+		const Value value;
+		SubobjectPair(const Value value) : value(value) {}
+	};
+}
+
+namespace kl {
+	struct GPU12 : NoCopy, ShaderCompiler
+	{
 		static constexpr UINT BACK_BUFFER_COUNT = 2;
 
-		struct DefaultRaserizationPipeline
-		{
-			CD3DX12_PIPELINE_STATE_STREAM_ROOT_SIGNATURE root_signature{};
-			CD3DX12_PIPELINE_STATE_STREAM_INPUT_LAYOUT input_layout{};
-			CD3DX12_PIPELINE_STATE_STREAM_PRIMITIVE_TOPOLOGY primitive_topology{};
-			CD3DX12_PIPELINE_STATE_STREAM_VS vertex_shader{};
-			CD3DX12_PIPELINE_STATE_STREAM_PS pixel_shader{};
-			CD3DX12_PIPELINE_STATE_STREAM_RENDER_TARGET_FORMATS render_target_formats{};
-		};
-
-	private:
-		dx12::Device m_device{};
-		dx12::DXGIFactory m_dxgi_factor{};
-		dx12::SwapChain m_swap_chain{};
-
-		dx12::Resource m_back_buffers[BACK_BUFFER_COUNT] = {};
-		dx12::DescriptorHeap m_rtv_descriptor_heap{};
-		UINT m_rtv_descriptor_size{};
-
-	public:
 		GPU12Queue queue{};
 		GPU12Commands commands{};
 		GPU12Fence fence{};
 
 		GPU12(HWND window, bool debug = false);
+		~GPU12();
 
 		dx12::Device device() const;
 		dx12::SwapChain chain() const;
@@ -56,10 +46,8 @@ namespace kl {
 		dx12::CommandList create_command_list(const dx12::CommandAllocator& command_allocator) const;
 		dx12::Fence create_fence() const;
 
-		void reset();
-		void execute();
-		void wait();
-		void execute_and_wait();
+		void execute(const std::function<void()>& func);
+		void await();
 
 		void resize(const kl::Int2& size);
 		dx12::Resource get_back_buffer(UINT index) const;
@@ -83,24 +71,24 @@ namespace kl {
 		dx12::Resource create_buffer(const void* data, UINT byte_size, D3D12_RESOURCE_STATES final_state = D3D12_RESOURCE_STATE_COMMON);
 
 		template<typename T>
-		dx12::VertexBuffer create_vertex_buffer(const dx12::Resource& resource, const UINT vertex_count) const
+		dx12::VertexBuffer create_vertex_buffer(const dx12::Resource& resource) const
 		{
 			dx12::VertexBuffer vertex_buffer{};
 			vertex_buffer.BufferLocation = resource->GetGPUVirtualAddress();
-			vertex_buffer.SizeInBytes = vertex_count * sizeof(T);
-			vertex_buffer.StrideInBytes = sizeof(T);
+			vertex_buffer.SizeInBytes = (UINT) resource->GetDesc().Width;
+			vertex_buffer.StrideInBytes = (UINT) sizeof(T);
 			return vertex_buffer;
 		}
 
 		template<typename T>
 		std::pair<dx12::Resource, dx12::VertexBuffer> create_vertex_buffer(const T* vertices, const UINT vertex_count)
 		{
-			const dx12::Resource vertex_buffer = create_buffer(vertices, static_cast<UINT>(vertex_count * sizeof(T)));
-			const dx12::VertexBuffer vertex_buffer_view = create_vertex_buffer<T>(vertex_buffer, vertex_count);
+			const dx12::Resource vertex_buffer = create_buffer(vertices, UINT(vertex_count * sizeof(T)));
+			const dx12::VertexBuffer vertex_buffer_view = create_vertex_buffer<T>(vertex_buffer);
 			return { vertex_buffer, vertex_buffer_view };
 		}
 
-		void copy(dx12::Resource& destination, const void* source, UINT byte_size) const;
+		void copy(const dx12::Resource& destination, const void* source, UINT byte_size) const;
 		void copy(void* destination, const dx12::Resource& source, UINT byte_size) const;
 
 		dx12::RootSignature create_root_signature(
@@ -113,24 +101,19 @@ namespace kl {
 		dx12::PipelineState create_pipeline_state(T* pipeline_state_desc) const
 		{
 			const D3D12_PIPELINE_STATE_STREAM_DESC descriptor{
-				.SizeInBytes{ sizeof(T) },
-				.pPipelineStateSubobjectStream{ pipeline_state_desc },
+				.SizeInBytes = (SIZE_T) sizeof(T),
+				.pPipelineStateSubobjectStream = (void*) pipeline_state_desc,
 			};
-
 			dx12::PipelineState pipeline_state{};
 			m_device->CreatePipelineState(&descriptor, IID_PPV_ARGS(&pipeline_state)) >> verify_result;
 			return pipeline_state;
 		}
 
-		// Raytracing
 		dx12::AccelerationStructure create_acceleration_structure(const dx12::AccelerationInputs& inputs, UINT64* update_scratch_size = nullptr);
-		dx12::AccelerationStructure create_tlas(const dx12::Resource& instances, UINT instance_count, UINT64* update_scratch_size = nullptr);
 		dx12::AccelerationStructure create_blas(const D3D12_RAYTRACING_GEOMETRY_DESC* geometry_descriptor, UINT64* update_scratch_size = nullptr);
-		dx12::AccelerationStructure create_triangle_blas(const dx12::Resource& vertex_buffer, const dx12::Resource& index_buffer = {}, UINT vertex_stride = sizeof(kl::Vertex<float>), UINT index_stride = sizeof(uint16_t));
+		dx12::AccelerationStructure create_triangle_blas(const dx12::Resource& vertex_buffer, UINT vertex_stride = sizeof(kl::Vertex<float>));
+		dx12::AccelerationStructure create_tlas(const dx12::Resource& instances, UINT64* update_scratch_size = nullptr);
 
-		void dispatch_rays(D3D12_GPU_VIRTUAL_ADDRESS shader_address, UINT width, UINT height);
-
-		// Helpers
 		dx12::PipelineState create_default_rasterization_pipeline(
 			const kl::dx12::RootSignature& root_signature,
 			const std::string_view& shader_source,
@@ -149,5 +132,14 @@ namespace kl {
 			UINT max_attribute_size = sizeof(kl::Vertex<float>),
 			UINT max_payload_size = 16
 		) const;
+
+	private:
+		dx12::Device m_device{};
+		dx12::DXGIFactory m_dxgi_factory{};
+		dx12::SwapChain m_swap_chain{};
+
+		dx12::Resource m_back_buffers[BACK_BUFFER_COUNT] = {};
+		dx12::DescriptorHeap m_rtv_descriptor_heap{};
+		UINT m_rtv_descriptor_size{};
 	};
 }

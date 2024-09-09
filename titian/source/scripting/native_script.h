@@ -6,9 +6,8 @@
 
 
 namespace titian {
-	class NativeScript : public Script
+	struct NativeScript : Script
 	{
-	public:
 		template<typename Return, typename... Args>
 		using Function = Return(__stdcall*)(Args...);
 

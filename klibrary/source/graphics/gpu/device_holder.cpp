@@ -1,10 +1,6 @@
 #include "klibrary.h"
 
 
-kl::DeviceHolder::DeviceHolder()
-{}
-
-// States
 kl::dx::RasterState kl::DeviceHolder::create_raster_state(const dx::RasterStateDescriptor* descriptor) const
 {
     dx::RasterState state;
@@ -111,7 +107,6 @@ kl::dx::BlendState kl::DeviceHolder::create_blend_state(const bool transparency)
     return create_blend_state(&descriptor);
 }
 
-// Buffers
 kl::dx::Buffer kl::DeviceHolder::create_buffer(const dx::BufferDescriptor* descriptor, const dx::SubresourceDescriptor* subresource_data) const
 {
     dx::Buffer buffer;
@@ -205,14 +200,11 @@ kl::dx::Buffer kl::DeviceHolder::create_staging_buffer(const dx::Buffer& buffer,
     return create_buffer(&descriptor, nullptr);
 }
 
-// Meshes
 kl::dx::Buffer kl::DeviceHolder::create_plane_mesh(const float size, size_t num_of_points) const
 {
-    // Count fix
     const float increment = size / (float) num_of_points;
     num_of_points += 1;
 
-    // Generating points
     std::vector<Float2> points{};
     points.reserve(num_of_points * num_of_points);
     for (int x = 0; x < num_of_points; x++) {
@@ -224,7 +216,6 @@ kl::dx::Buffer kl::DeviceHolder::create_plane_mesh(const float size, size_t num_
         }
     }
 
-    // Generating triangles
     std::vector<Vertex<float>> vertices{};
     vertices.reserve((num_of_points - 1) * (num_of_points - 1) * 6);
     for (size_t x = 0; x < num_of_points - 1; x++) {
@@ -253,7 +244,6 @@ kl::dx::Buffer kl::DeviceHolder::create_screen_mesh() const
     });
 }
 
-// Textures
 kl::dx::Texture kl::DeviceHolder::create_texture(const dx::TextureDescriptor* descriptor, const dx::SubresourceDescriptor* subresource_data) const
 {
     dx::Texture texture;
@@ -349,7 +339,6 @@ kl::dx::Texture kl::DeviceHolder::create_target_texture(const kl::Int2& size) co
     return create_texture(&descriptor, nullptr);
 }
 
-// Views
 kl::dx::TargetView kl::DeviceHolder::create_target_view(const dx::Resource& resource, const dx::TargetViewDescriptor* descriptor) const
 {
     dx::TargetView view;
@@ -382,7 +371,6 @@ kl::dx::AccessView kl::DeviceHolder::create_access_view(const dx::Resource& reso
     return view;
 }
 
-// Shaders
 kl::dx::InputLayout kl::DeviceHolder::create_input_layout(const CompiledShader& compiled_shader, const std::vector<dx::LayoutDescriptor>& descriptors) const
 {
     static constexpr dx::LayoutDescriptor default_layout_descriptors[3] = {
@@ -395,7 +383,7 @@ kl::dx::InputLayout kl::DeviceHolder::create_input_layout(const CompiledShader& 
     const UINT descriptors_count = (!descriptors.empty()) ? ((UINT) descriptors.size()) : ((UINT) std::size(default_layout_descriptors));
 
     dx::InputLayout layout;
-    m_device->CreateInputLayout(descriptors_ptr, descriptors_count, compiled_shader.data_val(), compiled_shader.data_size(), &layout);
+    m_device->CreateInputLayout(descriptors_ptr, descriptors_count, compiled_shader.data_ptr(), compiled_shader.data_size(), &layout);
     verify(layout, "Failed to create input layout");
     return layout;
 }
@@ -403,7 +391,7 @@ kl::dx::InputLayout kl::DeviceHolder::create_input_layout(const CompiledShader& 
 kl::dx::VertexShader kl::DeviceHolder::create_vertex_shader(const CompiledShader& compiled_shader) const
 {
     dx::VertexShader shader;
-    m_device->CreateVertexShader(compiled_shader.data_val(), compiled_shader.data_size(), nullptr, &shader);
+    m_device->CreateVertexShader(compiled_shader.data_ptr(), compiled_shader.data_size(), nullptr, &shader);
     verify(shader, "Failed to create vertex shader");
     return shader;
 }
@@ -411,7 +399,7 @@ kl::dx::VertexShader kl::DeviceHolder::create_vertex_shader(const CompiledShader
 kl::dx::GeometryShader kl::DeviceHolder::create_geometry_shader(const CompiledShader& compiled_shader) const
 {
     dx::GeometryShader shader;
-    m_device->CreateGeometryShader(compiled_shader.data_val(), compiled_shader.data_size(), nullptr, &shader);
+    m_device->CreateGeometryShader(compiled_shader.data_ptr(), compiled_shader.data_size(), nullptr, &shader);
     verify(shader, "Failed to create geometry shader");
     return shader;
 }
@@ -419,7 +407,7 @@ kl::dx::GeometryShader kl::DeviceHolder::create_geometry_shader(const CompiledSh
 kl::dx::PixelShader kl::DeviceHolder::create_pixel_shader(const CompiledShader& compiled_shader) const
 {
     dx::PixelShader shader;
-    m_device->CreatePixelShader(compiled_shader.data_val(), compiled_shader.data_size(), nullptr, &shader);
+    m_device->CreatePixelShader(compiled_shader.data_ptr(), compiled_shader.data_size(), nullptr, &shader);
     verify(shader, "Failed to create pixel shader");
     return shader;
 }
@@ -427,7 +415,7 @@ kl::dx::PixelShader kl::DeviceHolder::create_pixel_shader(const CompiledShader& 
 kl::dx::ComputeShader kl::DeviceHolder::create_compute_shader(const CompiledShader& compiled_shader) const
 {
     dx::ComputeShader shader;
-    m_device->CreateComputeShader(compiled_shader.data_val(), compiled_shader.data_size(), nullptr, &shader);
+    m_device->CreateComputeShader(compiled_shader.data_ptr(), compiled_shader.data_size(), nullptr, &shader);
     verify(shader, "Failed to create compute shader");
     return shader;
 }

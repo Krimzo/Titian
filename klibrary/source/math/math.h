@@ -1,34 +1,22 @@
 #pragma once
 
-// Helper
 #include "math/helper/helper.h"
-
-// Imaginary
 #include "math/imaginary/complex.h"
 #include "math/imaginary/quaternion.h"
-
-// Vector
 #include "math/vector/vector2.h"
 #include "math/vector/vector3.h"
 #include "math/vector/vector4.h"
-
-// Matrix
 #include "math/matrix/matrix2x2.h"
 #include "math/matrix/matrix3x3.h"
 #include "math/matrix/matrix4x4.h"
-
-// Triangle
 #include "math/triangle/vertex.h"
 #include "math/triangle/triangle.h"
-
-// Ray
 #include "math/ray/plane.h"
 #include "math/ray/sphere.h"
 #include "math/ray/ray.h"
 
 
 namespace kl {
-    // Complex
     template<typename T>
     constexpr Complex<T> abs(const Complex<T>& num)
     {
@@ -63,7 +51,6 @@ namespace kl {
         return { num.r / sqr_sum, -num.i / sqr_sum };
     }
 
-    // Quaternion
     template<typename T>
     constexpr Quaternion<T> abs(const Quaternion<T>& num)
     {
@@ -94,7 +81,6 @@ namespace kl {
         return { num.w, -num.x, -num.y, -num.z };
     }
 
-    // Vector2
     template<typename T>
     constexpr Vector2<T> abs(const Vector2<T>& vec)
     {
@@ -157,7 +143,6 @@ namespace kl {
         return vec - (normalized * (vec * normalized) * T(2));
     }
 
-    // Vector3
     template<typename T>
     constexpr Vector3<T> abs(const Vector3<T>& vec)
     {
@@ -219,7 +204,6 @@ namespace kl {
         };
     }
 
-    // Vector4
     template<typename T>
     constexpr Vector4<T> abs(const Vector4<T>& vec)
     {
@@ -256,7 +240,6 @@ namespace kl {
         return acos_d(dot(normalize(first), normalize(second)));
     }
 
-    // Matrix2x2
     template<typename T>
     constexpr Matrix2x2<T> abs(const Matrix2x2<T>& mat)
     {
@@ -300,7 +283,6 @@ namespace kl {
         return result;
     }
 
-    // Matrix3x3
     template<typename T>
     constexpr Matrix3x3<T> abs(const Matrix3x3<T>& mat)
     {
@@ -349,7 +331,6 @@ namespace kl {
         return result;
     }
 
-    // Matrix4x4
     template<typename T>
     constexpr Matrix4x4<T> abs(const Matrix4x4<T>& mat)
     {
@@ -424,7 +405,6 @@ namespace kl {
         return result;
     }
 
-    // Coords
     template<typename T>
     constexpr Vector2<T> calc_ndc(const Vector2<T>& position, const Vector2<T>& frame_size)
     {
@@ -443,7 +423,6 @@ namespace kl {
         return result;
     }
 
-    // Lines
     template<typename T>
     constexpr T line_x(const Vector2<T>& a, const Vector2<T>& b, T y)
     {
@@ -456,7 +435,6 @@ namespace kl {
         return T(((b.y - a.y) * (x - a.x)) / (b.x - a.x) + a.y);
     }
 
-    // Rotation
     template<typename T>
     constexpr Quaternion<T> to_quaternion(const Vector3<T>& euler)
     {

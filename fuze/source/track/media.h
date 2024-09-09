@@ -5,7 +5,7 @@
 
 
 namespace titian {
-	enum class MediaType
+	enum struct MediaType : int32_t
 	{
 		IMAGE = 0,
 		AUDIO = 1,
@@ -14,9 +14,8 @@ namespace titian {
 }
 
 namespace titian {
-	class Media : kl::NoCopy
+	struct Media : kl::NoCopy
 	{
-	public:
 		String name;
 		MediaType type = MediaType::IMAGE;
 		float duration = 0.0f;

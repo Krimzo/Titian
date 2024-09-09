@@ -1,7 +1,6 @@
 #include "klibrary.h"
 
 
-// Compilation
 kl::CompiledShader kl::ShaderCompiler::compile(const std::string_view& name, const std::string_view& version, const std::string_view& source) const
 {
     CompiledShader compiled_shader{};
@@ -10,7 +9,6 @@ kl::CompiledShader kl::ShaderCompiler::compile(const std::string_view& name, con
     return compiled_shader;
 }
 
-// Predefined compilation
 kl::CompiledShader kl::ShaderCompiler::compile_vertex_shader(const std::string_view& source) const
 {
     return compile("v_shader", "vs_5_0", source);

@@ -46,7 +46,7 @@ bool kl::time::sleep(const float seconds)
     }
 
     static const time_t frequency = cpu_frequency();
-    const time_t to_sleep = -static_cast<time_t>(seconds * frequency);
+    const time_t to_sleep = -time_t(seconds * frequency);
     if (!SetWaitableTimer(timer, reinterpret_cast<const LARGE_INTEGER*>(&to_sleep), 0, nullptr, nullptr, false)) {
         CloseHandle(timer);
         return false;

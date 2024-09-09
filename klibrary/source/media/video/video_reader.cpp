@@ -3,7 +3,6 @@
 
 using kl::ComRef;
 
-// Utility
 static void configure_reader(const ComRef<IMFSourceReader>& reader, const kl::Int2& size)
 {
     ComRef<IMFMediaType> media_type;
@@ -77,10 +76,8 @@ static float video_fps(const ComRef<IMFSourceReader>& reader)
     return (float) attribute1 / (float) attribute2;
 }
 
-// Video reader
 kl::VideoReader::VideoReader(const std::string_view& filepath, const Int2& output_size, const bool use_gpu)
 {
-    // Init
     ComRef<IMFAttributes> attributes;
     MFCreateAttributes(&attributes, 0) >> verify_result;
 
@@ -104,7 +101,6 @@ kl::VideoReader::VideoReader(const std::string_view& filepath, const Int2& outpu
     MFCreateSourceReaderFromURL(converted_path.data(), attributes.get(), &m_reader) >> verify_result;
     configure_reader(m_reader, output_size);
 
-    // Getting info
     m_byte_size = video_byte_size(m_reader);
     m_duration = video_duration_100ns(m_reader);
 

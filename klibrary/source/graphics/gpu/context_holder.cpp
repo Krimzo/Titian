@@ -1,18 +1,14 @@
 #include "klibrary.h"
 
 
-kl::ContextHolder::ContextHolder()
-{}
-
-// Viewport
 void kl::ContextHolder::set_viewport_position(const Int2& position) const
 {
     UINT number_of_vps = 1;
     D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
 
-    viewport.TopLeftX = static_cast<float>(position.x);
-    viewport.TopLeftY = static_cast<float>(position.y);
+    viewport.TopLeftX = float(position.x);
+    viewport.TopLeftY = float(position.y);
     m_context->RSSetViewports(1, &viewport);
 }
 
@@ -22,8 +18,8 @@ kl::Int2 kl::ContextHolder::viewport_position() const
     D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
     return {
-        static_cast<int>(viewport.TopLeftX),
-        static_cast<int>(viewport.TopLeftY),
+        int(viewport.TopLeftX),
+        int(viewport.TopLeftY),
     };
 }
 
@@ -33,8 +29,8 @@ void kl::ContextHolder::set_viewport_size(const Int2& size) const
     D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
 
-    viewport.Width = static_cast<float>(size.x);
-    viewport.Height = static_cast<float>(size.y);
+    viewport.Width = float(size.x);
+    viewport.Height = float(size.y);
     m_context->RSSetViewports(1, &viewport);
 }
 
@@ -43,10 +39,7 @@ kl::Int2 kl::ContextHolder::viewport_size() const
     UINT number_of_vps = 1;
     D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
-    return {
-        static_cast<int>(viewport.Width),
-        static_cast<int>(viewport.Height),
-    };
+    return { int(viewport.Width), int(viewport.Height) };
 }
 
 void kl::ContextHolder::set_viewport_min_max(const Float2& min_max) const
@@ -68,7 +61,6 @@ kl::Float2 kl::ContextHolder::viewport_min_max() const
     return { viewport.MinDepth, viewport.MaxDepth };
 }
 
-// States
 void kl::ContextHolder::bind_raster_state(const dx::RasterState& state) const
 {
     m_context->RSSetState(state.get());
@@ -119,7 +111,6 @@ void kl::ContextHolder::unbind_blend_state() const
     bind_blend_state({});
 }
 
-// Resources
 void kl::ContextHolder::copy_resource(const dx::Resource& destination, const dx::Resource& source) const
 {
     m_context->CopyResource(destination.get(), source.get());
@@ -215,7 +206,6 @@ kl::Int2 kl::ContextHolder::texture_size(const dx::Texture& texture) const
 	return { (int) descriptor.Width, (int) descriptor.Height };
 }
 
-// Const buffers
 void kl::ContextHolder::bind_cb_for_vertex_shader(const dx::Buffer& buffer, const UINT slot) const
 {
     m_context->VSSetConstantBuffers(slot, 1, buffer.address());
@@ -256,7 +246,6 @@ void kl::ContextHolder::unbind_cb_for_compute_shader(const UINT slot) const
     bind_cb_for_compute_shader({}, slot);
 }
 
-// Vertex buffers
 UINT kl::ContextHolder::vertex_buffer_size(const dx::Buffer& buffer, const UINT stride) const
 {
     return (buffer_size(buffer) / stride);
@@ -272,7 +261,6 @@ void kl::ContextHolder::unbind_vertex_buffer(const UINT slot) const
     bind_vertex_buffer({}, slot, 0, 0);
 }
 
-// Index buffers
 UINT kl::ContextHolder::index_buffer_size(const dx::Buffer& buffer) const
 {
     return (buffer_size(buffer) / sizeof(uint32_t));
@@ -288,7 +276,6 @@ void kl::ContextHolder::unbind_index_buffer(UINT slot) const
     bind_index_buffer({}, 0);
 }
 
-// Draw
 void kl::ContextHolder::set_draw_type(const D3D_PRIMITIVE_TOPOLOGY draw_type) const
 {
     m_context->IASetPrimitiveTopology(draw_type);
@@ -324,7 +311,6 @@ void kl::ContextHolder::draw_indexed(const dx::Buffer& vertex_buffer, const dx::
     draw_indexed(index_count, 0, 0);
 }
 
-// Views
 void kl::ContextHolder::clear_target_view(const dx::TargetView& view, const Float4& color) const
 {
     m_context->ClearRenderTargetView(view.get(), &color.x);
@@ -391,7 +377,6 @@ void kl::ContextHolder::unbind_access_view_for_compute_shader(const UINT slot) c
     bind_access_view_for_compute_shader({}, slot);
 }
 
-// Shaders
 void kl::ContextHolder::bind_input_layout(const dx::InputLayout& input_layout) const
 {
     m_context->IASetInputLayout(input_layout.get());

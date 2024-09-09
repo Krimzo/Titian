@@ -4,14 +4,13 @@
 
 
 namespace kl {
-    template<typename T> class Vector3;
-    template<typename T> class Vector4;
+    template<typename T> struct Vector3;
+    template<typename T> struct Vector4;
 }
 
 namespace kl {
-    class Color
+    struct Color
     {
-    public:
         byte b = 0;
         byte g = 0;
         byte r = 0;

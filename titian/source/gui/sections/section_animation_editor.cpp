@@ -71,7 +71,6 @@ void titian::GUISectionAnimationEditor::render_gui()
 
 void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* scene)
 {
-    // New animation
     if (im::BeginPopupContextWindow("NewAnimation", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Animation");
 
@@ -86,7 +85,6 @@ void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* 
         im::EndPopup();
     }
 
-    // Animations
     const String filter = gui_input_continuous("Search###AnimationEditor");
     for (auto& [animation_name, animation] : scene->animations) {
         if (!filter.empty() && animation_name.find(filter) == -1) {
@@ -273,7 +271,6 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
             m_start_mesh_index = kl::clamp(m_start_mesh_index, 0, kl::max<int>((int) animation->meshes.size() - 1, 0));
         }
 
-        /*-*/
         im::Text("Animation Editor");
         if (im::DragFloat3("Sun Direction", &sun_direction.x, 0.01f)) {
             sun_direction = kl::normalize(sun_direction);
@@ -297,7 +294,6 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
 
         im::Separator();
 
-        /*-*/
         im::Text("Info");
         im::Text("Name: ");
         im::SameLine();

@@ -18,9 +18,8 @@
 
 
 namespace titian {
-	class TitianGame : public LayerStack
+    struct TitianGame : LayerStack
 	{
-	public:
         AppLayer app_layer = {};
         GameLayer game_layer = {};
         RenderLayer render_layer = {};

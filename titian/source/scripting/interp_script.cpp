@@ -1,7 +1,6 @@
 #include "titian.h"
 
 
-/* Inter script */
 titian::InterpScript::InterpScript()
 {
 	source = get_default_script();

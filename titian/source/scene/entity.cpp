@@ -17,7 +17,7 @@ titian::Entity::~Entity()
 
 void titian::Entity::serialize(Serializer* serializer, const void* helper_data) const
 {
-    serializer->write_string("entity_type", typeid(*this).name()); // must be read from outside
+    serializer->write_string("entity_type", typeid(*this).name());
 
     serializer->write_bool("is_dynamic", is_dynamic());
     serializer->write_bool("has_gravity", has_gravity());
@@ -101,7 +101,6 @@ void titian::Entity::deserialize(const Serializer* serializer, const void* helpe
     }
 }
 
-// Get
 px::PxRigidActor* titian::Entity::actor() const
 {
     return m_actor;
@@ -126,7 +125,6 @@ titian::Float4x4 titian::Entity::collider_matrix() const
     return result;
 }
 
-// Geometry
 void titian::Entity::set_rotation(const Float3& rotation)
 {
     const Float4 quat = kl::to_quaternion(rotation);
@@ -154,7 +152,6 @@ titian::Float3 titian::Entity::position() const
     return (const Float3&)transform.p;
 }
 
-// Physics
 void titian::Entity::set_dynamic(const bool enabled)
 {
     const bool old_dynamic = is_dynamic();
@@ -244,7 +241,6 @@ titian::Float3 titian::Entity::angular() const
     return (const Float3&) angular;
 }
 
-// Collision
 void titian::Entity::set_collider(const Ref<Collider>& collider)
 {
     if (m_collider) {

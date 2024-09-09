@@ -25,13 +25,11 @@ void titian::SandboxPieceCubes::setup_self()
             scene->meshes[mesh_name] = scene->default_meshes->cube;
 			scene->animations[animation_name] = scene->default_animations->cube;
 
-            // Material
             Ref material = new Material();
             material->color = Color{ 214, 156, 86 };
-            material->reflection_factor = cube_counter / static_cast<float>(size * size);
+            material->reflection_factor = cube_counter / float(size * size);
             scene->materials[material_name] = material;
 
-            // Entity
             Ref cube = scene->new_entity(false);
             cube->scale = Float3{ 0.45f };
             cube->set_position({

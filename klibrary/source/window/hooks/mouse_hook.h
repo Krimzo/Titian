@@ -4,9 +4,8 @@
 
 
 namespace kl {
-    class MouseHook : NoCopy, public Mouse
+    struct MouseHook : NoCopy, Mouse
     {
-    public:
         MouseHook();
         ~MouseHook();
 

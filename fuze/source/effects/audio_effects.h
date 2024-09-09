@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class AudioEffectVolume : public AudioEffect
+	struct AudioEffectVolume : AudioEffect
 	{
-	public:
 		float volume = 1.0f;
 
 		AudioEffectVolume();

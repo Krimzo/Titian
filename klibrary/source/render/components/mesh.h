@@ -4,9 +4,8 @@
 
 
 namespace kl {
-    class Mesh
+    struct Mesh
     {
-    public:
         std::vector<Vertex<float>> data_buffer;
         dx::Buffer graphics_buffer;
 

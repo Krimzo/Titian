@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class BlendStates
+	struct BlendStates
 	{
-	public:
 		dx::BlendState disabled;
 		dx::BlendState enabled;
 

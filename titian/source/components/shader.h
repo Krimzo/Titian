@@ -19,9 +19,8 @@ namespace titian {
 }
 
 namespace titian {
-	class Shader : public Serializable
+	struct Shader : Serializable
 	{
-	public:
 		int32_t shader_type = ShaderType::MATERIAL;
 
 		String data_buffer;

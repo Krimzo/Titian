@@ -4,7 +4,7 @@
 
 
 namespace kl {
-    enum class KeyState : int8_t
+    enum struct KeyState : int8_t
     {
         UP = 0,
         PRESSED,

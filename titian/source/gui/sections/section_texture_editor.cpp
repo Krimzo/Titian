@@ -61,7 +61,6 @@ void titian::GUISectionTextureEditor::render_gui()
 
 void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scene)
 {
-    // New texture
     if (im::BeginPopupContextWindow("NewTexture", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Texture");
 
@@ -75,8 +74,6 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
         }
         im::EndPopup();
     }
-
-    // Textures
     const String filter = gui_input_continuous("Search###TextureEditor");
     for (const auto& [texture_name, texture] : scene->textures) {
         if (!filter.empty() && texture_name.find(filter) == -1) {

@@ -4,9 +4,8 @@
 
 
 namespace kl {
-	class GPU12Fence
+	struct GPU12Fence
 	{
-	public:
 		dx12::Fence fence{};
 		uint64_t counter{};
 

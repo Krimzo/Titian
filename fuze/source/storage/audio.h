@@ -9,9 +9,8 @@ namespace titian {
 }
 
 namespace titian {
-	class Audio : kl::NoCopy
+	struct Audio : kl::NoCopy
 	{
-	public:
 		RAWAudio out_audio;
 
 		Audio();

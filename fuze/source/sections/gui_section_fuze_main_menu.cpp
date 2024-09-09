@@ -29,7 +29,6 @@ void titian::GUISectionFuzeMainMenu::render_gui()
     im::PushStyleColor(ImGuiCol_MenuBarBg, (ImVec4) ImColor(0, 0, 0));
 
     if (im::BeginMainMenuBar()) {
-        // File
         if (im::BeginMenu("File")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (im::MenuItem("Import")) {
@@ -66,7 +65,6 @@ void titian::GUISectionFuzeMainMenu::render_gui()
             im::EndMenu();
         }
 
-        // Edit
         if (im::BeginMenu("Edit")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (im::MenuItem("Undo")) {
@@ -77,7 +75,6 @@ void titian::GUISectionFuzeMainMenu::render_gui()
             im::EndMenu();
         }
 
-        // View
         if (im::BeginMenu("View")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             im::Checkbox("Timeline Seconds", &video_layer->timeline_seconds);
@@ -87,7 +84,6 @@ void titian::GUISectionFuzeMainMenu::render_gui()
             im::EndMenu();
         }
 
-        // About
         if (im::BeginMenu("About")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             im::Text("Fuze 0.1v");

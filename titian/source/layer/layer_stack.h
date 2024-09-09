@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class LayerStack
+	struct LayerStack
 	{
-	public:
 		Vector<Layer*> layers = {};
 
 		LayerStack() = default;

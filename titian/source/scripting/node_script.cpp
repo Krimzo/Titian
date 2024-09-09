@@ -31,17 +31,14 @@ namespace titian {
 
 	static const Vector<Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>>> serial_node_generators
 	{
-		// base nodes
 		serial_generator_helper<Node>(),
 		serial_generator_helper<FlowNode>(),
 
-		// pointer
 		serial_generator_helper<VariableNode<void*>>(),
 		serial_generator_helper<CastNode<void*, bool>>(),
 		serial_generator_helper<CastNode<void*, String>>(),
 		serial_generator_helper<CompareNode<void*>>(),
 
-		// bool
 		serial_generator_helper<LiteralNode<bool>>(),
 		serial_generator_helper<VariableNode<bool>>(),
 		serial_generator_helper<CastNode<bool, int32_t>>(),
@@ -49,7 +46,6 @@ namespace titian {
 		serial_generator_helper<CastNode<bool, String>>(),
 		serial_generator_helper<CompareNode<bool>>(),
 
-		// int
 		serial_generator_helper<LiteralNode<int32_t>>(),
 		serial_generator_helper<VariableNode<int32_t>>(),
 		serial_generator_helper<CastNode<int32_t, bool>>(),
@@ -66,7 +62,6 @@ namespace titian {
 		serial_generator_helper<OperatorMaxNode<int32_t>>(),
 		serial_generator_helper<AbsNode<int32_t>>(),
 
-		// int2
 		serial_generator_helper<LiteralNode<Int2>>(),
 		serial_generator_helper<VariableNode<Int2>>(),
 		serial_generator_helper<ConstructNode<Int2>>(),
@@ -82,7 +77,6 @@ namespace titian {
 		serial_generator_helper<OperatorMaxNode<Int2>>(),
 		serial_generator_helper<AbsNode<Int2>>(),
 
-		// float
 		serial_generator_helper<LiteralNode<float>>(),
 		serial_generator_helper<VariableNode<float>>(),
 		serial_generator_helper<CastNode<float, bool>>(),
@@ -99,7 +93,6 @@ namespace titian {
 		serial_generator_helper<OperatorMaxNode<float>>(),
 		serial_generator_helper<AbsNode<float>>(),
 
-		// float2
 		serial_generator_helper<LiteralNode<Float2>>(),
 		serial_generator_helper<VariableNode<Float2>>(),
 		serial_generator_helper<ConstructNode<Float2>>(),
@@ -116,7 +109,6 @@ namespace titian {
 		serial_generator_helper<OperatorMaxNode<Float2>>(),
 		serial_generator_helper<AbsNode<Float2>>(),
 
-		// float3
 		serial_generator_helper<LiteralNode<Float3>>(),
 		serial_generator_helper<VariableNode<Float3>>(),
 		serial_generator_helper<ConstructNode<Float3>>(),
@@ -133,7 +125,6 @@ namespace titian {
 		serial_generator_helper<OperatorMaxNode<Float3>>(),
 		serial_generator_helper<AbsNode<Float3>>(),
 
-		// float4
 		serial_generator_helper<LiteralNode<Float4>>(),
 		serial_generator_helper<VariableNode<Float4>>(),
 		serial_generator_helper<ConstructNode<Float4>>(),
@@ -150,7 +141,6 @@ namespace titian {
 		serial_generator_helper<OperatorMaxNode<Float4>>(),
 		serial_generator_helper<AbsNode<Float4>>(),
 
-		// complex
 		serial_generator_helper<LiteralNode<Complex>>(),
 		serial_generator_helper<VariableNode<Complex>>(),
 		serial_generator_helper<ConstructNode<Complex>>(),
@@ -165,7 +155,6 @@ namespace titian {
 		serial_generator_helper<OperatorMaxNode<Complex>>(),
 		serial_generator_helper<AbsNode<Complex>>(),
 
-		// quaternion
 		serial_generator_helper<LiteralNode<Quaternion>>(),
 		serial_generator_helper<VariableNode<Quaternion>>(),
 		serial_generator_helper<ConstructNode<Quaternion>>(),
@@ -181,7 +170,6 @@ namespace titian {
 		serial_generator_helper<OperatorMaxNode<Quaternion>>(),
 		serial_generator_helper<AbsNode<Quaternion>>(),
 
-		// color
 		serial_generator_helper<LiteralNode<Color>>(),
 		serial_generator_helper<VariableNode<Color>>(),
 		serial_generator_helper<ConstructNode<Color>>(),
@@ -190,7 +178,6 @@ namespace titian {
 		serial_generator_helper<CastNode<Color, Float4>>(),
 		serial_generator_helper<CompareNode<Color>>(),
 
-		// string
 		serial_generator_helper<LiteralNode<String>>(),
 		serial_generator_helper<VariableNode<String>>(),
 		serial_generator_helper<CastNode<String, bool>>(),
@@ -200,7 +187,6 @@ namespace titian {
 		serial_generator_helper<OperatorPlusNode<String>>(),
 		serial_generator_helper<ContainsNode<String>>(),
 
-		// scene
 		serial_generator_helper<GetSceneNode>(),
 		serial_generator_helper<GetMeshNode>(),
 		serial_generator_helper<GetAnimationNode>(),
@@ -222,29 +208,24 @@ namespace titian {
 		serial_generator_helper<IterateShadersNode>(),
 		serial_generator_helper<IterateEntitiesNode>(),
 
-		// logic
 		serial_generator_helper<LogicNotNode>(),
 		serial_generator_helper<LogicAndNode>(),
 		serial_generator_helper<LogicOrNode>(),
 
-		// flow
 		serial_generator_helper<IfNode>(),
 		serial_generator_helper<WhileNode>(),
 		serial_generator_helper<ForNode>(),
 
-		// is
 		serial_generator_helper<IsTypeNode<Entity, Camera>>(),
 		serial_generator_helper<IsTypeNode<Entity, AmbientLight>>(),
 		serial_generator_helper<IsTypeNode<Entity, PointLight>>(),
 		serial_generator_helper<IsTypeNode<Entity, DirectionalLight>>(),
 
-		// math
 		serial_generator_helper<SqrtNode<float>>(),
 		serial_generator_helper<SinNode<float>>(),
 		serial_generator_helper<CosNode<float>>(),
 		serial_generator_helper<TanNode<float>>(),
 
-		// ui
 		serial_generator_helper<UISeparatorNode>(),
 		serial_generator_helper<UISameLineNode>(),
 		serial_generator_helper<UINextWidthNode>(),
@@ -260,7 +241,6 @@ namespace titian {
 		serial_generator_helper<UIValueNode<Color>>(),
 		serial_generator_helper<UIValueNode<String>>(),
 
-		// debug
 		serial_generator_helper<PrintNode>(),
 	};
 }

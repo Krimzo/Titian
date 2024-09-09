@@ -4,19 +4,16 @@
 
 
 namespace kl::random {
-    // Byte
     bool gen_bool();
     uint8_t gen_byte();
     Color gen_color(bool gray = false);
 
-    // Int
     int gen_int(int start_inclusive, int end_exclusive);
     int gen_int(int end_exclusive);
 
     Int2 gen_int2(int start_inclusive, int end_exclusive);
     Int2 gen_int2(int end_exclusive);
 
-    // Float
     float gen_float(float start_inclusive, float end_inclusive);
     float gen_float(float end_inclusive);
     float gen_float();
@@ -41,7 +38,6 @@ namespace kl::random {
     Float4x4 gen_float4x4(float end_inclusive);
     Float4x4 gen_float4x4();
 
-    // Char
     char gen_char(bool upper = false);
     std::string gen_string(int length, bool upper = false);
 }

@@ -4,9 +4,8 @@
 
 
 namespace kl::json {
-	class Object : public ObjectStorageType<std::string, ContainerWrap>, public Container
+	struct Object : ObjectStorageType<std::string, ContainerWrap>, Container
 	{
-	public:
 		Object();
 		Object(const std::string_view& data);
 

@@ -5,14 +5,12 @@
 
 namespace kl {
     template<typename T = float>
-    class Triangle
+    struct Triangle
     {
-    public:
         Vertex<T> a;
         Vertex<T> b;
         Vertex<T> c;
 
-        // Construct
         constexpr Triangle()
         {}
 
@@ -20,13 +18,11 @@ namespace kl {
 			: a(a), b(b), c(c)
         {}
 
-        // Normal
         constexpr Vector3<T> normal() const
         {
             return normalize(cross(b.world - a.world, c.world - a.world));
         }
 
-        // Interpolation
         constexpr Vector4<T> constants() const
         {
             const T calc_const = (b.world.y - c.world.y) * (a.world.x - c.world.x) + (c.world.x - b.world.x) * (a.world.y - c.world.y);
@@ -86,7 +82,6 @@ namespace kl {
             };
         }
 
-        // Static
         static constexpr bool is_in_triangle(const Vector3<T>& weights)
         {
             return weights.x >= T(0) && weights.y >= T(0) && weights.z >= T(0);

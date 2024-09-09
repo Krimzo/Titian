@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class Frame : kl::NoCopy
+	struct Frame : kl::NoCopy
 	{
-	public:
 		dx::Texture texture;
 		dx::ShaderView shader_view;
 		dx::AccessView access_view;

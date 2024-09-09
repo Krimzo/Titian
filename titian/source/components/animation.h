@@ -9,8 +9,8 @@ namespace titian {
 }
 
 namespace titian {
-	class Mesh;
-	class Scene;
+	struct Mesh;
+	struct Scene;
 }
 
 namespace titian {
@@ -39,9 +39,8 @@ namespace titian {
 }
 
 namespace titian {
-	class Animation : public Serializable
+	struct Animation : Serializable
 	{
-	public:
 		int32_t animation_type = AnimationType::SEQUENTIAL;
 		float ticks_per_second = 30.0f;
 		float duration_in_ticks = 1.0f;

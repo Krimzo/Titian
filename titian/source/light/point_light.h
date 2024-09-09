@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class PointLight : public Light
+	struct PointLight : Light
 	{
-	public:
 		Float3 color{ 1.0f };
 
 		PointLight(px::PxPhysics* physics, bool dynamic);

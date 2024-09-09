@@ -5,13 +5,12 @@
 
 
 namespace titian {
-    class Scene;
+    struct Scene;
 }
 
 namespace titian {
-	class DefaultMeshes
+    struct DefaultMeshes
 	{
-	public:
         Ref<Mesh> cube = nullptr;
         Ref<Mesh> sphere = nullptr;
         Ref<Mesh> capsule = nullptr;

@@ -118,7 +118,6 @@ static const int load_names = [&]
 	};
 
 	HLSL_MEMBERS = {
-		// material shader
 		"SHADOW_CASCADE_COUNT",
 		"MAX_BONE_COUNT",
 		"ELAPSED_TIME",
@@ -171,7 +170,6 @@ static const int load_names = [&]
 		"normal",
 		"light_coords",
 
-		// camera shader
 		"FRAME_SIZE",
 		"CUSTOM_DATA",
 		"GAME_COLOR_TEXTURE",
@@ -184,7 +182,6 @@ static const int load_names = [&]
 	};
 
 	HLSL_FUNCTIONS = {
-		// builtin
 		"abort", "abs", "acos", "all", "AllMemoryBarrier", "AllMemoryBarrierWithGroupSync", "any", "asdouble", "asfloat", "asin", "asint", "asint", "asuint",
 		"asuint", "atan", "atan2", "ceil", "CheckAccessFullyMapped", "clamp", "clip", "cos", "cosh", "countbits", "cross", "D3DCOLORtoUBYTE4", "ddx",
 		"ddx_coarse", "ddx_fine", "ddy", "ddy_coarse", "ddy_fine", "degrees", "determinant", "DeviceMemoryBarrier", "DeviceMemoryBarrierWithGroupSync",
@@ -199,7 +196,6 @@ static const int load_names = [&]
 		"tan", "tanh", "tex1D", "tex1D", "tex1Dbias", "tex1Dgrad", "tex1Dlod", "tex1Dproj", "tex2D", "tex2D", "tex2Dbias", "tex2Dgrad", "tex2Dlod", "tex2Dproj",
 		"tex3D", "tex3D", "tex3Dbias", "tex3Dgrad", "tex3Dlod", "tex3Dproj", "texCUBE", "texCUBE", "texCUBEbias", "texCUBEgrad", "texCUBElod", "texCUBEproj", "transpose", "trunc",
 
-		// custom
 		"_vertex_pre",
 		"_vertex_post",
 		"_pixel_pre",

@@ -5,9 +5,8 @@
 
 
 namespace titian {
-	class GameLayer : public Layer
+	struct GameLayer : Layer
 	{
-	public:
 		bool game_running = false;
 		bool game_paused = false;
 		Ref<Scene> scene = nullptr;

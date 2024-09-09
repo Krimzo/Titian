@@ -5,9 +5,8 @@
 
 
 namespace titian {
-    class PostPass : public RenderPass
+    struct PostPass : RenderPass
     {
-    public:
         PostPass();
 
         void state_package(StatePackage* package) override;

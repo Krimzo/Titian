@@ -16,7 +16,6 @@ void titian::ScenePass::state_package(StatePackage* package)
 
 void titian::ScenePass::render_self(StatePackage* package)
 {
-    // prepare
 	RenderLayer* render_layer = Layers::get<RenderLayer>();
     kl::Timer* timer = &Layers::get<AppLayer>()->timer;
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
@@ -115,7 +114,6 @@ void titian::ScenePass::render_self(StatePackage* package)
         gpu->unbind_shader_view_for_pixel_shader(0);
     }
 
-    // collect
     struct RenderInfo
     {
         int id = 0;
@@ -175,7 +173,6 @@ void titian::ScenePass::render_self(StatePackage* package)
         return a.camera_distance < b.camera_distance;
     });
     
-    // render helpers
     bool wireframe_bound = package->camera->render_wireframe;
     gpu->bind_raster_state(wireframe_bound ? render_layer->raster_states->wireframe : render_layer->raster_states->solid_cull);
 
@@ -210,7 +207,7 @@ void titian::ScenePass::render_self(StatePackage* package)
 
         global_cb.W = info.entity->model_matrix();
 
-        global_cb.OBJECT_INDEX = static_cast<float>(info.id);
+        global_cb.OBJECT_INDEX = float(info.id);
         global_cb.OBJECT_SCALE = info.entity->scale;
         global_cb.OBJECT_ROTATION = info.entity->rotation();
         global_cb.OBJECT_POSITION = info.entity->position();
@@ -241,14 +238,12 @@ void titian::ScenePass::render_self(StatePackage* package)
         }
     };
 
-    // render opaque
     for (const auto& info : to_render) {
         if (!info.material->is_transparent()) {
             render_helper(info);
         }
     }
 
-    // render transparent
     gpu->bind_depth_state(render_layer->depth_states->only_compare);
     global_cb.RECEIVES_SHADOWS = false;
 
@@ -259,7 +254,6 @@ void titian::ScenePass::render_self(StatePackage* package)
         }
     }
 
-    // finalize
     for (int i = 0; i < 8; i++) {
         gpu->unbind_shader_view_for_pixel_shader(i);
     }

@@ -4,9 +4,8 @@
 
 
 namespace kl {
-    class RenderShaders
+    struct RenderShaders
     {
-    public:
         ShaderHolder<dx::VertexShader> vertex_shader = nullptr;
         ShaderHolder<dx::PixelShader> pixel_shader = nullptr;
         dx::InputLayout input_layout;

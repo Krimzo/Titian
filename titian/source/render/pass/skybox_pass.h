@@ -5,9 +5,8 @@
 
 
 namespace titian {
-    class SkyboxPass : public RenderPass
+    struct SkyboxPass : RenderPass
     {
-    public:
         SkyboxPass();
 
         void state_package(StatePackage* package) override;

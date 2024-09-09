@@ -21,9 +21,8 @@ namespace titian {
 }
 
 namespace titian {
-	class NodeScript : public Script
+	struct NodeScript : Script
 	{
-	public:
 		FlowNode* on_start_node = nullptr;
 		FlowNode* on_update_node = nullptr;
 		FlowNode* on_collision_node = nullptr;
@@ -83,7 +82,6 @@ namespace titian {
 	};
 }
 
-// base node
 namespace titian {
 	struct Node : ne::BaseNode, Serializable
 	{
@@ -99,7 +97,7 @@ namespace titian {
 
 		void serialize(Serializer* serializer, const void* helper_data) const override
 		{
-			serializer->write_string("node_type", typeid(*this).name()); // must be read from outside
+			serializer->write_string("node_type", typeid(*this).name());
 
 			serializer->write_byte_array("user_data", user_data, sizeof(user_data));
 			serializer->write_string("title", getName());
@@ -148,7 +146,6 @@ namespace titian {
 	};
 }
 
-// flow node
 namespace titian {
 	struct FlowNode : Node
 	{
@@ -218,7 +215,6 @@ namespace titian {
 	};
 }
 
-// literal node
 namespace titian {
 	template<typename T>
 	struct LiteralNode : Node
@@ -361,7 +357,6 @@ namespace titian {
 	};
 }
 
-// variable node
 namespace titian {
 	template<typename T>
 	struct VariableNode : FlowNode, kl::NoCopy, kl::NoMove
@@ -453,7 +448,6 @@ namespace titian {
 	};
 }
 
-// construct/deconstruct nodes
 namespace titian {
 	template<typename T>
 	struct ConstructNode : Node
@@ -653,7 +647,6 @@ namespace titian {
 	};
 }
 
-// cast node
 namespace titian {
 	template<typename From, typename To>
 	struct CastNode : Node
@@ -683,14 +676,13 @@ namespace titian {
 					return kl::format(std::boolalpha, std::fixed, from);
 				}
 				else {
-					return static_cast<To>(from);
+					return To(from);
 				}
 			});
 		}
 	};
 }
 
-// is type node
 namespace titian {
 	template<typename From, typename To>
 		requires std::is_base_of_v<From, To>
@@ -706,7 +698,7 @@ namespace titian {
 
 		void call() override
 		{
-			From* ptr = static_cast<From*>(get_value<void*>("ptr"));
+			From* ptr = (From*) get_value<void*>("ptr");
 			if (dynamic_cast<To*>(ptr)) {
 				call_next("is");
 			}
@@ -717,7 +709,6 @@ namespace titian {
 	};
 }
 
-// compare node
 namespace titian {
 	template<typename T>
 		requires has_less_operator<T>::value or has_equals_operator<T>::value or has_greater_operator<T>::value
@@ -767,7 +758,6 @@ namespace titian {
 	};
 }
 
-// logic nodes
 namespace titian {
 	struct LogicNotNode : Node
 	{
@@ -811,7 +801,6 @@ namespace titian {
 	};
 }
 
-// operator nodes
 namespace titian {
 	template<typename T>
 	struct OperatorNode : Node
@@ -890,7 +879,7 @@ namespace titian {
 		{
 			const T left = this->get_value<T>("left");
 			const T right = this->get_value<T>("right");
-			return static_cast<T>(::pow((double) left, (double) right));
+			return T(::pow(double(left), double(right)));
 		}
 	};
 
@@ -909,7 +898,7 @@ namespace titian {
 				return left % right;
 			}
 			else if constexpr (std::is_same_v<T, float>) {
-				return static_cast<T>(::fmod(left, right));
+				return T(::fmod(left, right));
 			}
 			else {
 				static_assert(false, "Unsupported helper mod type");
@@ -948,7 +937,6 @@ namespace titian {
 	};
 }
 
-// flow control nodes
 namespace titian {
 	struct IfNode : FlowNode
 	{
@@ -1023,7 +1011,6 @@ namespace titian {
 	};
 }
 
-// debug
 namespace titian {
 	struct FunctionNode : FlowNode
 	{
@@ -1049,7 +1036,6 @@ namespace titian {
 	};
 }
 
-// math
 namespace titian {
 	template<typename T>
 	struct MathNode : Node
@@ -1088,7 +1074,7 @@ namespace titian {
 		T compute() override
 		{
 			const T in = this->get_value<T>("in");
-			return static_cast<T>(::sqrt(in));
+			return T(::sqrt(in));
 		}
 	};
 
@@ -1102,7 +1088,7 @@ namespace titian {
 		T compute() override
 		{
 			const T in = this->get_value<T>("in");
-			return static_cast<T>(::log(in));
+			return T(::log(in));
 		}
 	};
 
@@ -1186,7 +1172,6 @@ namespace titian {
 	};
 }
 
-// getter nodes
 namespace titian {
 	struct GetSceneNode : Node
 	{
@@ -1517,7 +1502,6 @@ namespace titian {
 	};
 }
 
-// setter nodes
 namespace titian {
 	struct SetSceneNode : FlowNode
 	{
@@ -1606,7 +1590,7 @@ namespace titian {
 		{
 			Mesh* ptr = get_casted_value<void*, Mesh*>("ptr");
 			if (!ptr) {
-				return; // don't call next
+				return;
 			}
 
 			if (input_connected("topology")) {
@@ -1634,7 +1618,7 @@ namespace titian {
 		{
 			Animation* ptr = get_casted_value<void*, Animation*>("ptr");
 			if (!ptr) {
-				return; // don't call next
+				return;
 			}
 
 			if (input_connected("animation_type")) {
@@ -1663,7 +1647,7 @@ namespace titian {
 		{
 			Texture* ptr = get_casted_value<void*, Texture*>("ptr");
 			if (!ptr) {
-				return; // don't call next
+				return;
 			}
 
 			if (input_connected("size")) {
@@ -1700,7 +1684,7 @@ namespace titian {
 		{
 			Material* ptr = get_casted_value<void*, Material*>("ptr");
 			if (!ptr) {
-				return; // don't call next
+				return;
 			}
 
 			if (input_connected("color")) {
@@ -1747,7 +1731,7 @@ namespace titian {
 		{
 			Shader* ptr = get_casted_value<void*, Shader*>("ptr");
 			if (!ptr) {
-				return; // don't call next
+				return;
 			}
 
 			if (input_connected("shader_type")) {
@@ -1781,7 +1765,7 @@ namespace titian {
 		{
 			Entity* ptr = get_casted_value<void*, Entity*>("ptr");
 			if (!ptr) {
-				return; // don't call next
+				return;
 			}
 
 			if (input_connected("scale")) {
@@ -1825,7 +1809,6 @@ namespace titian {
 	};
 }
 
-// iterators
 namespace titian {
 	template<typename T>
 	struct IteratorNode : FunctionNode
@@ -1868,7 +1851,9 @@ namespace titian {
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
 			Layers::get<GameLayer>()->scene->helper_iterate_meshes([&](const String& name, Mesh* ptr)
-				{ func(&name, static_cast<void*>(ptr)); });
+			{
+				func(&name, ptr);
+			});
 		}
 	};
 
@@ -1881,7 +1866,9 @@ namespace titian {
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
 			Layers::get<GameLayer>()->scene->helper_iterate_animations([&](const String& name, Animation* ptr)
-				{ func(&name, static_cast<void*>(ptr)); });
+			{
+				func(&name, ptr);
+			});
 		}
 	};
 
@@ -1894,7 +1881,9 @@ namespace titian {
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
 			Layers::get<GameLayer>()->scene->helper_iterate_textures([&](const String& name, Texture* ptr)
-				{ func(&name, static_cast<void*>(ptr)); });
+			{
+				func(&name, ptr);
+			});
 		}
 	};
 
@@ -1907,7 +1896,9 @@ namespace titian {
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
 			Layers::get<GameLayer>()->scene->helper_iterate_materials([&](const String& name, Material* ptr)
-				{ func(&name, static_cast<void*>(ptr)); });
+			{
+				func(&name, ptr);
+			});
 		}
 	};
 
@@ -1920,7 +1911,9 @@ namespace titian {
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
 			Layers::get<GameLayer>()->scene->helper_iterate_shaders([&](const String& name, Shader* ptr)
-				{ func(&name, static_cast<void*>(ptr)); });
+			{
+				func(&name, ptr);
+			});
 		}
 	};
 
@@ -1933,12 +1926,13 @@ namespace titian {
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
 			Layers::get<GameLayer>()->scene->helper_iterate_entities([&](const String& name, Entity* ptr)
-				{ func(&name, static_cast<void*>(ptr)); });
+			{
+				func(&name, ptr);
+			});
 		}
 	};
 }
 
-// ui
 namespace titian {
 	struct UISeparatorNode : FlowNode
 	{

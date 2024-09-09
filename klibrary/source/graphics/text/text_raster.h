@@ -19,15 +19,9 @@ namespace kl {
 }
 
 namespace kl {
-	class TextRaster : NoCopy
+	struct TextRaster : NoCopy
 	{
-	protected:
-		ComRef<ID2D1Factory> m_d2d1_factory{};
-		ComRef<IDWriteFactory> m_write_factory{};
-		ComRef<ID2D1RenderTarget> m_d2d1_targets[GPU_BUFFER_COUNT] = {};
-
-	public:
-		std::vector<Text> text_data{};
+		std::vector<Text> text_data;
 
 		TextRaster();
 
@@ -40,5 +34,10 @@ namespace kl {
 		) const;
 
 		void draw_text(UINT target_index) const;
+
+	protected:
+		ComRef<ID2D1Factory> m_d2d1_factory{};
+		ComRef<IDWriteFactory> m_write_factory{};
+		ComRef<ID2D1RenderTarget> m_d2d1_targets[GPU_BUFFER_COUNT] = {};
 	};
 }

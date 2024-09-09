@@ -2,16 +2,14 @@
 
 #include "render/scene/camera.h"
 #include "render/scene/entity.h"
-
 #include "render/light/ambient_light.h"
 #include "render/light/directional_light.h"
 #include "render/light/point_light.h"
 
 
 namespace kl {
-    class Scene
+    struct Scene
     {
-    public:
         std::vector<Ref<Entity>> entities;
 
         Ref<Camera> main_camera = nullptr;

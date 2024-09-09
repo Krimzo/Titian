@@ -11,15 +11,14 @@
 #define SIG0(x) (ROTRIGHT(x, 7) ^ ROTRIGHT(x, 18) ^ ((x) >> 3))
 #define SIG1(x) (ROTRIGHT(x, 17) ^ ROTRIGHT(x, 19) ^ ((x) >> 10))
 
-class SHA256Context
+struct SHA256Context
 {
-public:
 	uint8_t data[64] = {};
 	uint8_t data_length = 0;
 	uint32_t state[8] = {};
 	uint32_t bit_length[2] = {};
 
-	SHA256Context()
+	constexpr SHA256Context()
 	{
 		state[0] = 0x6a09e667;
 		state[1] = 0xbb67ae85;

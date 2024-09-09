@@ -5,9 +5,8 @@
 
 
 namespace titian {
-	class AppLayer : public Layer
+	struct AppLayer : Layer
 	{
-	public:
 		kl::Window window{ "Titian App", {1600, 900} };
 		kl::GPU gpu{ HWND(window), kl::IS_DEBUG, true, false };
 		kl::Timer timer{};

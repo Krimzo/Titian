@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class Video : kl::NoCopy
+	struct Video : kl::NoCopy
 	{
-	public:
 		static constexpr int SECTION_THREAD_COUNT = 3;
 		static constexpr float BUFFERING_LENGTH = 10.0f;
 

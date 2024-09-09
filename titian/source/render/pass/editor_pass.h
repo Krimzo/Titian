@@ -6,9 +6,8 @@
 
 
 namespace titian {
-    class EditorPass : public RenderPass
+    struct EditorPass : RenderPass
     {
-    public:
         dx::Buffer frustum_mesh;
 
         EditorPass();

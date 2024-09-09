@@ -4,9 +4,8 @@
 
 
 namespace kl {
-    class KeyboardHook : NoCopy, public Keyboard
+    struct KeyboardHook : NoCopy, Keyboard
     {
-    public:
         KeyboardHook();
         ~KeyboardHook();
 

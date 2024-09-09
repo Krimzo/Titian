@@ -4,9 +4,8 @@
 
 
 namespace titian {
-    class DepthStates
+    struct DepthStates
     {
-    public:
         dx::DepthState disabled;
         dx::DepthState enabled;
         dx::DepthState only_compare;

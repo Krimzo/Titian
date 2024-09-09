@@ -93,7 +93,6 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 			continue;
 		}
 
-		// Script type
 		if (script.is<const NativeScript>()) {
 			im::Button("NATIVE");
 		}
@@ -108,7 +107,6 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 		}
 		im::SameLine();
 
-		// Script name
 		if (im::Selectable(script_name.data(), script_name == this->selected_script)) {
 			this->selected_script = script_name;
 		}

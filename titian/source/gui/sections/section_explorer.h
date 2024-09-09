@@ -8,9 +8,8 @@
 
 
 namespace titian {
-	class GUISectionExplorer : public GUISection
+    struct GUISectionExplorer : GUISection
 	{
-	public:
         Ref<Texture> default_file_texture = nullptr;
         Ref<Texture> mesh_file_texture = nullptr;
         Ref<Texture> texture_file_texture = nullptr;

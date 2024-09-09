@@ -1,7 +1,6 @@
 #include "klibrary.h"
 
 
-// Date
 kl::Date::Date()
 {
     std::tm date_now = {};
@@ -16,10 +15,9 @@ kl::Date::Date()
 
     namespace ch = std::chrono;
     const auto time_since_epoch = ch::system_clock::now().time_since_epoch();
-    milisecond = static_cast<int>(ch::duration_cast<ch::milliseconds>(time_since_epoch).count() % 1000);
+    milisecond = int(ch::duration_cast<ch::milliseconds>(time_since_epoch).count() % 1000);
 }
 
-// Format
 std::ostream& kl::operator<<(std::ostream& stream, const Date& obj)
 {
     stream << std::setfill('0') <<

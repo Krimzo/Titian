@@ -5,9 +5,8 @@
 
 
 namespace kl {
-    class Material
+    struct Material
     {
-    public:
         float texture_blend = 0.0f;
         float reflection_factor = 0.0f;
         float refraction_factor = 0.0f;

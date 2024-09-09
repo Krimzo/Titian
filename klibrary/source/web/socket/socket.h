@@ -4,7 +4,7 @@
 
 
 namespace kl {
-    struct Address : public sockaddr_in
+    struct Address : sockaddr_in
     {
         Address();
         
@@ -17,21 +17,14 @@ namespace kl {
 }
 
 namespace kl {
-    class Socket : NoCopy
+    struct Socket : NoCopy
     {
-    public:
         using ID = uint64_t;
         static const std::string SELF;
 
-    private:
-        Address m_address = {};
-        ID m_socket = {};
-
-    public:
         Socket(bool udp);
         ~Socket();
 
-        // Properties
         ID id() const;
         operator bool() const;
 
@@ -41,13 +34,11 @@ namespace kl {
         int port() const;
         void set_port(int port);
 
-        // Connection
         int bind();
         int listen(int queue_size);
         void accept(Socket* socket);
         int connect();
 
-        // TCP transfer
         int send(const void* data, int byte_size) const;
         int receive(void* buff, int byte_size) const;
 
@@ -71,7 +62,6 @@ namespace kl {
             return t;
         }
 
-        // UDP transfer
         int send_to(const void* data, int byte_size, const Address& address) const;
         int receive_from(void* buff, int byte_size, Address* address) const;
 
@@ -95,7 +85,10 @@ namespace kl {
             return t;
         }
 
-        // Helper
         int exhaust(std::vector<byte>* output, int buffer_size = 16384) const;
+
+    private:
+        Address m_address = {};
+        ID m_socket = {};
     };
 }

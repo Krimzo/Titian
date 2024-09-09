@@ -5,19 +5,16 @@
 
 namespace kl {
     template<typename T>
-    class Matrix2x2
+    struct Matrix2x2
     {
-    public:
         T data[4] = {
             T(1), T(0),
             T(0), T(1),
         };
 
-        // Construct
         constexpr Matrix2x2()
         {}
 
-        // Get
         constexpr T& operator[](int index)
         {
             return data[index];
@@ -53,12 +50,11 @@ namespace kl {
         {
 			Matrix2x2<O> result;
 			for (int i = 0; i < 4; i++) {
-				result[i] = static_cast<O>(data[i]);
+				result[i] = O(data[i]);
 			}
 			return result;
         }
 
-        // Compare
         constexpr bool operator==(const Matrix2x2<T>& other) const
         {
 			for (int i = 0; i < 4; i++) {
@@ -74,7 +70,6 @@ namespace kl {
 			return !(*this == other);
         }
 
-        // Math
         constexpr Matrix2x2<T> operator+(const Matrix2x2<T>& other) const
         {
             Matrix2x2<T> result;

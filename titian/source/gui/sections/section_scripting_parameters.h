@@ -5,9 +5,8 @@
 
 
 namespace titian {
-    class GUISectionScriptingParameters : public GUISection
+    struct GUISectionScriptingParameters : GUISection
     {
-    public:
         GUISectionScriptingParameters();
 
         void render_gui() override;

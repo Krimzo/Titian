@@ -1,15 +1,8 @@
 #pragma once
 
-
-// get out
 #define NOMINMAX
 
-// Web
 #include <ws2tcpip.h>
-
-#pragma comment(lib, "ws2_32.lib")
-
-// Media
 #include <mfapi.h>
 #include <mfidl.h>
 #include <mferror.h>
@@ -22,7 +15,13 @@
 #include <functiondiscoverykeys_devpkey.h>
 #include <codecapi.h>
 #include <dvdmedia.h>
+#include <windows.h>
+#include <windowsx.h>
+#include <wininet.h>
+#include <dwmapi.h>
+#include <conio.h>
 
+#pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "mf.lib")
 #pragma comment(lib, "mfplay.lib")
 #pragma comment(lib, "mfplat.lib")
@@ -32,14 +31,6 @@
 #pragma comment(lib, "ole32.lib")
 #pragma comment(lib, "avrt.lib")
 #pragma comment(lib, "winmm.lib")
-
-// Windows
-#include <windows.h>
-#include <windowsx.h>
-#include <wininet.h>
-#include <dwmapi.h>
-#include <conio.h>
-
 #pragma comment(lib, "kernel32.lib")
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "gdi32.lib")
@@ -56,11 +47,8 @@
 #pragma comment(lib, "wininet.lib")
 #pragma comment(lib, "dwmapi.lib")
 
-namespace kl {
-	/*
-	*	Thanks CHILI!
-	*/
 
+namespace kl {
 	struct VerifyResult
 	{};
 
@@ -100,7 +88,7 @@ namespace kl {
 				grabber.location.line()
 			);
 			MessageBoxA(nullptr, message.data(), "Assertion failed!", MB_ICONERROR | MB_OK);
-			exit(static_cast<int>(grabber.result));
+			exit(int(grabber.result));
 		}
 	}
 

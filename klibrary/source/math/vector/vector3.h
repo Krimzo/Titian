@@ -5,19 +5,17 @@
 
 namespace kl {
     template<typename T>
-    class Quaternion;
+    struct Quaternion;
 }
 
 namespace kl {
 	template<typename T>
-	class Vector3
+	struct Vector3
 	{
-	public:
 		T x = {};
 		T y = {};
 		T z = {};
 
-		// Construct
 		constexpr Vector3()
 		{}
 
@@ -37,7 +35,6 @@ namespace kl {
 			: x(x), y(vec.x), z(vec.y)
 		{}
 
-		// Get
 		constexpr T& operator[](int index)
 		{
 			return (&x)[index];
@@ -51,7 +48,7 @@ namespace kl {
 		template<typename O>
 		constexpr operator Vector3<O>() const
 		{
-			return { static_cast<O>(x), static_cast<O>(y), static_cast<O>(z) };
+			return { O(x), O(y), O(z) };
 		}
 
 		constexpr operator Quaternion<T>() const
@@ -68,7 +65,6 @@ namespace kl {
 			};
 		}
 
-		// Helper
 		constexpr Vector2<T>& xy()
 		{
 			return reinterpret_cast<Vector2<T>&>(x);
@@ -89,7 +85,6 @@ namespace kl {
 			return reinterpret_cast<Vector2<T>&>(y);
 		}
 
-		// Compare
 		constexpr bool operator==(const Vector3<T>& other) const
 		{
 			return x == other.x && y == other.y && z == other.z;
@@ -100,7 +95,6 @@ namespace kl {
 			return !(*this == other);
 		}
 
-		// Math
 		constexpr Vector3<T> operator+(const Vector3<T>& other) const
 		{
 			return { x + other.x, y + other.y, z + other.z };
@@ -173,7 +167,6 @@ namespace kl {
 			z /= other.z;
 		}
 
-		// Other
 		constexpr Vector3<T> operator-() const
 		{
 			return { -x, -y, -z };

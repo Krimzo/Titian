@@ -6,7 +6,7 @@ kl::CompiledShader::operator bool() const
     return (data && !error);
 }
 
-const void* kl::CompiledShader::data_val() const
+const void* kl::CompiledShader::data_ptr() const
 {
     return data ? (const void*) data->GetBufferPointer() : nullptr;
 }
@@ -18,7 +18,7 @@ SIZE_T kl::CompiledShader::data_size() const
 
 std::string kl::CompiledShader::error_val() const
 {
-    return error ? static_cast<const char*>(error->GetBufferPointer()) : "Unknown";
+    return error ? (const char*) error->GetBufferPointer() : "Unknown";
 }
 
 SIZE_T kl::CompiledShader::error_size() const

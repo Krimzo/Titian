@@ -51,7 +51,6 @@ void titian::BinarySerializer::load_object(const StringView& name) const
 void titian::BinarySerializer::unload_object() const
 {}
 
-// basic
 void titian::BinarySerializer::write_bool(const StringView& name, bool value)
 {
 	m_file.write<bool>(value);
@@ -82,7 +81,6 @@ void titian::BinarySerializer::read_float(const StringView& name, float& value) 
 	m_file.read<float>(value);
 }
 
-// array
 void titian::BinarySerializer::write_byte_array(const StringView& name, const void* data, int32_t count)
 {
 	m_file.write((const byte*) data, count);
@@ -113,7 +111,6 @@ void titian::BinarySerializer::read_float_array(const StringView& name, float* d
 	read_byte_array(name, data, count * sizeof(float));
 }
 
-// complex
 void titian::BinarySerializer::write_string(const StringView& name, const StringView& value)
 {
 	write_int({}, (int32_t) value.size());

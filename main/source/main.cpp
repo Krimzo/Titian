@@ -30,7 +30,6 @@ int main(const int argc, const char** argv)
 		Logger::log("Exe type defaulting to ", exe_type);
 	}
 
-	/* titian */
 	if (exe_type == EXE_PLAY) {
 		return titian_entry(argc, argv, EntryType::GAME);
 	}
@@ -40,16 +39,12 @@ int main(const int argc, const char** argv)
 	if (exe_type == EXE_SANDBOX) {
 		return sandbox_entry(argc, argv);
 	}
-
-	// packager
 	if (exe_type == EXE_UNPACK) {
 		return packager_entry(argc, argv, false);
 	}
 	if (exe_type == EXE_PACK) {
 		return packager_entry(argc, argv, true);
 	}
-	
-	// fuze
 	if (exe_type == EXE_VIDEO) {
 		return fuze_entry(argc, argv);
 	}

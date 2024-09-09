@@ -10,7 +10,7 @@ void titian::GUISectionBenchInfo::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    TitianEditor* editor = static_cast<TitianEditor*>(this->editor);
+    TitianEditor* editor = (TitianEditor*) this->editor;
     kl::Timer* timer = &editor->app_layer.timer;
 
     static constexpr auto display_float = [](const StringView& name, float value)
@@ -25,7 +25,7 @@ void titian::GUISectionBenchInfo::render_gui()
     if (im::Begin("Bench Info")) {
         display_float("GameTime", timer->elapsed());
         display_float("FrameTime", timer->delta());
-        display_int("FPS", static_cast<int>(1.0f / timer->delta()));
+        display_int("FPS", int(1.0f / timer->delta()));
 
         im::Separator();
         im::Text("Layer Time [ms]");

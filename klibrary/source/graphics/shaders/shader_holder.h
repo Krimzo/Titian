@@ -4,27 +4,23 @@
 
 
 namespace kl {
-    class GPU;
+    struct GPU;
 }
 
 namespace kl {
     template<typename S>
-    class ShaderHolder
+    struct ShaderHolder
     {
-    public:
         const GPU* gpu = nullptr;
         S shader = {};
         dx::Buffer cbuffer;
 
-        // Construct
         ShaderHolder(const kl::GPU* gpu);
         ShaderHolder(const kl::GPU* gpu, const S& shader);
 
-        // Get
         operator S() const;
         operator bool() const;
 
-        // CBuffer
         template<typename T>
         void update_cbuffer(const T& object)
         {

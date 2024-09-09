@@ -5,9 +5,8 @@
 
 
 namespace titian {
-	class FuzeRenderer
+	struct FuzeRenderer
 	{
-	public:
 		Vector<Ref<Track>> tracks;
 
 		FuzeRenderer(
@@ -17,10 +16,12 @@ namespace titian {
 			int fps,
 			int video_bit_rate,
 			int audio_sample_rate);
+
 		FuzeRenderer(
 			const StringView& filepath,
 			kl::AudioType audio_type,
 			int audio_sample_rate);
+
 		~FuzeRenderer();
 
 		void load_tracks(const Vector<Ref<Track>>& tracks);

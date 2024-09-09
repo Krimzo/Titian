@@ -5,9 +5,8 @@
 
 namespace kl {
     template<typename T>
-    class Matrix4x4
+    struct Matrix4x4
     {
-    public:
         T data[16] = {
             T(1), T(0), T(0), T(0),
             T(0), T(1), T(0), T(0),
@@ -15,11 +14,9 @@ namespace kl {
             T(0), T(0), T(0), T(1),
         };
 
-        // Construct
         constexpr Matrix4x4()
         {}
 
-        // Get
         constexpr T& operator[](int index)
         {
 			return data[index];
@@ -55,12 +52,11 @@ namespace kl {
         {
             Matrix4x4<O> result;
             for (int i = 0; i < 16; i++) {
-                result[i] = static_cast<O>(data[i]);
+                result[i] = O(data[i]);
             }
             return result;
         }
 
-        // Compare
         constexpr bool operator==(const Matrix4x4<T>& other) const
 		{
 			for (int i = 0; i < 16; i++) {
@@ -76,7 +72,6 @@ namespace kl {
 			return !(*this == other);
 		}
 
-        // Math
         constexpr Matrix4x4<T> operator+(const Matrix4x4<T>& other) const
 		{
 			Matrix4x4<T> result;
@@ -172,7 +167,6 @@ namespace kl {
             return T(1) / result;
         }
 
-        // Static
         static constexpr Matrix4x4<T> scaling(const Vector3<T>& scale)
         {
             Matrix4x4<T> result;

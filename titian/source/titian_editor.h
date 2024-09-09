@@ -34,9 +34,8 @@
 
 
 namespace titian {
-    class TitianEditor : public LayerStack
+    struct TitianEditor : LayerStack
     {
-    public:
         AppLayer app_layer = {};
         GameLayer game_layer = {};
         EditorLayer editor_layer = {};

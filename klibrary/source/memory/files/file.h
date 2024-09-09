@@ -3,7 +3,6 @@
 #include "math/math.h"
 
 
-// File
 namespace kl {
     struct File : NoCopy
     {
@@ -24,7 +23,6 @@ namespace kl {
 
         int64_t tell() const;
 
-        // read
         template<typename T>
         T read() const
         {
@@ -48,7 +46,6 @@ namespace kl {
             return 0;
         }
 
-        // write
         template<typename T>
         uint64_t write(const T& object)
         {
@@ -69,7 +66,6 @@ namespace kl {
     };
 }
 
-// Helper
 namespace kl {
     std::string file_extension(const std::string_view& filepath);
     std::vector<std::string> list_files(const std::string_view& path, bool recursive = false);

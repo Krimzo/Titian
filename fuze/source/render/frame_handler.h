@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class FrameHandler
+	struct FrameHandler
 	{
-	public:
 		Frame out_frame;
 
 		FrameHandler();

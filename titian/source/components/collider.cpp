@@ -28,7 +28,7 @@ titian::Collider::~Collider()
 
 void titian::Collider::serialize(Serializer* serializer, const void* helper_data) const
 {
-    const auto helper_meshes = static_cast<const StringMap<Ref<Mesh>>*>(helper_data);
+    const auto helper_meshes = (const StringMap<Ref<Mesh>>*) helper_data;
 
     const px::PxGeometryType::Enum geometry_type = this->type();
     serializer->write_int("geometry_type", geometry_type);
@@ -83,7 +83,7 @@ saved_geometry:
 
 void titian::Collider::deserialize(const Serializer* serializer, const void* helper_data)
 {
-    const auto helper_meshes = static_cast<const StringMap<Ref<Mesh>>*>(helper_data);
+    const auto helper_meshes = (const StringMap<Ref<Mesh>>*) helper_data;
 
     px::PxGeometryType::Enum geometry_type{};
     serializer->read_int("geometry_type", (int&) geometry_type);
@@ -142,7 +142,6 @@ void titian::Collider::deserialize(const Serializer* serializer, const void* hel
     set_restitution(restitution);
 }
 
-// Get
 px::PxShape* titian::Collider::shape() const
 {
     return m_shape;
@@ -180,7 +179,6 @@ titian::Float4x4 titian::Collider::scaling_matrix() const
     return {};
 }
 
-// Geometry
 void titian::Collider::set_geometry(const px::PxGeometry& geometry)
 {
     if (m_shape) {
@@ -218,7 +216,6 @@ titian::Float3 titian::Collider::offset() const
     return (const Float3&) transform.p;
 }
 
-// Material
 void titian::Collider::set_static_friction(float friction)
 {
     m_material->setStaticFriction(friction);

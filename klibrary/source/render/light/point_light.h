@@ -4,9 +4,8 @@
 
 
 namespace kl {
-    class PointLight
+    struct PointLight
     {
-    public:
         Float3 origin{};
         Float3 color{ colors::WHITE };
         float intensity{ 1.0f };

@@ -1,7 +1,6 @@
 #include "fuze.h"
 
 
-/* AudioEffectVolume */
 titian::AudioEffectVolume::AudioEffectVolume()
 {}
 

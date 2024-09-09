@@ -12,9 +12,8 @@
 
 
 namespace titian {
-    class FuzeEditor : public LayerStack
+    struct FuzeEditor : LayerStack
     {
-    public:
         AppLayer app_layer = {};
         VideoLayer video_layer = {};
         GUILayer gui_layer = {};

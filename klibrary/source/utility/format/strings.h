@@ -53,7 +53,6 @@ namespace kl {
 }
 
 namespace kl {
-    // 8 bit chars
     template <bool NewLine = true, typename... Args>
     void write(std::ostream& stream, const Args&... args)
     {
@@ -78,7 +77,6 @@ namespace kl {
         return stream.str();
     }
 
-    // 16 bit chars
     template <bool NewLine = true, typename... Args>
     void wwrite(std::wostream& w_stream, const Args&... args)
     {

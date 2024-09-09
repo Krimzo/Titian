@@ -4,9 +4,8 @@
 
 
 namespace titian {
-	class Track : kl::NoCopy
+	struct Track : kl::NoCopy
 	{
-	public:
 		String name = "Track";
 		bool enabled = true;
 		std::map<float, Ref<Media>> media;

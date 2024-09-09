@@ -7,7 +7,8 @@ titian::SandboxPieceTest::SandboxPieceTest(TitianEditor* editor)
 
 void titian::SandboxPieceTest::setup_self()
 {
-    /* for testing purposes */
     kl::GPU* gpu = &editor->app_layer.gpu;
 	Scene* scene = &editor->game_layer.scene;
+
+
 }

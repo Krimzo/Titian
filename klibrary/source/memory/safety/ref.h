@@ -4,13 +4,11 @@
 
 
 namespace kl {
-    /* NOT THREAD SAFE */
     template<typename T, typename C = uint32_t>
     struct Ref
     {
         friend struct Ref;
 
-        // create
         Ref()
         {}
 
@@ -22,7 +20,6 @@ namespace kl {
             }
         }
 
-        // destroy
         ~Ref() noexcept
         {
             free();
@@ -36,7 +33,6 @@ namespace kl {
             clear();
         }
 
-        // copy
         Ref(const Ref& other)
             : m_instance(other.m_instance), m_count(other.m_count)
         {
@@ -54,7 +50,6 @@ namespace kl {
             return *this;
         }
 
-        // move
         Ref(Ref&& other) noexcept
         {
             *this = other;
@@ -68,7 +63,6 @@ namespace kl {
             return *this;
         }
 
-        // cast
         template<typename B>
             requires (not std::is_same_v<B, T> and std::is_base_of_v<B, T>)
         operator Ref<B, C>()
@@ -96,7 +90,6 @@ namespace kl {
             return result;
         }
 
-        // compare
         bool operator==(const Ref& other) const
         {
             const void* first = m_instance;
@@ -109,7 +102,6 @@ namespace kl {
             return !(*this == other);
         }
 
-        // access
         T* operator&() const
         {
             return m_instance;
@@ -125,25 +117,24 @@ namespace kl {
             return m_instance;
         }
 
-        // info
         operator bool() const
         {
-            return static_cast<bool>(m_instance);
+            return bool(m_instance);
         }
 
         template<typename T = uint32_t>
         T count() const
         {
             if (m_count) {
-                return static_cast<T>(*m_count);
+                return T(*m_count);
             }
-            return static_cast<T>(0);
+            return T(0);
         }
 
         template<typename T>
         bool is() const
         {
-            return static_cast<bool>(
+            return bool(
                 dynamic_cast<T*>(m_instance));
         }
 
@@ -162,9 +153,9 @@ namespace kl {
         T decrease_count() const
         {
             if (m_count) {
-                return static_cast<T>(--(*m_count));
+                return T(--(*m_count));
             }
-            return static_cast<T>(-1);
+            return T(-1);
         }
 
         void allocate()
@@ -203,13 +194,8 @@ namespace kl {
     template<typename T, typename C>
     std::ostream& operator<<(std::ostream& stream, const Ref<T, C>& ref)
     {
-        // Address
         stream << "(0x" << std::hex << &ref << std::dec;
-
-        // Ref count
         stream << "{" << ref.count() << "}: ";
-    
-        // Object
         if (ref) {
             stream << *ref;
         }

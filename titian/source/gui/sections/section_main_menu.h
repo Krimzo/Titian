@@ -8,9 +8,8 @@
 
 
 namespace titian {
-	class GUISectionMainMenu : public GUISection
+    struct GUISectionMainMenu : GUISection
 	{
-    public:
         GUISectionMainMenu();
 
         void render_gui() override;

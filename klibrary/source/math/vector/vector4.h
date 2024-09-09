@@ -5,15 +5,13 @@
 
 namespace kl {
 	template<typename T>
-	class Vector4
+	struct Vector4
 	{
-	public:
 		T x = {};
 		T y = {};
 		T z = {};
 		T w = {};
 
-		// Construct
 		constexpr Vector4()
 		{}
 
@@ -49,7 +47,6 @@ namespace kl {
 			: x(x), y(vec.x), z(vec.y), w(vec.z)
 		{}
 
-		// Get
 		constexpr T& operator[](int index)
 		{
 			return (&x)[index];
@@ -63,7 +60,7 @@ namespace kl {
 		template<typename O>
 		constexpr operator Vector4<O>() const
 		{
-			return { static_cast<O>(x), static_cast<O>(y), static_cast<O>(z), static_cast<O>(w) };
+			return { O(x), O(y), O(z), O(w) };
 		}
 
 		constexpr operator Quaternion<T>() const
@@ -81,7 +78,6 @@ namespace kl {
 			};
 		}
 
-		// Helper
 		constexpr Vector2<T>& xy()
 		{
 			return reinterpret_cast<Vector2<T>&>(x);
@@ -132,7 +128,6 @@ namespace kl {
 			return reinterpret_cast<Vector3<T>&>(y);
 		}
 
-		// Compare
 		constexpr bool operator==(const Vector4<T>& other) const
 		{
 			return x == other.x && y == other.y && z == other.z && w == other.w;
@@ -143,7 +138,6 @@ namespace kl {
 			return !(*this == other);
 		}
 
-		// Math
 		constexpr Vector4<T> operator+(const Vector4<T>& other) const
 		{
 			return { x + other.x, y + other.y, z + other.z, w + other.w };
@@ -222,7 +216,6 @@ namespace kl {
 			w /= other.w;
 		}
 
-		// Other
 		constexpr Vector4<T> operator-() const
 		{
 			return { -x, -y, -z, -w };
