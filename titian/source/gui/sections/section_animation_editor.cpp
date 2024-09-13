@@ -7,7 +7,7 @@ titian::GUISectionAnimationEditor::GUISectionAnimationEditor()
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
-    camera = new Camera(scene->physics(), true, gpu);
+    camera = new Camera(scene->physics(), gpu);
     render_texture = new Texture(gpu);
     depth_texture = new Texture(gpu);
 

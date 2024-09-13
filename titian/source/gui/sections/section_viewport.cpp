@@ -287,7 +287,7 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
 
         if (entities.size() == 1) {
             Entity* entity = *entities.begin();
-            entity->scale = decomposed_parts[0];
+            entity->set_scale(decomposed_parts[0]);
             entity->set_rotation(decomposed_parts[1]);
             entity->set_position(decomposed_parts[2]);
         }

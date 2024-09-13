@@ -30,8 +30,8 @@ void titian::SandboxPieceCubes::setup_self()
             material->reflection_factor = cube_counter / float(size * size);
             scene->materials[material_name] = material;
 
-            Ref cube = scene->new_entity(false);
-            cube->scale = Float3{ 0.45f };
+            Ref cube = scene->new_entity();
+            cube->set_scale(Float3{ 0.45f });
             cube->set_position({
                 (float)(x - half_size) + x_offset,
                 (float)(y - half_size),

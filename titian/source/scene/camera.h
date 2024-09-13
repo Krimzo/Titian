@@ -42,7 +42,7 @@ namespace titian {
         Ref<Texture> editor_picking_texture;
         Ref<Texture> editor_staging_texture;
 
-        Camera(px::PxPhysics* physics, bool dynamic, kl::GPU* gpu);
+        Camera(px::PxPhysics* physics, kl::GPU* gpu);
 
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;

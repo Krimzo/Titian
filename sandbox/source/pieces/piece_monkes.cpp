@@ -35,8 +35,8 @@ void titian::SandboxPieceMonkes::setup_self()
         material->color = Float4{ Float3{ normalized }, 1.0f };
         scene->materials[material_name] = material;
 
-        Ref monke = scene->new_entity(false);
-        monke->scale = Float3{ 0.5f };
+        Ref monke = scene->new_entity();
+        monke->set_scale(Float3{ 0.5f });
         monke->set_rotation({ 0.0f, 180.0f, 0.0f });
         monke->set_position({
             (float) (x - half_size) + x_offset,

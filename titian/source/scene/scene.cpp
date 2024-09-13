@@ -22,13 +22,13 @@ static px::PxFilterFlags filter_shader(
 titian::Scene::Scene(kl::GPU* gpu)
     : m_gpu(gpu)
 {
-    m_dispatcher = px::PxDefaultCpuDispatcherCreate(kl::CPU_CORE_COUNT / 4);
+    m_dispatcher = px::PxDefaultCpuDispatcherCreate(2);
     kl::assert(m_dispatcher, "Failed to create physics dispatcher");
 
-    m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, px::PxTolerancesScale());
+    m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, px::PxTolerancesScale{});
     kl::assert(m_physics, "Failed to create physics");
 
-    m_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_foundation, px::PxCookingParams(m_physics->getTolerancesScale()));
+    m_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_foundation, px::PxCookingParams{ m_physics->getTolerancesScale() });
     kl::assert(m_cooking, "Failed to create physics cooking");
 
     px::PxSceneDesc scene_descriptor = { m_physics->getTolerancesScale() };
@@ -61,7 +61,7 @@ titian::Scene::~Scene()
     scripts.clear();
 
     while (!m_entities.empty()) {
-        this->remove_entity(m_entities.begin()->first);
+        remove_entity(m_entities.begin()->first);
     }
 
     m_scene->release();
@@ -76,7 +76,7 @@ void titian::Scene::serialize(Serializer* serializer, const void* helper_data) c
     serializer->write_string("main_ambient_light_name", main_ambient_light_name);
     serializer->write_string("main_directional_light_name", main_directional_light_name);
 
-    auto write_map = [&]<typename T>(const StringView& map_name, const StringMap<Ref<T>>& data, const void* helper_data)
+    const auto write_map = [&]<typename T>(const StringView& map_name, const StringMap<Ref<T>>& data, const void* helper_data)
     {
         serializer->push_object(map_name);
         serializer->write_int("data_size", (int32_t) data.size());
@@ -106,7 +106,7 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
     serializer->read_string("main_ambient_light_name", main_ambient_light_name);
     serializer->read_string("main_directional_light_name", main_directional_light_name);
 
-    auto read_map = [&]<typename T>(const StringView& map_name, StringMap<Ref<T>>& data, const Function<T*()>& provider, const void* helper_data)
+    const auto read_map = [&]<typename T>(const StringView& map_name, StringMap<Ref<T>>& data, const Function<T*()>& provider, const void* helper_data)
     {
         serializer->load_object(map_name);
         int32_t data_size = 0;
@@ -180,26 +180,26 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
             serializer->read_string("entity_type", entity_type);
             Ref<Entity> entity;
             if (typeid(Entity).name() == entity_type) {
-                entity = new Entity(m_physics, false);
+                entity = new Entity(m_physics);
             }
             else if (typeid(Camera).name() == entity_type) {
-                entity = new Camera(m_physics, false, m_gpu);
+                entity = new Camera(m_physics, m_gpu);
             }
             else if (typeid(AmbientLight).name() == entity_type) {
-                entity = new AmbientLight(m_physics, false);
+                entity = new AmbientLight(m_physics);
             }
             else if (typeid(PointLight).name() == entity_type) {
-                entity = new PointLight(m_physics, false);
+                entity = new PointLight(m_physics);
             }
             else if (typeid(DirectionalLight).name() == entity_type) {
-                entity = new DirectionalLight(m_physics, false, m_gpu);
+                entity = new DirectionalLight(m_physics, m_gpu);
             }
             else {
                 kl::assert(false, "Unknown entity type: ", entity_type);
             }
             entity->deserialize(serializer, &meshes);
             serializer->unload_object();
-            this->add_entity(name, entity);
+            add_entity(name, entity);
         }
         serializer->unload_object();
     }
@@ -272,9 +272,9 @@ void titian::Scene::update_ui()
     }
 }
 
-titian::Ref<titian::Entity> titian::Scene::new_entity(const bool dynamic) const
+titian::Ref<titian::Entity> titian::Scene::new_entity() const
 {
-    return new Entity(m_physics, dynamic);
+    return new Entity(m_physics);
 }
 
 void titian::Scene::add_entity(const String& id, const Ref<Entity>& entity)
@@ -286,48 +286,51 @@ void titian::Scene::add_entity(const String& id, const Ref<Entity>& entity)
 void titian::Scene::remove_entity(const StringView& id)
 {
     const auto it = m_entities.find(id);
-    if (it != m_entities.end()) {
-        m_scene->removeActor(*it->second->actor());
-        m_entities.erase(it);
-    }
+    if (it == m_entities.end())
+        return;
+
+    m_scene->removeActor(*it->second->actor());
+    m_entities.erase(it);
 }
 
 titian::Ref<titian::Collider> titian::Scene::new_box_collider(const Float3& scale) const
 {
-    return new Collider(m_physics, px::PxBoxGeometry(reinterpret_cast<const px::PxVec3&>(scale)));
+    Ref result = new Collider(m_physics);
+    result->set_geometry(px::PxBoxGeometry{ reinterpret_cast<const px::PxVec3&>(scale) });
+    return result;
 }
 
 titian::Ref<titian::Collider> titian::Scene::new_sphere_collider(const float radius) const
 {
-    return new Collider(m_physics, px::PxSphereGeometry(radius));
+    Ref result = new Collider(m_physics);
+    result->set_geometry(px::PxSphereGeometry{ radius });
+    return result;
 }
 
 titian::Ref<titian::Collider> titian::Scene::new_capsule_collider(const float radius, const float height) const
 {
-    return new Collider(m_physics, px::PxCapsuleGeometry(radius, height));
+    Ref result = new Collider(m_physics);
+    result->set_geometry(px::PxCapsuleGeometry{ radius, height });
+    return result;
 }
 
 titian::Ref<titian::Collider> titian::Scene::new_mesh_collider(const Mesh& mesh, const Float3& scale) const
 {
+    Ref result = new Collider(m_physics);
     if (mesh.physics_buffer) {
-        return new Collider(m_physics, px::PxTriangleMeshGeometry(mesh.physics_buffer, reinterpret_cast<const px::PxVec3&>(scale)));
+        result->set_geometry(px::PxTriangleMeshGeometry{ mesh.physics_buffer, reinterpret_cast<const px::PxVec3&>(scale) });
     }
-    return nullptr;
+    return result;
 }
 
 titian::Ref<titian::Collider> titian::Scene::new_default_collider(const px::PxGeometryType::Enum type, const Mesh* optional_mesh) const
 {
-    switch (type) {
-    case px::PxGeometryType::Enum::eBOX:
-        return new_box_collider(Float3{ 1.0f });
-    case px::PxGeometryType::Enum::eSPHERE:
-        return new_sphere_collider(1.0f);
-    case px::PxGeometryType::Enum::eCAPSULE:
-        return new_capsule_collider(1.0f, 2.0f);
-    case px::PxGeometryType::Enum::eTRIANGLEMESH:
-        if (optional_mesh) {
-            return new_mesh_collider(*optional_mesh, Float3{ 1.0f });
-        }
+    switch (type)
+    {
+    case px::PxGeometryType::Enum::eBOX: return new_box_collider(Float3{ 1.0f });
+    case px::PxGeometryType::Enum::eSPHERE: return new_sphere_collider(1.0f);
+    case px::PxGeometryType::Enum::eCAPSULE: return new_capsule_collider(1.0f, 2.0f);
+    case px::PxGeometryType::Enum::eTRIANGLEMESH: if (optional_mesh) return new_mesh_collider(*optional_mesh, Float3{ 1.0f });
     }
     return nullptr;
 }
@@ -369,8 +372,8 @@ titian::Shader* titian::Scene::helper_new_shader(const String& id)
 
 titian::Entity* titian::Scene::helper_new_entity(const String& id)
 {
-    Ref entity = this->new_entity(true);
-    this->add_entity(id, entity);
+    Ref entity = new_entity();
+    add_entity(id, entity);
     return &entity;
 }
 
@@ -470,7 +473,7 @@ void titian::Scene::helper_remove_shader(const StringView& id)
 
 void titian::Scene::helper_remove_entity(const StringView& id)
 {
-    this->remove_entity(id);
+    remove_entity(id);
 }
 
 bool titian::Scene::helper_contains_mesh(const StringView& id) const

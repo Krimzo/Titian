@@ -193,7 +193,10 @@ void titian::GUISectionEntityProperties::edit_entity_transform(Scene* scene, Ent
     im::Separator();
     im::Text("Transform");
 
-    im::DragFloat3("Scale", &entity->scale.x, 0.1f);
+	Float3 scale = entity->scale();
+	if (im::DragFloat3("Scale", &scale.x, 0.1f)) {
+		entity->set_scale(scale);
+	}
 
     Float3 rotation = entity->rotation();
     if (im::DragFloat3("Rotation", &rotation.x)) {
@@ -256,7 +259,7 @@ void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const
     im::Separator();
     im::Text("Physics");
 
-    bool dynamic = entity->is_dynamic();
+    bool dynamic = entity->dynamic();
     if (im::Checkbox("Dynamic", &dynamic)) {
         scene->remove_entity(entity_name);
         entity->set_dynamic(dynamic);
@@ -264,7 +267,7 @@ void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const
     }
 
     if (dynamic) {
-        bool gravity = entity->has_gravity();
+        bool gravity = entity->gravity();
         if (im::Checkbox("Gravity", &gravity)) {
             entity->set_gravity(gravity);
         }
@@ -273,6 +276,11 @@ void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const
         if (im::DragFloat("Mass", &mass, 1.0f, 0.0f, 1e9f)) {
             entity->set_mass(mass);
         }
+
+        float angular_damping = entity->angular_damping();
+		if (im::DragFloat("Angular Damping", &angular_damping, 0.01f, 0.0f, 1.0f)) {
+			entity->set_angular_damping(angular_damping);
+		}
 
         Float3 velocity = entity->velocity();
         if (im::DragFloat3("Velocity", &velocity.x)) {
@@ -392,12 +400,13 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     }
 
     if (geometry_type != 0 && im::Button("Load size from scale")) {
+        const Float3 scale = entity->scale();
         if (geometry_type == 1) {
-            box_geometry.halfExtents = reinterpret_cast<px::PxVec3&>(entity->scale);
+            box_geometry.halfExtents = reinterpret_cast<const px::PxVec3&>(scale);
             collider_shape->setGeometry(box_geometry);
         }
         else {
-            mesh_geometry.scale = reinterpret_cast<px::PxVec3&>(entity->scale);
+            mesh_geometry.scale = reinterpret_cast<const px::PxVec3&>(scale);
             collider_shape->setGeometry(mesh_geometry);
         }
     }

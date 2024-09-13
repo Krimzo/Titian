@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::PointLight::PointLight(px::PxPhysics* physics, const bool dynamic)
-	: Light(physics, dynamic)
+titian::PointLight::PointLight(px::PxPhysics* physics)
+	: Light(physics)
 {}
 
 void titian::PointLight::serialize(Serializer* serializer, const void* helper_data) const

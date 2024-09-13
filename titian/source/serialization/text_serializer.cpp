@@ -45,9 +45,9 @@ titian::TextSerializer::operator bool() const
 void titian::TextSerializer::push_object(const StringView& name)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
-	auto it = current().emplace(name, kl::Wrap<js::Object>::make()).first;
-	js::Object* ptr = it->second.as<js::Object>();
-	m_stack.push_back(ptr);
+	current().emplace(name, kl::Wrap<js::Object>::make());
+	const auto it = current().find(name);
+	m_stack.push_back(it->second.as<js::Object>());
 }
 
 void titian::TextSerializer::pop_object()
@@ -61,8 +61,7 @@ void titian::TextSerializer::load_object(const StringView& name) const
 {
 	auto it = current().find(name);
 	if (it != current().end()) {
-		js::Object* ptr = (js::Object*) it->second.as<js::Object>();
-		m_stack.push_back(ptr);
+		m_stack.push_back(it->second.as<js::Object>());
 	}
 }
 

@@ -14,7 +14,7 @@ namespace titian {
 		float point_size = 1.0f;
 		float cascade_splits[CASCADE_COUNT + 1] = { 0.0f, 0.075f, 0.2f, 0.5f, 1.0f };
 
-		DirectionalLight(px::PxPhysics* physics, bool dynamic, kl::GPU* gpu);
+		DirectionalLight(px::PxPhysics* physics, kl::GPU* gpu);
 
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;

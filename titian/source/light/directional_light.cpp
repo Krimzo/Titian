@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::DirectionalLight::DirectionalLight(px::PxPhysics* physics, const bool dynamic, kl::GPU* gpu)
-    : Light(physics, dynamic), m_gpu(gpu)
+titian::DirectionalLight::DirectionalLight(px::PxPhysics* physics, kl::GPU* gpu)
+    : Light(physics), m_gpu(gpu)
 {
     set_resolution(2500);
 }

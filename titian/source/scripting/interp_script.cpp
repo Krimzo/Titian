@@ -421,20 +421,21 @@ void titian::InterpScript::load_engine_parts()
 
 	m_engine->new_usertype<Entity>(
 		"Entity",
-		"scale", &Entity::scale,
 		"casts_shadows", &Entity::casts_shadows,
 		"animation_name", &Entity::animation_name,
 		"material_name", &Entity::material_name,
 		"collider_mesh_name", &Entity::collider_mesh_name,
-		"model_matrix", &Entity::model_matrix,
-		"collider_matrix", &Entity::collider_matrix,
+		"dynamic", sl::property(&Entity::dynamic, &Entity::set_dynamic),
+		"gravity", sl::property(&Entity::gravity, &Entity::set_gravity),
+		"mass", sl::property(&Entity::mass, &Entity::set_mass),
+		"angular_damping", sl::property(&Entity::angular_damping, &Entity::set_angular_damping),
+		"scale", sl::property(&Entity::scale, &Entity::set_scale),
 		"rotation", sl::property(&Entity::rotation, &Entity::set_rotation),
 		"position", sl::property(&Entity::position, &Entity::set_position),
-		"dynamic", sl::property(&Entity::is_dynamic, &Entity::set_dynamic),
-		"gravity", sl::property(&Entity::has_gravity, &Entity::set_gravity),
-		"mass", sl::property(&Entity::mass, &Entity::set_mass),
 		"velocity", sl::property(&Entity::velocity, &Entity::set_velocity),
-		"angular", sl::property(&Entity::angular, &Entity::set_angular)
+		"angular", sl::property(&Entity::angular, &Entity::set_angular),
+		"model_matrix", &Entity::model_matrix,
+		"collider_matrix", &Entity::collider_matrix
 	);
 
 	m_engine->new_usertype<Camera>(

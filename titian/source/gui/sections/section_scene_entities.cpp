@@ -17,30 +17,45 @@ void titian::GUISectionSceneEntities::render_gui()
 		if (im::BeginPopupContextWindow("NewEntity", ImGuiPopupFlags_MouseButtonMiddle)) {
 			const String name = gui_input_continuous("##CreateEntityInput");
 			if (!name.empty() && !scene->helper_contains_entity(name)) {
-				if (im::MenuItem("New Entity")) {
-					Ref entity = scene->new_entity(false);
-					scene->add_entity(name, entity);
-					im::CloseCurrentPopup();
+				if (im::BeginMenu("Basic")) {
+					if (im::MenuItem("New Entity")) {
+						Ref entity = scene->new_entity();
+						scene->add_entity(name, entity);
+						im::CloseCurrentPopup();
+					}
+					if (im::MenuItem("New Camera")) {
+						Ref entity = scene->new_casted<Camera>(gpu);
+						scene->add_entity(name, entity);
+						im::CloseCurrentPopup();
+					}
+					if (im::MenuItem("New Ambient Light")) {
+						Ref entity = scene->new_casted<AmbientLight>();
+						scene->add_entity(name, entity);
+						im::CloseCurrentPopup();
+					}
+					if (im::MenuItem("New Point Light")) {
+						Ref entity = scene->new_casted<PointLight>();
+						scene->add_entity(name, entity);
+						im::CloseCurrentPopup();
+					}
+					if (im::MenuItem("New Directional Light")) {
+						Ref entity = scene->new_casted<DirectionalLight>(gpu);
+						scene->add_entity(name, entity);
+						im::CloseCurrentPopup();
+					}
+					im::EndMenu();
 				}
-				if (im::MenuItem("New Camera")) {
-					Ref entity = scene->new_casted<Camera>(false, gpu);
-					scene->add_entity(name, entity);
-					im::CloseCurrentPopup();
-				}
-				if (im::MenuItem("New Ambient Light")) {
-					Ref entity = scene->new_casted<AmbientLight>(false);
-					scene->add_entity(name, entity);
-					im::CloseCurrentPopup();
-				}
-				if (im::MenuItem("New Point Light")) {
-					Ref entity = scene->new_casted<PointLight>(false);
-					scene->add_entity(name, entity);
-					im::CloseCurrentPopup();
-				}
-				if (im::MenuItem("New Directional Light")) {
-					Ref entity = scene->new_casted<DirectionalLight>(false, gpu);
-					scene->add_entity(name, entity);
-					im::CloseCurrentPopup();
+				if (im::BeginMenu("Animation")) {
+					for (const auto& [anim_name, animation] : scene->animations) {
+						if (im::MenuItem(kl::format(anim_name, "##AnimationEnt").data())) {
+							Ref entity = scene->new_entity();
+							entity->animation_name = anim_name;
+							entity->material_name = "white";
+							scene->add_entity(name, entity);
+							im::CloseCurrentPopup();
+						}
+					}
+					im::EndMenu();
 				}
 			}
 			im::EndPopup();

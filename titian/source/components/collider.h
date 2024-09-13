@@ -7,17 +7,16 @@ namespace titian {
     struct Collider : Serializable
     {
         Collider(px::PxPhysics* physics);
-        Collider(px::PxPhysics* physics, const px::PxGeometry& geometry);
         ~Collider() override;
 
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;
 
-        px::PxShape* shape() const;
         px::PxGeometryType::Enum type() const;
-        Float4x4 scaling_matrix() const;
+        px::PxShape* shape() const;
 
         void set_geometry(const px::PxGeometry& geometry);
+        px::PxGeometry geometry() const;
 
         void set_rotation(const Float3& rotation);
         Float3 rotation() const;
@@ -34,9 +33,11 @@ namespace titian {
         void set_restitution(float restitution);
         float restitution() const;
 
+        Float4x4 scaling_matrix() const;
+
     private:
-        px::PxPhysics* m_physics = nullptr;
-        px::PxMaterial* m_material = nullptr;
+        px::PxPhysics* const m_physics;
+        px::PxMaterial* const m_material;
         px::PxShape* m_shape = nullptr;
     };
 }

@@ -1414,61 +1414,12 @@ namespace titian {
 			: Node(parent, title, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
-			addOUT<Float3>("scale")->behaviour([this]()
+			addOUT<bool>("casts_shadows")->behaviour([this]()
 			{
 				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
-					return ptr->scale;
-				}
-				return Float3{};
-			});
-			addOUT<Float3>("rotation")->behaviour([this]()
-			{
-				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
-					return ptr->rotation();
-				}
-				return Float3{};
-			});
-			addOUT<Float3>("position")->behaviour([this]()
-			{
-				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
-					return ptr->position();
-				}
-				return Float3{};
-			});
-			addOUT<bool>("is_dynamic")->behaviour([this]()
-			{
-				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
-					return ptr->is_dynamic();
+					return ptr->casts_shadows;
 				}
 				return bool{};
-			});
-			addOUT<bool>("has_gravity")->behaviour([this]()
-			{
-				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
-					return ptr->has_gravity();
-				}
-				return bool{};
-			});
-			addOUT<float>("mass")->behaviour([this]()
-			{
-				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
-					return ptr->mass();
-				}
-				return float{};
-			});
-			addOUT<Float3>("velocity")->behaviour([this]()
-			{
-				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
-					return ptr->velocity();
-				}
-				return Float3{};
-			});
-			addOUT<Float3>("angular")->behaviour([this]()
-			{
-				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
-					return ptr->angular();
-				}
-				return Float3{};
 			});
 			addOUT<String>("animation_name")->behaviour([this]()
 			{
@@ -1491,12 +1442,68 @@ namespace titian {
 				}
 				return String{};
 			});
-			addOUT<bool>("casts_shadows")->behaviour([this]()
+			addOUT<bool>("dynamic")->behaviour([this]()
 			{
 				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
-					return ptr->casts_shadows;
+					return ptr->dynamic();
 				}
 				return bool{};
+			});
+			addOUT<bool>("gravity")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->gravity();
+				}
+				return bool{};
+			});
+			addOUT<float>("mass")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->mass();
+				}
+				return float{};
+			});
+			addOUT<float>("angular_damping")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->angular_damping();
+				}
+				return float{};
+			});
+			addOUT<Float3>("scale")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->scale();
+				}
+				return Float3{};
+			});
+			addOUT<Float3>("rotation")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->rotation();
+				}
+				return Float3{};
+			});
+			addOUT<Float3>("position")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->position();
+				}
+				return Float3{};
+			});
+			addOUT<Float3>("velocity")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->velocity();
+				}
+				return Float3{};
+			});
+			addOUT<Float3>("angular")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->angular();
+				}
+				return Float3{};
 			});
 		}
 	};
@@ -1747,18 +1754,19 @@ namespace titian {
 			: FlowNode(parent, title, true, true, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
-			addIN<Float3>("scale");
-			addIN<Float3>("rotation");
-			addIN<Float3>("position");
-			addIN<bool>("dynamic");
-			addIN<bool>("gravity");
-			addIN<float>("mass");
-			addIN<Float3>("velocity");
-			addIN<Float3>("angular");
+			addIN<bool>("casts_shadows");
 			addIN<String>("animation_name");
 			addIN<String>("material_name");
 			addIN<String>("collider_mesh_name");
-			addIN<bool>("casts_shadows");
+			addIN<bool>("dynamic");
+			addIN<bool>("gravity");
+			addIN<float>("mass");
+			addIN<float>("angular_damping"),
+			addIN<Float3>("scale");
+			addIN<Float3>("rotation");
+			addIN<Float3>("position");
+			addIN<Float3>("velocity");
+			addIN<Float3>("angular");
 		}
 
 		void call() override
@@ -1768,29 +1776,8 @@ namespace titian {
 				return;
 			}
 
-			if (input_connected("scale")) {
-				ptr->scale = get_value<Float3>("scale");
-			}
-			if (input_connected("rotation")) {
-				ptr->set_rotation(get_value<Float3>("rotation"));
-			}
-			if (input_connected("position")) {
-				ptr->set_position(get_value<Float3>("position"));
-			}
-			if (input_connected("dynamic")) {
-				ptr->set_dynamic(get_value<bool>("dynamic"));
-			}
-			if (input_connected("gravity")) {
-				ptr->set_gravity(get_value<bool>("gravity"));
-			}
-			if (input_connected("mass")) {
-				ptr->set_mass(get_value<float>("mass"));
-			}
-			if (input_connected("velocity")) {
-				ptr->set_velocity(get_value<Float3>("velocity"));
-			}
-			if (input_connected("angular")) {
-				ptr->set_angular(get_value<Float3>("angular"));
+			if (input_connected("casts_shadows")) {
+				ptr->casts_shadows = get_value<bool>("casts_shadows");
 			}
 			if (input_connected("animation_name")) {
 				ptr->animation_name = get_value<String>("animation_name");
@@ -1801,8 +1788,32 @@ namespace titian {
 			if (input_connected("collider_mesh_name")) {
 				ptr->collider_mesh_name = get_value<String>("collider_mesh_name");
 			}
-			if (input_connected("casts_shadows")) {
-				ptr->casts_shadows = get_value<bool>("casts_shadows");
+			if (input_connected("dynamic")) {
+				ptr->set_dynamic(get_value<bool>("dynamic"));
+			}
+			if (input_connected("gravity")) {
+				ptr->set_gravity(get_value<bool>("gravity"));
+			}
+			if (input_connected("mass")) {
+				ptr->set_mass(get_value<float>("mass"));
+			}
+			if (input_connected("angular_damping")) {
+				ptr->set_angular_damping(get_value<float>("angular_damping"));
+			}
+			if (input_connected("scale")) {
+				ptr->set_scale(get_value<Float3>("scale"));
+			}
+			if (input_connected("rotation")) {
+				ptr->set_rotation(get_value<Float3>("rotation"));
+			}
+			if (input_connected("position")) {
+				ptr->set_position(get_value<Float3>("position"));
+			}
+			if (input_connected("velocity")) {
+				ptr->set_velocity(get_value<Float3>("velocity"));
+			}
+			if (input_connected("angular")) {
+				ptr->set_angular(get_value<Float3>("angular"));
 			}
 			call_next();
 		}

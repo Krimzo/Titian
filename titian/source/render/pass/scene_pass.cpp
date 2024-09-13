@@ -131,26 +131,25 @@ void titian::ScenePass::render_self(StatePackage* package)
     Vector<RenderInfo> to_render;
     to_render.reserve(scene->entities().size());
 
-    for (int counter = 0; const auto & [_, entity] : scene->entities()) {
-        counter += 1;
-
+    const auto schedule_entity_helper = [&](const int id, Entity* entity)
+    {
         if (!package->camera->can_see(entity->position())) {
-            continue;
-		}
+            return;
+        }
 
         RenderInfo info{};
-        info.id = counter;
-        info.entity = &entity;
+        info.id = id;
+        info.entity = entity;
 
         info.animation = scene->helper_get_animation(entity->animation_name);
         if (!info.animation) {
-            continue;
+            return;
         }
 
         info.mesh = info.animation->get_mesh(timer->elapsed());
         info.material = scene->helper_get_material(entity->material_name);
         if (!info.mesh || !info.material) {
-            continue;
+            return;
         }
 
         info.color_map = scene->helper_get_texture(info.material->color_map_name);
@@ -163,9 +162,12 @@ void titian::ScenePass::render_self(StatePackage* package)
         else {
             info.render_shaders = &package->shader_state;
         }
-
         info.camera_distance = (entity->position() - package->camera->position()).length();
-		to_render.push_back(info);
+        to_render.push_back(info);
+    };
+
+    for (int counter = 0; const auto& [_, entity] : scene->entities()) {
+        schedule_entity_helper(++counter, &entity);
     }
 
 	std::sort(to_render.begin(), to_render.end(), [](const RenderInfo& a, const RenderInfo& b)
@@ -176,7 +178,7 @@ void titian::ScenePass::render_self(StatePackage* package)
     bool wireframe_bound = package->camera->render_wireframe;
     gpu->bind_raster_state(wireframe_bound ? render_layer->raster_states->wireframe : render_layer->raster_states->solid_cull);
 
-    const auto render_helper = [&](const RenderInfo& info)
+    const auto render_entity_helper = [&](const RenderInfo& info)
     {
         const bool should_wireframe = package->camera->render_wireframe || info.mesh->render_wireframe;
         if (should_wireframe != wireframe_bound) {
@@ -208,7 +210,7 @@ void titian::ScenePass::render_self(StatePackage* package)
         global_cb.W = info.entity->model_matrix();
 
         global_cb.OBJECT_INDEX = float(info.id);
-        global_cb.OBJECT_SCALE = info.entity->scale;
+        global_cb.OBJECT_SCALE = info.entity->scale();
         global_cb.OBJECT_ROTATION = info.entity->rotation();
         global_cb.OBJECT_POSITION = info.entity->position();
 
@@ -240,7 +242,7 @@ void titian::ScenePass::render_self(StatePackage* package)
 
     for (const auto& info : to_render) {
         if (!info.material->is_transparent()) {
-            render_helper(info);
+            render_entity_helper(info);
         }
     }
 
@@ -250,7 +252,7 @@ void titian::ScenePass::render_self(StatePackage* package)
     for (int i = (int) to_render.size() - 1; i >= 0; i--) {
         const auto& info = to_render[i];
         if (info.material->is_transparent()) {
-            render_helper(info);
+            render_entity_helper(info);
         }
     }
 

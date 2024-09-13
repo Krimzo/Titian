@@ -8,7 +8,7 @@ namespace titian {
 	{
 		Float3 color{ 1.0f };
 
-		PointLight(px::PxPhysics* physics, bool dynamic);
+		PointLight(px::PxPhysics* physics);
 
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;

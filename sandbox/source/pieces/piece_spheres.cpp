@@ -33,7 +33,7 @@ void titian::SandboxPieceSpheres::setup_self()
             material->refraction_index = 1.0f / 1.52f;
             scene->materials[material_name] = material;
 
-            Ref sphere = scene->new_entity(false);
+            Ref sphere = scene->new_entity();
             sphere->set_position({ (x - half_size) * 2.25f + x_offset, (y - half_size) * 2.25f, 5.0f });
             sphere->animation_name = animation_name;
             sphere->material_name = material_name;

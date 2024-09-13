@@ -39,22 +39,23 @@ void titian::ShadowPass::render_self(StatePackage* package)
 
     Vector<RenderInfo> to_render;
     to_render.reserve(scene->entities().size());
-
-    for (const auto& [_, entity] : scene->entities()) {
+    
+    const auto schedule_entity_helper = [&](Entity* entity)
+    {
         if (!entity->casts_shadows) {
-            continue;
+            return;
         }
 
         RenderInfo info{};
         info.animation = scene->helper_get_animation(entity->animation_name);
         if (!info.animation) {
-            continue;
+            return;
         }
 
         info.mesh = info.animation->get_mesh(timer->elapsed());
         Material* material = scene->helper_get_material(entity->material_name);
         if (!info.mesh || !material || material->is_transparent()) {
-            continue;
+            return;
         }
 
         info.vs_cb.WVP = entity->model_matrix();
@@ -62,6 +63,10 @@ void titian::ShadowPass::render_self(StatePackage* package)
             info.vs_cb.IS_SKELETAL = 1.0f;
         }
         to_render.push_back(info);
+    };
+
+    for (const auto& [_, entity] : scene->entities()) {
+        schedule_entity_helper(&entity);
     }
 
     gpu->set_viewport_size(Int2{ dir_light->resolution() });

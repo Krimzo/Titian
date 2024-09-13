@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::Camera::Camera(px::PxPhysics* physics, const bool dynamic, kl::GPU* gpu)
-    : Entity(physics, dynamic), m_gpu(gpu)
+titian::Camera::Camera(px::PxPhysics* physics, kl::GPU* gpu)
+    : Entity(physics), m_gpu(gpu)
 {
     screen_texture = new Texture(gpu);
     game_color_texture = new Texture(gpu);

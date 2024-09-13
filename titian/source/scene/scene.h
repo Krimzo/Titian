@@ -65,15 +65,15 @@ namespace titian {
         void update_scripts();
         void update_ui();
 
-        inline const auto& entities() const { return m_entities; };
-        Ref<Entity> new_entity(bool dynamic) const;
+        Ref<Entity> new_entity() const;
         void add_entity(const String& id, const Ref<Entity>& entity);
         void remove_entity(const StringView& id);
+        inline const auto& entities() const { return m_entities; };
 
         template<typename T, typename... Args>
-        Ref<T> new_casted(const bool dynamic, const Args&... args) const
+        Ref<T> new_casted(const Args&... args) const
         {
-            return new T(m_physics, dynamic, args...);
+            return new T(m_physics, args...);
         }
 
         template<typename T>

@@ -9,7 +9,7 @@ namespace titian {
 		Float3 color = kl::colors::WHITE;
 		float intensity = 0.1f;
 
-		AmbientLight(px::PxPhysics* physics, bool dynamic);
+		AmbientLight(px::PxPhysics* physics);
 
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;
