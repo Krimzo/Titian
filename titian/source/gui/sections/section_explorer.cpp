@@ -6,12 +6,12 @@ titian::GUISectionExplorer::GUISectionExplorer()
 {
     AppLayer* app_layer = Layers::get<AppLayer>();
 
-    auto create_texture = [&](Ref<Texture>& texture, const char* filename)
+    const auto create_texture = [&](Ref<Texture>& texture, const char* filename)
     {
         texture = new Texture(&app_layer->gpu);
         texture->data_buffer.load_from_file(filename);
         texture->reload_as_2D();
-        texture->create_shader_view(nullptr);
+        texture->create_shader_view();
         kl::assert(texture->shader_view, "Failed to init texture: ", filename);
     };
 
@@ -31,9 +31,8 @@ void titian::GUISectionExplorer::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    List<fs::path> directories{};
-    List<fs::path> files{};
-
+    Vector<fs::path> directories;
+    Vector<fs::path> files;
     try {
         for (auto& entry : fs::directory_iterator(m_path)) {
             (entry.is_directory() ? directories : files).push_back(entry);
@@ -174,7 +173,7 @@ void titian::GUISectionExplorer::handle_file_entry(const fs::path& file)
     im::PopStyleVar(2);
 
     if (im::BeginPopupContextItem(file.string().data(), ImGuiPopupFlags_MouseButtonRight)) {
-        if (Optional opt_name = gui_input_waited("##RenameFileInput", file.filename().string())) {
+        if (auto opt_name = gui_input_waited("##RenameFileInput", file.filename().string())) {
             const auto& name = opt_name.value();
             if (!name.empty()) {
                 fs::path new_file = file;
@@ -221,10 +220,10 @@ void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, con
             this->m_path = path;
         }
 
-        if (Optional dragged_path = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
+        if (auto dragged_path = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
             handle_item_transfer(dragged_path.value(), path);
         }
-        if (Optional dragged_path = gui_get_drag_drop<String>(DRAG_DIR_ID)) {
+        if (auto dragged_path = gui_get_drag_drop<String>(DRAG_DIR_ID)) {
             handle_item_transfer(dragged_path.value(), path);
         }
         if (!is_parent_dir) {
@@ -239,7 +238,7 @@ void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, con
     im::PopStyleVar(2);
 
     if (!is_parent_dir && im::BeginPopupContextItem(dir.string().data(), ImGuiPopupFlags_MouseButtonRight)) {
-        if (Optional opt_name = gui_input_waited("##RenameDirInput", dir.filename().string())) {
+        if (auto opt_name = gui_input_waited("##RenameDirInput", dir.filename().string())) {
             const auto& name = opt_name.value();
             if (!name.empty()) {
                 fs::path new_dir = dir;

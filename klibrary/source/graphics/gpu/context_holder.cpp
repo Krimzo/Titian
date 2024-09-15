@@ -1,7 +1,7 @@
 #include "klibrary.h"
 
 
-void kl::ContextHolder::set_viewport_position(const Int2& position) const
+void kl::ContextHolder::set_viewport_position(const Int2 position) const
 {
     UINT number_of_vps = 1;
     D3D11_VIEWPORT viewport{};
@@ -23,7 +23,7 @@ kl::Int2 kl::ContextHolder::viewport_position() const
     };
 }
 
-void kl::ContextHolder::set_viewport_size(const Int2& size) const
+void kl::ContextHolder::set_viewport_size(const Int2 size) const
 {
     UINT number_of_vps = 1;
     D3D11_VIEWPORT viewport{};
@@ -42,7 +42,7 @@ kl::Int2 kl::ContextHolder::viewport_size() const
     return { int(viewport.Width), int(viewport.Height) };
 }
 
-void kl::ContextHolder::set_viewport_min_max(const Float2& min_max) const
+void kl::ContextHolder::set_viewport_min_max(const Float2 min_max) const
 {
     UINT number_of_vps = 1;
     D3D11_VIEWPORT viewport{};
@@ -116,7 +116,7 @@ void kl::ContextHolder::copy_resource(const dx::Resource& destination, const dx:
     m_context->CopyResource(destination.get(), source.get());
 }
 
-void kl::ContextHolder::copy_resource_region(const dx::Resource& destination, const dx::Resource& source, const Int2& src_min, const Int2& src_max, const Int2& dst) const
+void kl::ContextHolder::copy_resource_region(const dx::Resource& destination, const dx::Resource& source, const Int2 src_min, const Int2 src_max, const Int2 dst) const
 {
     D3D11_BOX source_box{};
     source_box.left = src_min.x;
@@ -128,11 +128,24 @@ void kl::ContextHolder::copy_resource_region(const dx::Resource& destination, co
 	m_context->CopySubresourceRegion(destination.get(), 0, dst.x, dst.y, 0, source.get(), 0, &source_box);
 }
 
+void kl::ContextHolder::map_read_resource(const dx::Resource& resource, const std::function<void(const byte*, uint32_t)>& func) const
+{
+    dx::MappedSubresourceDescriptor mapped_subresource{};
+    m_context->Map(resource.get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource) >> verify_result;
+    func((const byte*) mapped_subresource.pData, mapped_subresource.RowPitch);
+    m_context->Unmap(resource.get(), 0);
+}
+
+void kl::ContextHolder::map_write_resource(const dx::Resource& resource, const std::function<void(byte*, uint32_t)>& func, const bool discard) const
+{
+    dx::MappedSubresourceDescriptor mapped_subresource{};
+    m_context->Map(resource.get(), 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, NULL, &mapped_subresource) >> verify_result;
+    func((byte*) mapped_subresource.pData, mapped_subresource.RowPitch);
+    m_context->Unmap(resource.get(), 0);
+}
+
 void kl::ContextHolder::read_from_buffer(void* cpu_buffer, const dx::Buffer& gpu_buffer, SIZE_T byte_size) const
 {
-    if (!cpu_buffer || !gpu_buffer) {
-		return;
-	}
     dx::MappedSubresourceDescriptor mapped_subresource{};
     m_context->Map(gpu_buffer.get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource) >> verify_result;
     memcpy(cpu_buffer, mapped_subresource.pData, byte_size);
@@ -141,24 +154,18 @@ void kl::ContextHolder::read_from_buffer(void* cpu_buffer, const dx::Buffer& gpu
 
 void kl::ContextHolder::write_to_buffer(const dx::Buffer& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard) const
 {
-    if (!gpu_buffer || !cpu_buffer) {
-        return;
-    }
     dx::MappedSubresourceDescriptor mapped_subresource{};
     m_context->Map(gpu_buffer.get(), 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, NULL, &mapped_subresource) >> verify_result;
     memcpy(mapped_subresource.pData, cpu_buffer, byte_size);
     m_context->Unmap(gpu_buffer.get(), 0);
 }
 
-void kl::ContextHolder::read_from_texture(void* cpu_buffer, const dx::Texture& gpu_buffer, const Int2& cpu_size, UINT element_size) const
+void kl::ContextHolder::read_from_texture(void* cpu_buffer, const dx::Texture& gpu_buffer, const Int2 cpu_size, const UINT element_size) const
 {
-	if (!cpu_buffer || !gpu_buffer) {
-		return;
-	}
     dx::MappedSubresourceDescriptor mapped_subresource{};
     m_context->Map(gpu_buffer.get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource) >> verify_result;
-    BYTE* out_ptr = reinterpret_cast<BYTE*>(cpu_buffer);
-    const BYTE* in_ptr = reinterpret_cast<const BYTE*>(mapped_subresource.pData);
+    BYTE* out_ptr = (BYTE*) cpu_buffer;
+    const BYTE* in_ptr = (const BYTE*) mapped_subresource.pData;
     const Int2 min_size = min(texture_size(gpu_buffer), cpu_size);
     for (int y = 0; y < min_size.y; y++) {
         BYTE* out_addr = out_ptr + (y * cpu_size.x * element_size);
@@ -168,15 +175,12 @@ void kl::ContextHolder::read_from_texture(void* cpu_buffer, const dx::Texture& g
     m_context->Unmap(gpu_buffer.get(), 0);
 }
 
-void kl::ContextHolder::write_to_texture(const dx::Texture& gpu_buffer, const void* cpu_buffer, const Int2& cpu_size, UINT element_size, bool discard) const
+void kl::ContextHolder::write_to_texture(const dx::Texture& gpu_buffer, const void* cpu_buffer, const Int2 cpu_size, const UINT element_size, const bool discard) const
 {
-    if (!gpu_buffer || !cpu_buffer) {
-        return;
-    }
     dx::MappedSubresourceDescriptor mapped_subresource{};
     m_context->Map(gpu_buffer.get(), 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, NULL, &mapped_subresource) >> verify_result;
-    BYTE* out_ptr = reinterpret_cast<BYTE*>(mapped_subresource.pData);
-    const BYTE* in_ptr = reinterpret_cast<const BYTE*>(cpu_buffer);
+    BYTE* out_ptr = (BYTE*) mapped_subresource.pData;
+    const BYTE* in_ptr = (const BYTE*) cpu_buffer;
     const Int2 min_size = min(texture_size(gpu_buffer), cpu_size);
     for (int y = 0; y < min_size.y; y++) {
         BYTE* out_addr = out_ptr + (y * mapped_subresource.RowPitch);

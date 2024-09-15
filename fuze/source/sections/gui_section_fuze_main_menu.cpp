@@ -32,14 +32,14 @@ void titian::GUISectionFuzeMainMenu::render_gui()
         if (im::BeginMenu("File")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (im::MenuItem("Import")) {
-                if (Optional file = kl::choose_file(false)) {
+                if (auto file = kl::choose_file(false)) {
                     video_layer->load_file(file.value());
                 }
             }
             if (im::BeginMenu("Export")) {
                 if (im::MenuItem("Frame")) {
                     int index = 0;
-                    if (Optional file = kl::choose_file(true, { { "Image File",  FILE_EXTENSION_JPG }, { "Image File",  FILE_EXTENSION_PNG }, { "Image File",  FILE_EXTENSION_BMP } }, &index)) {
+                    if (auto file = kl::choose_file(true, { { "Image File",  FILE_EXTENSION_JPG }, { "Image File",  FILE_EXTENSION_PNG }, { "Image File",  FILE_EXTENSION_BMP } }, &index)) {
                         video_layer->store_frame(video_layer->frame_size());
                         RAWImage image{};
                         image.resize(video_layer->frame_size());

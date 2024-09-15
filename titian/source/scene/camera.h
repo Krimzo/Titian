@@ -39,8 +39,9 @@ namespace titian {
         Ref<Texture> screen_texture;
         Ref<Texture> game_color_texture;
         Ref<Texture> game_depth_texture;
+        Ref<Texture> game_depth_staging;
         Ref<Texture> editor_picking_texture;
-        Ref<Texture> editor_staging_texture;
+        Ref<Texture> editor_picking_staging;
 
         Camera(px::PxPhysics* physics, kl::GPU* gpu);
 

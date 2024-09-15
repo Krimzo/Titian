@@ -36,7 +36,20 @@ void titian::GUISectionViewport::render_gui()
             im::Image(nullptr, content_region);
         }
 
-        if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
+        const auto get_mouse_3d = [&]
+        {
+            if (auto pos = read_depth_texture(window_mouse_position())) {
+                return pos.value();
+            }
+            const kl::Ray pixel_ray{
+                main_camera->position(),
+                kl::inverse(main_camera->camera_matrix()),
+                window_to_ndc(window_mouse_position()),
+            };
+            return pixel_ray.origin + pixel_ray.direction() * 10.0f;
+        };
+
+        if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
             if (classify_file(file.value()) == FileType::BINARY_SCENE) {
                 if (const BinarySerializer serializer{ file.value(), false }) {
                     game_layer->reset_scene();
@@ -55,6 +68,44 @@ void titian::GUISectionViewport::render_gui()
                     Logger::log("Failed to load TEXT scene: ", file.value());
                 }
             }
+        }
+        if (auto entity_type = gui_get_drag_drop<String>(DRAG_BASIC_ENTITY_ID)) {
+            const String name = scene->generate_unique_name(entity_type.value(), scene->entities());
+            const Float3 position = get_mouse_3d();
+            if (entity_type.value() == DRAG_ENTITY_ENTITY) {
+                Ref entity = scene->new_casted<Entity>();
+                entity->set_position(position);
+				scene->add_entity(name, entity);
+            }
+            else if (entity_type.value() == DRAG_ENTITY_CAMERA) {
+                Ref entity = scene->new_casted<Camera>(gpu);
+                entity->set_position(position);
+                scene->add_entity(name, entity);
+            }
+            else if (entity_type.value() == DRAG_ENTITY_AMBIENT) {
+                Ref entity = scene->new_casted<AmbientLight>();
+                entity->set_position(position);
+                scene->add_entity(name, entity);
+            }
+            else if (entity_type.value() == DRAG_ENTITY_POINT) {
+                Ref entity = scene->new_casted<PointLight>();
+                entity->set_position(position);
+                scene->add_entity(name, entity);
+            }
+            else if (entity_type.value() == DRAG_ENTITY_DIRECTIONAL) {
+                Ref entity = scene->new_casted<DirectionalLight>(gpu);
+                entity->set_position(position);
+                scene->add_entity(name, entity);
+            }
+        }
+        if (auto entity_type = gui_get_drag_drop<String>(DRAG_ANIMATION_ENTITY_ID)) {
+            const String name = scene->generate_unique_name(entity_type.value(), scene->entities());
+            const Float3 position = get_mouse_3d();
+            Ref entity = scene->new_casted<Entity>();
+			entity->set_position(position);
+            entity->animation_name = entity_type.value();
+            entity->material_name = "white";
+            scene->add_entity(name, entity);
         }
 
         const ImVec2 viewport_max = im::GetWindowPos() + im::GetWindowSize();
@@ -89,7 +140,7 @@ void titian::GUISectionViewport::render_gui()
                 }
                 if (im::IsMouseReleased(ImGuiMouseButton_Left)) {
                     const Int2 rect_selection_last = window_mouse_position();
-                    const Set<uint32_t> entity_ids = read_entity_ids(rect_selection_first, rect_selection_last);
+                    const Set<uint32_t> entity_ids = read_id_texture(rect_selection_first, rect_selection_last);
 
                     if (!im::IsKeyDown(ImGuiKey_LeftCtrl) && !im::IsKeyDown(ImGuiKey_LeftShift)) {
                         editor_layer->selected_entities.clear();
@@ -152,18 +203,27 @@ void titian::GUISectionViewport::render_gui()
     im::PopStyleVar();
 }
 
-titian::Int2 titian::GUISectionViewport::window_mouse_position()
+titian::Int2 titian::GUISectionViewport::window_mouse_position() const
 {
-    const float tab_size = im::GetWindowContentRegionMin().y;
     const ImVec2 window_position = im::GetWindowPos();
     const ImVec2 mouse_position = im::GetMousePos();
+    const float tab_size = im::GetWindowContentRegionMin().y;
     return {
         int(mouse_position.x - window_position.x - 0.0f),
         int(mouse_position.y - window_position.y - tab_size),
     };
 }
 
-titian::Set<uint32_t> titian::GUISectionViewport::read_entity_ids(const Int2& first_coords, const Int2& last_coords)
+titian::Float2 titian::GUISectionViewport::window_to_ndc(const Int2 coords) const
+{
+    const ImVec2 window_size = im::GetWindowContentRegionMax() - im::GetWindowContentRegionMin();
+    return {
+        2.0f * coords.x / window_size.x - 1.0f,
+        2.0f * (window_size.y - coords.y) / window_size.y - 1.0f,
+    };
+}
+
+titian::Set<uint32_t> titian::GUISectionViewport::read_id_texture(const Int2 first_coords, const Int2 last_coords)
 {
     Int2 min_coords = kl::min(first_coords, last_coords);
 	Int2 max_coords = kl::max(first_coords, last_coords);
@@ -178,26 +238,49 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_entity_ids(const Int2& fi
     }
     const Int2 size = max_coords - min_coords;
 
-    RenderLayer* render_layer = Layers::get<RenderLayer>();
-    GameLayer* game_layer = Layers::get<GameLayer>();
     const kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    Scene* scene = &game_layer->scene;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
 
     Camera* main_camera = scene->get_casted<Camera>(scene->main_camera_name);
     if (!main_camera)
         return {};
 
     main_camera->resize_staging(size);
-    gpu->copy_resource_region(main_camera->editor_staging_texture->graphics_buffer, main_camera->editor_picking_texture->graphics_buffer, min_coords, max_coords);
+    gpu->copy_resource_region(main_camera->editor_picking_staging->graphics_buffer,
+        main_camera->editor_picking_texture->graphics_buffer, min_coords, max_coords);
 
     Vector<float> values(size.x * size.y);
-    gpu->read_from_texture(values.data(), main_camera->editor_staging_texture->graphics_buffer, size, sizeof(float));
+    gpu->read_from_texture(values.data(), main_camera->editor_picking_staging->graphics_buffer, size, sizeof(float));
 
     Set<uint32_t> results;
     for (float value : values) {
         results.insert(uint32_t(value));
     }
     return results;
+}
+
+titian::Optional<titian::Float3> titian::GUISectionViewport::read_depth_texture(const Int2 coords)
+{
+    const kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
+
+    Camera* main_camera = scene->get_casted<Camera>(scene->main_camera_name);
+    if (!main_camera)
+        return std::nullopt;
+
+    gpu->copy_resource(main_camera->game_depth_staging->graphics_buffer, main_camera->game_depth_texture->graphics_buffer);
+
+    float value = 0.0f;
+    gpu->map_read_resource(main_camera->game_depth_staging->graphics_buffer, [&](const byte* ptr, const uint32_t pitch)
+    {
+        memcpy(&value, ptr + (coords.x * sizeof(float)) + (coords.y * pitch), sizeof(float));
+    });
+    if (value <= 0.0f || value >= 1.0f)
+        return std::nullopt;
+
+    Float4 ndc = { window_to_ndc(coords), value, 1.0f };
+    ndc = inverse(main_camera->camera_matrix()) * ndc;
+    return { ndc.xyz() / ndc.w };
 }
 
 void titian::GUISectionViewport::handle_gizmo_operation_change(const int operation, const ImGuiKey switch_key)

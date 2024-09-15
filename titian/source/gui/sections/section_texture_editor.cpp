@@ -39,7 +39,7 @@ void titian::GUISectionTextureEditor::render_gui()
         }
         im::EndChild();
 
-        if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
+        if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
             if (classify_file(file.value()) == FileType::TEXTURE) {
                 const String name = fs::path(file.value()).filename().string();
                 Texture* texture = scene->helper_new_texture(scene->generate_unique_name(name, scene->textures));
@@ -64,7 +64,7 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
     if (im::BeginPopupContextWindow("NewTexture", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Texture");
 
-        if (Optional opt_name = gui_input_waited("##CreateTextureInput", {})) {
+        if (auto opt_name = gui_input_waited("##CreateTextureInput", {})) {
             const auto& name = opt_name.value();
             if (!name.empty() && !scene->textures.contains(name)) {
                 Ref texture = new Texture(gpu);
@@ -88,7 +88,7 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
             bool should_break = false;
             im::Text("Edit Texture");
 
-            if (Optional opt_name = gui_input_waited("##RenameTextureInput", texture_name)) {
+            if (auto opt_name = gui_input_waited("##RenameTextureInput", texture_name)) {
                 const auto& name = opt_name.value();
                 if (!name.empty() && !scene->textures.contains(name)) {
                     for (auto& [_, material] : scene->materials) {

@@ -60,7 +60,7 @@ void titian::GUISectionFuzeTimeline::handle_input(const int scroll)
 	im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
 	if (video_layer->can_edit() && im::BeginPopupContextWindow("##TimelinePopup")) {
 		if (m_editing_track && video_layer->selected_track) {
-			if (Optional opt_name = gui_input_waited("##RenameTrackInput", video_layer->selected_track->name)) {
+			if (auto opt_name = gui_input_waited("##RenameTrackInput", video_layer->selected_track->name)) {
 				video_layer->selected_track->name = opt_name.value();
 				im::CloseCurrentPopup();
 			}
@@ -79,7 +79,7 @@ void titian::GUISectionFuzeTimeline::handle_input(const int scroll)
 			}
 		}
 		else if (m_editing_media && video_layer->selected_media) {
-			if (Optional opt_name = gui_input_waited("##RenameMediaInput", video_layer->selected_media->name)) {
+			if (auto opt_name = gui_input_waited("##RenameMediaInput", video_layer->selected_media->name)) {
 				video_layer->selected_media->name = opt_name.value();
 				im::CloseCurrentPopup();
 			}

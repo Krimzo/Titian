@@ -35,6 +35,7 @@ titian::TitianEditor::TitianEditor()
     gui_layer.sections.emplace_back(new GUISectionViewport());
     gui_layer.sections.emplace_back(new GUISectionLogView());
     gui_layer.sections.emplace_back(new GUISectionExplorer());
+    gui_layer.sections.emplace_back(new GUISectionHelper());
     gui_layer.sections.emplace_back(new GUISectionEntityProperties());
     gui_layer.sections.emplace_back(new GUISectionScriptingParameters());
 

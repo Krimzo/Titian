@@ -39,7 +39,7 @@ void titian::GUISectionShaderEditor::render_gui()
 		im::EndChild();
 		im::NextColumn();
 
-		if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
+		if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
 			if (classify_file(file.value()) == FileType::SHADER) {
 				const String name = fs::path(file.value()).filename().string();
 				Shader* shader = scene->helper_new_shader(scene->generate_unique_name(name, scene->shaders));
@@ -65,17 +65,6 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 			continue;
 		}
 
-		if (shader->shader_type == ShaderType::MATERIAL) {
-			im::Button("MATERIAL");
-		}
-		else if (shader->shader_type == ShaderType::CAMERA) {
-			im::Button("CAMERA");
-		}
-		else {
-			im::Button("NONE");
-		}
-		im::SameLine();
-
 		if (im::Selectable(shader_name.data(), shader_name == this->selected_shader)) {
 			this->selected_shader = shader_name;
 		}
@@ -84,7 +73,7 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 			bool should_break = false;
 			im::Text("Edit Shader");
 
-			if (Optional opt_name = gui_input_waited("##RenameShaderInput", shader_name)) {
+			if (auto opt_name = gui_input_waited("##RenameShaderInput", shader_name)) {
 				const auto& name = opt_name.value();
 				if (!name.empty() && !scene->helper_contains_shader(name)) {
 					for (auto& [_, material] : scene->materials) {

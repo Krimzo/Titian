@@ -143,6 +143,7 @@
     <ClCompile Include="source\gui\sections\section_animation_editor.cpp" />
     <ClCompile Include="source\gui\sections\section_entity_properties.cpp" />
     <ClCompile Include="source\gui\sections\section_explorer.cpp" />
+    <ClCompile Include="source\gui\sections\section_helper.cpp" />
     <ClCompile Include="source\gui\sections\section_log_view.cpp" />
     <ClCompile Include="source\gui\sections\section_main_menu.cpp" />
     <ClCompile Include="source\gui\sections\section_material_editor.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="source\gui\sections\section_animation_editor.h" />
     <ClInclude Include="source\gui\sections\section_entity_properties.h" />
     <ClInclude Include="source\gui\sections\section_explorer.h" />
+    <ClInclude Include="source\gui\sections\section_helper.h" />
     <ClInclude Include="source\gui\sections\section_log_view.h" />
     <ClInclude Include="source\gui\sections\section_main_menu.h" />
     <ClInclude Include="source\gui\sections\section_material_editor.h" />

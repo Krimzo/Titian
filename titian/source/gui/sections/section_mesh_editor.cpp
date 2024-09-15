@@ -60,9 +60,9 @@ void titian::GUISectionMeshEditor::render_gui()
         }
         im::EndChild();
 
-        if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
+        if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
             if (classify_file(file.value()) == FileType::MESH) {
-                if (Optional data = scene->get_assimp_data(file.value())) {
+                if (auto data = scene->get_assimp_data(file.value())) {
                     const aiScene* ai_scene = data.value().importer->GetScene();
                     for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
                         Ref mesh = scene->load_assimp_mesh(ai_scene, ai_scene->mMeshes[i]);
@@ -85,7 +85,7 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
     if (im::BeginPopupContextWindow("NewMesh", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Mesh");
 
-        if (Optional opt_name = gui_input_waited("##CreateMeshInput", {})) {
+        if (auto opt_name = gui_input_waited("##CreateMeshInput", {})) {
             const auto& name = opt_name.value();
             if (!name.empty() && !scene->meshes.contains(name)) {
                 Ref mesh = new Mesh(gpu, scene->physics(), scene->cooking());
@@ -110,7 +110,7 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
             bool should_break = false;
             im::Text("Edit Mesh");
 
-            if (Optional opt_name = gui_input_waited("##RenameMeshInput", mesh_name)) {
+            if (auto opt_name = gui_input_waited("##RenameMeshInput", mesh_name)) {
                 const auto& name = opt_name.value();
                 if (!name.empty() && !scene->meshes.contains(name)) {
                     if (this->selected_mesh == mesh_name) {

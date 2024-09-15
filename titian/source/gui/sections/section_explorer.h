@@ -10,14 +10,14 @@
 namespace titian {
     struct GUISectionExplorer : GUISection
 	{
-        Ref<Texture> default_file_texture = nullptr;
-        Ref<Texture> mesh_file_texture = nullptr;
-        Ref<Texture> texture_file_texture = nullptr;
-        Ref<Texture> script_file_texture = nullptr;
-        Ref<Texture> shader_file_texture = nullptr;
-        Ref<Texture> scene_file_texture = nullptr;
-        Ref<Texture> default_dir_texture = nullptr;
-        Ref<Texture> parent_dir_texture = nullptr;
+        Ref<Texture> default_file_texture;
+        Ref<Texture> mesh_file_texture;
+        Ref<Texture> texture_file_texture;
+        Ref<Texture> script_file_texture;
+        Ref<Texture> shader_file_texture;
+        Ref<Texture> scene_file_texture;
+        Ref<Texture> default_dir_texture;
+        Ref<Texture> parent_dir_texture;
 
         GUISectionExplorer();
 

@@ -72,7 +72,7 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
     if (im::BeginPopupContextWindow("NewMaterial", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Material");
 
-        if (Optional opt_name = gui_input_waited("##CreateMaterialInput", {})) {
+        if (auto opt_name = gui_input_waited("##CreateMaterialInput", {})) {
             const auto& name = opt_name.value();
             if (!name.empty() && !scene->materials.contains(name)) {
                 Ref material = new Material();
@@ -96,7 +96,7 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
             bool should_break = false;
             im::Text("Edit Material");
 
-            if (Optional opt_name = gui_input_waited("##RenameMaterialInput", material_name)) {
+            if (auto opt_name = gui_input_waited("##RenameMaterialInput", material_name)) {
                 const auto& name = opt_name.value();
                 if (!name.empty() && !scene->materials.contains(name)) {
                     for (const auto& [_, entity] : scene->entities()) {

@@ -40,8 +40,8 @@ namespace kl {
         dx::Texture create_texture(const dx::TextureDescriptor* descriptor, const dx::SubresourceDescriptor* subresource_data) const;
         dx::Texture create_texture(const Image& image, bool has_unordered_access = false, bool is_target = false) const;
         dx::Texture create_cube_texture(const Image& front, const Image& back, const Image& left, const Image& right, const Image& top, const Image& bottom) const;
-        dx::Texture create_staging_texture(const dx::Texture& texture, const Int2& size) const;
-        dx::Texture create_target_texture(const Int2& size) const;
+        dx::Texture create_staging_texture(const dx::Texture& texture, Int2 size = {}) const;
+        dx::Texture create_target_texture(Int2 size) const;
 
         dx::TargetView create_target_view(const dx::Resource& resource, const dx::TargetViewDescriptor* descriptor) const;
         dx::DepthView create_depth_view(const dx::Resource& resource, const dx::DepthViewDescriptor* descriptor) const;

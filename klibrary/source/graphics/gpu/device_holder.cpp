@@ -306,7 +306,7 @@ kl::dx::Texture kl::DeviceHolder::create_cube_texture(const Image& front, const 
     return create_texture(&descriptor, data);
 }
 
-kl::dx::Texture kl::DeviceHolder::create_staging_texture(const dx::Texture& texture, const Int2& size) const
+kl::dx::Texture kl::DeviceHolder::create_staging_texture(const dx::Texture& texture, const Int2 size) const
 {
     dx::TextureDescriptor descriptor{};
     texture->GetDesc(&descriptor);
@@ -324,7 +324,7 @@ kl::dx::Texture kl::DeviceHolder::create_staging_texture(const dx::Texture& text
     return create_texture(&staging_descriptor, nullptr);
 }
 
-kl::dx::Texture kl::DeviceHolder::create_target_texture(const kl::Int2& size) const
+kl::dx::Texture kl::DeviceHolder::create_target_texture(const Int2 size) const
 {
     dx::TextureDescriptor descriptor{};
     descriptor.Usage = D3D11_USAGE_DEFAULT;

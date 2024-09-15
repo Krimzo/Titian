@@ -72,11 +72,11 @@ void titian::VideoLayer::start_rendering(
 	if (m_renderer || m_playing) {
 		return;
 	}
-	if (Optional file = kl::choose_file(true)) {
-		if (Optional format = classify_video_format(file.value())) {
+	if (auto file = kl::choose_file(true)) {
+		if (auto format = classify_video_format(file.value())) {
 			m_renderer = new FuzeRenderer(file.value(), format.value(), frame_size, fps, video_bit_rate, audio_sample_rate);
 		}
-		else if (Optional type = classify_audio_format(file.value())) {
+		else if (auto type = classify_audio_format(file.value())) {
 			m_renderer = new FuzeRenderer(file.value(), type.value(), audio_sample_rate);
 		}
 		if (m_renderer) {

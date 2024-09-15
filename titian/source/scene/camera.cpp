@@ -7,8 +7,9 @@ titian::Camera::Camera(px::PxPhysics* physics, kl::GPU* gpu)
     screen_texture = new Texture(gpu);
     game_color_texture = new Texture(gpu);
     game_depth_texture = new Texture(gpu);
+    game_depth_staging = new Texture(gpu);
     editor_picking_texture = new Texture(gpu);
-    editor_staging_texture = new Texture(gpu);
+    editor_picking_staging = new Texture(gpu);
 
     resize({ 1600, 900 });
     resize_staging({ 1, 1 });
@@ -207,6 +208,7 @@ void titian::Camera::resize(const Int2& new_size)
     game_depth_descriptor.Format = DXGI_FORMAT_R32_TYPELESS;
     game_depth_descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
     game_depth_texture->graphics_buffer = gpu->create_texture(&game_depth_descriptor, nullptr);
+    game_depth_staging->graphics_buffer = gpu->create_staging_texture(game_depth_texture->graphics_buffer);
 
     dx::DepthViewDescriptor game_depth_dv_descriptor{};
     game_depth_dv_descriptor.Format = DXGI_FORMAT_D32_FLOAT;
@@ -231,11 +233,11 @@ void titian::Camera::resize_staging(const Int2& new_size)
     if (new_size.x <= 0 || new_size.y <= 0) {
         return;
     }
-    if (editor_staging_texture->resolution() == new_size) {
+    if (editor_picking_staging->resolution() == new_size) {
         return;
     }
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    editor_staging_texture->graphics_buffer = gpu->create_staging_texture(editor_picking_texture->graphics_buffer, new_size);
+    editor_picking_staging->graphics_buffer = gpu->create_staging_texture(editor_picking_texture->graphics_buffer, new_size);
 }
 
 titian::Int2 titian::Camera::resolution() const

@@ -74,7 +74,7 @@ void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* 
     if (im::BeginPopupContextWindow("NewAnimation", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Animation");
 
-        if (Optional opt_name = gui_input_waited("##CreateAnimationInput", {})) {
+        if (auto opt_name = gui_input_waited("##CreateAnimationInput", {})) {
             const auto& name = opt_name.value();
             if (!name.empty() && !scene->animations.contains(name)) {
                 Ref animation = new Animation(gpu, scene);
@@ -99,7 +99,7 @@ void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* 
             bool should_break = false;
             im::Text("Edit Animation");
 
-            if (Optional opt_name = gui_input_waited("##RenameAnimationInput", animation_name)) {
+            if (auto opt_name = gui_input_waited("##RenameAnimationInput", animation_name)) {
                 const auto& name = opt_name.value();
                 if (!name.empty() && !scene->animations.contains(name)) {
                     if (this->selected_animation == animation_name) {

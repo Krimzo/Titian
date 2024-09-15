@@ -76,23 +76,6 @@ void titian::GUISectionSceneEntities::render_gui()
 				continue;
 			}
 
-			if (entity.is<Camera>()) {
-				im::Button("CAMERA");
-			}
-			else if (entity.is<AmbientLight>()) {
-				im::Button("AMBIENT");
-			}
-			else if (entity.is<PointLight>()) {
-				im::Button("POINT");
-			}
-			else if (entity.is<DirectionalLight>()) {
-				im::Button("DIRECTIONAL");
-			}
-			else {
-				im::Button("ENTITY");
-			}
-			im::SameLine();
-
 			if (im::Selectable(entity_name.data(), editor_layer->selected_entities.contains(entity_name))) {
 				if (im::IsKeyDown(ImGuiKey_LeftCtrl)) {
 					if (editor_layer->selected_entities.contains(entity_name)) {
@@ -132,7 +115,7 @@ void titian::GUISectionSceneEntities::render_gui()
 				bool should_break = false;
 				im::Text("Edit Entity");
 
-				if (Optional opt_name = gui_input_waited("##RenameEntityInput", entity_name)) {
+				if (auto opt_name = gui_input_waited("##RenameEntityInput", entity_name)) {
 					const auto& name = opt_name.value();
 					if (!name.empty() && !scene->helper_contains_entity(name)) {
 						Ref temp_holder = entity;

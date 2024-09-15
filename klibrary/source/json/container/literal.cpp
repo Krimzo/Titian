@@ -29,8 +29,8 @@ bool kl::json::Literal::compile(std::vector<Token>::const_iterator first, std::v
         return true;
     }
     if (token.type == TokenType::_NUMBER) {
-        if (std::optional result = parse_float(token.value)) {
-            put_number(result.value());
+        if (auto opt = parse_float(token.value)) {
+            put_number(opt.value());
             return true;
         }
     }
@@ -43,20 +43,20 @@ bool kl::json::Literal::compile(std::vector<Token>::const_iterator first, std::v
 
 std::string kl::json::Literal::decompile(const int depth) const
 {
-    if (std::optional value = get_bool()) {
-        return value.value() ? Standard::true_value : Standard::false_value;
+    if (auto opt = get_bool()) {
+        return opt.value() ? Standard::true_value : Standard::false_value;
     }
-	if (std::optional value = get_double()) {
-        const double flt_value = value.value();
+	if (auto opt = get_double()) {
+        const double flt_value = opt.value();
         const int64_t int_value = (int64_t) flt_value;
         if (int_value == flt_value) {
             return std::to_string(int_value);
         }
         return std::to_string(flt_value);
 	}
-    if (std::optional value = get_string()) {
-        Lexer::from_escaping(value.value());
-		return format(Standard::string_literal, value.value(), Standard::string_literal);
+    if (auto opt = get_string()) {
+        Lexer::from_escaping(opt.value());
+		return format(Standard::string_literal, opt.value(), Standard::string_literal);
     }
     return Standard::null_value;
 }
@@ -88,40 +88,40 @@ std::optional<double> kl::json::Literal::get_double() const
 
 std::optional<float> kl::json::Literal::get_float() const
 {
-    if (std::optional value = get_double()) {
-        return float(value.value());
+    if (auto opt = get_double()) {
+        return float(opt.value());
     }
     return std::nullopt;
 }
 
 std::optional<int64_t> kl::json::Literal::get_long() const
 {
-    if (std::optional value = get_double()) {
-        return int64_t(value.value());
+    if (auto opt = get_double()) {
+        return int64_t(opt.value());
     }
     return std::nullopt;
 }
 
 std::optional<int32_t> kl::json::Literal::get_int() const
 {
-    if (std::optional value = get_double()) {
-        return int32_t(value.value());
+    if (auto opt = get_double()) {
+        return int32_t(opt.value());
     }
     return std::nullopt;
 }
 
 std::optional<int16_t> kl::json::Literal::get_short() const
 {
-    if (std::optional value = get_double()) {
-        return int16_t(value.value());
+    if (auto opt = get_double()) {
+        return int16_t(opt.value());
     }
     return std::nullopt;
 }
 
 std::optional<uint8_t> kl::json::Literal::get_byte() const
 {
-    if (std::optional value = get_double()) {
-        return uint8_t(value.value());
+    if (auto opt = get_double()) {
+        return uint8_t(opt.value());
     }
     return std::nullopt;
 }

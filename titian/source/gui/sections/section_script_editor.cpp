@@ -44,7 +44,7 @@ void titian::GUISectionScriptEditor::render_gui()
 			edit_node_script(node_script);
 		}
 
-		if (const Optional file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
+		if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
 			const fs::path path = file.value();
 			const String extension = path.extension().string();
 			if (extension == FILE_EXTENSION_LUA) {
@@ -93,20 +93,6 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 			continue;
 		}
 
-		if (script.is<const NativeScript>()) {
-			im::Button("NATIVE");
-		}
-		else if (script.is<const InterpScript>()) {
-			im::Button("INTERP");
-		}
-		else if (script.is<const NodeScript>()) {
-			im::Button("NODE");
-		}
-		else {
-			im::Button("SCRIPT");
-		}
-		im::SameLine();
-
 		if (im::Selectable(script_name.data(), script_name == this->selected_script)) {
 			this->selected_script = script_name;
 		}
@@ -115,7 +101,7 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 			bool should_break = false;
 			im::Text("Edit Script");
 
-			if (Optional opt_name = gui_input_waited("##RenameScriptInput", script_name)) {
+			if (auto opt_name = gui_input_waited("##RenameScriptInput", script_name)) {
 				const auto& name = opt_name.value();
 				if (!name.empty() && !scene->scripts.contains(name)) {
 					if (this->selected_script == script_name) {

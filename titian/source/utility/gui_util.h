@@ -16,14 +16,25 @@ namespace titian {
     inline const String FILE_EXTENSION_PNG = ".png";
     inline const String FILE_EXTENSION_BMP = ".bmp";
 
+    inline const String FILE_EXTENSION_HLSL = ".hlsl";
+
     inline const String FILE_EXTENSION_DLL = ".dll";
     inline const String FILE_EXTENSION_LUA = ".lua";
-    inline const String FILE_EXTENSION_HLSL = ".hlsl";
+
     inline const String FILE_EXTENSION_JSON = ".json";
     inline const String FILE_EXTENSION_TITIAN = ".titian";
 
     inline const String DRAG_FILE_ID = "DragFileID";
     inline const String DRAG_DIR_ID = "DragDirID";
+
+    inline const String DRAG_BASIC_ENTITY_ID = "BasicEntityID";
+    inline const String DRAG_ANIMATION_ENTITY_ID = "AnimationEntityID";
+
+    inline const String DRAG_ENTITY_ENTITY = "entity";
+    inline const String DRAG_ENTITY_CAMERA = "camera";
+    inline const String DRAG_ENTITY_AMBIENT = "ambient";
+    inline const String DRAG_ENTITY_POINT = "point";
+    inline const String DRAG_ENTITY_DIRECTIONAL = "directional";
 }
 
 namespace titian {

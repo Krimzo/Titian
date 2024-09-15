@@ -228,6 +228,9 @@
     <ClCompile Include="source\utility\string_util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\gui\sections\section_helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\application\app_layer.h">
@@ -441,6 +444,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\serialization\serialization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gui\sections\section_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

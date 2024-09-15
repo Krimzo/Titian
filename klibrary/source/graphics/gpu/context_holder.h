@@ -9,13 +9,13 @@ namespace kl {
     {
         ContextHolder() = default;
 
-        void set_viewport_position(const Int2& position) const;
+        void set_viewport_position(Int2 position) const;
         Int2 viewport_position() const;
 
-        void set_viewport_size(const Int2& size) const;
+        void set_viewport_size(Int2 size) const;
         Int2 viewport_size() const;
 
-        void set_viewport_min_max(const Float2& min_max) const;
+        void set_viewport_min_max(Float2 min_max) const;
         Float2 viewport_min_max() const;
 
         void bind_raster_state(const dx::RasterState& state) const;
@@ -34,13 +34,16 @@ namespace kl {
         void unbind_blend_state() const;
 
         void copy_resource(const dx::Resource& destination, const dx::Resource& source) const;
-        void copy_resource_region(const dx::Resource& destination, const dx::Resource& source, const kl::Int2& src_min, const kl::Int2& src_max, const kl::Int2& dst = { 0, 0 }) const;
+        void copy_resource_region(const dx::Resource& destination, const dx::Resource& source, Int2 src_min, Int2 src_max, Int2 dst = { 0, 0 }) const;
+
+        void map_read_resource(const dx::Resource& resource, const std::function<void(const byte*, uint32_t)>& func) const;
+        void map_write_resource(const dx::Resource& resource, const std::function<void(byte*, uint32_t)>& func, bool discard = true) const;
 
         void read_from_buffer(void* cpu_buffer, const dx::Buffer& gpu_buffer, SIZE_T byte_size) const;
         void write_to_buffer(const dx::Buffer& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard = true) const;
 
-        void read_from_texture(void* cpu_buffer, const dx::Texture& gpu_buffer, const Int2& cpu_size, UINT element_size) const;
-        void write_to_texture(const dx::Texture& gpu_buffer, const void* cpu_buffer, const Int2& cpu_size, UINT element_size, bool discard = true) const;
+        void read_from_texture(void* cpu_buffer, const dx::Texture& gpu_buffer, Int2 cpu_size, UINT element_size) const;
+        void write_to_texture(const dx::Texture& gpu_buffer, const void* cpu_buffer, Int2 cpu_size, UINT element_size, bool discard = true) const;
 
         UINT buffer_size(const dx::Buffer& buffer) const;
         Int2 texture_size(const dx::Texture& texture) const;

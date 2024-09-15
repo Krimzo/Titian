@@ -59,8 +59,8 @@ void titian::GUISectionMainMenu::render_gui()
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (im::BeginMenu("Import")) {
                 if (im::MenuItem("Mesh")) {
-                    if (Optional file = kl::choose_file(false, { { "Mesh File",  FILE_EXTENSION_OBJ }, { "Mesh File",  FILE_EXTENSION_GLB }, { "Mesh File",  FILE_EXTENSION_FBX } })) {
-                        if (Optional data = scene->get_assimp_data(file.value())) {
+                    if (auto file = kl::choose_file(false, { { "Mesh File",  FILE_EXTENSION_OBJ }, { "Mesh File",  FILE_EXTENSION_GLB }, { "Mesh File",  FILE_EXTENSION_FBX } })) {
+                        if (auto data = scene->get_assimp_data(file.value())) {
                             const aiScene* ai_scene = data.value().importer->GetScene();
                             for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
                                 Ref mesh = scene->load_assimp_mesh(ai_scene, ai_scene->mMeshes[i]);
@@ -70,7 +70,7 @@ void titian::GUISectionMainMenu::render_gui()
                     }
                 }
                 if (im::MenuItem("Texture")) {
-                    if (Optional file = kl::choose_file(false, { { "Texture File", FILE_EXTENSION_JPG }, { "Texture File", FILE_EXTENSION_PNG } })) {
+                    if (auto file = kl::choose_file(false, { { "Texture File", FILE_EXTENSION_JPG }, { "Texture File", FILE_EXTENSION_PNG } })) {
                         const String stem_name = fs::path(file.value()).stem().string();
 
                         Texture* texture = scene->helper_new_texture(stem_name);
@@ -81,7 +81,7 @@ void titian::GUISectionMainMenu::render_gui()
                 }
                 if (im::MenuItem("Script")) {
                     int type_index = 0;
-                    if (Optional file = kl::choose_file(false, { { "Script File", FILE_EXTENSION_LUA }, { "Script File", FILE_EXTENSION_JSON }, { "Script File", FILE_EXTENSION_DLL } }, &type_index)) {
+                    if (auto file = kl::choose_file(false, { { "Script File", FILE_EXTENSION_LUA }, { "Script File", FILE_EXTENSION_JSON }, { "Script File", FILE_EXTENSION_DLL } }, &type_index)) {
                         const String stem_name = fs::path(file.value()).stem().string();
 
                         if (type_index == 0) {
@@ -109,7 +109,7 @@ void titian::GUISectionMainMenu::render_gui()
                     }
                 }
                 if (im::MenuItem("Shader")) {
-                    if (Optional file = kl::choose_file(false, { { "Shader File", FILE_EXTENSION_HLSL } })) {
+                    if (auto file = kl::choose_file(false, { { "Shader File", FILE_EXTENSION_HLSL } })) {
                         const String stem_name = fs::path(file.value()).stem().string();
 
                         Shader* shader = scene->helper_new_shader(stem_name);
@@ -118,7 +118,7 @@ void titian::GUISectionMainMenu::render_gui()
                 }
                 if (im::BeginMenu("Scene")) {
                     if (im::MenuItem("Binary")) {
-                        if (Optional file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
+                        if (auto file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
                             const String stem_name = fs::path(file.value()).stem().string();
                             if (const BinarySerializer serializer{ file.value(), false }) {
                                 Ref scene = new Scene(&app_layer->gpu);
@@ -128,7 +128,7 @@ void titian::GUISectionMainMenu::render_gui()
                         }
                     }
                     if (im::MenuItem("Text")) {
-                        if (Optional file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_JSON } })) {
+                        if (auto file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_JSON } })) {
                             const String stem_name = fs::path(file.value()).stem().string();
                             if (const TextSerializer serializer{ file.value(), false }) {
                                 Ref scene = new Scene(&app_layer->gpu);
@@ -150,7 +150,7 @@ void titian::GUISectionMainMenu::render_gui()
                         }
                         if (im::MenuItem(name.data())) {
                             int type_index = 0;
-                            if (Optional file = kl::choose_file(true, { { "Texture File",  FILE_EXTENSION_JPG }, { "Texture File",  FILE_EXTENSION_PNG } }, &type_index)) {
+                            if (auto file = kl::choose_file(true, { { "Texture File",  FILE_EXTENSION_JPG }, { "Texture File",  FILE_EXTENSION_PNG } }, &type_index)) {
                                 const String extension = fs::path(file.value()).extension().string();
                                 if (type_index == 0) {
                                     if (extension.empty()) {
@@ -186,7 +186,7 @@ void titian::GUISectionMainMenu::render_gui()
                             else {
                                 type_info = Pair{ "Native Script", FILE_EXTENSION_DLL };
                             }
-                            if (Optional file = kl::choose_file(true, { type_info })) {
+                            if (auto file = kl::choose_file(true, { type_info })) {
                                 const String extension = fs::path(file.value()).extension().string();
                                 if (InterpScript* interp_script = &script.as<InterpScript>()) {
                                     if (extension.empty()) {
@@ -220,7 +220,7 @@ void titian::GUISectionMainMenu::render_gui()
                             continue;
                         }
                         if (im::MenuItem(name.data())) {
-                            if (Optional file = kl::choose_file(true, { { "Shader File", FILE_EXTENSION_HLSL } })) {
+                            if (auto file = kl::choose_file(true, { { "Shader File", FILE_EXTENSION_HLSL } })) {
                                 const String extension = fs::path(file.value()).extension().string();
                                 if (extension.empty()) {
                                     file.value() += FILE_EXTENSION_HLSL;
@@ -233,7 +233,7 @@ void titian::GUISectionMainMenu::render_gui()
                 }
                 if (im::BeginMenu("Scene")) {
                     if (im::MenuItem("Binary")) {
-                        if (Optional file = kl::choose_file(true, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
+                        if (auto file = kl::choose_file(true, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
                             const String extension = fs::path(file.value()).extension().string();
                             if (extension.empty()) {
                                 file.value() += FILE_EXTENSION_TITIAN;
@@ -244,7 +244,7 @@ void titian::GUISectionMainMenu::render_gui()
                         }
                     }
                     if (im::MenuItem("Text")) {
-                        if (Optional file = kl::choose_file(true, { { "Scene File", FILE_EXTENSION_JSON } })) {
+                        if (auto file = kl::choose_file(true, { { "Scene File", FILE_EXTENSION_JSON } })) {
                             const String extension = fs::path(file.value()).extension().string();
                             if (extension.empty()) {
                                 file.value() += FILE_EXTENSION_JSON;
@@ -284,7 +284,7 @@ void titian::GUISectionMainMenu::render_gui()
         if (im::BeginMenu("Tools")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (im::MenuItem("Import Packed")) {
-                if (Optional file_path = kl::choose_file(false, { { "GLTF File", FILE_EXTENSION_GLB }, { "FBX File", FILE_EXTENSION_FBX } })) {
+                if (auto file_path = kl::choose_file(false, { { "GLTF File", FILE_EXTENSION_GLB }, { "FBX File", FILE_EXTENSION_FBX } })) {
                     opt_assimp_data = scene->get_assimp_data(file_path.value());
                 }
             }
