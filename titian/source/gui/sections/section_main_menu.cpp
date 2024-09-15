@@ -437,32 +437,6 @@ void titian::GUISectionMainMenu::render_gui()
         im::PopStyleColor(2);
         im::PopStyleVar(3);
 
-#if 0
-        im::SetCursorPosX(menu_size.x - m_gizmo_buttons_width);
-        m_gizmo_buttons_width = 0.0f;
-
-        if (im::BeginMenu("Gizmos")) {
-            im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
-
-            bool scaling_state = editor_layer->gizmo_operation == ImGuizmo::SCALE;
-            if (im::Checkbox("Scaling", &scaling_state)) {
-                editor_layer->gizmo_operation = scaling_state ? ImGuizmo::SCALE : 0;
-            }
-            bool rotation_state = editor_layer->gizmo_operation == ImGuizmo::ROTATE;
-            if (im::Checkbox("Rotation", &rotation_state)) {
-                editor_layer->gizmo_operation = rotation_state ? ImGuizmo::ROTATE : 0;
-            }
-            bool translation_state = editor_layer->gizmo_operation == ImGuizmo::TRANSLATE;
-            if (im::Checkbox("Translation", &translation_state)) {
-                editor_layer->gizmo_operation = translation_state ? ImGuizmo::TRANSLATE : 0;
-            }
-
-            im::PopStyleVar();
-            im::EndMenu();
-        }
-        m_gizmo_buttons_width += im::GetItemRectSize().x;
-#endif
-
         im::EndMainMenuBar();
     }
 

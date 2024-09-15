@@ -181,9 +181,26 @@ void titian::GUISectionViewport::render_gui()
         }
 
         if (im::IsWindowFocused()) {
-            handle_gizmo_operation_change(ImGuizmo::OPERATION::SCALE, ImGuiKey_1);
-            handle_gizmo_operation_change(ImGuizmo::OPERATION::ROTATE, ImGuiKey_2);
-            handle_gizmo_operation_change(ImGuizmo::OPERATION::TRANSLATE, ImGuiKey_3);
+            if (im::IsKeyPressed(ImGuiKey_1)) {
+                editor_layer->gizmo_operation = (editor_layer->gizmo_operation != ImGuizmo::OPERATION::SCALE)
+                    ? ImGuizmo::OPERATION::SCALE
+                    : ImGuizmo::OPERATION::NONE;
+            }
+            if (im::IsKeyPressed(ImGuiKey_2)) {
+                editor_layer->gizmo_operation = (editor_layer->gizmo_operation != ImGuizmo::OPERATION::ROTATE)
+                    ? ImGuizmo::OPERATION::ROTATE
+                    : ImGuizmo::OPERATION::NONE;
+            }
+            if (im::IsKeyPressed(ImGuiKey_3)) {
+                editor_layer->gizmo_operation = (editor_layer->gizmo_operation != ImGuizmo::OPERATION::TRANSLATE)
+                    ? ImGuizmo::OPERATION::TRANSLATE
+                    : ImGuizmo::OPERATION::NONE;
+            }
+            if (im::IsKeyPressed(ImGuiKey_4)) {
+                editor_layer->gizmo_mode = (editor_layer->gizmo_mode != ImGuizmo::MODE::WORLD)
+                    ? ImGuizmo::MODE::WORLD
+                    : ImGuizmo::MODE::LOCAL;
+            }
         }
         Set<Entity*> entities;
         for (const auto& sel_ent : editor_layer->selected_entities) {
@@ -283,27 +300,13 @@ titian::Optional<titian::Float3> titian::GUISectionViewport::read_depth_texture(
     return { ndc.xyz() / ndc.w };
 }
 
-void titian::GUISectionViewport::handle_gizmo_operation_change(const int operation, const ImGuiKey switch_key)
-{
-    EditorLayer* editor_layer = Layers::get<EditorLayer>();
-    if (im::IsKeyDown(switch_key)) {
-        if (!m_last_key_states[switch_key]) {
-            editor_layer->gizmo_operation = editor_layer->gizmo_operation != operation ? operation : 0;
-        }
-        m_last_key_states[switch_key] = true;
-    }
-    else {
-        m_last_key_states[switch_key] = false;
-    }
-}
-
 void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
 {
 	EditorLayer* editor_layer = Layers::get<EditorLayer>();
 	GameLayer* game_layer = Layers::get<GameLayer>();
 	AppLayer* app_layer = Layers::get<AppLayer>();
 
-    if (editor_layer->gizmo_operation == 0)
+    if (editor_layer->gizmo_operation == ImGuizmo::OPERATION::NONE)
         return;
 
     kl::Window* window = &app_layer->window;
@@ -321,23 +324,14 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
     ImGuizmo::SetDrawlist();
     ImGuizmo::SetRect(viewport_position.x, viewport_position.y, viewport_size.x, viewport_size.y);
 
-    Float3 selected_snap = {};
+    Float3 selected_snap;
     if (window->keyboard.shift) {
-        static Float3 predefined_snaps[3] = {
-            Float3(0.1f),
-            Float3(30.0f),
-            Float3(1.0f),
-        };
-
-        switch (editor_layer->gizmo_operation) {
-        case ImGuizmo::SCALE:
-            selected_snap = predefined_snaps[0];
-            break;
-        case ImGuizmo::ROTATE:
-            selected_snap = predefined_snaps[1];
-            break;
-        case ImGuizmo::TRANSLATE:
-            selected_snap = predefined_snaps[2];
+        static constexpr Float3 predefined_snaps[3] = { Float3{ 0.1f }, Float3{ 15.0f }, Float3{ 1.0f } };
+        switch (editor_layer->gizmo_operation)
+        {
+        case ImGuizmo::OPERATION::SCALE: selected_snap = predefined_snaps[0]; break;
+        case ImGuizmo::OPERATION::ROTATE: selected_snap = predefined_snaps[1]; break;
+        case ImGuizmo::OPERATION::TRANSLATE: selected_snap = predefined_snaps[2]; break;
         }
     }
 
@@ -359,26 +353,44 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
     }
 
     ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
-        (ImGuizmo::OPERATION) editor_layer->gizmo_operation, (ImGuizmo::MODE) editor_layer->gizmo_mode,
+        editor_layer->gizmo_operation, editor_layer->gizmo_mode,
         transform_matrix.data, nullptr,
         &selected_snap.x);
 
-    if (ImGuizmo::IsUsing()) {
-        Float3 decomposed_parts[3] = {};
-        ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
-            &decomposed_parts[2].x, &decomposed_parts[1].x, &decomposed_parts[0].x);
+    if (!ImGuizmo::IsUsing()) {
+        m_last_scaling = Float3{ 1.0f };
+        return;
+    }
 
-        if (entities.size() == 1) {
-            Entity* entity = *entities.begin();
-            entity->set_scale(decomposed_parts[0]);
-            entity->set_rotation(decomposed_parts[1]);
-            entity->set_position(decomposed_parts[2]);
+    Float3 decomposed_parts[3] = {};
+    ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
+        &decomposed_parts[2].x, &decomposed_parts[1].x, &decomposed_parts[0].x);
+
+    if (entities.size() == 1) {
+        Entity* entity = *entities.begin();
+        entity->set_scale(decomposed_parts[0]);
+        entity->set_rotation(decomposed_parts[1]);
+        entity->set_position(decomposed_parts[2]);
+    }
+    else {
+        Float4x4 position_transform;
+        if (editor_layer->gizmo_operation == ImGuizmo::OPERATION::SCALE) {
+            position_transform =
+                Float4x4::translation(collective_center)
+                * Float4x4::scaling(Float3{ 1.0f } + decomposed_parts[0] - m_last_scaling)
+                * Float4x4::translation(-collective_center);
+            m_last_scaling = decomposed_parts[0];
         }
         else {
-            const Float3 position_delta = decomposed_parts[2] - collective_center;
+            position_transform = kl::transpose(transform_matrix) * Float4x4::translation(-collective_center);
+        }
+        if (editor_layer->gizmo_mode == ImGuizmo::MODE::LOCAL) {
             for (Entity* entity : entities) {
-                entity->set_position(entity->position() + position_delta);
+                entity->set_rotation(entity->rotation() + Float3{ -decomposed_parts[1].x, -decomposed_parts[1].y, decomposed_parts[1].z });
             }
+        }
+        for (Entity* entity : entities) {
+            entity->set_position((position_transform * Float4(entity->position(), 1.0f)).xyz());
         }
     }
 }

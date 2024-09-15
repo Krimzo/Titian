@@ -14,8 +14,8 @@ namespace titian {
         void render_gui() override;
 
     private:
-        Map<ImGuiKey, bool> m_last_key_states;
         Optional<Int2> m_rect_selection_first;
+        Float3 m_last_scaling{ 1.0f };
 
         Int2 window_mouse_position() const;
         Float2 window_to_ndc(Int2 coords) const;
@@ -23,7 +23,6 @@ namespace titian {
         Set<uint32_t> read_id_texture(Int2 first_coords, Int2 second_coords);
         Optional<Float3> read_depth_texture(Int2 coords);
 
-        void handle_gizmo_operation_change(int operation, ImGuiKey switch_key);
         void render_gizmos(const Set<Entity*>& entities);
 	};
 }

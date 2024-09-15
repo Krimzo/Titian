@@ -639,8 +639,8 @@ namespace IMGUIZMO_NAMESPACE
       // default values
       TranslationLineThickness = 3.0f;
       TranslationLineArrowSize = 6.0f;
-      RotationLineThickness = 2.0f;
-      RotationOuterLineThickness = 3.0f;
+      RotationLineThickness = 3.0f;
+      RotationOuterLineThickness = 4.0f;
       ScaleLineThickness = 3.0f;
       ScaleLineCircleSize = 6.0f;
       HatchedAxisLineThickness = 6.0f;
