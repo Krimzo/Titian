@@ -326,6 +326,28 @@ titian::Float4x4 titian::Entity::collider_matrix() const
         * m_collider->scaling_matrix();
 }
 
+titian::Ref<titian::Entity> titian::Entity::clone() const
+{
+    Ref entity = new Entity(m_physics);
+    entity->casts_shadows = casts_shadows;
+    entity->animation_name = animation_name;
+    entity->material_name = material_name;
+    entity->collider_mesh_name = collider_mesh_name;
+    entity->set_dynamic(dynamic());
+    entity->set_gravity(gravity());
+    entity->set_mass(mass());
+    entity->set_angular_damping(angular_damping());
+    entity->set_scale(scale());
+    entity->set_rotation(rotation());
+    entity->set_position(position());
+    entity->set_velocity(velocity());
+    entity->set_angular(angular());
+    if (auto collider = this->collider()) {
+        entity->set_collider(collider->clone());
+    }
+    return entity;
+}
+
 void titian::Entity::generate_actor(const px::PxTransform& transform, const bool dynamic)
 {
     if (m_actor)

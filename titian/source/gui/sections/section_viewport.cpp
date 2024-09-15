@@ -359,7 +359,25 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
 
     if (!ImGuizmo::IsUsing()) {
         m_last_scaling = Float3{ 1.0f };
+        m_was_using = false;
         return;
+    }
+    if (!m_was_using) {
+        m_was_using = true;
+        if (im::IsKeyDown(ImGuiKey_LeftAlt)) {
+            StringSet new_entities;
+            for (const String& entity_name : editor_layer->selected_entities) {
+                Entity* entity = scene->helper_get_entity(entity_name);
+                if (!entity)
+                    continue;
+
+                const String new_name = scene->generate_unique_name(entity_name, scene->entities());
+                scene->add_entity(new_name, entity->clone());
+                new_entities.insert(new_name);
+            }
+            editor_layer->selected_entities = new_entities;
+            return;
+        }
     }
 
     Float3 decomposed_parts[3] = {};

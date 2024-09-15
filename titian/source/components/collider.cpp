@@ -147,9 +147,9 @@ void titian::Collider::set_geometry(const px::PxGeometry& geometry)
     kl::verify(m_shape, "Failed to create collider SHAPE");
 }
 
-px::PxGeometry titian::Collider::geometry() const
+px::PxGeometryHolder titian::Collider::geometry() const
 {
-    return m_shape->getGeometry().any();
+    return m_shape->getGeometry();
 }
 
 void titian::Collider::set_rotation(const Float3& rotation)
@@ -239,4 +239,16 @@ titian::Float4x4 titian::Collider::scaling_matrix() const
     }
     }
     return {};
+}
+
+titian::Ref<titian::Collider> titian::Collider::clone() const
+{
+    Ref collider = new Collider(m_physics);
+    collider->set_geometry(geometry().any());
+    collider->set_rotation(rotation());
+    collider->set_offset(offset());
+    collider->set_static_friction(static_friction());
+    collider->set_dynamic_friction(dynamic_friction());
+    collider->set_restitution(restitution());
+    return collider;
 }

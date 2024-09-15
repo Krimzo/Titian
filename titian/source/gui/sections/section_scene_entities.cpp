@@ -71,7 +71,7 @@ void titian::GUISectionSceneEntities::render_gui()
 		}
 
 		const String filter = gui_input_continuous("Search###SceneEntities");
-		for (auto& [entity_name, entity] : scene->entities()) {
+		for (const auto& [entity_name, entity] : scene->entities()) {
 			if (!filter.empty() && entity_name.find(filter) == -1) {
 				continue;
 			}
@@ -90,20 +90,20 @@ void titian::GUISectionSceneEntities::render_gui()
 						editor_layer->selected_entities.insert(entity_name);
 					}
 					else {
-						int find_counter = 0;
-						Vector<String> needed_entities;
-						for (const auto& [name, _] : scene->entities()) {
+						for (int find_counter = 0; const auto& [name, _] : scene->entities()) {
+							if (!filter.empty() && name.find(filter) == -1) {
+								continue;
+							}
 							if (name == entity_name || name == *--editor_layer->selected_entities.end()) {
 								find_counter += 1;
 							}
 							if (find_counter > 0) {
-								needed_entities.push_back(name);
+								editor_layer->selected_entities.insert(name);
 							}
 							if (find_counter >= 2) {
 								break;
 							}
 						}
-						editor_layer->selected_entities.insert(needed_entities.begin(), needed_entities.end());
 					}
 				}
 				else {

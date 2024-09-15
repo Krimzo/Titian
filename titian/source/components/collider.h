@@ -16,7 +16,7 @@ namespace titian {
         px::PxShape* shape() const;
 
         void set_geometry(const px::PxGeometry& geometry);
-        px::PxGeometry geometry() const;
+        px::PxGeometryHolder geometry() const;
 
         void set_rotation(const Float3& rotation);
         Float3 rotation() const;
@@ -34,6 +34,8 @@ namespace titian {
         float restitution() const;
 
         Float4x4 scaling_matrix() const;
+
+        Ref<Collider> clone() const;
 
     private:
         px::PxPhysics* const m_physics;

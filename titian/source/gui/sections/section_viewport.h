@@ -16,6 +16,7 @@ namespace titian {
     private:
         Optional<Int2> m_rect_selection_first;
         Float3 m_last_scaling{ 1.0f };
+        bool m_was_using = false;
 
         Int2 window_mouse_position() const;
         Float2 window_to_ndc(Int2 coords) const;

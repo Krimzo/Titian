@@ -141,7 +141,7 @@ namespace titian {
             String result;
             do {
                 i += 1;
-                result = kl::format(name, '_', i);
+                result = kl::format(name, i);
             }
 			while (map.contains(result));
 			return result;

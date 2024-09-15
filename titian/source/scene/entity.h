@@ -63,6 +63,8 @@ namespace titian {
         Float4x4 model_matrix() const;
         Float4x4 collider_matrix() const;
 
+        Ref<Entity> clone() const;
+
     private:
         Float3 m_scale{ 1.0f };
         Float3 m_rotation;
