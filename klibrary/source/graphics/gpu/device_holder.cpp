@@ -431,7 +431,17 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_capsule_mesh(const f
     };
 
     auto top_hem = gen_hem();
+    std::for_each(std::execution::par, top_hem.begin(), top_hem.end(), [](Triangle<float>& triangle)
+    {
+        std::swap(triangle.a, triangle.c);
+    });
+
     auto cylinder = gen_cyl();
+    std::for_each(std::execution::par, cylinder.begin(), cylinder.end(), [](Triangle<float>& triangle)
+    {
+        std::swap(triangle.a, triangle.c);
+    });
+
     auto bottom_hem = gen_hem();
     std::for_each(std::execution::par, bottom_hem.begin(), bottom_hem.end(), [](Triangle<float>& triangle)
     {
