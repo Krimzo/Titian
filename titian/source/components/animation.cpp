@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::Animation::Animation(kl::GPU* gpu, Scene* scene)
-	: m_gpu(gpu), m_scene(scene)
+titian::Animation::Animation(Scene* scene, kl::GPU* gpu)
+	: m_scene(scene), m_gpu(gpu)
 {
 	dx::BufferDescriptor descriptor{};
 	descriptor.Usage = D3D11_USAGE_DYNAMIC;

@@ -34,7 +34,7 @@ namespace titian {
 		void reload();
 
 	private:
-		kl::GPU* m_gpu = nullptr;
+		kl::GPU* const m_gpu;
 
 		void reload_for_material();
 		void reload_for_camera();

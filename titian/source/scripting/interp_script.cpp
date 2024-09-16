@@ -370,7 +370,8 @@ void titian::InterpScript::load_engine_parts()
 		"data_buffer", &Mesh::data_buffer,
 		"topology", &Mesh::topology,
 		"render_wireframe", &Mesh::render_wireframe,
-		"load", &Mesh::load,
+		"load_vertices", &Mesh::load_vertices,
+		"load_triangles", &Mesh::load_triangles,
 		"reload", &Mesh::reload
 	);
 
@@ -841,7 +842,6 @@ void titian::InterpScript::load_engine_parts()
 	(*m_engine)["gen_random_string"] = &kl::random::gen_string;
 
 	(*m_engine)["read_file"] = &kl::read_file;
-	(*m_engine)["parse_obj_file"] = &kl::parse_obj_file;
 
 	(*m_engine)["ui_separator"] = &ui_separator;
 	(*m_engine)["ui_same_line"] = &ui_same_line;

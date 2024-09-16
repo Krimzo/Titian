@@ -6,7 +6,6 @@ titian::RasterStates::RasterStates(kl::GPU* gpu)
     dx::RasterStateDescriptor wireframe_raster_descriptor{};
     wireframe_raster_descriptor.FillMode = D3D11_FILL_WIREFRAME;
     wireframe_raster_descriptor.CullMode = D3D11_CULL_NONE;
-    wireframe_raster_descriptor.FrontCounterClockwise = true;
     wireframe_raster_descriptor.MultisampleEnable = true;
     wireframe_raster_descriptor.AntialiasedLineEnable = true;
     wireframe_raster_descriptor.DepthClipEnable = false;
@@ -14,7 +13,6 @@ titian::RasterStates::RasterStates(kl::GPU* gpu)
     dx::RasterStateDescriptor shadow_raster_descriptor{};
     shadow_raster_descriptor.FillMode = D3D11_FILL_SOLID;
     shadow_raster_descriptor.CullMode = D3D11_CULL_BACK;
-    shadow_raster_descriptor.FrontCounterClockwise = true;
     shadow_raster_descriptor.MultisampleEnable = true;
     shadow_raster_descriptor.AntialiasedLineEnable = true;
     shadow_raster_descriptor.DepthClipEnable = false;

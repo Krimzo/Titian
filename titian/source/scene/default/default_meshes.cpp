@@ -3,22 +3,23 @@
 
 titian::DefaultMeshes::DefaultMeshes(Scene* scene)
 {
-    auto create_mesh = [&](Ref<Mesh>& mesh, const char* filename)
-    {
-        if (auto data = scene->get_assimp_data(filename)) {
-            const aiScene* ai_scene = data.value().importer->GetScene();
-            for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
-                mesh = scene->load_assimp_mesh(ai_scene, ai_scene->mMeshes[i]);
-                break;
-            }
-        }
-        kl::assert(mesh->graphics_buffer, "Failed to init mesh: ", filename);
-    };
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 
     WorkQueue queue;
-    queue.add_task([&] { create_mesh(cube, "package/meshes/cube.obj"); });
-    queue.add_task([&] { create_mesh(sphere, "package/meshes/sphere.obj"); });
-    queue.add_task([&] { create_mesh(capsule, "package/meshes/capsule.obj"); });
-    queue.add_task([&] { create_mesh(monke, "package/meshes/monke.obj"); });
+    queue.add_task([&]
+    {
+        cube = new Mesh(scene, gpu);
+        cube->load_triangles(gpu->generate_cube_mesh(1.0f));
+    });
+    queue.add_task([&]
+    {
+        sphere = new Mesh(scene, gpu);
+        sphere->load_triangles(gpu->generate_sphere_mesh(1.0f, 3, true));
+    });
+    queue.add_task([&]
+    {
+        capsule = new Mesh(scene, gpu);
+        capsule->load_triangles(gpu->generate_capsule_mesh(1.0f, 2.0f, 16, 16));
+    });
     queue.finalize();
 }

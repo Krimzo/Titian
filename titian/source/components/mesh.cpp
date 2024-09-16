@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::Mesh::Mesh(kl::GPU* gpu, px::PxPhysics* physics, px::PxCooking* cooking)
-    : m_gpu(gpu), m_physics(physics), m_cooking(cooking)
+titian::Mesh::Mesh(Scene* scene, kl::GPU* gpu)
+    : m_physics(scene->physics()), m_cooking(scene->cooking()), m_gpu(gpu)
 {}
 
 titian::Mesh::~Mesh()
@@ -99,14 +99,29 @@ void titian::Mesh::deserialize(const Serializer* serializer, const void* helper_
     this->reload();
 }
 
-void titian::Mesh::load(const Vector<kl::Vertex<float>>& vertices)
+D3D_PRIMITIVE_TOPOLOGY titian::Mesh::casted_topology() const
+{
+    return D3D_PRIMITIVE_TOPOLOGY(topology);
+}
+
+void titian::Mesh::load_vertices(const Vector<kl::Vertex<float>>& vertices)
 {
 	data_buffer.resize(vertices.size());
     for (size_t i = 0; i < vertices.size(); i++) {
-        data_buffer[i].world = vertices[i].world;
-        data_buffer[i].texture = vertices[i].texture;
-		data_buffer[i].normal = vertices[i].normal;
+        reinterpret_cast<kl::Vertex<float>&>(data_buffer[i]) = vertices[i];
     }
+    reload();
+}
+
+void titian::Mesh::load_triangles(const Vector<kl::Triangle<float>>& triangles)
+{
+    data_buffer.resize(triangles.size() * 3);
+    for (size_t i = 0; i < triangles.size(); i++) {
+        reinterpret_cast<kl::Vertex<float>&>(data_buffer[i * 3 + 0]) = triangles[i].a;
+        reinterpret_cast<kl::Vertex<float>&>(data_buffer[i * 3 + 1]) = triangles[i].b;
+        reinterpret_cast<kl::Vertex<float>&>(data_buffer[i * 3 + 2]) = triangles[i].c;
+    }
+    reload();
 }
 
 void titian::Mesh::reload()
@@ -126,11 +141,6 @@ void titian::Mesh::reload()
     m_cooking->cookTriangleMesh(mesh_descriptor, cook_buffer);
     px::PxDefaultMemoryInputData cooked_buffer(cook_buffer.getData(), cook_buffer.getSize());
     physics_buffer = m_physics->createTriangleMesh(cooked_buffer);
-}
-
-D3D_PRIMITIVE_TOPOLOGY titian::Mesh::casted_topology() const
-{
-    return D3D_PRIMITIVE_TOPOLOGY(topology);
 }
 
 void titian::Mesh::free_physics_buffer()

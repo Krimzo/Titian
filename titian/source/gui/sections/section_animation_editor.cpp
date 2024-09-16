@@ -38,7 +38,7 @@ void titian::GUISectionAnimationEditor::render_gui()
 
         im::SetColumnWidth(im::GetColumnIndex(), available_width * 0.25f);
         if (im::BeginChild("Animations")) {
-            display_animations(gpu, scene);
+            display_animations(scene, gpu);
         }
         im::EndChild();
         im::NextColumn();
@@ -69,7 +69,7 @@ void titian::GUISectionAnimationEditor::render_gui()
     im::End();
 }
 
-void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* scene)
+void titian::GUISectionAnimationEditor::display_animations(Scene* scene, kl::GPU* gpu)
 {
     if (im::BeginPopupContextWindow("NewAnimation", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Animation");
@@ -77,7 +77,7 @@ void titian::GUISectionAnimationEditor::display_animations(kl::GPU* gpu, Scene* 
         if (auto opt_name = gui_input_waited("##CreateAnimationInput", {})) {
             const auto& name = opt_name.value();
             if (!name.empty() && !scene->animations.contains(name)) {
-                Ref animation = new Animation(gpu, scene);
+                Ref animation = new Animation(scene, gpu);
                 scene->animations[name] = animation;
                 im::CloseCurrentPopup();
             }

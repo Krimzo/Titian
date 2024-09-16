@@ -217,7 +217,7 @@ titian::Float4x4 titian::Collider::scaling_matrix() const
     {
         px::PxBoxGeometry geometry{};
         m_shape->getBoxGeometry(geometry);
-        return Float4x4::scaling(reinterpret_cast<Float3&>(geometry.halfExtents));
+        return Float4x4::scaling(reinterpret_cast<Float3&>(geometry.halfExtents) * 2.0f);
     }
     case px::PxGeometryType::Enum::eSPHERE:
     {

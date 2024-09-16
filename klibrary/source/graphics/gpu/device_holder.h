@@ -25,7 +25,8 @@ namespace kl {
         
         dx::Buffer create_vertex_buffer(const void* data, UINT byte_size) const;
         dx::Buffer create_vertex_buffer(const std::vector<Vertex<float>>& vertices) const;
-        dx::Buffer create_vertex_buffer(const std::string_view& filepath) const;
+        dx::Buffer create_vertex_buffer(const std::vector<Triangle<float>>& triangles) const;
+        dx::Buffer create_vertex_buffer(const std::string_view& filepath, bool flip_z = true) const;
 
         dx::Buffer create_index_buffer(const uint32_t* data, UINT element_count) const;
         dx::Buffer create_index_buffer(const std::vector<uint32_t>& indices) const;
@@ -34,8 +35,17 @@ namespace kl {
         dx::Buffer create_structured_buffer(const void* data, UINT element_count, UINT element_size, bool has_unordered_access = false, bool cpu_read = false) const;
         dx::Buffer create_staging_buffer(const dx::Buffer& buffer, UINT byte_size) const;
 
-        dx::Buffer create_plane_mesh(float size, size_t num_of_points) const;
+        std::vector<Triangle<float>> generate_screen_mesh() const;
+        std::vector<Triangle<float>> generate_plane_mesh(float size, int complexity) const;
+        std::vector<Triangle<float>> generate_cube_mesh(float size) const;
+        std::vector<Triangle<float>> generate_sphere_mesh(float radius, int complexity, bool smooth) const;
+        std::vector<Triangle<float>> generate_capsule_mesh(float radius, float height, int sectors, int rings) const;
+
         dx::Buffer create_screen_mesh() const;
+        dx::Buffer create_plane_mesh(float size, int complexity) const;
+        dx::Buffer create_cube_mesh(float size) const;
+        dx::Buffer create_sphere_mesh(float radius, int complexity, bool smooth) const;
+        dx::Buffer create_capsule_mesh(float radius, float height, int sectors, int rings) const;
 
         dx::Texture create_texture(const dx::TextureDescriptor* descriptor, const dx::SubresourceDescriptor* subresource_data) const;
         dx::Texture create_texture(const Image& image, bool has_unordered_access = false, bool is_target = false) const;

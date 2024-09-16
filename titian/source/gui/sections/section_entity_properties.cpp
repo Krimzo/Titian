@@ -155,7 +155,7 @@ void titian::GUISectionEntityProperties::display_ambient_light_special_info(Scen
     im::Text("Ambient Light Special Info");
 
     im::ColorEdit3("Color", &light->color.x);
-    im::DragFloat("Intensity", &light->intensity);
+    im::DragFloat("Intensity", &light->intensity, 0.01f);
 }
 
 void titian::GUISectionEntityProperties::display_point_light_special_info(Scene* scene, PointLight* light)
@@ -170,7 +170,7 @@ void titian::GUISectionEntityProperties::display_directional_light_special_info(
     im::Text("Directional Light Special Info");
 
     im::ColorEdit3("Color", &light->color.x);
-    im::DragFloat("Point Size", &light->point_size);
+    im::DragFloat("Point Size", &light->point_size, 0.1f);
 
     for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
         im::DragFloat2(kl::format("Cascade ", i).data(), light->cascade_splits + i, 0.01f, 0.0f, 1.0f);
@@ -183,7 +183,7 @@ void titian::GUISectionEntityProperties::display_directional_light_special_info(
 	}
 
     Float3 direction = light->direction();
-    if (im::DragFloat3("Direction", &direction.x)) {
+    if (im::DragFloat3("Direction", &direction.x, 0.01f)) {
         light->set_direction(direction);
     }
 }
@@ -350,13 +350,14 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     }
 
     int geometry_type = 0;
-    px::PxBoxGeometry box_geometry = {};
-    px::PxTriangleMeshGeometry mesh_geometry = {};
+    px::PxBoxGeometry box_geometry{};
+    px::PxTriangleMeshGeometry mesh_geometry{};
     px::PxShape* collider_shape = collider->shape();
     if (collider_type == px::PxGeometryType::Enum::eBOX) {
         collider_shape->getBoxGeometry(box_geometry);
-
-        if (im::DragFloat3("Size", reinterpret_cast<float*>(&box_geometry.halfExtents), 0.5f, 0.0f, 1e9f)) {
+        Float3 box_size = reinterpret_cast<Float3&>(box_geometry.halfExtents) * 2.0f;
+        if (im::DragFloat3("Size", &box_size.x, 0.5f, 0.0f, 1e9f)) {
+            box_geometry.halfExtents = reinterpret_cast<px::PxVec3&>(box_size) * 0.5f;
             collider_shape->setGeometry(box_geometry);
         }
         geometry_type = 1;
@@ -402,7 +403,7 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     if (geometry_type != 0 && im::Button("Load size from scale")) {
         const Float3 scale = entity->scale();
         if (geometry_type == 1) {
-            box_geometry.halfExtents = reinterpret_cast<const px::PxVec3&>(scale);
+            box_geometry.halfExtents = reinterpret_cast<const px::PxVec3&>(scale) * 0.5f;
             collider_shape->setGeometry(box_geometry);
         }
         else {

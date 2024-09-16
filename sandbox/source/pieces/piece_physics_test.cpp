@@ -27,7 +27,7 @@ void titian::SandboxPiecePhysicsTest::setup_platform(Scene* scene)
 
     Ref platform = scene->new_entity();
 
-    const Float3 scale = { 15.0f, 0.1f, 15.0f };
+    const Float3 scale = { 30.0f, 0.2f, 30.0f };
     platform->set_scale(scale);
 
     platform->set_rotation({ 1.0f, 0.0f, 0.0f });
@@ -43,7 +43,6 @@ void titian::SandboxPiecePhysicsTest::setup_platform(Scene* scene)
 void titian::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
 {
     const int half_size = size / 2;
-    const Float3 scale = { 0.5f, 0.5f, 0.5f };
     int box_counter = 0;
 
     const String color_map = "dogo";
@@ -52,7 +51,7 @@ void titian::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
     Ref<Texture> color_map_tex;
     Ref<Texture> normal_map_tex;
 
-    auto create_texture = [&](Ref<Texture>& texture, const char* filename)
+    const auto create_texture = [&](Ref<Texture>& texture, const char* filename)
     {
         texture = new Texture(&editor->app_layer.gpu);
         texture->data_buffer.load_from_file(filename);
@@ -90,10 +89,9 @@ void titian::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
             Ref box = scene->new_entity();
             box->set_dynamic(true);
 
-            box->set_scale(scale);
             box->set_rotation(kl::random::gen_float3(360.0f));
             box->set_position({ (half_size - x) * 2.25f, 15.0f + (z - size / 2) * 1.5f, -25.0f + (half_size - z) * 2.25f});
-            box->set_collider(scene->new_box_collider(scale));
+            box->set_collider(scene->new_box_collider(Float3{ 1.0f }));
 
             box->set_mass(2.5f);
             box->set_gravity(true);

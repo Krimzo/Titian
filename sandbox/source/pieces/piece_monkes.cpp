@@ -15,6 +15,23 @@ void titian::SandboxPieceMonkes::setup_self()
     const int entity_count = size * size;
     const int half_size = size / 2;
 
+    Ref<Mesh> monke_mesh;
+    if (auto opt_data = scene->get_assimp_data("package/meshes/monke.obj")) {
+        const aiScene* ai_scene = opt_data.value().importer->GetScene();
+        for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
+            monke_mesh = scene->load_assimp_mesh(ai_scene, ai_scene->mMeshes[i]);
+            break;
+        }
+    }
+    if (!monke_mesh)
+        return;
+
+    Ref monke_animation = new Animation(scene, gpu);
+    monke_animation->meshes = { "monke" };
+
+    scene->meshes["monke"] = monke_mesh;
+    scene->animations["monke"] = monke_animation;
+
     for (int i = 0; i < entity_count; i++) {
         const int x = i % size;
         const int y = i / size;
@@ -25,9 +42,6 @@ void titian::SandboxPieceMonkes::setup_self()
         const String material_name = kl::format("monke_mat_", counter_id);
         const String entity_name = kl::format("Monke", counter_id);
 
-        scene->meshes[mesh_name] = scene->default_meshes->monke;
-		scene->animations[animation_name] = scene->default_animations->monke;
-
         const float percentage = (i + 1.0f) / entity_count;
         const float normalized = kl::clamp(percentage, 0.0f, 1.0f);
 
@@ -37,7 +51,6 @@ void titian::SandboxPieceMonkes::setup_self()
 
         Ref monke = scene->new_entity();
         monke->set_scale(Float3{ 0.5f });
-        monke->set_rotation({ 0.0f, 180.0f, 0.0f });
         monke->set_position({
             (float) (x - half_size) + x_offset,
             (float) (y - half_size),

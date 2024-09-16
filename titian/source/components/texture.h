@@ -35,7 +35,7 @@ namespace titian {
 		void copy_other(const dx::Texture& texture);
 
 	private:
-		kl::GPU* m_gpu = nullptr;
+		kl::GPU* const m_gpu;
 		bool m_is_cube = false;
 	};
 }

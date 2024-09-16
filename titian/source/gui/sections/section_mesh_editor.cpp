@@ -88,7 +88,7 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
         if (auto opt_name = gui_input_waited("##CreateMeshInput", {})) {
             const auto& name = opt_name.value();
             if (!name.empty() && !scene->meshes.contains(name)) {
-                Ref mesh = new Mesh(gpu, scene->physics(), scene->cooking());
+                Ref mesh = new Mesh(scene, gpu);
                 mesh->reload();
                 scene->meshes[name] = mesh;
                 im::CloseCurrentPopup();

@@ -9,11 +9,6 @@ namespace titian {
 }
 
 namespace titian {
-	struct Mesh;
-	struct Scene;
-}
-
-namespace titian {
 	enum AnimationType : int32_t
 	{
 		SEQUENTIAL = 0,
@@ -39,6 +34,11 @@ namespace titian {
 }
 
 namespace titian {
+	struct Mesh;
+	struct Scene;
+}
+
+namespace titian {
 	struct Animation : Serializable
 	{
 		int32_t animation_type = AnimationType::SEQUENTIAL;
@@ -49,7 +49,7 @@ namespace titian {
 		Vector<AnimationChannel> channels;
 		Ref<AnimationNode> animation_root;
 
-		Animation(kl::GPU* gpu, Scene* scene);
+		Animation(Scene* scene, kl::GPU* gpu);
 
 		void serialize(Serializer* serializer, const void* helper_data) const override;
 		void deserialize(const Serializer* serializer, const void* helper_data) override;
@@ -61,8 +61,8 @@ namespace titian {
 		void bind_matrices(int slot) const;
 
 	private:
-		kl::GPU* m_gpu = nullptr;
-		Scene* m_scene = nullptr;
+		Scene* const m_scene;
+		kl::GPU* const m_gpu;
 
 		Float4x4 m_global_inverse_transform;
 		Vector<Float4x4> m_final_matrices;

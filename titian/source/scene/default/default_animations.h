@@ -10,10 +10,9 @@ namespace titian {
 namespace titian {
     struct DefaultAnimations
     {
-        Ref<Animation> cube = nullptr;
-        Ref<Animation> sphere = nullptr;
-        Ref<Animation> capsule = nullptr;
-        Ref<Animation> monke = nullptr;
+        Ref<Animation> cube;
+        Ref<Animation> sphere;
+        Ref<Animation> capsule;
 
         DefaultAnimations(kl::GPU* gpu, Scene* scene);
     };

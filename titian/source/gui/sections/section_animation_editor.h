@@ -26,12 +26,12 @@ namespace titian {
         void render_gui() override;
 
     private:
-        kl::Timer m_timer = {};
+        kl::Timer m_timer;
         bool m_animating = false;
         int m_frame_index = 0;
         int m_start_mesh_index = 0;
 
-        void display_animations(kl::GPU* gpu, Scene* scene);
+        void display_animations(Scene* scene, kl::GPU* gpu);
         void update_animation_camera();
         void render_selected_animation(kl::GPU* gpu, Animation* animation, Int2 viewport_size);
         void show_animation_properties(Animation* animation);

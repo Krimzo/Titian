@@ -123,10 +123,10 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
         serializer->unload_object();
     };
 
-    Function mesh_provider = [&] { return new Mesh(m_gpu, m_physics, m_cooking); };
+    Function mesh_provider = [&] { return new Mesh(this, m_gpu); };
     read_map("meshes", meshes, mesh_provider, nullptr);
 
-    Function animation_provider = [&] { return new Animation(m_gpu, this); };
+    Function animation_provider = [&] { return new Animation(this, m_gpu); };
     read_map("animations", animations, animation_provider, nullptr);
 
     Function texture_provider = [&] { return new Texture(m_gpu); };
@@ -296,7 +296,7 @@ void titian::Scene::remove_entity(const StringView& id)
 titian::Ref<titian::Collider> titian::Scene::new_box_collider(const Float3& scale) const
 {
     Ref result = new Collider(m_physics);
-    result->set_geometry(px::PxBoxGeometry{ reinterpret_cast<const px::PxVec3&>(scale) });
+    result->set_geometry(px::PxBoxGeometry{ reinterpret_cast<const px::PxVec3&>(scale) * 0.5f });
     return result;
 }
 
@@ -337,14 +337,14 @@ titian::Ref<titian::Collider> titian::Scene::new_default_collider(const px::PxGe
 
 titian::Mesh* titian::Scene::helper_new_mesh(const String& id)
 {
-    Mesh* mesh = new Mesh(m_gpu, m_physics, m_cooking);
+    Mesh* mesh = new Mesh(this, m_gpu);
     meshes[id] = mesh;
     return mesh;
 }
 
 titian::Animation* titian::Scene::helper_new_animation(const String& id)
 {
-    Animation* animation = new Animation(m_gpu, this);
+    Animation* animation = new Animation(this, m_gpu);
     animations[id] = animation;
     return animation;
 }
@@ -539,10 +539,13 @@ void titian::Scene::helper_iterate_entities(const Function<void(const String&, E
 titian::Optional<titian::AssimpData> titian::Scene::get_assimp_data(const StringView& path) const
 {
     Ref importer = new as::Importer();
-    const aiScene* scene = importer->ReadFile(path, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_MakeLeftHanded);
-    if (!scene) {
+    const aiScene* scene = importer->ReadFile(path,
+        aiProcess_ConvertToLeftHanded |
+        aiProcess_JoinIdenticalVertices |
+        aiProcess_Triangulate |
+        aiProcess_GenNormals);
+    if (!scene)
         return std::nullopt;
-    }
 
     AssimpData data{};
     data.importer = importer;
@@ -600,7 +603,7 @@ void titian::Scene::load_assimp_data(const AssimpData& data)
 
 titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, const aiMesh* mesh)
 {
-    Ref mesh_object = new Mesh(m_gpu, m_physics, m_cooking);
+    Ref mesh_object = new Mesh(this, m_gpu);
     
     Vector<Vertex> vertices(mesh->mNumVertices);
     if (mesh->HasPositions()) {
@@ -685,7 +688,7 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, 
 
 titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScene* scene, const aiAnimation* animation)
 {
-    Ref animation_object = new Animation(m_gpu, this);
+    Ref animation_object = new Animation(this, m_gpu);
 
     animation_object->ticks_per_second = (float) animation->mTicksPerSecond;
     animation_object->duration_in_ticks = (float) animation->mDuration;

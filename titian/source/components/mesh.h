@@ -24,6 +24,10 @@ namespace titian {
 }
 
 namespace titian {
+    struct Scene;
+}
+
+namespace titian {
     struct Mesh : Serializable
     {
         int topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -36,20 +40,22 @@ namespace titian {
         Vector<Float4x4> bone_matrices;
         Ref<SkeletonNode> skeleton_root;
 
-        Mesh(kl::GPU* gpu, px::PxPhysics* physics, px::PxCooking* cooking);
+        Mesh(Scene* scene, kl::GPU* gpu);
         ~Mesh() override;
 
         void serialize(Serializer* serializer, const void* helper_data) const override;
         void deserialize(const Serializer* serializer, const void* helper_data) override;
 
-        void load(const Vector<kl::Vertex<float>>& vertices);
-        void reload();
         D3D_PRIMITIVE_TOPOLOGY casted_topology() const;
 
+        void load_vertices(const Vector<kl::Vertex<float>>& vertices);
+        void load_triangles(const Vector<kl::Triangle<float>>& triangles);
+        void reload();
+
     private:
-        kl::GPU* m_gpu = nullptr;
-        px::PxPhysics* m_physics = nullptr;
-        px::PxCooking* m_cooking = nullptr;
+        px::PxPhysics* const m_physics;
+        px::PxCooking* const m_cooking;
+        kl::GPU* const m_gpu;
 
         void free_physics_buffer();
     };

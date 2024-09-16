@@ -11,10 +11,9 @@ namespace titian {
 namespace titian {
     struct DefaultMeshes
 	{
-        Ref<Mesh> cube = nullptr;
-        Ref<Mesh> sphere = nullptr;
-        Ref<Mesh> capsule = nullptr;
-        Ref<Mesh> monke = nullptr;
+        Ref<Mesh> cube;
+        Ref<Mesh> sphere;
+        Ref<Mesh> capsule;
 
         DefaultMeshes(Scene* scene);
 	};
