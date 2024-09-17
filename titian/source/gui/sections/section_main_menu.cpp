@@ -286,6 +286,39 @@ void titian::GUISectionMainMenu::render_gui()
                     opt_assimp_data = scene->get_assimp_data(file_path.value());
                 }
             }
+            if (im::MenuItem("Quick Setup")) {
+                Ref camera = new Camera();
+                camera->set_position(Float3{ 1.5f });
+                camera->set_forward(-camera->position());
+                scene->add_entity("camera", camera);
+                scene->main_camera_name = "camera";
+
+                Ref ambient = new AmbientLight();
+                scene->add_entity("ambient", ambient);
+                scene->main_ambient_light_name = "ambient";
+
+                Ref sun = new DirectionalLight();
+                sun->set_direction({ -0.666f, -0.666f, 0.333f });
+                scene->add_entity("sun", sun);
+                scene->main_directional_light_name = "sun";
+
+                Ref cube = new Entity();
+                cube->animation_name = "cube";
+                cube->material_name = "white";
+                scene->add_entity("cube", cube);
+
+                Ref mesh = new Mesh();
+                mesh->load_triangles(kl::GPU::generate_cube_mesh(1.0f));
+                scene->meshes["cube"] = mesh;
+
+                Ref animation = new Animation();
+                animation->meshes = { "cube" };
+                scene->animations["cube"] = animation;
+
+                Ref material = new Material();
+                material->color = kl::colors::WHITE;
+                scene->materials["white"] = material;
+            }
             im::PopStyleVar();
             im::EndMenu();
         }
