@@ -1,9 +1,10 @@
 #include "titian.h"
 
 
-titian::Animation::Animation(Scene* scene, kl::GPU* gpu)
-	: m_scene(scene), m_gpu(gpu)
+titian::Animation::Animation()
 {
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+
 	dx::BufferDescriptor descriptor{};
 	descriptor.Usage = D3D11_USAGE_DYNAMIC;
 	descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE;
@@ -18,7 +19,7 @@ titian::Animation::Animation(Scene* scene, kl::GPU* gpu)
 	kl::assert(m_matrices_view, "Failed to create animation matrices shader view");
 }
 
-void titian::Animation::serialize(Serializer* serializer, const void* helper_data) const
+void titian::Animation::serialize(Serializer* serializer) const
 {
 	serializer->write_int("animation_type", animation_type);
 	serializer->write_float("ticks_per_second", ticks_per_second);
@@ -87,7 +88,7 @@ void titian::Animation::serialize(Serializer* serializer, const void* helper_dat
 	}
 }
 
-void titian::Animation::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::Animation::deserialize(const Serializer* serializer)
 {
 	serializer->read_int("animation_type", animation_type);
 	serializer->read_float("ticks_per_second", ticks_per_second);
@@ -179,25 +180,25 @@ int titian::Animation::get_index(const float time) const
 	return int(time * ticks_per_second) % (int) meshes.size();
 }
 
-titian::Mesh* titian::Animation::get_mesh(const float time) const
+titian::Mesh* titian::Animation::get_mesh(Scene* scene, const float time) const
 {
 	if (meshes.empty()) {
 		return nullptr;
 	}
 	if (animation_type == AnimationType::SKELETAL) {
-		return m_scene->helper_get_mesh(meshes[0]);
+		return scene->helper_get_mesh(meshes[0]);
 	}
 	const int index = get_index(time);
-	return m_scene->helper_get_mesh(meshes[index]);
+	return scene->helper_get_mesh(meshes[index]);
 }
 
-void titian::Animation::update(const float current_time)
+void titian::Animation::update(Scene* scene, const float current_time)
 {
 	if (animation_type != AnimationType::SKELETAL || meshes.empty() || !this->animation_root) {
 		return;
 	}
 
-	Mesh* mesh = m_scene->helper_get_mesh(meshes[0]);
+	Mesh* mesh = scene->helper_get_mesh(meshes[0]);
 	if (!mesh || !mesh->skeleton_root) {
 		return;
 	}
@@ -215,7 +216,8 @@ void titian::Animation::update(const float current_time)
 
 void titian::Animation::bind_matrices(const int slot) const
 {
-	m_gpu->bind_shader_view_for_vertex_shader(m_matrices_view, slot);
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+	gpu->bind_shader_view_for_vertex_shader(m_matrices_view, slot);
 }
 
 void titian::Animation::upload_matrices()
@@ -223,8 +225,9 @@ void titian::Animation::upload_matrices()
 	if (m_final_matrices.empty()) {
 		return;
 	}
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 	const size_t count = kl::min(m_final_matrices.size(), (size_t) MAX_BONE_COUNT);
-	m_gpu->write_to_buffer(m_matrices_buffer, m_final_matrices.data(), count * sizeof(Float4x4));
+	gpu->write_to_buffer(m_matrices_buffer, m_final_matrices.data(), count * sizeof(Float4x4));
 }
 
 void titian::Animation::update_node_hierarchy(const float time_ticks, const Mesh* mesh, const SkeletonNode* skel_node, const AnimationNode* anim_node, const Float4x4& parent_transform)

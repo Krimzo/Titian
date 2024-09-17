@@ -1,15 +1,14 @@
 #include "titian.h"
 
 
-titian::DirectionalLight::DirectionalLight(px::PxPhysics* physics, kl::GPU* gpu)
-    : Light(physics), m_gpu(gpu)
+titian::DirectionalLight::DirectionalLight()
 {
     set_resolution(2500);
 }
 
-void titian::DirectionalLight::serialize(Serializer* serializer, const void* helper_data) const
+void titian::DirectionalLight::serialize(Serializer* serializer) const
 {
-    Light::serialize(serializer, helper_data);
+    Entity::serialize(serializer);
 
     serializer->write_float_array("color", &color.x, 3);
     serializer->write_float("point_size", point_size);
@@ -19,9 +18,9 @@ void titian::DirectionalLight::serialize(Serializer* serializer, const void* hel
     serializer->write_float_array("direction", &m_direction.x, 3);
 }
 
-void titian::DirectionalLight::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::DirectionalLight::deserialize(const Serializer* serializer)
 {
-    Light::deserialize(serializer, helper_data);
+    Entity::deserialize(serializer);
 
     serializer->read_float_array("color", &color.x, 3);
     serializer->read_float("point_size", point_size);
@@ -31,11 +30,6 @@ void titian::DirectionalLight::deserialize(const Serializer* serializer, const v
     serializer->read_float_array("direction", &m_direction.x, 3);
 
     set_resolution(m_resolution);
-}
-
-titian::Float3 titian::DirectionalLight::light_at_point(const Float3& point) const
-{
-    return color;
 }
 
 void titian::DirectionalLight::set_resolution(const int resolution)
@@ -61,9 +55,10 @@ void titian::DirectionalLight::set_resolution(const int resolution)
     shadow_shader_view_descriptor.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     shadow_shader_view_descriptor.Texture2D.MipLevels = 1;
 
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     for (auto& cascade : m_cascades) {
-        cascade = new Texture(m_gpu);
-        cascade->graphics_buffer = m_gpu->create_texture(&shadow_map_descriptor, nullptr);
+        cascade = new Texture();
+        cascade->graphics_buffer = gpu->create_texture(&shadow_map_descriptor, nullptr);
         cascade->create_depth_view(&shadow_depth_view_descriptor);
         cascade->create_shader_view(&shadow_shader_view_descriptor);
     }

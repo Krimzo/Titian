@@ -5,6 +5,12 @@ titian::AppLayer::AppLayer()
 	: Layer("AppLayer")
 {}
 
+titian::AppLayer::~AppLayer()
+{
+	cpu_dispatcher->release();
+	physics->release();
+}
+
 void titian::AppLayer::init(const StringView& name)
 {
 	ImGui_ImplWin32_EnableDpiAwareness();
@@ -13,6 +19,11 @@ void titian::AppLayer::init(const StringView& name)
 	window.set_icon("package/textures/editor_icon.ico");
 	window.set_dark_mode(true);
 	window.maximize();
+
+	physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, px::PxTolerancesScale{});
+	cpu_dispatcher = px::PxDefaultCpuDispatcherCreate(2);
+	kl::assert(physics, "Failed to create physics");
+	kl::assert(cpu_dispatcher, "Failed to create physics dispatcher");
 }
 
 bool titian::AppLayer::update()

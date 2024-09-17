@@ -1,9 +1,8 @@
 #include "titian.h"
 
 
-titian::Collider::Collider(px::PxPhysics* physics)
-    : m_physics(physics)
-    , m_material(m_physics->createMaterial(0.25f, 0.25f, 0.25f))
+titian::Collider::Collider()
+    : m_material(Layers::get<AppLayer>()->physics->createMaterial(0.25f, 0.25f, 0.25f))
 {
     kl::assert(m_material, "Failed to create collider MATERIAL");
 }
@@ -14,10 +13,8 @@ titian::Collider::~Collider()
     if (m_material) m_material->release();
 }
 
-void titian::Collider::serialize(Serializer* serializer, const void* helper_data) const
+void titian::Collider::serialize(Serializer* serializer) const
 {
-    const auto helper_meshes = (const StringMap<Ref<Mesh>>*) helper_data;
-
     const px::PxGeometryType::Enum geometry_type = this->type();
     serializer->write_int("geometry_type", geometry_type);
 
@@ -42,20 +39,7 @@ void titian::Collider::serialize(Serializer* serializer, const void* helper_data
         serializer->write_float("radius", geometry.radius);
         break;
     }
-    case px::PxGeometryType::Enum::eTRIANGLEMESH: {
-        px::PxTriangleMeshGeometry geometry{};
-        m_shape->getTriangleMeshGeometry(geometry);
-        serializer->write_float_array("scale", &geometry.scale.scale.x, 3);
-        for (const auto& [name, mesh] : *helper_meshes) {
-            if (mesh->physics_buffer == geometry.triangleMesh) {
-                serializer->write_string("mesh_name", name);
-                goto saved_geometry;
-            }
-        }
-        kl::assert(false, "Failed to find collider MESH");
     }
-    }
-saved_geometry:
     serializer->pop_object();
 
     const Float3 rotation = this->rotation();
@@ -69,10 +53,8 @@ saved_geometry:
     serializer->write_float("restitution", restitution());
 }
 
-void titian::Collider::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::Collider::deserialize(const Serializer* serializer)
 {
-    const auto helper_meshes = (const StringMap<Ref<Mesh>>*) helper_data;
-
     px::PxGeometryType::Enum geometry_type{};
     serializer->read_int("geometry_type", (int&) geometry_type);
 
@@ -81,29 +63,20 @@ void titian::Collider::deserialize(const Serializer* serializer, const void* hel
     case px::PxGeometryType::Enum::eBOX: {
         px::PxBoxGeometry geometry{};
         serializer->read_float_array("half_extents", &geometry.halfExtents.x, 3);
-        this->set_geometry(geometry);
+        set_geometry(geometry);
         break;
     }
     case px::PxGeometryType::Enum::eSPHERE: {
         px::PxSphereGeometry geometry{};
         serializer->read_float("radius", geometry.radius);
-        this->set_geometry(geometry);
+        set_geometry(geometry);
         break;
     }
     case px::PxGeometryType::Enum::eCAPSULE: {
         px::PxCapsuleGeometry geometry{};
         serializer->read_float("half_height", geometry.halfHeight);
         serializer->read_float("radius", geometry.radius);
-        this->set_geometry(geometry);
-        break;
-    }
-    case px::PxGeometryType::Enum::eTRIANGLEMESH: {
-        px::PxTriangleMeshGeometry geometry{};
-        serializer->read_float_array("scale", &geometry.scale.scale.x, 3);
-        String mesh_name;
-        serializer->read_string("mesh_name", mesh_name);
-        geometry.triangleMesh = helper_meshes->at(mesh_name)->physics_buffer;
-        this->set_geometry(geometry);
+        set_geometry(geometry);
         break;
     }
     }
@@ -142,9 +115,14 @@ px::PxShape* titian::Collider::shape() const
 
 void titian::Collider::set_geometry(const px::PxGeometry& geometry)
 {
+    kl::assert(
+        geometry.getType() == px::PxGeometryType::Enum::eBOX ||
+        geometry.getType() == px::PxGeometryType::Enum::eSPHERE ||
+        geometry.getType() == px::PxGeometryType::Enum::eCAPSULE, "Not a valid geometry type");
+
+    px::PxPhysics* physics = Layers::get<AppLayer>()->physics;
     if (m_shape) m_shape->release();
-    m_shape = m_physics->createShape(geometry, *m_material);
-    kl::verify(m_shape, "Failed to create collider SHAPE");
+    m_shape = physics->createShape(geometry, *m_material);
 }
 
 px::PxGeometryHolder titian::Collider::geometry() const
@@ -230,19 +208,13 @@ titian::Float4x4 titian::Collider::scaling_matrix() const
         m_shape->getCapsuleGeometry(geometry);
         return Float4x4::scaling(Float3{ geometry.halfHeight * 0.5f, Float2{geometry.radius} });
     }
-    case px::PxGeometryType::Enum::eTRIANGLEMESH:
-    {
-        px::PxTriangleMeshGeometry geometry{};
-        m_shape->getTriangleMeshGeometry(geometry);
-        return Float4x4::scaling(px_cast(geometry.scale.scale));
-    }
     }
     return {};
 }
 
 titian::Ref<titian::Collider> titian::Collider::clone() const
 {
-    Ref collider = new Collider(m_physics);
+    Ref collider = new Collider();
     collider->set_geometry(geometry().any());
     collider->set_rotation(rotation());
     collider->set_offset(offset());

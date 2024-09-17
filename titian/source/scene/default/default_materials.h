@@ -6,8 +6,8 @@
 namespace titian {
 	struct DefaultMaterials
 	{
-		Ref<Material> white = nullptr;
+		Ref<Material> white;
 
-		DefaultMaterials(kl::GPU* gpu);
+		DefaultMaterials();
 	};
 }

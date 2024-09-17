@@ -64,8 +64,8 @@ namespace titian {
 
 		NodeScript();
 
-		void serialize(Serializer* serializer, const void* helper_data) const override;
-		void deserialize(const Serializer* serializer, const void* helper_data) override;
+		void serialize(Serializer* serializer) const override;
+		void deserialize(const Serializer* serializer) override;
 
 		bool is_valid() const override;
 		void reload() override;
@@ -95,7 +95,7 @@ namespace titian {
 			setStyle(style);
 		}
 
-		void serialize(Serializer* serializer, const void* helper_data) const override
+		void serialize(Serializer* serializer) const override
 		{
 			serializer->write_string("node_type", typeid(*this).name());
 
@@ -107,7 +107,7 @@ namespace titian {
 			serializer->write_byte_array("style", &style, sizeof(style));
 		}
 
-		void deserialize(const Serializer* serializer, const void* helper_data) override
+		void deserialize(const Serializer* serializer) override
 		{
 			serializer->read_byte_array("user_data", user_data, sizeof(user_data));
 			
@@ -163,17 +163,17 @@ namespace titian {
 			}
 		}
 
-		void serialize(Serializer* serializer, const void* helper_data) const override
+		void serialize(Serializer* serializer) const override
 		{
-			Node::serialize(serializer, helper_data);
+			Node::serialize(serializer);
 
 			serializer->write_bool("has_input", has_input);
 			serializer->write_bool("has_output", has_output);
 		}
 
-		void deserialize(const Serializer* serializer, const void* helper_data) override
+		void deserialize(const Serializer* serializer) override
 		{
-			Node::deserialize(serializer, helper_data);
+			Node::deserialize(serializer);
 
 			bool saved_has_input = false;
 			bool saved_has_ouput = false;
@@ -227,9 +227,9 @@ namespace titian {
 			addOUT<T>("result")->behaviour([this] { return this->value; });
 		}
 
-		void serialize(Serializer* serializer, const void* helper_data) const override
+		void serialize(Serializer* serializer) const override
 		{
-			Node::serialize(serializer, helper_data);
+			Node::serialize(serializer);
 
 			if constexpr (std::is_same_v<T, bool>) {
 				serializer->write_bool("value", value);
@@ -269,9 +269,9 @@ namespace titian {
 			}
 		}
 
-		void deserialize(const Serializer* serializer, const void* helper_data) override
+		void deserialize(const Serializer* serializer) override
 		{
-			Node::deserialize(serializer, helper_data);
+			Node::deserialize(serializer);
 
 			if constexpr (std::is_same_v<T, bool>) {
 				serializer->read_bool("value", value);
@@ -386,17 +386,17 @@ namespace titian {
 			storage().erase(name);
 		}
 
-		void serialize(Serializer* serializer, const void* helper_data) const override
+		void serialize(Serializer* serializer) const override
 		{
-			FlowNode::serialize(serializer, helper_data);
+			FlowNode::serialize(serializer);
 			serializer->write_string("var_name", name);
 			serializer->write_bool("var_global", var_ptr->global);
 			serializer->write_byte_array("var_value", &var_ptr->get<T>(), sizeof(T));
 		}
 
-		void deserialize(const Serializer* serializer, const void* helper_data) override
+		void deserialize(const Serializer* serializer) override
 		{
-			FlowNode::deserialize(serializer, helper_data);
+			FlowNode::deserialize(serializer);
 			String temp_name;
 			serializer->read_string("var_name", temp_name);
 			rename(temp_name);
@@ -1361,24 +1361,24 @@ namespace titian {
 				}
 				return float{};
 			});
-			addOUT<String>("color_map_name")->behaviour([this]()
+			addOUT<String>("color_texture_name")->behaviour([this]()
 			{
 				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
-					return ptr->color_map_name;
+					return ptr->color_texture_name;
 				}
 				return String{};
 			});
-			addOUT<String>("normal_map_name")->behaviour([this]()
+			addOUT<String>("normal_texture_name")->behaviour([this]()
 			{
 				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
-					return ptr->normal_map_name;
+					return ptr->normal_texture_name;
 				}
 				return String{};
 			});
-			addOUT<String>("roughness_map_name")->behaviour([this]()
+			addOUT<String>("roughness_texture_name")->behaviour([this]()
 			{
 				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
-					return ptr->roughness_map_name;
+					return ptr->roughness_texture_name;
 				}
 				return String{};
 			});
@@ -1401,7 +1401,7 @@ namespace titian {
 			addOUT<int32_t>("shader_type")->behaviour([this]()
 			{
 				if (Shader* ptr = get_casted_value<void*, Shader*>("ptr")) {
-					return ptr->shader_type;
+					return (int32_t) ptr->shader_type;
 				}
 				return int32_t{};
 			});
@@ -1432,13 +1432,6 @@ namespace titian {
 			{
 				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
 					return ptr->material_name;
-				}
-				return String{};
-			});
-			addOUT<String>("collider_mesh_name")->behaviour([this]()
-			{
-				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
-					return ptr->collider_mesh_name;
 				}
 				return String{};
 			});
@@ -1681,9 +1674,9 @@ namespace titian {
 			addIN<float>("reflection_factor");
 			addIN<float>("refraction_factor");
 			addIN<float>("refraction_index");
-			addIN<String>("color_map_name");
-			addIN<String>("normal_map_name");
-			addIN<String>("roughness_map_name");
+			addIN<String>("color_texture_name");
+			addIN<String>("normal_texture_name");
+			addIN<String>("roughness_texture_name");
 			addIN<String>("shader_name");
 		}
 
@@ -1709,14 +1702,14 @@ namespace titian {
 			if (input_connected("refraction_index")) {
 				ptr->refraction_index = get_value<float>("refraction_index");
 			}
-			if (input_connected("color_map_name")) {
-				ptr->color_map_name = get_value<String>("color_map_name");
+			if (input_connected("color_texture_name")) {
+				ptr->color_texture_name = get_value<String>("color_texture_name");
 			}
-			if (input_connected("normal_map_name")) {
-				ptr->normal_map_name = get_value<String>("normal_map_name");
+			if (input_connected("normal_texture_name")) {
+				ptr->normal_texture_name = get_value<String>("normal_texture_name");
 			}
-			if (input_connected("roughness_map_name")) {
-				ptr->roughness_map_name = get_value<String>("roughness_map_name");
+			if (input_connected("roughness_texture_name")) {
+				ptr->roughness_texture_name = get_value<String>("roughness_texture_name");
 			}
 			if (input_connected("shader_name")) {
 				ptr->shader_name = get_value<String>("shader_name");
@@ -1742,7 +1735,7 @@ namespace titian {
 			}
 
 			if (input_connected("shader_type")) {
-				ptr->shader_type = get_value<int32_t>("shader_type");
+				ptr->shader_type = (ShaderType) get_value<int32_t>("shader_type");
 			}
 			call_next();
 		}
@@ -1784,9 +1777,6 @@ namespace titian {
 			}
 			if (input_connected("material_name")) {
 				ptr->material_name = get_value<String>("material_name");
-			}
-			if (input_connected("collider_mesh_name")) {
-				ptr->collider_mesh_name = get_value<String>("collider_mesh_name");
 			}
 			if (input_connected("dynamic")) {
 				ptr->set_dynamic(get_value<bool>("dynamic"));

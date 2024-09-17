@@ -21,21 +21,19 @@ namespace titian {
 namespace titian {
 	struct Shader : Serializable
 	{
-		int32_t shader_type = ShaderType::MATERIAL;
+		ShaderType shader_type;
 
 		String data_buffer;
 		kl::RenderShaders graphics_buffer;
 
-		Shader(kl::GPU* gpu, ShaderType type);
+		Shader(ShaderType type = ShaderType::MATERIAL);
 
-		void serialize(Serializer* serializer, const void* helper_data) const override;
-		void deserialize(const Serializer* serializer, const void* helper_data) override;
+		void serialize(Serializer* serializer) const override;
+		void deserialize(const Serializer* serializer) override;
 
 		void reload();
 
 	private:
-		kl::GPU* const m_gpu;
-
 		void reload_for_material();
 		void reload_for_camera();
 	};

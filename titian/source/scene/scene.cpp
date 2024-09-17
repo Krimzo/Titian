@@ -1,10 +1,6 @@
 #include "titian.h"
 
 
-px::PxDefaultAllocator     titian::Scene::m_allocator = {};
-px::PxDefaultErrorCallback titian::Scene::m_error_callback = {};
-px::PxFoundation*          titian::Scene::m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_allocator, m_error_callback);
-
 static px::PxFilterFlags filter_shader(
     px::PxFilterObjectAttributes attributes0,
     px::PxFilterData filterData0,
@@ -19,34 +15,27 @@ static px::PxFilterFlags filter_shader(
     return px::PxFilterFlag::eDEFAULT;
 }
 
-titian::Scene::Scene(kl::GPU* gpu)
-    : m_gpu(gpu)
+titian::Scene::Scene()
 {
-    m_dispatcher = px::PxDefaultCpuDispatcherCreate(2);
-    kl::assert(m_dispatcher, "Failed to create physics dispatcher");
+    px::PxPhysics* physics = Layers::get<AppLayer>()->physics;
+    px::PxCpuDispatcher* cpu_dispatcher = Layers::get<AppLayer>()->cpu_dispatcher;
 
-    m_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_foundation, px::PxTolerancesScale{});
-    kl::assert(m_physics, "Failed to create physics");
-
-    m_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_foundation, px::PxCookingParams{ m_physics->getTolerancesScale() });
-    kl::assert(m_cooking, "Failed to create physics cooking");
-
-    px::PxSceneDesc scene_descriptor = { m_physics->getTolerancesScale() };
+    px::PxSceneDesc scene_descriptor = { physics->getTolerancesScale() };
     scene_descriptor.gravity.y = -9.81f;
-    scene_descriptor.cpuDispatcher = m_dispatcher;
+    scene_descriptor.cpuDispatcher = cpu_dispatcher;
     scene_descriptor.filterShader = filter_shader;
     scene_descriptor.simulationEventCallback = this;
 
-    m_scene = m_physics->createScene(scene_descriptor);
+    m_scene = physics->createScene(scene_descriptor);
     kl::assert(m_scene, "Failed to create physics scene");
 
-    default_meshes = new DefaultMeshes(this);
+    default_meshes = new DefaultMeshes();
     kl::assert(default_meshes, "Failed to init default meshes");
 
-    default_animations = new DefaultAnimations(m_gpu, this);
+    default_animations = new DefaultAnimations();
     kl::assert(default_animations, "Failed to init default animations");
 
-    default_materials = new DefaultMaterials(gpu);
+    default_materials = new DefaultMaterials();
     kl::assert(default_materials, "Failed to init default materials");
 }
 
@@ -54,23 +43,17 @@ titian::Scene::~Scene()
 {
     default_meshes.free();
     default_materials.free();
-
     meshes.clear();
     textures.clear();
     materials.clear();
     scripts.clear();
-
     while (!m_entities.empty()) {
         remove_entity(m_entities.begin()->first);
     }
-
     m_scene->release();
-    m_dispatcher->release();
-    m_cooking->release();
-    m_physics->release();
 }
 
-void titian::Scene::serialize(Serializer* serializer, const void* helper_data) const
+void titian::Scene::serialize(Serializer* serializer) const
 {
     serializer->write_string("main_camera_name", main_camera_name);
     serializer->write_string("main_ambient_light_name", main_ambient_light_name);
@@ -84,7 +67,7 @@ void titian::Scene::serialize(Serializer* serializer, const void* helper_data) c
         for (auto& [name, object] : data) {
             serializer->write_string(kl::format("__name_", counter), name);
             serializer->push_object(name);
-            object->serialize(serializer, helper_data);
+            object->serialize(serializer);
             serializer->pop_object();
             counter += 1;
         }
@@ -100,7 +83,7 @@ void titian::Scene::serialize(Serializer* serializer, const void* helper_data) c
     write_map("entities", m_entities, &meshes);
 }
 
-void titian::Scene::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::Scene::deserialize(const Serializer* serializer)
 {
     serializer->read_string("main_camera_name", main_camera_name);
     serializer->read_string("main_ambient_light_name", main_ambient_light_name);
@@ -116,26 +99,26 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
             serializer->read_string(kl::format("__name_", i), name);
             Ref<T> object = provider();
             serializer->load_object(name);
-            object->deserialize(serializer, helper_data);
+            object->deserialize(serializer);
             serializer->unload_object();
             data[name] = object;
         }
         serializer->unload_object();
     };
 
-    Function mesh_provider = [&] { return new Mesh(this, m_gpu); };
+    Function mesh_provider = [&] { return new Mesh(); };
     read_map("meshes", meshes, mesh_provider, nullptr);
 
-    Function animation_provider = [&] { return new Animation(this, m_gpu); };
+    Function animation_provider = [&] { return new Animation(); };
     read_map("animations", animations, animation_provider, nullptr);
 
-    Function texture_provider = [&] { return new Texture(m_gpu); };
+    Function texture_provider = [&] { return new Texture(); };
     read_map("textures", textures, texture_provider, nullptr);
 
     Function material_provider = [&] { return new Material(); };
     read_map("materials", materials, material_provider, nullptr);
 
-    Function shader_provider = [&] { return new Shader(m_gpu, ShaderType::MATERIAL); };
+    Function shader_provider = [&] { return new Shader(); };
     read_map("shaders", shaders, shader_provider, nullptr);
 
     {
@@ -161,7 +144,7 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
             else {
                 kl::assert(false, "Unknown script type: ", script_type);
             }
-            script->deserialize(serializer, nullptr);
+            script->deserialize(serializer);
             serializer->unload_object();
             scripts[name] = script;
         }
@@ -180,24 +163,24 @@ void titian::Scene::deserialize(const Serializer* serializer, const void* helper
             serializer->read_string("entity_type", entity_type);
             Ref<Entity> entity;
             if (typeid(Entity).name() == entity_type) {
-                entity = new Entity(m_physics);
+                entity = new Entity();
             }
             else if (typeid(Camera).name() == entity_type) {
-                entity = new Camera(m_physics, m_gpu);
+                entity = new Camera();
             }
             else if (typeid(AmbientLight).name() == entity_type) {
-                entity = new AmbientLight(m_physics);
+                entity = new AmbientLight();
             }
             else if (typeid(PointLight).name() == entity_type) {
-                entity = new PointLight(m_physics);
+                entity = new PointLight();
             }
             else if (typeid(DirectionalLight).name() == entity_type) {
-                entity = new DirectionalLight(m_physics, m_gpu);
+                entity = new DirectionalLight();
             }
             else {
                 kl::assert(false, "Unknown entity type: ", entity_type);
             }
-            entity->deserialize(serializer, &meshes);
+            entity->deserialize(serializer);
             serializer->unload_object();
             add_entity(name, entity);
         }
@@ -231,16 +214,6 @@ void titian::Scene::onTrigger(px::PxTriggerPair* pairs, px::PxU32 count)
 void titian::Scene::onAdvance(const px::PxRigidBody* const* bodyBuffer, const px::PxTransform* poseBuffer, const px::PxU32 count)
 {}
 
-px::PxPhysics* titian::Scene::physics() const
-{
-    return m_physics;
-}
-
-px::PxCooking* titian::Scene::cooking() const
-{
-    return m_cooking;
-}
-
 void titian::Scene::set_gravity(const Float3& gravity)
 {
     m_scene->setGravity(px_cast(gravity));
@@ -271,11 +244,6 @@ void titian::Scene::update_ui()
     }
 }
 
-titian::Ref<titian::Entity> titian::Scene::new_entity() const
-{
-    return new Entity(m_physics);
-}
-
 void titian::Scene::add_entity(const String& id, const Ref<Entity>& entity)
 {
     m_entities[id] = entity;
@@ -294,63 +262,53 @@ void titian::Scene::remove_entity(const StringView& id)
 
 titian::Ref<titian::Collider> titian::Scene::new_box_collider(const Float3& scale) const
 {
-    Ref result = new Collider(m_physics);
+    Ref result = new Collider();
     result->set_geometry(px::PxBoxGeometry{ px_cast(scale) * 0.5f });
     return result;
 }
 
 titian::Ref<titian::Collider> titian::Scene::new_sphere_collider(const float radius) const
 {
-    Ref result = new Collider(m_physics);
+    Ref result = new Collider();
     result->set_geometry(px::PxSphereGeometry{ radius });
     return result;
 }
 
 titian::Ref<titian::Collider> titian::Scene::new_capsule_collider(const float radius, const float height) const
 {
-    Ref result = new Collider(m_physics);
+    Ref result = new Collider();
     result->set_geometry(px::PxCapsuleGeometry{ radius, height });
     return result;
 }
 
-titian::Ref<titian::Collider> titian::Scene::new_mesh_collider(const Mesh& mesh, const Float3& scale) const
-{
-    Ref result = new Collider(m_physics);
-    if (mesh.physics_buffer) {
-        result->set_geometry(px::PxTriangleMeshGeometry{ mesh.physics_buffer, px_cast(scale) });
-    }
-    return result;
-}
-
-titian::Ref<titian::Collider> titian::Scene::new_default_collider(const px::PxGeometryType::Enum type, const Mesh* optional_mesh) const
+titian::Ref<titian::Collider> titian::Scene::new_collider(const px::PxGeometryType::Enum type) const
 {
     switch (type)
     {
     case px::PxGeometryType::Enum::eBOX: return new_box_collider(Float3{ 1.0f });
     case px::PxGeometryType::Enum::eSPHERE: return new_sphere_collider(1.0f);
     case px::PxGeometryType::Enum::eCAPSULE: return new_capsule_collider(1.0f, 2.0f);
-    case px::PxGeometryType::Enum::eTRIANGLEMESH: if (optional_mesh) return new_mesh_collider(*optional_mesh, Float3{ 1.0f });
     }
-    return nullptr;
+    return {};
 }
 
 titian::Mesh* titian::Scene::helper_new_mesh(const String& id)
 {
-    Mesh* mesh = new Mesh(this, m_gpu);
+    Mesh* mesh = new Mesh();
     meshes[id] = mesh;
     return mesh;
 }
 
 titian::Animation* titian::Scene::helper_new_animation(const String& id)
 {
-    Animation* animation = new Animation(this, m_gpu);
+    Animation* animation = new Animation();
     animations[id] = animation;
     return animation;
 }
 
 titian::Texture* titian::Scene::helper_new_texture(const String& id)
 {
-    Texture* texture = new Texture(m_gpu);
+    Texture* texture = new Texture();
     textures[id] = texture;
     return texture;
 }
@@ -364,14 +322,14 @@ titian::Material* titian::Scene::helper_new_material(const String& id)
 
 titian::Shader* titian::Scene::helper_new_shader(const String& id)
 {
-    Shader* shader = new Shader(m_gpu, ShaderType::MATERIAL);
+    Shader* shader = new Shader();
     shaders[id] = shader;
     return shader;
 }
 
 titian::Entity* titian::Scene::helper_new_entity(const String& id)
 {
-    Ref entity = new_entity();
+    Ref entity = new Entity();
     add_entity(id, entity);
     return &entity;
 }
@@ -602,7 +560,7 @@ void titian::Scene::load_assimp_data(const AssimpData& data)
 
 titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, const aiMesh* mesh)
 {
-    Ref mesh_object = new Mesh(this, m_gpu);
+    Ref mesh_object = new Mesh();
     
     Vector<Vertex> vertices(mesh->mNumVertices);
     if (mesh->HasPositions()) {
@@ -687,7 +645,7 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, 
 
 titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScene* scene, const aiAnimation* animation)
 {
-    Ref animation_object = new Animation(this, m_gpu);
+    Ref animation_object = new Animation();
 
     animation_object->ticks_per_second = (float) animation->mTicksPerSecond;
     animation_object->duration_in_ticks = (float) animation->mDuration;
@@ -743,7 +701,7 @@ titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScen
 
 titian::Ref<titian::Texture> titian::Scene::load_assimp_texture(const aiScene* scene, const aiTexture* texture)
 {
-    Ref texture_object = new Texture(m_gpu);
+    Ref texture_object = new Texture();
 
     if (texture->mHeight == 0) {
         texture_object->data_buffer.load_from_memory((byte*) texture->pcData, texture->mWidth);

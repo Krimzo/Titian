@@ -53,7 +53,7 @@ void titian::GUISectionViewport::render_gui()
             if (classify_file(file.value()) == FileType::BINARY_SCENE) {
                 if (const BinarySerializer serializer{ file.value(), false }) {
                     game_layer->reset_scene();
-                    scene->deserialize(&serializer, nullptr);
+                    scene->deserialize(&serializer);
                 }
                 else {
                     Logger::log("Failed to load BINARY scene: ", file.value());
@@ -62,7 +62,7 @@ void titian::GUISectionViewport::render_gui()
             else if (classify_file(file.value()) == FileType::TEXT_SCENE) {
                 if (const TextSerializer serializer{ file.value(), false }) {
                     game_layer->reset_scene();
-                    scene->deserialize(&serializer, nullptr);
+                    scene->deserialize(&serializer);
                 }
                 else {
                     Logger::log("Failed to load TEXT scene: ", file.value());
@@ -73,27 +73,27 @@ void titian::GUISectionViewport::render_gui()
             const String name = scene->generate_unique_name(entity_type.value(), scene->entities());
             const Float3 position = get_mouse_3d();
             if (entity_type.value() == DRAG_ENTITY_ENTITY) {
-                Ref entity = scene->new_casted<Entity>();
+                Ref entity = new Entity();
                 entity->set_position(position);
 				scene->add_entity(name, entity);
             }
             else if (entity_type.value() == DRAG_ENTITY_CAMERA) {
-                Ref entity = scene->new_casted<Camera>(gpu);
+                Ref entity = new Camera();
                 entity->set_position(position);
                 scene->add_entity(name, entity);
             }
             else if (entity_type.value() == DRAG_ENTITY_AMBIENT) {
-                Ref entity = scene->new_casted<AmbientLight>();
+                Ref entity = new AmbientLight();
                 entity->set_position(position);
                 scene->add_entity(name, entity);
             }
             else if (entity_type.value() == DRAG_ENTITY_POINT) {
-                Ref entity = scene->new_casted<PointLight>();
+                Ref entity = new PointLight();
                 entity->set_position(position);
                 scene->add_entity(name, entity);
             }
             else if (entity_type.value() == DRAG_ENTITY_DIRECTIONAL) {
-                Ref entity = scene->new_casted<DirectionalLight>(gpu);
+                Ref entity = new DirectionalLight();
                 entity->set_position(position);
                 scene->add_entity(name, entity);
             }
@@ -101,7 +101,7 @@ void titian::GUISectionViewport::render_gui()
         if (auto entity_type = gui_get_drag_drop<String>(DRAG_ANIMATION_ENTITY_ID)) {
             const String name = scene->generate_unique_name(entity_type.value(), scene->entities());
             const Float3 position = get_mouse_3d();
-            Ref entity = scene->new_casted<Entity>();
+            Ref entity = new Entity();
 			entity->set_position(position);
             entity->animation_name = entity_type.value();
             entity->material_name = "white";

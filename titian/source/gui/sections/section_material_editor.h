@@ -8,9 +8,9 @@
 namespace titian {
     struct GUISectionMaterialEditor : GUISection
     {
-        Ref<Camera> camera = nullptr;
-        Ref<Texture> render_texture = nullptr;
-        Ref<Texture> depth_texture = nullptr;
+        Ref<Camera> camera;
+        Ref<Texture> render_texture;
+        Ref<Texture> depth_texture;
 
         bool was_focused = true;
         Float2 initial_camera_info = { 40, 30 };
@@ -25,9 +25,9 @@ namespace titian {
     private:
         Float4 m_new_mat_color = kl::colors::WHITE;
 
-        void display_materials(kl::GPU* gpu, Scene* scene);
-        void render_selected_material(Scene* scene, kl::GPU* gpu, Material* material, Int2 viewport_size);
-        void show_material_properties(Scene* scene, Material* material);
-        void update_material_camera();
+        void display_materials(Scene* scene);
+        void update_material_camera(Scene* scene);
+        void render_selected_material(Material* material, Int2 viewport_size);
+        void show_material_properties(Material* material);
     };
 }

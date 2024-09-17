@@ -24,11 +24,11 @@ void titian::GUISectionShaderEditor::render_gui()
 				const String name = gui_input_continuous("##CreateShaderInput");
 				if (!name.empty() && !scene->helper_contains_shader(name)) {
 					if (im::MenuItem("New Material Shader")) {
-						scene->shaders[name] = new Shader(gpu, ShaderType::MATERIAL);
+						scene->shaders[name] = new Shader();
 						im::CloseCurrentPopup();
 					}
 					if (im::MenuItem("New Camera Shader")) {
-						scene->shaders[name] = new Shader(gpu, ShaderType::CAMERA);
+						scene->shaders[name] = new Shader(ShaderType::CAMERA);
 						im::CloseCurrentPopup();
 					}
 				}
@@ -65,8 +65,8 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 			continue;
 		}
 
-		if (im::Selectable(shader_name.data(), shader_name == this->selected_shader)) {
-			this->selected_shader = shader_name;
+		if (im::Selectable(shader_name.data(), shader_name == selected_shader)) {
+			selected_shader = shader_name;
 		}
 
 		if (im::BeginPopupContextItem(shader_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
@@ -74,17 +74,24 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 			im::Text("Edit Shader");
 
 			if (auto opt_name = gui_input_waited("##RenameShaderInput", shader_name)) {
-				const auto& name = opt_name.value();
-				if (!name.empty() && !scene->helper_contains_shader(name)) {
-					for (auto& [_, material] : scene->materials) {
-						if (material->shader_name == shader_name) {
-							material->shader_name = name;
+				const auto& new_name = opt_name.value();
+				if (!new_name.empty() && !scene->helper_contains_shader(new_name)) {
+					if (selected_shader == shader_name) {
+						selected_shader = new_name;
+					}
+					if (shader->shader_type == ShaderType::MATERIAL) {
+						for (auto& [_, material] : scene->materials) {
+							if (material->shader_name == shader_name) material->shader_name = new_name;
 						}
 					}
-					if (this->selected_shader == shader_name) {
-						this->selected_shader = name;
+					else {
+						for (auto& [_, entity] : scene->entities()) {
+							if (Camera* camera = &entity.as<Camera>()) {
+								if (camera->shader_name == shader_name) camera->shader_name = new_name;
+							}
+						}
 					}
-					scene->shaders[name] = shader;
+					scene->shaders[new_name] = shader;
 					scene->shaders.erase(shader_name);
 					should_break = true;
 					im::CloseCurrentPopup();
@@ -98,13 +105,8 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 			}
 
 			if (im::Button("Delete", { -1.0f, 0.0f })) {
-				if (this->selected_shader == shader_name) {
-					this->selected_shader = "/";
-				}
-				for (auto& [_, material] : scene->materials) {
-					if (material->shader_name == shader_name) {
-						material->shader_name = "/";
-					}
+				if (selected_shader == shader_name) {
+					selected_shader = "/";
 				}
 				scene->shaders.erase(shader_name);
 				should_break = true;
@@ -138,7 +140,7 @@ void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) cons
 		if (im::BeginCombo("Shader Type", shader_type_names.at(shader->shader_type).data())) {
 			for (auto& [type, name] : shader_type_names) {
 				if (im::Selectable(name.data(), shader->shader_type == type)) {
-					shader->shader_type = type;
+					shader->shader_type = (ShaderType) type;
 				}
 			}
 			im::EndCombo();

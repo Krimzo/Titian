@@ -52,7 +52,7 @@ void titian::ShadowPass::render_self(StatePackage* package)
             return;
         }
 
-        info.mesh = info.animation->get_mesh(timer->elapsed());
+        info.mesh = info.animation->get_mesh(scene, timer->elapsed());
         Material* material = scene->helper_get_material(entity->material_name);
         if (!info.mesh || !material || material->is_transparent()) {
             return;

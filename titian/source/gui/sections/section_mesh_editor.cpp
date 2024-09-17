@@ -4,12 +4,9 @@
 titian::GUISectionMeshEditor::GUISectionMeshEditor()
     : GUISection("GUISectionMeshEditor")
 {
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    Scene* scene = &Layers::get<GameLayer>()->scene;
-
-    camera = new Camera(scene->physics(), gpu);
-    render_texture = new Texture(gpu);
-    depth_texture = new Texture(gpu);
+    camera = new Camera();
+    render_texture = new Texture();
+    depth_texture = new Texture();
 
     sun_direction = kl::normalize(Float3(-0.5f, -0.75f, 1.0f));
 
@@ -22,7 +19,6 @@ void titian::GUISectionMeshEditor::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
     Ref<Mesh> mesh;
@@ -36,7 +32,7 @@ void titian::GUISectionMeshEditor::render_gui()
 
         im::SetColumnWidth(im::GetColumnIndex(), available_width * 0.25f);
         if (im::BeginChild("Meshes")) {
-            display_meshes(gpu, scene);
+            display_meshes(scene);
         }
         im::EndChild();
         im::NextColumn();
@@ -48,10 +44,10 @@ void titian::GUISectionMeshEditor::render_gui()
         if (im::BeginChild("Mesh View", {}, was_focused)) {
             const Int2 viewport_size = { (int)im::GetContentRegionAvail().x, (int)im::GetContentRegionAvail().y };
             if (was_focused) {
-                update_mesh_camera();
+                update_mesh_camera(scene);
             }
             if (mesh) {
-                render_selected_mesh(gpu, &mesh, viewport_size);
+                render_selected_mesh(&mesh, viewport_size);
                 const dx::ShaderView& shader_view = render_texture->shader_view;
                 im::Image(render_texture->shader_view.get(), { (float)viewport_size.x, (float)viewport_size.y });
                 render_gizmos(&mesh);
@@ -80,18 +76,18 @@ void titian::GUISectionMeshEditor::render_gui()
     im::End();
 }
 
-void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
+void titian::GUISectionMeshEditor::display_meshes(Scene* scene)
 {
     if (im::BeginPopupContextWindow("NewMesh", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Mesh");
         const String name = gui_input_continuous("##CreateMeshInput");
         if (!name.empty() && !scene->meshes.contains(name)) {
             if (im::MenuItem("Basic Mesh")) {
-                scene->meshes[name] = new Mesh(scene, gpu);
+                scene->meshes[name] = new Mesh();
                 im::CloseCurrentPopup();
             }
             if (im::MenuItem("Screen Mesh")) {
-                Ref mesh = new Mesh(scene, gpu);
+                Ref mesh = new Mesh();
                 mesh->load_triangles(kl::GPU::generate_screen_mesh());
                 scene->meshes[name] = mesh;
                 im::CloseCurrentPopup();
@@ -100,7 +96,7 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
                 im::DragFloat("Size", &m_plane_size);
                 im::DragInt("Complexity", &m_plane_complexity, 1.0f, 2, 1'000'000);
                 if (im::MenuItem("Generate")) {
-                    Ref mesh = new Mesh(scene, gpu);
+                    Ref mesh = new Mesh();
                     mesh->load_triangles(kl::GPU::generate_plane_mesh(m_plane_size, m_plane_complexity));
                     scene->meshes[name] = mesh;
                     im::CloseCurrentPopup();
@@ -110,7 +106,7 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
             if (im::BeginMenu("Cube Mesh")) {
                 im::DragFloat("Size", &m_cube_size, 1.0f, 0.0f, 1e6f);
                 if (im::MenuItem("Generate")) {
-                    Ref mesh = new Mesh(scene, gpu);
+                    Ref mesh = new Mesh();
                     mesh->load_triangles(kl::GPU::generate_cube_mesh(m_cube_size));
                     scene->meshes[name] = mesh;
                     im::CloseCurrentPopup();
@@ -122,7 +118,7 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
                 im::DragInt("Complexity", &m_sphere_complexity, 1.0f, 0, 1'000'000);
                 im::Checkbox("Smooth", &m_sphere_smooth);
                 if (im::MenuItem("Generate")) {
-                    Ref mesh = new Mesh(scene, gpu);
+                    Ref mesh = new Mesh();
                     mesh->load_triangles(kl::GPU::generate_sphere_mesh(m_sphere_radius, m_sphere_complexity, m_sphere_smooth));
                     scene->meshes[name] = mesh;
                     im::CloseCurrentPopup();
@@ -135,7 +131,7 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
                 im::DragInt("Sectors", &m_capsule_sectors, 1.0f, 1, 1'000'000);
                 im::DragInt("Rings", &m_capsule_rings, 1.0f, 1, 1'000'000);
                 if (im::MenuItem("Generate")) {
-                    Ref mesh = new Mesh(scene, gpu);
+                    Ref mesh = new Mesh();
                     mesh->load_triangles(kl::GPU::generate_capsule_mesh(m_capsule_radius, m_capsule_height, m_capsule_sectors, m_capsule_rings));
                     scene->meshes[name] = mesh;
                     im::CloseCurrentPopup();
@@ -152,8 +148,8 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
             continue;
         }
 
-        if (im::Selectable(mesh_name.data(), mesh_name == this->selected_mesh)) {
-            this->selected_mesh = mesh_name;
+        if (im::Selectable(mesh_name.data(), mesh_name == selected_mesh)) {
+            selected_mesh = mesh_name;
         }
 
         if (im::BeginPopupContextItem(mesh_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
@@ -161,12 +157,19 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
             im::Text("Edit Mesh");
 
             if (auto opt_name = gui_input_waited("##RenameMeshInput", mesh_name)) {
-                const auto& name = opt_name.value();
-                if (!name.empty() && !scene->meshes.contains(name)) {
-                    if (this->selected_mesh == mesh_name) {
-                        this->selected_mesh = name;
+                const auto& new_name = opt_name.value();
+                if (!new_name.empty() && !scene->meshes.contains(new_name)) {
+                    if (selected_mesh == mesh_name) {
+                        selected_mesh = new_name;
                     }
-                    scene->meshes[name] = mesh;
+                    for (auto& [_, animation] : scene->animations) {
+                        for (auto& name : animation->meshes) {
+                            if (name == mesh_name) {
+                                name = new_name;
+                            }
+                        }
+                    }
+                    scene->meshes[new_name] = mesh;
                     scene->meshes.erase(mesh_name);
                     should_break = true;
                     im::CloseCurrentPopup();
@@ -180,8 +183,8 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
             }
 
             if (im::Button("Delete", { -1.0f, 0.0f })) {
-                if (this->selected_mesh == mesh_name) {
-                    this->selected_mesh = "/";
+                if (selected_mesh == mesh_name) {
+                    selected_mesh = "/";
                 }
                 scene->meshes.erase(mesh_name);
                 should_break = true;
@@ -196,7 +199,7 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
     }
 }
 
-void titian::GUISectionMeshEditor::update_mesh_camera()
+void titian::GUISectionMeshEditor::update_mesh_camera(Scene* scene)
 {
     if (im::IsMouseClicked(ImGuiMouseButton_Right)) {
         initial_camera_info = camera_info;
@@ -224,8 +227,10 @@ void titian::GUISectionMeshEditor::update_mesh_camera()
     camera->set_forward(-camera->position());
 }
 
-void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh* mesh, const Int2 viewport_size)
+void titian::GUISectionMeshEditor::render_selected_mesh(Mesh* mesh, const Int2 viewport_size)
 {
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
         return;
     }
@@ -296,48 +301,6 @@ void titian::GUISectionMeshEditor::render_selected_mesh(kl::GPU* gpu, const Mesh
 
     gpu->bind_internal_views();
     gpu->set_viewport_size(old_viewport_size);
-}
-
-void titian::GUISectionMeshEditor::render_gizmos(Mesh* mesh)
-{
-    kl::Window* window = &Layers::get<AppLayer>()->window;
-
-    auto& mesh_data = mesh->data_buffer;
-    if (m_selected_vertex_index < 0 || m_selected_vertex_index >= mesh_data.size()) {
-        return;
-    }
-    Vertex* selected_vertex = &mesh_data[m_selected_vertex_index];
-
-    const float viewport_tab_height = im::GetWindowContentRegionMin().y;
-    const Float2 viewport_position = { im::GetWindowPos().x, im::GetWindowPos().y + viewport_tab_height };
-    const Float2 viewport_size = { im::GetWindowWidth(), im::GetWindowHeight() };
-
-    ImGuizmo::Enable(true);
-    ImGuizmo::SetDrawlist();
-    ImGuizmo::SetRect(viewport_position.x, viewport_position.y, viewport_size.x, viewport_size.y);
-
-    Float3 selected_snap = {};
-    if (window->keyboard.shift) {
-        selected_snap = Float3{ 0.1f };
-    }
-
-    const Float4x4 view_matrix = kl::transpose(camera->view_matrix());
-    const Float4x4 projection_matrix = kl::transpose(camera->projection_matrix());
-    Float4x4 transform_matrix = kl::transpose(Float4x4::translation(selected_vertex->world));
-
-    ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
-        ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
-        transform_matrix.data, nullptr,
-        &selected_snap.x);
-
-    if (ImGuizmo::IsUsing()) {
-        Float3 decomposed_parts[3] = {};
-        ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
-            &decomposed_parts[2].x, &decomposed_parts[1].x, &decomposed_parts[0].x);
-
-        selected_vertex->world = decomposed_parts[2];
-        mesh->reload();
-    }
 }
 
 void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
@@ -458,4 +421,46 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
     im::End();
 
     m_last_scroll = current_scroll;
+}
+
+void titian::GUISectionMeshEditor::render_gizmos(Mesh* mesh)
+{
+    kl::Window* window = &Layers::get<AppLayer>()->window;
+
+    auto& mesh_data = mesh->data_buffer;
+    if (m_selected_vertex_index < 0 || m_selected_vertex_index >= mesh_data.size()) {
+        return;
+    }
+    Vertex* selected_vertex = &mesh_data[m_selected_vertex_index];
+
+    const float viewport_tab_height = im::GetWindowContentRegionMin().y;
+    const Float2 viewport_position = { im::GetWindowPos().x, im::GetWindowPos().y + viewport_tab_height };
+    const Float2 viewport_size = { im::GetWindowWidth(), im::GetWindowHeight() };
+
+    ImGuizmo::Enable(true);
+    ImGuizmo::SetDrawlist();
+    ImGuizmo::SetRect(viewport_position.x, viewport_position.y, viewport_size.x, viewport_size.y);
+
+    Float3 selected_snap = {};
+    if (window->keyboard.shift) {
+        selected_snap = Float3{ 0.1f };
+    }
+
+    const Float4x4 view_matrix = kl::transpose(camera->view_matrix());
+    const Float4x4 projection_matrix = kl::transpose(camera->projection_matrix());
+    Float4x4 transform_matrix = kl::transpose(Float4x4::translation(selected_vertex->world));
+
+    ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
+        ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
+        transform_matrix.data, nullptr,
+        &selected_snap.x);
+
+    if (ImGuizmo::IsUsing()) {
+        Float3 decomposed_parts[3] = {};
+        ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
+            &decomposed_parts[2].x, &decomposed_parts[1].x, &decomposed_parts[0].x);
+
+        selected_vertex->world = decomposed_parts[2];
+        mesh->reload();
+    }
 }

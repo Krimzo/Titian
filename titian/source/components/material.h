@@ -15,16 +15,15 @@ namespace titian {
 
 		Float4x4 custom_data;
 
-		String color_map_name = "/";
-		String normal_map_name = "/";
-		String roughness_map_name = "/";
-
+		String color_texture_name = "/";
+		String normal_texture_name = "/";
+		String roughness_texture_name = "/";
 		String shader_name = "/";
 
 		Material();
 
-		void serialize(Serializer* serializer, const void* helper_data) const override;
-		void deserialize(const Serializer* serializer, const void* helper_data) override;
+		void serialize(Serializer* serializer) const override;
+		void deserialize(const Serializer* serializer) override;
 
 		bool is_transparent() const;
 	};

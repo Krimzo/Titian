@@ -4,11 +4,9 @@
 titian::GUISectionHelper::GUISectionHelper()
     : GUISection("GUISectionHelper")
 {
-    AppLayer* app_layer = Layers::get<AppLayer>();
-
     const auto create_texture = [&](Ref<Texture>& texture, const char* filename)
     {
-        texture = new Texture(&app_layer->gpu);
+        texture = new Texture();
         texture->data_buffer.load_from_file(filename);
         texture->reload_as_2D();
         texture->create_shader_view();

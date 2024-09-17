@@ -7,7 +7,7 @@ titian::GameLayer::GameLayer()
 
 void titian::GameLayer::init()
 {
-	scene = new Scene(&Layers::get<AppLayer>()->gpu);
+	reset_scene();
 }
 
 bool titian::GameLayer::update()
@@ -24,7 +24,7 @@ bool titian::GameLayer::update()
 
 void titian::GameLayer::reset_scene()
 {
-	scene = new Scene(&Layers::get<AppLayer>()->gpu);
+	scene = new Scene();
 }
 
 void titian::GameLayer::start_game()

@@ -8,9 +8,9 @@
 namespace titian {
     struct GUISectionAnimationEditor : GUISection
     {
-        Ref<Camera> camera = nullptr;
-        Ref<Texture> render_texture = nullptr;
-        Ref<Texture> depth_texture = nullptr;
+        Ref<Camera> camera;
+        Ref<Texture> render_texture;
+        Ref<Texture> depth_texture;
 
         Float4 line_color = kl::colors::WHITE;
         Float3 sun_direction = { 0.0f, -1.0f, 0.0f };
@@ -31,9 +31,9 @@ namespace titian {
         int m_frame_index = 0;
         int m_start_mesh_index = 0;
 
-        void display_animations(Scene* scene, kl::GPU* gpu);
-        void update_animation_camera();
-        void render_selected_animation(kl::GPU* gpu, Animation* animation, Int2 viewport_size);
+        void display_animations(Scene* scene);
+        void update_animation_camera(Scene* scene);
+        void render_selected_animation(Animation* animation, Int2 viewport_size);
         void show_animation_properties(Animation* animation);
     };
 }

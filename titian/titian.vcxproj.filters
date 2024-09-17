@@ -114,9 +114,6 @@
     <ClCompile Include="source\light\directional_light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\light\light.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\light\point_light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -333,9 +330,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\light\directional_light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\light\light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\light\point_light.h">

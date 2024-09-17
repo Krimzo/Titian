@@ -1,16 +1,10 @@
 #include "titian.h"
 
 
-titian::Mesh::Mesh(Scene* scene, kl::GPU* gpu)
-    : m_physics(scene->physics()), m_cooking(scene->cooking()), m_gpu(gpu)
+titian::Mesh::Mesh()
 {}
 
-titian::Mesh::~Mesh()
-{
-    free_physics_buffer();
-}
-
-void titian::Mesh::serialize(Serializer* serializer, const void* helper_data) const
+void titian::Mesh::serialize(Serializer* serializer) const
 {
     serializer->write_int("topology", topology);
     serializer->write_bool("render_wireframe", render_wireframe);
@@ -49,7 +43,7 @@ void titian::Mesh::serialize(Serializer* serializer, const void* helper_data) co
 	}
 }
 
-void titian::Mesh::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::Mesh::deserialize(const Serializer* serializer)
 {
     serializer->read_int("topology", topology);
     serializer->read_bool("render_wireframe", render_wireframe);
@@ -126,27 +120,10 @@ void titian::Mesh::load_triangles(const Vector<kl::Triangle<float>>& triangles)
 
 void titian::Mesh::reload()
 {
+    graphics_buffer = {};
     if (data_buffer.empty()) {
         return;
     }
-
-    graphics_buffer = m_gpu->create_vertex_buffer(data_buffer.data(), (UINT) (data_buffer.size() * sizeof(Vertex)));
-
-    free_physics_buffer();
-    px::PxTriangleMeshDesc mesh_descriptor = {};
-    mesh_descriptor.points.stride = px::PxU32(sizeof(Vertex));
-    mesh_descriptor.points.count = px::PxU32(data_buffer.size() / 3 * 3);
-    mesh_descriptor.points.data = data_buffer.data();
-    px::PxDefaultMemoryOutputStream cook_buffer = {};
-    m_cooking->cookTriangleMesh(mesh_descriptor, cook_buffer);
-    px::PxDefaultMemoryInputData cooked_buffer(cook_buffer.getData(), cook_buffer.getSize());
-    physics_buffer = m_physics->createTriangleMesh(cooked_buffer);
-}
-
-void titian::Mesh::free_physics_buffer()
-{
-    if (physics_buffer) {
-        physics_buffer->release();
-        physics_buffer = nullptr;
-    }
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    graphics_buffer = gpu->create_vertex_buffer(data_buffer.data(), (UINT) (data_buffer.size() * sizeof(Vertex)));
 }

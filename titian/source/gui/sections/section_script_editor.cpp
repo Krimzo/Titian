@@ -93,8 +93,8 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 			continue;
 		}
 
-		if (im::Selectable(script_name.data(), script_name == this->selected_script)) {
-			this->selected_script = script_name;
+		if (im::Selectable(script_name.data(), script_name == selected_script)) {
+			selected_script = script_name;
 		}
 
 		if (im::BeginPopupContextItem(script_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
@@ -104,8 +104,8 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 			if (auto opt_name = gui_input_waited("##RenameScriptInput", script_name)) {
 				const auto& name = opt_name.value();
 				if (!name.empty() && !scene->scripts.contains(name)) {
-					if (this->selected_script == script_name) {
-						this->selected_script = name;
+					if (selected_script == script_name) {
+						selected_script = name;
 					}
 					scene->scripts[name] = script;
 					scene->scripts.erase(script_name);
@@ -121,8 +121,8 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 			}
 
 			if (im::Button("Delete", { -1.0f, 0.0f })) {
-				if (this->selected_script == script_name) {
-					this->selected_script = "/";
+				if (selected_script == script_name) {
+					selected_script = "/";
 				}
 				scene->scripts.erase(script_name);
 				should_break = true;

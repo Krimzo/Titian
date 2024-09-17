@@ -19,7 +19,7 @@ void titian::SkyboxPass::render_self(StatePackage* package)
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
-    Texture* skybox = scene->helper_get_texture(package->camera->skybox_name);
+    Texture* skybox = scene->helper_get_texture(package->camera->skybox_texture_name);
     if (!skybox)
         return;
 

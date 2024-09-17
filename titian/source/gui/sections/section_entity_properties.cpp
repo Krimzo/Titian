@@ -66,10 +66,10 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
 
     if (im::BeginCombo("Camera Type", camera->camera_type == CameraType::ORTHOGRAPHIC ? "Orthographic" : "Perspective")) {
         if (im::Selectable("Perspective", camera->camera_type == CameraType::PERSPECTIVE)) {
-            camera->camera_type = (int) CameraType::PERSPECTIVE;
+            camera->camera_type = CameraType::PERSPECTIVE;
         }
         if (im::Selectable("Orthographic", camera->camera_type == CameraType::ORTHOGRAPHIC)) {
-            camera->camera_type = (int) CameraType::ORTHOGRAPHIC;
+            camera->camera_type = CameraType::ORTHOGRAPHIC;
         }
         im::EndCombo();
     }
@@ -106,13 +106,13 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
     im::DragFloat3("Up", &camera_up.x, 0.01f);
     camera->set_up(camera_up);
 
-    if (im::BeginCombo("Bound Skybox", camera->skybox_name.data())) {
-        if (im::Selectable("/", camera->skybox_name == "/")) {
-            camera->skybox_name = "/";
+    if (im::BeginCombo("Bound Skybox", camera->skybox_texture_name.data())) {
+        if (im::Selectable("/", camera->skybox_texture_name == "/")) {
+            camera->skybox_texture_name = "/";
         }
         for (const auto& [texture_name, _] : scene->textures) {
-            if (im::Selectable(texture_name.data(), texture_name == camera->skybox_name)) {
-                camera->skybox_name = texture_name;
+            if (im::Selectable(texture_name.data(), texture_name == camera->skybox_texture_name)) {
+                camera->skybox_texture_name = texture_name;
             }
         }
         im::EndCombo();
@@ -131,18 +131,18 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
         }
         im::EndCombo();
     }
-    if (im::BeginCombo("Bound Target", camera->target_name.data())) {
-        if (im::Selectable("/", camera->target_name == "/")) {
-            camera->target_name = "/";
+    if (im::BeginCombo("Bound Target", camera->target_texture_name.data())) {
+        if (im::Selectable("/", camera->target_texture_name == "/")) {
+            camera->target_texture_name = "/";
         }
         for (const auto& [texture_name, _] : scene->textures) {
-            if (im::Selectable(texture_name.data(), texture_name == camera->target_name)) {
-                camera->target_name = texture_name;
+            if (im::Selectable(texture_name.data(), texture_name == camera->target_texture_name)) {
+                camera->target_texture_name = texture_name;
             }
         }
         im::EndCombo();
     }
-    if (!scene->textures.contains(camera->skybox_name)) {
+    if (!scene->textures.contains(camera->skybox_texture_name)) {
         Float4 background = camera->background;
         if (im::ColorEdit4("Background", &background.x)) {
             camera->background = background;
@@ -308,22 +308,12 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
 
     Ref collider = entity->collider();
     px::PxGeometryType::Enum collider_type = collider ? collider->type() : px::PxGeometryType::Enum::eINVALID;
-    String collider_name = possible_colliders.contains(collider_type) ? possible_colliders.at(collider_type) : ("mesh_" + entity->collider_mesh_name);
+    String collider_name = possible_colliders.contains(collider_type) ? possible_colliders.at(collider_type) : "mesh_";
 
     if (im::BeginCombo("Bound Collider", collider_name.data())) {
         for (auto& [type, name] : possible_colliders) {
             if (im::Selectable(name.data(), type == collider_type)) {
-                collider = scene->new_default_collider(type, nullptr);
-                collider_type = (collider ? collider->type() : px::PxGeometryType::Enum::eINVALID);
-                entity->set_collider(collider);
-            }
-        }
-        for (auto& [name, mesh] : scene->meshes) {
-            if (im::Selectable(("mesh_" + name).data(), entity->collider_mesh_name == name)) {
-                entity->collider_mesh_name = name;
-
-                Mesh* mesh = scene->helper_get_mesh(entity->collider_mesh_name);
-                collider = scene->new_default_collider(px::PxGeometryType::Enum::eTRIANGLEMESH, mesh);
+                collider = scene->new_collider(type);
                 collider_type = (collider ? collider->type() : px::PxGeometryType::Enum::eINVALID);
                 entity->set_collider(collider);
             }
@@ -380,14 +370,6 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
         if (im::DragFloat("Height", &geometry.halfHeight, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(geometry);
         }
-    }
-    else if (collider_type == px::PxGeometryType::Enum::eTRIANGLEMESH) {
-        collider_shape->getTriangleMeshGeometry(mesh_geometry);
-
-        if (im::DragFloat3("Mesh Scale", &mesh_geometry.scale.scale.x, 0.5f, 0.0f, 1e9f)) {
-            collider_shape->setGeometry(mesh_geometry);
-        }
-        geometry_type = 2;
     }
 
     Float3 rotation = collider->rotation();

@@ -4,11 +4,9 @@
 titian::GUISectionMainMenu::GUISectionMainMenu()
     : GUISection("GUISectionMainMenu")
 {
-    AppLayer* app_layer = Layers::get<AppLayer>();
-
-    auto create_texture = [&](Ref<Texture>& texture, const char* filename)
+    const auto create_texture = [&](Ref<Texture>& texture, const char* filename)
     {
-        texture = new Texture(&app_layer->gpu);
+        texture = new Texture();
         texture->data_buffer.load_from_file(filename);
         texture->reload_as_2D();
         texture->create_shader_view(nullptr);
@@ -95,7 +93,7 @@ void titian::GUISectionMainMenu::render_gui()
                             if (const TextSerializer serializer{ file.value(), false }) {
                                 String ignored_type;
                                 serializer.read_string("script_type", ignored_type);
-                                script->deserialize(&serializer, nullptr);
+                                script->deserialize(&serializer);
                             }
                             script->reload();
                             scene->scripts[stem_name] = script;
@@ -121,8 +119,8 @@ void titian::GUISectionMainMenu::render_gui()
                         if (auto file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
                             const String stem_name = fs::path(file.value()).stem().string();
                             if (const BinarySerializer serializer{ file.value(), false }) {
-                                Ref scene = new Scene(&app_layer->gpu);
-                                scene->deserialize(&serializer, nullptr);
+                                Ref scene = new Scene();
+                                scene->deserialize(&serializer);
                                 game_layer->scene = scene;
                             }
                         }
@@ -131,8 +129,8 @@ void titian::GUISectionMainMenu::render_gui()
                         if (auto file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_JSON } })) {
                             const String stem_name = fs::path(file.value()).stem().string();
                             if (const TextSerializer serializer{ file.value(), false }) {
-                                Ref scene = new Scene(&app_layer->gpu);
-                                scene->deserialize(&serializer, nullptr);
+                                Ref scene = new Scene();
+                                scene->deserialize(&serializer);
                                 game_layer->scene = scene;
                             }
                         }
@@ -199,7 +197,7 @@ void titian::GUISectionMainMenu::render_gui()
                                         file.value() += FILE_EXTENSION_JSON;
                                     }
                                     if (TextSerializer serializer{ file.value(), true }) {
-                                        node_script->serialize(&serializer, nullptr);
+                                        node_script->serialize(&serializer);
                                     }
                                 }
                                 else if (NativeScript* native_script = &script.as<NativeScript>()) {
@@ -239,7 +237,7 @@ void titian::GUISectionMainMenu::render_gui()
                                 file.value() += FILE_EXTENSION_TITIAN;
                             }
                             if (BinarySerializer serializer{ file.value(), true }) {
-                                scene->serialize(&serializer, nullptr);
+                                scene->serialize(&serializer);
                             }
                         }
                     }
@@ -250,7 +248,7 @@ void titian::GUISectionMainMenu::render_gui()
                                 file.value() += FILE_EXTENSION_JSON;
                             }
                             if (TextSerializer serializer{ file.value(), true }) {
-                                scene->serialize(&serializer, nullptr);
+                                scene->serialize(&serializer);
                             }
                         }
                     }
@@ -260,7 +258,7 @@ void titian::GUISectionMainMenu::render_gui()
             }
             im::Separator();
             if (im::MenuItem("New Scene")) {
-                scene = new Scene(&app_layer->gpu);
+                scene = new Scene();
             }
             im::Separator();
             if (im::MenuItem("Exit")) {
@@ -402,7 +400,7 @@ void titian::GUISectionMainMenu::render_gui()
             }
             else {
                 if (BinarySerializer serializer{ m_temp_path, true }) {
-                    game_layer->scene->serialize(&serializer, nullptr);
+                    game_layer->scene->serialize(&serializer);
                 }
                 game_layer->start_game();
             }
@@ -428,7 +426,7 @@ void titian::GUISectionMainMenu::render_gui()
             game_layer->stop_game();
             if (const BinarySerializer serializer{ m_temp_path, false }) {
                 game_layer->reset_scene();
-                game_layer->scene->deserialize(&serializer, nullptr);
+                game_layer->scene->deserialize(&serializer);
             }
         }
         m_control_buttons_width += im::GetItemRectSize().x;

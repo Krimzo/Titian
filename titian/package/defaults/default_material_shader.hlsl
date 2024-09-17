@@ -48,16 +48,16 @@ cbuffer GLOBAL_CB : register(b0)
     float REFRACTION_FACTOR;
     float REFRACTION_INDEX;
     
-    float HAS_NORMAL_MAP;
-    float HAS_ROUGHNESS_MAP;
+    float HAS_NORMAL_TEXTURE;
+    float HAS_ROUGHNESS_TEXTURE;
     
     float4x4 W;
     float4x4 V;
     float4x4 VP;
 
     float RECEIVES_SHADOWS;
-    float2 SHADOW_MAP_SIZE;
-    float2 SHADOW_MAP_TEXEL_SIZE;
+    float2 SHADOW_TEXTURE_SIZE;
+    float2 SHADOW_TEXTURE_TEXEL_SIZE;
     float4 SHADOW_CASCADES;
     float4x4 LIGHT_VPs[SHADOW_CASCADE_COUNT];
 
@@ -86,7 +86,7 @@ Texture2D SHADOW_TEXTURE_2 : register(t3);
 Texture2D SHADOW_TEXTURE_3 : register(t4);
 
 SamplerState MATERIAL_SAMPLER : register(s2);
-Texture2D COLOR_MAP : register(t5);
-Texture2D NORMAL_MAP : register(t6);
-Texture2D ROUGHNESS_MAP : register(t7);
+Texture2D COLOR_TEXTURE : register(t5);
+Texture2D NORMAL_TEXTURE : register(t6);
+Texture2D ROUGHNESS_TEXTURE : register(t7);
 #endif

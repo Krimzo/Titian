@@ -604,9 +604,9 @@ titian::NodeScript::NodeScript()
 	m_editor.setScroll({ 150.f, 450.f });
 }
 
-void titian::NodeScript::serialize(Serializer* serializer, const void* helper_data) const
+void titian::NodeScript::serialize(Serializer* serializer) const
 {
-	Script::serialize(serializer, helper_data);
+	Script::serialize(serializer);
 
 	serializer->write_float("editor_scale", m_editor.getScale());
 	serializer->write_float_array("editor_scroll", (const float*) &m_editor.getScroll(), 2);
@@ -630,7 +630,7 @@ void titian::NodeScript::serialize(Serializer* serializer, const void* helper_da
 		const String name = kl::format("__node_", counter);
 		serializer->push_object(name);
 		serializer->write_byte_array("uid", &uid, sizeof(uid));
-		node_ptr->serialize(serializer, helper_data);
+		node_ptr->serialize(serializer);
 		serializer->pop_object();
 		counter += 1;
 	}
@@ -657,9 +657,9 @@ void titian::NodeScript::serialize(Serializer* serializer, const void* helper_da
 	}
 }
 
-void titian::NodeScript::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::NodeScript::deserialize(const Serializer* serializer)
 {
-	Script::deserialize(serializer, helper_data);
+	Script::deserialize(serializer);
 
 	float editor_scale = 0.0f;
 	serializer->read_float("editor_scale", editor_scale);
@@ -691,7 +691,7 @@ void titian::NodeScript::deserialize(const Serializer* serializer, const void* h
 		}
 		kl::assert((bool) node, "Unknown node type: ", node_type);
 
-		node->deserialize(serializer, helper_data);
+		node->deserialize(serializer);
 		node->setUID(uid);
 		m_editor.insertNode(node);
 

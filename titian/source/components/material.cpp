@@ -4,7 +4,7 @@
 titian::Material::Material()
 {}
 
-void titian::Material::serialize(Serializer* serializer, const void* helper_data) const
+void titian::Material::serialize(Serializer* serializer) const
 {
 	serializer->write_float_array("color", &color.x, 4);
 	serializer->write_float("texture_blend", texture_blend);
@@ -15,14 +15,13 @@ void titian::Material::serialize(Serializer* serializer, const void* helper_data
 
 	serializer->write_float_array("custom_data", custom_data.data, 16);
 
-	serializer->write_string("color_map_name", color_map_name);
-	serializer->write_string("normal_map_name", normal_map_name);
-	serializer->write_string("roughness_map_name", roughness_map_name);
-
+	serializer->write_string("color_texture_name", color_texture_name);
+	serializer->write_string("normal_texture_name", normal_texture_name);
+	serializer->write_string("roughness_texture_name", roughness_texture_name);
 	serializer->write_string("shader_name", shader_name);
 }
 
-void titian::Material::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::Material::deserialize(const Serializer* serializer)
 {
 	serializer->read_float_array("color", &color.x, 4);
 	serializer->read_float("texture_blend", texture_blend);
@@ -33,10 +32,9 @@ void titian::Material::deserialize(const Serializer* serializer, const void* hel
 
 	serializer->read_float_array("custom_data", custom_data.data, 16);
 
-	serializer->read_string("color_map_name", color_map_name);
-	serializer->read_string("normal_map_name", normal_map_name);
-	serializer->read_string("roughness_map_name", roughness_map_name);
-
+	serializer->read_string("color_texture_name", color_texture_name);
+	serializer->read_string("normal_texture_name", normal_texture_name);
+	serializer->read_string("roughness_texture_name", roughness_texture_name);
 	serializer->read_string("shader_name", shader_name);
 }
 

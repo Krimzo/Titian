@@ -1,11 +1,11 @@
 #include "titian.h"
 
 
-titian::DefaultAnimations::DefaultAnimations(kl::GPU* gpu, Scene* scene)
+titian::DefaultAnimations::DefaultAnimations()
 {
     const auto create_animation = [&](Ref<Animation>& animation, std::initializer_list<String> meshes)
     {
-        animation = new Animation(scene, gpu);
+        animation = new Animation();
         animation->meshes.insert(animation->meshes.end(), meshes);
     };
 

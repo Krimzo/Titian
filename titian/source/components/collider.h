@@ -6,11 +6,11 @@
 namespace titian {
     struct Collider : Serializable
     {
-        Collider(px::PxPhysics* physics);
+        Collider();
         ~Collider() override;
 
-        void serialize(Serializer* serializer, const void* helper_data) const override;
-        void deserialize(const Serializer* serializer, const void* helper_data) override;
+        void serialize(Serializer* serializer) const override;
+        void deserialize(const Serializer* serializer) override;
 
         px::PxGeometryType::Enum type() const;
         px::PxShape* shape() const;
@@ -38,7 +38,6 @@ namespace titian {
         Ref<Collider> clone() const;
 
     private:
-        px::PxPhysics* const m_physics;
         px::PxMaterial* const m_material;
         px::PxShape* m_shape = nullptr;
     };

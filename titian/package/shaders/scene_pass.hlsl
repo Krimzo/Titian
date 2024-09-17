@@ -29,8 +29,8 @@ cbuffer GLOBAL_CB : register(b0)
     float REFRACTION_FACTOR;
     float REFRACTION_INDEX;
     
-    float HAS_NORMAL_MAP;
-    float HAS_ROUGHNESS_MAP;
+    float HAS_NORMAL_TEXTURE;
+    float HAS_ROUGHNESS_TEXTURE;
     
     float4x4 W;
     float4x4 V;
@@ -39,8 +39,8 @@ cbuffer GLOBAL_CB : register(b0)
     float IS_SKELETAL;
 
     float RECEIVES_SHADOWS;
-    float2 SHADOW_MAP_SIZE;
-    float2 SHADOW_MAP_TEXEL_SIZE;
+    float2 SHADOW_TEXTURE_SIZE;
+    float2 SHADOW_TEXTURE_TEXEL_SIZE;
     float4 SHADOW_CASCADES;
     float4x4 LIGHT_VPs[SHADOW_CASCADE_COUNT];
     
@@ -112,13 +112,13 @@ Texture2D SHADOW_TEXTURE_2 : register(t3);
 Texture2D SHADOW_TEXTURE_3 : register(t4);
 
 SamplerState MATERIAL_SAMPLER : register(s2);
-Texture2D COLOR_MAP : register(t5);
-Texture2D NORMAL_MAP : register(t6);
-Texture2D ROUGHNESS_MAP : register(t7);
+Texture2D COLOR_TEXTURE : register(t5);
+Texture2D NORMAL_TEXTURE : register(t6);
+Texture2D ROUGHNESS_TEXTURE : register(t7);
 
 float3 get_pixel_normal(const float3 world_position, const float3 interpolated_normal, const float2 texture_coords)
 {
-    if (!HAS_NORMAL_MAP) {
+    if (!HAS_NORMAL_TEXTURE) {
         return interpolated_normal;
     }
 
@@ -129,20 +129,20 @@ float3 get_pixel_normal(const float3 world_position, const float3 interpolated_n
     const float3 T = normalize(Q1 * st2.x - Q2 * st1.x);
     const float3 B = normalize(-Q1 * st2.y + Q2 * st1.y);
     const float3x3 TBN = float3x3(T, B, interpolated_normal);
-    const float3 result_normal = normalize(NORMAL_MAP.Sample(MATERIAL_SAMPLER, texture_coords).xyz * 2.0f - 1.0f);
+    const float3 result_normal = normalize(NORMAL_TEXTURE.Sample(MATERIAL_SAMPLER, texture_coords).xyz * 2.0f - 1.0f);
     return normalize(mul(result_normal, TBN));
 }
 
 float get_pixel_reflectivity(const float reflectivity, const float2 texture_coords)
 {
-    if (!HAS_ROUGHNESS_MAP) {
+    if (!HAS_ROUGHNESS_TEXTURE) {
         return reflectivity;
     }
-    const float roughness = ROUGHNESS_MAP.Sample(MATERIAL_SAMPLER, texture_coords).r;
+    const float roughness = ROUGHNESS_TEXTURE.Sample(MATERIAL_SAMPLER, texture_coords).r;
     return 1.0f - roughness;
 }
 
-float get_pcf_shadow(const Texture2D shadow_map, const float3 light_coords, const int half_kernel_size)
+float get_pcf_shadow(const Texture2D shadow_texture, const float3 light_coords, const int half_kernel_size)
 {
     static const float2 adder = 0.25f;
 
@@ -154,8 +154,8 @@ float get_pcf_shadow(const Texture2D shadow_map, const float3 light_coords, cons
         [unroll]
         for (int x = -half_kernel_size; x <= half_kernel_size; x++) {
             const float2 kernel_coords = float2(x, y) + adder;
-            const float2 altered_coords = light_coords.xy + kernel_coords * SHADOW_MAP_TEXEL_SIZE;
-            const float depth = shadow_map.Sample(SHADOW_SAMPLER, altered_coords).r;
+            const float2 altered_coords = light_coords.xy + kernel_coords * SHADOW_TEXTURE_TEXEL_SIZE;
+            const float depth = shadow_texture.Sample(SHADOW_SAMPLER, altered_coords).r;
             
             shadow_factor += (depth < light_coords.z) ? 0.0f : 1.0f;
             sample_counter += 1.0f;
@@ -238,7 +238,7 @@ PS_OUT p_shader(VS_OUT data)
     const float3 light_intensity = ambient_factor + diffuse_factor + specular_factor;
 
     // Color calculations
-    const float4 texture_color = COLOR_MAP.Sample(MATERIAL_SAMPLER, data.textur);
+    const float4 texture_color = COLOR_TEXTURE.Sample(MATERIAL_SAMPLER, data.textur);
     const float4 unlit_color = lerp(MATERIAL_COLOR, texture_color, TEXTURE_BLEND);
     const float4 lit_color = unlit_color * float4(light_intensity, 1.0f);
     

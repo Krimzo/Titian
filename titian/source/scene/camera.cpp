@@ -1,23 +1,22 @@
 #include "titian.h"
 
 
-titian::Camera::Camera(px::PxPhysics* physics, kl::GPU* gpu)
-    : Entity(physics), m_gpu(gpu)
+titian::Camera::Camera()
 {
-    screen_texture = new Texture(gpu);
-    game_color_texture = new Texture(gpu);
-    game_depth_texture = new Texture(gpu);
-    game_depth_staging = new Texture(gpu);
-    editor_picking_texture = new Texture(gpu);
-    editor_picking_staging = new Texture(gpu);
+    screen_texture = new Texture();
+    game_color_texture = new Texture();
+    game_depth_texture = new Texture();
+    game_depth_staging = new Texture();
+    editor_picking_texture = new Texture();
+    editor_picking_staging = new Texture();
 
     resize({ 1600, 900 });
     resize_staging({ 1, 1 });
 }
 
-void titian::Camera::serialize(Serializer* serializer, const void* helper_data) const
+void titian::Camera::serialize(Serializer* serializer) const
 {
-    Entity::serialize(serializer, helper_data);
+    Entity::serialize(serializer);
 
     serializer->write_int("camera_type", camera_type);
 
@@ -40,19 +39,19 @@ void titian::Camera::serialize(Serializer* serializer, const void* helper_data) 
     serializer->write_float_array("background", &background.x, 4);
     serializer->write_float_array("custom_data", custom_data.data, 16);
 
-    serializer->write_string("skybox_name", skybox_name);
+    serializer->write_string("skybox_texture_name", skybox_texture_name);
+    serializer->write_string("target_texture_name", target_texture_name);
     serializer->write_string("shader_name", shader_name);
-    serializer->write_string("target_name", target_name);
 
     const Int2 res = resolution();
     serializer->write_int_array("resolution", &res.x, 2);
 }
 
-void titian::Camera::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::Camera::deserialize(const Serializer* serializer)
 {
-    Entity::deserialize(serializer, helper_data);
+    Entity::deserialize(serializer);
 
-    serializer->read_int("camera_type", camera_type);
+    serializer->read_int("camera_type", (int32_t&) camera_type);
 
     serializer->read_bool("enabled", enabled);
     serializer->read_bool("v_sync", v_sync);
@@ -73,9 +72,9 @@ void titian::Camera::deserialize(const Serializer* serializer, const void* helpe
     serializer->read_float_array("background", &background.x, 4);
     serializer->read_float_array("custom_data", custom_data.data, 16);
 
-    serializer->read_string("skybox_name", skybox_name);
+    serializer->read_string("skybox_texture_name", skybox_texture_name);
+    serializer->read_string("target_texture_name", target_texture_name);
     serializer->read_string("shader_name", shader_name);
-    serializer->read_string("target_name", target_name);
 
     Int2 res;
     serializer->read_int_array("resolution", &res.x, 2);
@@ -247,7 +246,8 @@ titian::Int2 titian::Camera::resolution() const
 
 void titian::Camera::clear_targets()
 {
-    m_gpu->clear_target_view(game_color_texture->target_view, background);
-    m_gpu->clear_depth_view(game_depth_texture->depth_view, 1.0f, 0xFF);
-    m_gpu->clear_target_view(editor_picking_texture->target_view, {});
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    gpu->clear_target_view(game_color_texture->target_view, background);
+    gpu->clear_depth_view(game_depth_texture->depth_view, 1.0f, 0xFF);
+    gpu->clear_target_view(editor_picking_texture->target_view, {});
 }

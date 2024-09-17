@@ -9,12 +9,11 @@ void titian::GUISectionTextureEditor::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
     Ref<Texture> texture;
-    if (scene->textures.contains(this->selected_texture)) {
-        texture = scene->textures.at(this->selected_texture);
+    if (scene->textures.contains(selected_texture)) {
+        texture = scene->textures.at(selected_texture);
     }
 
     if (im::Begin("Texture Editor")) {
@@ -23,7 +22,7 @@ void titian::GUISectionTextureEditor::render_gui()
 
         im::SetColumnWidth(im::GetColumnIndex(), available_width * 0.25f);
         if (im::BeginChild("Textures")) {
-            display_textures(gpu, scene);
+            display_textures(scene);
         }
         im::EndChild();
         im::NextColumn();
@@ -59,7 +58,7 @@ void titian::GUISectionTextureEditor::render_gui()
     im::End();
 }
 
-void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scene)
+void titian::GUISectionTextureEditor::display_textures(Scene* scene)
 {
     if (im::BeginPopupContextWindow("NewTexture", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Texture");
@@ -67,7 +66,7 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
         if (auto opt_name = gui_input_waited("##CreateTextureInput", {})) {
             const auto& name = opt_name.value();
             if (!name.empty() && !scene->textures.contains(name)) {
-                Ref texture = new Texture(gpu);
+                Ref texture = new Texture();
                 scene->textures[name] = texture;
                 im::CloseCurrentPopup();
             }
@@ -80,8 +79,8 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
             continue;
         }
 
-        if (im::Selectable(texture_name.data(), texture_name == this->selected_texture)) {
-            this->selected_texture = texture_name;
+        if (im::Selectable(texture_name.data(), texture_name == selected_texture)) {
+            selected_texture = texture_name;
         }
 
         if (im::BeginPopupContextItem(texture_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
@@ -89,23 +88,23 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
             im::Text("Edit Texture");
 
             if (auto opt_name = gui_input_waited("##RenameTextureInput", texture_name)) {
-                const auto& name = opt_name.value();
-                if (!name.empty() && !scene->textures.contains(name)) {
+                const auto& new_name = opt_name.value();
+                if (!new_name.empty() && !scene->textures.contains(new_name)) {
+                    if (selected_texture == texture_name) {
+                        selected_texture = new_name;
+                    }
                     for (auto& [_, material] : scene->materials) {
-                        if (material->color_map_name == texture_name) {
-                            material->color_map_name = name;
-                        }
-                        if (material->normal_map_name == texture_name) {
-                            material->normal_map_name = name;
-                        }
-                        if (material->roughness_map_name == texture_name) {
-                            material->roughness_map_name = name;
+                        if (material->color_texture_name == texture_name) material->color_texture_name = new_name;
+                        if (material->normal_texture_name == texture_name) material->normal_texture_name = new_name;
+                        if (material->roughness_texture_name == texture_name) material->roughness_texture_name = new_name;
+                    }
+                    for (auto& [_, entity] : scene->entities()) {
+                        if (Camera* camera = &entity.as<Camera>()) {
+                            if (camera->skybox_texture_name == texture_name) camera->skybox_texture_name = new_name;
+                            if (camera->target_texture_name == texture_name) camera->target_texture_name = new_name;
                         }
                     }
-                    if (this->selected_texture == texture_name) {
-                        this->selected_texture = name;
-                    }
-                    scene->textures[name] = texture;
+                    scene->textures[new_name] = texture;
                     scene->textures.erase(texture_name);
                     should_break = true;
                     im::CloseCurrentPopup();
@@ -113,19 +112,8 @@ void titian::GUISectionTextureEditor::display_textures(kl::GPU* gpu, Scene* scen
             }
 
             if (im::Button("Delete", { -1.0f, 0.0f })) {
-                for (auto& [_, material] : scene->materials) {
-                    if (material->color_map_name == texture_name) {
-                        material->color_map_name = "/";
-                    }
-                    if (material->normal_map_name == texture_name) {
-                        material->normal_map_name = "/";
-                    }
-                    if (material->roughness_map_name == texture_name) {
-                        material->roughness_map_name = "/";
-                    }
-                }
-                if (this->selected_texture == texture_name) {
-                    this->selected_texture = "/";
+                if (selected_texture == texture_name) {
+                    selected_texture = "/";
                 }
                 scene->textures.erase(texture_name);
                 should_break = true;

@@ -2,10 +2,8 @@
 
 
 titian::SandboxPiecePhysicsTest::SandboxPiecePhysicsTest(TitianEditor* editor, const int size)
-    : SandboxPiece(editor)
-{
-    this->size = size;
-}
+    : SandboxPiece(editor), size(size)
+{}
 
 void titian::SandboxPiecePhysicsTest::setup_self()
 {
@@ -25,7 +23,7 @@ void titian::SandboxPiecePhysicsTest::setup_platform(Scene* scene)
     scene->animations[animation_name] = scene->default_animations->cube;
     scene->materials[material_name] = scene->default_materials->white;
 
-    Ref platform = scene->new_entity();
+    Ref platform = new Entity();
 
     const Float3 scale = { 30.0f, 0.2f, 30.0f };
     platform->set_scale(scale);
@@ -45,15 +43,15 @@ void titian::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
     const int half_size = size / 2;
     int box_counter = 0;
 
-    const String color_map = "dogo";
-    const String normal_map = "concrete_normal";
+    const String color_name = "dogo";
+    const String normal_name = "concrete_normal";
 
-    Ref<Texture> color_map_tex;
-    Ref<Texture> normal_map_tex;
+    Ref<Texture> color_texture;
+    Ref<Texture> normal_texture;
 
     const auto create_texture = [&](Ref<Texture>& texture, const char* filename)
     {
-        texture = new Texture(&editor->app_layer.gpu);
+        texture = new Texture();
         texture->data_buffer.load_from_file(filename);
         texture->reload_as_2D();
         texture->create_shader_view(nullptr);
@@ -61,12 +59,12 @@ void titian::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
     };
 
     WorkQueue queue;
-    queue.add_task([&] { create_texture(color_map_tex, "package/textures/dogo.png"); });
-    queue.add_task([&] { create_texture(normal_map_tex, "package/textures/concrete_normal.png"); });
+    queue.add_task([&] { create_texture(color_texture, "package/textures/dogo.png"); });
+    queue.add_task([&] { create_texture(normal_texture, "package/textures/concrete_normal.png"); });
     queue.finalize();
 
-    scene->textures[color_map] = color_map_tex;
-    scene->textures[normal_map] = normal_map_tex;
+    scene->textures[color_name] = color_texture;
+    scene->textures[normal_name] = normal_texture;
 
     for (int z = 0; z < size; z++) {
         for (int x = 0; x < size; x++) {
@@ -82,11 +80,11 @@ void titian::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
             Ref material = new Material();
             material->texture_blend = 0.5f;
             material->color = kl::random::gen_color();
-            material->color_map_name = color_map;
-            material->normal_map_name = normal_map;
+            material->color_texture_name = color_name;
+            material->normal_texture_name = normal_name;
             scene->materials[material_name] = material;
 
-            Ref box = scene->new_entity();
+            Ref box = new Entity();
             box->set_dynamic(true);
 
             box->set_rotation(kl::random::gen_float3(360.0f));

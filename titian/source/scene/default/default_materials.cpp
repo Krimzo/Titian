@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-titian::DefaultMaterials::DefaultMaterials(kl::GPU* gpu)
+titian::DefaultMaterials::DefaultMaterials()
 {
 	white = new Material();
 }

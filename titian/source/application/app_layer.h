@@ -11,7 +11,15 @@ namespace titian {
 		kl::GPU gpu{ HWND(window), kl::IS_DEBUG, true, false };
 		kl::Timer timer{};
 
+		px::PxDefaultAllocator m_allocator = {};
+		px::PxDefaultErrorCallback m_error_callback = {};
+		px::PxFoundation* m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_allocator, m_error_callback);
+
+		px::PxPhysics* physics = nullptr;
+		px::PxDefaultCpuDispatcher* cpu_dispatcher = nullptr;
+
 		AppLayer();
+		~AppLayer() override;
 
 		void init(const StringView& name);
 		bool update() override;

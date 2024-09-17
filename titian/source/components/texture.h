@@ -16,10 +16,10 @@ namespace titian {
 		dx::ShaderView shader_view;
 		dx::AccessView access_view;
 
-		Texture(kl::GPU* gpu);
+		Texture();
 
-		void serialize(Serializer* serializer, const void* helper_data) const override;
-		void deserialize(const Serializer* serializer, const void* helper_data) override;
+		void serialize(Serializer* serializer) const override;
+		void deserialize(const Serializer* serializer) override;
 
 		void reload_as_2D();
 		bool reload_as_cube();
@@ -35,7 +35,6 @@ namespace titian {
 		void copy_other(const dx::Texture& texture);
 
 	private:
-		kl::GPU* const m_gpu;
 		bool m_is_cube = false;
 	};
 }

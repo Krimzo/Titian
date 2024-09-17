@@ -10,8 +10,8 @@ namespace titian {
 namespace titian {
 	struct Script : kl::NoCopy, Serializable
 	{
-		void serialize(Serializer* serializer, const void* helper_data) const override;
-		void deserialize(const Serializer* serializer, const void* helper_data) override;
+		void serialize(Serializer* serializer) const override;
+		void deserialize(const Serializer* serializer) override;
 
 		virtual bool is_valid() const = 0;
 		virtual void reload() = 0;

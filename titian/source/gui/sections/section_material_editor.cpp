@@ -4,12 +4,9 @@
 titian::GUISectionMaterialEditor::GUISectionMaterialEditor()
     : GUISection("GUISectionMaterialEditor")
 {
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    Scene* scene = &Layers::get<GameLayer>()->scene;
-
-    camera = new Camera(scene->physics(), gpu);
-    render_texture = new Texture(gpu);
-    depth_texture = new Texture(gpu);
+    camera = new Camera();
+    render_texture = new Texture();
+    depth_texture = new Texture();
 
     camera->background = Color{ 30, 30, 30 };
     camera->set_position({ 0.642787576f, 0.577350259f, 0.766044438f });
@@ -20,12 +17,11 @@ void titian::GUISectionMaterialEditor::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
     Ref<Material> material;
-    if (scene->materials.contains(this->selected_material)) {
-        material = scene->materials.at(this->selected_material);
+    if (scene->materials.contains(selected_material)) {
+        material = scene->materials.at(selected_material);
     }
 
     if (im::Begin("Material Editor")) {
@@ -34,7 +30,7 @@ void titian::GUISectionMaterialEditor::render_gui()
 
         im::SetColumnWidth(im::GetColumnIndex(), available_width * 0.25f);
         if (im::BeginChild("Materials")) {
-            display_materials(gpu, scene);
+            display_materials(scene);
         }
         im::EndChild();
         im::NextColumn();
@@ -47,10 +43,10 @@ void titian::GUISectionMaterialEditor::render_gui()
         if (im::BeginChild("Material View", {}, should_rotate_cam)) {
             const Int2 viewport_size = { (int) im::GetContentRegionAvail().x, (int) im::GetContentRegionAvail().y };
             if (should_rotate_cam) {
-                update_material_camera();
+                update_material_camera(scene);
             }
             if (material) {
-                render_selected_material(scene, gpu, &material, viewport_size);
+                render_selected_material(&material, viewport_size);
                 im::Image(render_texture->shader_view.get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
             was_focused = im::IsWindowFocused();
@@ -61,13 +57,13 @@ void titian::GUISectionMaterialEditor::render_gui()
         im::PopStyleVar(2);
 
         if (material) {
-            show_material_properties(scene, &material);
+            show_material_properties(&material);
         }
     }
     im::End();
 }
 
-void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* scene)
+void titian::GUISectionMaterialEditor::display_materials(Scene* scene)
 {
     if (im::BeginPopupContextWindow("NewMaterial", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Material");
@@ -95,7 +91,7 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
                     }
                     if (im::Selectable(texture_name.data(), false)) {
                         Ref material = new Material();
-                        material->color_map_name = texture_name;
+                        material->color_texture_name = texture_name;
                         material->texture_blend = 1.0f;
                         scene->materials[name] = material;
                         im::CloseCurrentPopup();
@@ -113,8 +109,8 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
             continue;
         }
 
-        if (im::Selectable(material_name.data(), material_name == this->selected_material)) {
-            this->selected_material = material_name;
+        if (im::Selectable(material_name.data(), material_name == selected_material)) {
+            selected_material = material_name;
         }
 
         if (im::BeginPopupContextItem(material_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
@@ -122,17 +118,17 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
             im::Text("Edit Material");
 
             if (auto opt_name = gui_input_waited("##RenameMaterialInput", material_name)) {
-                const auto& name = opt_name.value();
-                if (!name.empty() && !scene->materials.contains(name)) {
-                    for (const auto& [_, entity] : scene->entities()) {
+                const auto& new_name = opt_name.value();
+                if (!new_name.empty() && !scene->materials.contains(new_name)) {
+                    if (selected_material == material_name) {
+                        selected_material = new_name;
+                    }
+                    for (auto& [_, entity] : scene->entities()) {
                         if (entity->material_name == material_name) {
-                            entity->material_name = name;
+                            entity->material_name = new_name;
                         }
                     }
-                    if (this->selected_material == material_name) {
-                        this->selected_material = name;
-                    }
-                    scene->materials[name] = material;
+                    scene->materials[new_name] = material;
                     scene->materials.erase(material_name);
                     should_break = true;
                     im::CloseCurrentPopup();
@@ -140,12 +136,7 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
             }
 
             if (im::Button("Delete", { -1.0f, 0.0f })) {
-                for (const auto& [_, entity] : scene->entities()) {
-                    if (entity->material_name == material_name) {
-                        entity->material_name = "/";
-                    }
-                }
-                if (this->selected_material == material_name) {
+                if (selected_material == material_name) {
                     selected_material = "/";
                 }
                 scene->materials.erase(material_name);
@@ -161,8 +152,39 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
     }
 }
 
-void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl::GPU* gpu, Material* material, const Int2 viewport_size)
+void titian::GUISectionMaterialEditor::update_material_camera(Scene* scene)
 {
+    if (im::IsMouseClicked(ImGuiMouseButton_Right)) {
+        initial_camera_info = camera_info;
+    }
+
+    const int scroll = Layers::get<AppLayer>()->window.mouse.scroll();
+    if (im::IsMouseDown(ImGuiMouseButton_Right)) {
+        const ImVec2 drag_delta = im::GetMouseDragDelta(ImGuiMouseButton_Right);
+        camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;
+        camera_info.y = initial_camera_info.y + drag_delta.y * camera->sensitivity;
+        camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
+
+        camera->set_position({
+            kl::sin_d(camera_info.x),
+            kl::tan_d(camera_info.y),
+            kl::cos_d(camera_info.x),
+            });
+
+        camera->speed -= scroll * 0.1f;
+        camera->speed = kl::max(camera->speed, 0.1f);
+    }
+
+    const float camera_distance = camera->speed;
+    camera->set_position(kl::normalize(camera->position()) * camera_distance);
+    camera->set_forward(-camera->position());
+}
+
+void titian::GUISectionMaterialEditor::render_selected_material(Material* material, const Int2 viewport_size)
+{
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    Scene* scene = &Layers::get<GameLayer>()->scene;
+
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
         return;
     }
@@ -235,31 +257,30 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         float REFRACTION_FACTOR{};
         float REFRACTION_INDEX{};
 
-        float HAS_NORMAL_MAP{};
-        float HAS_ROUGHNESS_MAP{};
+        float HAS_NORMAL_TEXTURE{};
+        float HAS_ROUGHNESS_TEXTURE{};
 
         alignas(16) Float4x4 W;
         Float4x4 V;
         Float4x4 VP;
 
+        float IS_SKELETAL{};
+
         float RECEIVES_SHADOWS{};
-        Float2 SHADOW_MAP_SIZE;
-        alignas(16) Float2 SHADOW_MAP_TEXEL_SIZE;
+        Float2 SHADOW_TEXTURE_SIZE;
+        Float2 SHADOW_TEXTURE_TEXEL_SIZE;
         alignas(16) Float4 SHADOW_CASCADES;
         Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
 
         Float4x4 CUSTOM_DATA;
     };
+
     GLOBAL_CB global_cb{};
 
-    const kl::Timer* timer = &app_layer->timer;
-    global_cb.ELAPSED_TIME = timer->elapsed();
-    global_cb.DELTA_TIME = timer->delta();
+    global_cb.ELAPSED_TIME = app_layer->timer.elapsed();
+    global_cb.DELTA_TIME = app_layer->timer.delta();
 
-    global_cb.W = {};
-    global_cb.VP = camera->camera_matrix();
-
-    Texture* skybox_texture = scene->helper_get_texture(scene_camera->skybox_name);
+    Texture* skybox_texture = scene->helper_get_texture(scene_camera->skybox_texture_name);
     if (skybox_texture) {
         gpu->bind_shader_view_for_pixel_shader(skybox_texture->shader_view, 0);
     }
@@ -267,34 +288,36 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         gpu->unbind_shader_view_for_pixel_shader(0);
     }
 
-    Texture* color_map_texture = scene->helper_get_texture(material->color_map_name);
-    if (color_map_texture) {
-        gpu->bind_shader_view_for_pixel_shader(color_map_texture->shader_view, 5);
+    Texture* color_texture = scene->helper_get_texture(material->color_texture_name);
+    if (color_texture) {
+        gpu->bind_shader_view_for_pixel_shader(color_texture->shader_view, 5);
     }
     else {
         gpu->unbind_shader_view_for_pixel_shader(5);
     }
 
-    Texture* normal_map_texture = scene->helper_get_texture(material->normal_map_name);
-    if (normal_map_texture) {
-        gpu->bind_shader_view_for_pixel_shader(normal_map_texture->shader_view, 6);
-        global_cb.HAS_NORMAL_MAP = 1.0f;
+    Texture* normal_texture = scene->helper_get_texture(material->normal_texture_name);
+    if (normal_texture) {
+        gpu->bind_shader_view_for_pixel_shader(normal_texture->shader_view, 6);
+        global_cb.HAS_NORMAL_TEXTURE = 1.0f;
     }
     else {
-        global_cb.HAS_NORMAL_MAP = 0.0f;
+        global_cb.HAS_NORMAL_TEXTURE = 0.0f;
     }
 
-    Texture* roughness_map_texture = scene->helper_get_texture(material->roughness_map_name);
-    if (roughness_map_texture) {
-        gpu->bind_shader_view_for_pixel_shader(roughness_map_texture->shader_view, 7);
-        global_cb.HAS_ROUGHNESS_MAP = 1.0f;
+    Texture* roughness_texture = scene->helper_get_texture(material->roughness_texture_name);
+    if (roughness_texture) {
+        gpu->bind_shader_view_for_pixel_shader(roughness_texture->shader_view, 7);
+        global_cb.HAS_ROUGHNESS_TEXTURE = 1.0f;
     }
     else {
-        global_cb.HAS_ROUGHNESS_MAP = 0.0f;
+        global_cb.HAS_ROUGHNESS_TEXTURE = 0.0f;
     }
 
+    global_cb.V = camera->view_matrix();
+    global_cb.VP = camera->camera_matrix();
     global_cb.CAMERA_POSITION = camera->position();
-    global_cb.CAMERA_HAS_SKYBOX = float(bool(skybox_texture));
+    global_cb.CAMERA_HAS_SKYBOX = (float) scene->textures.contains(camera->skybox_texture_name);
     global_cb.CAMERA_BACKGROUND = camera->background;
 
     global_cb.AMBIENT_COLOR = Float3{ 1.0f };
@@ -312,8 +335,6 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
 
     global_cb.CUSTOM_DATA = material->custom_data;
 
-    global_cb.RECEIVES_SHADOWS = false;
-
     kl::RenderShaders* render_shaders = &render_layer->shader_states->scene_pass;
     if (Shader* shader = scene->helper_get_shader(material->shader_name)) {
         render_shaders = &shader->graphics_buffer;
@@ -323,18 +344,18 @@ void titian::GUISectionMaterialEditor::render_selected_material(Scene* scene, kl
         render_shaders->pixel_shader.update_cbuffer(global_cb);
         gpu->bind_render_shaders(*render_shaders);
 
-        DefaultMeshes* default_meshes = &game_layer->scene->default_meshes;
-        Mesh* material_mesh = &default_meshes->sphere;
-
-        gpu->draw(material_mesh->graphics_buffer, material_mesh->casted_topology(), sizeof(Vertex));
+        Mesh* mesh = &game_layer->scene->default_meshes->cube;
+        gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
     }
 
     gpu->bind_internal_views();
     gpu->set_viewport_size(old_viewport_size);
 }
 
-void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Material* material)
+void titian::GUISectionMaterialEditor::show_material_properties(Material* material)
 {
+    Scene* scene = &Layers::get<GameLayer>()->scene;
+
     if (im::Begin("Material Properties") && material) {
         im::Text("Info");
 
@@ -349,37 +370,37 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
         im::DragFloat("Refraction Factor", &material->refraction_factor, 0.05f, 0.0f, 1.0f);
         im::DragFloat("Refraction Index", &material->refraction_index, 0.05f, 0.0f, 1.0f);
 
-        if (im::BeginCombo("Color Map", material->color_map_name.data())) {
-            if (im::Selectable("/", material->color_map_name == "/")) {
-                material->color_map_name = "/";
+        if (im::BeginCombo("Color Texture", material->color_texture_name.data())) {
+            if (im::Selectable("/", material->color_texture_name == "/")) {
+                material->color_texture_name = "/";
             }
             for (auto& [texture_name, _] : scene->textures) {
-                if (im::Selectable(texture_name.data(), texture_name == material->color_map_name)) {
-                    material->color_map_name = texture_name;
+                if (im::Selectable(texture_name.data(), texture_name == material->color_texture_name)) {
+                    material->color_texture_name = texture_name;
                 }
             }
             im::EndCombo();
         }
 
-        if (im::BeginCombo("Normal Map", material->normal_map_name.data())) {
-            if (im::Selectable("/", material->normal_map_name == "/")) {
-                material->normal_map_name = "/";
+        if (im::BeginCombo("Normal Texture", material->normal_texture_name.data())) {
+            if (im::Selectable("/", material->normal_texture_name == "/")) {
+                material->normal_texture_name = "/";
             }
             for (auto& [texture_name, _] : scene->textures) {
-                if (im::Selectable(texture_name.data(), texture_name == material->normal_map_name)) {
-                    material->normal_map_name = texture_name;
+                if (im::Selectable(texture_name.data(), texture_name == material->normal_texture_name)) {
+                    material->normal_texture_name = texture_name;
                 }
             }
             im::EndCombo();
         }
 
-        if (im::BeginCombo("Roughness Map", material->roughness_map_name.data())) {
-            if (im::Selectable("/", material->roughness_map_name == "/")) {
-                material->roughness_map_name = "/";
+        if (im::BeginCombo("Roughness Texture", material->roughness_texture_name.data())) {
+            if (im::Selectable("/", material->roughness_texture_name == "/")) {
+                material->roughness_texture_name = "/";
             }
             for (auto& [texture_name, _] : scene->textures) {
-                if (im::Selectable(texture_name.data(), material->roughness_map_name == texture_name)) {
-                    material->roughness_map_name = texture_name;
+                if (im::Selectable(texture_name.data(), material->roughness_texture_name == texture_name)) {
+                    material->roughness_texture_name = texture_name;
                 }
             }
             im::EndCombo();
@@ -401,32 +422,4 @@ void titian::GUISectionMaterialEditor::show_material_properties(Scene* scene, Ma
         }
     }
     im::End();
-}
-
-void titian::GUISectionMaterialEditor::update_material_camera()
-{
-    if (im::IsMouseClicked(ImGuiMouseButton_Right)) {
-        initial_camera_info = camera_info;
-    }
-
-    const int scroll = Layers::get<AppLayer>()->window.mouse.scroll();
-    if (im::IsMouseDown(ImGuiMouseButton_Right)) {
-        const ImVec2 drag_delta = im::GetMouseDragDelta(ImGuiMouseButton_Right);
-        camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;
-        camera_info.y = initial_camera_info.y + drag_delta.y * camera->sensitivity;
-        camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
-
-        camera->set_position({
-            kl::sin_d(camera_info.x),
-            kl::tan_d(camera_info.y),
-            kl::cos_d(camera_info.x),
-        });
-
-        camera->speed -= scroll * 0.1f;
-        camera->speed = kl::max(camera->speed, 0.1f);
-    }
-
-    const float camera_distance = camera->speed;
-    camera->set_position(kl::normalize(camera->position()) * camera_distance);
-    camera->set_forward(-camera->position());
 }

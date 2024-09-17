@@ -4,30 +4,19 @@
 
 
 namespace titian {
-    enum struct EntityType : int32_t
-    {
-        VIRTUAL = 0,
-		STATIC,
-        DYNAMIC,
-    };
-}
-
-namespace titian {
     struct Entity : kl::NoCopy, Serializable
     {
         bool casts_shadows = true;
 
         String animation_name = "/";
         String material_name = "/";
-        String collider_mesh_name = "/";
 
-        Entity(px::PxPhysics* physics);
+        Entity();
         ~Entity() override;
 
-        void serialize(Serializer* serializer, const void* helper_data) const override;
-        void deserialize(const Serializer* serializer, const void* helper_data) override;
+        void serialize(Serializer* serializer) const override;
+        void deserialize(const Serializer* serializer) override;
 
-        EntityType type() const;
         px::PxRigidActor* actor() const;
 
         void set_dynamic(bool enabled);
@@ -67,10 +56,6 @@ namespace titian {
 
     private:
         Float3 m_scale{ 1.0f };
-        Float3 m_rotation;
-        Float3 m_position;
-
-        px::PxPhysics* const m_physics;
         px::PxRigidActor* m_actor = nullptr;
         Ref<Collider> m_collider;
 

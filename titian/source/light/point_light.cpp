@@ -1,25 +1,19 @@
 #include "titian.h"
 
 
-titian::PointLight::PointLight(px::PxPhysics* physics)
-	: Light(physics)
+titian::PointLight::PointLight()
 {}
 
-void titian::PointLight::serialize(Serializer* serializer, const void* helper_data) const
+void titian::PointLight::serialize(Serializer* serializer) const
 {
-	Light::serialize(serializer, helper_data);
+	Entity::serialize(serializer);
 
 	serializer->write_float_array("color", &color.x, 3);
 }
 
-void titian::PointLight::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::PointLight::deserialize(const Serializer* serializer)
 {
-	Light::deserialize(serializer, helper_data);
+	Entity::deserialize(serializer);
 
 	serializer->read_float_array("color", &color.x, 3);
-}
-
-titian::Float3 titian::PointLight::light_at_point(const Float3& point) const
-{
-	return color;
 }

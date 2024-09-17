@@ -26,7 +26,7 @@ void titian::SandboxPieceMonkes::setup_self()
     if (!monke_mesh)
         return;
 
-    Ref monke_animation = new Animation(scene, gpu);
+    Ref monke_animation = new Animation();
     monke_animation->meshes = { "monke" };
 
     scene->meshes["monke"] = monke_mesh;
@@ -49,7 +49,7 @@ void titian::SandboxPieceMonkes::setup_self()
         material->color = Float4{ Float3{ normalized }, 1.0f };
         scene->materials[material_name] = material;
 
-        Ref monke = scene->new_entity();
+        Ref monke = new Entity();
         monke->set_scale(Float3{ 0.5f });
         monke->set_position({
             (float) (x - half_size) + x_offset,

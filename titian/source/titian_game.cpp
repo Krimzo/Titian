@@ -28,7 +28,7 @@ titian::TitianGame::TitianGame(const StringView& entry_scene)
         ? (Serializer*) new TextSerializer(entry_scene, false)
         : (Serializer*) new BinarySerializer(entry_scene, false);
     if (*serializer) {
-        game_layer.scene->deserialize(&serializer, nullptr);
+        game_layer.scene->deserialize(&serializer);
         game_layer.start_game();
     }
     else {

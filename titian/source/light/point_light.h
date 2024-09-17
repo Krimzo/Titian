@@ -1,18 +1,16 @@
 #pragma once
 
-#include "light/light.h"
+#include "scene/entity.h"
 
 
 namespace titian {
-	struct PointLight : Light
+	struct PointLight : Entity
 	{
 		Float3 color{ 1.0f };
 
-		PointLight(px::PxPhysics* physics);
+		PointLight();
 
-		void serialize(Serializer* serializer, const void* helper_data) const override;
-		void deserialize(const Serializer* serializer, const void* helper_data) override;
-
-		Float3 light_at_point(const Float3& point) const override;
+		void serialize(Serializer* serializer) const override;
+		void deserialize(const Serializer* serializer) override;
 	};
 }

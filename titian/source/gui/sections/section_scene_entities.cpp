@@ -19,27 +19,27 @@ void titian::GUISectionSceneEntities::render_gui()
 			if (!name.empty() && !scene->helper_contains_entity(name)) {
 				if (im::BeginMenu("Basic")) {
 					if (im::MenuItem("New Entity")) {
-						Ref entity = scene->new_entity();
+						Ref entity = new Entity();
 						scene->add_entity(name, entity);
 						im::CloseCurrentPopup();
 					}
 					if (im::MenuItem("New Camera")) {
-						Ref entity = scene->new_casted<Camera>(gpu);
+						Ref entity = new Camera();
 						scene->add_entity(name, entity);
 						im::CloseCurrentPopup();
 					}
 					if (im::MenuItem("New Ambient Light")) {
-						Ref entity = scene->new_casted<AmbientLight>();
+						Ref entity = new AmbientLight();
 						scene->add_entity(name, entity);
 						im::CloseCurrentPopup();
 					}
 					if (im::MenuItem("New Point Light")) {
-						Ref entity = scene->new_casted<PointLight>();
+						Ref entity = new PointLight();
 						scene->add_entity(name, entity);
 						im::CloseCurrentPopup();
 					}
 					if (im::MenuItem("New Directional Light")) {
-						Ref entity = scene->new_casted<DirectionalLight>(gpu);
+						Ref entity = new DirectionalLight();
 						scene->add_entity(name, entity);
 						im::CloseCurrentPopup();
 					}
@@ -48,7 +48,7 @@ void titian::GUISectionSceneEntities::render_gui()
 				if (im::BeginMenu("Animation")) {
 					for (const auto& [anim_name, animation] : scene->animations) {
 						if (im::MenuItem(kl::format(anim_name, "##AnimationEnt").data())) {
-							Ref entity = scene->new_entity();
+							Ref entity = new Entity();
 							entity->animation_name = anim_name;
 							entity->material_name = "white";
 							scene->add_entity(name, entity);
@@ -116,12 +116,14 @@ void titian::GUISectionSceneEntities::render_gui()
 				im::Text("Edit Entity");
 
 				if (auto opt_name = gui_input_waited("##RenameEntityInput", entity_name)) {
-					const auto& name = opt_name.value();
-					if (!name.empty() && !scene->helper_contains_entity(name)) {
-						Ref temp_holder = entity;
+					const auto& new_name = opt_name.value();
+					if (!new_name.empty() && !scene->helper_contains_entity(new_name)) {
+						if (scene->main_camera_name == entity_name) scene->main_camera_name = new_name;
+						if (scene->main_ambient_light_name == entity_name) scene->main_ambient_light_name = new_name;
+						if (scene->main_directional_light_name == entity_name) scene->main_directional_light_name = new_name;
+						Ref temp_ent = entity;
 						scene->remove_entity(entity_name);
-						scene->add_entity(name, temp_holder);
-
+						scene->add_entity(new_name, temp_ent);
 						should_break = true;
 						im::CloseCurrentPopup();
 					}
@@ -129,7 +131,6 @@ void titian::GUISectionSceneEntities::render_gui()
 
 				if (im::Button("Delete", { -1.0f, 0.0f })) {
 					scene->remove_entity(entity_name);
-
 					should_break = true;
 					im::CloseCurrentPopup();
 				}

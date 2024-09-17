@@ -15,6 +15,6 @@ namespace titian {
         Ref<Mesh> sphere;
         Ref<Mesh> capsule;
 
-        DefaultMeshes(Scene* scene);
+        DefaultMeshes();
 	};
 }

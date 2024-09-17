@@ -4,18 +4,18 @@
 titian::NativeScript::NativeScript()
 {}
 
-void titian::NativeScript::serialize(Serializer* serializer, const void* helper_data) const
+void titian::NativeScript::serialize(Serializer* serializer) const
 {
-	Script::serialize(serializer, helper_data);
+	Script::serialize(serializer);
 
 	const int32_t data_size = (int32_t) data.size();
 	serializer->write_int("data_size", data_size);
 	serializer->write_byte_array("data", data.data(), data_size);
 }
 
-void titian::NativeScript::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::NativeScript::deserialize(const Serializer* serializer)
 {
-	Script::deserialize(serializer, helper_data);
+	Script::deserialize(serializer);
 
 	int32_t data_size = 0;
 	serializer->read_int("data_size", data_size);

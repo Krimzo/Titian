@@ -49,21 +49,18 @@ namespace titian {
 		Vector<AnimationChannel> channels;
 		Ref<AnimationNode> animation_root;
 
-		Animation(Scene* scene, kl::GPU* gpu);
+		Animation();
 
-		void serialize(Serializer* serializer, const void* helper_data) const override;
-		void deserialize(const Serializer* serializer, const void* helper_data) override;
+		void serialize(Serializer* serializer) const override;
+		void deserialize(const Serializer* serializer) override;
 
 		int get_index(float index) const;
-		Mesh* get_mesh(float time) const;
+		Mesh* get_mesh(Scene* scene, float time) const;
 
-		void update(float current_time);
+		void update(Scene* scene, float current_time);
 		void bind_matrices(int slot) const;
 
 	private:
-		Scene* const m_scene;
-		kl::GPU* const m_gpu;
-
 		Float4x4 m_global_inverse_transform;
 		Vector<Float4x4> m_final_matrices;
 

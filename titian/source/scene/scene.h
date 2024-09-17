@@ -34,19 +34,19 @@ namespace titian {
         StringMap<Ref<Shader>> shaders;
         StringMap<Ref<Script>> scripts;
 
-        Ref<DefaultMeshes> default_meshes = nullptr;
-        Ref<DefaultAnimations> default_animations = nullptr;
-        Ref<DefaultMaterials> default_materials = nullptr;
+        Ref<DefaultMeshes> default_meshes;
+        Ref<DefaultAnimations> default_animations;
+        Ref<DefaultMaterials> default_materials;
 
         String main_camera_name = "/";
         String main_ambient_light_name = "/";
         String main_directional_light_name = "/";
 
-        Scene(kl::GPU* gpu);
+        Scene();
         ~Scene() override;
 
-        void serialize(Serializer* serializer, const void* helper_data) const override;
-        void deserialize(const Serializer* serializer, const void* helper_data) override;
+        void serialize(Serializer* serializer) const override;
+        void deserialize(const Serializer* serializer) override;
         
         void onConstraintBreak(px::PxConstraintInfo* constraints, px::PxU32 count) override;
         void onWake(px::PxActor** actors, px::PxU32 count) override;
@@ -55,9 +55,6 @@ namespace titian {
         void onTrigger(px::PxTriggerPair* pairs, px::PxU32 count) override;
         void onAdvance(const px::PxRigidBody* const* bodyBuffer, const px::PxTransform* poseBuffer, const px::PxU32 count) override;
 
-        px::PxPhysics* physics() const;
-        px::PxCooking* cooking() const;
-
         void set_gravity(const Float3& gravity);
         Float3 gravity() const;
 
@@ -65,16 +62,9 @@ namespace titian {
         void update_scripts();
         void update_ui();
 
-        Ref<Entity> new_entity() const;
         void add_entity(const String& id, const Ref<Entity>& entity);
         void remove_entity(const StringView& id);
         inline const auto& entities() const { return m_entities; };
-
-        template<typename T, typename... Args>
-        Ref<T> new_casted(const Args&... args) const
-        {
-            return new T(m_physics, args...);
-        }
 
         template<typename T>
         T* get_casted(const StringView& id)
@@ -85,8 +75,7 @@ namespace titian {
         Ref<Collider> new_box_collider(const Float3& scale) const;
         Ref<Collider> new_sphere_collider(float radius) const;
         Ref<Collider> new_capsule_collider(float radius, float height) const;
-        Ref<Collider> new_mesh_collider(const Mesh& mesh, const Float3& scale) const;
-        Ref<Collider> new_default_collider(px::PxGeometryType::Enum type, const Mesh* optional_mesh) const;
+        Ref<Collider> new_collider(px::PxGeometryType::Enum type) const;
 
         Mesh* helper_new_mesh(const String& id);
         Animation* helper_new_animation(const String& id);
@@ -148,16 +137,7 @@ namespace titian {
         }
 
     private:
-        static px::PxDefaultAllocator m_allocator;
-        static px::PxDefaultErrorCallback m_error_callback;
-        static px::PxFoundation* m_foundation;
-
-        px::PxDefaultCpuDispatcher* m_dispatcher = nullptr;
-        px::PxPhysics* m_physics = nullptr;
-        px::PxCooking* m_cooking = nullptr;
         px::PxScene* m_scene = nullptr;
-
-        kl::GPU* m_gpu = nullptr;
         StringMap<Ref<Entity>> m_entities;
     };
 }

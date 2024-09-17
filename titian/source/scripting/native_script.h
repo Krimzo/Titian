@@ -15,8 +15,8 @@ namespace titian {
 
 		NativeScript();
 
-		void serialize(Serializer* serializer, const void* helper_data) const override;
-		void deserialize(const Serializer* serializer, const void* helper_data) override;
+		void serialize(Serializer* serializer) const override;
+		void deserialize(const Serializer* serializer) override;
 
 		bool is_valid() const override;
 		void reload() override;

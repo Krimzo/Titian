@@ -14,6 +14,6 @@ namespace titian {
         Ref<Animation> sphere;
         Ref<Animation> capsule;
 
-        DefaultAnimations(kl::GPU* gpu, Scene* scene);
+        DefaultAnimations();
     };
 }

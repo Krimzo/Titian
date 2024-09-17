@@ -14,7 +14,7 @@ namespace titian {
 namespace titian {
     struct Camera : Entity
     {
-        int32_t camera_type = CameraType::PERSPECTIVE;
+        CameraType camera_type = CameraType::PERSPECTIVE;
 
         bool enabled = true;
         bool v_sync = true;
@@ -32,9 +32,9 @@ namespace titian {
         Float4 background = Color{ 30, 30, 30 };
         Float4x4 custom_data;
 
-        String skybox_name = "/";
+        String skybox_texture_name = "/";
+        String target_texture_name = "/";
         String shader_name = "/";
-        String target_name = "/";
 
         Ref<Texture> screen_texture;
         Ref<Texture> game_color_texture;
@@ -43,10 +43,10 @@ namespace titian {
         Ref<Texture> editor_picking_texture;
         Ref<Texture> editor_picking_staging;
 
-        Camera(px::PxPhysics* physics, kl::GPU* gpu);
+        Camera();
 
-        void serialize(Serializer* serializer, const void* helper_data) const override;
-        void deserialize(const Serializer* serializer, const void* helper_data) override;
+        void serialize(Serializer* serializer) const override;
+        void deserialize(const Serializer* serializer) override;
 
         void update_aspect_ratio(const Int2& size);
         void set_forward(const Float3& dir);
@@ -77,7 +77,6 @@ namespace titian {
         void clear_targets();
         
     private:
-        kl::GPU* m_gpu = nullptr;
         Float3 m_forward = { 0.0f, 0.0f, 1.0f };
         Float3 m_up = { 0.0f, 1.0f, 0.0f };
     };

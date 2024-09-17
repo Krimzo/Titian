@@ -98,13 +98,6 @@ void titian::EditorPass::render_self(StatePackage* package)
                 gpu->draw(capsule->graphics_buffer, capsule->casted_topology(), sizeof(Vertex));
                 bench_add_draw_call();
                 break;
-
-            case px::PxGeometryType::Enum::eTRIANGLEMESH:
-                if (Mesh* mesh = scene->helper_get_mesh(entity->collider_mesh_name)) {
-                    gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
-                    bench_add_draw_call();
-                }
-                break;
             }
         }
 

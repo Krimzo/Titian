@@ -1,8 +1,8 @@
 #include "titian.h"
 
 
-titian::Shader::Shader(kl::GPU* gpu, ShaderType type)
-	: m_gpu(gpu), shader_type(type)
+titian::Shader::Shader(const ShaderType type)
+	: shader_type(type)
 {
 	switch (type)
 	{
@@ -11,17 +11,17 @@ titian::Shader::Shader(kl::GPU* gpu, ShaderType type)
 	}
 }
 
-void titian::Shader::serialize(Serializer* serializer, const void* helper_data) const
+void titian::Shader::serialize(Serializer* serializer) const
 {
 	serializer->write_int("shader_type", shader_type);
 	serializer->write_string("data_buffer", data_buffer);
 }
 
-void titian::Shader::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::Shader::deserialize(const Serializer* serializer)
 {
-	serializer->read_int("shader_type", shader_type);
+	serializer->read_int("shader_type", (int32_t&) shader_type);
 	serializer->read_string("data_buffer", data_buffer);
-	this->reload();
+	reload();
 }
 
 void titian::Shader::reload()
@@ -75,7 +75,8 @@ void titian::Shader::reload_for_material()
 		{ "KL_BoneIndices", 0, DXGI_FORMAT_R8G8B8A8_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "KL_BoneWeights", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	graphics_buffer = m_gpu->create_render_shaders(full_source.str(), vertex_layout_descriptors);
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+	graphics_buffer = gpu->create_render_shaders(full_source.str(), vertex_layout_descriptors);
 }
 
 void titian::Shader::reload_for_camera()
@@ -84,7 +85,8 @@ void titian::Shader::reload_for_camera()
 		graphics_buffer = {};
 		return;
 	}
-	graphics_buffer = m_gpu->create_render_shaders(data_buffer);
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+	graphics_buffer = gpu->create_render_shaders(data_buffer);
 }
 
 static const int load_names = [&]
@@ -140,14 +142,14 @@ static const int load_names = [&]
 		"REFLECTION_FACTOR",
 		"REFRACTION_FACTOR",
 		"REFRACTION_INDEX",
-		"HAS_NORMAL_MAP",
-		"HAS_ROUGHNESS_MAP",
+		"HAS_NORMAL_TEXTURE",
+		"HAS_ROUGHNESS_TEXTURE",
 		"W",
 		"V",
 		"VP",
 		"RECEIVES_SHADOWS",
-		"SHADOW_MAP_SIZE",
-		"SHADOW_MAP_TEXEL_SIZE",
+		"SHADOW_TEXTURE_SIZE",
+		"SHADOW_TEXTURE_TEXEL_SIZE",
 		"SHADOW_CASCADES",
 		"LIGHT_VPs",
 		"BONE_MATRICES",
@@ -161,9 +163,9 @@ static const int load_names = [&]
 		"SHADOW_TEXTURE_2",
 		"SHADOW_TEXTURE_3",
 		"MATERIAL_SAMPLER",
-		"COLOR_MAP",
-		"NORMAL_MAP",
-		"ROUGHNESS_MAP",
+		"COLOR_TEXTURE",
+		"NORMAL_TEXTURE",
+		"ROUGHNESS_TEXTURE",
 		"screen",
 		"world",
 		"textur",

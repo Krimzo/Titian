@@ -1,12 +1,8 @@
 #include "titian.h"
 
 
-titian::Entity::Entity(px::PxPhysics* physics)
-    : m_physics(physics)
+titian::Entity::Entity()
 {
-    if (!m_physics)
-        return;
-
     px::PxTransform transform{};
     transform.q = px::PxQuat(px::PxIdentity);
     transform.p = px::PxVec3(px::PxZero);
@@ -18,7 +14,7 @@ titian::Entity::~Entity()
     if (m_actor) m_actor->release();
 }
 
-void titian::Entity::serialize(Serializer* serializer, const void* helper_data) const
+void titian::Entity::serialize(Serializer* serializer) const
 {
     serializer->write_string("entity_type", typeid(*this).name());
 
@@ -26,7 +22,6 @@ void titian::Entity::serialize(Serializer* serializer, const void* helper_data) 
 
     serializer->write_string("animation_name", animation_name);
     serializer->write_string("material_name", material_name);
-    serializer->write_string("collider_mesh_name", collider_mesh_name);
 
     serializer->write_bool("dynamic", dynamic());
     serializer->write_bool("gravity", gravity());
@@ -51,18 +46,17 @@ void titian::Entity::serialize(Serializer* serializer, const void* helper_data) 
     serializer->write_bool("has_collider", has_collider);
     if (has_collider) {
         serializer->push_object("collider");
-        m_collider->serialize(serializer, helper_data);
+        m_collider->serialize(serializer);
         serializer->pop_object();
     }
 }
 
-void titian::Entity::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::Entity::deserialize(const Serializer* serializer)
 {
     serializer->read_bool("casts_shadows", casts_shadows);
 
     serializer->read_string("animation_name", animation_name);
     serializer->read_string("material_name", material_name);
-    serializer->read_string("collider_mesh_name", collider_mesh_name);
 
     bool dynamic = false;
     serializer->read_bool("dynamic", dynamic);
@@ -99,21 +93,12 @@ void titian::Entity::deserialize(const Serializer* serializer, const void* helpe
     bool has_collider = false;
     serializer->read_bool("has_collider", has_collider);
     if (has_collider) {
-        Ref new_collider = new Collider(m_physics);
+        Ref new_collider = new Collider();
         serializer->load_object("collider");
-        new_collider->deserialize(serializer, helper_data);
+        new_collider->deserialize(serializer);
         serializer->unload_object();
         this->set_collider(new_collider);
     }
-}
-
-titian::EntityType titian::Entity::type() const
-{
-    if (!m_physics)
-        return EntityType::VIRTUAL;
-    if (m_actor->getType() != px::PxActorType::Enum::eRIGID_DYNAMIC)
-        return EntityType::STATIC;
-    return EntityType::DYNAMIC;
 }
 
 px::PxRigidActor* titian::Entity::actor() const
@@ -123,9 +108,6 @@ px::PxRigidActor* titian::Entity::actor() const
 
 void titian::Entity::set_dynamic(const bool enabled)
 {
-    if (type() == EntityType::VIRTUAL)
-		return;
-
     const px::PxTransform old_transform = m_actor->getGlobalPose();
     Ref<Collider> old_collider = m_collider;
     set_collider(nullptr);
@@ -135,12 +117,12 @@ void titian::Entity::set_dynamic(const bool enabled)
 
 bool titian::Entity::dynamic() const
 {
-    return type() == EntityType::DYNAMIC;
+    return m_actor->getType() == px::PxActorType::Enum::eRIGID_DYNAMIC;
 }
 
 void titian::Entity::set_gravity(const bool enabled)
 {
-    if (type() != EntityType::DYNAMIC)
+    if (!dynamic())
         return;
 
     m_actor->setActorFlag(px::PxActorFlag::eDISABLE_GRAVITY, !enabled);
@@ -155,7 +137,7 @@ void titian::Entity::set_gravity(const bool enabled)
 
 bool titian::Entity::gravity() const
 {
-    if (type() != EntityType::DYNAMIC)
+    if (!dynamic())
         return false;
 
     const px::PxActorFlags flags = m_actor->getActorFlags();
@@ -164,7 +146,7 @@ bool titian::Entity::gravity() const
 
 void titian::Entity::set_mass(const float mass)
 {
-    if (type() != EntityType::DYNAMIC)
+    if (!dynamic())
         return;
 
     px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
@@ -173,7 +155,7 @@ void titian::Entity::set_mass(const float mass)
 
 float titian::Entity::mass() const
 {
-    if (type() != EntityType::DYNAMIC)
+    if (!dynamic())
         return 0.0f;
 
     const px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
@@ -182,7 +164,7 @@ float titian::Entity::mass() const
 
 void titian::Entity::set_angular_damping(float damping)
 {
-	if (type() != EntityType::DYNAMIC)
+    if (!dynamic())
 		return;
 
 	px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
@@ -191,7 +173,7 @@ void titian::Entity::set_angular_damping(float damping)
 
 float titian::Entity::angular_damping() const
 {
-	if (type() != EntityType::DYNAMIC)
+    if (!dynamic())
 		return 0.0f;
 
 	const px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
@@ -210,11 +192,6 @@ titian::Float3 titian::Entity::scale() const
 
 void titian::Entity::set_rotation(const Float3& rotation)
 {
-    if (type() == EntityType::VIRTUAL) {
-        m_rotation = rotation;
-        return;
-    }
-
     px::PxTransform transform = m_actor->getGlobalPose();
     transform.q = px_cast(Float4{ kl::to_quaternion(rotation) });
     m_actor->setGlobalPose(transform);
@@ -222,20 +199,12 @@ void titian::Entity::set_rotation(const Float3& rotation)
 
 titian::Float3 titian::Entity::rotation() const
 {
-	if (type() == EntityType::VIRTUAL)
-		return m_rotation;
-
     const px::PxTransform transform = m_actor->getGlobalPose();
     return kl::to_euler(Quaternion{ px_cast(transform.q) });
 }
 
 void titian::Entity::set_position(const Float3& position)
 {
-	if (type() == EntityType::VIRTUAL) {
-		m_position = position;
-		return;
-	}
-
     px::PxTransform transform = m_actor->getGlobalPose();
     transform.p = px_cast(position);
     m_actor->setGlobalPose(transform);
@@ -243,16 +212,13 @@ void titian::Entity::set_position(const Float3& position)
 
 titian::Float3 titian::Entity::position() const
 {
-	if (type() == EntityType::VIRTUAL)
-		return m_position;
-
     const px::PxTransform transform = m_actor->getGlobalPose();
     return px_cast(transform.p);
 }
 
 void titian::Entity::set_velocity(const Float3& velocity)
 {
-    if (type() != EntityType::DYNAMIC)
+    if (!dynamic())
         return;
 
     px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
@@ -261,7 +227,7 @@ void titian::Entity::set_velocity(const Float3& velocity)
 
 titian::Float3 titian::Entity::velocity() const
 {
-    if (type() != EntityType::DYNAMIC)
+    if (!dynamic())
         return {};
 
     const px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
@@ -271,7 +237,7 @@ titian::Float3 titian::Entity::velocity() const
 
 void titian::Entity::set_angular(const Float3& angular)
 {
-    if (type() != EntityType::DYNAMIC)
+    if (!dynamic())
         return;
 
     px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
@@ -280,7 +246,7 @@ void titian::Entity::set_angular(const Float3& angular)
 
 titian::Float3 titian::Entity::angular() const
 {
-    if (type() != EntityType::DYNAMIC)
+    if (!dynamic())
         return {};
 
     const px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
@@ -290,9 +256,6 @@ titian::Float3 titian::Entity::angular() const
 
 void titian::Entity::set_collider(const Ref<Collider>& collider)
 {
-    if (type() == EntityType::VIRTUAL)
-        return;
-
     if (m_collider) {
         m_actor->detachShape(*m_collider->shape());
     }
@@ -327,11 +290,10 @@ titian::Float4x4 titian::Entity::collider_matrix() const
 
 titian::Ref<titian::Entity> titian::Entity::clone() const
 {
-    Ref entity = new Entity(m_physics);
+    Ref entity = new Entity();
     entity->casts_shadows = casts_shadows;
     entity->animation_name = animation_name;
     entity->material_name = material_name;
-    entity->collider_mesh_name = collider_mesh_name;
     entity->set_dynamic(dynamic());
     entity->set_gravity(gravity());
     entity->set_mass(mass());
@@ -349,14 +311,16 @@ titian::Ref<titian::Entity> titian::Entity::clone() const
 
 void titian::Entity::generate_actor(const px::PxTransform& transform, const bool dynamic)
 {
+    px::PxPhysics* physics = Layers::get<AppLayer>()->physics;
+
     if (m_actor)
         m_actor->release();
 
     if (dynamic) {
-        m_actor = m_physics->createRigidDynamic(transform);
+        m_actor = physics->createRigidDynamic(transform);
     }
     else {
-        m_actor = m_physics->createRigidStatic(transform);
+        m_actor = physics->createRigidStatic(transform);
     }
     kl::assert(m_actor, "Failed to create physics actor");
 

@@ -7,15 +7,15 @@ titian::InterpScript::InterpScript()
 	reload();
 }
 
-void titian::InterpScript::serialize(Serializer* serializer, const void* helper_data) const
+void titian::InterpScript::serialize(Serializer* serializer) const
 {
-	Script::serialize(serializer, helper_data);
+	Script::serialize(serializer);
 	serializer->write_string("source", source);
 }
 
-void titian::InterpScript::deserialize(const Serializer* serializer, const void* helper_data)
+void titian::InterpScript::deserialize(const Serializer* serializer)
 {
-	Script::deserialize(serializer, helper_data);
+	Script::deserialize(serializer);
 	serializer->read_string("source", source);
 	reload();
 }
@@ -407,9 +407,9 @@ void titian::InterpScript::load_engine_parts()
 		"refraction_factor", &Material::refraction_factor,
 		"refraction_index", &Material::refraction_index,
 		"custom_data", &Material::custom_data,
-		"color_map_name", &Material::color_map_name,
-		"normal_map_name", &Material::normal_map_name,
-		"roughness_map_name", &Material::roughness_map_name,
+		"color_texture_name", &Material::color_texture_name,
+		"normal_texture_name", &Material::normal_texture_name,
+		"roughness_texture_name", &Material::roughness_texture_name,
 		"shader_name", &Material::shader_name
 	);
 
@@ -425,7 +425,6 @@ void titian::InterpScript::load_engine_parts()
 		"casts_shadows", &Entity::casts_shadows,
 		"animation_name", &Entity::animation_name,
 		"material_name", &Entity::material_name,
-		"collider_mesh_name", &Entity::collider_mesh_name,
 		"dynamic", sl::property(&Entity::dynamic, &Entity::set_dynamic),
 		"gravity", sl::property(&Entity::gravity, &Entity::set_gravity),
 		"mass", sl::property(&Entity::mass, &Entity::set_mass),
@@ -456,9 +455,9 @@ void titian::InterpScript::load_engine_parts()
 		"speed", &Camera::speed,
 		"background", &Camera::background,
 		"custom_data", &Camera::custom_data,
-		"skybox_name", &Camera::skybox_name,
+		"skybox_texture_name", &Camera::skybox_texture_name,
+		"target_texture_name", &Camera::target_texture_name,
 		"shader_name", &Camera::shader_name,
-		"target_name", &Camera::target_name,
 		"update_aspect_ratio", &Camera::update_aspect_ratio,
 		"forward", sl::property(&Camera::forward, &Camera::set_forward),
 		"up", sl::property(&Camera::up, &Camera::set_up),
@@ -477,28 +476,19 @@ void titian::InterpScript::load_engine_parts()
 		"resolution", &Camera::resolution
 	);
 
-	m_engine->new_usertype<Light>(
-		"Light",
-		sl::base_classes, sl::bases<Entity>(),
-		"light_at_point", &Light::light_at_point
-	);
-
 	m_engine->new_usertype<AmbientLight>(
 		"AmbientLight",
-		sl::base_classes, sl::bases<Light>(),
 		"color", &AmbientLight::color,
 		"intensity", &AmbientLight::intensity
 	);
 
 	m_engine->new_usertype<PointLight>(
 		"PointLight",
-		sl::base_classes, sl::bases<Light>(),
 		"color", &PointLight::color
 	);
 
 	m_engine->new_usertype<DirectionalLight>(
 		"DirectionalLight",
-		sl::base_classes, sl::bases<Light>(),
 		"color", &DirectionalLight::color,
 		"point_size", &DirectionalLight::point_size,
 		"cascade_splits", &DirectionalLight::cascade_splits,

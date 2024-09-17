@@ -23,15 +23,14 @@ bool titian::RenderLayer::update()
 	const TimeBomb _ = bench_time_bomb();
 
 	AppLayer* app_layer = Layers::get<AppLayer>();
-	GameLayer* game_layer = Layers::get<GameLayer>();
 	kl::GPU* gpu = &app_layer->gpu;
-	Scene* scene = &game_layer->scene;
+	Scene* scene = &Layers::get<GameLayer>()->scene;
 
 	gpu->clear_internal();
 
 	const float animation_time = app_layer->timer.elapsed();
 	for (auto& [_, animation] : scene->animations) {
-		animation->update(animation_time);
+		animation->update(scene, animation_time);
 	}
 
 	scene->helper_iterate_entities([&](const String& name, Entity* entity)
@@ -44,7 +43,7 @@ bool titian::RenderLayer::update()
 					gpu->set_viewport_size(texture_size);
 					pass->process(camera);
 				}
-				if (Texture* texture = scene->helper_get_texture(camera->target_name)) {
+				if (Texture* texture = scene->helper_get_texture(camera->target_texture_name)) {
 					texture->copy_other(camera->screen_texture->graphics_buffer);
 				}
 			}
@@ -60,7 +59,7 @@ bool titian::RenderLayer::update()
 				camera->update_aspect_ratio(texture_size);
 				pass->process(camera);
 			}
-			if (Texture* texture = scene->helper_get_texture(camera->target_name)) {
+			if (Texture* texture = scene->helper_get_texture(camera->target_texture_name)) {
 				texture->copy_other(camera->screen_texture->graphics_buffer);
 			}
 		}

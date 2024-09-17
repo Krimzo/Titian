@@ -8,9 +8,9 @@
 namespace titian {
     struct GUISectionMeshEditor : GUISection
     {
-        Ref<Camera> camera = nullptr;
-        Ref<Texture> render_texture = nullptr;
-        Ref<Texture> depth_texture = nullptr;
+        Ref<Camera> camera;
+        Ref<Texture> render_texture;
+        Ref<Texture> depth_texture;
 
         Float4 line_color = kl::colors::WHITE;
         Float3 sun_direction = { 0.0f, -1.0f, 0.0f };
@@ -43,10 +43,10 @@ namespace titian {
         int m_capsule_sectors = 16;
         int m_capsule_rings = 16;
 
-        void display_meshes(kl::GPU* gpu, Scene* scene);
-        void update_mesh_camera();
-        void render_selected_mesh(kl::GPU* gpu, const Mesh* mesh, Int2 viewport_size);
-        void render_gizmos(Mesh* mesh);
+        void display_meshes(Scene* scene);
+        void update_mesh_camera(Scene* scene);
+        void render_selected_mesh(Mesh* mesh, Int2 viewport_size);
         void show_mesh_properties(Mesh* mesh);
+        void render_gizmos(Mesh* mesh);
     };
 }

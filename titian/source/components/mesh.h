@@ -35,28 +35,19 @@ namespace titian {
 
         Vector<Vertex> data_buffer;
         dx::Buffer graphics_buffer;
-        px::PxTriangleMesh* physics_buffer = nullptr;
 
         Vector<Float4x4> bone_matrices;
         Ref<SkeletonNode> skeleton_root;
 
-        Mesh(Scene* scene, kl::GPU* gpu);
-        ~Mesh() override;
+        Mesh();
 
-        void serialize(Serializer* serializer, const void* helper_data) const override;
-        void deserialize(const Serializer* serializer, const void* helper_data) override;
+        void serialize(Serializer* serializer) const override;
+        void deserialize(const Serializer* serializer) override;
 
         D3D_PRIMITIVE_TOPOLOGY casted_topology() const;
 
         void load_vertices(const Vector<kl::Vertex<float>>& vertices);
         void load_triangles(const Vector<kl::Triangle<float>>& triangles);
         void reload();
-
-    private:
-        px::PxPhysics* const m_physics;
-        px::PxCooking* const m_cooking;
-        kl::GPU* const m_gpu;
-
-        void free_physics_buffer();
     };
 }
