@@ -71,17 +71,42 @@ void titian::GUISectionMaterialEditor::display_materials(kl::GPU* gpu, Scene* sc
 {
     if (im::BeginPopupContextWindow("NewMaterial", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Material");
-
-        if (auto opt_name = gui_input_waited("##CreateMaterialInput", {})) {
-            const auto& name = opt_name.value();
-            if (!name.empty() && !scene->materials.contains(name)) {
-                Ref material = new Material();
-                scene->materials[name] = material;
+        const String name = gui_input_continuous("##CreateMaterialInput");
+        if (!name.empty() && !scene->materials.contains(name)) {
+            if (im::MenuItem("Basic Material")) {
+                scene->materials[name] = new Material();
                 im::CloseCurrentPopup();
+            }
+            if (im::BeginMenu("Color Material")) {
+                im::ColorEdit4("Color", &m_new_mat_color.x);
+                if (im::MenuItem("Generate")) {
+                    Ref material = new Material();
+                    material->color = m_new_mat_color;
+                    material->texture_blend = 0.0f;
+                    scene->materials[name] = material;
+                }
+                im::EndMenu();
+            }
+            if (im::BeginMenu("Texture Material")) {
+                const String filter = gui_input_continuous("Search###NewTextureMaterial");
+                for (const auto& [texture_name, _] : scene->textures) {
+                    if (!filter.empty() && texture_name.find(filter) == -1) {
+                        continue;
+                    }
+                    if (im::Selectable(texture_name.data(), false)) {
+                        Ref material = new Material();
+                        material->color_map_name = texture_name;
+                        material->texture_blend = 1.0f;
+                        scene->materials[name] = material;
+                        im::CloseCurrentPopup();
+                    }
+                }
+                im::EndMenu();
             }
         }
         im::EndPopup();
     }
+
     const String filter = gui_input_continuous("Search###MeterialEditor");
     for (auto& [material_name, material] : scene->materials) {
         if (!filter.empty() && material_name.find(filter) == -1) {

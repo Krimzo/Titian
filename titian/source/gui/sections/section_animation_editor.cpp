@@ -73,13 +73,26 @@ void titian::GUISectionAnimationEditor::display_animations(Scene* scene, kl::GPU
 {
     if (im::BeginPopupContextWindow("NewAnimation", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Animation");
-
-        if (auto opt_name = gui_input_waited("##CreateAnimationInput", {})) {
-            const auto& name = opt_name.value();
-            if (!name.empty() && !scene->animations.contains(name)) {
-                Ref animation = new Animation(scene, gpu);
-                scene->animations[name] = animation;
+        const String name = gui_input_continuous("##CreateAnimationInput");
+        if (!name.empty() && !scene->animations.contains(name)) {
+            if (im::MenuItem("Basic Animation")) {
+                scene->animations[name] = new Animation(scene, gpu);
                 im::CloseCurrentPopup();
+            }
+            if (im::BeginMenu("Mesh Animation")) {
+                const String filter = gui_input_continuous("Search###NewMeshAnimation");
+                for (const auto& [mesh_name, _] : scene->meshes) {
+                    if (!filter.empty() && mesh_name.find(filter) == -1) {
+                        continue;
+                    }
+                    if (im::Selectable(mesh_name.data(), false)) {
+                        Ref animation = new Animation(scene, gpu);
+                        animation->meshes = { mesh_name };
+                        scene->animations[name] = animation;
+                        im::CloseCurrentPopup();
+                    }
+                }
+                im::EndMenu();
             }
         }
         im::EndPopup();

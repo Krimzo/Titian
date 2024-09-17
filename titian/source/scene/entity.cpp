@@ -215,9 +215,8 @@ void titian::Entity::set_rotation(const Float3& rotation)
         return;
     }
 
-    const Float4 quat = kl::to_quaternion(rotation);
     px::PxTransform transform = m_actor->getGlobalPose();
-    transform.q = reinterpret_cast<const px::PxQuat&>(quat);
+    transform.q = px_cast(Float4{ kl::to_quaternion(rotation) });
     m_actor->setGlobalPose(transform);
 }
 
@@ -227,7 +226,7 @@ titian::Float3 titian::Entity::rotation() const
 		return m_rotation;
 
     const px::PxTransform transform = m_actor->getGlobalPose();
-    return kl::to_euler<float>(reinterpret_cast<const Float4&>(transform.q));
+    return kl::to_euler(Quaternion{ px_cast(transform.q) });
 }
 
 void titian::Entity::set_position(const Float3& position)
@@ -238,7 +237,7 @@ void titian::Entity::set_position(const Float3& position)
 	}
 
     px::PxTransform transform = m_actor->getGlobalPose();
-    transform.p = reinterpret_cast<const px::PxVec3&>(position);
+    transform.p = px_cast(position);
     m_actor->setGlobalPose(transform);
 }
 
@@ -248,7 +247,7 @@ titian::Float3 titian::Entity::position() const
 		return m_position;
 
     const px::PxTransform transform = m_actor->getGlobalPose();
-    return reinterpret_cast<const Float3&>(transform.p);
+    return px_cast(transform.p);
 }
 
 void titian::Entity::set_velocity(const Float3& velocity)
@@ -257,7 +256,7 @@ void titian::Entity::set_velocity(const Float3& velocity)
         return;
 
     px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
-    actor->setLinearVelocity(reinterpret_cast<const px::PxVec3&>(velocity));
+    actor->setLinearVelocity(px_cast(velocity));
 }
 
 titian::Float3 titian::Entity::velocity() const
@@ -267,7 +266,7 @@ titian::Float3 titian::Entity::velocity() const
 
     const px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
     const px::PxVec3 velocity = actor->getLinearVelocity();
-    return reinterpret_cast<const Float3&>(velocity);
+    return px_cast(velocity);
 }
 
 void titian::Entity::set_angular(const Float3& angular)
@@ -276,7 +275,7 @@ void titian::Entity::set_angular(const Float3& angular)
         return;
 
     px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
-    actor->setAngularVelocity(reinterpret_cast<const px::PxVec3&>(angular));
+    actor->setAngularVelocity(px_cast(angular));
 }
 
 titian::Float3 titian::Entity::angular() const
@@ -286,7 +285,7 @@ titian::Float3 titian::Entity::angular() const
 
     const px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
     const px::PxVec3 angular = actor->getAngularVelocity();
-    return reinterpret_cast<const Float3&>(angular);
+    return px_cast(angular);
 }
 
 void titian::Entity::set_collider(const Ref<Collider>& collider)

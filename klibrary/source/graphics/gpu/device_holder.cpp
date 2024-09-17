@@ -203,7 +203,7 @@ kl::dx::Buffer kl::DeviceHolder::create_staging_buffer(const dx::Buffer& buffer,
     return create_buffer(&descriptor, nullptr);
 }
 
-std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_screen_mesh() const
+std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_screen_mesh()
 {
     std::vector<Triangle<float>> triangles;
     triangles.emplace_back(
@@ -219,7 +219,7 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_screen_mesh() const
     return triangles;
 }
 
-std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_plane_mesh(const float size, const int complexity) const
+std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_plane_mesh(const float size, const int complexity)
 {
     assert(complexity >= 2, "Plane complexity must be at least 2");
     std::vector<Triangle<float>> triangles;
@@ -227,22 +227,26 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_plane_mesh(const flo
     const float incr = size / (complexity - 1);
     for (int x = 0; x < complexity - 1; x++) {
         for (int z = 0; z < complexity - 1; z++) {
+            const Float3 lb = { x * incr, 0.0f, z * incr };
+            const Float3 lt = lb + Float3{ 0.0f, 0.0f, incr };
+			const Float3 rb = lb + Float3{ incr, 0.0f, 0.0f };
+            const Float3 rt = lb + Float3{ incr, 0.0f, incr };
             triangles.emplace_back(
-                Vertex{ { x + 0.0f, 0.0f, z + 0.0f }, { float(x + 0) / (complexity - 1), float(z + 0) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
-                Vertex{ { x + 0.0f, 0.0f, z + incr }, { float(x + 0) / (complexity - 1), float(z + 1) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
-                Vertex{ { x + incr, 0.0f, z + incr }, { float(x + 1) / (complexity - 1), float(z + 1) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } }
+                Vertex{ lb, { float(x + 0) / (complexity - 1), 1.0f - float(z + 0) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
+                Vertex{ lt, { float(x + 0) / (complexity - 1), 1.0f - float(z + 1) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
+                Vertex{ rt, { float(x + 1) / (complexity - 1), 1.0f - float(z + 1) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } }
             );
             triangles.emplace_back(
-                Vertex{ { x + 0.0f, 0.0f, z + 0.0f }, { float(x + 0) / (complexity - 1), float(z + 0) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
-                Vertex{ { x + incr, 0.0f, z + incr }, { float(x + 1) / (complexity - 1), float(z + 1) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
-                Vertex{ { x + incr, 0.0f, z + 0.0f }, { float(x + 1) / (complexity - 1), float(z + 0) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } }
+                Vertex{ lb, { float(x + 0) / (complexity - 1), 1.0f - float(z + 0) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
+                Vertex{ rt, { float(x + 1) / (complexity - 1), 1.0f - float(z + 1) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
+                Vertex{ rb, { float(x + 1) / (complexity - 1), 1.0f - float(z + 0) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } }
             );
         }
     }
     return triangles;
 }
 
-std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_cube_mesh(const float size) const
+std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_cube_mesh(const float size)
 {
     static constexpr Triangle<float> face[2] = {
         Triangle<float>{
@@ -300,7 +304,7 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_cube_mesh(const floa
     return triangles;
 }
 
-std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_sphere_mesh(const float radius, const int complexity, const bool smooth) const
+std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_sphere_mesh(const float radius, const int complexity, const bool smooth)
 {
     static constexpr float X = 0.525731112119133606f;
     static constexpr float Z = 0.850650808352039932f;
@@ -370,7 +374,7 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_sphere_mesh(const fl
     return triangles;
 }
 
-std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_capsule_mesh(const float radius, const float height, const int sectors, const int rings) const
+std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_capsule_mesh(const float radius, const float height, const int sectors, const int rings)
 {
     const auto gen_hem = [&]
     {

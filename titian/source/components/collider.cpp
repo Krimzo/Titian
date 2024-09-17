@@ -115,7 +115,7 @@ void titian::Collider::deserialize(const Serializer* serializer, const void* hel
 
     Float3 offset;
     serializer->read_float_array("offset", &offset.x, 3);
-    set_rotation(offset);
+    set_offset(offset);
 
     float static_friction = 0.0f;
     serializer->read_float("static_friction", static_friction);
@@ -154,29 +154,28 @@ px::PxGeometryHolder titian::Collider::geometry() const
 
 void titian::Collider::set_rotation(const Float3& rotation)
 {
-    const Float4 quat = kl::to_quaternion(rotation);
     px::PxTransform transform = m_shape->getLocalPose();
-    transform.q = reinterpret_cast<const px::PxQuat&>(quat);
+    transform.q = px_cast(Float4{ kl::to_quaternion(rotation) });
     m_shape->setLocalPose(transform);
 }
 
 titian::Float3 titian::Collider::rotation() const
 {
     const px::PxTransform transform = m_shape->getLocalPose();
-    return kl::to_euler<float>(reinterpret_cast<const Float4&>(transform.q));
+    return kl::to_euler(Quaternion{ px_cast(transform.q) });
 }
 
 void titian::Collider::set_offset(const Float3& position)
 {
     px::PxTransform transform = m_shape->getLocalPose();
-    transform.p = reinterpret_cast<const px::PxVec3&>(position);
+    transform.p = px_cast(position);
     m_shape->setLocalPose(transform);
 }
 
 titian::Float3 titian::Collider::offset() const
 {
     const px::PxTransform transform = m_shape->getLocalPose();
-    return reinterpret_cast<const Float3&>(transform.p);
+    return px_cast(transform.p);
 }
 
 void titian::Collider::set_static_friction(const float friction)
@@ -217,7 +216,7 @@ titian::Float4x4 titian::Collider::scaling_matrix() const
     {
         px::PxBoxGeometry geometry{};
         m_shape->getBoxGeometry(geometry);
-        return Float4x4::scaling(reinterpret_cast<Float3&>(geometry.halfExtents) * 2.0f);
+        return Float4x4::scaling(px_cast(geometry.halfExtents) * 2.0f);
     }
     case px::PxGeometryType::Enum::eSPHERE:
     {
@@ -235,7 +234,7 @@ titian::Float4x4 titian::Collider::scaling_matrix() const
     {
         px::PxTriangleMeshGeometry geometry{};
         m_shape->getTriangleMeshGeometry(geometry);
-        return Float4x4::scaling(reinterpret_cast<Float3&>(geometry.scale.scale));
+        return Float4x4::scaling(px_cast(geometry.scale.scale));
     }
     }
     return {};

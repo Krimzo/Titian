@@ -243,13 +243,12 @@ px::PxCooking* titian::Scene::cooking() const
 
 void titian::Scene::set_gravity(const Float3& gravity)
 {
-    m_scene->setGravity(reinterpret_cast<const px::PxVec3&>(gravity));
+    m_scene->setGravity(px_cast(gravity));
 }
 
 titian::Float3 titian::Scene::gravity() const
 {
-    const px::PxVec3 gravity = m_scene->getGravity();
-    return reinterpret_cast<const Float3&>(gravity);
+    return px_cast(m_scene->getGravity());
 }
 
 void titian::Scene::update_physics(const float delta_t)
@@ -296,7 +295,7 @@ void titian::Scene::remove_entity(const StringView& id)
 titian::Ref<titian::Collider> titian::Scene::new_box_collider(const Float3& scale) const
 {
     Ref result = new Collider(m_physics);
-    result->set_geometry(px::PxBoxGeometry{ reinterpret_cast<const px::PxVec3&>(scale) * 0.5f });
+    result->set_geometry(px::PxBoxGeometry{ px_cast(scale) * 0.5f });
     return result;
 }
 
@@ -318,7 +317,7 @@ titian::Ref<titian::Collider> titian::Scene::new_mesh_collider(const Mesh& mesh,
 {
     Ref result = new Collider(m_physics);
     if (mesh.physics_buffer) {
-        result->set_geometry(px::PxTriangleMeshGeometry{ mesh.physics_buffer, reinterpret_cast<const px::PxVec3&>(scale) });
+        result->set_geometry(px::PxTriangleMeshGeometry{ mesh.physics_buffer, px_cast(scale) });
     }
     return result;
 }

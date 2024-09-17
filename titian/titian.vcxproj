@@ -200,6 +200,7 @@
     <ClCompile Include="source\utility\bench_util.cpp" />
     <ClCompile Include="source\utility\file_util.cpp" />
     <ClCompile Include="source\utility\gui_util.cpp" />
+    <ClCompile Include="source\utility\helper_util.cpp" />
     <ClCompile Include="source\utility\string_util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -271,6 +272,7 @@
     <ClInclude Include="source\titian.h" />
     <ClInclude Include="source\ui\ui_funcs.h" />
     <ClInclude Include="source\utility\async_util.h" />
+    <ClInclude Include="source\utility\helper_util.h" />
     <ClInclude Include="source\utility\file_util.h" />
     <ClInclude Include="source\utility\gui_util.h" />
     <ClInclude Include="source\utility\string_util.h" />

@@ -355,9 +355,9 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     px::PxShape* collider_shape = collider->shape();
     if (collider_type == px::PxGeometryType::Enum::eBOX) {
         collider_shape->getBoxGeometry(box_geometry);
-        Float3 box_size = reinterpret_cast<Float3&>(box_geometry.halfExtents) * 2.0f;
+        Float3 box_size = px_cast(box_geometry.halfExtents) * 2.0f;
         if (im::DragFloat3("Size", &box_size.x, 0.5f, 0.0f, 1e9f)) {
-            box_geometry.halfExtents = reinterpret_cast<px::PxVec3&>(box_size) * 0.5f;
+            box_geometry.halfExtents = px_cast(box_size) * 0.5f;
             collider_shape->setGeometry(box_geometry);
         }
         geometry_type = 1;
@@ -384,7 +384,7 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     else if (collider_type == px::PxGeometryType::Enum::eTRIANGLEMESH) {
         collider_shape->getTriangleMeshGeometry(mesh_geometry);
 
-        if (im::DragFloat3("Mesh Scale", reinterpret_cast<float*>(&mesh_geometry.scale), 0.5f, 0.0f, 1e9f)) {
+        if (im::DragFloat3("Mesh Scale", &mesh_geometry.scale.scale.x, 0.5f, 0.0f, 1e9f)) {
             collider_shape->setGeometry(mesh_geometry);
         }
         geometry_type = 2;
@@ -403,11 +403,11 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     if (geometry_type != 0 && im::Button("Load size from scale")) {
         const Float3 scale = entity->scale();
         if (geometry_type == 1) {
-            box_geometry.halfExtents = reinterpret_cast<const px::PxVec3&>(scale) * 0.5f;
+            box_geometry.halfExtents = px_cast(scale) * 0.5f;
             collider_shape->setGeometry(box_geometry);
         }
         else {
-            mesh_geometry.scale = reinterpret_cast<const px::PxVec3&>(scale);
+            mesh_geometry.scale = px_cast(scale);
             collider_shape->setGeometry(mesh_geometry);
         }
     }

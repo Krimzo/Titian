@@ -84,18 +84,68 @@ void titian::GUISectionMeshEditor::display_meshes(kl::GPU* gpu, Scene* scene)
 {
     if (im::BeginPopupContextWindow("NewMesh", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Mesh");
-
-        if (auto opt_name = gui_input_waited("##CreateMeshInput", {})) {
-            const auto& name = opt_name.value();
-            if (!name.empty() && !scene->meshes.contains(name)) {
+        const String name = gui_input_continuous("##CreateMeshInput");
+        if (!name.empty() && !scene->meshes.contains(name)) {
+            if (im::MenuItem("Basic Mesh")) {
+                scene->meshes[name] = new Mesh(scene, gpu);
+                im::CloseCurrentPopup();
+            }
+            if (im::MenuItem("Screen Mesh")) {
                 Ref mesh = new Mesh(scene, gpu);
-                mesh->reload();
+                mesh->load_triangles(kl::GPU::generate_screen_mesh());
                 scene->meshes[name] = mesh;
                 im::CloseCurrentPopup();
+            }
+            if (im::BeginMenu("Plane Mesh")) {
+                im::DragFloat("Size", &m_plane_size);
+                im::DragInt("Complexity", &m_plane_complexity, 1.0f, 2, 1'000'000);
+                if (im::MenuItem("Generate")) {
+                    Ref mesh = new Mesh(scene, gpu);
+                    mesh->load_triangles(kl::GPU::generate_plane_mesh(m_plane_size, m_plane_complexity));
+                    scene->meshes[name] = mesh;
+                    im::CloseCurrentPopup();
+                }
+                im::EndMenu();
+            }
+            if (im::BeginMenu("Cube Mesh")) {
+                im::DragFloat("Size", &m_cube_size, 1.0f, 0.0f, 1e6f);
+                if (im::MenuItem("Generate")) {
+                    Ref mesh = new Mesh(scene, gpu);
+                    mesh->load_triangles(kl::GPU::generate_cube_mesh(m_cube_size));
+                    scene->meshes[name] = mesh;
+                    im::CloseCurrentPopup();
+                }
+                im::EndMenu();
+            }
+            if (im::BeginMenu("Sphere Mesh")) {
+                im::DragFloat("Radius", &m_sphere_radius, 1.0f, 0.0f, 1e6f);
+                im::DragInt("Complexity", &m_sphere_complexity, 1.0f, 0, 1'000'000);
+                im::Checkbox("Smooth", &m_sphere_smooth);
+                if (im::MenuItem("Generate")) {
+                    Ref mesh = new Mesh(scene, gpu);
+                    mesh->load_triangles(kl::GPU::generate_sphere_mesh(m_sphere_radius, m_sphere_complexity, m_sphere_smooth));
+                    scene->meshes[name] = mesh;
+                    im::CloseCurrentPopup();
+                }
+                im::EndMenu();
+            }
+            if (im::BeginMenu("Capsule Mesh")) {
+                im::DragFloat("Radius", &m_capsule_radius, 1.0f, 0.0f, 1e6f);
+                im::DragFloat("Height", &m_capsule_height, 1.0f, 0.0f, 1e6f);
+                im::DragInt("Sectors", &m_capsule_sectors, 1.0f, 1, 1'000'000);
+                im::DragInt("Rings", &m_capsule_rings, 1.0f, 1, 1'000'000);
+                if (im::MenuItem("Generate")) {
+                    Ref mesh = new Mesh(scene, gpu);
+                    mesh->load_triangles(kl::GPU::generate_capsule_mesh(m_capsule_radius, m_capsule_height, m_capsule_sectors, m_capsule_rings));
+                    scene->meshes[name] = mesh;
+                    im::CloseCurrentPopup();
+                }
+                im::EndMenu();
             }
         }
         im::EndPopup();
     }
+
     const String filter = gui_input_continuous("Search###MeshEditor");
     for (auto& [mesh_name, mesh] : scene->meshes) {
         if (!filter.empty() && mesh_name.find(filter) == -1) {

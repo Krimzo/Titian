@@ -1,6 +1,7 @@
 #pragma once
 
 #include "utility/bench_util.h"
+#include "utility/helper_util.h"
 
 
 namespace titian {

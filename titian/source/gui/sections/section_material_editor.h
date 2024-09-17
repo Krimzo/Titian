@@ -23,6 +23,8 @@ namespace titian {
         void render_gui() override;
 
     private:
+        Float4 m_new_mat_color = kl::colors::WHITE;
+
         void display_materials(kl::GPU* gpu, Scene* scene);
         void render_selected_material(Scene* scene, kl::GPU* gpu, Material* material, Int2 viewport_size);
         void show_material_properties(Scene* scene, Material* material);

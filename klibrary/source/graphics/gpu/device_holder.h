@@ -35,11 +35,11 @@ namespace kl {
         dx::Buffer create_structured_buffer(const void* data, UINT element_count, UINT element_size, bool has_unordered_access = false, bool cpu_read = false) const;
         dx::Buffer create_staging_buffer(const dx::Buffer& buffer, UINT byte_size) const;
 
-        std::vector<Triangle<float>> generate_screen_mesh() const;
-        std::vector<Triangle<float>> generate_plane_mesh(float size, int complexity) const;
-        std::vector<Triangle<float>> generate_cube_mesh(float size) const;
-        std::vector<Triangle<float>> generate_sphere_mesh(float radius, int complexity, bool smooth) const;
-        std::vector<Triangle<float>> generate_capsule_mesh(float radius, float height, int sectors, int rings) const;
+        static std::vector<Triangle<float>> generate_screen_mesh();
+        static std::vector<Triangle<float>> generate_plane_mesh(float size, int complexity);
+        static std::vector<Triangle<float>> generate_cube_mesh(float size);
+        static std::vector<Triangle<float>> generate_sphere_mesh(float radius, int complexity, bool smooth);
+        static std::vector<Triangle<float>> generate_capsule_mesh(float radius, float height, int sectors, int rings);
 
         dx::Buffer create_screen_mesh() const;
         dx::Buffer create_plane_mesh(float size, int complexity) const;
