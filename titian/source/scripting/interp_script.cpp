@@ -401,11 +401,10 @@ void titian::InterpScript::load_engine_parts()
 
 	m_engine->new_usertype<Material>(
 		"Material",
-		"color", &Material::color,
 		"texture_blend", &Material::texture_blend,
-		"reflection_factor", &Material::reflection_factor,
-		"refraction_factor", &Material::refraction_factor,
+		"reflectivity_factor", &Material::reflectivity_factor,
 		"refraction_index", &Material::refraction_index,
+		"color", &Material::color,
 		"custom_data", &Material::custom_data,
 		"color_texture_name", &Material::color_texture_name,
 		"normal_texture_name", &Material::normal_texture_name,
@@ -478,8 +477,7 @@ void titian::InterpScript::load_engine_parts()
 
 	m_engine->new_usertype<AmbientLight>(
 		"AmbientLight",
-		"color", &AmbientLight::color,
-		"intensity", &AmbientLight::intensity
+		"color", &AmbientLight::color
 	);
 
 	m_engine->new_usertype<PointLight>(

@@ -28,16 +28,16 @@ void titian::SandboxPieceSpheres::setup_self()
 
             Ref material = new Material();
             material->color = Float4{ 1.0f };
-            material->reflection_factor = (float) sphere_counter / (size * size);
-            material->refraction_factor = (float) (size * size - sphere_counter) / (size * size);
-            material->refraction_index = 1.0f / 1.52f;
+            material->reflectivity_factor = sphere_counter / float(size * size - 1);
             scene->materials[material_name] = material;
 
             Ref sphere = new Entity();
             sphere->set_position({ (x - half_size) * 2.25f + x_offset, (y - half_size) * 2.25f, 5.0f });
+
             sphere->animation_name = animation_name;
             sphere->material_name = material_name;
             scene->add_entity(entity_name, sphere);
+
             sphere_counter += 1;
         }
     }

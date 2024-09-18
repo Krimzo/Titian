@@ -34,7 +34,7 @@ void titian::ScenePass::render_self(StatePackage* package)
         Float3 CAMERA_POSITION;
         float CAMERA_HAS_SKYBOX;
         Float3 AMBIENT_COLOR;
-        float AMBIENT_INTENSITY;
+        float RECEIVES_SHADOWS;
         Float3 SUN_DIRECTION;
         float SUN_POINT_SIZE;
         Float3 SUN_COLOR;
@@ -47,13 +47,11 @@ void titian::ScenePass::render_self(StatePackage* package)
         float TEXTURE_BLEND;
         Float2 SHADOW_TEXTURE_SIZE;
         Float2 SHADOW_TEXTURE_TEXEL_SIZE;
-        float REFLECTION_FACTOR;
-        float REFRACTION_FACTOR;
+        float REFLECTIVITY_FACTOR;
         float REFRACTION_INDEX;
         float HAS_NORMAL_TEXTURE;
         float HAS_ROUGHNESS_TEXTURE;
         float IS_SKELETAL;
-        float RECEIVES_SHADOWS;
     } cb = {};
 
     cb.V = package->camera->view_matrix();
@@ -64,7 +62,6 @@ void titian::ScenePass::render_self(StatePackage* package)
 
     if (AmbientLight* ambient_light = scene->get_casted<AmbientLight>(scene->main_ambient_light_name)) {
         cb.AMBIENT_COLOR = ambient_light->color;
-        cb.AMBIENT_INTENSITY = ambient_light->intensity;
     }
     if (DirectionalLight* directional_light = scene->get_casted<DirectionalLight>(scene->main_directional_light_name)) {
         ID3D11ShaderResourceView* dir_light_views[DirectionalLight::CASCADE_COUNT] = {};
@@ -206,8 +203,7 @@ void titian::ScenePass::render_self(StatePackage* package)
         cb.MATERIAL_COLOR = info.material->color;
         cb.TEXTURE_BLEND = info.material->texture_blend;
 
-        cb.REFLECTION_FACTOR = info.material->reflection_factor;
-        cb.REFRACTION_FACTOR = info.material->refraction_factor;
+        cb.REFLECTIVITY_FACTOR = info.material->reflectivity_factor;
         cb.REFRACTION_INDEX = info.material->refraction_index;
 
         if (info.animation->animation_type == AnimationType::SKELETAL) {

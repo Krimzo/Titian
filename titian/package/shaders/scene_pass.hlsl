@@ -26,7 +26,7 @@ float4 SHADOW_CASCADES;
 float3 CAMERA_POSITION;
 float CAMERA_HAS_SKYBOX;
 float3 AMBIENT_COLOR;
-float AMBIENT_INTENSITY;
+float RECEIVES_SHADOWS;
 float3 SUN_DIRECTION;
 float SUN_POINT_SIZE;
 float3 SUN_COLOR;
@@ -39,13 +39,11 @@ float3 OBJECT_POSITION;
 float TEXTURE_BLEND;
 float2 SHADOW_TEXTURE_SIZE;
 float2 SHADOW_TEXTURE_TEXEL_SIZE;
-float REFLECTION_FACTOR;
-float REFRACTION_FACTOR;
+float REFLECTIVITY_FACTOR;
 float REFRACTION_INDEX;
 float HAS_NORMAL_TEXTURE;
 float HAS_ROUGHNESS_TEXTURE;
 float IS_SKELETAL;
-float RECEIVES_SHADOWS;
 
 StructuredBuffer<float4x4> BONES_BUFFER : register(t0);
 TextureCube SKYBOX_TEXTURE : register(t0);
@@ -61,32 +59,32 @@ SamplerState SKYBOX_SAMPLER : register(s0);
 SamplerState SHADOW_SAMPLER : register(s1);
 SamplerState MATERIAL_SAMPLER : register(s2);
 
-float3 get_normal(float3 world_position, float3 interpolated_normal, float2 texture_coords)
+float3 get_normal(float3 position, float3 normal, float2 coords)
 {
     if (!HAS_NORMAL_TEXTURE)
-        return interpolated_normal;
-    float3 Q1 = ddx(world_position);
-    float3 Q2 = ddy(world_position);
-    float2 st1 = ddx(texture_coords);
-    float2 st2 = ddy(texture_coords);
+        return normal;
+    
+    float3 Q1 = ddx(position);
+    float3 Q2 = ddy(position);
+    float2 st1 = ddx(coords);
+    float2 st2 = ddy(coords);
     float3 T = normalize(Q1 * st2.x - Q2 * st1.x);
     float3 B = normalize(-Q1 * st2.y + Q2 * st1.y);
-    float3x3 TBN = float3x3(T, B, interpolated_normal);
-    float3 result_normal = normalize(NORMAL_TEXTURE.Sample(MATERIAL_SAMPLER, texture_coords).xyz * 2.0f - 1.0f);
-    return normalize(mul(result_normal, TBN));
+    float3x3 TBN = float3x3(T, B, normal);
+    float3 result = normalize(NORMAL_TEXTURE.Sample(MATERIAL_SAMPLER, coords).xyz * 2.0f - 1.0f);
+    return normalize(mul(result, TBN));
 }
 
-float get_reflectivity(float reflectivity, float2 texture_coords)
+float get_reflectivity(float2 texture_coords)
 {
     if (!HAS_ROUGHNESS_TEXTURE)
-        return reflectivity;
+        return clamp(REFLECTIVITY_FACTOR, -1.0f, 1.0f);
     return 1.0f - ROUGHNESS_TEXTURE.Sample(MATERIAL_SAMPLER, texture_coords).r;
 }
 
 float get_pcf_shadow(Texture2D shadow_texture, float3 light_coords, int half_kernel_size)
 {
     float shadow_factor = 0.0f;
-    int sample_counter = 0;
     [unroll]
     for (int y = -half_kernel_size; y <= half_kernel_size; y++)
     {
@@ -95,17 +93,20 @@ float get_pcf_shadow(Texture2D shadow_texture, float3 light_coords, int half_ker
         {
             float2 kernel_coords = float2(x, y) + 0.25f;
             float2 altered_coords = light_coords.xy + kernel_coords * SHADOW_TEXTURE_TEXEL_SIZE;
-            float depth = shadow_texture.Sample(SHADOW_SAMPLER, altered_coords).r;
-            shadow_factor += (depth < light_coords.z) ? 0.0f : 1.0f;
-            sample_counter += 1;
+            float shadow_depth = shadow_texture.Sample(SHADOW_SAMPLER, altered_coords).r;
+            shadow_factor += (light_coords.z < shadow_depth) ? 0.0f : 1.0f;
         }
     }
-    return shadow_factor / sample_counter;
+    return shadow_factor / ((half_kernel_size * 2 + 1) * (half_kernel_size * 2 + 1));
 }
 
-float get_shadow_factor(VS_OUT data, float camera_z, int half_kernel_size)
+float get_shadow(VS_OUT data, int half_kernel_size)
 {
+    if (!RECEIVES_SHADOWS)
+        return 0.0f;
+    
     float pcf_value = 0.0f;
+    float camera_z = abs(mul(float4(data.world, 1.0f), V).z);
     if (camera_z < SHADOW_CASCADES.x)
     {
         pcf_value = get_pcf_shadow(SHADOW_TEXTURE0, data.light_coords[0].xyz, half_kernel_size);
@@ -166,10 +167,9 @@ VS_OUT v_shader(float3 position : KL_Position, float2 textur : KL_Texture, float
 
 PS_OUT p_shader(VS_OUT data)
 {
-    data.normal = normalize(data.normal);
-    float3 pixel_normal = get_normal(data.world, data.normal, data.textur);
-    float pixel_reflectivity = get_reflectivity(REFLECTION_FACTOR, data.textur);
-
+    float3 vertex_normal = normalize(data.normal);
+    data.normal = get_normal(data.world, vertex_normal, data.textur);
+    
     PS_OUT result;
     result.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
     result.index = OBJECT_INDEX;
@@ -177,51 +177,38 @@ PS_OUT p_shader(VS_OUT data)
     if (_pixel_pre(data, result.color))
         return result;
 #endif
-
-    float3 camera_pixel_direction = normalize(data.world - CAMERA_POSITION);
-    float3 reflected_pixel_direction = reflect(camera_pixel_direction, pixel_normal);
-    float4 reflected_sky_color = CAMERA_HAS_SKYBOX ? SKYBOX_TEXTURE.Sample(SKYBOX_SAMPLER, reflected_pixel_direction) : CAMERA_BACKGROUND;
     
-    float3 refracted_pixel_direction = refract(camera_pixel_direction, pixel_normal, REFRACTION_INDEX);
-    float4 refracted_sky_color = CAMERA_HAS_SKYBOX ? SKYBOX_TEXTURE.Sample(SKYBOX_SAMPLER, refracted_pixel_direction) : CAMERA_BACKGROUND;
+    float pixel_reflectivity = get_reflectivity(data.textur);
+    float3 pixel_dir = normalize(data.world - CAMERA_POSITION);
+    
+    float ambient_factor = max(dot(vertex_normal, data.normal), 0.0f);
+    float3 ambient = AMBIENT_COLOR * ambient_factor;
+    
+    float diffuse_factor = max(dot(-SUN_DIRECTION, data.normal), 0.0f);
+    float3 diffuse = SUN_COLOR * diffuse_factor;
+    
+    float3 refl_sun_dir = reflect(SUN_DIRECTION, data.normal);
+    float specular_factor = max(dot(-pixel_dir, refl_sun_dir), 0.0f);
+    float3 specular = pow(specular_factor, 1.0f / SUN_POINT_SIZE) * clamp(pixel_reflectivity, 0.0f, 1.0f);
 
-    float3 reflected_sun_direction = reflect(-SUN_DIRECTION, pixel_normal);
-    float specular_strength = dot(camera_pixel_direction, reflected_sun_direction);
+    float3 shadow = get_shadow(data, 1);
+    float3 light = ambient + (diffuse + specular) * (1.0f - shadow);
 
-    float3 ambient_factor = AMBIENT_COLOR * AMBIENT_INTENSITY;
-    float specular_factor = pow(max(specular_strength, 0.0f), 64.0f) * pixel_reflectivity;
-
-    float ambient_diffuse_factor = dot(-SUN_DIRECTION, data.normal);
-    float directional_diffuse_factor = dot(-SUN_DIRECTION, pixel_normal);
-    float3 diffuse_factor = SUN_COLOR;
-
-    if (RECEIVES_SHADOWS)
+    float4 texture_color = COLOR_TEXTURE.Sample(MATERIAL_SAMPLER, data.textur);
+    result.color = lerp(MATERIAL_COLOR, texture_color, TEXTURE_BLEND) * float4(light, 1.0f);
+    
+    if (pixel_reflectivity >= 0.0f)
     {
-        if (ambient_diffuse_factor > 0.0f)
-        {
-            float camera_z = abs(mul(float4(data.world, 1.0f), V).z);
-            float shadow_factor = get_shadow_factor(data, camera_z, 1.0f);
-            diffuse_factor *= directional_diffuse_factor * max(ambient_factor, shadow_factor);
-        }
-        else
-        {
-            diffuse_factor *= directional_diffuse_factor * ambient_factor;
-        }
+        float3 refl_pixel_dir = reflect(pixel_dir, data.normal);
+        float4 refl_pixel_color = CAMERA_HAS_SKYBOX ? SKYBOX_TEXTURE.Sample(SKYBOX_SAMPLER, refl_pixel_dir) : CAMERA_BACKGROUND;
+        result.color = lerp(result.color, refl_pixel_color, pixel_reflectivity);
     }
     else
     {
-        diffuse_factor *= directional_diffuse_factor;
+        float3 refr_pixel_dir = refract(pixel_dir, data.normal, 1.0f / REFRACTION_INDEX);
+        float4 refr_pixel_color = CAMERA_HAS_SKYBOX ? SKYBOX_TEXTURE.Sample(SKYBOX_SAMPLER, refr_pixel_dir) : CAMERA_BACKGROUND;
+        result.color = lerp(result.color, refr_pixel_color, -pixel_reflectivity);
     }
-    float3 light_intensity = ambient_factor + diffuse_factor + specular_factor;
-
-    float4 texture_color = COLOR_TEXTURE.Sample(MATERIAL_SAMPLER, data.textur);
-    float4 unlit_color = lerp(MATERIAL_COLOR, texture_color, TEXTURE_BLEND);
-    float4 lit_color = unlit_color * float4(light_intensity, 1.0f);
-    
-    float4 reflected_color = lerp(lit_color, reflected_sky_color, pixel_reflectivity);
-    float4 refracted_color = lerp(reflected_color, refracted_sky_color, REFRACTION_FACTOR);
-    
-    result.color = refracted_color;
     
 #ifdef _CUSTOM_PIXEL_SHADER
     _pixel_post(data, result.color);

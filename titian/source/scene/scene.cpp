@@ -722,7 +722,7 @@ titian::Ref<titian::Material> titian::Scene::load_assimp_material(const aiScene*
 	Ref material_object = new Material();
     material->Get(AI_MATKEY_COLOR_DIFFUSE, material_object->color);
 	material->Get(AI_MATKEY_COLOR_TRANSPARENT, material_object->color.w);
-	material->Get(AI_MATKEY_REFLECTIVITY, material_object->reflection_factor);
+	material->Get(AI_MATKEY_REFLECTIVITY, material_object->reflectivity_factor);
 	material->Get(AI_MATKEY_REFRACTI, material_object->refraction_index);
 	return material_object;
 }

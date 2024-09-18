@@ -6,8 +6,7 @@
 namespace titian {
 	struct AmbientLight : Entity
 	{
-		Float3 color = kl::colors::WHITE;
-		float intensity = 0.1f;
+		Float3 color{ 0.1f };
 
 		AmbientLight();
 

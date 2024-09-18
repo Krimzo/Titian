@@ -6,13 +6,11 @@ titian::Material::Material()
 
 void titian::Material::serialize(Serializer* serializer) const
 {
-	serializer->write_float_array("color", &color.x, 4);
 	serializer->write_float("texture_blend", texture_blend);
-
-	serializer->write_float("reflection_factor", reflection_factor);
-	serializer->write_float("refraction_factor", refraction_factor);
+	serializer->write_float("reflectivity_factor", reflectivity_factor);
 	serializer->write_float("refraction_index", refraction_index);
 
+	serializer->write_float_array("color", &color.x, 4);
 	serializer->write_float_array("custom_data", custom_data.data, 16);
 
 	serializer->write_string("color_texture_name", color_texture_name);
@@ -23,13 +21,11 @@ void titian::Material::serialize(Serializer* serializer) const
 
 void titian::Material::deserialize(const Serializer* serializer)
 {
-	serializer->read_float_array("color", &color.x, 4);
 	serializer->read_float("texture_blend", texture_blend);
-
-	serializer->read_float("reflection_factor", reflection_factor);
-	serializer->read_float("refraction_factor", refraction_factor);
+	serializer->read_float("reflectivity_factor", reflectivity_factor);
 	serializer->read_float("refraction_index", refraction_index);
 
+	serializer->read_float_array("color", &color.x, 4);
 	serializer->read_float_array("custom_data", custom_data.data, 16);
 
 	serializer->read_string("color_texture_name", color_texture_name);

@@ -242,7 +242,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Material* materi
         Float3 CAMERA_POSITION;
         float CAMERA_HAS_SKYBOX;
         Float3 AMBIENT_COLOR;
-        float AMBIENT_INTENSITY;
+        float RECEIVES_SHADOWS;
         Float3 SUN_DIRECTION;
         float SUN_POINT_SIZE;
         Float3 SUN_COLOR;
@@ -255,13 +255,11 @@ void titian::GUISectionMaterialEditor::render_selected_material(Material* materi
         float TEXTURE_BLEND;
         Float2 SHADOW_TEXTURE_SIZE;
         Float2 SHADOW_TEXTURE_TEXEL_SIZE;
-        float REFLECTION_FACTOR;
-        float REFRACTION_FACTOR;
+        float REFLECTIVITY_FACTOR;
         float REFRACTION_INDEX;
         float HAS_NORMAL_TEXTURE;
         float HAS_ROUGHNESS_TEXTURE;
         float IS_SKELETAL;
-        float RECEIVES_SHADOWS;
     } cb = {};
 
     cb.ELAPSED_TIME = app_layer->timer.elapsed();
@@ -300,14 +298,12 @@ void titian::GUISectionMaterialEditor::render_selected_material(Material* materi
     cb.CAMERA_POSITION = camera->position();
     cb.CAMERA_HAS_SKYBOX = (float) scene->textures.contains(camera->skybox_texture_name);
     cb.CAMERA_BACKGROUND = camera->background;
-    cb.AMBIENT_COLOR = Float3{ 1.0f };
-    cb.AMBIENT_INTENSITY = 0.1f;
-    cb.SUN_DIRECTION = kl::normalize(Float3{ 0.0f, -1.0f, 1.0f });
+    cb.AMBIENT_COLOR = Float3{ 0.1f };
+    cb.SUN_DIRECTION = kl::normalize(Float3{ -0.666f, -0.666f, 0.333f });
     cb.SUN_COLOR = kl::colors::WHITE;
     cb.MATERIAL_COLOR = material->color;
     cb.TEXTURE_BLEND = material->texture_blend;
-    cb.REFLECTION_FACTOR = material->reflection_factor;
-    cb.REFRACTION_FACTOR = material->refraction_factor;
+    cb.REFLECTIVITY_FACTOR = material->reflectivity_factor;
     cb.REFRACTION_INDEX = material->refraction_index;
     cb.CUSTOM_DATA = material->custom_data;
 
@@ -338,11 +334,10 @@ void titian::GUISectionMaterialEditor::show_material_properties(Material* materi
         gui_colored_text(selected_material, Layers::get<GUILayer>()->special_color);
 
         im::ColorEdit4("Base Color", &material->color.x);
-        im::DragFloat("Texture Blend", &material->texture_blend, 0.05f, 0.0f, 1.0f);
+        im::DragFloat("Texture Blend", &material->texture_blend, 0.01f, 0.0f, 1.0f);
 
-        im::DragFloat("Reflection Factor", &material->reflection_factor, 0.05f, 0.0f, 1.0f);
-        im::DragFloat("Refraction Factor", &material->refraction_factor, 0.05f, 0.0f, 1.0f);
-        im::DragFloat("Refraction Index", &material->refraction_index, 0.05f, 0.0f, 1.0f);
+        im::DragFloat("Reflectivity Factor", &material->reflectivity_factor, 0.01f, -1.0f, 1.0f);
+        im::DragFloat("Refraction Index", &material->refraction_index, 0.01f, 1.0f, 1e6f);
 
         if (im::BeginCombo("Color Texture", material->color_texture_name.data())) {
             if (im::Selectable("/", material->color_texture_name == "/")) {

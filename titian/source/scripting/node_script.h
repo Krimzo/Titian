@@ -1326,13 +1326,6 @@ namespace titian {
 			: Node(parent, title, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
-			addOUT<Float4>("color")->behaviour([this]()
-			{
-				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
-					return ptr->color;
-				}
-				return Float4{};
-			});
 			addOUT<float>("texture_blend")->behaviour([this]()
 			{
 				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
@@ -1340,17 +1333,10 @@ namespace titian {
 				}
 				return float{};
 			});
-			addOUT<float>("reflection_factor")->behaviour([this]()
+			addOUT<float>("reflectivity_factor")->behaviour([this]()
 			{
 				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
-					return ptr->reflection_factor;
-				}
-				return float{};
-			});
-			addOUT<float>("refraction_factor")->behaviour([this]()
-			{
-				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
-					return ptr->refraction_factor;
+					return ptr->reflectivity_factor;
 				}
 				return float{};
 			});
@@ -1360,6 +1346,13 @@ namespace titian {
 					return ptr->refraction_index;
 				}
 				return float{};
+			});
+			addOUT<Float4>("color")->behaviour([this]()
+			{
+				if (Material* ptr = get_casted_value<void*, Material*>("ptr")) {
+					return ptr->color;
+				}
+				return Float4{};
 			});
 			addOUT<String>("color_texture_name")->behaviour([this]()
 			{
@@ -1669,11 +1662,10 @@ namespace titian {
 			: FlowNode(parent, title, true, true, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
-			addIN<Float4>("color");
 			addIN<float>("texture_blend");
-			addIN<float>("reflection_factor");
-			addIN<float>("refraction_factor");
+			addIN<float>("reflectivity_factor");
 			addIN<float>("refraction_index");
+			addIN<Float4>("color");
 			addIN<String>("color_texture_name");
 			addIN<String>("normal_texture_name");
 			addIN<String>("roughness_texture_name");
@@ -1687,20 +1679,17 @@ namespace titian {
 				return;
 			}
 
-			if (input_connected("color")) {
-				ptr->color = get_value<Float4>("color");
-			}
 			if (input_connected("texture_blend")) {
 				ptr->texture_blend = get_value<float>("texture_blend");
 			}
-			if (input_connected("reflection_factor")) {
-				ptr->reflection_factor = get_value<float>("reflection_factor");
-			}
-			if (input_connected("refraction_factor")) {
-				ptr->refraction_factor = get_value<float>("refraction_factor");
+			if (input_connected("reflectivity_factor")) {
+				ptr->reflectivity_factor = get_value<float>("reflectivity_factor");
 			}
 			if (input_connected("refraction_index")) {
 				ptr->refraction_index = get_value<float>("refraction_index");
+			}
+			if (input_connected("color")) {
+				ptr->color = get_value<Float4>("color");
 			}
 			if (input_connected("color_texture_name")) {
 				ptr->color_texture_name = get_value<String>("color_texture_name");

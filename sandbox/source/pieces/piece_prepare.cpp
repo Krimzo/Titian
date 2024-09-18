@@ -17,8 +17,6 @@ void titian::SandboxPiecePrepare::setup_self()
     scene->add_entity(scene->main_camera_name, camera);
 
     Ref ambient_light = new AmbientLight();
-    ambient_light->color = kl::colors::WHITE;
-    ambient_light->intensity = 0.1f;
     scene->main_ambient_light_name = "default_ambient";
     scene->add_entity(scene->main_ambient_light_name, ambient_light);
 

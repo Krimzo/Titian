@@ -10,7 +10,7 @@ namespace titian {
 		static constexpr int CASCADE_COUNT = 4;
 
 		Float3 color{ 1.0f };
-		float point_size = 1.0f;
+		float point_size = 0.2f;
 		float cascade_splits[CASCADE_COUNT + 1] = { 0.0f, 0.075f, 0.2f, 0.5f, 1.0f };
 
 		DirectionalLight();

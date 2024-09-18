@@ -6,13 +6,11 @@
 namespace titian {
 	struct Material : Serializable
 	{
-		Float4 color = kl::colors::WHITE;
 		float texture_blend = 0.0f;
-
-		float reflection_factor = 0.0f;
-		float refraction_factor = 0.0f;
+		float reflectivity_factor = 0.0f;
 		float refraction_index = 1.0f;
 
+		Float4 color = kl::colors::WHITE;
 		Float4x4 custom_data;
 
 		String color_texture_name = "/";

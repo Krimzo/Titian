@@ -26,8 +26,8 @@ void titian::SandboxPieceCubes::setup_self()
 			scene->animations[animation_name] = scene->default_animations->cube;
 
             Ref material = new Material();
-            material->color = Color{ 214, 156, 86 };
-            material->reflection_factor = cube_counter / float(size * size);
+            material->color = kl::colors::ORANGE;
+            material->reflectivity_factor = cube_counter / float(size * size - 1);
             scene->materials[material_name] = material;
 
             Ref cube = new Entity();
@@ -39,8 +39,8 @@ void titian::SandboxPieceCubes::setup_self()
 
             cube->animation_name = animation_name;
             cube->material_name = material_name;
-
             scene->add_entity(entity_name, cube);
+
             cube_counter += 1;
         }
     }

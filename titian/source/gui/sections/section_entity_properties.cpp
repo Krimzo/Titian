@@ -153,15 +153,12 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
 void titian::GUISectionEntityProperties::display_ambient_light_special_info(Scene* scene, AmbientLight* light)
 {
     im::Text("Ambient Light Special Info");
-
     im::ColorEdit3("Color", &light->color.x);
-    im::DragFloat("Intensity", &light->intensity, 0.01f);
 }
 
 void titian::GUISectionEntityProperties::display_point_light_special_info(Scene* scene, PointLight* light)
 {
     im::Text("Point Light Special Info");
-
     im::ColorEdit3("Color", &light->color.x);
 }
 
@@ -170,7 +167,7 @@ void titian::GUISectionEntityProperties::display_directional_light_special_info(
     im::Text("Directional Light Special Info");
 
     im::ColorEdit3("Color", &light->color.x);
-    im::DragFloat("Point Size", &light->point_size, 0.1f);
+    im::DragFloat("Point Size", &light->point_size, 0.01f, 0.0f, 1.0f);
 
     for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
         im::DragFloat2(kl::format("Cascade ", i).data(), light->cascade_splits + i, 0.01f, 0.0f, 1.0f);

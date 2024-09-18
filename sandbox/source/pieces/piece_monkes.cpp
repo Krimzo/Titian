@@ -42,11 +42,10 @@ void titian::SandboxPieceMonkes::setup_self()
         const String material_name = kl::format("monke_mat_", counter_id);
         const String entity_name = kl::format("Monke", counter_id);
 
-        const float percentage = (i + 1.0f) / entity_count;
-        const float normalized = kl::clamp(percentage, 0.0f, 1.0f);
-
         Ref material = new Material();
-        material->color = Float4{ Float3{ normalized }, 1.0f };
+        material->color = kl::colors::CYAN;
+        material->reflectivity_factor = -i / (entity_count - 1.0f);
+        material->refraction_index = 1.5f;
         scene->materials[material_name] = material;
 
         Ref monke = new Entity();
