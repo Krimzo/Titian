@@ -15,12 +15,11 @@ void titian::OutlinePass::state_package(StatePackage* package)
 
 void titian::OutlinePass::render_self(StatePackage* package)
 {
-    AppLayer* app_layer = Layers::get<AppLayer>();
 	EditorLayer* editor_layer = Layers::get<EditorLayer>();
 	GameLayer* game_layer = Layers::get<GameLayer>();
 	RenderLayer* render_layer = Layers::get<RenderLayer>();
     GUILayer* gui_layer = Layers::get<GUILayer>();
-    kl::GPU* gpu = &app_layer->gpu;
+    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 
     if (editor_layer->selected_entities.empty())
         return;
@@ -36,22 +35,22 @@ void titian::OutlinePass::render_self(StatePackage* package)
         return;
 
     load_selected_entities(entitiy_indices);
-    gpu->bind_target_depth_view(package->camera->screen_texture->target_view, package->camera->game_depth_texture->depth_view);
-    gpu->bind_shader_view_for_pixel_shader(package->camera->editor_picking_texture->shader_view, 0);
+    gpu->bind_target_depth_view(package->camera->screen_texture->target_view, package->camera->depth_texture->depth_view);
+    gpu->bind_shader_view_for_pixel_shader(package->camera->index_texture->shader_view, 0);
     gpu->bind_shader_view_for_pixel_shader(m_selected_entities_view, 1);
 
-    struct alignas(16) PS_CB
+    struct alignas(16) CB
     {
         Float4 OUTLINE_COLOR;
-        int32_t OUTLINE_SIZE;
-        uint32_t SELECTED_COUNT;
+        int OUTLINE_SIZE;
+        int SELECTED_COUNT;
     };
 
-    PS_CB ps_cb{};
-    ps_cb.OUTLINE_COLOR = gui_layer->special_color;
-    ps_cb.OUTLINE_SIZE = editor_layer->outline_size;
-    ps_cb.SELECTED_COUNT = (uint32_t) entitiy_indices.size();
-    package->shader_state.pixel_shader.update_cbuffer(ps_cb);
+    CB cb{};
+    cb.OUTLINE_COLOR = gui_layer->special_color;
+    cb.OUTLINE_SIZE = editor_layer->outline_size;
+    cb.SELECTED_COUNT = (int) entitiy_indices.size();
+    package->shader_state.upload(cb);
 
     gpu->draw(render_layer->screen_mesh);
     bench_add_draw_call();
@@ -72,10 +71,8 @@ void titian::OutlinePass::load_selected_entities(const Vector<float>& entitiy_in
         descriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         descriptor.StructureByteStride = sizeof(float);
         descriptor.ByteWidth = (UINT) entitiy_indices.size() * sizeof(float);
-
         dx::SubresourceDescriptor subresource{};
         subresource.pSysMem = entitiy_indices.data();
-
         m_selected_entities_buff = gpu->create_buffer(&descriptor, &subresource);
         if (!m_selected_entities_buff) {
             return;

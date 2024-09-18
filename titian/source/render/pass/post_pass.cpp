@@ -27,22 +27,22 @@ void titian::PostPass::render_self(StatePackage* package)
         }
     }
 
-    struct PS_CB
+    struct alignas(16) CB
     {
+        Float4x4 CUSTOM_DATA;
         Float2 FRAME_SIZE;
-        alignas(16) Float4x4 CUSTOM_DATA;
     };
 
-	PS_CB ps_cb{};
-    ps_cb.FRAME_SIZE = (Float2) package->camera->resolution();
-    ps_cb.CUSTOM_DATA = custom_data;
-	package->shader_state.pixel_shader.update_cbuffer(ps_cb);
+	CB cb{};
+    cb.FRAME_SIZE = package->camera->resolution();
+    cb.CUSTOM_DATA = custom_data;
+	package->shader_state.upload(cb);
     
     gpu->bind_target_depth_view(package->camera->screen_texture->target_view, {});
 
-    gpu->bind_shader_view_for_pixel_shader(package->camera->game_color_texture->shader_view, 0);
-    gpu->bind_shader_view_for_pixel_shader(package->camera->game_depth_texture->shader_view, 1);
-    gpu->bind_shader_view_for_pixel_shader(package->camera->editor_picking_texture->shader_view, 2);
+    gpu->bind_shader_view_for_pixel_shader(package->camera->color_texture->shader_view, 0);
+    gpu->bind_shader_view_for_pixel_shader(package->camera->depth_texture->shader_view, 1);
+    gpu->bind_shader_view_for_pixel_shader(package->camera->index_texture->shader_view, 2);
 
     gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->linear, 0);
     gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->non_linear, 1);

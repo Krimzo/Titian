@@ -8,25 +8,67 @@ namespace kl {
 }
 
 namespace kl {
-    template<typename S>
-    struct ShaderHolder
+    enum class ShaderType : int32_t
     {
-        const GPU* gpu = nullptr;
-        S shader = {};
+        VERTEX = 0,
+        PIXEL,
+        GEOMETRY,
+        COMPUTE,
+    };
+}
+
+namespace kl {
+    struct CBuffer
+    {
+        const GPU* gpu;
         dx::Buffer cbuffer;
 
-        ShaderHolder(const kl::GPU* gpu);
-        ShaderHolder(const kl::GPU* gpu, const S& shader);
+        CBuffer(const GPU* gpu);
+        
+        void upload(const void* data, UINT byte_size);
+        void bind(ShaderType type, int index) const;
+    };
+}
 
-        operator S() const;
-        operator bool() const;
+namespace kl {
+    template<typename S>
+    struct ShaderHolder : private CBuffer
+    {
+        S shader = {};
 
-        template<typename T>
-        void update_cbuffer(const T& object)
+        ShaderHolder(const GPU* gpu = nullptr)
+            : CBuffer(gpu)
+        {}
+
+        operator bool() const
         {
-            update_cbuffer(&object, sizeof(T));
+            return gpu && shader;
         }
 
-        void update_cbuffer(const void* data, UINT byte_size);
+        template<typename T>
+        void upload(const T& object, int index = 0)
+        {
+            CBuffer::upload(&object, sizeof(T));
+            CBuffer::bind(type(), index);
+        }
+
+        static consteval ShaderType type()
+        {
+            if constexpr (std::is_same_v<S, dx::VertexShader>) {
+                return ShaderType::VERTEX;
+            }
+            else if constexpr (std::is_same_v<S, dx::PixelShader>) {
+                return ShaderType::PIXEL;
+            }
+            else if constexpr (std::is_same_v<S, dx::GeometryShader>) {
+                return ShaderType::GEOMETRY;
+            }
+            else if constexpr (std::is_same_v<S, dx::ComputeShader>) {
+                return ShaderType::COMPUTE;
+            }
+            else {
+                static_assert(false, "Unsupported shader type");
+            }
+        }
     };
 }

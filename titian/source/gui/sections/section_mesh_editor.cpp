@@ -270,33 +270,20 @@ void titian::GUISectionMeshEditor::render_selected_mesh(Mesh* mesh, const Int2 v
 
     camera->update_aspect_ratio(viewport_size);
 
-    struct alignas(16) VS_CB
+    struct alignas(16) CB
     {
         Float4x4 W;
         Float4x4 WVP;
-        float IS_SKELETAL{};
-    };
-
-    const VS_CB vs_cb{
-        .W = {},
-        .WVP = camera->camera_matrix(),
-        .IS_SKELETAL = 0.0f,
-    };
-
-    struct alignas(16) PS_CB
-    {
         Float4 OBJECT_COLOR;
         Float3 SUN_DIRECTION;
-    };
+        float IS_SKELETAL;
+    } cb = {};
 
-    const PS_CB ps_cb{
-        .OBJECT_COLOR = line_color,
-        .SUN_DIRECTION = sun_direction,
-    };
+    cb.WVP = camera->camera_matrix();
+    cb.OBJECT_COLOR = line_color;
+    cb.SUN_DIRECTION = sun_direction;
 
-    render_shaders.vertex_shader.update_cbuffer(vs_cb);
-    render_shaders.pixel_shader.update_cbuffer(ps_cb);
-
+    render_shaders.upload(cb);
     gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
 
     gpu->bind_internal_views();
@@ -307,8 +294,6 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
 {
     GUILayer* gui_layer = Layers::get<GUILayer>();
     kl::Window* window = &Layers::get<AppLayer>()->window;
-
-    const int current_scroll = window->mouse.scroll();
 
     if (im::Begin("Mesh Properties") && mesh) {
         im::Text("Mesh Editor");
@@ -354,7 +339,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
         if (vertex_count > 0) {
             const Pair window_rect = gui_window_rect();
             if (im::IsMouseHoveringRect(window_rect.first, window_rect.second)) {
-                m_starting_vertex_index += m_last_scroll - current_scroll;
+                m_starting_vertex_index -= window->mouse.scroll();
             }
             m_starting_vertex_index = kl::clamp(m_starting_vertex_index, 0, vertex_count - 1);
 
@@ -419,8 +404,6 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
         }
     }
     im::End();
-
-    m_last_scroll = current_scroll;
 }
 
 void titian::GUISectionMeshEditor::render_gizmos(Mesh* mesh)

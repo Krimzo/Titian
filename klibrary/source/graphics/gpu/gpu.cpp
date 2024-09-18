@@ -264,36 +264,43 @@ void kl::GPU::bind_internal_views() const
 kl::ShaderHolder<kl::dx::VertexShader> kl::GPU::create_vertex_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_vertex_shader(shader_source);
-    return { this, DeviceHolder::create_vertex_shader(compiled_shader) };
-}
-
-kl::ShaderHolder<kl::dx::GeometryShader> kl::GPU::create_geometry_shader(const std::string_view& shader_source) const
-{
-    const CompiledShader compiled_shader = compile_geometry_shader(shader_source);
-    return { this, DeviceHolder::create_geometry_shader(compiled_shader) };
+    ShaderHolder<dx::VertexShader> holder{ this };
+    holder.shader = DeviceHolder::create_vertex_shader(compiled_shader);
+    return holder;
 }
 
 kl::ShaderHolder<kl::dx::PixelShader> kl::GPU::create_pixel_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_pixel_shader(shader_source);
-    return { this, DeviceHolder::create_pixel_shader(compiled_shader) };
+    ShaderHolder<dx::PixelShader> holder{ this };
+    holder.shader = DeviceHolder::create_pixel_shader(compiled_shader);
+    return holder;
+}
+
+kl::ShaderHolder<kl::dx::GeometryShader> kl::GPU::create_geometry_shader(const std::string_view& shader_source) const
+{
+    const CompiledShader compiled_shader = compile_geometry_shader(shader_source);
+    ShaderHolder<dx::GeometryShader> holder{ this };
+    holder.shader = DeviceHolder::create_geometry_shader(compiled_shader);
+    return holder;
 }
 
 kl::ShaderHolder<kl::dx::ComputeShader> kl::GPU::create_compute_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_compute_shader(shader_source);
-    return { this, DeviceHolder::create_compute_shader(compiled_shader) };
+    ShaderHolder<dx::ComputeShader> holder{ this };
+    holder.shader = DeviceHolder::create_compute_shader(compiled_shader);
+    return holder;
 }
 
 kl::RenderShaders kl::GPU::create_render_shaders(const std::string_view& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors) const
 {
     const CompiledShader compiled_vertex_shader = compile_vertex_shader(shader_sources);
     const CompiledShader compiled_pixel_shader = compile_pixel_shader(shader_sources);
-
-    RenderShaders shaders{};
+    RenderShaders shaders{ this };
     shaders.input_layout = create_input_layout(compiled_vertex_shader, descriptors);
-    shaders.vertex_shader = { this, DeviceHolder::create_vertex_shader(compiled_vertex_shader) };
-    shaders.pixel_shader = { this, DeviceHolder::create_pixel_shader(compiled_pixel_shader) };
+    shaders.vertex_shader = DeviceHolder::create_vertex_shader(compiled_vertex_shader);
+    shaders.pixel_shader = DeviceHolder::create_pixel_shader(compiled_pixel_shader);
     return shaders;
 }
 

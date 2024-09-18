@@ -21,89 +21,78 @@ void titian::ScenePass::render_self(StatePackage* package)
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
     Scene* scene = &Layers::get<GameLayer>()->scene;
 
-    struct GLOBAL_CB
+    struct alignas(16) CB
     {
-        float ELAPSED_TIME{};
-        float DELTA_TIME{};
-
-        alignas(16) Float3 CAMERA_POSITION;
-        float CAMERA_HAS_SKYBOX{};
-        Float4 CAMERA_BACKGROUND;
-
-        Float3 AMBIENT_COLOR;
-        float AMBIENT_INTENSITY{};
-
-        Float3 SUN_DIRECTION;
-        float SUN_POINT_SIZE{};
-        Float3 SUN_COLOR;
-
-        float OBJECT_INDEX{};
-        Float3 OBJECT_SCALE;
-        alignas(16) Float3 OBJECT_ROTATION;
-        alignas(16) Float3 OBJECT_POSITION;
-
-        alignas(16) Float4 OBJECT_COLOR;
-        float TEXTURE_BLEND{};
-
-        float REFLECTION_FACTOR{};
-        float REFRACTION_FACTOR{};
-        float REFRACTION_INDEX{};
-
-        float HAS_NORMAL_TEXTURE{};
-        float HAS_ROUGHNESS_TEXTURE{};
-
-        alignas(16) Float4x4 W;
+        Float4x4 W;
         Float4x4 V;
         Float4x4 VP;
-
-        float IS_SKELETAL{};
-
-        float RECEIVES_SHADOWS{};
+        Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
+        Float4x4 CUSTOM_DATA;
+        Float4 CAMERA_BACKGROUND;
+        Float4 MATERIAL_COLOR;
+        Float4 SHADOW_CASCADES;
+        Float3 CAMERA_POSITION;
+        float CAMERA_HAS_SKYBOX;
+        Float3 AMBIENT_COLOR;
+        float AMBIENT_INTENSITY;
+        Float3 SUN_DIRECTION;
+        float SUN_POINT_SIZE;
+        Float3 SUN_COLOR;
+        float ELAPSED_TIME;
+        Float3 OBJECT_SCALE;
+        float DELTA_TIME;
+        Float3 OBJECT_ROTATION;
+        float OBJECT_INDEX;
+        Float3 OBJECT_POSITION;
+        float TEXTURE_BLEND;
         Float2 SHADOW_TEXTURE_SIZE;
         Float2 SHADOW_TEXTURE_TEXEL_SIZE;
-        alignas(16) Float4 SHADOW_CASCADES;
-        Float4x4 LIGHT_VPs[DirectionalLight::CASCADE_COUNT];
+        float REFLECTION_FACTOR;
+        float REFRACTION_FACTOR;
+        float REFRACTION_INDEX;
+        float HAS_NORMAL_TEXTURE;
+        float HAS_ROUGHNESS_TEXTURE;
+        float IS_SKELETAL;
+        float RECEIVES_SHADOWS;
+    } cb = {};
 
-        Float4x4 CUSTOM_DATA;
-    };
-
-    GLOBAL_CB global_cb{};
-
-    global_cb.V = package->camera->view_matrix();
-    global_cb.VP = package->camera->camera_matrix();
-    global_cb.CAMERA_POSITION = package->camera->position();
-    global_cb.CAMERA_HAS_SKYBOX = (float) scene->textures.contains(package->camera->skybox_texture_name);
-    global_cb.CAMERA_BACKGROUND = package->camera->background;
+    cb.V = package->camera->view_matrix();
+    cb.VP = package->camera->camera_matrix();
+    cb.CAMERA_POSITION = package->camera->position();
+    cb.CAMERA_HAS_SKYBOX = (float) scene->textures.contains(package->camera->skybox_texture_name);
+    cb.CAMERA_BACKGROUND = package->camera->background;
 
     if (AmbientLight* ambient_light = scene->get_casted<AmbientLight>(scene->main_ambient_light_name)) {
-        global_cb.AMBIENT_COLOR = ambient_light->color;
-        global_cb.AMBIENT_INTENSITY = ambient_light->intensity;
+        cb.AMBIENT_COLOR = ambient_light->color;
+        cb.AMBIENT_INTENSITY = ambient_light->intensity;
     }
     if (DirectionalLight* directional_light = scene->get_casted<DirectionalLight>(scene->main_directional_light_name)) {
         ID3D11ShaderResourceView* dir_light_views[DirectionalLight::CASCADE_COUNT] = {};
         for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
             dir_light_views[i] = directional_light->shader_view(i).get();
-            global_cb.LIGHT_VPs[i] = directional_light->light_matrix(package->camera, i);
+            cb.LIGHT_VPs[i] = directional_light->light_matrix(package->camera, i);
         }
 
         gpu->context()->PSSetShaderResources(1, DirectionalLight::CASCADE_COUNT, dir_light_views);
 
-        global_cb.SUN_DIRECTION = directional_light->direction();
-        global_cb.SUN_COLOR = directional_light->color;
-        global_cb.SUN_POINT_SIZE = directional_light->point_size;
+        cb.SUN_DIRECTION = directional_light->direction();
+        cb.SUN_COLOR = directional_light->color;
+        cb.SUN_POINT_SIZE = directional_light->point_size;
 
-        global_cb.SHADOW_TEXTURE_SIZE = Float2{ (float) directional_light->resolution() };
-        global_cb.SHADOW_TEXTURE_TEXEL_SIZE = Float2{ 1.0f / directional_light->resolution() };
+        cb.SHADOW_TEXTURE_SIZE = Float2{ (float) directional_light->resolution() };
+        cb.SHADOW_TEXTURE_TEXEL_SIZE = Float2{ 1.0f / directional_light->resolution() };
         for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
-            global_cb.SHADOW_CASCADES[i] = kl::lerp(directional_light->cascade_splits[i + 1], package->camera->near_plane, package->camera->far_plane);
+            cb.SHADOW_CASCADES[i] = kl::lerp(directional_light->cascade_splits[i + 1], package->camera->near_plane, package->camera->far_plane);
         }
     }
-    global_cb.RECEIVES_SHADOWS = true;
+    cb.RECEIVES_SHADOWS = true;
+    cb.ELAPSED_TIME = timer->elapsed();
+    cb.DELTA_TIME = timer->delta();
 
-    global_cb.ELAPSED_TIME = timer->elapsed();
-    global_cb.DELTA_TIME = timer->delta();
-
-    gpu->bind_target_depth_views({ package->camera->game_color_texture->target_view.get(), package->camera->editor_picking_texture->target_view.get() }, package->camera->game_depth_texture->depth_view);
+    gpu->bind_target_depth_views({
+        package->camera->color_texture->target_view.get(),
+        package->camera->index_texture->target_view.get() },
+        package->camera->depth_texture->depth_view);
     gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->linear, 0);
     gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->shadow, 1);
     gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->linear, 2);
@@ -194,46 +183,45 @@ void titian::ScenePass::render_self(StatePackage* package)
         }
         if (info.normal_texture) {
             gpu->bind_shader_view_for_pixel_shader(info.normal_texture->shader_view, 6);
-            global_cb.HAS_NORMAL_TEXTURE = 1.0f;
+            cb.HAS_NORMAL_TEXTURE = 1.0f;
         }
         else {
-            global_cb.HAS_NORMAL_TEXTURE = 0.0f;
+            cb.HAS_NORMAL_TEXTURE = 0.0f;
         }
         if (info.roughness_texture) {
             gpu->bind_shader_view_for_pixel_shader(info.roughness_texture->shader_view, 7);
-            global_cb.HAS_ROUGHNESS_TEXTURE = 1.0f;
+            cb.HAS_ROUGHNESS_TEXTURE = 1.0f;
         }
         else {
-            global_cb.HAS_ROUGHNESS_TEXTURE = 0.0f;
+            cb.HAS_ROUGHNESS_TEXTURE = 0.0f;
         }
 
-        global_cb.W = info.entity->model_matrix();
+        cb.W = info.entity->model_matrix();
 
-        global_cb.OBJECT_INDEX = float(info.id);
-        global_cb.OBJECT_SCALE = info.entity->scale();
-        global_cb.OBJECT_ROTATION = info.entity->rotation();
-        global_cb.OBJECT_POSITION = info.entity->position();
+        cb.OBJECT_INDEX = float(info.id);
+        cb.OBJECT_SCALE = info.entity->scale();
+        cb.OBJECT_ROTATION = info.entity->rotation();
+        cb.OBJECT_POSITION = info.entity->position();
 
-        global_cb.OBJECT_COLOR = info.material->color;
-        global_cb.TEXTURE_BLEND = info.material->texture_blend;
+        cb.MATERIAL_COLOR = info.material->color;
+        cb.TEXTURE_BLEND = info.material->texture_blend;
 
-        global_cb.REFLECTION_FACTOR = info.material->reflection_factor;
-        global_cb.REFRACTION_FACTOR = info.material->refraction_factor;
-        global_cb.REFRACTION_INDEX = info.material->refraction_index;
+        cb.REFLECTION_FACTOR = info.material->reflection_factor;
+        cb.REFRACTION_FACTOR = info.material->refraction_factor;
+        cb.REFRACTION_INDEX = info.material->refraction_index;
 
         if (info.animation->animation_type == AnimationType::SKELETAL) {
             info.animation->bind_matrices(0);
-            global_cb.IS_SKELETAL = 1.0f;
+            cb.IS_SKELETAL = 1.0f;
         }
         else {
-            global_cb.IS_SKELETAL = 0.0f;
+            cb.IS_SKELETAL = 0.0f;
         }
 
-        global_cb.CUSTOM_DATA = info.material->custom_data;
+        cb.CUSTOM_DATA = info.material->custom_data;
 
         if (*info.render_shaders) {
-            info.render_shaders->vertex_shader.update_cbuffer(global_cb);
-            info.render_shaders->pixel_shader.update_cbuffer(global_cb);
+            info.render_shaders->upload(cb);
             gpu->bind_render_shaders(*info.render_shaders);
             gpu->draw(info.mesh->graphics_buffer, info.mesh->casted_topology(), sizeof(Vertex));
             bench_add_draw_call();
@@ -247,7 +235,7 @@ void titian::ScenePass::render_self(StatePackage* package)
     }
 
     gpu->bind_depth_state(render_layer->depth_states->only_compare);
-    global_cb.RECEIVES_SHADOWS = false;
+    cb.RECEIVES_SHADOWS = false;
 
     for (int i = (int) to_render.size() - 1; i >= 0; i--) {
         const auto& info = to_render[i];

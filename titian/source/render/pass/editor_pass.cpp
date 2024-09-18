@@ -51,20 +51,16 @@ void titian::EditorPass::render_self(StatePackage* package)
     if (editor_layer->selected_entities.empty())
         return;
 
-    gpu->bind_target_depth_view(package->camera->screen_texture->target_view, package->camera->game_depth_texture->depth_view);
+    gpu->bind_target_depth_view(package->camera->screen_texture->target_view, package->camera->depth_texture->depth_view);
 
     for (auto& name : editor_layer->selected_entities) {
         Entity* entity = scene->helper_get_entity(name);
         if (!entity)
             continue;
 
-        struct VS_CB
+        struct alignas(16) CB
         {
             Float4x4 WVP;
-        };
-
-        struct PS_CB
-        {
             Float4 SOLID_COLOR;
         };
 
@@ -73,14 +69,10 @@ void titian::EditorPass::render_self(StatePackage* package)
             const auto& sphere = scene->default_meshes->sphere;
 			const auto& capsule = scene->default_meshes->capsule;
 
-            const VS_CB vs_cb{
-                .WVP = package->camera->camera_matrix() * entity->collider_matrix(),
-            };
-            const PS_CB ps_cb{
-                .SOLID_COLOR = gui_layer->alternate_color,
-            };
-            package->shader_state.vertex_shader.update_cbuffer(vs_cb);
-            package->shader_state.pixel_shader.update_cbuffer(ps_cb);
+            CB cb{};
+            cb.WVP = package->camera->camera_matrix() * entity->collider_matrix();
+            cb.SOLID_COLOR = gui_layer->alternate_color;
+            package->shader_state.upload(cb);
 
             switch (collider->type())
             {
@@ -102,15 +94,10 @@ void titian::EditorPass::render_self(StatePackage* package)
         }
 
         if (Camera* camera = dynamic_cast<Camera*>(entity)) {
-            const VS_CB vs_cb{
-                .WVP = package->camera->camera_matrix() * kl::inverse(camera->camera_matrix()),
-            };
-            const PS_CB ps_cb{
-                .SOLID_COLOR = gui_layer->special_color,
-            };
-            package->shader_state.vertex_shader.update_cbuffer(vs_cb);
-            package->shader_state.pixel_shader.update_cbuffer(ps_cb);
-
+            CB cb{};
+            cb.WVP = package->camera->camera_matrix() * kl::inverse(camera->camera_matrix());
+            cb.SOLID_COLOR = gui_layer->special_color;
+            package->shader_state.upload(cb);
             gpu->draw(frustum_mesh, D3D_PRIMITIVE_TOPOLOGY_LINELIST);
             bench_add_draw_call();
         }

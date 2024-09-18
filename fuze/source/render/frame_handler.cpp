@@ -11,7 +11,7 @@ void titian::FrameHandler::init()
 	auto load_shader = [&](dx::ComputeShader& shader, const char* filename)
 	{
 		const String source = kl::read_file(kl::format("package/shaders/", filename));
-		shader = gpu->create_compute_shader(source);
+		shader = gpu->create_compute_shader(source).shader;
 		kl::assert(shader, "Failed to init [", filename, "] shaders");
 	};
 

@@ -40,7 +40,6 @@ kl::dx::DepthState kl::DeviceHolder::create_depth_state(const bool depth, const 
         descriptor.StencilEnable = true;
         descriptor.StencilReadMask = 0xFF;
         descriptor.StencilWriteMask = 0xFF;
-
         if (mask) {
             descriptor.DepthEnable = false;
             descriptor.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
@@ -120,10 +119,8 @@ kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const void* data, const UI
     descriptor.ByteWidth = byte_size;
     descriptor.Usage = D3D11_USAGE_IMMUTABLE;
     descriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
     dx::SubresourceDescriptor subresource_data{};
     subresource_data.pSysMem = data;
-
     return create_buffer(&descriptor, &subresource_data);
 }
 
@@ -148,10 +145,8 @@ kl::dx::Buffer kl::DeviceHolder::create_index_buffer(const uint32_t* data, const
     descriptor.ByteWidth = element_count * sizeof(uint32_t);
     descriptor.Usage = D3D11_USAGE_IMMUTABLE;
     descriptor.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
     dx::SubresourceDescriptor subresource_data{};
     subresource_data.pSysMem = data;
-
     return create_buffer(&descriptor, &subresource_data);
 }
 
@@ -165,13 +160,11 @@ kl::dx::Buffer kl::DeviceHolder::create_const_buffer(const UINT byte_size) const
     if (!verify(byte_size % 16 == 0, "Constant buffer size has to be a multiple of 16")) {
         return {};
     }
-
     dx::BufferDescriptor descriptor{};
     descriptor.ByteWidth = byte_size;
     descriptor.Usage = D3D11_USAGE_DYNAMIC;
     descriptor.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     descriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
     return create_buffer(&descriptor, nullptr);
 }
 
@@ -184,10 +177,8 @@ kl::dx::Buffer kl::DeviceHolder::create_structured_buffer(const void* data, cons
     descriptor.CPUAccessFlags = cpu_read ? D3D11_CPU_ACCESS_READ : NULL;
     descriptor.StructureByteStride = element_size;
     descriptor.ByteWidth = element_count * element_size;
-
     dx::SubresourceDescriptor subresource{};
     subresource.pSysMem = data;
-
     return create_buffer(&descriptor, &subresource);
 }
 
@@ -195,11 +186,9 @@ kl::dx::Buffer kl::DeviceHolder::create_staging_buffer(const dx::Buffer& buffer,
 {
     dx::BufferDescriptor descriptor{};
     buffer->GetDesc(&descriptor);
-
     descriptor.Usage = D3D11_USAGE_STAGING;
     descriptor.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
     descriptor.ByteWidth = byte_size ? byte_size : descriptor.ByteWidth;
-
     return create_buffer(&descriptor, nullptr);
 }
 
@@ -309,7 +298,6 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_sphere_mesh(const fl
     static constexpr float X = 0.525731112119133606f;
     static constexpr float Z = 0.850650808352039932f;
     static constexpr float N = 0.0f;
-
     static constexpr Float3 vertices[12] = {
         { -X, N, Z }, {  X, N,  Z }, { -X,  N, -Z }, {  X,  N, -Z },
         {  N, Z, X }, {  N, Z, -X }, {  N, -Z,  X }, {  N, -Z, -X },
@@ -321,7 +309,6 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_sphere_mesh(const fl
         { 7, 10,  3 }, { 7, 6, 10 }, { 7, 11, 6 }, { 11, 0, 6 }, { 0, 1,  6 },
         { 6,  1, 10 }, { 9, 0, 11 }, { 9, 11, 2 }, {  9, 2, 5 }, { 7, 2, 11 },
     };
-
     static constexpr auto subdivide_single = [](const Triangle<float>& triangle, std::vector<Triangle<float>>& triangles)
     {
         auto& a = triangle.a;
@@ -439,13 +426,11 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_capsule_mesh(const f
     {
         std::swap(triangle.a, triangle.c);
     });
-
     auto cylinder = gen_cyl();
     std::for_each(std::execution::par, cylinder.begin(), cylinder.end(), [](Triangle<float>& triangle)
     {
         std::swap(triangle.a, triangle.c);
     });
-
     auto bottom_hem = gen_hem();
     std::for_each(std::execution::par, bottom_hem.begin(), bottom_hem.end(), [](Triangle<float>& triangle)
     {
@@ -517,11 +502,9 @@ kl::dx::Texture kl::DeviceHolder::create_texture(const Image& image, const bool 
     descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE |
         (has_unordered_access ? D3D11_BIND_UNORDERED_ACCESS : NULL) |
         (is_target ? D3D11_BIND_RENDER_TARGET : NULL);
-
     dx::SubresourceDescriptor data{};
     data.pSysMem = image.ptr();
     data.SysMemPitch = image.width() * sizeof(Color);
-
     return create_texture(&descriptor, &data);
 }
 
@@ -534,7 +517,6 @@ kl::dx::Texture kl::DeviceHolder::create_cube_texture(const Image& front, const 
         && front.size() == bottom.size(), "Sizes of the 6 given images do not match")) {
         return {};
     }
-
     dx::TextureDescriptor descriptor{};
     descriptor.Width = front.width();
     descriptor.Height = front.height();
@@ -545,15 +527,14 @@ kl::dx::Texture kl::DeviceHolder::create_cube_texture(const Image& front, const 
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     descriptor.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-
     const UINT mem_pitch = (UINT) (front.width() * sizeof(Color));
     const dx::SubresourceDescriptor data[6] = {
-        { right.ptr(),  mem_pitch, 0 },
-        { left.ptr(),   mem_pitch, 0 },
-        { top.ptr(),    mem_pitch, 0 },
+        { right.ptr(), mem_pitch, 0 },
+        { left.ptr(), mem_pitch, 0 },
+        { top.ptr(), mem_pitch, 0 },
         { bottom.ptr(), mem_pitch, 0 },
-        { front.ptr(),  mem_pitch, 0 },
-        { back.ptr(),   mem_pitch, 0 },
+        { front.ptr(), mem_pitch, 0 },
+        { back.ptr(), mem_pitch, 0 },
     };
     return create_texture(&descriptor, data);
 }
@@ -562,7 +543,6 @@ kl::dx::Texture kl::DeviceHolder::create_staging_texture(const dx::Texture& text
 {
     dx::TextureDescriptor descriptor{};
     texture->GetDesc(&descriptor);
-
     dx::TextureDescriptor staging_descriptor{};
     staging_descriptor.Width = (size.x > 0) ? size.x : descriptor.Width;
     staging_descriptor.Height = (size.y > 0) ? size.y : descriptor.Height;
@@ -572,7 +552,6 @@ kl::dx::Texture kl::DeviceHolder::create_staging_texture(const dx::Texture& text
     staging_descriptor.SampleDesc.Count = 1;
     staging_descriptor.Usage = D3D11_USAGE_STAGING;
     staging_descriptor.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-
     return create_texture(&staging_descriptor, nullptr);
 }
 
@@ -587,7 +566,6 @@ kl::dx::Texture kl::DeviceHolder::create_target_texture(const Int2 size) const
     descriptor.ArraySize = 1;
     descriptor.MipLevels = 1;
     descriptor.SampleDesc.Count = 1;
-
     return create_texture(&descriptor, nullptr);
 }
 
@@ -630,10 +608,8 @@ kl::dx::InputLayout kl::DeviceHolder::create_input_layout(const CompiledShader& 
         { "KL_Texture", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "KL_Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
-
     const dx::LayoutDescriptor* descriptors_ptr = (!descriptors.empty()) ? descriptors.data() : default_layout_descriptors;
     const UINT descriptors_count = (!descriptors.empty()) ? ((UINT) descriptors.size()) : ((UINT) std::size(default_layout_descriptors));
-
     dx::InputLayout layout;
     m_device->CreateInputLayout(descriptors_ptr, descriptors_count, compiled_shader.data_ptr(), compiled_shader.data_size(), &layout);
     verify(layout, "Failed to create input layout");

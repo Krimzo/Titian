@@ -1,7 +1,11 @@
 #include "klibrary.h"
 
 
+kl::RenderShaders::RenderShaders(const GPU* gpu)
+    : CBuffer(gpu)
+{}
+
 kl::RenderShaders::operator bool() const
 {
-    return (vertex_shader && pixel_shader);
+    return gpu && vertex_shader && pixel_shader;
 }

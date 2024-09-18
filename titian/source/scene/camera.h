@@ -17,7 +17,7 @@ namespace titian {
         CameraType camera_type = CameraType::PERSPECTIVE;
 
         bool enabled = true;
-        bool v_sync = true;
+        bool v_sync = false;
         bool render_wireframe = false;
 
         float field_of_view = 75.0f;
@@ -37,18 +37,18 @@ namespace titian {
         String shader_name = "/";
 
         Ref<Texture> screen_texture;
-        Ref<Texture> game_color_texture;
-        Ref<Texture> game_depth_texture;
-        Ref<Texture> game_depth_staging;
-        Ref<Texture> editor_picking_texture;
-        Ref<Texture> editor_picking_staging;
+        Ref<Texture> color_texture;
+        Ref<Texture> depth_texture;
+        Ref<Texture> depth_staging;
+        Ref<Texture> index_texture;
+        Ref<Texture> index_staging;
 
         Camera();
 
         void serialize(Serializer* serializer) const override;
         void deserialize(const Serializer* serializer) override;
 
-        void update_aspect_ratio(const Int2& size);
+        void update_aspect_ratio(Int2 size);
         void set_forward(const Float3& dir);
         void set_up(const Float3& dir);
 
@@ -63,7 +63,7 @@ namespace titian {
         void move_up(float delta_time);
         void move_down(float delta_time);
 
-        void rotate(const Float2& mouse_pos, const Float2& frame_center, float vertical_angle_limit = 85.0f);
+        void rotate(Float2 mouse_pos, Float2 frame_center, float vertical_angle_limit = 85.0f);
 
         Float4x4 view_matrix() const;
         Float4x4 projection_matrix() const;
@@ -71,8 +71,8 @@ namespace titian {
 
         bool can_see(const Float3& point) const;
 
-        void resize(const Int2& new_size);
-        void resize_staging(const Int2& new_size);
+        void resize(Int2 new_size);
+        void resize_staging(Int2 new_size);
         Int2 resolution() const;
         void clear_targets();
         

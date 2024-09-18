@@ -29,7 +29,6 @@ namespace titian {
         int m_selected_vertex_index = -1;
         int m_starting_vertex_index = 0;
         int m_vertex_display_count = 6;
-        int m_last_scroll = 0;
         int m_new_vertex_index = 0;
 
         float m_plane_size = 10.0f;

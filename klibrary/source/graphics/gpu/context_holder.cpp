@@ -6,7 +6,6 @@ void kl::ContextHolder::set_viewport_position(const Int2 position) const
     UINT number_of_vps = 1;
     D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
-
     viewport.TopLeftX = float(position.x);
     viewport.TopLeftY = float(position.y);
     m_context->RSSetViewports(1, &viewport);
@@ -28,7 +27,6 @@ void kl::ContextHolder::set_viewport_size(const Int2 size) const
     UINT number_of_vps = 1;
     D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
-
     viewport.Width = float(size.x);
     viewport.Height = float(size.y);
     m_context->RSSetViewports(1, &viewport);
@@ -47,7 +45,6 @@ void kl::ContextHolder::set_viewport_min_max(const Float2 min_max) const
     UINT number_of_vps = 1;
     D3D11_VIEWPORT viewport{};
     m_context->RSGetViewports(&number_of_vps, &viewport);
-
     viewport.MinDepth = min_max.x;
     viewport.MaxDepth = min_max.y;
     m_context->RSSetViewports(1, &viewport);
@@ -144,7 +141,7 @@ void kl::ContextHolder::map_write_resource(const dx::Resource& resource, const s
     m_context->Unmap(resource.get(), 0);
 }
 
-void kl::ContextHolder::read_from_buffer(void* cpu_buffer, const dx::Buffer& gpu_buffer, SIZE_T byte_size) const
+void kl::ContextHolder::read_from_buffer(void* cpu_buffer, const dx::Buffer& gpu_buffer, const SIZE_T byte_size) const
 {
     dx::MappedSubresourceDescriptor mapped_subresource{};
     m_context->Map(gpu_buffer.get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource) >> verify_result;
@@ -152,7 +149,7 @@ void kl::ContextHolder::read_from_buffer(void* cpu_buffer, const dx::Buffer& gpu
     m_context->Unmap(gpu_buffer.get(), 0);
 }
 
-void kl::ContextHolder::write_to_buffer(const dx::Buffer& gpu_buffer, const void* cpu_buffer, SIZE_T byte_size, bool discard) const
+void kl::ContextHolder::write_to_buffer(const dx::Buffer& gpu_buffer, const void* cpu_buffer, const SIZE_T byte_size, const bool discard) const
 {
     dx::MappedSubresourceDescriptor mapped_subresource{};
     m_context->Map(gpu_buffer.get(), 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, NULL, &mapped_subresource) >> verify_result;
@@ -310,9 +307,7 @@ void kl::ContextHolder::draw_indexed(const dx::Buffer& vertex_buffer, const dx::
     set_draw_type(draw_type);
     bind_vertex_buffer(vertex_buffer, 0, 0, stride);
     bind_index_buffer(index_buffer, 0);
-
-    const UINT index_count = index_buffer_size(index_buffer);
-    draw_indexed(index_count, 0, 0);
+    draw_indexed(index_buffer_size(index_buffer), 0, 0);
 }
 
 void kl::ContextHolder::clear_target_view(const dx::TargetView& view, const Float4& color) const
@@ -440,7 +435,9 @@ void kl::ContextHolder::bind_render_shaders(const RenderShaders& shaders) const
 
 void kl::ContextHolder::unbind_render_shaders() const
 {
-    bind_render_shaders({});
+    unbind_input_layout();
+    unbind_vertex_shader();
+    unbind_pixel_shader();
 }
 
 void kl::ContextHolder::dispatch_compute_shader(const UINT x, const UINT y, const UINT z) const

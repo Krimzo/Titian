@@ -263,11 +263,11 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_id_texture(const Int2 fir
         return {};
 
     main_camera->resize_staging(size);
-    gpu->copy_resource_region(main_camera->editor_picking_staging->graphics_buffer,
-        main_camera->editor_picking_texture->graphics_buffer, min_coords, max_coords);
+    gpu->copy_resource_region(main_camera->index_staging->graphics_buffer,
+        main_camera->index_texture->graphics_buffer, min_coords, max_coords);
 
     Vector<float> values(size.x * size.y);
-    gpu->read_from_texture(values.data(), main_camera->editor_picking_staging->graphics_buffer, size, sizeof(float));
+    gpu->read_from_texture(values.data(), main_camera->index_staging->graphics_buffer, size, sizeof(float));
 
     Set<uint32_t> results;
     for (float value : values) {
@@ -285,10 +285,10 @@ titian::Optional<titian::Float3> titian::GUISectionViewport::read_depth_texture(
     if (!main_camera)
         return std::nullopt;
 
-    gpu->copy_resource(main_camera->game_depth_staging->graphics_buffer, main_camera->game_depth_texture->graphics_buffer);
+    gpu->copy_resource(main_camera->depth_staging->graphics_buffer, main_camera->depth_texture->graphics_buffer);
 
     float value = 0.0f;
-    gpu->map_read_resource(main_camera->game_depth_staging->graphics_buffer, [&](const byte* ptr, const uint32_t pitch)
+    gpu->map_read_resource(main_camera->depth_staging->graphics_buffer, [&](const byte* ptr, const uint32_t pitch)
     {
         memcpy(&value, ptr + (coords.x * sizeof(float)) + (coords.y * pitch), sizeof(float));
     });

@@ -24,17 +24,17 @@ void titian::ShadowPass::render_self(StatePackage* package)
     if (!dir_light)
         return;
 
-    struct alignas(16) VS_CB
+    struct alignas(16) CB
     {
-        Float4x4 WVP = {};
-        float IS_SKELETAL = 0.0f;
+        Float4x4 WVP;
+        float IS_SKELETAL;
     };
 
     struct RenderInfo
     {
         Animation* animation = nullptr;
         Mesh* mesh = nullptr;
-        VS_CB vs_cb = {};
+        CB cb = {};
     };
 
     Vector<RenderInfo> to_render;
@@ -58,9 +58,9 @@ void titian::ShadowPass::render_self(StatePackage* package)
             return;
         }
 
-        info.vs_cb.WVP = entity->model_matrix();
+        info.cb.WVP = entity->model_matrix();
         if (info.animation->animation_type == AnimationType::SKELETAL) {
-            info.vs_cb.IS_SKELETAL = 1.0f;
+            info.cb.IS_SKELETAL = 1.0f;
         }
         to_render.push_back(info);
     };
@@ -87,14 +87,13 @@ void titian::ShadowPass::render_self(StatePackage* package)
                 wireframe_bound = should_wireframe;
                 gpu->bind_raster_state(wireframe_bound ? render_layer->raster_states->wireframe : render_layer->raster_states->shadow);
             }
-
             if (info.animation->animation_type == AnimationType::SKELETAL) {
                 info.animation->bind_matrices(0);
             }
 
-            VS_CB vs_cb = info.vs_cb;
-            vs_cb.WVP = VP * vs_cb.WVP;
-            package->shader_state.vertex_shader.update_cbuffer(vs_cb);
+            CB cb = info.cb;
+            cb.WVP = VP * cb.WVP;
+            package->shader_state.upload(cb);
             gpu->draw(info.mesh->graphics_buffer, info.mesh->casted_topology(), sizeof(Vertex));
             bench_add_draw_call();
         }

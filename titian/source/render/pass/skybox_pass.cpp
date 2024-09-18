@@ -23,16 +23,15 @@ void titian::SkyboxPass::render_self(StatePackage* package)
     if (!skybox)
         return;
 
-    struct VS_CB
+    struct alignas(16) CB
     {
         Float4x4 VP;
-    };
+    } cb = {};
 
-    VS_CB vs_cb{};
-    vs_cb.VP = package->camera->camera_matrix();
-    package->shader_state.vertex_shader.update_cbuffer(vs_cb);
+    cb.VP = package->camera->camera_matrix();
+    package->shader_state.upload(cb);
 
-    gpu->bind_target_depth_view(package->camera->game_color_texture->target_view, {});
+    gpu->bind_target_depth_view(package->camera->color_texture->target_view, {});
     gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->linear, 0);
     gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
    

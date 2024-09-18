@@ -44,10 +44,10 @@ void c_shader(const uint3 thread_id : SV_DispatchThreadID)
 	kl::replace_all(source, "#custom_source", get_source());
 
 	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-	shader = gpu->create_compute_shader(source);
+	compute_shader = gpu->create_compute_shader(source);
 
 	if constexpr (kl::IS_DEBUG) {
-		kl::assert(shader, "Failed to init image effect shader");
+		kl::assert(compute_shader, "Failed to init image effect shader");
 	}
 }
 
@@ -56,32 +56,31 @@ void titian::ImageEffect::apply(const EffectPackage& package, Frame& frame)
 	if (!frame.texture) {
 		return;
 	}
-	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-
 	if (needs_copy()) {
 		temp_frame.resize(frame.size());
 	}
 
-	gpu->bind_compute_shader(shader);
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+	gpu->bind_compute_shader(compute_shader.shader);
 	gpu->bind_access_view_for_compute_shader(frame.access_view, 0);
 	gpu->bind_access_view_for_compute_shader(temp_frame.access_view, 1);
 
-	struct alignas(16) CS_CB
+	struct alignas(16) CB
 	{
 		Float4x4 custom_data;
 		Float2 frame_size;
-		float current_time = 0.0f;
-		float media_start = 0.0f;
-		float media_end = 0.0f;
+		float current_time;
+		float media_start;
+		float media_end;
 	};
 
-	CS_CB cb{};
+	CB cb{};
 	cb.custom_data = custom_data;
 	cb.frame_size = frame.size();
 	cb.current_time = package.current_time;
 	cb.media_start = package.media_start;
 	cb.media_end = package.media_end;
-	shader.update_cbuffer<CS_CB>(cb);
+	compute_shader.upload(cb);
 
 	const Int2 dispatch_size = (frame.size() / 32) + Int2(1);
 	gpu->dispatch_compute_shader(dispatch_size.x, dispatch_size.y, 1);

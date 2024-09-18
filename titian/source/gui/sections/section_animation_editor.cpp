@@ -233,41 +233,26 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation* ani
 
     camera->update_aspect_ratio(viewport_size);
 
-    struct alignas(16) VS_CB
+    struct alignas(16) CB
     {
         Float4x4 W;
         Float4x4 WVP;
-        float IS_SKELETAL{};
-    };
+        Float4 OBJECT_COLOR;
+        Float3 SUN_DIRECTION;
+        float IS_SKELETAL;
+    } cb = {};
 
-    VS_CB vs_cb{
-        .W = {},
-        .WVP = camera->camera_matrix(),
-    };
+    cb.WVP = camera->camera_matrix();
+    cb.OBJECT_COLOR = line_color;
+    cb.SUN_DIRECTION = sun_direction;
 
     if (m_animating && animation->animation_type == AnimationType::SKELETAL) {
         animation->update(scene, m_timer.elapsed());
         animation->bind_matrices(0);
-        vs_cb.IS_SKELETAL = 1.0f;
-    }
-    else {
-        vs_cb.IS_SKELETAL = 0.0f;
+        cb.IS_SKELETAL = 1.0f;
     }
 
-    struct alignas(16) PS_CB
-    {
-        Float4 OBJECT_COLOR;
-        Float3 SUN_DIRECTION;
-    };
-
-    const PS_CB ps_cb{
-        .OBJECT_COLOR = line_color,
-        .SUN_DIRECTION = sun_direction,
-    };
-
-    render_shaders.vertex_shader.update_cbuffer(vs_cb);
-    render_shaders.pixel_shader.update_cbuffer(ps_cb);
-
+    render_shaders.upload(cb);
     gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
 
     gpu->unbind_shader_view_for_vertex_shader(0);

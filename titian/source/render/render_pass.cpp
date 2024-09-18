@@ -26,7 +26,7 @@ void titian::RenderPass::process(Camera* camera)
 
 void titian::RenderPass::bind_states(const StatePackage& package)
 {
-	const kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 	gpu->bind_raster_state(package.raster_state);
 	gpu->bind_depth_state(package.depth_state);
 	gpu->bind_render_shaders(package.shader_state);
@@ -35,7 +35,7 @@ void titian::RenderPass::bind_states(const StatePackage& package)
 
 void titian::RenderPass::unbind_states()
 {
-	const kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 	gpu->unbind_raster_state();
 	gpu->unbind_depth_state();
 	gpu->unbind_render_shaders();

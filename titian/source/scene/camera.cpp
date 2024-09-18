@@ -4,12 +4,11 @@
 titian::Camera::Camera()
 {
     screen_texture = new Texture();
-    game_color_texture = new Texture();
-    game_depth_texture = new Texture();
-    game_depth_staging = new Texture();
-    editor_picking_texture = new Texture();
-    editor_picking_staging = new Texture();
-
+    color_texture = new Texture();
+    depth_texture = new Texture();
+    depth_staging = new Texture();
+    index_texture = new Texture();
+    index_staging = new Texture();
     resize({ 1600, 900 });
     resize_staging({ 1, 1 });
 }
@@ -81,9 +80,9 @@ void titian::Camera::deserialize(const Serializer* serializer)
 	resize(res);
 }
 
-void titian::Camera::update_aspect_ratio(const Int2& size)
+void titian::Camera::update_aspect_ratio(const Int2 size)
 {
-    aspect_ratio = size.x / (float)size.y;
+    aspect_ratio = size.x / float(size.y);
 }
 
 void titian::Camera::set_forward(const Float3& dir)
@@ -141,7 +140,7 @@ void titian::Camera::move_down(const float delta_time)
     set_position(position() - m_up * (speed * delta_time));
 }
 
-void titian::Camera::rotate(const Float2& mouse_pos, const Float2& frame_center, const float vertical_angle_limit)
+void titian::Camera::rotate(const Float2 mouse_pos, const Float2 frame_center, const float vertical_angle_limit)
 {
     const Float2 rotation = (mouse_pos - frame_center) * sensitivity;
     const Float3 forward_vert = kl::rotate(m_forward, right(), rotation.y);
@@ -175,7 +174,7 @@ bool titian::Camera::can_see(const Float3& point) const
     return true;
 }
 
-void titian::Camera::resize(const Int2& new_size)
+void titian::Camera::resize(const Int2 new_size)
 {
     if (new_size.x <= 0 || new_size.y <= 0) {
         return;
@@ -185,58 +184,58 @@ void titian::Camera::resize(const Int2& new_size)
     }
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
 
-    dx::TextureDescriptor screen_tex_descriptor{};
-    screen_tex_descriptor.Width = new_size.x;
-    screen_tex_descriptor.Height = new_size.y;
-    screen_tex_descriptor.MipLevels = 1;
-    screen_tex_descriptor.ArraySize = 1;
-    screen_tex_descriptor.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-    screen_tex_descriptor.SampleDesc.Count = 1;
-    screen_tex_descriptor.Usage = D3D11_USAGE_DEFAULT;
-    screen_tex_descriptor.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    screen_texture->graphics_buffer = gpu->create_texture(&screen_tex_descriptor, nullptr);
+    dx::TextureDescriptor screen_desc{};
+    screen_desc.Width = new_size.x;
+    screen_desc.Height = new_size.y;
+    screen_desc.MipLevels = 1;
+    screen_desc.ArraySize = 1;
+    screen_desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    screen_desc.SampleDesc.Count = 1;
+    screen_desc.Usage = D3D11_USAGE_DEFAULT;
+    screen_desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    screen_texture->graphics_buffer = gpu->create_texture(&screen_desc, nullptr);
     screen_texture->create_target_view(nullptr);
     screen_texture->create_shader_view(nullptr);
 
-    dx::TextureDescriptor game_col_descriptor = screen_tex_descriptor;
-    game_color_texture->graphics_buffer = gpu->create_texture(&game_col_descriptor, nullptr);
-    game_color_texture->create_target_view(nullptr);
-    game_color_texture->create_shader_view(nullptr);
+    dx::TextureDescriptor color_desc = screen_desc;
+    color_texture->graphics_buffer = gpu->create_texture(&color_desc, nullptr);
+    color_texture->create_target_view(nullptr);
+    color_texture->create_shader_view(nullptr);
 
-    dx::TextureDescriptor  game_depth_descriptor = game_col_descriptor;
-    game_depth_descriptor.Format = DXGI_FORMAT_R32_TYPELESS;
-    game_depth_descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-    game_depth_texture->graphics_buffer = gpu->create_texture(&game_depth_descriptor, nullptr);
-    game_depth_staging->graphics_buffer = gpu->create_staging_texture(game_depth_texture->graphics_buffer);
+    dx::TextureDescriptor depth_desc = color_desc;
+    depth_desc.Format = DXGI_FORMAT_R32_TYPELESS;
+    depth_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+    depth_texture->graphics_buffer = gpu->create_texture(&depth_desc, nullptr);
+    depth_staging->graphics_buffer = gpu->create_staging_texture(depth_texture->graphics_buffer);
 
-    dx::DepthViewDescriptor game_depth_dv_descriptor{};
-    game_depth_dv_descriptor.Format = DXGI_FORMAT_D32_FLOAT;
-    game_depth_dv_descriptor.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-    game_depth_texture->create_depth_view(&game_depth_dv_descriptor);
+    dx::DepthViewDescriptor depth_dv_desc{};
+    depth_dv_desc.Format = DXGI_FORMAT_D32_FLOAT;
+    depth_dv_desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    depth_texture->create_depth_view(&depth_dv_desc);
 
-    dx::ShaderViewDescriptor game_depth_sv_descriptor{};
-    game_depth_sv_descriptor.Format = DXGI_FORMAT_R32_FLOAT;
-    game_depth_sv_descriptor.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    game_depth_sv_descriptor.Texture2D.MipLevels = 1;
-    game_depth_texture->create_shader_view(&game_depth_sv_descriptor);
+    dx::ShaderViewDescriptor depth_sv_desc{};
+    depth_sv_desc.Format = DXGI_FORMAT_R32_FLOAT;
+    depth_sv_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    depth_sv_desc.Texture2D.MipLevels = 1;
+    depth_texture->create_shader_view(&depth_sv_desc);
 
-    dx::TextureDescriptor editor_picking_descriptor = screen_tex_descriptor;
-    editor_picking_descriptor.Format = DXGI_FORMAT_R32_FLOAT;
-    editor_picking_texture->graphics_buffer = gpu->create_texture(&editor_picking_descriptor, nullptr);
-    editor_picking_texture->create_target_view(nullptr);
-    editor_picking_texture->create_shader_view(nullptr);
+    dx::TextureDescriptor index_desc = screen_desc;
+    index_desc.Format = DXGI_FORMAT_R32_FLOAT;
+    index_texture->graphics_buffer = gpu->create_texture(&index_desc, nullptr);
+    index_texture->create_target_view(nullptr);
+    index_texture->create_shader_view(nullptr);
 }
 
-void titian::Camera::resize_staging(const Int2& new_size)
+void titian::Camera::resize_staging(const Int2 new_size)
 {
     if (new_size.x <= 0 || new_size.y <= 0) {
         return;
     }
-    if (editor_picking_staging->resolution() == new_size) {
+    if (index_staging->resolution() == new_size) {
         return;
     }
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    editor_picking_staging->graphics_buffer = gpu->create_staging_texture(editor_picking_texture->graphics_buffer, new_size);
+    index_staging->graphics_buffer = gpu->create_staging_texture(index_texture->graphics_buffer, new_size);
 }
 
 titian::Int2 titian::Camera::resolution() const
@@ -247,7 +246,7 @@ titian::Int2 titian::Camera::resolution() const
 void titian::Camera::clear_targets()
 {
     kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    gpu->clear_target_view(game_color_texture->target_view, background);
-    gpu->clear_depth_view(game_depth_texture->depth_view, 1.0f, 0xFF);
-    gpu->clear_target_view(editor_picking_texture->target_view, {});
+    gpu->clear_target_view(color_texture->target_view, background);
+    gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
+    gpu->clear_target_view(index_texture->target_view, {});
 }
