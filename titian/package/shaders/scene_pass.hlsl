@@ -181,15 +181,15 @@ PS_OUT p_shader(VS_OUT data)
     float pixel_reflectivity = get_reflectivity(data.textur);
     float3 pixel_dir = normalize(data.world - CAMERA_POSITION);
     
-    float ambient_factor = max(dot(vertex_normal, data.normal), 0.0f);
+    float ambient_factor = saturate(dot(vertex_normal, data.normal));
     float3 ambient = AMBIENT_COLOR * ambient_factor;
     
-    float diffuse_factor = max(dot(-SUN_DIRECTION, data.normal), 0.0f);
+    float diffuse_factor = saturate(dot(-SUN_DIRECTION, data.normal));
     float3 diffuse = SUN_COLOR * diffuse_factor;
     
     float3 refl_sun_dir = reflect(SUN_DIRECTION, data.normal);
-    float specular_factor = max(dot(-pixel_dir, refl_sun_dir), 0.0f);
-    float3 specular = pow(specular_factor, 1.0f / SUN_POINT_SIZE) * clamp(pixel_reflectivity, 0.0f, 1.0f);
+    float specular_factor = saturate(dot(-pixel_dir, refl_sun_dir));
+    float3 specular = pow(specular_factor, 1.0f / SUN_POINT_SIZE) * saturate(pixel_reflectivity);
 
     float3 shadow = get_shadow(data, 1);
     float3 light = ambient + (diffuse + specular) * (1.0f - shadow);
