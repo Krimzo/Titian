@@ -5,7 +5,6 @@
 
 #include "scene/camera.h"
 #include "light/ambient_light.h"
-#include "light/point_light.h"
 #include "light/directional_light.h"
 
 

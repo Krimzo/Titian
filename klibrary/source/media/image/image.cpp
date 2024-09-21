@@ -344,7 +344,7 @@ bool kl::Image::load_from_memory(const void* data, const uint64_t byte_size)
     }
 
     resize({ int(bitmap_data.Width), int(bitmap_data.Height) });
-    memcpy(m_pixels.data(), bitmap_data.Scan0, m_pixels.size() * sizeof(Color));
+    copy<Color>(m_pixels.data(), bitmap_data.Scan0, m_pixels.size());
     return true;
 }
 
@@ -396,7 +396,7 @@ bool kl::Image::save_to_buffer(std::string& buffer, const ImageType type) const
         return false;
     }
 
-    memcpy(bitmap_data.Scan0, m_pixels.data(), m_pixels.size() * sizeof(Color));
+    copy<Color>(bitmap_data.Scan0, m_pixels.data(), m_pixels.size());
     bitmap.UnlockBits(&bitmap_data);
 
     const ComRef<IStream> stream{ SHCreateMemStream(nullptr, 0) };

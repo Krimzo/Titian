@@ -293,9 +293,8 @@ void titian::InterpScript::load_engine_parts()
 		"Plane",
 		sl::constructors<kl::Plane<float>(),
 			kl::Plane<float>(Float3, Float3)>(),
-		"origin", &kl::Plane<float>::origin,
-		"set_normal", &kl::Plane<float>::set_normal,
-		"normal", &kl::Plane<float>::normal,
+		"position", &kl::Plane<float>::position,
+		"normal", sl::overload(&kl::Plane<float>::normal, &kl::Plane<float>::set_normal),
 		"in_front", &kl::Plane<float>::in_front
 	);
 
@@ -303,8 +302,16 @@ void titian::InterpScript::load_engine_parts()
 		"Sphere",
 		sl::constructors<kl::Sphere<float>(),
 			kl::Sphere<float>(Float3, float)>(),
-		"origin", &kl::Sphere<float>::origin,
+		"position", &kl::Sphere<float>::position,
 		"radius", &kl::Sphere<float>::radius
+	);
+
+	m_engine->new_usertype<kl::AABB<float>>(
+		"AABB",
+		sl::constructors<kl::AABB<float>(),
+			kl::AABB<float>(Float3, Float3)>(),
+		"position", &kl::AABB<float>::position,
+		"size", &kl::AABB<float>::size
 	);
 
 	m_engine->new_usertype<kl::Ray<float>>(
@@ -314,9 +321,9 @@ void titian::InterpScript::load_engine_parts()
 		"origin", &kl::Ray<float>::origin,
 		"direction", sl::property(&kl::Ray<float>::direction, &kl::Ray<float>::set_direction),
 		"intersect_plane", &kl::Ray<float>::intersect_plane,
-		"intersect_triangle", &kl::Ray<float>::intersect_triangle,
-		"can_intersect_sphere", &kl::Ray<float>::can_intersect_sphere,
-		"intersect_sphere", &kl::Ray<float>::intersect_sphere
+		"intersect_sphere", &kl::Ray<float>::intersect_sphere,
+		"intersect_aabb", &kl::Ray<float>::intersect_aabb,
+		"intersect_triangle", &kl::Ray<float>::intersect_triangle
 	);
 
 	m_engine->new_usertype<Color>(
@@ -480,11 +487,6 @@ void titian::InterpScript::load_engine_parts()
 		"color", &AmbientLight::color
 	);
 
-	m_engine->new_usertype<PointLight>(
-		"PointLight",
-		"color", &PointLight::color
-	);
-
 	m_engine->new_usertype<DirectionalLight>(
 		"DirectionalLight",
 		"color", &DirectionalLight::color,
@@ -533,7 +535,6 @@ void titian::InterpScript::load_engine_parts()
 		"iterate_entities", &Scene::helper_iterate_entities,
 		"get_camera", &Scene::get_casted<Camera>,
 		"get_ambient_light", &Scene::get_casted<AmbientLight>,
-		"get_point_light", &Scene::get_casted<PointLight>,
 		"get_directional_light", &Scene::get_casted<DirectionalLight>
 	);
 

@@ -3,7 +3,7 @@
 
 void kl::Camera::update_aspect_ratio(const Int2& size)
 {
-    aspect_ratio = (float) size.x / size.y;
+    aspect_ratio = size.x / (float) size.y;
 }
 
 void kl::Camera::set_forward(const Float3& dir)
@@ -33,32 +33,32 @@ kl::Float3 kl::Camera::up() const
 
 void kl::Camera::move_forward(const float delta_time)
 {
-    origin += m_forward * (speed * delta_time);
+    position += m_forward * (speed * delta_time);
 }
 
 void kl::Camera::move_back(const float delta_time)
 {
-    origin -= m_forward * (speed * delta_time);
+    position -= m_forward * (speed * delta_time);
 }
 
 void kl::Camera::move_right(const float delta_time)
 {
-    origin += right() * (speed * delta_time);
+    position += right() * (speed * delta_time);
 }
 
 void kl::Camera::move_left(const float delta_time)
 {
-    origin -= right() * (speed * delta_time);
+    position -= right() * (speed * delta_time);
 }
 
 void kl::Camera::move_up(const float delta_time)
 {
-    origin += m_up * (speed * delta_time);
+    position += m_up * (speed * delta_time);
 }
 
 void kl::Camera::move_down(const float delta_time)
 {
-    origin -= m_up * (speed * delta_time);
+    position -= m_up * (speed * delta_time);
 }
 
 void kl::Camera::rotate(const Float2& mouse_pos, const Float2& frame_center, const float vertical_angle_limit)
@@ -75,7 +75,7 @@ void kl::Camera::rotate(const Float2& mouse_pos, const Float2& frame_center, con
 
 kl::Float4x4 kl::Camera::view_matrix() const
 {
-    return Float4x4::look_at(origin, origin + m_forward, m_up);
+    return Float4x4::look_at(position, position + m_forward, m_up);
 }
 
 kl::Float4x4 kl::Camera::projection_matrix() const

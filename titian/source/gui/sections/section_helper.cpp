@@ -35,7 +35,7 @@ void titian::GUISectionHelper::render_gui()
         im::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2{ 0.0f, 4.0f });
 
         if (im::BeginTable("##HelperTable", column_count)) {
-            for (const auto& type : { DRAG_ENTITY_ENTITY, DRAG_ENTITY_CAMERA, DRAG_ENTITY_AMBIENT, DRAG_ENTITY_POINT, DRAG_ENTITY_DIRECTIONAL }) {
+            for (const auto& type : { DRAG_ENTITY_ENTITY, DRAG_ENTITY_CAMERA, DRAG_ENTITY_AMBIENT, DRAG_ENTITY_DIRECTIONAL }) {
                 im::TableNextColumn();
                 handle_basic_entry(type);
             }

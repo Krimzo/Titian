@@ -6,7 +6,6 @@
 
 #include "scene/camera.h"
 #include "light/ambient_light.h"
-#include "light/point_light.h"
 #include "light/directional_light.h"
 
 
@@ -21,7 +20,6 @@ namespace titian {
         void display_entity_info(Scene* scene, const StringView& entity_name, Entity* entity);
         void display_camera_special_info(Scene* scene, Camera* camera);
         void display_ambient_light_special_info(Scene* scene, AmbientLight* light);
-        void display_point_light_special_info(Scene* scene, PointLight* light);
         void display_directional_light_special_info(Scene* scene, DirectionalLight* light);
 
         void edit_entity_transform(Scene* scene, Entity* entity);

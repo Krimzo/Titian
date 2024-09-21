@@ -19,7 +19,6 @@ kl::Window::Window(const std::string_view& name, const Int2& size)
     assert(RegisterClassExA(&window_class), "Failed to register window class");
 
     m_window_style = WS_OVERLAPPEDWINDOW;
-
     RECT size_buffer = { 0, 0, (LONG) size.x, (LONG) size.y };
     AdjustWindowRect(&size_buffer, m_window_style, false);
 
@@ -89,7 +88,8 @@ bool kl::Window::is_resizeable() const
 
 void kl::Window::set_resizeable(const bool enabled)
 {
-    if (m_in_fullscreen) { return; }
+    if (m_in_fullscreen)
+        return;
 
     if (!m_resizeable && enabled) {
         SetWindowLongA(m_window, GWL_STYLE, GetWindowLongA(m_window, GWL_STYLE) | WS_SIZEBOX | WS_MAXIMIZEBOX);
@@ -99,7 +99,6 @@ void kl::Window::set_resizeable(const bool enabled)
         SetWindowLongA(m_window, GWL_STYLE, GetWindowLongA(m_window, GWL_STYLE) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX);
         m_window_style = GetWindowLongA(m_window, GWL_STYLE);
     }
-
     m_resizeable = enabled;
 }
 
@@ -170,7 +169,6 @@ void kl::Window::set_fullscreen(const bool enabled)
         m_window_style = GetWindowLongA(m_window, GWL_STYLE);
         m_window_ex_style = GetWindowLongA(m_window, GWL_EXSTYLE);
     }
-
     if (m_in_fullscreen = enabled) {
         SetWindowLongA(m_window, GWL_STYLE, m_window_style & ~(WS_CAPTION | WS_THICKFRAME));
         SetWindowLongA(m_window, GWL_EXSTYLE, m_window_ex_style & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));

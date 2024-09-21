@@ -11,8 +11,9 @@
 #include "math/matrix/matrix4x4.h"
 #include "math/triangle/vertex.h"
 #include "math/triangle/triangle.h"
-#include "math/ray/plane.h"
+#include "math/ray/aabb.h"
 #include "math/ray/sphere.h"
+#include "math/ray/plane.h"
 #include "math/ray/ray.h"
 
 

@@ -160,7 +160,6 @@
     <ClCompile Include="source\layer\layer_stack.cpp" />
     <ClCompile Include="source\light\ambient_light.cpp" />
     <ClCompile Include="source\light\directional_light.cpp" />
-    <ClCompile Include="source\light\point_light.cpp" />
     <ClCompile Include="source\render\pass\display_pass.cpp" />
     <ClCompile Include="source\render\pass\editor_pass.cpp" />
     <ClCompile Include="source\render\pass\outline_pass.cpp" />
@@ -237,7 +236,6 @@
     <ClInclude Include="source\layer\layer_stack.h" />
     <ClInclude Include="source\light\ambient_light.h" />
     <ClInclude Include="source\light\directional_light.h" />
-    <ClInclude Include="source\light\point_light.h" />
     <ClInclude Include="source\render\pass\display_pass.h" />
     <ClInclude Include="source\render\pass\editor_pass.h" />
     <ClInclude Include="source\render\pass\outline_pass.h" />

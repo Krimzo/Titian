@@ -242,7 +242,7 @@ void kl::GPU12::copy(const dx12::Resource& destination, const void* source, cons
 {
 	void* buffer = nullptr;
 	destination->Map(0, nullptr, &buffer) >> verify_result;
-	memcpy(buffer, source, byte_size);
+	kl::copy<byte>(buffer, source, byte_size);
 	destination->Unmap(0, nullptr);
 }
 
@@ -250,7 +250,7 @@ void kl::GPU12::copy(void* destination, const dx12::Resource& source, const UINT
 {
 	void* buffer = nullptr;
 	source->Map(0, nullptr, &buffer) >> verify_result;
-	memcpy(destination, buffer, byte_size);
+	kl::copy<byte>(destination, buffer, byte_size);
 	source->Unmap(0, nullptr);
 }
 

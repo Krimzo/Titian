@@ -8,7 +8,7 @@
 namespace kl {
     struct Camera
     {
-        Float3 origin;
+        Float3 position;
 
         float aspect_ratio = 1.7778f;
         float field_of_view = 75.0f;

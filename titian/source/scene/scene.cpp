@@ -171,9 +171,6 @@ void titian::Scene::deserialize(const Serializer* serializer)
             else if (typeid(AmbientLight).name() == entity_type) {
                 entity = new AmbientLight();
             }
-            else if (typeid(PointLight).name() == entity_type) {
-                entity = new PointLight();
-            }
             else if (typeid(DirectionalLight).name() == entity_type) {
                 entity = new DirectionalLight();
             }
@@ -603,7 +600,7 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, 
             auto& bone = mesh->mBones[i];
             auto& offset_matrix = mesh_object->bone_matrices[i];
             for (int j = 0; j < 4; j++) {
-                memcpy(&offset_matrix(0, j), bone->mOffsetMatrix[j], 4 * sizeof(float));
+                kl::copy<float>(&offset_matrix(0, j), bone->mOffsetMatrix[j], 4);
             }
         }
 
@@ -619,7 +616,7 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, 
 				}
             }
             for (int i = 0; i < 4; i++) {
-                memcpy(&skeleton_node->transformation(0, i), node->mTransformation[i], 4 * sizeof(float));
+                kl::copy<float>(&skeleton_node->transformation(0, i), node->mTransformation[i], 4);
             }
             skeleton_node->children.resize(node->mNumChildren);
 			for (uint32_t i = 0; i < node->mNumChildren; i++) {
@@ -702,18 +699,15 @@ titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScen
 titian::Ref<titian::Texture> titian::Scene::load_assimp_texture(const aiScene* scene, const aiTexture* texture)
 {
     Ref texture_object = new Texture();
-
     if (texture->mHeight == 0) {
-        texture_object->data_buffer.load_from_memory((byte*) texture->pcData, texture->mWidth);
+        texture_object->data_buffer.load_from_memory(texture->pcData, texture->mWidth);
 	}
     else {
         texture_object->data_buffer.resize({ (int) texture->mWidth, (int) texture->mHeight });
-        memcpy(texture_object->data_buffer.ptr(), texture->pcData, (size_t) texture->mWidth * texture->mHeight * 4);
+        kl::copy<Color>(texture_object->data_buffer.ptr(), texture->pcData, texture_object->data_buffer.pixel_count());
     }
-
     texture_object->reload_as_2D();
     texture_object->create_shader_view();
-
     return texture_object;
 }
 

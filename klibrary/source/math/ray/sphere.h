@@ -7,14 +7,14 @@ namespace kl {
     template<typename T = float>
     struct Sphere
     {
-        Vector3<T> origin;
+        Vector3<T> position;
         T radius = {};
 
         constexpr Sphere()
         {}
 
-        constexpr Sphere(const Vector3<T>& origin, T radius)
-			: origin(origin) , radius(radius)
+        constexpr Sphere(const Vector3<T>& position, T radius)
+			: position(position) , radius(radius)
         {}
     };
 }
@@ -23,7 +23,7 @@ namespace kl {
     template<typename T>
     std::ostream& operator<<(std::ostream& stream, const Sphere<T>& sphere)
     {
-        stream << "{" << sphere.origin << ", " << sphere.radius << "}";
+        stream << "{" << sphere.position << ", " << sphere.radius << "}";
         return stream;
     }
 }

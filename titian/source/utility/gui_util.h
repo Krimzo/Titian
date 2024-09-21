@@ -33,7 +33,6 @@ namespace titian {
     inline const String DRAG_ENTITY_ENTITY = "entity";
     inline const String DRAG_ENTITY_CAMERA = "camera";
     inline const String DRAG_ENTITY_AMBIENT = "ambient";
-    inline const String DRAG_ENTITY_POINT = "point";
     inline const String DRAG_ENTITY_DIRECTIONAL = "directional";
 }
 

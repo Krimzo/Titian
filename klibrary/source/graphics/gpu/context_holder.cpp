@@ -145,7 +145,7 @@ void kl::ContextHolder::read_from_buffer(void* cpu_buffer, const dx::Buffer& gpu
 {
     dx::MappedSubresourceDescriptor mapped_subresource{};
     m_context->Map(gpu_buffer.get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource) >> verify_result;
-    memcpy(cpu_buffer, mapped_subresource.pData, byte_size);
+    copy<byte>(cpu_buffer, mapped_subresource.pData, byte_size);
     m_context->Unmap(gpu_buffer.get(), 0);
 }
 
@@ -153,7 +153,7 @@ void kl::ContextHolder::write_to_buffer(const dx::Buffer& gpu_buffer, const void
 {
     dx::MappedSubresourceDescriptor mapped_subresource{};
     m_context->Map(gpu_buffer.get(), 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, NULL, &mapped_subresource) >> verify_result;
-    memcpy(mapped_subresource.pData, cpu_buffer, byte_size);
+    copy<byte>(mapped_subresource.pData, cpu_buffer, byte_size);
     m_context->Unmap(gpu_buffer.get(), 0);
 }
 
@@ -167,7 +167,7 @@ void kl::ContextHolder::read_from_texture(void* cpu_buffer, const dx::Texture& g
     for (int y = 0; y < min_size.y; y++) {
         BYTE* out_addr = out_ptr + (y * cpu_size.x * element_size);
         const BYTE* in_addr = in_ptr + (y * mapped_subresource.RowPitch);
-        memcpy(out_addr, in_addr, (size_t) min_size.x * element_size);
+        copy<byte>(out_addr, in_addr, min_size.x * uint64_t(element_size));
     }
     m_context->Unmap(gpu_buffer.get(), 0);
 }
@@ -182,7 +182,7 @@ void kl::ContextHolder::write_to_texture(const dx::Texture& gpu_buffer, const vo
     for (int y = 0; y < min_size.y; y++) {
         BYTE* out_addr = out_ptr + (y * mapped_subresource.RowPitch);
         const BYTE* in_addr = in_ptr + (y * cpu_size.x * element_size);
-        memcpy(out_addr, in_addr, (size_t) min_size.x * element_size);
+        copy<byte>(out_addr, in_addr, min_size.x * uint64_t(element_size));
     }
     m_context->Unmap(gpu_buffer.get(), 0);
 }

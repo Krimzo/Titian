@@ -332,10 +332,9 @@ aiVector3f titian::Animation::interpolate_scaling(const float time_ticks, const 
 titian::Float4x4 titian::Animation::make_animation_matrix(const aiVector3f& translation, const aiQuaternion& rotation, const aiVector3f& scaling) const
 {
 	const aiMatrix4x4 matrix{ scaling, rotation, translation };
-
 	Float4x4 result;
 	for (int i = 0; i < 4; i++) {
-		memcpy(&result(0, i), matrix[i], sizeof(float) * 4);
+		kl::copy<float>(&result(0, i), matrix[i], 4);
 	}
 	return result;
 }

@@ -218,7 +218,6 @@ namespace titian {
 
 		serial_generator_helper<IsTypeNode<Entity, Camera>>(),
 		serial_generator_helper<IsTypeNode<Entity, AmbientLight>>(),
-		serial_generator_helper<IsTypeNode<Entity, PointLight>>(),
 		serial_generator_helper<IsTypeNode<Entity, DirectionalLight>>(),
 
 		serial_generator_helper<SqrtNode<float>>(),
@@ -499,7 +498,6 @@ namespace titian {
 		{
 		ui_generator_helper<IsTypeNode<Entity, Camera>>("Is Camera"),
 		ui_generator_helper<IsTypeNode<Entity, AmbientLight>>("Is Ambient Light"),
-		ui_generator_helper<IsTypeNode<Entity, PointLight>>("Is Point Light"),
 		ui_generator_helper<IsTypeNode<Entity, DirectionalLight>>("Is Directional Light"),
 		},
 		},

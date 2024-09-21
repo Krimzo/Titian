@@ -139,7 +139,7 @@ bool kl::Audio::load_from_memory(const void* data, const uint64_t byte_size)
 		media_buffer->Lock(&sample_data, nullptr, &sample_byte_size) >> verify_result;
 		const int old_size = (int) this->size();
 		this->resize(old_size + (sample_byte_size / sizeof(float)));
-		memcpy(this->data() + old_size, sample_data, sample_byte_size);
+		copy<byte>(this->data() + old_size, sample_data, sample_byte_size);
 	}
 	return true;
 }
@@ -216,7 +216,7 @@ bool kl::Audio::save_to_buffer(std::string& buffer, const AudioType type) const
 
 		BYTE* out_buffer = nullptr;
 		media_buffer->Lock(&out_buffer, nullptr, nullptr) >> verify_result;
-		memcpy(out_buffer, data() + i, sample_byte_size);
+		copy<byte>(out_buffer, data() + i, sample_byte_size);
 		media_buffer->Unlock() >> verify_result;
 
 		media_sample->SetSampleDuration((sample_size * 10'000'000LL) / sample_rate) >> verify_result;

@@ -50,10 +50,6 @@ void titian::GUISectionEntityProperties::display_entity_info(Scene* scene, const
         im::Separator();
         display_ambient_light_special_info(scene, light);
     }
-    else if (PointLight* light = dynamic_cast<PointLight*>(entity)) {
-        im::Separator();
-        display_point_light_special_info(scene, light);
-    }
     else if (DirectionalLight* light = dynamic_cast<DirectionalLight*>(entity)) {
         im::Separator();
         display_directional_light_special_info(scene, light);
@@ -153,12 +149,6 @@ void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scen
 void titian::GUISectionEntityProperties::display_ambient_light_special_info(Scene* scene, AmbientLight* light)
 {
     im::Text("Ambient Light Special Info");
-    im::ColorEdit3("Color", &light->color.x);
-}
-
-void titian::GUISectionEntityProperties::display_point_light_special_info(Scene* scene, PointLight* light)
-{
-    im::Text("Point Light Special Info");
     im::ColorEdit3("Color", &light->color.x);
 }
 

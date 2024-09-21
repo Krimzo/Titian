@@ -49,6 +49,7 @@
     <ClInclude Include="source\math\matrix\matrix2x2.h" />
     <ClInclude Include="source\math\matrix\matrix3x3.h" />
     <ClInclude Include="source\math\matrix\matrix4x4.h" />
+    <ClInclude Include="source\math\ray\aabb.h" />
     <ClInclude Include="source\math\ray\plane.h" />
     <ClInclude Include="source\math\ray\ray.h" />
     <ClInclude Include="source\math\ray\sphere.h" />
@@ -65,7 +66,7 @@
     <ClInclude Include="source\media\video\video_reader.h" />
     <ClInclude Include="source\media\video\video_writer.h" />
     <ClInclude Include="source\memory\files\file.h" />
-    <ClInclude Include="source\memory\linking\dll.h" />
+    <ClInclude Include="source\memory\files\dll.h" />
     <ClInclude Include="source\memory\memory.h" />
     <ClInclude Include="source\memory\safety\ref.h" />
     <ClInclude Include="source\memory\safety\wrap.h" />
@@ -74,7 +75,6 @@
     <ClInclude Include="source\render\components\texture.h" />
     <ClInclude Include="source\render\light\ambient_light.h" />
     <ClInclude Include="source\render\light\directional_light.h" />
-    <ClInclude Include="source\render\light\point_light.h" />
     <ClInclude Include="source\render\render.h" />
     <ClInclude Include="source\render\scene\camera.h" />
     <ClInclude Include="source\render\scene\entity.h" />
@@ -127,7 +127,7 @@
     <ClCompile Include="source\media\video\video_reader.cpp" />
     <ClCompile Include="source\media\video\video_writer.cpp" />
     <ClCompile Include="source\memory\files\file.cpp" />
-    <ClCompile Include="source\memory\linking\dll.cpp" />
+    <ClCompile Include="source\memory\files\dll.cpp" />
     <ClCompile Include="source\render\components\mesh.cpp" />
     <ClCompile Include="source\render\components\texture.cpp" />
     <ClCompile Include="source\render\light\directional_light.cpp" />

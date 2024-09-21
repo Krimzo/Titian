@@ -113,7 +113,7 @@ bool kl::VideoWriter::add_frame(const Image& frame)
     const Color* in_buffer = frame.ptr();
     media_buffer->Lock((BYTE**) &out_buffer, nullptr, nullptr) >> verify_result;
     for (uint32_t y = 0; y < m_height; y++) {
-        memcpy(out_buffer + (m_height - 1 - y) * m_width, in_buffer + y * m_width, frame_byte_width);
+        copy<byte>(out_buffer + (m_height - 1 - y) * m_width, in_buffer + y * m_width, frame_byte_width);
     }
     media_buffer->Unlock() >> verify_result;
 
@@ -161,7 +161,7 @@ bool kl::VideoWriter::add_audio(const Audio& audio)
 
     BYTE* out_buffer = nullptr;
     media_buffer->Lock(&out_buffer, nullptr, nullptr) >> verify_result;
-    memcpy(out_buffer, audio.data(), sample_byte_size);
+    copy<byte>(out_buffer, audio.data(), sample_byte_size);
     media_buffer->Unlock() >> verify_result;
 
     if (FAILED(media_sample->SetSampleTime((LONGLONG) audio_duration_100ns()))) {

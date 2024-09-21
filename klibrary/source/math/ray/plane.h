@@ -7,13 +7,13 @@ namespace kl {
     template<typename T = float>
     struct Plane
     {
-        Vector3<T> origin;
+        Vector3<T> position;
 
         constexpr Plane()
         {}
 
-        constexpr Plane(const Vector3<T>& origin, const Vector3<T>& normal)
-			: origin(origin)
+        constexpr Plane(const Vector3<T>& position, const Vector3<T>& normal)
+			: position(position)
         {
 			set_normal(normal);
         }
@@ -30,7 +30,7 @@ namespace kl {
 
         constexpr bool in_front(const Vector3<T>& point) const
         {
-            const T result = dot(point - origin, m_normal);
+            const T result = dot(point - position, m_normal);
             return result >= T(0);
         }
 
@@ -43,7 +43,7 @@ namespace kl {
     template<typename T>
     std::ostream& operator<<(std::ostream& stream, const Plane<T>& plane)
     {
-        stream << "{" << plane.origin << ", " << plane.normal() << "}";
+        stream << "{" << plane.position << ", " << plane.normal() << "}";
         return stream;
     }
 }

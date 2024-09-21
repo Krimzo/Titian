@@ -4,7 +4,6 @@
 #include "render/scene/entity.h"
 #include "render/light/ambient_light.h"
 #include "render/light/directional_light.h"
-#include "render/light/point_light.h"
 
 
 namespace kl {

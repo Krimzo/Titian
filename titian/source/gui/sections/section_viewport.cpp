@@ -38,6 +38,9 @@ void titian::GUISectionViewport::render_gui()
 
         const auto get_mouse_3d = [&]
         {
+            if (!main_camera) {
+                return Float3{};
+            }
             if (auto pos = read_depth_texture(window_mouse_position())) {
                 return pos.value();
             }
@@ -84,11 +87,6 @@ void titian::GUISectionViewport::render_gui()
             }
             else if (entity_type.value() == DRAG_ENTITY_AMBIENT) {
                 Ref entity = new AmbientLight();
-                entity->set_position(position);
-                scene->add_entity(name, entity);
-            }
-            else if (entity_type.value() == DRAG_ENTITY_POINT) {
-                Ref entity = new PointLight();
                 entity->set_position(position);
                 scene->add_entity(name, entity);
             }
@@ -287,17 +285,17 @@ titian::Optional<titian::Float3> titian::GUISectionViewport::read_depth_texture(
 
     gpu->copy_resource(main_camera->depth_staging->graphics_buffer, main_camera->depth_texture->graphics_buffer);
 
-    float value = 0.0f;
+    float depth = 0.0f;
     gpu->map_read_resource(main_camera->depth_staging->graphics_buffer, [&](const byte* ptr, const uint32_t pitch)
     {
-        memcpy(&value, ptr + (coords.x * sizeof(float)) + (coords.y * pitch), sizeof(float));
+        kl::copy<float>(&depth, ptr + coords.x * sizeof(float) + coords.y * pitch, 1);
     });
-    if (value <= 0.0f || value >= 1.0f)
+    if (depth <= 0.0f || depth >= 1.0f)
         return std::nullopt;
 
-    Float4 ndc = { window_to_ndc(coords), value, 1.0f };
-    ndc = inverse(main_camera->camera_matrix()) * ndc;
-    return { ndc.xyz() / ndc.w };
+    Float4 position = { window_to_ndc(coords), depth, 1.0f };
+    position = kl::inverse(main_camera->camera_matrix()) * position;
+    return { position.xyz() / position.w };
 }
 
 void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)

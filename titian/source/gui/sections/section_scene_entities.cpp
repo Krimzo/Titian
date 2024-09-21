@@ -33,11 +33,6 @@ void titian::GUISectionSceneEntities::render_gui()
 						scene->add_entity(name, entity);
 						im::CloseCurrentPopup();
 					}
-					if (im::MenuItem("New Point Light")) {
-						Ref entity = new PointLight();
-						scene->add_entity(name, entity);
-						im::CloseCurrentPopup();
-					}
 					if (im::MenuItem("New Directional Light")) {
 						Ref entity = new DirectionalLight();
 						scene->add_entity(name, entity);
