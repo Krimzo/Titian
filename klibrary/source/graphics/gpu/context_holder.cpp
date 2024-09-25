@@ -289,9 +289,8 @@ void kl::ContextHolder::draw(const UINT vertex_count, const UINT start_index) co
 
 void kl::ContextHolder::draw(const dx::Buffer& vertex_buffer, const D3D_PRIMITIVE_TOPOLOGY draw_type, const UINT stride) const
 {
-    if (!vertex_buffer) {
+    if (!vertex_buffer)
         return;
-    }
     set_draw_type(draw_type);
     bind_vertex_buffer(vertex_buffer, 0, 0, stride);
     draw(vertex_buffer_size(vertex_buffer, stride), 0);

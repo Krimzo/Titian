@@ -19,14 +19,12 @@ namespace kl::dx12 {
 namespace kl {
 	struct GPU12 : NoCopy, ShaderCompiler
 	{
-		static constexpr UINT BACK_BUFFER_COUNT = 2;
-
 		GPU12Queue queue{};
 		GPU12Commands commands{};
 		GPU12Fence fence{};
 
-		GPU12(HWND window, bool debug = false);
-		~GPU12();
+		GPU12(HWND window, bool debug = IS_DEBUG);
+		virtual ~GPU12();
 
 		dx12::Device device() const;
 		dx12::SwapChain chain() const;
@@ -138,7 +136,7 @@ namespace kl {
 		dx12::DXGIFactory m_dxgi_factory{};
 		dx12::SwapChain m_swap_chain{};
 
-		dx12::Resource m_back_buffers[BACK_BUFFER_COUNT] = {};
+		dx12::Resource m_back_buffers[GPU_BUFFER_COUNT] = {};
 		dx12::DescriptorHeap m_rtv_descriptor_heap{};
 		UINT m_rtv_descriptor_size{};
 	};

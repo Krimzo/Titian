@@ -81,7 +81,7 @@ kl::dx12::SwapChain kl::GPU12::create_swap_chain(const HWND window, const dx12::
 			.Quality = 0,
 		},
 		.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
-		.BufferCount = BACK_BUFFER_COUNT,
+		.BufferCount = GPU_BUFFER_COUNT,
 		.Scaling = DXGI_SCALING_STRETCH,
 		.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD,
 		.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED,
@@ -165,11 +165,11 @@ void kl::GPU12::resize(const Int2& size)
 	m_rtv_descriptor_size = 0;
 
 	m_swap_chain->ResizeBuffers(0, (UINT) size.x, (UINT) size.y, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING);
-	m_rtv_descriptor_heap = create_descriptor_heap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, BACK_BUFFER_COUNT);
+	m_rtv_descriptor_heap = create_descriptor_heap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, GPU_BUFFER_COUNT);
 	m_rtv_descriptor_size = get_descriptor_size(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	dx12::DescriptorHandle rtv_handle = m_rtv_descriptor_heap->GetCPUDescriptorHandleForHeapStart();
-	for (int i = 0; i < BACK_BUFFER_COUNT; i++) {
+	for (int i = 0; i < GPU_BUFFER_COUNT; i++) {
 		m_swap_chain->GetBuffer(i, IID_PPV_ARGS(&m_back_buffers[i])) >> verify_result;
 		m_device->CreateRenderTargetView(m_back_buffers[i].get(), nullptr, rtv_handle);
 		rtv_handle.ptr += m_rtv_descriptor_size;

@@ -7,9 +7,9 @@
 namespace titian {
 	struct AppLayer : Layer
 	{
-		kl::Window window{ "Titian App", {1600, 900} };
-		kl::GPU gpu{ HWND(window), kl::IS_DEBUG, true, false };
-		kl::Timer timer{};
+		kl::Window window{ "Titian App" };
+		kl::GPU gpu{ window };
+		kl::Timer timer;
 
 		px::PxDefaultAllocator m_allocator = {};
 		px::PxDefaultErrorCallback m_error_callback = {};

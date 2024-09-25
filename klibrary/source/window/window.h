@@ -23,7 +23,7 @@ namespace kl {
         std::vector<std::function<void(Int2)>> on_resize;
 		std::vector<std::function<void(Int2)>> on_move;
 
-        Window(const std::string_view& name, const Int2& size);
+        Window(const std::string_view& name);
         virtual ~Window();
 
         operator HWND() const;
@@ -47,6 +47,7 @@ namespace kl {
         bool is_maximized() const;
         bool is_minimized() const;
         bool is_restored() const;
+        bool is_focused() const;
 
         bool in_fullscreen() const;
         void set_fullscreen(bool enabled);

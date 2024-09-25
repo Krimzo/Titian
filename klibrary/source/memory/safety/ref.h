@@ -41,25 +41,31 @@ namespace kl {
 
         Ref& operator=(const Ref& other)
         {
-            if (other.m_instance != m_instance) {
-                free();
-                m_instance = other.m_instance;
-                m_count = other.m_count;
-                increase_count();
-            }
+            if (this == _addr(other))
+				return *this;
+
+            free();
+            m_instance = other.m_instance;
+            m_count = other.m_count;
+            increase_count();
             return *this;
         }
 
         Ref(Ref&& other) noexcept
+            : m_instance(other.m_instance), m_count(other.m_count)
         {
-            *this = other;
-            other.free();
+            other.clear();
         }
 
         Ref& operator=(Ref&& other) noexcept
         {
-            *this = other;
-            other.free();
+			if (this == _addr(other))
+				return *this;
+
+            free();
+            m_instance = other.m_instance;
+            m_count = other.m_count;
+            other.clear();
             return *this;
         }
 
@@ -79,9 +85,8 @@ namespace kl {
         Ref<D, C> as() const
         {
             D* derived = dynamic_cast<D*>(m_instance);
-            if (!derived) {
+            if (!derived)
                 return {};
-            }
 
             Ref<D, C> result;
             result.m_instance = derived;

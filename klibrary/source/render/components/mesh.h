@@ -9,11 +9,11 @@ namespace kl {
         std::vector<Vertex<float>> data_buffer;
         dx::Buffer graphics_buffer;
 
-        Mesh(kl::GPU* gpu);
+        Mesh(kl::GPU& gpu);
 
         void reload();
 
     private:
-        GPU* m_gpu = nullptr;
+        GPU& m_gpu;
     };
 }

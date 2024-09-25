@@ -17,7 +17,7 @@ namespace kl {
 
         bool is_cube = false;
 
-        Texture(GPU* gpu);
+        Texture(GPU& gpu);
 
         void reload(bool has_unordered_access = false, bool is_target = false);
         bool reload_as_cube();
@@ -28,6 +28,6 @@ namespace kl {
         void create_access_view(const dx::AccessViewDescriptor* descriptor = nullptr);
 
     private:
-        GPU* m_gpu = nullptr;
+        GPU& m_gpu;
     };
 }

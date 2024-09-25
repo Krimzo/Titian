@@ -6,6 +6,11 @@ void kl::Camera::update_aspect_ratio(const Int2& size)
     aspect_ratio = size.x / (float) size.y;
 }
 
+kl::Ray<float> kl::Camera::ray() const
+{
+    return { position, m_forward };
+}
+
 void kl::Camera::set_forward(const Float3& dir)
 {
     m_forward = normalize(dir);
@@ -65,11 +70,9 @@ void kl::Camera::rotate(const Float2& mouse_pos, const Float2& frame_center, con
 {
     const Float2 rotation = (mouse_pos - frame_center) * sensitivity;
     const Float3 forward_vert = kl::rotate(m_forward, right(), rotation.y);
-
     if (abs(angle(forward_vert, m_up) - 90.0f) <= vertical_angle_limit) {
         set_forward(forward_vert);
     }
-
     set_forward(kl::rotate(m_forward, m_up, rotation.x));
 }
 

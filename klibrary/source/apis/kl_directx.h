@@ -24,6 +24,13 @@
 
 
 namespace kl {
+    constexpr const void* _addr(const auto& obj)
+    {
+        return &reinterpret_cast<const byte&>(obj);
+    }
+}
+
+namespace kl {
     template<typename T>
 	    requires std::is_base_of_v<IUnknown, T>
     struct ComRef
@@ -42,10 +49,8 @@ namespace kl {
 
         void free()
         {
-            if (m_instance) {
-                m_instance->Release();
-                m_instance = nullptr;
-            }
+            destroy();
+            clear();
         }
 
         ComRef(const ComRef& other)
@@ -56,39 +61,45 @@ namespace kl {
 
         ComRef& operator=(const ComRef& other)
         {
-            if (other.m_instance != m_instance) {
-                free();
-                m_instance = other.m_instance;
-                increase_count();
-            }
+			if (this == _addr(other))
+				return *this;
+
+            free();
+            m_instance = other.m_instance;
+            increase_count();
             return *this;
         }
 
         ComRef(ComRef&& other) noexcept
+            : m_instance(other.m_instance)
         {
-            *this = other;
-            other.free();
+            other.clear();
         }
 
         ComRef& operator=(ComRef&& other) noexcept
         {
-            *this = other;
-            other.free();
+			if (this == _addr(other))
+				return *this;
+
+            free();
+            m_instance = other.m_instance;
+            other.clear();
             return *this;
         }
 
         template<typename B>
-            requires std::is_base_of_v<B, T>
+            requires (not std::is_same_v<B, T> and std::is_base_of_v<B, T>)
         operator ComRef<B>() const
         {
             increase_count();
             return ComRef<B>{m_instance};
         }
 
-        template<typename U>
-        HRESULT as(ComRef<U>& out) const
+        template<typename D>
+            requires (not std::is_same_v<D, T>)
+        HRESULT as(ComRef<D>& out) const
         {
-            return m_instance->QueryInterface(__uuidof(U), (void**) &out);
+            return m_instance->QueryInterface(__uuidof(D), (void**) &out);
         }
 
         T** operator&()
@@ -130,6 +141,18 @@ namespace kl {
             if (m_instance) {
                 m_instance->AddRef();
             }
+        }
+
+        void destroy()
+        {
+            if (m_instance) {
+                m_instance->Release();
+            }
+        }
+
+        void clear()
+        {
+            m_instance = nullptr;
         }
     };
 }

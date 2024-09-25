@@ -19,11 +19,10 @@ kl::File::operator bool() const
     return (bool) m_file;
 }
 
-void kl::File::open(const std::string_view& filepath, bool write)
+void kl::File::open(const std::string_view& filepath, const bool write)
 {
     close();
-    errno_t error = fopen_s(&m_file, filepath.data(), write ? "wb" : "rb");
-    verify(!error, "Failed to open file \"", filepath, "\"");
+    fopen_s(&m_file, filepath.data(), write ? "wb" : "rb");
 }
 
 void kl::File::close()

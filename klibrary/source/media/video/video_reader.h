@@ -33,6 +33,6 @@ namespace kl {
         float m_fps = 0.0f;
 
         ComRef<IMFSourceReader> m_reader;
-        Ref<GPU> m_gpu = nullptr;
+        Ref<VideoGPU> m_gpu;
     };
 }

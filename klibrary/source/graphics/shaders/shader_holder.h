@@ -8,7 +8,7 @@ namespace kl {
 }
 
 namespace kl {
-    enum class ShaderType : int32_t
+    enum struct ShaderType : int32_t
     {
         VERTEX = 0,
         PIXEL,

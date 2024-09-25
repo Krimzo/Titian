@@ -85,7 +85,7 @@ namespace kl {
 
 		constexpr const Vector2<T>& xy() const
 		{
-			return reinterpret_cast<Vector2<T>&>(x);
+			return reinterpret_cast<const Vector2<T>&>(x);
 		}
 
 		constexpr Vector2<T>& yz()
@@ -95,7 +95,7 @@ namespace kl {
 
 		constexpr const Vector2<T>& yz() const
 		{
-			return reinterpret_cast<Vector2<T>&>(y);
+			return reinterpret_cast<const Vector2<T>&>(y);
 		}
 
 		constexpr Vector2<T>& zw()
@@ -105,7 +105,7 @@ namespace kl {
 
 		constexpr const Vector2<T>& zw() const
 		{
-			return reinterpret_cast<Vector2<T>&>(z);
+			return reinterpret_cast<const Vector2<T>&>(z);
 		}
 
 		constexpr Vector3<T>& xyz()
@@ -115,7 +115,7 @@ namespace kl {
 
 		constexpr const Vector3<T>& xyz() const
 		{
-			return reinterpret_cast<Vector3<T>&>(x);
+			return reinterpret_cast<const Vector3<T>&>(x);
 		}
 
 		constexpr Vector3<T>& yzw()
@@ -125,7 +125,7 @@ namespace kl {
 
 		constexpr const Vector3<T>& yzw() const
 		{
-			return reinterpret_cast<Vector3<T>&>(y);
+			return reinterpret_cast<const Vector3<T>&>(y);
 		}
 
 		constexpr bool operator==(const Vector4<T>& other) const

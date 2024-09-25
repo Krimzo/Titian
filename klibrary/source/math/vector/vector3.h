@@ -72,7 +72,7 @@ namespace kl {
 
 		constexpr const Vector2<T>& xy() const
 		{
-			return reinterpret_cast<Vector2<T>&>(x);
+			return reinterpret_cast<const Vector2<T>&>(x);
 		}
 
 		constexpr Vector2<T>& yz()
@@ -82,7 +82,7 @@ namespace kl {
 
 		constexpr const Vector2<T>& yz() const
 		{
-			return reinterpret_cast<Vector2<T>&>(y);
+			return reinterpret_cast<const Vector2<T>&>(y);
 		}
 
 		constexpr bool operator==(const Vector3<T>& other) const

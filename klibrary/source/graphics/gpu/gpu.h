@@ -7,22 +7,16 @@
 
 
 namespace kl {
-    enum struct GPUCreationType : int32_t
-    {
-        NONE = 0,
-        RENDER,
-        COMPUTE,
-    };
-}
-
-namespace kl {
     struct GPU : DeviceHolder, ContextHolder, ShaderCompiler, TextRaster
     {
-        const GPUCreationType creation_type = GPUCreationType::NONE;
+		inline GPU(HWND window)
+		    : GPU(window, IS_DEBUG, false)
+        {}
 
-        GPU(bool debug = false, bool single_threaded = true, bool video_support = false);
-        GPU(HWND window, bool debug = false, bool single_threaded = true, bool video_support = false);
-        virtual ~GPU();
+        virtual ~GPU() noexcept
+        {
+            if (m_chain) set_fullscreen(false);
+        }
 
         dx::Device device() const;
         dx::Context context() const;
@@ -62,10 +56,22 @@ namespace kl {
 
         void draw_text() const;
 
+    protected:
+        GPU(HWND window, bool debug, bool video_support);
+
     private:
         dx::Chain m_chain;
         dx::Texture m_depth_textures[GPU_BUFFER_COUNT] = {};
         dx::TargetView m_target_views[GPU_BUFFER_COUNT] = {};
         dx::DepthView m_depth_views[GPU_BUFFER_COUNT] = {};
+    };
+}
+
+namespace kl {
+    struct VideoGPU : GPU
+    {
+        inline VideoGPU()
+            : GPU(nullptr, IS_DEBUG, true)
+        {}
     };
 }

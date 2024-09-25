@@ -23,6 +23,7 @@ namespace kl {
         Ref<Texture> skybox;
 
         void update_aspect_ratio(const Int2& size);
+        Ray<float> ray() const;
 
         void set_forward(const Float3& dir);
         void set_up(const Float3& dir);

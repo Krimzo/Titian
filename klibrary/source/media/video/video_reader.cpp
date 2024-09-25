@@ -85,7 +85,7 @@ kl::VideoReader::VideoReader(const std::string_view& filepath, const Int2& outpu
     attributes->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE) >> verify_result;
 
     if (use_gpu) {
-        m_gpu = new GPU(IS_DEBUG, false, true);
+        m_gpu = new VideoGPU();
         ComRef<ID3D11Multithread> multithread;
         m_gpu->device().as(multithread) >> verify_result;
         multithread->SetMultithreadProtected(TRUE);

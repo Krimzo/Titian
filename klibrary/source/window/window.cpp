@@ -1,7 +1,7 @@
 #include "klibrary.h"
 
 
-kl::Window::Window(const std::string_view& name, const Int2& size)
+kl::Window::Window(const std::string_view& name)
     : m_name(name)
 {
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
@@ -19,9 +19,8 @@ kl::Window::Window(const std::string_view& name, const Int2& size)
     assert(RegisterClassExA(&window_class), "Failed to register window class");
 
     m_window_style = WS_OVERLAPPEDWINDOW;
-    RECT size_buffer = { 0, 0, (LONG) size.x, (LONG) size.y };
+    RECT size_buffer = { 0, 0, 1600, 900 };
     AdjustWindowRect(&size_buffer, m_window_style, false);
-
     const Int2 new_size = {
         size_buffer.right - size_buffer.left,
         size_buffer.bottom - size_buffer.top,
@@ -156,6 +155,11 @@ bool kl::Window::is_restored() const
     placement.length = sizeof(WINDOWPLACEMENT);
     GetWindowPlacement(m_window, &placement);
     return placement.showCmd == SW_RESTORE;
+}
+
+bool kl::Window::is_focused() const
+{
+    return GetForegroundWindow() == m_window;
 }
 
 bool kl::Window::in_fullscreen() const
