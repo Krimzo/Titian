@@ -14,7 +14,7 @@ namespace kl {
         const void* data_ptr() const;
         SIZE_T data_size() const;
 
-        std::string error_val() const;
+        const char* error_val() const;
         SIZE_T error_size() const;
     };
 }

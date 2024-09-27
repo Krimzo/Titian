@@ -72,3 +72,10 @@ namespace kl {
         }
     };
 }
+
+namespace kl {
+    using VertexShader = ShaderHolder<dx::VertexShader>;
+	using PixelShader = ShaderHolder<dx::PixelShader>;
+	using GeometryShader = ShaderHolder<dx::GeometryShader>;
+	using ComputeShader = ShaderHolder<dx::ComputeShader>;
+}

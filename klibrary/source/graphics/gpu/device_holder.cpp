@@ -608,8 +608,8 @@ kl::dx::InputLayout kl::DeviceHolder::create_input_layout(const CompiledShader& 
         { "KL_Texture", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "KL_Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
-    const dx::LayoutDescriptor* descriptors_ptr = (!descriptors.empty()) ? descriptors.data() : default_layout_descriptors;
-    const UINT descriptors_count = (!descriptors.empty()) ? ((UINT) descriptors.size()) : ((UINT) std::size(default_layout_descriptors));
+    const dx::LayoutDescriptor* descriptors_ptr = !descriptors.empty() ? descriptors.data() : default_layout_descriptors;
+    const UINT descriptors_count = !descriptors.empty() ? (UINT) descriptors.size() : (UINT) std::size(default_layout_descriptors);
     dx::InputLayout layout;
     m_device->CreateInputLayout(descriptors_ptr, descriptors_count, compiled_shader.data_ptr(), compiled_shader.data_size(), &layout);
     verify(layout, "Failed to create input layout");

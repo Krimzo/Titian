@@ -47,11 +47,10 @@ namespace kl {
 
         void bind_internal_views() const;
 
-        ShaderHolder<dx::VertexShader> create_vertex_shader(const std::string_view& shader_source) const;
-        ShaderHolder<dx::PixelShader> create_pixel_shader(const std::string_view& shader_source) const;
-        ShaderHolder<dx::GeometryShader> create_geometry_shader(const std::string_view& shader_source) const;
-        ShaderHolder<dx::ComputeShader> create_compute_shader(const std::string_view& shader_source) const;
-
+        VertexShader create_vertex_shader(const std::string_view& shader_source) const;
+        PixelShader create_pixel_shader(const std::string_view& shader_source) const;
+        GeometryShader create_geometry_shader(const std::string_view& shader_source) const;
+        ComputeShader create_compute_shader(const std::string_view& shader_source) const;
         RenderShaders create_render_shaders(const std::string_view& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors = {}) const;
 
         void draw_text() const;

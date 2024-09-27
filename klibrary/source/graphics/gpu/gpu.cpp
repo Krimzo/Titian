@@ -231,34 +231,34 @@ void kl::GPU::bind_internal_views() const
     bind_target_depth_view(back_target_view(), back_depth_view());
 }
 
-kl::ShaderHolder<kl::dx::VertexShader> kl::GPU::create_vertex_shader(const std::string_view& shader_source) const
+kl::VertexShader kl::GPU::create_vertex_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_vertex_shader(shader_source);
-    ShaderHolder<dx::VertexShader> holder{ this };
+    VertexShader holder{ this };
     holder.shader = DeviceHolder::create_vertex_shader(compiled_shader);
     return holder;
 }
 
-kl::ShaderHolder<kl::dx::PixelShader> kl::GPU::create_pixel_shader(const std::string_view& shader_source) const
+kl::PixelShader kl::GPU::create_pixel_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_pixel_shader(shader_source);
-    ShaderHolder<dx::PixelShader> holder{ this };
+    PixelShader holder{ this };
     holder.shader = DeviceHolder::create_pixel_shader(compiled_shader);
     return holder;
 }
 
-kl::ShaderHolder<kl::dx::GeometryShader> kl::GPU::create_geometry_shader(const std::string_view& shader_source) const
+kl::GeometryShader kl::GPU::create_geometry_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_geometry_shader(shader_source);
-    ShaderHolder<dx::GeometryShader> holder{ this };
+    GeometryShader holder{ this };
     holder.shader = DeviceHolder::create_geometry_shader(compiled_shader);
     return holder;
 }
 
-kl::ShaderHolder<kl::dx::ComputeShader> kl::GPU::create_compute_shader(const std::string_view& shader_source) const
+kl::ComputeShader kl::GPU::create_compute_shader(const std::string_view& shader_source) const
 {
     const CompiledShader compiled_shader = compile_compute_shader(shader_source);
-    ShaderHolder<dx::ComputeShader> holder{ this };
+    ComputeShader holder{ this };
     holder.shader = DeviceHolder::create_compute_shader(compiled_shader);
     return holder;
 }
