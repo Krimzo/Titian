@@ -704,7 +704,7 @@ titian::Ref<titian::Texture> titian::Scene::load_assimp_texture(const aiScene* s
 	}
     else {
         texture_object->data_buffer.resize({ (int) texture->mWidth, (int) texture->mHeight });
-        kl::copy<Color>(texture_object->data_buffer.ptr(), texture->pcData, texture_object->data_buffer.pixel_count());
+        kl::copy<RGB>(texture_object->data_buffer.ptr(), texture->pcData, texture_object->data_buffer.pixel_count());
     }
     texture_object->reload_as_2D();
     texture_object->create_shader_view();

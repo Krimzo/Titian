@@ -53,7 +53,7 @@ namespace kl {
         void set_fullscreen(bool enabled);
 
         Int2 position() const;
-        void set_position(const Int2& position) const;
+        void set_position(Int2 position) const;
 
         int width() const;
         void set_width(int width) const;
@@ -62,7 +62,7 @@ namespace kl {
         void set_height(int height) const;
 
         Int2 size() const;
-        void resize(const Int2& size) const;
+        void resize(Int2 size) const;
 
         float aspect_ratio() const;
         Int2 frame_center() const;
@@ -74,8 +74,8 @@ namespace kl {
         void set_title(const std::string_view& data) const;
         bool set_icon(const std::string_view& filepath) const;
 
-        void draw_pixel_data(const Color* data, const Int2& size, const Int2& position = {}) const;
-        void draw_image(const Image& image, const Int2& position = {}) const;
+        void draw_pixel_data(const RGB* data, Int2 size, Int2 position = {}) const;
+        void draw_image(const Image& image, Int2 position = {}) const;
 
         void set_dark_mode(bool enabled) const;
         void notify() const;

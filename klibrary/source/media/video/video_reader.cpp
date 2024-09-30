@@ -3,7 +3,7 @@
 
 using kl::ComRef;
 
-static void configure_reader(const ComRef<IMFSourceReader>& reader, const kl::Int2& size)
+static void configure_reader(const ComRef<IMFSourceReader>& reader, const kl::Int2 size)
 {
     ComRef<IMFMediaType> media_type;
     reader->GetNativeMediaType(MF_SOURCE_READER_FIRST_VIDEO_STREAM, 0, &media_type) >> kl::verify_result;
@@ -76,7 +76,7 @@ static float video_fps(const ComRef<IMFSourceReader>& reader)
     return (float) attribute1 / (float) attribute2;
 }
 
-kl::VideoReader::VideoReader(const std::string_view& filepath, const Int2& output_size, const bool use_gpu)
+kl::VideoReader::VideoReader(const std::string_view& filepath, const Int2 output_size, const bool use_gpu)
 {
     ComRef<IMFAttributes> attributes;
     MFCreateAttributes(&attributes, 0) >> verify_result;
@@ -170,8 +170,8 @@ bool kl::VideoReader::read_frame(Image& out, int* out_index) const
     media_buffer->Lock(&frame_data, nullptr, &frame_byte_size) >> verify_result;
 
     out.resize(m_frame_size);
-    const Color* frame_source = (Color*) frame_data;
-    Color* frame_target = out.ptr();
+    const RGB* frame_source = (RGB*) frame_data;
+    RGB* frame_target = out.ptr();
 
     kl::async_for(0, out.width() * out.height(), [&](const int i)
     {

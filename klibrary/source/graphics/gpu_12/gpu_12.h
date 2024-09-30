@@ -47,7 +47,7 @@ namespace kl {
 		void execute(const std::function<void()>& func);
 		void await();
 
-		void resize(const kl::Int2& size);
+		void resize(Int2 size);
 		dx12::Resource get_back_buffer(UINT index) const;
 		dx12::DescriptorHandle get_render_target(UINT index) const;
 		void swap_buffers(bool v_sync) const;

@@ -62,6 +62,16 @@ namespace kl {
             return { w1, w2, T(1) - w1 - w2 };
         }
 
+        static constexpr bool is_in_triangle(const Vector3<T>& weights)
+        {
+            return weights.x >= T(0) && weights.y >= T(0) && weights.z >= T(0);
+        }
+
+        static constexpr T interpolate(const Vector3<T>& weights, const Vector3<T>& values)
+        {
+            return dot(weights, values);
+        }
+
         constexpr Vertex<T> interpolate_self(const Vector3<T>& weights) const
         {
             return Vertex<T>{
@@ -80,16 +90,6 @@ namespace kl {
                     interpolate(weights, { a.normal.z, b.normal.z, c.normal.z }),
                 }
             };
-        }
-
-        static constexpr bool is_in_triangle(const Vector3<T>& weights)
-        {
-            return weights.x >= T(0) && weights.y >= T(0) && weights.z >= T(0);
-        }
-
-        static constexpr T interpolate(const Vector3<T>& weights, const Vector3<T>& values)
-        {
-            return dot(weights, values);
         }
     };
 }

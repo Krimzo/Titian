@@ -1,7 +1,7 @@
 #include "klibrary.h"
 
 
-void kl::Mouse::set_position(const Int2& position)
+void kl::Mouse::set_position(const Int2 position)
 {
     m_position = position;
     POINT screen_position{ position.x, position.y };
@@ -72,7 +72,7 @@ void kl::Mouse::_update_scroll(const int scroll)
     m_scroll = (int16_t) scroll;
 }
 
-void kl::Mouse::_update_position(const Int2 & position)
+void kl::Mouse::_update_position(const Int2 position)
 {
 	m_position = position;
 }

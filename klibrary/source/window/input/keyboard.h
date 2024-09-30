@@ -9,7 +9,6 @@ namespace kl {
         union
         {
             Key keys[66] = {};
-
             struct
             {
                 Key q;

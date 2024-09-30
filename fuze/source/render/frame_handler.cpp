@@ -21,7 +21,7 @@ void titian::FrameHandler::init()
 	queue.finalize();
 }
 
-void titian::FrameHandler::prepare_frame(const Int2& size)
+void titian::FrameHandler::prepare_frame(const Int2 size)
 {
 	out_frame.resize(size);
 

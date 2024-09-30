@@ -16,7 +16,7 @@ namespace titian {
 		void retrieve(RAWImage& image) const;
 
 		Int2 size() const;
-		void resize(const Int2& size);
+		void resize(Int2 size);
 
 	private:
 		dx::Texture m_staging_texture;

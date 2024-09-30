@@ -68,7 +68,7 @@ namespace kl {
 			return { w, x, y, z };
 		}
 
-		constexpr operator Color() const
+		constexpr operator RGB() const
 		{
 			return {
 				(byte) clamp(x * to_byte_rgb<T>(), T(0), T(255)),

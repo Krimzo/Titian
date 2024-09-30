@@ -112,10 +112,10 @@ void titian::GUISectionScriptingParameters::display_interp_parameter_editor(cons
 			parameter.set<Quaternion>(temp);
 		}
 	}
-	else if (parameter.is<Color>()) {
-		Float4 temp = parameter.get<Color>();
+	else if (parameter.is<RGB>()) {
+		Float4 temp = parameter.get<RGB>();
 		if (im::ColorEdit4(identifier.data(), &temp.x)) {
-			parameter.set<Color>(temp);
+			parameter.set<RGB>(temp);
 		}
 	}
 	else if (parameter.is<String>()) {
@@ -169,10 +169,10 @@ void titian::GUISectionScriptingParameters::display_node_parameter_editor(const 
 			*(Quaternion*) ptr = temp;
 		}
 	}
-	else if (type == typeid(Color)) {
-		Float4 temp = *(Color*) ptr;
+	else if (type == typeid(RGB)) {
+		Float4 temp = *(RGB*) ptr;
 		if (im::ColorEdit4(identifier.data(), &temp.x)) {
-			*(Color*) ptr = temp;
+			*(RGB*) ptr = temp;
 		}
 	}
 	else if (type == typeid(String)) {

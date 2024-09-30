@@ -1,52 +1,51 @@
 #include "klibrary.h"
 
 
-kl::Color::Color()
+kl::RGB::RGB()
 {}
 
-kl::Color::Color(const byte r, const byte g, const byte b, const byte a)
+kl::RGB::RGB(const byte r, const byte g, const byte b, const byte a)
     : b(b), g(g), r(r), a(a)
 {}
 
-kl::Color::operator kl::Float3() const
+kl::RGB::operator kl::YUV() const
+{
+	const float R = r * to_float_rgb();
+	const float G = g * to_float_rgb();
+	const float B = b * to_float_rgb();
+    float y = R * 0.299f + G * 0.587f + B * 0.114f;
+	float u = R * -0.14713f + G * -0.28886f + B * 0.436f;
+	float v = R * 0.615f + G * -0.51499f + B * -0.10001f;
+    u = (u + 0.436f) * (1.0f / 0.872f);
+    v = (v + 0.615f) * (1.0f / 1.23f);
+	return {
+        clamp(y, 0.0f, 1.0f),
+		clamp(u, 0.0f, 1.0f),
+		clamp(v, 0.0f, 1.0f),
+    };
+}
+
+kl::RGB::operator kl::Float3() const
 {
     return Float3{ float(r), float(g), float(b) } * to_float_rgb();
 }
 
-kl::Color::operator kl::Float4() const
+kl::RGB::operator kl::Float4() const
 {
 	return Float4{ float(r), float(g), float(b), float(a) } * to_float_rgb();
 }
 
-bool kl::Color::operator==(const Color& other) const
+bool kl::RGB::operator==(const RGB other) const
 {
     return r == other.r && g == other.g && b == other.b && a == other.a;
 }
 
-bool kl::Color::operator!=(const Color& other) const
+bool kl::RGB::operator!=(const RGB other) const
 {
     return !(*this == other);
 }
 
-kl::Color kl::Color::gray() const
-{
-    const double light_value = r * 0.299 + g * 0.587 + b * 0.114;
-    const byte gray_value = (byte) clamp(int(light_value), 0, 255);
-    return { gray_value, gray_value, gray_value, a };
-}
-
-kl::Color kl::Color::inverted() const
-{
-    return { byte(255 - r), byte(255 - g), byte(255 - b), a };
-}
-
-char kl::Color::as_ascii() const
-{
-    static constexpr char ascii_table[10] = { '@', '%', '#', 'x', '+', '=', ':', '-', '.', ' ' };
-    return ascii_table[int(gray().r * (9.0 / 255.0))];
-}
-
-kl::Color kl::Color::mix(const Color& color, float ratio) const
+kl::RGB kl::RGB::mix(const RGB color, float ratio) const
 {
     ratio = clamp(ratio, 0.0f, 1.0f);
     return {
@@ -56,13 +55,80 @@ kl::Color kl::Color::mix(const Color& color, float ratio) const
     };
 }
 
-kl::Color kl::Color::mix(const Color& color) const
+kl::RGB kl::RGB::mix(const RGB color) const
 {
     return mix(color, color.a * to_float_rgb());
 }
 
-std::ostream& kl::operator<<(std::ostream& stream, const Color& object)
+kl::RGB kl::RGB::gray() const
 {
-    stream << "\033[38;2;" << ((int) object.r) << ";" << ((int) object.g) << ";" << ((int) object.b) << "m";
+    const float light = YUV(*this).y * 255.0f;
+    const byte result = (byte) clamp(light, 0.0f, 255.0f);
+    return { result, result, result, a };
+}
+
+kl::RGB kl::RGB::inverted() const
+{
+    return { byte(255 - r), byte(255 - g), byte(255 - b), a };
+}
+
+char kl::RGB::ascii() const
+{
+    return YUV(*this).ascii();
+}
+
+kl::YUV::YUV()
+{}
+
+kl::YUV::YUV(const float y, const float u, const float v)
+	: y(y), u(u), v(v)
+{}
+
+kl::YUV::operator kl::RGB() const
+{
+    const float Y = y;
+    const float U = u * 0.872f - 0.436f;
+	const float V = v * 1.23f - 0.615f;
+    float r = Y + 1.13983f * V;
+	float g = Y - 0.39465f * U - 0.58060f * V;
+	float b = Y + 2.03211f * U;
+    return {
+        (byte) clamp(r * 255.0f, 0.0f, 255.0f),
+		(byte) clamp(g * 255.0f, 0.0f, 255.0f),
+		(byte) clamp(b * 255.0f, 0.0f, 255.0f),
+    };
+}
+
+kl::YUV::operator kl::Vector3<float>() const
+{
+    return { y, u, v };
+}
+
+bool kl::YUV::operator==(const YUV& other) const
+{
+    return y == other.y && u == other.u && v == other.v;
+}
+
+bool kl::YUV::operator!=(const YUV& other) const
+{
+    return !(*this == other);
+}
+
+char kl::YUV::ascii() const
+{
+    static constexpr char ascii_table[10] = { '@', '%', '#', 'x', '+', '=', ':', '-', '.', ' ' };
+    return ascii_table[int(y * 9.0f)];
+}
+
+std::ostream& kl::operator<<(std::ostream& stream, const RGB col)
+{
+    stream << "\033[38;2;" << int(col.r) << ";" << int(col.g) << ";" << int(col.b) << "m";
+    return stream;
+}
+
+std::ostream& kl::operator<<(std::ostream& stream, const YUV& col)
+{
+    stream << std::setprecision(2);
+    stream << '(' << col.y << ", " << col.u << ", " << col.v << ')';
     return stream;
 }

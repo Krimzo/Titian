@@ -2,14 +2,13 @@
 
 #include "math/math.h"
 
-#undef assert
 
 namespace kl::console {
     void set_enabled(bool state);
     void clear();
 
     void set_cursor_enabled(bool state);
-    void move_cursor(const Int2& position);
+    void move_cursor(Int2 position);
 
     int width();
     void set_width(int width);
@@ -18,16 +17,16 @@ namespace kl::console {
     void set_height(int height);
 
     Int2 size();
-    void set_size(const Int2& size);
+    void set_size(Int2 size);
 
     void set_title(const std::string_view& text);
-    void set_font(const Int2& size, const std::string_view& font_name = "Consolas");
+    void set_font(Int2 size, const std::string_view& font_name = "Consolas");
 
     char read();
     void wait(char to_wait_for, bool echo = false);
     char wait_for_any(bool echo = false);
 
-    void dump(const std::string_view& data, const Int2& location = {});
+    void dump(const std::string_view& data, Int2 location = {});
     void progress_bar(const std::string_view& message, int output_y, float percentage);
 }
 

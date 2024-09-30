@@ -9,7 +9,7 @@ namespace titian {
 	void ui_set_next_width(float width);
 
 	Float2 ui_cursor_pos();
-	void ui_set_cursor_pos(const Float2& pos);
+	void ui_set_cursor_pos(Float2 pos);
 
 	void ui_window(const StringView& name, const Function<void()>& func);
 	void ui_button(const StringView& name, const Function<void()>& func);
@@ -21,7 +21,7 @@ namespace titian {
 	void ui_float2(const StringView& name, Float2 value, const Function<void(Float2)>& func);
 	void ui_float3(const StringView& name, Float3 value, const Function<void(Float3)>& func);
 	void ui_float4(const StringView& name, Float4 value, const Function<void(Float4)>& func);
-	void ui_color(const StringView& name, Color value, const Function<void(Color)>& func);
+	void ui_color(const StringView& name, RGB value, const Function<void(RGB)>& func);
 	void ui_string(const StringView& name, String value, const Function<void(String)>& func);
 
 	void ui_text(const StringView& data);

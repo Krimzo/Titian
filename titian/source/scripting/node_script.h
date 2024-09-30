@@ -41,7 +41,7 @@ namespace titian {
 				Float4,
 				Complex,
 				Quaternion,
-				Color,
+				RGB,
 				String>;
 
 			bool global = false;
@@ -258,7 +258,7 @@ namespace titian {
 			else if constexpr (std::is_same_v<T, Quaternion>) {
 				serializer->write_float_array("value", &value.w, 4);
 			}
-			else if constexpr (std::is_same_v<T, Color>) {
+			else if constexpr (std::is_same_v<T, RGB>) {
 				serializer->write_byte_array("value", &value, 4);
 			}
 			else if constexpr (std::is_same_v<T, String>) {
@@ -300,7 +300,7 @@ namespace titian {
 			else if constexpr (std::is_same_v<T, Quaternion>) {
 				serializer->read_float_array("value", &value.w, 4);
 			}
-			else if constexpr (std::is_same_v<T, Color>) {
+			else if constexpr (std::is_same_v<T, RGB>) {
 				serializer->read_byte_array("value", &value, 4);
 			}
 			else if constexpr (std::is_same_v<T, String>) {
@@ -341,7 +341,7 @@ namespace titian {
 			else if constexpr (std::is_same_v<T, Quaternion>) {
 				im::InputFloat4("##value", &value.w);
 			}
-			else if constexpr (std::is_same_v<T, Color>) {
+			else if constexpr (std::is_same_v<T, RGB>) {
 				Float4 temp = value;
 				if (im::ColorEdit4("##value", &temp.x)) {
 					value = temp;
@@ -508,7 +508,7 @@ namespace titian {
 					return T{ get_value<float>("w"), get_value<float>("x"), get_value<float>("y"), get_value<float>("z") };
 				});
 			}
-			else if constexpr (std::is_same_v<T, Color>) {
+			else if constexpr (std::is_same_v<T, RGB>) {
 				addIN<int32_t>("r");
 				addIN<int32_t>("g");
 				addIN<int32_t>("b");
@@ -621,7 +621,7 @@ namespace titian {
 					return get_value<T>("in").z;
 				});
 			}
-			else if constexpr (std::is_same_v<T, Color>) {
+			else if constexpr (std::is_same_v<T, RGB>) {
 				addIN<T>("in");
 				addOUT<int32_t>("r")->behaviour([this]()
 				{
@@ -2077,7 +2077,7 @@ namespace titian {
 			else if constexpr (std::is_same_v<T, Float4>) {
 				ui_float4(name, value, on_set);
 			}
-			else if constexpr (std::is_same_v<T, Color>) {
+			else if constexpr (std::is_same_v<T, RGB>) {
 				ui_color(name, value, on_set);
 			}
 			else if constexpr (std::is_same_v<T, String>) {

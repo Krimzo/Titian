@@ -190,7 +190,7 @@ kl::Int2 kl::Window::position() const
     return { rect.left, rect.top };
 }
 
-void kl::Window::set_position(const Int2& position) const
+void kl::Window::set_position(const Int2 position) const
 {
     if (m_in_fullscreen)
         return;
@@ -228,7 +228,7 @@ kl::Int2 kl::Window::size() const
     return { rect.right - rect.left, rect.bottom - rect.top };
 }
 
-void kl::Window::resize(const Int2& size) const
+void kl::Window::resize(const Int2 size) const
 {
     if (m_in_fullscreen)
         return;
@@ -282,7 +282,7 @@ bool kl::Window::set_icon(const std::string_view& filepath) const
     return true;
 }
 
-void kl::Window::draw_pixel_data(const Color* data, const Int2& size, const Int2& position) const
+void kl::Window::draw_pixel_data(const RGB* data, const Int2 size, const Int2 position) const
 {
     BITMAPINFO bitmap_info = {};
     bitmap_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -299,7 +299,7 @@ void kl::Window::draw_pixel_data(const Color* data, const Int2& size, const Int2
         data, &bitmap_info, DIB_RGB_COLORS, SRCCOPY);
 }
 
-void kl::Window::draw_image(const Image& image, const Int2& position) const
+void kl::Window::draw_image(const Image& image, const Int2 position) const
 {
     draw_pixel_data(image.ptr(), image.size(), position);
 }
@@ -327,18 +327,20 @@ LRESULT CALLBACK kl::Window::window_procedure(const HWND window_handle, const UI
     switch (message) {
     case WM_SIZE:
     {
-        const Int2 new_size = { LOWORD(l_param), HIWORD(l_param) };
-        for (auto& callback : on_resize) {
-            callback(new_size);
+        const Int2 size = { LOWORD(l_param), HIWORD(l_param) };
+        if (size.x > 0 && size.y > 0) {
+            for (auto& callback : on_resize) {
+                callback(size);
+            }
         }
     }
     break;
 
     case WM_MOVE:
     {
-        const Int2 new_position = { LOWORD(l_param), HIWORD(l_param) };
+        const Int2 position = { LOWORD(l_param), HIWORD(l_param) };
         for (auto& callback : on_move) {
-            callback(new_position);
+            callback(position);
         }
     }
     break;

@@ -16,7 +16,7 @@ namespace titian {
 		register_pin_style<Float4>(75, 200, 115, 7);
 		register_pin_style<Complex>(115, 70, 190, 4);
 		register_pin_style<Quaternion>(100, 75, 205, 5);
-		register_pin_style<Color>(185, 175, 70, 4);
+		register_pin_style<RGB>(185, 175, 70, 4);
 		register_pin_style<String>(215, 155, 135, 4);
 		return 0;
 	}();
@@ -114,7 +114,7 @@ namespace titian {
 		serial_generator_helper<ConstructNode<Float3>>(),
 		serial_generator_helper<DeconstructNode<Float3>>(),
 		serial_generator_helper<CastNode<Float3, Quaternion>>(),
-		serial_generator_helper<CastNode<Float3, Color>>(),
+		serial_generator_helper<CastNode<Float3, RGB>>(),
 		serial_generator_helper<CastNode<Float3, String>>(),
 		serial_generator_helper<CompareNode<Float3>>(),
 		serial_generator_helper<OperatorPlusNode<Float3>>(),
@@ -130,7 +130,7 @@ namespace titian {
 		serial_generator_helper<ConstructNode<Float4>>(),
 		serial_generator_helper<DeconstructNode<Float4>>(),
 		serial_generator_helper<CastNode<Float4, Quaternion>>(),
-		serial_generator_helper<CastNode<Float4, Color>>(),
+		serial_generator_helper<CastNode<Float4, RGB>>(),
 		serial_generator_helper<CastNode<Float4, String>>(),
 		serial_generator_helper<CompareNode<Float4>>(),
 		serial_generator_helper<OperatorPlusNode<Float4>>(),
@@ -170,13 +170,13 @@ namespace titian {
 		serial_generator_helper<OperatorMaxNode<Quaternion>>(),
 		serial_generator_helper<AbsNode<Quaternion>>(),
 
-		serial_generator_helper<LiteralNode<Color>>(),
-		serial_generator_helper<VariableNode<Color>>(),
-		serial_generator_helper<ConstructNode<Color>>(),
-		serial_generator_helper<DeconstructNode<Color>>(),
-		serial_generator_helper<CastNode<Color, Float3>>(),
-		serial_generator_helper<CastNode<Color, Float4>>(),
-		serial_generator_helper<CompareNode<Color>>(),
+		serial_generator_helper<LiteralNode<RGB>>(),
+		serial_generator_helper<VariableNode<RGB>>(),
+		serial_generator_helper<ConstructNode<RGB>>(),
+		serial_generator_helper<DeconstructNode<RGB>>(),
+		serial_generator_helper<CastNode<RGB, Float3>>(),
+		serial_generator_helper<CastNode<RGB, Float4>>(),
+		serial_generator_helper<CompareNode<RGB>>(),
 
 		serial_generator_helper<LiteralNode<String>>(),
 		serial_generator_helper<VariableNode<String>>(),
@@ -237,7 +237,7 @@ namespace titian {
 		serial_generator_helper<UIValueNode<Float2>>(),
 		serial_generator_helper<UIValueNode<Float3>>(),
 		serial_generator_helper<UIValueNode<Float4>>(),
-		serial_generator_helper<UIValueNode<Color>>(),
+		serial_generator_helper<UIValueNode<RGB>>(),
 		serial_generator_helper<UIValueNode<String>>(),
 
 		serial_generator_helper<PrintNode>(),
@@ -358,7 +358,7 @@ namespace titian {
 		ui_generator_helper<ConstructNode<Float3>>("Construct Float3"),
 		ui_generator_helper<DeconstructNode<Float3>>("Deconstruct Float3"),
 		ui_generator_helper<CastNode<Float3, Quaternion>>("Float3 -> Quaternion"),
-		ui_generator_helper<CastNode<Float3, Color>>("Float3 -> Color"),
+		ui_generator_helper<CastNode<Float3, RGB>>("Float3 -> Color"),
 		ui_generator_helper<CastNode<Float3, String>>("Float3 -> String"),
 		ui_generator_helper<CompareNode<Float3>>("Compare Float3"),
 		ui_generator_helper<OperatorPlusNode<Float3>>("Plus Float3"),
@@ -378,7 +378,7 @@ namespace titian {
 		ui_generator_helper<ConstructNode<Float4>>("Construct Float4"),
 		ui_generator_helper<DeconstructNode<Float4>>("Deconstruct Float4"),
 		ui_generator_helper<CastNode<Float4, Quaternion>>("Float4 -> Quaternion"),
-		ui_generator_helper<CastNode<Float4, Color>>("Float4 -> Color"),
+		ui_generator_helper<CastNode<Float4, RGB>>("Float4 -> Color"),
 		ui_generator_helper<CastNode<Float4, String>>("Float4 -> String"),
 		ui_generator_helper<CompareNode<Float4>>("Compare Float4"),
 		ui_generator_helper<OperatorPlusNode<Float4>>("Plus Float4"),
@@ -430,13 +430,13 @@ namespace titian {
 
 		{ "Color",
 		{
-		ui_generator_helper<LiteralNode<Color>>("Literal Color"),
-		ui_generator_helper<VariableNode<Color>>("Variable Color"),
-		ui_generator_helper<ConstructNode<Color>>("Construct Color"),
-		ui_generator_helper<DeconstructNode<Color>>("Deconstruct Color"),
-		ui_generator_helper<CastNode<Color, Float3>>("Color -> Float3"),
-		ui_generator_helper<CastNode<Color, Float4>>("Color -> Float4"),
-		ui_generator_helper<CompareNode<Color>>("Compare Color"),
+		ui_generator_helper<LiteralNode<RGB>>("Literal Color"),
+		ui_generator_helper<VariableNode<RGB>>("Variable Color"),
+		ui_generator_helper<ConstructNode<RGB>>("Construct Color"),
+		ui_generator_helper<DeconstructNode<RGB>>("Deconstruct Color"),
+		ui_generator_helper<CastNode<RGB, Float3>>("Color -> Float3"),
+		ui_generator_helper<CastNode<RGB, Float4>>("Color -> Float4"),
+		ui_generator_helper<CompareNode<RGB>>("Compare Color"),
 		},
 		},
 
@@ -526,7 +526,7 @@ namespace titian {
 		ui_generator_helper<UIValueNode<Float2>>("UI Value Float2"),
 		ui_generator_helper<UIValueNode<Float3>>("UI Value Float3"),
 		ui_generator_helper<UIValueNode<Float4>>("UI Value Float4"),
-		ui_generator_helper<UIValueNode<Color>>("UI Value Color"),
+		ui_generator_helper<UIValueNode<RGB>>("UI Value Color"),
 		ui_generator_helper<UIValueNode<String>>("UI Value String"),
 		},
 		},

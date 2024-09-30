@@ -381,14 +381,14 @@ void titian::GUISectionMainMenu::render_gui()
                 if (im::Button("Reload", { -1.0f, 0.0f })) {
                     gui_layer->reload_colors();
 
-                    const Color special_color = gui_layer->special_color;
+                    const RGB special_color = gui_layer->special_color;
                     kl::Wrap special_wrap = kl::Wrap<js::Array>::make();
                     special_wrap->push_back(js::make_number(special_color.r));
                     special_wrap->push_back(js::make_number(special_color.g));
                     special_wrap->push_back(js::make_number(special_color.b));
                     _conf_data[CONF_SPECIAL_COLOR] = std::move(special_wrap);
 
-                    const Color alternate_color = gui_layer->alternate_color;
+                    const RGB alternate_color = gui_layer->alternate_color;
                     kl::Wrap alternate_wrap = kl::Wrap<js::Array>::make();
                     alternate_wrap->push_back(js::make_number(alternate_color.r));
                     alternate_wrap->push_back(js::make_number(alternate_color.g));

@@ -6,7 +6,7 @@
 namespace kl::random {
     bool gen_bool();
     uint8_t gen_byte();
-    Color gen_color(bool gray = false);
+    RGB gen_rgb(bool gray = false);
 
     int gen_int(int start_inclusive, int end_exclusive);
     int gen_int(int end_exclusive);

@@ -12,7 +12,7 @@ static const int _image_init = []
 kl::Image::Image()
 {}
 
-kl::Image::Image(const Int2& size)
+kl::Image::Image(const Int2 size)
     : m_size(size)
 {
     m_pixels.resize((size_t) size.x * size.y);
@@ -23,12 +23,12 @@ kl::Image::Image(const std::string_view& filepath)
     load_from_file(filepath);
 }
 
-kl::Color* kl::Image::ptr()
+kl::RGB* kl::Image::ptr()
 {
     return m_pixels.data();
 }
 
-const kl::Color* kl::Image::ptr() const
+const kl::RGB* kl::Image::ptr() const
 {
     return m_pixels.data();
 }
@@ -40,39 +40,39 @@ int kl::Image::pixel_count() const
 
 uint64_t kl::Image::byte_size() const
 {
-    return pixel_count() * sizeof(Color);
+    return pixel_count() * sizeof(RGB);
 }
 
-kl::Color& kl::Image::operator[](const int index)
+kl::RGB& kl::Image::operator[](const int index)
 {
     return m_pixels[index];
 }
 
-const kl::Color& kl::Image::operator[](const int index) const
+const kl::RGB& kl::Image::operator[](const int index) const
 {
     return m_pixels[index];
 }
 
-kl::Color& kl::Image::operator[](const Int2& coords)
+kl::RGB& kl::Image::operator[](const Int2 coords)
 {
     return m_pixels[coords.to_index(m_size.x)];
 }
 
-const kl::Color& kl::Image::operator[](const Int2& coords) const
+const kl::RGB& kl::Image::operator[](const Int2 coords) const
 {
     return m_pixels[coords.to_index(m_size.x)];
 }
 
-bool kl::Image::in_bounds(const Int2& coords) const
+bool kl::Image::in_bounds(const Int2 coords) const
 {
     return coords.in_bounds(m_size);
 }
 
-kl::Color kl::Image::sample(const Float2& uv) const
+kl::RGB kl::Image::sample(const Float2 uv) const
 {
     const Int2 coords = {
-        (int) (uv.x * m_size.x),
-        (int) (uv.y * m_size.y),
+        int(uv.x * m_size.x),
+        int(uv.y * m_size.y),
     };
     if (in_bounds(coords)) {
         return (*this)[coords];
@@ -105,7 +105,7 @@ kl::Int2 kl::Image::size() const
     return m_size;
 }
 
-void kl::Image::resize(const Int2& new_size)
+void kl::Image::resize(const Int2 new_size)
 {
     if (new_size == m_size) { return; }
 
@@ -121,7 +121,7 @@ void kl::Image::resize(const Int2& new_size)
     *this = result;
 }
 
-void kl::Image::resize_scaled(const Int2& new_size)
+void kl::Image::resize_scaled(const Int2 new_size)
 {
     if (new_size == m_size) { return; }
 
@@ -140,7 +140,7 @@ void kl::Image::resize_scaled(const Int2& new_size)
     *this = result;
 }
 
-void kl::Image::fill(const Color& color)
+void kl::Image::fill(const RGB color)
 {
     for (auto& pixel : m_pixels) {
         pixel = color;
@@ -177,7 +177,6 @@ kl::Image kl::Image::rectangle(Int2 top_left, Int2 bottom_right) const
     if (bottom_right.y < top_left.y) {
         std::swap(top_left.y, bottom_right.y);
     }
-
     Image result = { Int2(bottom_right.x - top_left.x, bottom_right.y - top_left.y) };
     for (Int2 position; position.y < result.height(); position.y++) {
         for (position.x = 0; position.x < result.width(); position.x++) {
@@ -190,27 +189,25 @@ kl::Image kl::Image::rectangle(Int2 top_left, Int2 bottom_right) const
     return result;
 }
 
-std::string kl::Image::as_ascii(const Int2& frame_size) const
+std::string kl::Image::as_ascii(const Int2 frame_size) const
 {
     const Int2 increment = m_size / frame_size;
-
     std::stringstream frame;
     for (Int2 position; position.y < frame_size.y; position.y++) {
         for (position.x = 0; position.x < frame_size.x; position.x++) {
             const Int2 read_position = { position.x * increment.x, position.y * increment.y };
             if (in_bounds(read_position)) {
-                frame << (*this)[read_position].as_ascii();
+                frame << (*this)[read_position].ascii();
             }
         }
     }
     return frame.str();
 }
 
-void kl::Image::draw_line(const Int2& from, const Int2& to, const Color& color)
+void kl::Image::draw_line(const Int2 from, const Int2 to, const RGB color)
 {
     const int length = max(abs(to.x - from.x), abs(to.y - from.y));
     const Float2 increment = { (to.x - from.x) / (float) length, (to.y - from.y) / (float) length };
-
     Float2 draw_point = from;
     for (int i = 0; i <= length; i++) {
         if (in_bounds(draw_point)) {
@@ -220,7 +217,7 @@ void kl::Image::draw_line(const Int2& from, const Int2& to, const Color& color)
     }
 }
 
-void kl::Image::draw_triangle(Int2 position_a, Int2 position_b, Int2 position_c, const Color& color, bool fill)
+void kl::Image::draw_triangle(Int2 position_a, Int2 position_b, Int2 position_c, const RGB color, const bool fill)
 {
     if (!fill) {
         draw_line(position_a, position_b, color);
@@ -228,7 +225,6 @@ void kl::Image::draw_triangle(Int2 position_a, Int2 position_b, Int2 position_c,
         draw_line(position_c, position_a, color);
         return;
     }
-
     if (position_a.y > position_b.y) {
         std::swap(position_a, position_b);
     }
@@ -238,12 +234,10 @@ void kl::Image::draw_triangle(Int2 position_a, Int2 position_b, Int2 position_c,
     if (position_b.y > position_c.y) {
         std::swap(position_b, position_c);
     }
-
     for (int y = position_a.y; y < position_c.y; y++) {
         const Float2 flt_pos_a = position_a;
         const Float2 flt_pos_b = position_b;
         const Float2 flt_pos_c = position_b;
-
         draw_line(
             { (int) line_x((y < position_b.y) ? flt_pos_a : flt_pos_c, flt_pos_b, (float) y), y },
             { (int) line_x(flt_pos_a, flt_pos_c, (float) y), y },
@@ -252,7 +246,7 @@ void kl::Image::draw_triangle(Int2 position_a, Int2 position_b, Int2 position_c,
     }
 }
 
-void kl::Image::draw_rectangle(Int2 top_left, Int2 bottom_right, const Color& color, bool fill)
+void kl::Image::draw_rectangle(Int2 top_left, Int2 bottom_right, const RGB color, bool fill)
 {
     if (!fill) {
         draw_line(top_left, { top_left.x, bottom_right.y }, color);
@@ -261,20 +255,17 @@ void kl::Image::draw_rectangle(Int2 top_left, Int2 bottom_right, const Color& co
         draw_line(bottom_right, { bottom_right.x, top_left.y }, color);
         return;
     }
-
     if (top_left.y > bottom_right.y) {
         std::swap(top_left, bottom_right);
     }
-
     for (int y = top_left.y; y <= bottom_right.y; y++) {
         draw_line({ top_left.x, y }, { bottom_right.x, y }, color);
     }
 }
 
-void kl::Image::draw_circle(const Int2& center, const float radius, const Color& color, const bool fill)
+void kl::Image::draw_circle(const Int2 center, const float radius, const RGB color, const bool fill)
 {
     const Float2 f_center = center;
-
     if (fill) {
         const int start = (int) (f_center.y - radius);
         const int end = (int) (f_center.y + radius);
@@ -285,9 +276,7 @@ void kl::Image::draw_circle(const Int2& center, const float radius, const Color&
         }
         return;
     }
-
     const int end = (int) (2 * radius);
-
     for (int i = 0; i < end; i++) {
         const int x1 = (int) (f_center.x - radius + i);
         const int y1 = (int) (f_center.y + sqrt(radius * radius - (x1 - f_center.x) * (x1 - f_center.x)));
@@ -311,18 +300,18 @@ void kl::Image::draw_circle(const Int2& center, const float radius, const Color&
     }
 }
 
-void kl::Image::draw_circle(const Int2& center, const Int2& outer_position, const Color& color, const bool fill)
+void kl::Image::draw_circle(const Int2 center, const Int2 outer_position, const RGB color, const bool fill)
 {
     draw_circle(center, Float2(outer_position - center).length(), color, fill);
 }
 
-void kl::Image::draw_image(const Int2& top_left, const Image& image, const bool mix_alpha)
+void kl::Image::draw_image(const Int2 top_left, const Image& image, const bool mix_alpha)
 {
     for (Int2 position; position.y < image.height(); position.y++) {
         for (position.x = 0; position.x < image.width(); position.x++) {
             const Int2 write_position = { top_left.x + position.x, top_left.y + position.y };
             if (in_bounds(write_position)) {
-                const Color result_pixel = mix_alpha ? (*this)[write_position].mix(image[position]) : image[position];
+                const RGB result_pixel = mix_alpha ? (*this)[write_position].mix(image[position]) : image[position];
                 (*this)[write_position] = result_pixel;
             }
         }
@@ -344,7 +333,7 @@ bool kl::Image::load_from_memory(const void* data, const uint64_t byte_size)
     }
 
     resize({ int(bitmap_data.Width), int(bitmap_data.Height) });
-    copy<Color>(m_pixels.data(), bitmap_data.Scan0, m_pixels.size());
+    copy<RGB>(m_pixels.data(), bitmap_data.Scan0, m_pixels.size());
     return true;
 }
 
@@ -396,7 +385,7 @@ bool kl::Image::save_to_buffer(std::string& buffer, const ImageType type) const
         return false;
     }
 
-    copy<Color>(bitmap_data.Scan0, m_pixels.data(), m_pixels.size());
+    copy<RGB>(bitmap_data.Scan0, m_pixels.data(), m_pixels.size());
     bitmap.UnlockBits(&bitmap_data);
 
     const ComRef<IStream> stream{ SHCreateMemStream(nullptr, 0) };
@@ -421,7 +410,7 @@ bool kl::Image::save_to_file(const std::string_view& filepath, ImageType type) c
 
         for (int y = 0; y < m_size.y; y++) {
             for (int x = 0; x < m_size.x; x++) {
-                const Color pixel = m_pixels[(size_t) y * m_size.x + x];
+                const RGB pixel = m_pixels[(size_t) y * m_size.x + x];
                 write(file, x, " ", y, " => ", (int) pixel.r, " ", (int) pixel.g, " ", (int) pixel.b);
             }
         }
@@ -451,7 +440,7 @@ kl::Image kl::take_screenshot()
     bitmap = (HBITMAP) SelectObject(memory_dc, old_bitmap);
 
     Image result{ Int2{ width, height } };
-    GetBitmapBits(bitmap, width * height * (LONG) sizeof(Color), result.ptr());
+    GetBitmapBits(bitmap, width * height * (LONG) sizeof(RGB), result.ptr());
 
     DeleteDC(memory_dc);
     DeleteDC(screen_dc);

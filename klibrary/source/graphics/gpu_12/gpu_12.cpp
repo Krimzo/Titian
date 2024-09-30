@@ -154,7 +154,7 @@ void kl::GPU12::await()
 	fence.signal_and_wait(queue.queue);
 }
 
-void kl::GPU12::resize(const Int2& size)
+void kl::GPU12::resize(const Int2 size)
 {
 	await();
 

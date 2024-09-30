@@ -18,7 +18,7 @@ byte kl::random::gen_byte()
     return byte(_random_init() % 256);
 }
 
-kl::Color kl::random::gen_color(const bool gray)
+kl::RGB kl::random::gen_rgb(const bool gray)
 {
     if (gray) {
         const byte rand_gray = gen_byte();

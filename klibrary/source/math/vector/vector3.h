@@ -56,13 +56,18 @@ namespace kl {
 			return { x, y, z };
 		}
 
-		constexpr operator Color() const
+		constexpr operator RGB() const
 		{
 			return {
 				(byte) clamp(x * to_byte_rgb<T>(), T(0), T(255)),
 				(byte) clamp(y * to_byte_rgb<T>(), T(0), T(255)),
 				(byte) clamp(z * to_byte_rgb<T>(), T(0), T(255)),
 			};
+		}
+
+		constexpr operator YUV() const
+		{
+			return { x, y, z };
 		}
 
 		constexpr Vector2<T>& xy()

@@ -326,20 +326,31 @@ void titian::InterpScript::load_engine_parts()
 		"intersect_triangle", &kl::Ray<float>::intersect_triangle
 	);
 
-	m_engine->new_usertype<Color>(
-		"Color",
-		sl::constructors<Color(),
-			Color(byte, byte, byte), Color(byte, byte, byte, byte)>(),
-		"r", &Color::r,
-		"g", &Color::g,
-		"b", &Color::b,
-		"a", &Color::a,
-		"gray", &Color::gray,
-		"inverted", &Color::inverted,
-		"as_ascii", &Color::as_ascii,
-		"mix", sl::overload(CONST_METHOD(Color, Color, mix, const Color&, float),
-			CONST_METHOD(Color, Color, mix, const Color&)),
-		sl::meta_function::equal_to, &Color::operator==
+	m_engine->new_usertype<RGB>(
+		"RGB",
+		sl::constructors<RGB(),
+		RGB(byte, byte, byte), RGB(byte, byte, byte, byte)>(),
+		"r", &RGB::r,
+		"g", &RGB::g,
+		"b", &RGB::b,
+		"a", &RGB::a,
+		"gray", &RGB::gray,
+		"inverted", &RGB::inverted,
+		"ascii", &RGB::ascii,
+		"mix", sl::overload(CONST_METHOD(RGB, RGB, mix, RGB, float),
+			CONST_METHOD(RGB, RGB, mix, RGB)),
+		sl::meta_function::equal_to, &RGB::operator==
+	);
+
+	m_engine->new_usertype<YUV>(
+		"YUV",
+		sl::constructors<YUV(),
+		YUV(float, float, float)>(),
+		"y", &YUV::y,
+		"u", &YUV::u,
+		"v", &YUV::v,
+		"ascii", &YUV::ascii,
+		sl::meta_function::equal_to, &YUV::operator==
 	);
 
 	m_engine->new_usertype<kl::Image>(
@@ -348,10 +359,10 @@ void titian::InterpScript::load_engine_parts()
 			kl::Image(Int2), kl::Image(StringView)>(),
 		"pixel_count", &kl::Image::pixel_count,
 		"byte_size", &kl::Image::byte_size,
-		sl::meta_function::index, sl::overload(METHOD(kl::Image, Color&, operator[], int),
-			METHOD(kl::Image, Color&, operator[], const Int2&)),
-		sl::meta_function::new_index, sl::overload(METHOD(kl::Image, Color&, operator[], int),
-			METHOD(kl::Image, Color&, operator[], const Int2&)),
+		sl::meta_function::index, sl::overload(METHOD(kl::Image, RGB&, operator[], int),
+			METHOD(kl::Image, RGB&, operator[], Int2)),
+		sl::meta_function::new_index, sl::overload(METHOD(kl::Image, RGB&, operator[], int),
+			METHOD(kl::Image, RGB&, operator[], Int2)),
 		"in_bounds", &kl::Image::in_bounds,
 		"sample", &kl::Image::sample,
 		"width", sl::property(&kl::Image::width, &kl::Image::set_width),
@@ -365,8 +376,8 @@ void titian::InterpScript::load_engine_parts()
 		"draw_line", &kl::Image::draw_line,
 		"draw_triangle", &kl::Image::draw_triangle,
 		"draw_rectangle", &kl::Image::draw_rectangle,
-		"draw_circle", sl::overload(METHOD(kl::Image, void, draw_circle, const Int2&, float, const Color&, bool),
-			METHOD(kl::Image, void, draw_circle, const Int2&, const Int2&, const Color&, bool)),
+		"draw_circle", sl::overload(METHOD(kl::Image, void, draw_circle, Int2, float, RGB, bool),
+			METHOD(kl::Image, void, draw_circle, Int2, Int2, RGB, bool)),
 		"draw_image", &kl::Image::draw_image,
 		"load_from_file", &kl::Image::load_from_file,
 		"save_to_file", &kl::Image::save_to_file
@@ -657,7 +668,7 @@ void titian::InterpScript::load_engine_parts()
 	(*m_engine)["new_plane_vector"] = []() { return Vector<kl::Plane<float>>{}; };
 	(*m_engine)["new_sphere_vector"] = []() { return Vector<kl::Sphere<float>>{}; };
 	(*m_engine)["new_ray_vector"] = []() { return Vector<kl::Ray<float>>{}; };
-	(*m_engine)["new_color_vector"] = []() { return Vector<Color>{}; };
+	(*m_engine)["new_color_vector"] = []() { return Vector<RGB>{}; };
 	(*m_engine)["new_string_vector"] = []() { return Vector<String>{}; };
 
 	(*m_engine)["PI"] = kl::pi();
@@ -826,7 +837,7 @@ void titian::InterpScript::load_engine_parts()
 	(*m_engine)["gen_random_float2"] = FUNCTION(Float2, kl::random::gen_float2, float, float);
 	(*m_engine)["gen_random_float3"] = FUNCTION(Float3, kl::random::gen_float3, float, float);
 	(*m_engine)["gen_random_float4"] = FUNCTION(Float4, kl::random::gen_float4, float, float);
-	(*m_engine)["gen_random_color"] = &kl::random::gen_color;
+	(*m_engine)["gen_random_color"] = &kl::random::gen_rgb;
 	(*m_engine)["gen_random_char"] = &kl::random::gen_char;
 	(*m_engine)["gen_random_string"] = &kl::random::gen_string;
 
@@ -859,11 +870,12 @@ void titian::InterpScript::load_engine_parts()
 		[](const Complex& value) -> Float2 { return value; }
 	);
 	(*m_engine)["tofloat3"] = sl::overload(
-		[](const Color& value) -> Float3 { return value; },
+		[](const RGB& value) -> Float3 { return value; },
+		[](const YUV& value) -> Float3 { return value; },
 		[](const Quaternion& value) -> Float3 { return value; }
 	);
 	(*m_engine)["tofloat4"] = sl::overload(
-		[](const Color& value) -> Float4 { return value; },
+		[](const RGB& value) -> Float4 { return value; },
 		[](const Quaternion& value) -> Float4 { return value; }
 	);
 	(*m_engine)["tocomplex"] = sl::overload(
@@ -873,9 +885,14 @@ void titian::InterpScript::load_engine_parts()
 		[](const Float3& value) -> Quaternion { return value; },
 		[](const Float4& value) -> Quaternion { return value; }
 	);
-	(*m_engine)["tocolor"] = sl::overload(
-		[](const Float3& value) -> Color { return value; },
-		[](const Float4& value) -> Color { return value; }
+	(*m_engine)["torgb"] = sl::overload(
+		[](const YUV& value) -> RGB { return value; },
+		[](const Float3& value) -> RGB { return value; },
+		[](const Float4& value) -> RGB { return value; }
+	);
+	(*m_engine)["toyuv"] = sl::overload(
+		[](const RGB& value) -> YUV { return value; },
+		[](const Float3& value) -> YUV { return value; }
 	);
 }
 

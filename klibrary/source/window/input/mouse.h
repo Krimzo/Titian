@@ -10,7 +10,6 @@ namespace kl {
         union
         {
             Key keys[5] = {};
-
             struct
             {
                 Key left;
@@ -21,7 +20,7 @@ namespace kl {
             };
         };
 
-        void set_position(const Int2& position);
+        void set_position(Int2 position);
         Int2 position() const;
         Float2 norm_position() const;
         
@@ -35,7 +34,7 @@ namespace kl {
 
         void _set_window(HWND window);
         void _update_scroll(int scroll);
-        void _update_position(const Int2& position);
+        void _update_position(Int2 position);
 
     private:
         bool m_hidden = false;

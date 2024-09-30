@@ -12,7 +12,7 @@ namespace titian {
 		FuzeRenderer(
 			const StringView& filepath,
 			const kl::VideoType& video_type,
-			const Int2& frame_size,
+			Int2 frame_size,
 			int fps,
 			int video_bit_rate,
 			int audio_sample_rate);

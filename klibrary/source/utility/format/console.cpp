@@ -40,7 +40,7 @@ void kl::console::set_cursor_enabled(const bool state)
     SetConsoleCursorInfo(_console_init, &cursor_info);
 }
 
-void kl::console::move_cursor(const Int2& position)
+void kl::console::move_cursor(const Int2 position)
 {
     SetConsoleCursorPosition(_console_init, { (SHORT) position.x, (SHORT) position.y });
 }
@@ -77,13 +77,13 @@ kl::Int2 kl::console::size()
     return { info.srWindow.Right - info.srWindow.Left + 1, info.srWindow.Bottom - info.srWindow.Top + 1 };
 }
 
-void kl::console::set_size(const Int2& size)
+void kl::console::set_size(const Int2 size)
 {
     const SMALL_RECT rect = { 0, 0, (SHORT) (size.x - 1), (SHORT) (size.y - 1) };
     SetConsoleWindowInfo(_console_init, true, &rect);
 }
 
-void kl::console::set_font(const Int2& size, const std::string_view& font_name)
+void kl::console::set_font(const Int2 size, const std::string_view& font_name)
 {
     CONSOLE_FONT_INFOEX cfi = {};
     cfi.cbSize = sizeof(CONSOLE_FONT_INFOEX);
@@ -127,7 +127,7 @@ char kl::console::wait_for_any(const bool echo)
     return (char) _getch();
 }
 
-void kl::console::dump(const std::string_view& data, const Int2& location)
+void kl::console::dump(const std::string_view& data, const Int2 location)
 {
     DWORD ignored = 0;
     WriteConsoleOutputCharacterA(_console_init, data.data(), (DWORD) data.length(), { (SHORT) location.x, (SHORT) location.y }, &ignored);

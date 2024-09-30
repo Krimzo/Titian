@@ -1,7 +1,5 @@
 #pragma once
 
-#define NOMINMAX
-
 #include <ws2tcpip.h>
 #include <mfapi.h>
 #include <mfidl.h>

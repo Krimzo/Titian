@@ -11,9 +11,3 @@
 #include "web/web.h"
 #include "window/window.h"
 #include "graphics/graphics.h"
-
-#undef min
-#undef max
-#undef assert
-#undef VOID
-#undef INFINITY

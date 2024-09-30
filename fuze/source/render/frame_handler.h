@@ -12,7 +12,7 @@ namespace titian {
 
 		void init();
 
-		void prepare_frame(const Int2& size);
+		void prepare_frame(Int2 size);
 		void mix_frame(const Frame& frame);
 
 	private:

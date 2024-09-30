@@ -19,10 +19,10 @@ namespace kl {
         float sensitivity = 0.1f;
         float speed = 2.0f;
 
-        Color background;
+        RGB background;
         Ref<Texture> skybox;
 
-        void update_aspect_ratio(const Int2& size);
+        void update_aspect_ratio(Int2 size);
         Ray<float> ray() const;
 
         void set_forward(const Float3& dir);
@@ -39,7 +39,7 @@ namespace kl {
         void move_up(float delta_time);
         void move_down(float delta_time);
 
-        void rotate(const Float2& mouse_pos, const Float2& frame_center, float vertical_angle_limit = 85.0f);
+        void rotate(Float2 mouse_pos, Float2 frame_center, float vertical_angle_limit = 85.0f);
 
         Float4x4 view_matrix() const;
         Float4x4 projection_matrix() const;

@@ -48,7 +48,7 @@ float kl::Audio::index_to_time(const int at_index) const
 
 int kl::Audio::time_to_index(const float at_time) const
 {
-	return (int) (at_time * sample_rate);
+	return int(at_time * sample_rate);
 }
 
 float kl::Audio::sample_at_index(const int index) const

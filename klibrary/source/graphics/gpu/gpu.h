@@ -42,7 +42,7 @@ namespace kl {
         void clear_internal_depth(float depth = 1.0f, UINT8 stencil = 0xFF) const;
         void clear_internal(const Float4& color = {}) const;
 
-        void resize_internal(const Int2& size, DXGI_FORMAT depth_format = DXGI_FORMAT_D32_FLOAT);
+        void resize_internal(Int2 size, DXGI_FORMAT depth_format = DXGI_FORMAT_D32_FLOAT);
         void resize_to_window(HWND window);
 
         void bind_internal_views() const;

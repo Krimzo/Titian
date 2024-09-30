@@ -1,7 +1,7 @@
 #include "klibrary.h"
 
 
-void kl::Camera::update_aspect_ratio(const Int2& size)
+void kl::Camera::update_aspect_ratio(const Int2 size)
 {
     aspect_ratio = size.x / (float) size.y;
 }
@@ -66,7 +66,7 @@ void kl::Camera::move_down(const float delta_time)
     position -= m_up * (speed * delta_time);
 }
 
-void kl::Camera::rotate(const Float2& mouse_pos, const Float2& frame_center, const float vertical_angle_limit)
+void kl::Camera::rotate(const Float2 mouse_pos, const Float2 frame_center, const float vertical_angle_limit)
 {
     const Float2 rotation = (mouse_pos - frame_center) * sensitivity;
     const Float3 forward_vert = kl::rotate(m_forward, right(), rotation.y);

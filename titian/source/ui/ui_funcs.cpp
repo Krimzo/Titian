@@ -21,7 +21,7 @@ titian::Float2 titian::ui_cursor_pos()
 	return { im::GetCursorPosX(), im::GetCursorPosY() };
 }
 
-void titian::ui_set_cursor_pos(const Float2& pos)
+void titian::ui_set_cursor_pos(const Float2 pos)
 {
 	im::SetCursorPos({ pos.x, pos.y });
 }
@@ -90,7 +90,7 @@ void titian::ui_float4(const StringView& name, Float4 value, const Function<void
 	}
 }
 
-void titian::ui_color(const StringView& name, Color value, const Function<void(Color)>& func)
+void titian::ui_color(const StringView& name, RGB value, const Function<void(RGB)>& func)
 {
 	Float4 temp_val = value;
 	if (im::ColorEdit4(name.data(), &temp_val.x)) {

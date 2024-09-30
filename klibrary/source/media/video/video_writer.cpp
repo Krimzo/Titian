@@ -9,7 +9,7 @@ static const int _media_init = []
     return 0;
 }();
 
-kl::VideoWriter::VideoWriter(const std::string_view& filepath, const VideoType& video_type, const Int2& frame_size, const int fps, const int video_bit_rate, const int audio_sample_rate)
+kl::VideoWriter::VideoWriter(const std::string_view& filepath, const VideoType& video_type, const Int2 frame_size, const int fps, const int video_bit_rate, const int audio_sample_rate)
     : m_width(frame_size.x)
     , m_height(frame_size.y)
     , m_fps(fps)
@@ -97,7 +97,7 @@ bool kl::VideoWriter::add_frame(const Image& frame)
         return false;
     }
 
-    const int frame_byte_width = m_width * sizeof(Color);
+    const int frame_byte_width = m_width * sizeof(RGB);
     const int frame_byte_size = frame_byte_width * m_height;
 
     ComRef<IMFMediaBuffer> media_buffer;
@@ -109,8 +109,8 @@ bool kl::VideoWriter::add_frame(const Image& frame)
     media_sample->AddBuffer(media_buffer.get()) >> verify_result;
     media_sample->SetSampleDuration((LONGLONG) m_frame_duration) >> verify_result;
 
-    Color* out_buffer = nullptr;
-    const Color* in_buffer = frame.ptr();
+    RGB* out_buffer = nullptr;
+    const RGB* in_buffer = frame.ptr();
     media_buffer->Lock((BYTE**) &out_buffer, nullptr, nullptr) >> verify_result;
     for (uint32_t y = 0; y < m_height; y++) {
         copy<byte>(out_buffer + (m_height - 1 - y) * m_width, in_buffer + y * m_width, frame_byte_width);

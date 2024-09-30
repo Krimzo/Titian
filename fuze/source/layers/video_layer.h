@@ -27,7 +27,7 @@ namespace titian {
 		bool playing() const;
 
 		void start_rendering(
-			const Int2& frame_size,
+			Int2 frame_size,
 			int fps,
 			int video_bit_rate,
 			int audio_sample_rate);
@@ -41,7 +41,7 @@ namespace titian {
 		float start_time() const;
 		float end_time() const;
 
-		void store_frame(const Int2& size);
+		void store_frame(Int2 size);
 		Int2 frame_size() const;
 		dx::ShaderView get_shader_view() const;
 		void retrieve_frame(RAWImage& out_image) const;

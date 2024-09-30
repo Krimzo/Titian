@@ -79,7 +79,7 @@ void titian::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
 
             Ref material = new Material();
             material->texture_blend = 0.5f;
-            material->color = kl::random::gen_color();
+            material->color = kl::random::gen_rgb();
             material->color_texture_name = color_name;
             material->normal_texture_name = normal_name;
             scene->materials[material_name] = material;

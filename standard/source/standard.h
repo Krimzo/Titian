@@ -37,7 +37,8 @@ namespace titian {
 	using Complex = kl::Complex<float>;
 	using Quaternion = kl::Quaternion<float>;
 
-	using Color = kl::Color;
+	using RGB = kl::RGB;
+	using YUV = kl::YUV;
 
 	using String = std::string;
 	using StringView = std::string_view;

@@ -16,7 +16,7 @@ namespace titian {
 		Image();
 		Image(const StringView& path);
 
-		void cache_frame(const Int2& size);
+		void cache_frame(Int2 size);
 
 		Ref<Image> make_copy() const;
 	

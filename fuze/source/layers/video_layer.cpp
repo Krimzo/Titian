@@ -64,7 +64,7 @@ bool titian::VideoLayer::playing() const
 }
 
 void titian::VideoLayer::start_rendering(
-	const Int2& frame_size,
+	const Int2 frame_size,
 	const int fps,
 	const int video_bit_rate,
 	const int audio_sample_rate)
@@ -137,7 +137,7 @@ float titian::VideoLayer::end_time() const
 	return result;
 }
 
-void titian::VideoLayer::store_frame(const Int2& size)
+void titian::VideoLayer::store_frame(const Int2 size)
 {
 	m_handler.prepare_frame(size);
 

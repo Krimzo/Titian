@@ -171,7 +171,7 @@ void kl::GPU::clear_internal(const Float4& color) const
     clear_internal_depth();
 }
 
-void kl::GPU::resize_internal(const Int2& size, const DXGI_FORMAT depth_format)
+void kl::GPU::resize_internal(const Int2 size, const DXGI_FORMAT depth_format)
 {
     unbind_target_depth_views();
     for (auto& view : m_target_views) {

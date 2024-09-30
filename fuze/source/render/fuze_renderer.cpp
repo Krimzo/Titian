@@ -4,7 +4,7 @@
 titian::FuzeRenderer::FuzeRenderer(
 	const StringView& filepath,
 	const kl::VideoType& video_type,
-	const Int2& frame_size,
+	const Int2 frame_size,
 	const int fps,
 	const int video_bit_rate,
 	const int audio_sample_rate)
