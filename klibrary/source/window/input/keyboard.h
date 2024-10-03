@@ -8,7 +8,7 @@ namespace kl {
     {
         union
         {
-            Key keys[66] = {};
+            Key keys[80] = {};
             struct
             {
                 Key q;
@@ -37,39 +37,49 @@ namespace kl {
                 Key b;
                 Key n;
                 Key m;
-
-                Key num0;
-                Key num1;
-                Key num2;
-                Key num3;
-                Key num4;
-                Key num5;
-                Key num6;
-                Key num7;
-                Key num8;
-                Key num9;
-
+                Key zero;
+                Key one;
+                Key two;
+                Key three;
+                Key four;
+                Key five;
+                Key six;
+                Key seven;
+                Key eight;
+                Key nine;
                 Key period;
                 Key comma;
                 Key plus;
                 Key minus;
-
-                Key esc;
+                Key multiply;
+				Key divide;
+                Key equals;
+                Key lsqrbrckt;
+				Key rsqrbrckt;
+                Key semicolon;
+                Key apostrophe;
+                Key backslash;
+                Key backtick;
                 Key tab;
+                Key space;
+                Key enter;
+                Key backspace;
+                Key esc;
+
                 Key caps;
                 Key shift;
                 Key ctrl;
                 Key alt;
-                Key space;
-                Key enter;
                 Key insert;
                 Key delet;
-
+                Key home;
+				Key end;
+                Key pageup;
+				Key pagedown;
                 Key up;
                 Key left;
                 Key down;
                 Key right;
-
                 Key f1;
                 Key f2;
                 Key f3;
@@ -88,6 +98,10 @@ namespace kl {
         Keyboard() = default;
 
         void _reload();
-        void _update(uint64_t type, bool new_state);
+        void _update(WPARAM type, bool new_state);
+
+    private:
+        void _update_char(char type, bool new_state);
+        void _update_virtual(WPARAM type, bool new_state);
     };
 }

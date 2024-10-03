@@ -284,7 +284,7 @@ bool kl::Window::set_icon(const std::string_view& filepath) const
 
 void kl::Window::draw_pixel_data(const RGB* data, const Int2 size, const Int2 position) const
 {
-    BITMAPINFO bitmap_info = {};
+    BITMAPINFO bitmap_info{};
     bitmap_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bitmap_info.bmiHeader.biCompression = BI_RGB;
     bitmap_info.bmiHeader.biBitCount = 32;
@@ -324,7 +324,8 @@ extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam
 
 LRESULT CALLBACK kl::Window::window_procedure(const HWND window_handle, const UINT message, const WPARAM w_param, const LPARAM l_param) const
 {
-    switch (message) {
+    switch (message)
+    {
     case WM_SIZE:
     {
         const Int2 size = { LOWORD(l_param), HIWORD(l_param) };
@@ -357,10 +358,11 @@ void kl::Window::handle_message(const MSG& message)
     }
 #endif
 
-    switch (message.message) {
+    switch (message.message)
+    {
 #ifdef KL_USING_IMGUI
     case WM_CHAR:
-        if (*((short*) &message.lParam) > 1) {
+        if (reinterpret_cast<const short&>(message.lParam) > 1) {
             imgui::GetIO().AddInputCharacter((int) message.wParam);
         }
         break;

@@ -335,12 +335,12 @@ void kl::ContextHolder::unbind_target_depth_views() const
     m_context->OMSetRenderTargets(0, nullptr, nullptr);
 }
 
-void kl::ContextHolder::bind_shader_view_for_vertex_shader(const dx::ShaderView& view, UINT slot) const
+void kl::ContextHolder::bind_shader_view_for_vertex_shader(const dx::ShaderView& view, const UINT slot) const
 {
     m_context->VSSetShaderResources(slot, 1, view.address());
 }
 
-void kl::ContextHolder::unbind_shader_view_for_vertex_shader(UINT slot) const
+void kl::ContextHolder::unbind_shader_view_for_vertex_shader(const UINT slot) const
 {
     bind_shader_view_for_vertex_shader({}, slot);
 }

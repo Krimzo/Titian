@@ -8,7 +8,18 @@ void kl::Keyboard::_reload()
     }
 }
 
-void kl::Keyboard::_update(const uint64_t type, const bool new_state)
+void kl::Keyboard::_update(const WPARAM type, const bool new_state)
+{
+    char type_char = (char) MapVirtualKeyA(UINT(type), MAPVK_VK_TO_CHAR);
+    if (type_char != 0) {
+        _update_char(type_char, new_state);
+    }
+    else {
+        _update_virtual(type, new_state);
+    }
+}
+
+void kl::Keyboard::_update_char(const char type, const bool new_state)
 {
     switch (type)
     {
@@ -38,39 +49,55 @@ void kl::Keyboard::_update(const uint64_t type, const bool new_state)
     case 'B': b._update(new_state); break;
     case 'N': n._update(new_state); break;
     case 'M': m._update(new_state); break;
+    case '0': zero._update(new_state); break;
+    case '1': one._update(new_state); break;
+    case '2': two._update(new_state); break;
+    case '3': three._update(new_state); break;
+    case '4': four._update(new_state); break;
+    case '5': five._update(new_state); break;
+    case '6': six._update(new_state); break;
+    case '7': seven._update(new_state); break;
+    case '8': eight._update(new_state); break;
+    case '9': nine._update(new_state); break;
+	case '.': period._update(new_state); break;
+	case ',': comma._update(new_state); break;
+	case '+': plus._update(new_state); break;
+	case '-': minus._update(new_state); break;
+	case '*': multiply._update(new_state); break;
+	case '/': divide._update(new_state); break;
+	case '=': equals._update(new_state); break;
+	case '[': lsqrbrckt._update(new_state); break;
+	case ']': rsqrbrckt._update(new_state); break;
+	case ';': semicolon._update(new_state); break;
+	case '\'': apostrophe._update(new_state); break;
+	case '\\': backslash._update(new_state); break;
+	case '`': backtick._update(new_state); break;
+    case '\t': tab._update(new_state); break;
+    case ' ': space._update(new_state); break;
+    case '\r': enter._update(new_state); break;
+    case '\b': backspace._update(new_state); break;
+    case '\x1b': esc._update(new_state); break;
+    }
+}
 
-    case '0': num0._update(new_state); break;
-    case '1': num1._update(new_state); break;
-    case '2': num2._update(new_state); break;
-    case '3': num3._update(new_state); break;
-    case '4': num4._update(new_state); break;
-    case '5': num5._update(new_state); break;
-    case '6': num6._update(new_state); break;
-    case '7': num7._update(new_state); break;
-    case '8': num8._update(new_state); break;
-    case '9': num9._update(new_state); break;
-
-    case VK_OEM_PERIOD: period._update(new_state); break;
-    case VK_OEM_COMMA: comma._update(new_state); break;
-    case VK_OEM_PLUS: plus._update(new_state); break;
-    case VK_OEM_MINUS: minus._update(new_state); break;
-
-    case VK_ESCAPE: esc._update(new_state); break;
-    case VK_TAB: tab._update(new_state); break;
+void kl::Keyboard::_update_virtual(const WPARAM type, const bool new_state)
+{
+    switch (type)
+    {
     case VK_CAPITAL: caps._update(new_state); break;
     case VK_SHIFT: shift._update(new_state); break;
     case VK_CONTROL: ctrl._update(new_state); break;
     case VK_MENU: alt._update(new_state); break;
-    case VK_SPACE: space._update(new_state); break;
-    case VK_RETURN: enter._update(new_state); break;
     case VK_INSERT: insert._update(new_state); break;
     case VK_DELETE: delet._update(new_state); break;
-
+    case VK_HOME: home._update(new_state); break;
+    case VK_END: end._update(new_state); break;
+    case VK_PRIOR: pageup._update(new_state); break;
+    case VK_NEXT: pagedown._update(new_state); break;
     case VK_UP: up._update(new_state); break;
     case VK_LEFT: left._update(new_state); break;
     case VK_DOWN: down._update(new_state); break;
     case VK_RIGHT: right._update(new_state); break;
-
     case VK_F1: f1._update(new_state); break;
     case VK_F2: f2._update(new_state); break;
     case VK_F3: f3._update(new_state); break;
