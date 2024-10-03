@@ -16,6 +16,11 @@ namespace kl {
         constexpr Sphere(const Vector3<T>& position, T radius)
 			: position(position) , radius(radius)
         {}
+
+        constexpr bool contains(const Vector3<T>& point) const
+        {
+			return (point - position).length() <= radius;
+        }
     };
 }
 

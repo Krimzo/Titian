@@ -26,6 +26,16 @@ namespace kl {
         {
 			return position + size;
         }
+
+        constexpr bool contains(const Vector3<T>& point) const
+        {
+            const Vector3<T> minp = min_point();
+			const Vector3<T> maxp = max_point();
+            return
+                (point.x >= minp.x && point.x <= maxp.x) &&
+                (point.y >= minp.y && point.y <= maxp.y) &&
+                (point.z >= minp.z && point.z <= maxp.z);
+        }
     };
 }
 
