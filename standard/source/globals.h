@@ -4,18 +4,18 @@
 
 
 namespace titian {
-	inline constexpr const char* _CONF_FILE = "titian.json";
-	inline constexpr const char* CONF_EXE_TYPE = "exe_type";
-	inline constexpr const char* CONF_ENTRY_SCENE = "entry_scene";
-	inline constexpr const char* CONF_SPECIAL_COLOR = "special_color";
-	inline constexpr const char* CONF_ALTERNATE_COLOR = "alternate_color";
+	inline constexpr str _CONF_FILE = "titian.json";
+	inline constexpr str CONF_EXE_TYPE = "exe_type";
+	inline constexpr str CONF_ENTRY_SCENE = "entry_scene";
+	inline constexpr str CONF_SPECIAL_COLOR = "special_color";
+	inline constexpr str CONF_ALTERNATE_COLOR = "alternate_color";
 
-	inline constexpr const char* EXE_PLAY = "play";
-	inline constexpr const char* EXE_EDIT = "edit";
-	inline constexpr const char* EXE_SANDBOX = "sandbox";
-	inline constexpr const char* EXE_UNPACK = "unpack";
-	inline constexpr const char* EXE_PACK = "pack";
-	inline constexpr const char* EXE_VIDEO = "video";
+	inline constexpr str EXE_PLAY = "play";
+	inline constexpr str EXE_EDIT = "edit";
+	inline constexpr str EXE_SANDBOX = "sandbox";
+	inline constexpr str EXE_UNPACK = "unpack";
+	inline constexpr str EXE_PACK = "pack";
+	inline constexpr str EXE_VIDEO = "video";
 }
 
 namespace titian {

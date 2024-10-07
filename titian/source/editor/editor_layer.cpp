@@ -12,20 +12,20 @@ bool titian::EditorLayer::update()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    AppLayer* app_layer = Layers::get<AppLayer>();
-	GameLayer* game_layer = Layers::get<GameLayer>();
+    AppLayer& app_layer = Layers::get<AppLayer>();
+	GameLayer& game_layer = Layers::get<GameLayer>();
     
     if (!is_viewport_focused || !is_over_viewport) {
         return true;
     }
 
-    Camera* camera = game_layer->scene->get_casted<Camera>(game_layer->scene->main_camera_name);
+    Camera* camera = game_layer.scene->get_casted<Camera>(game_layer.scene->main_camera_name);
     if (!camera) {
         return true;
     }
 
-    kl::Window* window = &app_layer->window;
-    const float delta_time = app_layer->timer.delta();
+    kl::Window* window = &app_layer.window;
+    const float delta_time = app_layer.timer.delta();
 
     if (window->mouse.right) {
         const Int2 frame_center = window->frame_center();

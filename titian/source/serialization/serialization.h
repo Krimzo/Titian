@@ -52,7 +52,7 @@ namespace titian {
 		Serializable() = default;
 		virtual ~Serializable() = default;
 
-		virtual void serialize(Serializer* serializer) const = 0;
-		virtual void deserialize(const Serializer* serializer) = 0;
+		virtual void serialize(Serializer& serializer) const = 0;
+		virtual void deserialize(const Serializer& serializer) = 0;
 	};
 }

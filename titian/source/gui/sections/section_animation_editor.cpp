@@ -21,12 +21,12 @@ void titian::GUISectionAnimationEditor::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    Scene* scene = &Layers::get<GameLayer>()->scene;
+    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    Scene& scene = *Layers::get<GameLayer>().scene;
 
     Ref<Animation> animation;
-    if (scene->animations.contains(selected_animation)) {
-        animation = scene->animations.at(selected_animation);
+    if (scene.animations.contains(selected_animation)) {
+        animation = scene.animations.at(selected_animation);
     }
 
     if (im::Begin("Animation Editor")) {
@@ -50,7 +50,7 @@ void titian::GUISectionAnimationEditor::render_gui()
                 update_animation_camera(scene);
             }
             if (animation) {
-                render_selected_animation(&animation, viewport_size);
+                render_selected_animation(*animation, viewport_size);
                 const dx::ShaderView& shader_view = render_texture->shader_view;
                 im::Image(render_texture->shader_view.get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
@@ -66,26 +66,26 @@ void titian::GUISectionAnimationEditor::render_gui()
     im::End();
 }
 
-void titian::GUISectionAnimationEditor::display_animations(Scene* scene)
+void titian::GUISectionAnimationEditor::display_animations(Scene& scene)
 {
     if (im::BeginPopupContextWindow("NewAnimation", ImGuiPopupFlags_MouseButtonMiddle)) {
         im::Text("New Animation");
         const String name = gui_input_continuous("##CreateAnimationInput");
-        if (!name.empty() && !scene->animations.contains(name)) {
+        if (!name.empty() && !scene.animations.contains(name)) {
             if (im::MenuItem("Basic Animation")) {
-                scene->animations[name] = new Animation();
+                scene.animations[name] = new Animation();
                 im::CloseCurrentPopup();
             }
             if (im::BeginMenu("Mesh Animation")) {
                 const String filter = gui_input_continuous("Search###NewMeshAnimation");
-                for (const auto& [mesh_name, _] : scene->meshes) {
+                for (const auto& [mesh_name, _] : scene.meshes) {
                     if (!filter.empty() && mesh_name.find(filter) == -1) {
                         continue;
                     }
                     if (im::Selectable(mesh_name.data(), false)) {
                         Ref animation = new Animation();
                         animation->meshes = { mesh_name };
-                        scene->animations[name] = animation;
+                        scene.animations[name] = animation;
                         im::CloseCurrentPopup();
                     }
                 }
@@ -96,7 +96,7 @@ void titian::GUISectionAnimationEditor::display_animations(Scene* scene)
     }
 
     const String filter = gui_input_continuous("Search###AnimationEditor");
-    for (auto& [animation_name, animation] : scene->animations) {
+    for (auto& [animation_name, animation] : scene.animations) {
         if (!filter.empty() && animation_name.find(filter) == -1) {
             continue;
         }
@@ -111,17 +111,17 @@ void titian::GUISectionAnimationEditor::display_animations(Scene* scene)
 
             if (auto opt_name = gui_input_waited("##RenameAnimationInput", animation_name)) {
                 const auto& new_name = opt_name.value();
-                if (!new_name.empty() && !scene->animations.contains(new_name)) {
+                if (!new_name.empty() && !scene.animations.contains(new_name)) {
                     if (selected_animation == animation_name) {
                         selected_animation = new_name;
                     }
-                    for (auto& [_, entity] : scene->entities()) {
+                    for (auto& [_, entity] : scene.entities()) {
                         if (entity->animation_name == animation_name) {
                             entity->animation_name = new_name;
                         }
                     }
-                    scene->animations[new_name] = animation;
-                    scene->animations.erase(animation_name);
+                    scene.animations[new_name] = animation;
+                    scene.animations.erase(animation_name);
                     should_break = true;
                     im::CloseCurrentPopup();
                 }
@@ -131,7 +131,7 @@ void titian::GUISectionAnimationEditor::display_animations(Scene* scene)
                 if (selected_animation == animation_name) {
                     selected_animation = "/";
                 }
-                scene->animations.erase(animation_name);
+                scene.animations.erase(animation_name);
                 should_break = true;
                 im::CloseCurrentPopup();
             }
@@ -144,13 +144,13 @@ void titian::GUISectionAnimationEditor::display_animations(Scene* scene)
     }
 }
 
-void titian::GUISectionAnimationEditor::update_animation_camera(Scene* scene)
+void titian::GUISectionAnimationEditor::update_animation_camera(Scene& scene)
 {
     if (im::IsMouseClicked(ImGuiMouseButton_Right)) {
         initial_camera_info = camera_info;
     }
 
-    const int scroll = Layers::get<AppLayer>()->window.mouse.scroll();
+    const int scroll = Layers::get<AppLayer>().window.mouse.scroll();
     if (im::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = im::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;
@@ -172,18 +172,18 @@ void titian::GUISectionAnimationEditor::update_animation_camera(Scene* scene)
     camera->set_forward(-camera->position());
 }
 
-void titian::GUISectionAnimationEditor::render_selected_animation(Animation* animation, const Int2 viewport_size)
+void titian::GUISectionAnimationEditor::render_selected_animation(Animation& animation, const Int2 viewport_size)
 {
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
         return;
     }
 
-    RenderLayer* render_layer = Layers::get<RenderLayer>();
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    Scene* scene = &Layers::get<GameLayer>()->scene;
+    RenderLayer& render_layer = Layers::get<RenderLayer>();
+    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    Scene& scene = *Layers::get<GameLayer>().scene;
 
     if (render_texture->resolution() != viewport_size) {
-        render_texture->graphics_buffer = gpu->create_target_texture(viewport_size);
+        render_texture->graphics_buffer = gpu.create_target_texture(viewport_size);
         render_texture->create_target_view(nullptr);
         render_texture->create_shader_view(nullptr);
     }
@@ -197,39 +197,39 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation* ani
         descriptor.SampleDesc.Count = 1;
         descriptor.Usage = D3D11_USAGE_DEFAULT;
         descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-        depth_texture->graphics_buffer = gpu->create_texture(&descriptor, nullptr);
+        depth_texture->graphics_buffer = gpu.create_texture(&descriptor, nullptr);
         depth_texture->create_depth_view(nullptr);
     }
 
-    gpu->clear_target_view(render_texture->target_view, camera->background);
-    gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
+    gpu.clear_target_view(render_texture->target_view, camera->background);
+    gpu.clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
 
     Mesh* mesh = nullptr;
-    if (animation->animation_type == AnimationType::SEQUENTIAL) {
+    if (animation.animation_type == AnimationType::SEQUENTIAL) {
         if (m_animating) {
-            m_frame_index = animation->get_index(m_timer.elapsed());
+            m_frame_index = animation.get_index(m_timer.elapsed());
         }
-        if (m_frame_index >= 0 && m_frame_index < (int) animation->meshes.size()) {
-            mesh = scene->helper_get_mesh(animation->meshes[m_frame_index]);
+        if (m_frame_index >= 0 && m_frame_index < (int) animation.meshes.size()) {
+            mesh = scene.helper_get_mesh(animation.meshes[m_frame_index]);
         }
     }
     else {
-        mesh = animation->get_mesh(scene, 0.0f);
+        mesh = animation.get_mesh(scene, 0.0f);
     }
     if (!mesh) {
         return;
     }
 
-    gpu->bind_target_depth_view(render_texture->target_view, depth_texture->depth_view);
+    gpu.bind_target_depth_view(render_texture->target_view, depth_texture->depth_view);
 
-    const Int2 old_viewport_size = gpu->viewport_size();
-    gpu->set_viewport_size(viewport_size);
+    const Int2 old_viewport_size = gpu.viewport_size();
+    gpu.set_viewport_size(viewport_size);
 
-    gpu->bind_raster_state(mesh->render_wireframe ? render_layer->raster_states->wireframe : render_layer->raster_states->solid);
-    gpu->bind_depth_state(render_layer->depth_states->enabled);
+    gpu.bind_raster_state(mesh->render_wireframe ? render_layer.raster_states.wireframe : render_layer.raster_states.solid);
+    gpu.bind_depth_state(render_layer.depth_states.enabled);
 
-    kl::RenderShaders& render_shaders = render_layer->shader_states->solid_lit_pass;
-    gpu->bind_render_shaders(render_shaders);
+    kl::RenderShaders& render_shaders = render_layer.shader_states.solid_lit_pass;
+    gpu.bind_render_shaders(render_shaders);
 
     camera->update_aspect_ratio(viewport_size);
 
@@ -246,29 +246,29 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation* ani
     cb.OBJECT_COLOR = line_color;
     cb.SUN_DIRECTION = sun_direction;
 
-    if (m_animating && animation->animation_type == AnimationType::SKELETAL) {
-        animation->update(scene, m_timer.elapsed());
-        animation->bind_matrices(0);
+    if (m_animating && animation.animation_type == AnimationType::SKELETAL) {
+        animation.update(scene, m_timer.elapsed());
+        animation.bind_matrices(0);
         cb.IS_SKELETAL = 1.0f;
     }
 
     render_shaders.upload(cb);
-    gpu->draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
+    gpu.draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
 
-    gpu->unbind_shader_view_for_vertex_shader(0);
-    gpu->bind_internal_views();
-    gpu->set_viewport_size(old_viewport_size);
+    gpu.unbind_shader_view_for_vertex_shader(0);
+    gpu.bind_internal_views();
+    gpu.set_viewport_size(old_viewport_size);
 }
 
 void titian::GUISectionAnimationEditor::show_animation_properties(Animation* animation)
 {
-    GUILayer* gui_layer = Layers::get<GUILayer>();
-    kl::Window* window = &Layers::get<AppLayer>()->window;
-    Scene* scene = &Layers::get<GameLayer>()->scene;
+    GUILayer& gui_layer = Layers::get<GUILayer>();
+    kl::Window& window = Layers::get<AppLayer>().window;
+    Scene& scene = *Layers::get<GameLayer>().scene;
 
     if (im::Begin("Animation Properties") && animation) {
         if (im::IsWindowFocused()) {
-            m_start_mesh_index += window->mouse.scroll();
+            m_start_mesh_index += window.mouse.scroll();
             m_start_mesh_index = kl::clamp(m_start_mesh_index, 0, kl::max<int>((int) animation->meshes.size() - 1, 0));
         }
 
@@ -298,7 +298,7 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
         im::Text("Info");
         im::Text("Name: ");
         im::SameLine();
-        gui_colored_text(selected_animation, gui_layer->special_color);
+        gui_colored_text(selected_animation, gui_layer.special_color);
 
         static const Map<int32_t, String> animation_type_names{
             { AnimationType::SEQUENTIAL, "Sequential" },
@@ -329,7 +329,7 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
 
         for (int i = m_start_mesh_index; i < (m_start_mesh_index + 10) && i < (int) animation->meshes.size(); i++) {
             if (im::BeginCombo(kl::format(i, ". Mesh").data(), animation->meshes[i].data())) {
-                for (auto& [name, _] : scene->meshes) {
+                for (auto& [name, _] : scene.meshes) {
                     if (im::Selectable(name.data(), name == animation->meshes[i])) {
                         animation->meshes[i] = name;
                     }

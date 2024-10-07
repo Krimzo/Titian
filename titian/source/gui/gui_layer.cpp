@@ -7,17 +7,17 @@ titian::GUILayer::GUILayer()
 
 void titian::GUILayer::init()
 {
-	AppLayer* app_layer = Layers::get<AppLayer>();
+	AppLayer& app_layer = Layers::get<AppLayer>();
 
-	kl::Window* window = &app_layer->window;
-	kl::GPU* gpu = &app_layer->gpu;
+	kl::Window& window = app_layer.window;
+	kl::GPU& gpu = app_layer.gpu;
 
 	im::CreateContext();
 	im::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-	ImGui_ImplWin32_Init(HWND(*window));
-	ImGui_ImplDX11_Init(gpu->device().get(), gpu->context().get());
-	dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(*window);
+	ImGui_ImplWin32_Init(HWND(window));
+	ImGui_ImplDX11_Init(gpu.device().get(), gpu.context().get());
+	dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(HWND(window));
 
 	if (_conf_data.contains(CONF_SPECIAL_COLOR)) {
 		js::Array* data = _conf_data[CONF_SPECIAL_COLOR].as<js::Array>();
@@ -49,9 +49,9 @@ bool titian::GUILayer::update()
 {
 	const TimeBomb _ = bench_time_bomb();
 
-	AppLayer* app_layer = Layers::get<AppLayer>();
-	RenderLayer* render_layer = Layers::get<RenderLayer>();
-	GameLayer* game_layer = Layers::get<GameLayer>();
+	AppLayer& app_layer = Layers::get<AppLayer>();
+	RenderLayer* render_layer = &Layers::get<RenderLayer>();
+	GameLayer* game_layer = &Layers::get<GameLayer>();
 
 	ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
@@ -74,7 +74,7 @@ bool titian::GUILayer::update()
 		render_layer->present();
 	}
 	else {
-		app_layer->gpu.swap_buffers(true);
+		app_layer.gpu.swap_buffers(true);
 	}
 	return true;
 }

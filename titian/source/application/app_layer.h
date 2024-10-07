@@ -11,9 +11,9 @@ namespace titian {
 		kl::GPU gpu{ window };
 		kl::Timer timer;
 
-		px::PxDefaultAllocator m_allocator = {};
-		px::PxDefaultErrorCallback m_error_callback = {};
-		px::PxFoundation* m_foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_allocator, m_error_callback);
+		px::PxDefaultAllocator allocator = {};
+		px::PxDefaultErrorCallback error_callback = {};
+		px::PxFoundation& foundation = *PxCreateFoundation(PX_PHYSICS_VERSION, allocator, error_callback);
 
 		px::PxPhysics* physics = nullptr;
 		px::PxDefaultCpuDispatcher* cpu_dispatcher = nullptr;

@@ -24,8 +24,8 @@ namespace titian {
 		void process(Camera* camera);
 
 	protected:
-		virtual void state_package(StatePackage* package) = 0;
-		virtual void render_self(StatePackage* package) = 0;
+		virtual void state_package(StatePackage& package) = 0;
+		virtual void render_self(StatePackage& package) = 0;
 
 	private:
 		void bind_states(const StatePackage& package);

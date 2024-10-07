@@ -11,16 +11,16 @@ titian::Shader::Shader(const ShaderType type)
 	}
 }
 
-void titian::Shader::serialize(Serializer* serializer) const
+void titian::Shader::serialize(Serializer& serializer) const
 {
-	serializer->write_int("shader_type", shader_type);
-	serializer->write_string("data_buffer", data_buffer);
+	serializer.write_int("shader_type", shader_type);
+	serializer.write_string("data_buffer", data_buffer);
 }
 
-void titian::Shader::deserialize(const Serializer* serializer)
+void titian::Shader::deserialize(const Serializer& serializer)
 {
-	serializer->read_int("shader_type", (int32_t&) shader_type);
-	serializer->read_string("data_buffer", data_buffer);
+	serializer.read_int("shader_type", (int32_t&) shader_type);
+	serializer.read_string("data_buffer", data_buffer);
 	reload();
 }
 
@@ -75,8 +75,8 @@ void titian::Shader::reload_for_material()
 		{ "KL_BoneIndices", 0, DXGI_FORMAT_R8G8B8A8_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "KL_BoneWeights", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-	graphics_buffer = gpu->create_render_shaders(full_source.str(), vertex_layout_descriptors);
+	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	graphics_buffer = gpu.create_render_shaders(full_source.str(), vertex_layout_descriptors);
 }
 
 void titian::Shader::reload_for_camera()
@@ -85,8 +85,8 @@ void titian::Shader::reload_for_camera()
 		graphics_buffer = {};
 		return;
 	}
-	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-	graphics_buffer = gpu->create_render_shaders(data_buffer);
+	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	graphics_buffer = gpu.create_render_shaders(data_buffer);
 }
 
 static const int load_names = [&]

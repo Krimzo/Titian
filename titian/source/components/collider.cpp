@@ -2,7 +2,7 @@
 
 
 titian::Collider::Collider()
-    : m_material(Layers::get<AppLayer>()->physics->createMaterial(0.25f, 0.25f, 0.25f))
+    : m_material(Layers::get<AppLayer>().physics->createMaterial(0.25f, 0.25f, 0.25f))
 {
     kl::assert(m_material, "Failed to create collider MATERIAL");
 }
@@ -13,93 +13,93 @@ titian::Collider::~Collider()
     if (m_material) m_material->release();
 }
 
-void titian::Collider::serialize(Serializer* serializer) const
+void titian::Collider::serialize(Serializer& serializer) const
 {
     const px::PxGeometryType::Enum geometry_type = this->type();
-    serializer->write_int("geometry_type", geometry_type);
+    serializer.write_int("geometry_type", geometry_type);
 
-    serializer->push_object("geometry");
+    serializer.push_object("geometry");
     switch (geometry_type) {
     case px::PxGeometryType::Enum::eBOX: {
         px::PxBoxGeometry geometry{};
         m_shape->getBoxGeometry(geometry);
-        serializer->write_float_array("half_extents", &geometry.halfExtents.x, 3);
+        serializer.write_float_array("half_extents", &geometry.halfExtents.x, 3);
         break;
     }
     case px::PxGeometryType::Enum::eSPHERE: {
         px::PxSphereGeometry geometry{};
         m_shape->getSphereGeometry(geometry);
-        serializer->write_float("radius", geometry.radius);
+        serializer.write_float("radius", geometry.radius);
         break;
     }
     case px::PxGeometryType::Enum::eCAPSULE: {
         px::PxCapsuleGeometry geometry{};
         m_shape->getCapsuleGeometry(geometry);
-        serializer->write_float("half_height", geometry.halfHeight);
-        serializer->write_float("radius", geometry.radius);
+        serializer.write_float("half_height", geometry.halfHeight);
+        serializer.write_float("radius", geometry.radius);
         break;
     }
     }
-    serializer->pop_object();
+    serializer.pop_object();
 
     const Float3 rotation = this->rotation();
-    serializer->write_float_array("rotation", &rotation.x, 3);
+    serializer.write_float_array("rotation", &rotation.x, 3);
 
     const Float3 offset = this->offset();
-    serializer->write_float_array("offset", &offset.x, 3);
+    serializer.write_float_array("offset", &offset.x, 3);
 
-    serializer->write_float("static_friction", static_friction());
-    serializer->write_float("dynamic_friction", dynamic_friction());
-    serializer->write_float("restitution", restitution());
+    serializer.write_float("static_friction", static_friction());
+    serializer.write_float("dynamic_friction", dynamic_friction());
+    serializer.write_float("restitution", restitution());
 }
 
-void titian::Collider::deserialize(const Serializer* serializer)
+void titian::Collider::deserialize(const Serializer& serializer)
 {
     px::PxGeometryType::Enum geometry_type{};
-    serializer->read_int("geometry_type", (int&) geometry_type);
+    serializer.read_int("geometry_type", (int&) geometry_type);
 
-    serializer->load_object("geometry");
+    serializer.load_object("geometry");
     switch (geometry_type) {
     case px::PxGeometryType::Enum::eBOX: {
         px::PxBoxGeometry geometry{};
-        serializer->read_float_array("half_extents", &geometry.halfExtents.x, 3);
+        serializer.read_float_array("half_extents", &geometry.halfExtents.x, 3);
         set_geometry(geometry);
         break;
     }
     case px::PxGeometryType::Enum::eSPHERE: {
         px::PxSphereGeometry geometry{};
-        serializer->read_float("radius", geometry.radius);
+        serializer.read_float("radius", geometry.radius);
         set_geometry(geometry);
         break;
     }
     case px::PxGeometryType::Enum::eCAPSULE: {
         px::PxCapsuleGeometry geometry{};
-        serializer->read_float("half_height", geometry.halfHeight);
-        serializer->read_float("radius", geometry.radius);
+        serializer.read_float("half_height", geometry.halfHeight);
+        serializer.read_float("radius", geometry.radius);
         set_geometry(geometry);
         break;
     }
     }
-    serializer->unload_object();
+    serializer.unload_object();
 
     Float3 rotation;
-    serializer->read_float_array("rotation", &rotation.x, 3);
+    serializer.read_float_array("rotation", &rotation.x, 3);
     set_rotation(rotation);
 
     Float3 offset;
-    serializer->read_float_array("offset", &offset.x, 3);
+    serializer.read_float_array("offset", &offset.x, 3);
     set_offset(offset);
 
     float static_friction = 0.0f;
-    serializer->read_float("static_friction", static_friction);
+    serializer.read_float("static_friction", static_friction);
     set_static_friction(static_friction);
 
     float dynamic_friction = 0.0f;
-    serializer->read_float("dynamic_friction", dynamic_friction);
+    serializer.read_float("dynamic_friction", dynamic_friction);
     set_dynamic_friction(dynamic_friction);
 
     float restitution = 0.0f;
-    serializer->read_float("restitution", restitution);
+    serializer.read_float("restitution", restitution);
     set_restitution(restitution);
 }
 
@@ -120,7 +120,7 @@ void titian::Collider::set_geometry(const px::PxGeometry& geometry)
         geometry.getType() == px::PxGeometryType::Enum::eSPHERE ||
         geometry.getType() == px::PxGeometryType::Enum::eCAPSULE, "Not a valid geometry type");
 
-    px::PxPhysics* physics = Layers::get<AppLayer>()->physics;
+    px::PxPhysics* physics = Layers::get<AppLayer>().physics;
     if (m_shape) m_shape->release();
     m_shape = physics->createShape(geometry, *m_material);
 }

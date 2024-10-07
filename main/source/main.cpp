@@ -1,12 +1,11 @@
 #include "main.h"
 
+using namespace titian;
 
 static constexpr bool SHOULD_PACKAGE_DEFAULTS = false;
 
-int main(const int argc, const char** argv)
+int main(int argc, str* argv)
 {
-	using namespace titian;
-
 	if constexpr (SHOULD_PACKAGE_DEFAULTS) {
 		create_package("../titian/package/", "titian.tipk");
 		create_package("../sandbox/package/", "sandbox.tipk");

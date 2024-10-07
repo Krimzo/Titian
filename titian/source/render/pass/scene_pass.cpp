@@ -5,21 +5,21 @@ titian::ScenePass::ScenePass()
     : RenderPass("ScenePass")
 {}
 
-void titian::ScenePass::state_package(StatePackage* package)
+void titian::ScenePass::state_package(StatePackage& package)
 {
-    RenderLayer* render_layer = Layers::get<RenderLayer>();
-    package->raster_state = package->camera->render_wireframe ? render_layer->raster_states->wireframe : dx::RasterState{};
-    package->depth_state = render_layer->depth_states->enabled;
-    package->shader_state = render_layer->shader_states->scene_pass;
-    package->blend_state = render_layer->blend_states->enabled;
+    RenderLayer& render_layer = Layers::get<RenderLayer>();
+    package.raster_state = package.camera->render_wireframe ? render_layer.raster_states.wireframe : dx::RasterState{};
+    package.depth_state = render_layer.depth_states.enabled;
+    package.shader_state = render_layer.shader_states.scene_pass;
+    package.blend_state = render_layer.blend_states.enabled;
 }
 
-void titian::ScenePass::render_self(StatePackage* package)
+void titian::ScenePass::render_self(StatePackage& package)
 {
-	RenderLayer* render_layer = Layers::get<RenderLayer>();
-    kl::Timer* timer = &Layers::get<AppLayer>()->timer;
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    Scene* scene = &Layers::get<GameLayer>()->scene;
+	RenderLayer& render_layer = Layers::get<RenderLayer>();
+    kl::Timer& timer = Layers::get<AppLayer>().timer;
+    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    Scene& scene = *Layers::get<GameLayer>().scene;
 
     struct alignas(16) CB
     {
@@ -54,23 +54,23 @@ void titian::ScenePass::render_self(StatePackage* package)
         float IS_SKELETAL;
     } cb = {};
 
-    cb.V = package->camera->view_matrix();
-    cb.VP = package->camera->camera_matrix();
-    cb.CAMERA_POSITION = package->camera->position();
-    cb.CAMERA_HAS_SKYBOX = (float) scene->textures.contains(package->camera->skybox_texture_name);
-    cb.CAMERA_BACKGROUND = package->camera->background;
+    cb.V = package.camera->view_matrix();
+    cb.VP = package.camera->camera_matrix();
+    cb.CAMERA_POSITION = package.camera->position();
+    cb.CAMERA_HAS_SKYBOX = (float) scene.textures.contains(package.camera->skybox_texture_name);
+    cb.CAMERA_BACKGROUND = package.camera->background;
 
-    if (AmbientLight* ambient_light = scene->get_casted<AmbientLight>(scene->main_ambient_light_name)) {
+    if (AmbientLight* ambient_light = scene.get_casted<AmbientLight>(scene.main_ambient_light_name)) {
         cb.AMBIENT_COLOR = ambient_light->color;
     }
-    if (DirectionalLight* directional_light = scene->get_casted<DirectionalLight>(scene->main_directional_light_name)) {
+    if (DirectionalLight* directional_light = scene.get_casted<DirectionalLight>(scene.main_directional_light_name)) {
         ID3D11ShaderResourceView* dir_light_views[DirectionalLight::CASCADE_COUNT] = {};
         for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
             dir_light_views[i] = directional_light->shader_view(i).get();
-            cb.LIGHT_VPs[i] = directional_light->light_matrix(package->camera, i);
+            cb.LIGHT_VPs[i] = directional_light->light_matrix(package.camera, i);
         }
 
-        gpu->context()->PSSetShaderResources(1, DirectionalLight::CASCADE_COUNT, dir_light_views);
+        gpu.context()->PSSetShaderResources(1, DirectionalLight::CASCADE_COUNT, dir_light_views);
 
         cb.SUN_DIRECTION = directional_light->direction();
         cb.SUN_COLOR = directional_light->color;
@@ -79,25 +79,25 @@ void titian::ScenePass::render_self(StatePackage* package)
         cb.SHADOW_TEXTURE_SIZE = Float2{ (float) directional_light->resolution() };
         cb.SHADOW_TEXTURE_TEXEL_SIZE = Float2{ 1.0f / directional_light->resolution() };
         for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
-            cb.SHADOW_CASCADES[i] = kl::lerp(directional_light->cascade_splits[i + 1], package->camera->near_plane, package->camera->far_plane);
+            cb.SHADOW_CASCADES[i] = kl::lerp(directional_light->cascade_splits[i + 1], package.camera->near_plane, package.camera->far_plane);
         }
     }
     cb.RECEIVES_SHADOWS = true;
-    cb.ELAPSED_TIME = timer->elapsed();
-    cb.DELTA_TIME = timer->delta();
+    cb.ELAPSED_TIME = timer.elapsed();
+    cb.DELTA_TIME = timer.delta();
 
-    gpu->bind_target_depth_views({
-        package->camera->color_texture->target_view.get(),
-        package->camera->index_texture->target_view.get() },
-        package->camera->depth_texture->depth_view);
-    gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->linear, 0);
-    gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->shadow, 1);
-    gpu->bind_sampler_state_for_pixel_shader(render_layer->sampler_states->linear, 2);
-    if (Texture* skybox = scene->helper_get_texture(package->camera->skybox_texture_name)) {
-        gpu->bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
+    gpu.bind_target_depth_views({
+        package.camera->color_texture->target_view.get(),
+        package.camera->index_texture->target_view.get() },
+        package.camera->depth_texture->depth_view);
+    gpu.bind_sampler_state_for_pixel_shader(render_layer.sampler_states.linear, 0);
+    gpu.bind_sampler_state_for_pixel_shader(render_layer.sampler_states.shadow, 1);
+    gpu.bind_sampler_state_for_pixel_shader(render_layer.sampler_states.linear, 2);
+    if (Texture* skybox = scene.helper_get_texture(package.camera->skybox_texture_name)) {
+        gpu.bind_shader_view_for_pixel_shader(skybox->shader_view, 0);
     }
     else {
-        gpu->unbind_shader_view_for_pixel_shader(0);
+        gpu.unbind_shader_view_for_pixel_shader(0);
     }
 
     struct RenderInfo
@@ -115,11 +115,11 @@ void titian::ScenePass::render_self(StatePackage* package)
     };
 
     Vector<RenderInfo> to_render;
-    to_render.reserve(scene->entities().size());
+    to_render.reserve(scene.entities().size());
 
     const auto schedule_entity_helper = [&](const int id, Entity* entity)
     {
-        if (!package->camera->can_see(entity->position())) {
+        if (!package.camera->can_see(entity->position())) {
             return;
         }
 
@@ -127,32 +127,32 @@ void titian::ScenePass::render_self(StatePackage* package)
         info.id = id;
         info.entity = entity;
 
-        info.animation = scene->helper_get_animation(entity->animation_name);
+        info.animation = scene.helper_get_animation(entity->animation_name);
         if (!info.animation) {
             return;
         }
 
-        info.mesh = info.animation->get_mesh(scene, timer->elapsed());
-        info.material = scene->helper_get_material(entity->material_name);
+        info.mesh = info.animation->get_mesh(scene, timer.elapsed());
+        info.material = scene.helper_get_material(entity->material_name);
         if (!info.mesh || !info.material) {
             return;
         }
 
-        info.color_texture = scene->helper_get_texture(info.material->color_texture_name);
-        info.normal_texture = scene->helper_get_texture(info.material->normal_texture_name);
-        info.roughness_texture = scene->helper_get_texture(info.material->roughness_texture_name);
+        info.color_texture = scene.helper_get_texture(info.material->color_texture_name);
+        info.normal_texture = scene.helper_get_texture(info.material->normal_texture_name);
+        info.roughness_texture = scene.helper_get_texture(info.material->roughness_texture_name);
 
-        if (Shader* shader = scene->helper_get_shader(info.material->shader_name)) {
+        if (Shader* shader = scene.helper_get_shader(info.material->shader_name)) {
             info.render_shaders = &shader->graphics_buffer;
         }
         else {
-            info.render_shaders = &package->shader_state;
+            info.render_shaders = &package.shader_state;
         }
-        info.camera_distance = (entity->position() - package->camera->position()).length();
+        info.camera_distance = (entity->position() - package.camera->position()).length();
         to_render.push_back(info);
     };
 
-    for (int counter = 0; const auto& [_, entity] : scene->entities()) {
+    for (int counter = 0; const auto& [_, entity] : scene.entities()) {
         schedule_entity_helper(++counter, &entity);
     }
 
@@ -161,32 +161,32 @@ void titian::ScenePass::render_self(StatePackage* package)
         return a.camera_distance < b.camera_distance;
     });
     
-    bool wireframe_bound = package->camera->render_wireframe;
-    gpu->bind_raster_state(wireframe_bound ? render_layer->raster_states->wireframe : render_layer->raster_states->solid_cull);
+    bool wireframe_bound = package.camera->render_wireframe;
+    gpu.bind_raster_state(wireframe_bound ? render_layer.raster_states.wireframe : render_layer.raster_states.solid_cull);
 
     const auto render_entity_helper = [&](const RenderInfo& info)
     {
-        const bool should_wireframe = package->camera->render_wireframe || info.mesh->render_wireframe;
+        const bool should_wireframe = package.camera->render_wireframe || info.mesh->render_wireframe;
         if (should_wireframe != wireframe_bound) {
             wireframe_bound = should_wireframe;
-            gpu->bind_raster_state(wireframe_bound ? render_layer->raster_states->wireframe : render_layer->raster_states->solid_cull);
+            gpu.bind_raster_state(wireframe_bound ? render_layer.raster_states.wireframe : render_layer.raster_states.solid_cull);
         }
 
         if (info.color_texture) {
-            gpu->bind_shader_view_for_pixel_shader(info.color_texture->shader_view, 5);
+            gpu.bind_shader_view_for_pixel_shader(info.color_texture->shader_view, 5);
         }
         else {
-            gpu->unbind_shader_view_for_pixel_shader(5);
+            gpu.unbind_shader_view_for_pixel_shader(5);
         }
         if (info.normal_texture) {
-            gpu->bind_shader_view_for_pixel_shader(info.normal_texture->shader_view, 6);
+            gpu.bind_shader_view_for_pixel_shader(info.normal_texture->shader_view, 6);
             cb.HAS_NORMAL_TEXTURE = 1.0f;
         }
         else {
             cb.HAS_NORMAL_TEXTURE = 0.0f;
         }
         if (info.roughness_texture) {
-            gpu->bind_shader_view_for_pixel_shader(info.roughness_texture->shader_view, 7);
+            gpu.bind_shader_view_for_pixel_shader(info.roughness_texture->shader_view, 7);
             cb.HAS_ROUGHNESS_TEXTURE = 1.0f;
         }
         else {
@@ -218,8 +218,8 @@ void titian::ScenePass::render_self(StatePackage* package)
 
         if (*info.render_shaders) {
             info.render_shaders->upload(cb);
-            gpu->bind_render_shaders(*info.render_shaders);
-            gpu->draw(info.mesh->graphics_buffer, info.mesh->casted_topology(), sizeof(Vertex));
+            gpu.bind_render_shaders(*info.render_shaders);
+            gpu.draw(info.mesh->graphics_buffer, info.mesh->casted_topology(), sizeof(Vertex));
             bench_add_draw_call();
         }
     };
@@ -230,7 +230,7 @@ void titian::ScenePass::render_self(StatePackage* package)
         }
     }
 
-    gpu->bind_depth_state(render_layer->depth_states->only_compare);
+    gpu.bind_depth_state(render_layer.depth_states.only_compare);
     cb.RECEIVES_SHADOWS = false;
 
     for (int i = (int) to_render.size() - 1; i >= 0; i--) {
@@ -241,6 +241,6 @@ void titian::ScenePass::render_self(StatePackage* package)
     }
 
     for (int i = 0; i < 8; i++) {
-        gpu->unbind_shader_view_for_pixel_shader(i);
+        gpu.unbind_shader_view_for_pixel_shader(i);
     }
 }

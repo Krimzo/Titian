@@ -1,10 +1,10 @@
 #include "packager.h"
 
 
-int titian::packager_entry(const int argc, const char** argv, const bool package)
+int titian::packager_entry(int argc, str* argv, bool pack)
 {
 	bool result = false;
-	if (package) {
+	if (pack) {
 		if (argc >= 4) {
 			result = create_package(argv[2], argv[3]);
 		}

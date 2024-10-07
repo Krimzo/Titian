@@ -17,16 +17,16 @@ namespace titian {
         void render_gui() override;
 
     private:
-        void display_entity_info(Scene* scene, const StringView& entity_name, Entity* entity);
-        void display_camera_special_info(Scene* scene, Camera* camera);
-        void display_ambient_light_special_info(Scene* scene, AmbientLight* light);
-        void display_directional_light_special_info(Scene* scene, DirectionalLight* light);
+        void display_entity_info(Scene& scene, const StringView& entity_name, Entity& entity);
+        void display_camera_special_info(Scene& scene, Camera& camera);
+        void display_ambient_light_special_info(Scene& scene, AmbientLight& light);
+        void display_directional_light_special_info(Scene& scene, DirectionalLight& light);
 
-        void edit_entity_transform(Scene* scene, Entity* entity);
-        void edit_entity_animation(Scene* scene, Entity* entity);
-        void edit_entity_material(Scene* scene, Entity* entity);
-        void edit_entity_physics(Scene* scene, const String& entity_name, Ref<Entity>& entity);
-        void edit_entity_collider(Scene* scene, Entity* entity);
-        void edit_entity_other(Scene* scene, Entity* entity);
+        void edit_entity_transform(Scene& scene, Entity& entity);
+        void edit_entity_animation(Scene& scene, Entity& entity);
+        void edit_entity_material(Scene& scene, Entity& entity);
+        void edit_entity_physics(Scene& scene, const String& entity_name, Ref<Entity>& entity);
+        void edit_entity_collider(Scene& scene, Entity& entity);
+        void edit_entity_other(Scene& scene, Entity& entity);
     };
 }

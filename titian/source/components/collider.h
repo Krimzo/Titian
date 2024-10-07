@@ -9,8 +9,8 @@ namespace titian {
         Collider();
         ~Collider() override;
 
-        void serialize(Serializer* serializer) const override;
-        void deserialize(const Serializer* serializer) override;
+        void serialize(Serializer& serializer) const override;
+        void deserialize(const Serializer& serializer) override;
 
         px::PxGeometryType::Enum type() const;
         px::PxShape* shape() const;

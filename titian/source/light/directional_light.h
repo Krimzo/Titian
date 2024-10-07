@@ -15,8 +15,8 @@ namespace titian {
 
 		DirectionalLight();
 
-        void serialize(Serializer* serializer) const override;
-        void deserialize(const Serializer* serializer) override;
+        void serialize(Serializer& serializer) const override;
+        void deserialize(const Serializer& serializer) override;
 
 		void set_resolution(int resolution);
 		int resolution() const;

@@ -28,8 +28,8 @@ namespace titian {
 
 		Shader(ShaderType type = ShaderType::MATERIAL);
 
-		void serialize(Serializer* serializer) const override;
-		void deserialize(const Serializer* serializer) override;
+		void serialize(Serializer& serializer) const override;
+		void deserialize(const Serializer& serializer) override;
 
 		void reload();
 

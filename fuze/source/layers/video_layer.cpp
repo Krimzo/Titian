@@ -7,24 +7,22 @@ titian::VideoLayer::VideoLayer()
 
 void titian::VideoLayer::init()
 {
-	kl::Window* window = &Layers::get<AppLayer>()->window;
-	window->set_icon("package/textures/video_editor_icon.ico");
-
+	kl::Window& window = Layers::get<AppLayer>().window;
+	window.set_icon("package/textures/video_editor_icon.ico");
 	for (int i = 0; i < 5; i++) {
 		tracks.emplace_back(new Track());
 	}
-
 	m_handler.init();
 }
 
 bool titian::VideoLayer::update()
 {
-	AppLayer* app_layer = Layers::get<AppLayer>();
-	kl::GPU* gpu = &app_layer->gpu;
-	kl::Timer* timer = &app_layer->timer;
+	AppLayer& app_layer = Layers::get<AppLayer>();
+	kl::GPU& gpu = app_layer.gpu;
+	kl::Timer& timer = app_layer.timer;
 
 	if (m_playing) {
-		current_time = m_last_time + timer->elapsed();
+		current_time = m_last_time + timer.elapsed();
 	}
 	if (m_renderer) {
 		if (m_renderer->progress() >= 1.0f) {
@@ -35,7 +33,7 @@ bool titian::VideoLayer::update()
 		}
 	}
 
-	gpu->clear_internal(kl::colors::BLACK);
+	gpu.clear_internal(kl::colors::BLACK);
 	return true;
 }
 

@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-titian::RasterStates::RasterStates(kl::GPU* gpu)
+void titian::RasterStates::init(kl::GPU& gpu)
 {
     dx::RasterStateDescriptor wireframe_raster_descriptor{};
     wireframe_raster_descriptor.FillMode = D3D11_FILL_WIREFRAME;
@@ -18,10 +18,10 @@ titian::RasterStates::RasterStates(kl::GPU* gpu)
     shadow_raster_descriptor.DepthClipEnable = false;
     shadow_raster_descriptor.SlopeScaledDepthBias = 3.0f;
 
-    wireframe = gpu->create_raster_state(&wireframe_raster_descriptor);
-    solid = gpu->create_raster_state(false, false);
-    solid_cull = gpu->create_raster_state(false, true, true);
-    shadow = gpu->create_raster_state(&shadow_raster_descriptor);
+    wireframe = gpu.create_raster_state(&wireframe_raster_descriptor);
+    solid = gpu.create_raster_state(false, false);
+    solid_cull = gpu.create_raster_state(false, true, true);
+    shadow = gpu.create_raster_state(&shadow_raster_descriptor);
 
     kl::assert(wireframe, "Failed to init WIREFRAME raster state.");
     kl::assert(solid, "Failed to init SOLID raster state.");

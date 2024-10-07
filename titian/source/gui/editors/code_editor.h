@@ -9,7 +9,7 @@ namespace titian {
 		CodeEditor();
 
 		void load(const StringView& source);
-		void edit(String* source);
+		void edit(String& source);
 
 		void load_lua_standard();
 		void load_hlsl_standard();

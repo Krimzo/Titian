@@ -7,16 +7,16 @@ titian::InterpScript::InterpScript()
 	reload();
 }
 
-void titian::InterpScript::serialize(Serializer* serializer) const
+void titian::InterpScript::serialize(Serializer& serializer) const
 {
 	Script::serialize(serializer);
-	serializer->write_string("source", source);
+	serializer.write_string("source", source);
 }
 
-void titian::InterpScript::deserialize(const Serializer* serializer)
+void titian::InterpScript::deserialize(const Serializer& serializer)
 {
 	Script::deserialize(serializer);
-	serializer->read_string("source", source);
+	serializer.read_string("source", source);
 	reload();
 }
 
@@ -49,7 +49,7 @@ void titian::InterpScript::reload()
 	*m_ui_function = (*m_engine)["on_ui"];
 }
 
-void titian::InterpScript::call_start(Scene* scene)
+void titian::InterpScript::call_start(Scene& scene)
 {
 	if (!m_start_function->valid())
 		return;
@@ -61,7 +61,7 @@ void titian::InterpScript::call_start(Scene* scene)
 	}
 }
 
-void titian::InterpScript::call_update(Scene* scene)
+void titian::InterpScript::call_update(Scene& scene)
 {
 	if (!m_update_function->valid())
 		return;
@@ -73,7 +73,7 @@ void titian::InterpScript::call_update(Scene* scene)
 	}
 }
 
-void titian::InterpScript::call_collision(Scene* scene, Entity* attacker, Entity* target)
+void titian::InterpScript::call_collision(Scene& scene, Entity& attacker, Entity& target)
 {
 	if (!m_collision_function->valid())
 		return;
@@ -85,7 +85,7 @@ void titian::InterpScript::call_collision(Scene* scene, Entity* attacker, Entity
 	}
 }
 
-void titian::InterpScript::call_ui(Scene* scene)
+void titian::InterpScript::call_ui(Scene& scene)
 {
 	if (!m_ui_function->valid())
 		return;
@@ -112,7 +112,7 @@ titian::StringMap<titian::InterpScript::Parameter> titian::InterpScript::get_par
 		if (!name.starts_with("p_"))
 			continue;
  
-		parameters.emplace(name.substr(2), Parameter{ this, name });
+		parameters.emplace(name.substr(2), Parameter{ *this, name });
 	}
 	return parameters;
 }
@@ -737,12 +737,12 @@ void titian::InterpScript::load_engine_parts()
 		&Logger::log<const kl::Ray<float>&>);
 	(*m_engine)["print"] = (*m_engine)["log"];
 
-	(*m_engine)["elapsed_t"] = [] { return Layers::get<AppLayer>()->timer.elapsed(); };
-	(*m_engine)["delta_t"] = [] { return Layers::get<AppLayer>()->timer.delta(); };
+	(*m_engine)["elapsed_t"] = [] { return Layers::get<AppLayer>().timer.elapsed(); };
+	(*m_engine)["delta_t"] = [] { return Layers::get<AppLayer>().timer.delta(); };
 
-	(*m_engine)["get_window"] = []{ return &Layers::get<AppLayer>()->window; };
-	(*m_engine)["get_keyboard"] = [] { return &Layers::get<AppLayer>()->window.keyboard; };
-	(*m_engine)["get_mouse"] = [] { return &Layers::get<AppLayer>()->window.mouse; };
+	(*m_engine)["get_window"] = []() -> kl::Window& { return Layers::get<AppLayer>().window; };
+	(*m_engine)["get_keyboard"] = []() -> kl::Keyboard& { return Layers::get<AppLayer>().window.keyboard; };
+	(*m_engine)["get_mouse"] = []() -> kl::Mouse& { return Layers::get<AppLayer>().window.mouse; };
 
 	(*m_engine)["Float3x3_translation"] = &Float3x3::translation;
 	(*m_engine)["Float3x3_rotation"] = &Float3x3::rotation;

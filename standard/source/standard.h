@@ -2,16 +2,10 @@
 
 #define SOL_ALL_SAFETIES_ON 1
 
-#include "klibrary.h"
 #include "physx.h"
-#include "sol.hpp"
 #include "assimp.h"
-
-#undef min
-#undef max
-#undef assert
-#undef VOID
-#undef INFINITY
+#include "sol.hpp"
+#include "klibrary.h"
 
 namespace fs = std::filesystem;
 namespace dx = kl::dx;
@@ -22,6 +16,9 @@ namespace sl = sol;
 namespace as = Assimp;
 
 namespace titian {
+	using byte = uint8_t;
+	using str = const char*;
+
 	using Int2 = kl::Int2;
 	using Int3 = kl::Int3;
 	using Int4 = kl::Int4;

@@ -31,9 +31,9 @@ namespace titian {
         int m_frame_index = 0;
         int m_start_mesh_index = 0;
 
-        void display_animations(Scene* scene);
-        void update_animation_camera(Scene* scene);
-        void render_selected_animation(Animation* animation, Int2 viewport_size);
+        void display_animations(Scene& scene);
+        void update_animation_camera(Scene& scene);
+        void render_selected_animation(Animation& animation, Int2 viewport_size);
         void show_animation_properties(Animation* animation);
     };
 }

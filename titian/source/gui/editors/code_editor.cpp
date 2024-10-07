@@ -10,10 +10,10 @@ void titian::CodeEditor::load(const StringView& source)
 	m_text_editor.SetText(source);
 }
 
-void titian::CodeEditor::edit(String* source)
+void titian::CodeEditor::edit(String& source)
 {
 	m_text_editor.Update("Interp Editor");
-	*source = m_text_editor.GetText();
+	source = m_text_editor.GetText();
 }
 
 void titian::CodeEditor::load_lua_standard()

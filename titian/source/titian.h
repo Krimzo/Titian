@@ -14,5 +14,5 @@ namespace titian {
 }
 
 namespace titian {
-	int titian_entry(int argc, const char** argv, EntryType type);
+	int titian_entry(int argc, str* argv, EntryType type);
 }

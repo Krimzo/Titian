@@ -3,11 +3,11 @@
 
 titian::TitianEditor::TitianEditor()
 {
-    Layers::bind<AppLayer>(&app_layer);
-    Layers::bind<GameLayer>(&game_layer);
-    Layers::bind<EditorLayer>(&editor_layer);
-    Layers::bind<RenderLayer>(&render_layer);
-    Layers::bind<GUILayer>(&gui_layer);
+    Layers::bind<AppLayer>(app_layer);
+    Layers::bind<GameLayer>(game_layer);
+    Layers::bind<EditorLayer>(editor_layer);
+    Layers::bind<RenderLayer>(render_layer);
+    Layers::bind<GUILayer>(gui_layer);
 
     app_layer.init("TITIAN");
 	game_layer.init();

@@ -21,15 +21,17 @@ namespace titian {
 	struct Layers
 	{
 		template<typename T>
-		static constexpr void bind(T* ptr) noexcept
+			requires(!std::is_pointer_v<T> and !std::is_reference_v<T>)
+		static constexpr void bind(T& obj) noexcept
 		{
-			m_data[type_id<T>] = ptr;
+			m_data[type_id<T>] = &obj;
 		}
 
 		template<typename T>
-		static constexpr T* get() noexcept
+			requires(!std::is_pointer_v<T> and !std::is_reference_v<T>)
+		static constexpr T& get() noexcept
 		{
-			return (T*) m_data[type_id<T>];
+			return *(T*) m_data[type_id<T>];
 		}
 
 	private:

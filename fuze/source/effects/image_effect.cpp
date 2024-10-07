@@ -43,8 +43,8 @@ void c_shader(const uint3 thread_id : SV_DispatchThreadID)
 )";
 	kl::replace_all(source, "#custom_source", get_source());
 
-	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-	compute_shader = gpu->create_compute_shader(source);
+	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	compute_shader = gpu.create_compute_shader(source);
 
 	if constexpr (kl::IS_DEBUG) {
 		kl::assert(compute_shader, "Failed to init image effect shader");
@@ -60,10 +60,10 @@ void titian::ImageEffect::apply(const EffectPackage& package, Frame& frame)
 		temp_frame.resize(frame.size());
 	}
 
-	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-	gpu->bind_compute_shader(compute_shader.shader);
-	gpu->bind_access_view_for_compute_shader(frame.access_view, 0);
-	gpu->bind_access_view_for_compute_shader(temp_frame.access_view, 1);
+	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	gpu.bind_compute_shader(compute_shader.shader);
+	gpu.bind_access_view_for_compute_shader(frame.access_view, 0);
+	gpu.bind_access_view_for_compute_shader(temp_frame.access_view, 1);
 
 	struct alignas(16) CB
 	{
@@ -83,13 +83,13 @@ void titian::ImageEffect::apply(const EffectPackage& package, Frame& frame)
 	compute_shader.upload(cb);
 
 	const Int2 dispatch_size = (frame.size() / 32) + Int2(1);
-	gpu->dispatch_compute_shader(dispatch_size.x, dispatch_size.y, 1);
+	gpu.dispatch_compute_shader(dispatch_size.x, dispatch_size.y, 1);
 
-	gpu->unbind_access_view_for_compute_shader(1);
-	gpu->unbind_access_view_for_compute_shader(0);
-	gpu->unbind_compute_shader();
+	gpu.unbind_access_view_for_compute_shader(1);
+	gpu.unbind_access_view_for_compute_shader(0);
+	gpu.unbind_compute_shader();
 
 	if (needs_copy()) {
-		gpu->copy_resource(frame.texture, temp_frame.texture);
+		gpu.copy_resource(frame.texture, temp_frame.texture);
 	}
 }

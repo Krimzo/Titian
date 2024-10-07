@@ -51,13 +51,13 @@ namespace titian {
 
 		Animation();
 
-		void serialize(Serializer* serializer) const override;
-		void deserialize(const Serializer* serializer) override;
+		void serialize(Serializer& serializer) const override;
+		void deserialize(const Serializer& serializer) override;
 
 		int get_index(float index) const;
-		Mesh* get_mesh(Scene* scene, float time) const;
+		Mesh* get_mesh(Scene& scene, float time) const;
 
-		void update(Scene* scene, float current_time);
+		void update(Scene& scene, float current_time);
 		void bind_matrices(int slot) const;
 
 	private:
@@ -68,7 +68,7 @@ namespace titian {
 		dx::ShaderView m_matrices_view;
 
 		void upload_matrices();
-		void update_node_hierarchy(float time_ticks, const Mesh* mesh, const SkeletonNode* skel_node, const AnimationNode* anim_node, const Float4x4& parent_transform);
+		void update_node_hierarchy(float time_ticks, const Mesh& mesh, const SkeletonNode& skel_node, const AnimationNode& anim_node, const Float4x4& parent_transform);
 
 		aiVector3f interpolate_translation(float time_ticks, int channel_index) const;
 		aiQuaternion interpolate_rotation(float time_ticks, int channel_index) const;

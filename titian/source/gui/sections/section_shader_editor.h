@@ -20,8 +20,8 @@ namespace titian {
         CodeEditor m_editor{};
         Shader* m_last_shader = nullptr;
 
-        void display_shaders(Scene* scene);
-        void edit_shader(Shader* shader);
+        void display_shaders(Scene& scene);
+        void edit_shader(Shader& shader);
         void show_shader_properties(Shader* shader) const;
     };
 }

@@ -10,6 +10,6 @@ namespace titian {
         dx::SamplerState non_linear;
         dx::SamplerState shadow;
         
-        SamplerStates(kl::GPU* gpu);
+        void init(kl::GPU& gpu);
     };
 }

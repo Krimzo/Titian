@@ -3,10 +3,10 @@
 
 titian::TitianGame::TitianGame(const StringView& entry_scene)
 {
-    Layers::bind<AppLayer>(&app_layer);
-    Layers::bind<GameLayer>(&game_layer);
-    Layers::bind<RenderLayer>(&render_layer);
-    Layers::bind<GUILayer>(&gui_layer);
+    Layers::bind<AppLayer>(app_layer);
+    Layers::bind<GameLayer>(game_layer);
+    Layers::bind<RenderLayer>(render_layer);
+    Layers::bind<GUILayer>(gui_layer);
 
 	app_layer.init("Titian Game");
 	game_layer.init();
@@ -28,7 +28,7 @@ titian::TitianGame::TitianGame(const StringView& entry_scene)
         ? (Serializer*) new TextSerializer(entry_scene, false)
         : (Serializer*) new BinarySerializer(entry_scene, false);
     if (*serializer) {
-        game_layer.scene->deserialize(&serializer);
+        game_layer.scene->deserialize(*serializer);
         game_layer.start_game();
     }
     else {

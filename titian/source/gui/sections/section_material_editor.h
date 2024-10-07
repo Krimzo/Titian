@@ -25,9 +25,9 @@ namespace titian {
     private:
         Float4 m_new_mat_color = kl::colors::WHITE;
 
-        void display_materials(Scene* scene);
-        void update_material_camera(Scene* scene);
-        void render_selected_material(Material* material, Int2 viewport_size);
+        void display_materials(Scene& scene);
+        void update_material_camera(Scene& scene);
+        void render_selected_material(Material& material, Int2 viewport_size);
         void show_material_properties(Material* material);
     };
 }

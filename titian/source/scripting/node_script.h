@@ -23,11 +23,6 @@ namespace titian {
 namespace titian {
 	struct NodeScript : Script
 	{
-		FlowNode* on_start_node = nullptr;
-		FlowNode* on_update_node = nullptr;
-		FlowNode* on_collision_node = nullptr;
-		FlowNode* on_ui_node = nullptr;
-
 		struct VarInfo
 		{
 			using ValueType = std::variant<
@@ -60,20 +55,25 @@ namespace titian {
 			}
 		};
 
+		FlowNode* on_start_node = nullptr;
+		FlowNode* on_update_node = nullptr;
+		FlowNode* on_collision_node = nullptr;
+		FlowNode* on_ui_node = nullptr;
+
 		StringMap<VarInfo> var_storage;
 
 		NodeScript();
 
-		void serialize(Serializer* serializer) const override;
-		void deserialize(const Serializer* serializer) override;
+		void serialize(Serializer& serializer) const override;
+		void deserialize(const Serializer& serializer) override;
 
 		bool is_valid() const override;
 		void reload() override;
 
-		void call_start(Scene* scene) override;
-		void call_update(Scene* scene) override;
-		void call_collision(Scene* scene, Entity* attacker, Entity* target) override;
-		void call_ui(Scene* scene) override;
+		void call_start(Scene& scene) override;
+		void call_update(Scene& scene) override;
+		void call_collision(Scene& scene, Entity& attacker, Entity& target) override;
+		void call_ui(Scene& scene) override;
 
 		void update_editor();
 
@@ -95,43 +95,43 @@ namespace titian {
 			setStyle(style);
 		}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer& serializer) const override
 		{
-			serializer->write_string("node_type", typeid(*this).name());
+			serializer.write_string("node_type", typeid(*this).name());
 
-			serializer->write_byte_array("user_data", user_data, sizeof(user_data));
-			serializer->write_string("title", getName());
-			serializer->write_float_array("position", (const float*) &getPos(), 2);
+			serializer.write_byte_array("user_data", user_data, sizeof(user_data));
+			serializer.write_string("title", getName());
+			serializer.write_float_array("position", (const float*) &getPos(), 2);
 
 			auto& style = *getStyle();
-			serializer->write_byte_array("style", &style, sizeof(style));
+			serializer.write_byte_array("style", &style, sizeof(style));
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer& serializer) override
 		{
-			serializer->read_byte_array("user_data", user_data, sizeof(user_data));
+			serializer.read_byte_array("user_data", user_data, sizeof(user_data));
 			
 			String title;
-			serializer->read_string("title", title);
+			serializer.read_string("title", title);
 			setTitle(title);
 
 			ImVec2 position{};
-			serializer->read_float_array("position", (float*) &position, 2);
+			serializer.read_float_array("position", (float*) &position, 2);
 			setPos(position);
 
 			std::shared_ptr style = ne::NodeStyle::red();
-			serializer->read_byte_array("style", style.get(), sizeof(*style));
+			serializer.read_byte_array("style", style.get(), sizeof(*style));
 			setStyle(style);
 		}
 
-		bool input_connected(const char* uid)
+		bool input_connected(str uid)
 		{
 			ne::Pin* ptr = this->inPin(uid);
 			return ptr->isConnected();
 		}
 
 		template<typename T>
-		const T& get_value(const char* uid)
+		const T& get_value(str uid)
 		{
 			ne::Pin* ptr = this->inPin(uid);
 			ne::InPin<T>* in_ptr = reinterpret_cast<ne::InPin<T>*>(ptr);
@@ -139,7 +139,7 @@ namespace titian {
 		}
 
 		template<typename From, typename To>
-		To get_casted_value(const char* uid)
+		To get_casted_value(str uid)
 		{
 			return (To) get_value<From>(uid);
 		}
@@ -163,22 +163,22 @@ namespace titian {
 			}
 		}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer& serializer) const override
 		{
 			Node::serialize(serializer);
 
-			serializer->write_bool("has_input", has_input);
-			serializer->write_bool("has_output", has_output);
+			serializer.write_bool("has_input", has_input);
+			serializer.write_bool("has_output", has_output);
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer& serializer) override
 		{
 			Node::deserialize(serializer);
 
 			bool saved_has_input = false;
 			bool saved_has_ouput = false;
-			serializer->read_bool("has_input", saved_has_input);
-			serializer->read_bool("has_output", saved_has_ouput);
+			serializer.read_bool("has_input", saved_has_input);
+			serializer.read_bool("has_output", saved_has_ouput);
 
 			if (!has_input && saved_has_input) {
 				has_input = true;
@@ -196,7 +196,7 @@ namespace titian {
 		}
 
 	protected:
-		void call_next(const char* pin_name = "out_flow")
+		void call_next(str pin_name = "out_flow")
 		{
 			auto pin = this->outPin(pin_name);
 			if (!pin)
@@ -227,84 +227,84 @@ namespace titian {
 			addOUT<T>("result")->behaviour([this] { return this->value; });
 		}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer& serializer) const override
 		{
 			Node::serialize(serializer);
 
 			if constexpr (std::is_same_v<T, bool>) {
-				serializer->write_bool("value", value);
+				serializer.write_bool("value", value);
 			}
 			else if constexpr (std::is_same_v<T, int32_t>) {
-				serializer->write_int("value", value);
+				serializer.write_int("value", value);
 			}
 			else if constexpr (std::is_same_v<T, Int2>) {
-				serializer->write_int_array("value", &value.x, 2);
+				serializer.write_int_array("value", &value.x, 2);
 			}
 			else if constexpr (std::is_same_v<T, float>) {
-				serializer->write_float("value", value);
+				serializer.write_float("value", value);
 			}
 			else if constexpr (std::is_same_v<T, Float2>) {
-				serializer->write_float_array("value", &value.x, 2);
+				serializer.write_float_array("value", &value.x, 2);
 			}
 			else if constexpr (std::is_same_v<T, Float3>) {
-				serializer->write_float_array("value", &value.x, 3);
+				serializer.write_float_array("value", &value.x, 3);
 			}
 			else if constexpr (std::is_same_v<T, Float4>) {
-				serializer->write_float_array("value", &value.x, 4);
+				serializer.write_float_array("value", &value.x, 4);
 			}
 			else if constexpr (std::is_same_v<T, Complex>) {
-				serializer->write_float_array("value", &value.r, 2);
+				serializer.write_float_array("value", &value.r, 2);
 			}
 			else if constexpr (std::is_same_v<T, Quaternion>) {
-				serializer->write_float_array("value", &value.w, 4);
+				serializer.write_float_array("value", &value.w, 4);
 			}
 			else if constexpr (std::is_same_v<T, RGB>) {
-				serializer->write_byte_array("value", &value, 4);
+				serializer.write_byte_array("value", &value, 4);
 			}
 			else if constexpr (std::is_same_v<T, String>) {
-				serializer->write_string("value", value);
+				serializer.write_string("value", value);
 			}
 			else {
 				static_assert(false, "Unknown serialize literal node type");
 			}
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer& serializer) override
 		{
 			Node::deserialize(serializer);
 
 			if constexpr (std::is_same_v<T, bool>) {
-				serializer->read_bool("value", value);
+				serializer.read_bool("value", value);
 			}
 			else if constexpr (std::is_same_v<T, int32_t>) {
-				serializer->read_int("value", value);
+				serializer.read_int("value", value);
 			}
 			else if constexpr (std::is_same_v<T, Int2>) {
-				serializer->read_int_array("value", &value.x, 2);
+				serializer.read_int_array("value", &value.x, 2);
 			}
 			else if constexpr (std::is_same_v<T, float>) {
-				serializer->read_float("value", value);
+				serializer.read_float("value", value);
 			}
 			else if constexpr (std::is_same_v<T, Float2>) {
-				serializer->read_float_array("value", &value.x, 2);
+				serializer.read_float_array("value", &value.x, 2);
 			}
 			else if constexpr (std::is_same_v<T, Float3>) {
-				serializer->read_float_array("value", &value.x, 3);
+				serializer.read_float_array("value", &value.x, 3);
 			}
 			else if constexpr (std::is_same_v<T, Float4>) {
-				serializer->read_float_array("value", &value.x, 4);
+				serializer.read_float_array("value", &value.x, 4);
 			}
 			else if constexpr (std::is_same_v<T, Complex>) {
-				serializer->read_float_array("value", &value.r, 2);
+				serializer.read_float_array("value", &value.r, 2);
 			}
 			else if constexpr (std::is_same_v<T, Quaternion>) {
-				serializer->read_float_array("value", &value.w, 4);
+				serializer.read_float_array("value", &value.w, 4);
 			}
 			else if constexpr (std::is_same_v<T, RGB>) {
-				serializer->read_byte_array("value", &value, 4);
+				serializer.read_byte_array("value", &value, 4);
 			}
 			else if constexpr (std::is_same_v<T, String>) {
-				serializer->read_string("value", value);
+				serializer.read_string("value", value);
 			}
 			else {
 				static_assert(false, "Unknown deserialize literal node type");
@@ -386,22 +386,22 @@ namespace titian {
 			storage().erase(name);
 		}
 
-		void serialize(Serializer* serializer) const override
+		void serialize(Serializer& serializer) const override
 		{
 			FlowNode::serialize(serializer);
-			serializer->write_string("var_name", name);
-			serializer->write_bool("var_global", var_ptr->global);
-			serializer->write_byte_array("var_value", &var_ptr->get<T>(), sizeof(T));
+			serializer.write_string("var_name", name);
+			serializer.write_bool("var_global", var_ptr->global);
+			serializer.write_byte_array("var_value", &var_ptr->get<T>(), sizeof(T));
 		}
 
-		void deserialize(const Serializer* serializer) override
+		void deserialize(const Serializer& serializer) override
 		{
 			FlowNode::deserialize(serializer);
 			String temp_name;
-			serializer->read_string("var_name", temp_name);
+			serializer.read_string("var_name", temp_name);
 			rename(temp_name);
-			serializer->read_bool("var_global", var_ptr->global);
-			serializer->read_byte_array("var_value", &var_ptr->get<T>(), sizeof(T));
+			serializer.read_bool("var_global", var_ptr->global);
+			serializer.read_byte_array("var_value", &var_ptr->get<T>(), sizeof(T));
 		}
 
 		void draw() override
@@ -1181,64 +1181,64 @@ namespace titian {
 			addIN<String>("mesh_name");
 			addOUT<void*>("mesh")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
+				Scene& scene = *Layers::get<GameLayer>().scene;
 				return scene.helper_get_mesh(get_value<String>("mesh_name"));
 			});
 
 			addIN<String>("animation_name");
 			addOUT<void*>("animation")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
+				Scene& scene = *Layers::get<GameLayer>().scene;
 				return scene.helper_get_animation(get_value<String>("animation_name"));
 			});
 
 			addIN<String>("texture_name");
 			addOUT<void*>("texture")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
+				Scene& scene = *Layers::get<GameLayer>().scene;
 				return scene.helper_get_texture(get_value<String>("texture_name"));
 			});
 
 			addIN<String>("material_name");
 			addOUT<void*>("material")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
+				Scene& scene = *Layers::get<GameLayer>().scene;
 				return scene.helper_get_material(get_value<String>("material_name"));
 			});
 
 			addIN<String>("shader_name");
 			addOUT<void*>("shader")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
+				Scene& scene = *Layers::get<GameLayer>().scene;
 				return scene.helper_get_shader(get_value<String>("shader_name"));
 			});
 
 			addIN<String>("entity_name");
 			addOUT<void*>("entity")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
+				Scene& scene = *Layers::get<GameLayer>().scene;
 				return scene.helper_get_entity(get_value<String>("entity_name"));
 			});
 
 			addOUT<Float3>("gravity")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
+				Scene& scene = *Layers::get<GameLayer>().scene;
 				return scene.gravity();
 			});
 
 			addOUT<String>("main_camera_name")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
+				Scene& scene = *Layers::get<GameLayer>().scene;
 				return scene.main_camera_name;
 			});
 			addOUT<String>("main_ambient_light_name")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
+				Scene& scene = *Layers::get<GameLayer>().scene;
 				return scene.main_ambient_light_name;
 			});
 			addOUT<String>("main_directional_light_name")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>()->scene;
+				Scene& scene = *Layers::get<GameLayer>().scene;
 				return scene.main_directional_light_name;
 			});
 		}
@@ -1534,36 +1534,36 @@ namespace titian {
 
 		void call() override
 		{
-			Scene* scene = scene = &Layers::get<GameLayer>()->scene;
+			Scene& scene = *Layers::get<GameLayer>().scene;
 			if (input_connected("mesh_name")) {
-				mesh_ptr = scene->helper_new_mesh(get_value<String>("mesh_name"));
+				mesh_ptr = scene.helper_new_mesh(get_value<String>("mesh_name"));
 			}
 			if (input_connected("animation_name")) {
-				animation_ptr = scene->helper_new_animation(get_value<String>("animation_name"));
+				animation_ptr = scene.helper_new_animation(get_value<String>("animation_name"));
 			}
 			if (input_connected("texture_name")) {
-				texture_ptr = scene->helper_new_texture(get_value<String>("texture_name"));
+				texture_ptr = scene.helper_new_texture(get_value<String>("texture_name"));
 			}
 			if (input_connected("material_name")) {
-				material_ptr = scene->helper_new_material(get_value<String>("material_name"));
+				material_ptr = scene.helper_new_material(get_value<String>("material_name"));
 			}
 			if (input_connected("shader_name")) {
-				shader_ptr = scene->helper_new_shader(get_value<String>("shader_name"));
+				shader_ptr = scene.helper_new_shader(get_value<String>("shader_name"));
 			}
 			if (input_connected("entity_name")) {
-				entity_ptr = scene->helper_new_entity(get_value<String>("entity_name"));
+				entity_ptr = scene.helper_new_entity(get_value<String>("entity_name"));
 			}
 			if (input_connected("gravity")) {
-				scene->set_gravity(get_value<Float3>("gravity"));
+				scene.set_gravity(get_value<Float3>("gravity"));
 			}
 			if (input_connected("main_camera_name")) {
-				scene->main_camera_name = get_value<String>("main_camera_name");
+				scene.main_camera_name = get_value<String>("main_camera_name");
 			}
 			if (input_connected("main_ambient_light_name")) {
-				scene->main_ambient_light_name = get_value<String>("main_ambient_light_name");
+				scene.main_ambient_light_name = get_value<String>("main_ambient_light_name");
 			}
 			if (input_connected("main_directional_light_name")) {
-				scene->main_directional_light_name = get_value<String>("main_directional_light_name");
+				scene.main_directional_light_name = get_value<String>("main_directional_light_name");
 			}
 			call_next();
 		}
@@ -1840,7 +1840,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>()->scene->helper_iterate_meshes([&](const String& name, Mesh* ptr)
+			Layers::get<GameLayer>().scene->helper_iterate_meshes([&](const String& name, Mesh* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1855,7 +1855,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>()->scene->helper_iterate_animations([&](const String& name, Animation* ptr)
+			Layers::get<GameLayer>().scene->helper_iterate_animations([&](const String& name, Animation* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1870,7 +1870,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>()->scene->helper_iterate_textures([&](const String& name, Texture* ptr)
+			Layers::get<GameLayer>().scene->helper_iterate_textures([&](const String& name, Texture* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1885,7 +1885,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>()->scene->helper_iterate_materials([&](const String& name, Material* ptr)
+			Layers::get<GameLayer>().scene->helper_iterate_materials([&](const String& name, Material* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1900,7 +1900,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>()->scene->helper_iterate_shaders([&](const String& name, Shader* ptr)
+			Layers::get<GameLayer>().scene->helper_iterate_shaders([&](const String& name, Shader* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1915,7 +1915,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>()->scene->helper_iterate_entities([&](const String& name, Entity* ptr)
+			Layers::get<GameLayer>().scene->helper_iterate_entities([&](const String& name, Entity* ptr)
 			{
 				func(&name, ptr);
 			});

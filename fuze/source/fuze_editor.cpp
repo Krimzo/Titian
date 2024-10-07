@@ -3,9 +3,9 @@
 
 titian::FuzeEditor::FuzeEditor()
 {
-    Layers::bind<AppLayer>(&app_layer);
-    Layers::bind<VideoLayer>(&video_layer);
-    Layers::bind<GUILayer>(&gui_layer);
+    Layers::bind<AppLayer>(app_layer);
+    Layers::bind<VideoLayer>(video_layer);
+    Layers::bind<GUILayer>(gui_layer);
 
     app_layer.init("FUZE");
     video_layer.init();

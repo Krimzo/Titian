@@ -1,12 +1,12 @@
 #include "titian.h"
 
 
-titian::ShaderStates::ShaderStates(kl::GPU* gpu)
+void titian::ShaderStates::init(kl::GPU& gpu)
 {
-    auto load_shader = [&](kl::RenderShaders& shader, const char* filename, const Vector<dx::LayoutDescriptor>& layout_descriptors)
+    auto load_shader = [&](kl::RenderShaders& shader, str filename, const Vector<dx::LayoutDescriptor>& layout_descriptors)
 	{
         const String source = kl::read_file(kl::format("package/shaders/", filename));
-        shader = gpu->create_render_shaders(source, layout_descriptors);
+        shader = gpu.create_render_shaders(source, layout_descriptors);
         kl::assert(shader, "Failed to init [", filename, "] shaders");
 	};
 

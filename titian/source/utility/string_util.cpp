@@ -41,21 +41,21 @@ titian::String titian::format_path(const fs::path& path)
 	return "[" + fs::absolute(path).string() + "]";
 }
 
-titian::String titian::ltrim(const StringView& source, const char* t)
+titian::String titian::ltrim(const StringView& source, str t)
 {
 	String data{ source };
 	data.erase(0, data.find_first_not_of(t));
 	return data;
 }
 
-titian::String titian::rtrim(const StringView& source, const char* t)
+titian::String titian::rtrim(const StringView& source, str t)
 {
 	String data{ source };
 	data.erase(data.find_last_not_of(t) + 1);
 	return data;
 }
 
-titian::String titian::trim(const StringView& source, const char* t)
+titian::String titian::trim(const StringView& source, str t)
 {
 	return ltrim(rtrim(source, t), t);
 }

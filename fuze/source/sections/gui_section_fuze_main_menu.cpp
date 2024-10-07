@@ -7,8 +7,8 @@ titian::GUISectionFuzeMainMenu::GUISectionFuzeMainMenu()
 
 void titian::GUISectionFuzeMainMenu::render_gui()
 {
-    AppLayer* app_layer = Layers::get<AppLayer>();
-    VideoLayer* video_layer = Layers::get<VideoLayer>();
+    AppLayer& app_layer = Layers::get<AppLayer>();
+    VideoLayer& video_layer = Layers::get<VideoLayer>();
 
     if (m_testing_exit) {
         if (im::Begin("Exit?", nullptr, ImGuiWindowFlags_NoScrollbar)) {
@@ -18,7 +18,7 @@ void titian::GUISectionFuzeMainMenu::render_gui()
             }
             im::SameLine();
             if (im::Button("Yes", ImVec2(40.0f, 0.0f))) {
-                app_layer->window.close();
+                app_layer.window.close();
             }
         }
         im::End();
@@ -33,17 +33,17 @@ void titian::GUISectionFuzeMainMenu::render_gui()
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (im::MenuItem("Import")) {
                 if (auto file = kl::choose_file(false)) {
-                    video_layer->load_file(file.value());
+                    video_layer.load_file(file.value());
                 }
             }
             if (im::BeginMenu("Export")) {
                 if (im::MenuItem("Frame")) {
                     int index = 0;
                     if (auto file = kl::choose_file(true, { { "Image File",  FILE_EXTENSION_JPG }, { "Image File",  FILE_EXTENSION_PNG }, { "Image File",  FILE_EXTENSION_BMP } }, &index)) {
-                        video_layer->store_frame(video_layer->frame_size());
+                        video_layer.store_frame(video_layer.frame_size());
                         RAWImage image{};
-                        image.resize(video_layer->frame_size());
-                        video_layer->retrieve_frame(image);
+                        image.resize(video_layer.frame_size());
+                        video_layer.retrieve_frame(image);
                         
                         RAWImageType image_type = RAWImageType::JPG;
                         if (index == 1) {
@@ -77,9 +77,9 @@ void titian::GUISectionFuzeMainMenu::render_gui()
 
         if (im::BeginMenu("View")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
-            im::Checkbox("Timeline Seconds", &video_layer->timeline_seconds);
-            im::Checkbox("Timeline 10s Seconds", &video_layer->timeline_10seconds);
-            im::Checkbox("Timeline Minutes", &video_layer->timeline_minutes);
+            im::Checkbox("Timeline Seconds", &video_layer.timeline_seconds);
+            im::Checkbox("Timeline 10s Seconds", &video_layer.timeline_10seconds);
+            im::Checkbox("Timeline Minutes", &video_layer.timeline_minutes);
             im::PopStyleVar();
             im::EndMenu();
         }

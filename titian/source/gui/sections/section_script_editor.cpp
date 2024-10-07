@@ -11,12 +11,12 @@ void titian::GUISectionScriptEditor::render_gui()
 {
 	const TimeBomb _ = bench_time_bomb();
 
-	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-	Scene* scene = &Layers::get<GameLayer>()->scene;
+	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	Scene& scene = *Layers::get<GameLayer>().scene;
 
 	Ref<Script> script;
-	if (scene->scripts.contains(selected_script)) {
-		script = scene->scripts.at(selected_script);
+	if (scene.scripts.contains(selected_script)) {
+		script = scene.scripts.at(selected_script);
 	}
 
 	NativeScript* native_script = &script.as<NativeScript>();
@@ -35,13 +35,13 @@ void titian::GUISectionScriptEditor::render_gui()
 		im::NextColumn();
 
 		if (native_script) {
-			edit_native_script(native_script);
+			edit_native_script(*native_script);
 		}
 		else if (interp_script) {
-			edit_interp_script(interp_script);
+			edit_interp_script(*interp_script);
 		}
 		else if (node_script) {
-			edit_node_script(node_script);
+			edit_node_script(*node_script);
 		}
 
 		if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
@@ -51,13 +51,13 @@ void titian::GUISectionScriptEditor::render_gui()
 				Ref script = new InterpScript();
 				script->source = kl::read_file(path.string());
 				script->reload();
-				scene->scripts[scene->generate_unique_name(path.filename().string(), scene->scripts)] = script;
+				scene.scripts[scene.generate_unique_name(path.filename().string(), scene.scripts)] = script;
 			}
 			else if (extension == FILE_EXTENSION_DLL) {
 				Ref script = new NativeScript();
 				script->data = kl::read_file(path.string());
 				script->reload();
-				scene->scripts[scene->generate_unique_name(path.filename().string(), scene->scripts)] = script;
+				scene.scripts[scene.generate_unique_name(path.filename().string(), scene.scripts)] = script;
 			}
 		}
 
@@ -66,21 +66,21 @@ void titian::GUISectionScriptEditor::render_gui()
 	im::End();
 }
 
-void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
+void titian::GUISectionScriptEditor::display_scripts(Scene& scene)
 {
 	if (im::BeginPopupContextWindow("NewScript", ImGuiPopupFlags_MouseButtonMiddle)) {
 		const String name = gui_input_continuous("##CreateScriptInput");
-		if (!name.empty() && !scene->scripts.contains(name)) {
+		if (!name.empty() && !scene.scripts.contains(name)) {
 			if (im::MenuItem("New Interp Script")) {
-				scene->scripts[name] = new InterpScript();
+				scene.scripts[name] = new InterpScript();
 				im::CloseCurrentPopup();
 			}
 			if (im::MenuItem("New Node Script")) {
-				scene->scripts[name] = new NodeScript();
+				scene.scripts[name] = new NodeScript();
 				im::CloseCurrentPopup();
 			}
 			if (im::MenuItem("New Native Script")) {
-				scene->scripts[name] = new NativeScript();
+				scene.scripts[name] = new NativeScript();
 				im::CloseCurrentPopup();
 			}
 		}
@@ -88,7 +88,7 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 	}
 
 	const String filter = gui_input_continuous("Search###ScriptEditor");
-	for (auto& [script_name, script] : scene->scripts) {
+	for (auto& [script_name, script] : scene.scripts) {
 		if (!filter.empty() && script_name.find(filter) == -1) {
 			continue;
 		}
@@ -103,12 +103,12 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 
 			if (auto opt_name = gui_input_waited("##RenameScriptInput", script_name)) {
 				const auto& name = opt_name.value();
-				if (!name.empty() && !scene->scripts.contains(name)) {
+				if (!name.empty() && !scene.scripts.contains(name)) {
 					if (selected_script == script_name) {
 						selected_script = name;
 					}
-					scene->scripts[name] = script;
-					scene->scripts.erase(script_name);
+					scene.scripts[name] = script;
+					scene.scripts.erase(script_name);
 					should_break = true;
 					im::CloseCurrentPopup();
 				}
@@ -124,7 +124,7 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 				if (selected_script == script_name) {
 					selected_script = "/";
 				}
-				scene->scripts.erase(script_name);
+				scene.scripts.erase(script_name);
 				should_break = true;
 				im::CloseCurrentPopup();
 			}
@@ -139,14 +139,14 @@ void titian::GUISectionScriptEditor::display_scripts(Scene* scene)
 
 void titian::GUISectionScriptEditor::show_script_properties(Script* script) const
 {
-	GUILayer* gui_layer = Layers::get<GUILayer>();
+	GUILayer& gui_layer = Layers::get<GUILayer>();
 
 	if (im::Begin("Script Properties") && script) {
 		im::Text("Info");
 
 		im::Text("Name: ");
 		im::SameLine();
-		gui_colored_text(selected_script, gui_layer->special_color);
+		gui_colored_text(selected_script, gui_layer.special_color);
 
 		im::Text("Type: ");
 		im::SameLine();
@@ -163,25 +163,24 @@ void titian::GUISectionScriptEditor::show_script_properties(Script* script) cons
 	im::End();
 }
 
-void titian::GUISectionScriptEditor::edit_interp_script(InterpScript* script)
+void titian::GUISectionScriptEditor::edit_interp_script(InterpScript& script)
 {
-	if (script != m_last_script) {
-		m_last_script = script;
-		m_interp_editor.load(script->source);
+	if (&script != m_last_script) {
+		m_last_script = &script;
+		m_interp_editor.load(script.source);
 	}
-
-	im::PushFont(Layers::get<GUILayer>()->roboto_font_large);
-	m_interp_editor.edit(&script->source);
+	im::PushFont(Layers::get<GUILayer>().roboto_font_large);
+	m_interp_editor.edit(script.source);
 	im::PopFont();
 }
 
-void titian::GUISectionScriptEditor::edit_node_script(NodeScript* script)
+void titian::GUISectionScriptEditor::edit_node_script(NodeScript& script)
 {
-	script->update_editor();
+	script.update_editor();
 }
 
-void titian::GUISectionScriptEditor::edit_native_script(NativeScript* script)
+void titian::GUISectionScriptEditor::edit_native_script(NativeScript& script)
 {
-	auto& data = script->data;
+	auto& data = script.data;
 	m_native_editor.DrawContents(data.data(), data.size());
 }

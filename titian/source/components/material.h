@@ -20,8 +20,8 @@ namespace titian {
 
 		Material();
 
-		void serialize(Serializer* serializer) const override;
-		void deserialize(const Serializer* serializer) override;
+		void serialize(Serializer& serializer) const override;
+		void deserialize(const Serializer& serializer) override;
 
 		bool is_transparent() const;
 	};

@@ -10,5 +10,5 @@
 
 
 namespace titian {
-	int sandbox_entry(int argc, const char** argv);
+	int sandbox_entry(int argc, str* argv);
 }

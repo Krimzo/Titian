@@ -17,9 +17,9 @@ void titian::SandboxPieceMonkes::setup_self()
 
     Ref<Mesh> monke_mesh;
     if (auto opt_data = scene->get_assimp_data("package/meshes/monke.obj")) {
-        const aiScene* ai_scene = opt_data.value().importer->GetScene();
-        for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
-            monke_mesh = scene->load_assimp_mesh(ai_scene, ai_scene->mMeshes[i]);
+        const aiScene& ai_scene = *opt_data.value().importer->GetScene();
+        for (uint32_t i = 0; i < ai_scene.mNumMeshes; i++) {
+            monke_mesh = scene->load_assimp_mesh(ai_scene, *ai_scene.mMeshes[i]);
             break;
         }
     }

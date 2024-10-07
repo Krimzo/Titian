@@ -21,15 +21,15 @@ void titian::GUISectionScriptingParameters::render_gui()
 {
 	const TimeBomb _ = bench_time_bomb();
 
-	GUILayer* gui_layer = Layers::get<GUILayer>();
-	Scene* scene = &Layers::get<GameLayer>()->scene;
+	GUILayer& gui_layer = Layers::get<GUILayer>();
+	Scene& scene = *Layers::get<GameLayer>().scene;
 
-	im::PushFont(gui_layer->roboto_font_small);
+	im::PushFont(gui_layer.roboto_font_small);
 
 	if (im::Begin("Scripting Parameters")) {
 		int script_counter = 1;
 
-		for (auto& [name, script] : scene->scripts) {
+		for (auto& [name, script] : scene.scripts) {
 			if (script_counter > 1) {
 				im::Separator();
 			}

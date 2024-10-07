@@ -45,8 +45,8 @@ namespace titian {
 
         Camera();
 
-        void serialize(Serializer* serializer) const override;
-        void deserialize(const Serializer* serializer) override;
+        void serialize(Serializer& serializer) const override;
+        void deserialize(const Serializer& serializer) override;
 
         void update_aspect_ratio(Int2 size);
         void set_forward(const Float3& dir);

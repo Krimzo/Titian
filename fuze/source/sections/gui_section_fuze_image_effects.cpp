@@ -11,10 +11,10 @@ void titian::GUISectionFuzeImageEffects::render_gui()
 		{ "Scale, Rotation, Position", [] { return new ImageEffectScaleRotPos(); } },
 	};
 
-	VideoLayer* video_layer = Layers::get<VideoLayer>();
-	Media* selected_media = &video_layer->selected_media;
+	VideoLayer& video_layer = Layers::get<VideoLayer>();
+	Media* selected_media = &video_layer.selected_media;
 
-	if (im::Begin("Image Effects", nullptr, !video_layer->can_edit() ? ImGuiWindowFlags_NoInputs : ImGuiWindowFlags_None) && selected_media) {
+	if (im::Begin("Image Effects", nullptr, !video_layer.can_edit() ? ImGuiWindowFlags_NoInputs : ImGuiWindowFlags_None) && selected_media) {
 		if (im::BeginPopupContextWindow("New Effect", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems)) {
 			int counter = 0;
 			im::Text("New Effect");

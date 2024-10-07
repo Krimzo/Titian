@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-int titian::titian_entry(const int argc, const char** argv, const EntryType type)
+int titian::titian_entry(int argc, str* argv, EntryType type)
 {
 	Ref<LayerStack> layer_stack;
 

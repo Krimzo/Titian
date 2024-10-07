@@ -18,8 +18,8 @@ namespace titian {
 
 		Texture();
 
-		void serialize(Serializer* serializer) const override;
-		void deserialize(const Serializer* serializer) override;
+		void serialize(Serializer& serializer) const override;
+		void deserialize(const Serializer& serializer) override;
 
 		void reload_as_2D();
 		bool reload_as_cube();

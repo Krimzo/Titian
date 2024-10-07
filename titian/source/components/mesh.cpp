@@ -4,22 +4,22 @@
 titian::Mesh::Mesh()
 {}
 
-void titian::Mesh::serialize(Serializer* serializer) const
+void titian::Mesh::serialize(Serializer& serializer) const
 {
-    serializer->write_int("topology", topology);
-    serializer->write_bool("render_wireframe", render_wireframe);
+    serializer.write_int("topology", topology);
+    serializer.write_bool("render_wireframe", render_wireframe);
 
-    serializer->write_int("data_buffer_size", (int32_t) data_buffer.size());
+    serializer.write_int("data_buffer_size", (int32_t) data_buffer.size());
     int counter = 0;
     for (const auto& data : data_buffer) {
-		serializer->write_byte_array(kl::format("__vertex_", counter), &data, sizeof(Vertex));
+		serializer.write_byte_array(kl::format("__vertex_", counter), &data, sizeof(Vertex));
         counter += 1;
     }
 
-    serializer->write_int("bone_matrices_size", (int32_t) bone_matrices.size());
+    serializer.write_int("bone_matrices_size", (int32_t) bone_matrices.size());
     counter = 0;
     for (const auto& mat : bone_matrices) {
-        serializer->write_float_array(kl::format("__bone_matrix_", counter), mat.data, 16);
+        serializer.write_float_array(kl::format("__bone_matrix_", counter), mat.data, 16);
         counter += 1;
     }
 
@@ -27,42 +27,42 @@ void titian::Mesh::serialize(Serializer* serializer) const
     counter = 0;
     rec_helper = [&](const SkeletonNode* node)
     {
-        serializer->push_object(kl::format("__node_", counter++));
-        serializer->write_int("bone_index", node->bone_index);
-        serializer->write_float_array("transformation", node->transformation.data, 16);
-        serializer->write_int("children_size", (int32_t) node->children.size());
+        serializer.push_object(kl::format("__node_", counter++));
+        serializer.write_int("bone_index", node->bone_index);
+        serializer.write_float_array("transformation", node->transformation.data, 16);
+        serializer.write_int("children_size", (int32_t) node->children.size());
         for (auto& child : node->children) {
 			rec_helper(&child);
         }
-        serializer->pop_object();
+        serializer.pop_object();
     };
 
-    serializer->write_bool("has_data", (bool) skeleton_root);
+    serializer.write_bool("has_data", (bool) skeleton_root);
     if (skeleton_root) {
 		rec_helper(&skeleton_root);
 	}
 }
 
-void titian::Mesh::deserialize(const Serializer* serializer)
+void titian::Mesh::deserialize(const Serializer& serializer)
 {
-    serializer->read_int("topology", topology);
-    serializer->read_bool("render_wireframe", render_wireframe);
+    serializer.read_int("topology", topology);
+    serializer.read_bool("render_wireframe", render_wireframe);
 
     int32_t data_buffer_size = 0;
-    serializer->read_int("data_buffer_size", data_buffer_size);
+    serializer.read_int("data_buffer_size", data_buffer_size);
     data_buffer.resize(data_buffer_size);
     int counter = 0;
     for (auto& data : data_buffer) {
-        serializer->read_byte_array(kl::format("__vertex_", counter), &data, sizeof(Vertex));
+        serializer.read_byte_array(kl::format("__vertex_", counter), &data, sizeof(Vertex));
         counter += 1;
     }
 
     int32_t bone_matrices_size = 0;
-    serializer->read_int("bone_matrices_size", bone_matrices_size);
+    serializer.read_int("bone_matrices_size", bone_matrices_size);
     bone_matrices.resize(bone_matrices_size);
     counter = 0;
     for (auto& mat : bone_matrices) {
-        serializer->read_float_array(kl::format("__bone_matrix_", counter), mat.data, 16);
+        serializer.read_float_array(kl::format("__bone_matrix_", counter), mat.data, 16);
         counter += 1;
     }
 
@@ -70,21 +70,21 @@ void titian::Mesh::deserialize(const Serializer* serializer)
     counter = 0;
     rec_helper = [&](SkeletonNode* node)
     {
-        serializer->load_object(kl::format("__node_", counter++));
-        serializer->read_int("bone_index", node->bone_index);
-        serializer->read_float_array("transformation", node->transformation.data, 16);
+        serializer.load_object(kl::format("__node_", counter++));
+        serializer.read_int("bone_index", node->bone_index);
+        serializer.read_float_array("transformation", node->transformation.data, 16);
         int32_t children_size = 0;
-        serializer->read_int("children_size", children_size);
+        serializer.read_int("children_size", children_size);
         node->children.resize(children_size);
         for (auto& child : node->children) {
 			child = new SkeletonNode();
             rec_helper(&child);
         }
-        serializer->unload_object();
+        serializer.unload_object();
     };
 
     bool has_skeleton = false;
-    serializer->read_bool("has_data", has_skeleton);
+    serializer.read_bool("has_data", has_skeleton);
     if (has_skeleton) {
 		skeleton_root = new SkeletonNode();
         rec_helper(&skeleton_root);
@@ -124,6 +124,6 @@ void titian::Mesh::reload()
     if (data_buffer.empty()) {
         return;
     }
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    graphics_buffer = gpu->create_vertex_buffer(data_buffer.data(), (UINT) (data_buffer.size() * sizeof(Vertex)));
+    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    graphics_buffer = gpu.create_vertex_buffer(data_buffer.data(), (UINT) (data_buffer.size() * sizeof(Vertex)));
 }

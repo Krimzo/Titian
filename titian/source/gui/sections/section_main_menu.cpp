@@ -4,7 +4,7 @@
 titian::GUISectionMainMenu::GUISectionMainMenu()
     : GUISection("GUISectionMainMenu")
 {
-    const auto create_texture = [&](Ref<Texture>& texture, const char* filename)
+    const auto create_texture = [&](Ref<Texture>& texture, str filename)
     {
         texture = new Texture();
         texture->data_buffer.load_from_file(filename);
@@ -24,13 +24,13 @@ void titian::GUISectionMainMenu::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-	AppLayer* app_layer = Layers::get<AppLayer>();
-    RenderLayer* render_layer = Layers::get<RenderLayer>();
-    GameLayer* game_layer = Layers::get<GameLayer>();
-    GUILayer* gui_layer = Layers::get<GUILayer>();
-    EditorLayer* editor_layer = Layers::get<EditorLayer>();
+	AppLayer& app_layer = Layers::get<AppLayer>();
+    RenderLayer& render_layer = Layers::get<RenderLayer>();
+    GameLayer& game_layer = Layers::get<GameLayer>();
+    GUILayer& gui_layer = Layers::get<GUILayer>();
+    EditorLayer& editor_layer = Layers::get<EditorLayer>();
 
-    Ref<Scene>& scene = game_layer->scene;
+    Scene& scene = *game_layer.scene;
 
     if (m_testing_exit) {
         if (im::Begin("Exit?", nullptr, ImGuiWindowFlags_NoScrollbar)) {
@@ -40,7 +40,7 @@ void titian::GUISectionMainMenu::render_gui()
             }
             im::SameLine();
             if (im::Button("Yes", ImVec2(40.0f, 0.0f))) {
-                app_layer->window.close();
+                app_layer.window.close();
             }
         }
         im::End();
@@ -58,11 +58,11 @@ void titian::GUISectionMainMenu::render_gui()
             if (im::BeginMenu("Import")) {
                 if (im::MenuItem("Mesh")) {
                     if (auto file = kl::choose_file(false, { { "Mesh File",  FILE_EXTENSION_OBJ }, { "Mesh File",  FILE_EXTENSION_GLB }, { "Mesh File",  FILE_EXTENSION_FBX } })) {
-                        if (auto data = scene->get_assimp_data(file.value())) {
-                            const aiScene* ai_scene = data.value().importer->GetScene();
-                            for (uint32_t i = 0; i < ai_scene->mNumMeshes; i++) {
-                                Ref mesh = scene->load_assimp_mesh(ai_scene, ai_scene->mMeshes[i]);
-								scene->meshes[data.value().meshes[i]] = mesh;
+                        if (auto data = scene.get_assimp_data(file.value())) {
+                            const aiScene& ai_scene = *data.value().importer->GetScene();
+                            for (uint32_t i = 0; i < ai_scene.mNumMeshes; i++) {
+                                Ref mesh = scene.load_assimp_mesh(ai_scene, *ai_scene.mMeshes[i]);
+								scene.meshes[data.value().meshes[i]] = mesh;
                             }
                         }
                     }
@@ -71,7 +71,7 @@ void titian::GUISectionMainMenu::render_gui()
                     if (auto file = kl::choose_file(false, { { "Texture File", FILE_EXTENSION_JPG }, { "Texture File", FILE_EXTENSION_PNG } })) {
                         const String stem_name = fs::path(file.value()).stem().string();
 
-                        Texture* texture = scene->helper_new_texture(stem_name);
+                        Texture* texture = scene.helper_new_texture(stem_name);
                         texture->data_buffer.load_from_file(file.value());
                         texture->reload_as_2D();
                         texture->create_shader_view();
@@ -86,23 +86,23 @@ void titian::GUISectionMainMenu::render_gui()
                             Ref script = new NativeScript();
                             script->data = kl::read_file(file.value());
 							script->reload();
-                            scene->scripts[stem_name] = script;
+                            scene.scripts[stem_name] = script;
                         }
                         else if (type_index == 1) {
                             Ref script = new NodeScript();
                             if (const TextSerializer serializer{ file.value(), false }) {
                                 String ignored_type;
                                 serializer.read_string("script_type", ignored_type);
-                                script->deserialize(&serializer);
+                                script->deserialize(serializer);
                             }
                             script->reload();
-                            scene->scripts[stem_name] = script;
+                            scene.scripts[stem_name] = script;
                         }
                         else if (type_index == 2) {
                             Ref script = new InterpScript();
                             script->source = kl::read_file(file.value());
                             script->reload();
-                            scene->scripts[stem_name] = script;
+                            scene.scripts[stem_name] = script;
                         }
                     }
                 }
@@ -110,7 +110,7 @@ void titian::GUISectionMainMenu::render_gui()
                     if (auto file = kl::choose_file(false, { { "Shader File", FILE_EXTENSION_HLSL } })) {
                         const String stem_name = fs::path(file.value()).stem().string();
 
-                        Shader* shader = scene->helper_new_shader(stem_name);
+                        Shader* shader = scene.helper_new_shader(stem_name);
                         shader->data_buffer = kl::read_file(file.value());
                     }
                 }
@@ -120,8 +120,8 @@ void titian::GUISectionMainMenu::render_gui()
                             const String stem_name = fs::path(file.value()).stem().string();
                             if (const BinarySerializer serializer{ file.value(), false }) {
                                 Ref scene = new Scene();
-                                scene->deserialize(&serializer);
-                                game_layer->scene = scene;
+                                scene->deserialize(serializer);
+                                game_layer.scene = scene;
                             }
                         }
                     }
@@ -130,8 +130,8 @@ void titian::GUISectionMainMenu::render_gui()
                             const String stem_name = fs::path(file.value()).stem().string();
                             if (const TextSerializer serializer{ file.value(), false }) {
                                 Ref scene = new Scene();
-                                scene->deserialize(&serializer);
-                                game_layer->scene = scene;
+                                scene->deserialize(serializer);
+                                game_layer.scene = scene;
                             }
                         }
                     }
@@ -142,7 +142,7 @@ void titian::GUISectionMainMenu::render_gui()
             if (im::BeginMenu("Export")) {
                 if (im::BeginMenu("Texture")) {
                     const String filter = gui_input_continuous("Search###MenuExportTexture");
-                    for (auto& [name, texture] : scene->textures) {
+                    for (auto& [name, texture] : scene.textures) {
                         if (!filter.empty() && name.find(filter) == -1) {
                             continue;
                         }
@@ -169,7 +169,7 @@ void titian::GUISectionMainMenu::render_gui()
                 }
                 if (im::BeginMenu("Script")) {
                     const String filter = gui_input_continuous("Search###MenuExportScript");
-                    for (auto& [name, script] : scene->scripts) {
+                    for (auto& [name, script] : scene.scripts) {
                         if (!filter.empty() && name.find(filter) == -1) {
                             continue;
                         }
@@ -197,7 +197,7 @@ void titian::GUISectionMainMenu::render_gui()
                                         file.value() += FILE_EXTENSION_JSON;
                                     }
                                     if (TextSerializer serializer{ file.value(), true }) {
-                                        node_script->serialize(&serializer);
+                                        node_script->serialize(serializer);
                                     }
                                 }
                                 else if (NativeScript* native_script = &script.as<NativeScript>()) {
@@ -213,7 +213,7 @@ void titian::GUISectionMainMenu::render_gui()
                 }
                 if (im::BeginMenu("Shader")) {
                     const String filter = gui_input_continuous("Search###MenuExportShader");
-                    for (auto& [name, shader] : scene->shaders) {
+                    for (auto& [name, shader] : scene.shaders) {
                         if (!filter.empty() && name.find(filter) == -1) {
                             continue;
                         }
@@ -237,7 +237,7 @@ void titian::GUISectionMainMenu::render_gui()
                                 file.value() += FILE_EXTENSION_TITIAN;
                             }
                             if (BinarySerializer serializer{ file.value(), true }) {
-                                scene->serialize(&serializer);
+                                scene.serialize(serializer);
                             }
                         }
                     }
@@ -248,7 +248,7 @@ void titian::GUISectionMainMenu::render_gui()
                                 file.value() += FILE_EXTENSION_JSON;
                             }
                             if (TextSerializer serializer{ file.value(), true }) {
-                                scene->serialize(&serializer);
+                                scene.serialize(serializer);
                             }
                         }
                     }
@@ -258,7 +258,7 @@ void titian::GUISectionMainMenu::render_gui()
             }
             im::Separator();
             if (im::MenuItem("New Scene")) {
-                scene = new Scene();
+                game_layer.reset_scene();
             }
             im::Separator();
             if (im::MenuItem("Exit")) {
@@ -283,41 +283,41 @@ void titian::GUISectionMainMenu::render_gui()
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (im::MenuItem("Import Packed")) {
                 if (auto file_path = kl::choose_file(false, { { "GLTF File", FILE_EXTENSION_GLB }, { "FBX File", FILE_EXTENSION_FBX } })) {
-                    opt_assimp_data = scene->get_assimp_data(file_path.value());
+                    opt_assimp_data = scene.get_assimp_data(file_path.value());
                 }
             }
             if (im::MenuItem("Quick Setup")) {
                 Ref camera = new Camera();
                 camera->set_position(Float3{ 1.5f });
                 camera->set_forward(-camera->position());
-                scene->add_entity("camera", camera);
-                scene->main_camera_name = "camera";
+                scene.add_entity("camera", camera);
+                scene.main_camera_name = "camera";
 
                 Ref ambient = new AmbientLight();
-                scene->add_entity("ambient", ambient);
-                scene->main_ambient_light_name = "ambient";
+                scene.add_entity("ambient", ambient);
+                scene.main_ambient_light_name = "ambient";
 
                 Ref sun = new DirectionalLight();
                 sun->set_direction({ -0.666f, -0.666f, 0.333f });
-                scene->add_entity("sun", sun);
-                scene->main_directional_light_name = "sun";
+                scene.add_entity("sun", sun);
+                scene.main_directional_light_name = "sun";
 
                 Ref cube = new Entity();
                 cube->animation_name = "cube";
                 cube->material_name = "white";
-                scene->add_entity("cube", cube);
+                scene.add_entity("cube", cube);
 
                 Ref mesh = new Mesh();
                 mesh->load_triangles(kl::GPU::generate_cube_mesh(1.0f));
-                scene->meshes["cube"] = mesh;
+                scene.meshes["cube"] = mesh;
 
                 Ref animation = new Animation();
                 animation->meshes = { "cube" };
-                scene->animations["cube"] = animation;
+                scene.animations["cube"] = animation;
 
                 Ref material = new Material();
                 material->color = kl::colors::WHITE;
-                scene->materials["white"] = material;
+                scene.materials["white"] = material;
             }
             im::PopStyleVar();
             im::EndMenu();
@@ -356,7 +356,7 @@ void titian::GUISectionMainMenu::render_gui()
                 }
                 im::SameLine();
                 if (im::Button("Import")) {
-                    scene->load_assimp_data(assimp_data);
+                    scene.load_assimp_data(assimp_data);
                     opt_assimp_data = std::nullopt;
                 }
                 im::PopStyleVar();
@@ -370,25 +370,25 @@ void titian::GUISectionMainMenu::render_gui()
 
             if (im::BeginMenu("Values")) {
                 im::SetNextItemWidth(75.0f);
-                im::DragInt("Outline Size", &editor_layer->outline_size);
+                im::DragInt("Outline Size", &editor_layer.outline_size);
                 im::EndMenu();
             }
             if (im::BeginMenu("Colors")) {
                 im::SetNextItemWidth(250.0f);
-                im::ColorEdit3("Special", &gui_layer->special_color.x);
+                im::ColorEdit3("Special", &gui_layer.special_color.x);
                 im::SetNextItemWidth(250.0f);
-                im::ColorEdit3("Alternate", &gui_layer->alternate_color.x);
+                im::ColorEdit3("Alternate", &gui_layer.alternate_color.x);
                 if (im::Button("Reload", { -1.0f, 0.0f })) {
-                    gui_layer->reload_colors();
+                    gui_layer.reload_colors();
 
-                    const RGB special_color = gui_layer->special_color;
+                    const RGB special_color = gui_layer.special_color;
                     kl::Wrap special_wrap = kl::Wrap<js::Array>::make();
                     special_wrap->push_back(js::make_number(special_color.r));
                     special_wrap->push_back(js::make_number(special_color.g));
                     special_wrap->push_back(js::make_number(special_color.b));
                     _conf_data[CONF_SPECIAL_COLOR] = std::move(special_wrap);
 
-                    const RGB alternate_color = gui_layer->alternate_color;
+                    const RGB alternate_color = gui_layer.alternate_color;
                     kl::Wrap alternate_wrap = kl::Wrap<js::Array>::make();
                     alternate_wrap->push_back(js::make_number(alternate_color.r));
                     alternate_wrap->push_back(js::make_number(alternate_color.g));
@@ -423,43 +423,43 @@ void titian::GUISectionMainMenu::render_gui()
 
         constexpr float button_image_size = 16.0f;
         
-        const bool is_start_enabled = !game_layer->game_running || game_layer->game_paused;
+        const bool is_start_enabled = !game_layer.game_running || game_layer.game_paused;
         const ImVec4 start_tint_color = is_start_enabled ? ImColor(200, 200, 200) : ImColor(75, 75, 75);
 
         im::PushItemFlag(ImGuiItemFlags_Disabled, !is_start_enabled);
         if (im::ImageButton("StartButton", m_start_button_texture->shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), start_tint_color)) {
-            if (game_layer->game_paused) {
-                game_layer->resume_game();
+            if (game_layer.game_paused) {
+                game_layer.resume_game();
             }
             else {
                 if (BinarySerializer serializer{ m_temp_path, true }) {
-                    game_layer->scene->serialize(&serializer);
+                    game_layer.scene->serialize(serializer);
                 }
-                game_layer->start_game();
+                game_layer.start_game();
             }
         }
         m_control_buttons_width += im::GetItemRectSize().x;
         im::PopItemFlag();
 
-        const bool is_pause_enabled = game_layer->game_running && !game_layer->game_paused;
+        const bool is_pause_enabled = game_layer.game_running && !game_layer.game_paused;
         const ImVec4 pause_tint_color = is_pause_enabled ? ImColor(200, 200, 200) : ImColor(75, 75, 75);
 
         im::PushItemFlag(ImGuiItemFlags_Disabled, !is_pause_enabled);
         if (im::ImageButton("PauseButton", m_pause_button_texture->shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), pause_tint_color)) {
-            game_layer->pause_game();
+            game_layer.pause_game();
         }
         m_control_buttons_width += im::GetItemRectSize().x;
         im::PopItemFlag();
 
-        const bool is_stop_enabled = game_layer->game_running || game_layer->game_paused;
+        const bool is_stop_enabled = game_layer.game_running || game_layer.game_paused;
         const ImVec4 stop_tint_color = is_stop_enabled ? ImColor(200, 200, 200) : ImColor(75, 75, 75);
 
         im::PushItemFlag(ImGuiItemFlags_Disabled, !is_stop_enabled);
         if (im::ImageButton("StopButton", m_stop_button_texture->shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), stop_tint_color)) {
-            game_layer->stop_game();
+            game_layer.stop_game();
             if (const BinarySerializer serializer{ m_temp_path, false }) {
-                game_layer->reset_scene();
-                game_layer->scene->deserialize(&serializer);
+                game_layer.reset_scene();
+                game_layer.scene->deserialize(serializer);
             }
         }
         m_control_buttons_width += im::GetItemRectSize().x;

@@ -9,7 +9,7 @@ namespace titian {
         Float3 world;
         Float2 texture;
         Float3 normal;
-        kl::Vector4<uint8_t> bone_indices;
+        kl::Vector4<byte> bone_indices;
         Float4 bone_weights;
     };
 }
@@ -41,8 +41,8 @@ namespace titian {
 
         Mesh();
 
-        void serialize(Serializer* serializer) const override;
-        void deserialize(const Serializer* serializer) override;
+        void serialize(Serializer& serializer) const override;
+        void deserialize(const Serializer& serializer) override;
 
         D3D_PRIMITIVE_TOPOLOGY casted_topology() const;
 

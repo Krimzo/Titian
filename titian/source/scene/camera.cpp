@@ -13,70 +13,70 @@ titian::Camera::Camera()
     resize_staging({ 1, 1 });
 }
 
-void titian::Camera::serialize(Serializer* serializer) const
+void titian::Camera::serialize(Serializer& serializer) const
 {
     Entity::serialize(serializer);
 
-    serializer->write_int("camera_type", camera_type);
+    serializer.write_int("camera_type", camera_type);
 
-    serializer->write_bool("enabled", enabled);
-    serializer->write_bool("v_sync", v_sync);
-    serializer->write_bool("render_wireframe", render_wireframe);
+    serializer.write_bool("enabled", enabled);
+    serializer.write_bool("v_sync", v_sync);
+    serializer.write_bool("render_wireframe", render_wireframe);
 
-    serializer->write_float("aspect_ratio", aspect_ratio);
-    serializer->write_float("field_of_view", field_of_view);
-    serializer->write_float("width", width);
-    serializer->write_float("height", height);
-    serializer->write_float("near_plane", near_plane);
-    serializer->write_float("far_plane", far_plane);
-    serializer->write_float("sensitivity", sensitivity);
-    serializer->write_float("speed", speed);
+    serializer.write_float("aspect_ratio", aspect_ratio);
+    serializer.write_float("field_of_view", field_of_view);
+    serializer.write_float("width", width);
+    serializer.write_float("height", height);
+    serializer.write_float("near_plane", near_plane);
+    serializer.write_float("far_plane", far_plane);
+    serializer.write_float("sensitivity", sensitivity);
+    serializer.write_float("speed", speed);
 
-    serializer->write_float_array("forward", &m_forward.x, 3);
-    serializer->write_float_array("up", &m_up.x, 3);
+    serializer.write_float_array("forward", &m_forward.x, 3);
+    serializer.write_float_array("up", &m_up.x, 3);
 
-    serializer->write_float_array("background", &background.x, 4);
-    serializer->write_float_array("custom_data", custom_data.data, 16);
+    serializer.write_float_array("background", &background.x, 4);
+    serializer.write_float_array("custom_data", custom_data.data, 16);
 
-    serializer->write_string("skybox_texture_name", skybox_texture_name);
-    serializer->write_string("target_texture_name", target_texture_name);
-    serializer->write_string("shader_name", shader_name);
+    serializer.write_string("skybox_texture_name", skybox_texture_name);
+    serializer.write_string("target_texture_name", target_texture_name);
+    serializer.write_string("shader_name", shader_name);
 
     const Int2 res = resolution();
-    serializer->write_int_array("resolution", &res.x, 2);
+    serializer.write_int_array("resolution", &res.x, 2);
 }
 
-void titian::Camera::deserialize(const Serializer* serializer)
+void titian::Camera::deserialize(const Serializer& serializer)
 {
     Entity::deserialize(serializer);
 
-    serializer->read_int("camera_type", (int32_t&) camera_type);
+    serializer.read_int("camera_type", (int32_t&) camera_type);
 
-    serializer->read_bool("enabled", enabled);
-    serializer->read_bool("v_sync", v_sync);
-    serializer->read_bool("render_wireframe", render_wireframe);
+    serializer.read_bool("enabled", enabled);
+    serializer.read_bool("v_sync", v_sync);
+    serializer.read_bool("render_wireframe", render_wireframe);
 
-    serializer->read_float("aspect_ratio", aspect_ratio);
-    serializer->read_float("field_of_view", field_of_view);
-    serializer->read_float("width", width);
-    serializer->read_float("height", height);
-    serializer->read_float("near_plane", near_plane);
-    serializer->read_float("far_plane", far_plane);
-    serializer->read_float("sensitivity", sensitivity);
-    serializer->read_float("speed", speed);
+    serializer.read_float("aspect_ratio", aspect_ratio);
+    serializer.read_float("field_of_view", field_of_view);
+    serializer.read_float("width", width);
+    serializer.read_float("height", height);
+    serializer.read_float("near_plane", near_plane);
+    serializer.read_float("far_plane", far_plane);
+    serializer.read_float("sensitivity", sensitivity);
+    serializer.read_float("speed", speed);
 
-    serializer->read_float_array("forward", &m_forward.x, 3);
-    serializer->read_float_array("up", &m_up.x, 3);
+    serializer.read_float_array("forward", &m_forward.x, 3);
+    serializer.read_float_array("up", &m_up.x, 3);
 
-    serializer->read_float_array("background", &background.x, 4);
-    serializer->read_float_array("custom_data", custom_data.data, 16);
+    serializer.read_float_array("background", &background.x, 4);
+    serializer.read_float_array("custom_data", custom_data.data, 16);
 
-    serializer->read_string("skybox_texture_name", skybox_texture_name);
-    serializer->read_string("target_texture_name", target_texture_name);
-    serializer->read_string("shader_name", shader_name);
+    serializer.read_string("skybox_texture_name", skybox_texture_name);
+    serializer.read_string("target_texture_name", target_texture_name);
+    serializer.read_string("shader_name", shader_name);
 
     Int2 res;
-    serializer->read_int_array("resolution", &res.x, 2);
+    serializer.read_int_array("resolution", &res.x, 2);
 	resize(res);
 }
 
@@ -182,7 +182,7 @@ void titian::Camera::resize(const Int2 new_size)
     if (new_size == resolution()) {
         return;
     }
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
 
     dx::TextureDescriptor screen_desc{};
     screen_desc.Width = new_size.x;
@@ -193,20 +193,20 @@ void titian::Camera::resize(const Int2 new_size)
     screen_desc.SampleDesc.Count = 1;
     screen_desc.Usage = D3D11_USAGE_DEFAULT;
     screen_desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    screen_texture->graphics_buffer = gpu->create_texture(&screen_desc, nullptr);
+    screen_texture->graphics_buffer = gpu.create_texture(&screen_desc, nullptr);
     screen_texture->create_target_view(nullptr);
     screen_texture->create_shader_view(nullptr);
 
     dx::TextureDescriptor color_desc = screen_desc;
-    color_texture->graphics_buffer = gpu->create_texture(&color_desc, nullptr);
+    color_texture->graphics_buffer = gpu.create_texture(&color_desc, nullptr);
     color_texture->create_target_view(nullptr);
     color_texture->create_shader_view(nullptr);
 
     dx::TextureDescriptor depth_desc = color_desc;
     depth_desc.Format = DXGI_FORMAT_R32_TYPELESS;
     depth_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-    depth_texture->graphics_buffer = gpu->create_texture(&depth_desc, nullptr);
-    depth_staging->graphics_buffer = gpu->create_staging_texture(depth_texture->graphics_buffer);
+    depth_texture->graphics_buffer = gpu.create_texture(&depth_desc, nullptr);
+    depth_staging->graphics_buffer = gpu.create_staging_texture(depth_texture->graphics_buffer);
 
     dx::DepthViewDescriptor depth_dv_desc{};
     depth_dv_desc.Format = DXGI_FORMAT_D32_FLOAT;
@@ -221,7 +221,7 @@ void titian::Camera::resize(const Int2 new_size)
 
     dx::TextureDescriptor index_desc = screen_desc;
     index_desc.Format = DXGI_FORMAT_R32_FLOAT;
-    index_texture->graphics_buffer = gpu->create_texture(&index_desc, nullptr);
+    index_texture->graphics_buffer = gpu.create_texture(&index_desc, nullptr);
     index_texture->create_target_view(nullptr);
     index_texture->create_shader_view(nullptr);
 }
@@ -234,8 +234,8 @@ void titian::Camera::resize_staging(const Int2 new_size)
     if (index_staging->resolution() == new_size) {
         return;
     }
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    index_staging->graphics_buffer = gpu->create_staging_texture(index_texture->graphics_buffer, new_size);
+    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    index_staging->graphics_buffer = gpu.create_staging_texture(index_texture->graphics_buffer, new_size);
 }
 
 titian::Int2 titian::Camera::resolution() const
@@ -245,8 +245,8 @@ titian::Int2 titian::Camera::resolution() const
 
 void titian::Camera::clear_targets()
 {
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    gpu->clear_target_view(color_texture->target_view, background);
-    gpu->clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
-    gpu->clear_target_view(index_texture->target_view, {});
+    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    gpu.clear_target_view(color_texture->target_view, background);
+    gpu.clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
+    gpu.clear_target_view(index_texture->target_view, {});
 }

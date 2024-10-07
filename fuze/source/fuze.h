@@ -4,5 +4,5 @@
 
 
 namespace titian {
-	int fuze_entry(int argc, const char** argv);
+	int fuze_entry(int argc, str* argv);
 }

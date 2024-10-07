@@ -9,204 +9,204 @@ void titian::GUISectionEntityProperties::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    EditorLayer* editor_layer = Layers::get<EditorLayer>();
-	GameLayer* game_layer = Layers::get<GameLayer>();
-    Scene* scene = &game_layer->scene;
+    EditorLayer& editor_layer = Layers::get<EditorLayer>();
+	GameLayer& game_layer = Layers::get<GameLayer>();
+    Scene& scene = *game_layer.scene;
 
-    if (im::Begin("Entity properties") && !editor_layer->selected_entities.empty()) {
-        const String entity_name = *(--editor_layer->selected_entities.end());
+    if (im::Begin("Entity properties") && !editor_layer.selected_entities.empty()) {
+        const String entity_name = *(--editor_layer.selected_entities.end());
         Ref<Entity> entity;
-        if (scene->entities().contains(entity_name)) {
-            entity = scene->entities().at(entity_name);
+        if (scene.entities().contains(entity_name)) {
+            entity = scene.entities().at(entity_name);
         }
         if (entity) {
-            display_entity_info(scene, entity_name, &entity);
-            edit_entity_transform(scene, &entity);
-            edit_entity_animation(scene, &entity);
-            edit_entity_material(scene, &entity);
+            display_entity_info(scene, entity_name, *entity);
+            edit_entity_transform(scene, *entity);
+            edit_entity_animation(scene, *entity);
+            edit_entity_material(scene, *entity);
             edit_entity_physics(scene, entity_name, entity);
-            edit_entity_collider(scene, &entity);
-            edit_entity_other(scene, &entity);
+            edit_entity_collider(scene, *entity);
+            edit_entity_other(scene, *entity);
         }
     }
     im::End();
 }
 
-void titian::GUISectionEntityProperties::display_entity_info(Scene* scene, const StringView& entity_name, Entity* entity)
+void titian::GUISectionEntityProperties::display_entity_info(Scene& scene, const StringView& entity_name, Entity& entity)
 {
-    GUILayer* gui_layer = Layers::get<GUILayer>();
+    GUILayer& gui_layer = Layers::get<GUILayer>();
 
     im::Text("Entity Info");
 
     im::Text("Name: ");
     im::SameLine();
-    gui_colored_text(entity_name, gui_layer->special_color);
+    gui_colored_text(entity_name, gui_layer.special_color);
 
-    if (Camera* camera = dynamic_cast<Camera*>(entity)) {
+    if (Camera* camera = dynamic_cast<Camera*>(&entity)) {
         im::Separator();
-        display_camera_special_info(scene, camera);
+        display_camera_special_info(scene, *camera);
     }
-    else if (AmbientLight* light = dynamic_cast<AmbientLight*>(entity)) {
+    else if (AmbientLight* light = dynamic_cast<AmbientLight*>(&entity)) {
         im::Separator();
-        display_ambient_light_special_info(scene, light);
+        display_ambient_light_special_info(scene, *light);
     }
-    else if (DirectionalLight* light = dynamic_cast<DirectionalLight*>(entity)) {
+    else if (DirectionalLight* light = dynamic_cast<DirectionalLight*>(&entity)) {
         im::Separator();
-        display_directional_light_special_info(scene, light);
+        display_directional_light_special_info(scene, *light);
     }
 }
 
-void titian::GUISectionEntityProperties::display_camera_special_info(Scene* scene, Camera* camera)
+void titian::GUISectionEntityProperties::display_camera_special_info(Scene& scene, Camera& camera)
 {
     im::Text("Camera Special Info");
 
-    if (im::BeginCombo("Camera Type", camera->camera_type == CameraType::ORTHOGRAPHIC ? "Orthographic" : "Perspective")) {
-        if (im::Selectable("Perspective", camera->camera_type == CameraType::PERSPECTIVE)) {
-            camera->camera_type = CameraType::PERSPECTIVE;
+    if (im::BeginCombo("Camera Type", camera.camera_type == CameraType::ORTHOGRAPHIC ? "Orthographic" : "Perspective")) {
+        if (im::Selectable("Perspective", camera.camera_type == CameraType::PERSPECTIVE)) {
+            camera.camera_type = CameraType::PERSPECTIVE;
         }
-        if (im::Selectable("Orthographic", camera->camera_type == CameraType::ORTHOGRAPHIC)) {
-            camera->camera_type = CameraType::ORTHOGRAPHIC;
+        if (im::Selectable("Orthographic", camera.camera_type == CameraType::ORTHOGRAPHIC)) {
+            camera.camera_type = CameraType::ORTHOGRAPHIC;
         }
         im::EndCombo();
     }
 
-    im::Checkbox("Enabled", &camera->enabled);
-    im::Checkbox("vSync", &camera->v_sync);
-    im::Checkbox("Wireframe", &camera->render_wireframe);
+    im::Checkbox("Enabled", &camera.enabled);
+    im::Checkbox("vSync", &camera.v_sync);
+    im::Checkbox("Wireframe", &camera.render_wireframe);
     
-    Int2 resolution = camera->resolution();
+    Int2 resolution = camera.resolution();
     if (im::DragInt2("Resolution", &resolution.x, 1.0f, 1, 8192)) {
-        camera->resize(resolution);
+        camera.resize(resolution);
     }
 
-    if (camera->camera_type == CameraType::ORTHOGRAPHIC) {
-        im::DragFloat("Width", &camera->width);
-        im::DragFloat("Height", &camera->height);
+    if (camera.camera_type == CameraType::ORTHOGRAPHIC) {
+        im::DragFloat("Width", &camera.width);
+        im::DragFloat("Height", &camera.height);
     }
     else {
-        im::DragFloat("Aspect Ratio", &camera->aspect_ratio);
-        im::DragFloat("FOV", &camera->field_of_view);
+        im::DragFloat("Aspect Ratio", &camera.aspect_ratio);
+        im::DragFloat("FOV", &camera.field_of_view);
     }
 
-    im::DragFloat("Near Plane", &camera->near_plane);
-    im::DragFloat("Far Plane", &camera->far_plane);
+    im::DragFloat("Near Plane", &camera.near_plane);
+    im::DragFloat("Far Plane", &camera.far_plane);
 
-    im::DragFloat("Sensitivity", &camera->sensitivity);
-    im::DragFloat("Speed", &camera->speed);
+    im::DragFloat("Sensitivity", &camera.sensitivity);
+    im::DragFloat("Speed", &camera.speed);
 
-    Float3 camera_forward = camera->forward();
+    Float3 camera_forward = camera.forward();
     im::DragFloat3("Forward", &camera_forward.x, 0.01f);
-    camera->set_forward(camera_forward);
+    camera.set_forward(camera_forward);
 
-    Float3 camera_up = camera->up();
+    Float3 camera_up = camera.up();
     im::DragFloat3("Up", &camera_up.x, 0.01f);
-    camera->set_up(camera_up);
+    camera.set_up(camera_up);
 
-    if (im::BeginCombo("Bound Skybox", camera->skybox_texture_name.data())) {
-        if (im::Selectable("/", camera->skybox_texture_name == "/")) {
-            camera->skybox_texture_name = "/";
+    if (im::BeginCombo("Bound Skybox", camera.skybox_texture_name.data())) {
+        if (im::Selectable("/", camera.skybox_texture_name == "/")) {
+            camera.skybox_texture_name = "/";
         }
-        for (const auto& [texture_name, _] : scene->textures) {
-            if (im::Selectable(texture_name.data(), texture_name == camera->skybox_texture_name)) {
-                camera->skybox_texture_name = texture_name;
+        for (const auto& [texture_name, _] : scene.textures) {
+            if (im::Selectable(texture_name.data(), texture_name == camera.skybox_texture_name)) {
+                camera.skybox_texture_name = texture_name;
             }
         }
         im::EndCombo();
     }
-    if (im::BeginCombo("Bound Shader", camera->shader_name.data())) {
-        if (im::Selectable("/", camera->shader_name == "/")) {
-            camera->shader_name = "/";
+    if (im::BeginCombo("Bound Shader", camera.shader_name.data())) {
+        if (im::Selectable("/", camera.shader_name == "/")) {
+            camera.shader_name = "/";
         }
-        for (const auto& [shader_name, shader] : scene->shaders) {
+        for (const auto& [shader_name, shader] : scene.shaders) {
             if (shader->shader_type != ShaderType::CAMERA) {
                 continue;
             }
-            if (im::Selectable(shader_name.data(), shader_name == camera->shader_name)) {
-                camera->shader_name = shader_name;
+            if (im::Selectable(shader_name.data(), shader_name == camera.shader_name)) {
+                camera.shader_name = shader_name;
             }
         }
         im::EndCombo();
     }
-    if (im::BeginCombo("Bound Target", camera->target_texture_name.data())) {
-        if (im::Selectable("/", camera->target_texture_name == "/")) {
-            camera->target_texture_name = "/";
+    if (im::BeginCombo("Bound Target", camera.target_texture_name.data())) {
+        if (im::Selectable("/", camera.target_texture_name == "/")) {
+            camera.target_texture_name = "/";
         }
-        for (const auto& [texture_name, _] : scene->textures) {
-            if (im::Selectable(texture_name.data(), texture_name == camera->target_texture_name)) {
-                camera->target_texture_name = texture_name;
+        for (const auto& [texture_name, _] : scene.textures) {
+            if (im::Selectable(texture_name.data(), texture_name == camera.target_texture_name)) {
+                camera.target_texture_name = texture_name;
             }
         }
         im::EndCombo();
     }
-    if (!scene->textures.contains(camera->skybox_texture_name)) {
-        Float4 background = camera->background;
+    if (!scene.textures.contains(camera.skybox_texture_name)) {
+        Float4 background = camera.background;
         if (im::ColorEdit4("Background", &background.x)) {
-            camera->background = background;
+            camera.background = background;
         }
     }
 }
 
-void titian::GUISectionEntityProperties::display_ambient_light_special_info(Scene* scene, AmbientLight* light)
+void titian::GUISectionEntityProperties::display_ambient_light_special_info(Scene& scene, AmbientLight& light)
 {
     im::Text("Ambient Light Special Info");
-    im::ColorEdit3("Color", &light->color.x);
+    im::ColorEdit3("Color", &light.color.x);
 }
 
-void titian::GUISectionEntityProperties::display_directional_light_special_info(Scene* scene, DirectionalLight* light)
+void titian::GUISectionEntityProperties::display_directional_light_special_info(Scene& scene, DirectionalLight& light)
 {
     im::Text("Directional Light Special Info");
 
-    im::ColorEdit3("Color", &light->color.x);
-    im::DragFloat("Point Size", &light->point_size, 0.01f, 0.0f, 1.0f);
+    im::ColorEdit3("Color", &light.color.x);
+    im::DragFloat("Point Size", &light.point_size, 0.01f, 0.0f, 1.0f);
 
     for (int i = 0; i < DirectionalLight::CASCADE_COUNT; i++) {
-        im::DragFloat2(kl::format("Cascade ", i).data(), light->cascade_splits + i, 0.01f, 0.0f, 1.0f);
+        im::DragFloat2(kl::format("Cascade ", i).data(), light.cascade_splits + i, 0.01f, 0.0f, 1.0f);
     }
-    std::sort(light->cascade_splits, light->cascade_splits + std::size(light->cascade_splits));
+    std::sort(light.cascade_splits, light.cascade_splits + std::size(light.cascade_splits));
 
-    int resolution = light->resolution();
+    int resolution = light.resolution();
 	if (im::DragInt("Resolution", &resolution, 1.0f, 10, 8192)) {
-		light->set_resolution(resolution);
+		light.set_resolution(resolution);
 	}
 
-    Float3 direction = light->direction();
+    Float3 direction = light.direction();
     if (im::DragFloat3("Direction", &direction.x, 0.01f)) {
-        light->set_direction(direction);
+        light.set_direction(direction);
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_transform(Scene* scene, Entity* entity)
+void titian::GUISectionEntityProperties::edit_entity_transform(Scene& scene, Entity& entity)
 {
     im::Separator();
     im::Text("Transform");
 
-	Float3 scale = entity->scale();
+	Float3 scale = entity.scale();
 	if (im::DragFloat3("Scale", &scale.x, 0.1f)) {
-		entity->set_scale(scale);
+		entity.set_scale(scale);
 	}
 
-    Float3 rotation = entity->rotation();
+    Float3 rotation = entity.rotation();
     if (im::DragFloat3("Rotation", &rotation.x)) {
-        entity->set_rotation(rotation);
+        entity.set_rotation(rotation);
     }
 
-    Float3 position = entity->position();
+    Float3 position = entity.position();
     if (im::DragFloat3("Position", &position.x)) {
-        entity->set_position(position);
+        entity.set_position(position);
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_animation(Scene* scene, Entity* entity)
+void titian::GUISectionEntityProperties::edit_entity_animation(Scene& scene, Entity& entity)
 {
     im::Separator();
     im::Text("Animation");
-    auto& bound_animation = entity->animation_name;
+    auto& bound_animation = entity.animation_name;
     if (im::BeginCombo("Bound Animation", bound_animation.data())) {
         const String filter = gui_input_continuous("Search###EntityPropsMesh");
         if (im::Selectable("/", bound_animation == "/")) {
             bound_animation = "/";
         }
-        for (const auto& [name, animation] : scene->animations) {
+        for (const auto& [name, animation] : scene.animations) {
             if (!filter.empty() && name.find(filter) == -1) {
                 continue;
             }
@@ -218,18 +218,18 @@ void titian::GUISectionEntityProperties::edit_entity_animation(Scene* scene, Ent
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_material(Scene* scene, Entity* entity)
+void titian::GUISectionEntityProperties::edit_entity_material(Scene& scene, Entity& entity)
 {
     im::Separator();
     im::Text("Material");
 
-    String& bound_material = entity->material_name;
+    String& bound_material = entity.material_name;
     if (im::BeginCombo("Bound Material", bound_material.data())) {
         const String filter = gui_input_continuous("Search###EntityPropsMaterial");
         if (im::Selectable("/", bound_material == "/")) {
             bound_material = "/";
         }
-        for (auto& [material, _] : scene->materials) {
+        for (auto& [material, _] : scene.materials) {
             if (!filter.empty() && material.find(filter) == -1) {
                 continue;
             }
@@ -241,16 +241,16 @@ void titian::GUISectionEntityProperties::edit_entity_material(Scene* scene, Enti
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const String& entity_name, Ref<Entity>& entity)
+void titian::GUISectionEntityProperties::edit_entity_physics(Scene& scene, const String& entity_name, Ref<Entity>& entity)
 {
     im::Separator();
     im::Text("Physics");
 
     bool dynamic = entity->dynamic();
     if (im::Checkbox("Dynamic", &dynamic)) {
-        scene->remove_entity(entity_name);
+        scene.remove_entity(entity_name);
         entity->set_dynamic(dynamic);
-        scene->add_entity(entity_name, entity);
+        scene.add_entity(entity_name, entity);
     }
 
     if (dynamic) {
@@ -281,7 +281,7 @@ void titian::GUISectionEntityProperties::edit_entity_physics(Scene* scene, const
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Entity* entity)
+void titian::GUISectionEntityProperties::edit_entity_collider(Scene& scene, Entity& entity)
 {
     static const Map<px::PxGeometryType::Enum, String> possible_colliders = {
         { px::PxGeometryType::Enum::eINVALID, "/" },
@@ -293,16 +293,16 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     im::Separator();
     im::Text("Collider");
 
-    Ref collider = entity->collider();
+    Ref<Collider> collider = entity.collider();
     px::PxGeometryType::Enum collider_type = collider ? collider->type() : px::PxGeometryType::Enum::eINVALID;
     String collider_name = possible_colliders.contains(collider_type) ? possible_colliders.at(collider_type) : "mesh_";
 
     if (im::BeginCombo("Bound Collider", collider_name.data())) {
         for (auto& [type, name] : possible_colliders) {
             if (im::Selectable(name.data(), type == collider_type)) {
-                collider = scene->new_collider(type);
+                collider = scene.new_collider(type);
                 collider_type = (collider ? collider->type() : px::PxGeometryType::Enum::eINVALID);
-                entity->set_collider(collider);
+                entity.set_collider(collider);
             }
         }
         im::EndCombo();
@@ -370,7 +370,7 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     }
 
     if (geometry_type != 0 && im::Button("Load size from scale")) {
-        const Float3 scale = entity->scale();
+        const Float3 scale = entity.scale();
         if (geometry_type == 1) {
             box_geometry.halfExtents = px_cast(scale) * 0.5f;
             collider_shape->setGeometry(box_geometry);
@@ -382,10 +382,10 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene* scene, Enti
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_other(Scene* scene, Entity* entity)
+void titian::GUISectionEntityProperties::edit_entity_other(Scene& scene, Entity& entity)
 {
     im::Separator();
     im::Text("Other Properties");
 
-    im::Checkbox("Casts Shadows", &entity->casts_shadows);
+    im::Checkbox("Casts Shadows", &entity.casts_shadows);
 }

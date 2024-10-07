@@ -17,16 +17,16 @@ static px::PxFilterFlags filter_shader(
 
 titian::Scene::Scene()
 {
-    px::PxPhysics* physics = Layers::get<AppLayer>()->physics;
-    px::PxCpuDispatcher* cpu_dispatcher = Layers::get<AppLayer>()->cpu_dispatcher;
+    px::PxPhysics& physics = *Layers::get<AppLayer>().physics;
+    px::PxCpuDispatcher& cpu_dispatcher = *Layers::get<AppLayer>().cpu_dispatcher;
 
-    px::PxSceneDesc scene_descriptor = { physics->getTolerancesScale() };
+    px::PxSceneDesc scene_descriptor = { physics.getTolerancesScale() };
     scene_descriptor.gravity.y = -9.81f;
-    scene_descriptor.cpuDispatcher = cpu_dispatcher;
+    scene_descriptor.cpuDispatcher = &cpu_dispatcher;
     scene_descriptor.filterShader = filter_shader;
     scene_descriptor.simulationEventCallback = this;
 
-    m_scene = physics->createScene(scene_descriptor);
+    m_scene = physics.createScene(scene_descriptor);
     kl::assert(m_scene, "Failed to create physics scene");
 
     default_meshes = new DefaultMeshes();
@@ -53,84 +53,84 @@ titian::Scene::~Scene()
     m_scene->release();
 }
 
-void titian::Scene::serialize(Serializer* serializer) const
+void titian::Scene::serialize(Serializer& serializer) const
 {
-    serializer->write_string("main_camera_name", main_camera_name);
-    serializer->write_string("main_ambient_light_name", main_ambient_light_name);
-    serializer->write_string("main_directional_light_name", main_directional_light_name);
+    serializer.write_string("main_camera_name", main_camera_name);
+    serializer.write_string("main_ambient_light_name", main_ambient_light_name);
+    serializer.write_string("main_directional_light_name", main_directional_light_name);
 
-    const auto write_map = [&]<typename T>(const StringView& map_name, const StringMap<Ref<T>>& data, const void* helper_data)
+    const auto write_map = [&]<typename T>(const StringView& map_name, const StringMap<Ref<T>>& data)
     {
-        serializer->push_object(map_name);
-        serializer->write_int("data_size", (int32_t) data.size());
+        serializer.push_object(map_name);
+        serializer.write_int("data_size", (int32_t) data.size());
         int counter = 0;
         for (auto& [name, object] : data) {
-            serializer->write_string(kl::format("__name_", counter), name);
-            serializer->push_object(name);
+            serializer.write_string(kl::format("__name_", counter), name);
+            serializer.push_object(name);
             object->serialize(serializer);
-            serializer->pop_object();
+            serializer.pop_object();
             counter += 1;
         }
-        serializer->pop_object();
+        serializer.pop_object();
     };
 
-    write_map("meshes", meshes, nullptr);
-    write_map("animations", animations, nullptr);
-    write_map("textures", textures, nullptr);
-    write_map("materials", materials, nullptr);
-    write_map("shaders", shaders, nullptr);
-    write_map("scripts", scripts, nullptr);
-    write_map("entities", m_entities, &meshes);
+    write_map("meshes", meshes);
+    write_map("animations", animations);
+    write_map("textures", textures);
+    write_map("materials", materials);
+    write_map("shaders", shaders);
+    write_map("scripts", scripts);
+    write_map("entities", m_entities);
 }
 
-void titian::Scene::deserialize(const Serializer* serializer)
+void titian::Scene::deserialize(const Serializer& serializer)
 {
-    serializer->read_string("main_camera_name", main_camera_name);
-    serializer->read_string("main_ambient_light_name", main_ambient_light_name);
-    serializer->read_string("main_directional_light_name", main_directional_light_name);
+    serializer.read_string("main_camera_name", main_camera_name);
+    serializer.read_string("main_ambient_light_name", main_ambient_light_name);
+    serializer.read_string("main_directional_light_name", main_directional_light_name);
 
-    const auto read_map = [&]<typename T>(const StringView& map_name, StringMap<Ref<T>>& data, const Function<T*()>& provider, const void* helper_data)
+    const auto read_map = [&]<typename T>(const StringView& map_name, StringMap<Ref<T>>& data, const Function<T*()>& provider)
     {
-        serializer->load_object(map_name);
+        serializer.load_object(map_name);
         int32_t data_size = 0;
-        serializer->read_int("data_size", data_size);
+        serializer.read_int("data_size", data_size);
         for (int32_t i = 0; i < data_size; i++) {
             String name;
-            serializer->read_string(kl::format("__name_", i), name);
+            serializer.read_string(kl::format("__name_", i), name);
             Ref<T> object = provider();
-            serializer->load_object(name);
+            serializer.load_object(name);
             object->deserialize(serializer);
-            serializer->unload_object();
+            serializer.unload_object();
             data[name] = object;
         }
-        serializer->unload_object();
+        serializer.unload_object();
     };
 
     Function mesh_provider = [&] { return new Mesh(); };
-    read_map("meshes", meshes, mesh_provider, nullptr);
+    read_map("meshes", meshes, mesh_provider);
 
     Function animation_provider = [&] { return new Animation(); };
-    read_map("animations", animations, animation_provider, nullptr);
+    read_map("animations", animations, animation_provider);
 
     Function texture_provider = [&] { return new Texture(); };
-    read_map("textures", textures, texture_provider, nullptr);
+    read_map("textures", textures, texture_provider);
 
     Function material_provider = [&] { return new Material(); };
-    read_map("materials", materials, material_provider, nullptr);
+    read_map("materials", materials, material_provider);
 
     Function shader_provider = [&] { return new Shader(); };
-    read_map("shaders", shaders, shader_provider, nullptr);
+    read_map("shaders", shaders, shader_provider);
 
     {
-        serializer->load_object("scripts");
+        serializer.load_object("scripts");
         int32_t data_size = 0;
-        serializer->read_int("data_size", data_size);
+        serializer.read_int("data_size", data_size);
         for (int32_t i = 0; i < data_size; i++) {
             String name;
-            serializer->read_string(kl::format("__name_", i), name);
-            serializer->load_object(name);
+            serializer.read_string(kl::format("__name_", i), name);
+            serializer.load_object(name);
             String script_type;
-            serializer->read_string("script_type", script_type);
+            serializer.read_string("script_type", script_type);
             Ref<Script> script;
             if (typeid(InterpScript).name() == script_type) {
                 script = new InterpScript();
@@ -145,22 +145,22 @@ void titian::Scene::deserialize(const Serializer* serializer)
                 kl::assert(false, "Unknown script type: ", script_type);
             }
             script->deserialize(serializer);
-            serializer->unload_object();
+            serializer.unload_object();
             scripts[name] = script;
         }
-        serializer->unload_object();
+        serializer.unload_object();
     }
 
     {
-        serializer->load_object("entities");
+        serializer.load_object("entities");
         int32_t data_size = 0;
-        serializer->read_int("data_size", data_size);
+        serializer.read_int("data_size", data_size);
         for (int32_t i = 0; i < data_size; i++) {
             String name;
-            serializer->read_string(kl::format("__name_", i), name);
-            serializer->load_object(name);
+            serializer.read_string(kl::format("__name_", i), name);
+            serializer.load_object(name);
             String entity_type;
-            serializer->read_string("entity_type", entity_type);
+            serializer.read_string("entity_type", entity_type);
             Ref<Entity> entity;
             if (typeid(Entity).name() == entity_type) {
                 entity = new Entity();
@@ -178,10 +178,10 @@ void titian::Scene::deserialize(const Serializer* serializer)
                 kl::assert(false, "Unknown entity type: ", entity_type);
             }
             entity->deserialize(serializer);
-            serializer->unload_object();
+            serializer.unload_object();
             add_entity(name, entity);
         }
-        serializer->unload_object();
+        serializer.unload_object();
     }
 }
 
@@ -198,10 +198,11 @@ void titian::Scene::onContact(const px::PxContactPairHeader& pairHeader, const p
 {
     Entity* entity_0 = (Entity*) pairHeader.actors[0]->userData;
     Entity* entity_1 = (Entity*) pairHeader.actors[1]->userData;
-    if (entity_0 && entity_1) {
-        for (auto& [_, script] : scripts) {
-            script->call_collision(this, entity_0, entity_1);
-        }
+    if (!entity_0 || !entity_1)
+        return;
+
+    for (auto& [_, script] : scripts) {
+        script->call_collision(*this, *entity_0, *entity_1);
     }
 }
 
@@ -230,14 +231,14 @@ void titian::Scene::update_physics(const float delta_t)
 void titian::Scene::update_scripts()
 {
     for (auto& [_, script] : scripts) {
-        script->call_update(this);
+        script->call_update(*this);
     }
 }
 
 void titian::Scene::update_ui()
 {
     for (auto& [_, script] : scripts) {
-        script->call_ui(this);
+        script->call_ui(*this);
     }
 }
 
@@ -504,8 +505,8 @@ titian::Optional<titian::AssimpData> titian::Scene::get_assimp_data(const String
     AssimpData data{};
     data.importer = importer;
     for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
-        aiMesh* mesh = scene->mMeshes[i];
-        String name = mesh->mName.C_Str();
+        aiMesh& mesh = *scene->mMeshes[i];
+        String name = mesh.mName.C_Str();
         if (name.empty()) {
             name = "unknown_mesh";
         }
@@ -542,62 +543,62 @@ void titian::Scene::load_assimp_data(const AssimpData& data)
 {
     const aiScene* scene = data.importer->GetScene();
     for (uint32_t i = 0; i < scene->mNumMeshes; i++) {
-        meshes[data.meshes[i]] = load_assimp_mesh(scene, scene->mMeshes[i]);
+        meshes[data.meshes[i]] = load_assimp_mesh(*scene, *scene->mMeshes[i]);
     }
     for (uint32_t i = 0; i < scene->mNumAnimations; i++) {
-        animations[data.animations[i]] = load_assimp_animation(scene, scene->mAnimations[i]);
+        animations[data.animations[i]] = load_assimp_animation(*scene, *scene->mAnimations[i]);
     }
     for (uint32_t i = 0; i < scene->mNumTextures; i++) {
-        textures[data.textures[i]] = load_assimp_texture(scene, scene->mTextures[i]);
+        textures[data.textures[i]] = load_assimp_texture(*scene, *scene->mTextures[i]);
     }
     for (uint32_t i = 0; i < scene->mNumMaterials; i++) {
-		materials[data.materials[i]] = load_assimp_material(scene, scene->mMaterials[i]);
+		materials[data.materials[i]] = load_assimp_material(*scene, *scene->mMaterials[i]);
     }
 }
 
-titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, const aiMesh* mesh)
+titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene& scene, const aiMesh& mesh)
 {
     Ref mesh_object = new Mesh();
     
-    Vector<Vertex> vertices(mesh->mNumVertices);
-    if (mesh->HasPositions()) {
-        for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
-            vertices[i].world = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z };
+    Vector<Vertex> vertices(mesh.mNumVertices);
+    if (mesh.HasPositions()) {
+        for (uint32_t i = 0; i < mesh.mNumVertices; i++) {
+            vertices[i].world = { mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z };
         }
     }
-    if (mesh->HasTextureCoords(0)) {
-        for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
-            vertices[i].texture = { mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y };
+    if (mesh.HasTextureCoords(0)) {
+        for (uint32_t i = 0; i < mesh.mNumVertices; i++) {
+            vertices[i].texture = { mesh.mTextureCoords[0][i].x, mesh.mTextureCoords[0][i].y };
         }
     }
-    if (mesh->HasNormals()) {
-        for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
-            vertices[i].normal = { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z };
+    if (mesh.HasNormals()) {
+        for (uint32_t i = 0; i < mesh.mNumVertices; i++) {
+            vertices[i].normal = { mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z };
         }
     }
-    if (mesh->HasBones()) {
-        if (mesh->mNumBones > MAX_BONE_COUNT) {
-            Logger::log("Mesh has too many bones: ", mesh->mNumBones, " > ", MAX_BONE_COUNT);
+    if (mesh.HasBones()) {
+        if (mesh.mNumBones > MAX_BONE_COUNT) {
+            Logger::log("Mesh has too many bones: ", mesh.mNumBones, " > ", MAX_BONE_COUNT);
         }
 
-        for (uint32_t i = 0; i < mesh->mNumBones; i++) {
-            auto& bone = mesh->mBones[i];
+        for (uint32_t i = 0; i < mesh.mNumBones; i++) {
+            auto& bone = mesh.mBones[i];
             for (uint32_t j = 0; j < bone->mNumWeights; j++) {
                 auto& weight = bone->mWeights[j];
                 auto& vertex = vertices[weight.mVertexId];
                 for (int k = 0; k < MAX_BONE_REFS; k++) {
                     if (vertex.bone_weights[k] == 0.0f) {
                         vertex.bone_weights[k] = (float) weight.mWeight;
-                        vertex.bone_indices[k] = (uint8_t) i;
+                        vertex.bone_indices[k] = (byte) i;
                         break;
                     }
                 }
             }
         }
 
-        mesh_object->bone_matrices.resize(mesh->mNumBones);
-        for (uint32_t i = 0; i < mesh->mNumBones; i++) {
-            auto& bone = mesh->mBones[i];
+        mesh_object->bone_matrices.resize(mesh.mNumBones);
+        for (uint32_t i = 0; i < mesh.mNumBones; i++) {
+            auto& bone = mesh.mBones[i];
             auto& offset_matrix = mesh_object->bone_matrices[i];
             for (int j = 0; j < 4; j++) {
                 kl::copy<float>(&offset_matrix(0, j), bone->mOffsetMatrix[j], 4);
@@ -609,8 +610,8 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, 
         {
             Ref<SkeletonNode> skeleton_node = new SkeletonNode();
             skeleton_node->bone_index = -1;
-            for (uint32_t i = 0; i < mesh->mNumBones; i++) {
-				if (mesh->mBones[i]->mName == node->mName) {
+            for (uint32_t i = 0; i < mesh.mNumBones; i++) {
+				if (mesh.mBones[i]->mName == node->mName) {
                     skeleton_node->bone_index = i;
 					break;
 				}
@@ -624,12 +625,12 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, 
 			}
             return skeleton_node;
         };
-        mesh_object->skeleton_root = recur_helper(scene->mRootNode);
+        mesh_object->skeleton_root = recur_helper(scene.mRootNode);
     }
 
-    mesh_object->data_buffer.reserve((size_t) mesh->mNumFaces * 3);
-    for (uint32_t i = 0; i < mesh->mNumFaces; i++) {
-        const auto& face = mesh->mFaces[i];
+    mesh_object->data_buffer.reserve((size_t) mesh.mNumFaces * 3);
+    for (uint32_t i = 0; i < mesh.mNumFaces; i++) {
+        const auto& face = mesh.mFaces[i];
         for (uint32_t j = 0; j < face.mNumIndices; j++) {
             const uint32_t index = face.mIndices[j];
             mesh_object->data_buffer.push_back(vertices[index]);
@@ -640,16 +641,16 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene* scene, 
     return mesh_object;
 }
 
-titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScene* scene, const aiAnimation* animation)
+titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScene& scene, const aiAnimation& animation)
 {
     Ref animation_object = new Animation();
 
-    animation_object->ticks_per_second = (float) animation->mTicksPerSecond;
-    animation_object->duration_in_ticks = (float) animation->mDuration;
+    animation_object->ticks_per_second = (float) animation.mTicksPerSecond;
+    animation_object->duration_in_ticks = (float) animation.mDuration;
 
-    animation_object->channels.resize(animation->mNumChannels);
-    for (uint32_t i = 0; i < animation->mNumChannels; i++) {
-        auto& channel = animation->mChannels[i];
+    animation_object->channels.resize(animation.mNumChannels);
+    for (uint32_t i = 0; i < animation.mNumChannels; i++) {
+        auto& channel = animation.mChannels[i];
         auto& anim_channel = animation_object->channels[i];
         
         anim_channel.scalings.resize(channel->mNumScalingKeys);
@@ -679,8 +680,8 @@ titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScen
     {
         Ref<AnimationNode> animation_node = new AnimationNode();
         animation_node->channel_index = -1;
-        for (uint32_t i = 0; i < animation->mNumChannels; i++) {
-            if (animation->mChannels[i]->mNodeName == node->mName) {
+        for (uint32_t i = 0; i < animation.mNumChannels; i++) {
+            if (animation.mChannels[i]->mNodeName == node->mName) {
                 animation_node->channel_index = i;
                 break;
             }
@@ -691,32 +692,32 @@ titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScen
         }
         return animation_node;
     };
-    animation_object->animation_root = recur_helper(scene->mRootNode);
+    animation_object->animation_root = recur_helper(scene.mRootNode);
 
     return animation_object;
 }
 
-titian::Ref<titian::Texture> titian::Scene::load_assimp_texture(const aiScene* scene, const aiTexture* texture)
+titian::Ref<titian::Texture> titian::Scene::load_assimp_texture(const aiScene& scene, const aiTexture& texture)
 {
     Ref texture_object = new Texture();
-    if (texture->mHeight == 0) {
-        texture_object->data_buffer.load_from_memory(texture->pcData, texture->mWidth);
+    if (texture.mHeight == 0) {
+        texture_object->data_buffer.load_from_memory(texture.pcData, texture.mWidth);
 	}
     else {
-        texture_object->data_buffer.resize({ (int) texture->mWidth, (int) texture->mHeight });
-        kl::copy<RGB>(texture_object->data_buffer.ptr(), texture->pcData, texture_object->data_buffer.pixel_count());
+        texture_object->data_buffer.resize({ (int) texture.mWidth, (int) texture.mHeight });
+        kl::copy<RGB>(texture_object->data_buffer.ptr(), texture.pcData, texture_object->data_buffer.pixel_count());
     }
     texture_object->reload_as_2D();
     texture_object->create_shader_view();
     return texture_object;
 }
 
-titian::Ref<titian::Material> titian::Scene::load_assimp_material(const aiScene* scene, const aiMaterial* material)
+titian::Ref<titian::Material> titian::Scene::load_assimp_material(const aiScene& scene, const aiMaterial& material)
 {
 	Ref material_object = new Material();
-    material->Get(AI_MATKEY_COLOR_DIFFUSE, material_object->color);
-	material->Get(AI_MATKEY_COLOR_TRANSPARENT, material_object->color.w);
-	material->Get(AI_MATKEY_REFLECTIVITY, material_object->reflectivity_factor);
-	material->Get(AI_MATKEY_REFRACTI, material_object->refraction_index);
+    material.Get(AI_MATKEY_COLOR_DIFFUSE, material_object->color);
+	material.Get(AI_MATKEY_COLOR_TRANSPARENT, material_object->color.w);
+	material.Get(AI_MATKEY_REFLECTIVITY, material_object->reflectivity_factor);
+	material.Get(AI_MATKEY_REFRACTI, material_object->refraction_index);
 	return material_object;
 }

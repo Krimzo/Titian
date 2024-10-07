@@ -246,7 +246,7 @@ namespace titian {
 
 namespace titian {
 	template<typename T, typename... Args>
-	static constexpr Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>> ui_generator_helper(const char* name)
+	static constexpr Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>> ui_generator_helper(str name)
 	{
 		return { name, [=](NodeScript* script) { return std::shared_ptr<T>(new T(script, name)); } };
 	}
@@ -541,8 +541,6 @@ namespace titian {
 
 titian::NodeScript::NodeScript()
 {
-	kl::Timer* timer = &Layers::get<AppLayer>()->timer;
-
 	auto temp_start_node = std::make_shared<FlowNode>(this, "On Start", false, true);
 	auto temp_update_node = std::make_shared<FlowNode>(this, "On Update", false, true);
 	auto temp_collision_node = std::make_shared<FlowNode>(this, "On Collision", false, true);
@@ -559,9 +557,9 @@ titian::NodeScript::NodeScript()
 	on_ui_node = m_editor.insertNode({ 0.0f, 250.0f }, temp_ui_node).get();
 
 	on_update_node->addOUT<float>("elapsed_time")
-		->behaviour([timer]() { return timer->elapsed(); });
+		->behaviour([this]() { return Layers::get<AppLayer>().timer.elapsed(); });
 	on_update_node->addOUT<float>("delta_time")
-		->behaviour([timer]() { return timer->delta(); });
+		->behaviour([this]() { return Layers::get<AppLayer>().timer.delta(); });
 
 	on_collision_node->addOUT<void*>("attacker_entity")
 		->behaviour([this]() { return *reinterpret_cast<Entity**>(on_collision_node->user_data + 0); });
@@ -602,15 +600,15 @@ titian::NodeScript::NodeScript()
 	m_editor.setScroll({ 150.f, 450.f });
 }
 
-void titian::NodeScript::serialize(Serializer* serializer) const
+void titian::NodeScript::serialize(Serializer& serializer) const
 {
 	Script::serialize(serializer);
 
-	serializer->write_float("editor_scale", m_editor.getScale());
-	serializer->write_float_array("editor_scroll", (const float*) &m_editor.getScroll(), 2);
+	serializer.write_float("editor_scale", m_editor.getScale());
+	serializer.write_float_array("editor_scroll", (const float*) &m_editor.getScroll(), 2);
 
 	auto& nodes = m_editor.getNodes();
-	serializer->write_int("node_count", (int32_t) nodes.size() - 4);
+	serializer.write_int("node_count", (int32_t) nodes.size() - 4);
 
 	int counter = 0;
 	for (auto& [uid, node] : nodes) {
@@ -626,15 +624,15 @@ void titian::NodeScript::serialize(Serializer* serializer) const
 		}
 
 		const String name = kl::format("__node_", counter);
-		serializer->push_object(name);
-		serializer->write_byte_array("uid", &uid, sizeof(uid));
+		serializer.push_object(name);
+		serializer.write_byte_array("uid", &uid, sizeof(uid));
 		node_ptr->serialize(serializer);
-		serializer->pop_object();
+		serializer.pop_object();
 		counter += 1;
 	}
 
 	auto& links = m_editor.getLinks();
-	serializer->write_int("link_count", (int32_t) links.size());
+	serializer.write_int("link_count", (int32_t) links.size());
 
 	counter = 0;
 	for (auto& link : links) {
@@ -645,40 +643,40 @@ void titian::NodeScript::serialize(Serializer* serializer) const
 		const auto& right_name = link_ptr->right()->getName();
 
 		const String name = kl::format("__link_", counter);
-		serializer->push_object(name);
-		serializer->write_byte_array("left_parent", &left_parent, sizeof(left_parent));
-		serializer->write_byte_array("right_parent", &right_parent, sizeof(right_parent));
-		serializer->write_string("left_name", left_name);
-		serializer->write_string("right_name", right_name);
-		serializer->pop_object();
+		serializer.push_object(name);
+		serializer.write_byte_array("left_parent", &left_parent, sizeof(left_parent));
+		serializer.write_byte_array("right_parent", &right_parent, sizeof(right_parent));
+		serializer.write_string("left_name", left_name);
+		serializer.write_string("right_name", right_name);
+		serializer.pop_object();
 		counter += 1;
 	}
 }
 
-void titian::NodeScript::deserialize(const Serializer* serializer)
+void titian::NodeScript::deserialize(const Serializer& serializer)
 {
 	Script::deserialize(serializer);
 
 	float editor_scale = 0.0f;
-	serializer->read_float("editor_scale", editor_scale);
+	serializer.read_float("editor_scale", editor_scale);
 	m_editor.setScale(editor_scale);
 
 	ImVec2 editor_scroll = {};
-	serializer->read_float_array("editor_scroll", (float*) &editor_scroll, 2);
+	serializer.read_float_array("editor_scroll", (float*) &editor_scroll, 2);
 	m_editor.setScroll(editor_scroll);
 
 	int node_count = 0;
-	serializer->read_int("node_count", node_count);
+	serializer.read_int("node_count", node_count);
 
 	for (int i = 0; i < node_count; i++) {
 		const String name = kl::format("__node_", i);
-		serializer->load_object(name);
+		serializer.load_object(name);
 
 		ne::NodeUID uid{};
-		serializer->read_byte_array("uid", &uid, sizeof(uid));
+		serializer.read_byte_array("uid", &uid, sizeof(uid));
 
 		String node_type;
-		serializer->read_string("node_type", node_type);
+		serializer.read_string("node_type", node_type);
 
 		std::shared_ptr<Node> node;
 		for (auto& [type, generator] : serial_node_generators) {
@@ -693,26 +691,26 @@ void titian::NodeScript::deserialize(const Serializer* serializer)
 		node->setUID(uid);
 		m_editor.insertNode(node);
 
-		serializer->unload_object();
+		serializer.unload_object();
 	}
 
 	int link_count = 0;
-	serializer->read_int("link_count", link_count);
+	serializer.read_int("link_count", link_count);
 
 	const auto& nodes = m_editor.getNodes();
 	for (int i = 0; i < link_count; i++) {
 		const String name = kl::format("__link_", i);
-		serializer->load_object(name);
+		serializer.load_object(name);
 
 		ne::NodeUID left_parent{};
 		ne::NodeUID right_parent{};
-		serializer->read_byte_array("left_parent", &left_parent, sizeof(left_parent));
-		serializer->read_byte_array("right_parent", &right_parent, sizeof(right_parent));
+		serializer.read_byte_array("left_parent", &left_parent, sizeof(left_parent));
+		serializer.read_byte_array("right_parent", &right_parent, sizeof(right_parent));
 
 		String left_name;
 		String right_name;
-		serializer->read_string("left_name", left_name);
-		serializer->read_string("right_name", right_name);
+		serializer.read_string("left_name", left_name);
+		serializer.read_string("right_name", right_name);
 
 		if (nodes.contains(left_parent) && nodes.contains(right_parent)) {
 			auto left_pin = nodes.at(left_parent)->outPin(left_name);
@@ -722,7 +720,7 @@ void titian::NodeScript::deserialize(const Serializer* serializer)
 			}
 		}
 
-		serializer->unload_object();
+		serializer.unload_object();
 	}
 
 	this->reload();
@@ -736,24 +734,24 @@ bool titian::NodeScript::is_valid() const
 void titian::NodeScript::reload()
 {}
 
-void titian::NodeScript::call_start(Scene* scene)
+void titian::NodeScript::call_start(Scene& scene)
 {
 	on_start_node->call();
 }
 
-void titian::NodeScript::call_update(Scene* scene)
+void titian::NodeScript::call_update(Scene& scene)
 {
 	on_update_node->call();
 }
 
-void titian::NodeScript::call_collision(Scene* scene, Entity* attacker, Entity* target)
+void titian::NodeScript::call_collision(Scene& scene, Entity& attacker, Entity& target)
 {
-	*reinterpret_cast<Entity**>(on_collision_node->user_data + 0) = attacker;
-	*reinterpret_cast<Entity**>(on_collision_node->user_data + 8) = target;
+	*reinterpret_cast<Entity**>(on_collision_node->user_data + 0) = &attacker;
+	*reinterpret_cast<Entity**>(on_collision_node->user_data + 8) = &target;
 	on_collision_node->call();
 }
 
-void titian::NodeScript::call_ui(Scene* scene)
+void titian::NodeScript::call_ui(Scene& scene)
 {
 	on_ui_node->call();
 }

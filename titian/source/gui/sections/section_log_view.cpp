@@ -9,8 +9,8 @@ void titian::GUISectionLogView::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    GUILayer* gui_layer = Layers::get<GUILayer>();
-    im::PushFont(gui_layer->roboto_font_large);
+    GUILayer& gui_layer = Layers::get<GUILayer>();
+    im::PushFont(gui_layer.roboto_font_large);
 
     const uint64_t unseen_count = Logger::last_log_index - last_log_index;
     const String title_extension = unseen_count > 0 ? kl::format(" [", unseen_count, "]###") : "###";
@@ -20,7 +20,7 @@ void titian::GUISectionLogView::render_gui()
 
         uint32_t log_index = 0;
         for (const auto& log_info : Logger::logs) {
-            gui_colored_text(kl::format(std::setfill('0'), std::setw(3), log_index + 1, "."), gui_layer->special_color);
+            gui_colored_text(kl::format(std::setfill('0'), std::setw(3), log_index + 1, "."), gui_layer.special_color);
             im::SameLine();
 
             gui_colored_text(kl::format("[", log_info.date, "]:"), { 0.85f, 0.75f, 0.75f, 1.0f });

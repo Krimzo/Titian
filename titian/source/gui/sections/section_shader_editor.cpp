@@ -11,8 +11,8 @@ void titian::GUISectionShaderEditor::render_gui()
 {
 	const TimeBomb _ = bench_time_bomb();
 
-	kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-	Scene* scene = &Layers::get<GameLayer>()->scene;
+	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	Scene& scene = *Layers::get<GameLayer>().scene;
 
 	if (im::Begin("Shader Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const float available_width = im::GetContentRegionAvail().x;
@@ -22,13 +22,13 @@ void titian::GUISectionShaderEditor::render_gui()
 		if (im::BeginChild("ShaderListChild")) {
 			if (im::BeginPopupContextWindow("NewShader", ImGuiPopupFlags_MouseButtonMiddle)) {
 				const String name = gui_input_continuous("##CreateShaderInput");
-				if (!name.empty() && !scene->helper_contains_shader(name)) {
+				if (!name.empty() && !scene.helper_contains_shader(name)) {
 					if (im::MenuItem("New Material Shader")) {
-						scene->shaders[name] = new Shader();
+						scene.shaders[name] = new Shader();
 						im::CloseCurrentPopup();
 					}
 					if (im::MenuItem("New Camera Shader")) {
-						scene->shaders[name] = new Shader(ShaderType::CAMERA);
+						scene.shaders[name] = new Shader(ShaderType::CAMERA);
 						im::CloseCurrentPopup();
 					}
 				}
@@ -42,25 +42,25 @@ void titian::GUISectionShaderEditor::render_gui()
 		if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
 			if (classify_file(file.value()) == FileType::SHADER) {
 				const String name = fs::path(file.value()).filename().string();
-				Shader* shader = scene->helper_new_shader(scene->generate_unique_name(name, scene->shaders));
+				Shader* shader = scene.helper_new_shader(scene.generate_unique_name(name, scene.shaders));
 				shader->data_buffer = kl::read_file(file.value());
 				shader->reload();
 			}
 		}
 
-		Shader* shader = scene->helper_get_shader(selected_shader);
+		Shader* shader = scene.helper_get_shader(selected_shader);
 		if (shader) {
-			edit_shader(shader);
+			edit_shader(*shader);
 		}
 		show_shader_properties(shader);
 	}
 	im::End();
 }
 
-void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
+void titian::GUISectionShaderEditor::display_shaders(Scene& scene)
 {
 	const String filter = gui_input_continuous("Search###ShaderEditor");
-	for (auto& [shader_name, shader] : scene->shaders) {
+	for (auto& [shader_name, shader] : scene.shaders) {
 		if (!filter.empty() && shader_name.find(filter) == -1) {
 			continue;
 		}
@@ -75,24 +75,24 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 
 			if (auto opt_name = gui_input_waited("##RenameShaderInput", shader_name)) {
 				const auto& new_name = opt_name.value();
-				if (!new_name.empty() && !scene->helper_contains_shader(new_name)) {
+				if (!new_name.empty() && !scene.helper_contains_shader(new_name)) {
 					if (selected_shader == shader_name) {
 						selected_shader = new_name;
 					}
 					if (shader->shader_type == ShaderType::MATERIAL) {
-						for (auto& [_, material] : scene->materials) {
+						for (auto& [_, material] : scene.materials) {
 							if (material->shader_name == shader_name) material->shader_name = new_name;
 						}
 					}
 					else {
-						for (auto& [_, entity] : scene->entities()) {
+						for (auto& [_, entity] : scene.entities()) {
 							if (Camera* camera = &entity.as<Camera>()) {
 								if (camera->shader_name == shader_name) camera->shader_name = new_name;
 							}
 						}
 					}
-					scene->shaders[new_name] = shader;
-					scene->shaders.erase(shader_name);
+					scene.shaders[new_name] = shader;
+					scene.shaders.erase(shader_name);
 					should_break = true;
 					im::CloseCurrentPopup();
 				}
@@ -108,7 +108,7 @@ void titian::GUISectionShaderEditor::display_shaders(Scene* scene)
 				if (selected_shader == shader_name) {
 					selected_shader = "/";
 				}
-				scene->shaders.erase(shader_name);
+				scene.shaders.erase(shader_name);
 				should_break = true;
 				im::CloseCurrentPopup();
 			}
@@ -128,14 +128,14 @@ void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) cons
 		{ ShaderType::CAMERA, "Camera" },
 	};
 
-	GUILayer* gui_layer = Layers::get<GUILayer>();
+	GUILayer& gui_layer = Layers::get<GUILayer>();
 
 	if (im::Begin("Shader Properties") && shader) {
 		im::Text("Info");
 
 		im::Text("Name: ");
 		im::SameLine();
-		gui_colored_text(selected_shader, gui_layer->special_color);
+		gui_colored_text(selected_shader, gui_layer.special_color);
 
 		if (im::BeginCombo("Shader Type", shader_type_names.at(shader->shader_type).data())) {
 			for (auto& [type, name] : shader_type_names) {
@@ -149,14 +149,13 @@ void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) cons
 	im::End();
 }
 
-void titian::GUISectionShaderEditor::edit_shader(Shader* shader)
+void titian::GUISectionShaderEditor::edit_shader(Shader& shader)
 {
-	if (shader != m_last_shader) {
-		m_last_shader = shader;
-		m_editor.load(shader->data_buffer);
+	if (&shader != m_last_shader) {
+		m_last_shader = &shader;
+		m_editor.load(shader.data_buffer);
 	}
-
-	im::PushFont(Layers::get<GUILayer>()->roboto_font_large);
-	m_editor.edit(&shader->data_buffer);
+	im::PushFont(Layers::get<GUILayer>().roboto_font_large);
+	m_editor.edit(shader.data_buffer);
 	im::PopFont();
 }

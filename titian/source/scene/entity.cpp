@@ -14,89 +14,89 @@ titian::Entity::~Entity()
     if (m_actor) m_actor->release();
 }
 
-void titian::Entity::serialize(Serializer* serializer) const
+void titian::Entity::serialize(Serializer& serializer) const
 {
-    serializer->write_string("entity_type", typeid(*this).name());
+    serializer.write_string("entity_type", typeid(*this).name());
 
-    serializer->write_bool("casts_shadows", casts_shadows);
+    serializer.write_bool("casts_shadows", casts_shadows);
 
-    serializer->write_string("animation_name", animation_name);
-    serializer->write_string("material_name", material_name);
+    serializer.write_string("animation_name", animation_name);
+    serializer.write_string("material_name", material_name);
 
-    serializer->write_bool("dynamic", dynamic());
-    serializer->write_bool("gravity", gravity());
-    serializer->write_float("mass", mass());
+    serializer.write_bool("dynamic", dynamic());
+    serializer.write_bool("gravity", gravity());
+    serializer.write_float("mass", mass());
 
     const Float3 scale = this->scale();
-    serializer->write_float_array("scale", &scale.x, 3);
+    serializer.write_float_array("scale", &scale.x, 3);
 
     const Float3 rotation = this->rotation();
-    serializer->write_float_array("rotation", &rotation.x, 3);
+    serializer.write_float_array("rotation", &rotation.x, 3);
 
     const Float3 position = this->position();
-    serializer->write_float_array("position", &position.x, 3);
+    serializer.write_float_array("position", &position.x, 3);
 
     const Float3 velocity = this->velocity();
-    serializer->write_float_array("velocity", &velocity.x, 3);
+    serializer.write_float_array("velocity", &velocity.x, 3);
 
     const Float3 angular = this->angular();
-    serializer->write_float_array("angular", &angular.x, 3);
+    serializer.write_float_array("angular", &angular.x, 3);
 
     const bool has_collider = m_collider;
-    serializer->write_bool("has_collider", has_collider);
+    serializer.write_bool("has_collider", has_collider);
     if (has_collider) {
-        serializer->push_object("collider");
+        serializer.push_object("collider");
         m_collider->serialize(serializer);
-        serializer->pop_object();
+        serializer.pop_object();
     }
 }
 
-void titian::Entity::deserialize(const Serializer* serializer)
+void titian::Entity::deserialize(const Serializer& serializer)
 {
-    serializer->read_bool("casts_shadows", casts_shadows);
+    serializer.read_bool("casts_shadows", casts_shadows);
 
-    serializer->read_string("animation_name", animation_name);
-    serializer->read_string("material_name", material_name);
+    serializer.read_string("animation_name", animation_name);
+    serializer.read_string("material_name", material_name);
 
     bool dynamic = false;
-    serializer->read_bool("dynamic", dynamic);
+    serializer.read_bool("dynamic", dynamic);
     set_dynamic(dynamic);
 
     bool gravity = false;
-    serializer->read_bool("gravity", gravity);
+    serializer.read_bool("gravity", gravity);
     set_gravity(gravity);
     
     float mass = 0.0f;
-    serializer->read_float("mass", mass);
+    serializer.read_float("mass", mass);
     set_mass(mass);
 
 	Float3 scale;
-    serializer->read_float_array("scale", &scale.x, 3);
+    serializer.read_float_array("scale", &scale.x, 3);
 	set_scale(scale);
 
     Float3 rotation;
-    serializer->read_float_array("rotation", &rotation.x, 3);
+    serializer.read_float_array("rotation", &rotation.x, 3);
     set_rotation(rotation);
 
     Float3 position;
-    serializer->read_float_array("position", &position.x, 3);
+    serializer.read_float_array("position", &position.x, 3);
     set_position(position);
 
     Float3 velocity;
-    serializer->read_float_array("velocity", &velocity.x, 3);
+    serializer.read_float_array("velocity", &velocity.x, 3);
     set_velocity(velocity);
 
     Float3 angular;
-    serializer->read_float_array("angular", &angular.x, 3);
+    serializer.read_float_array("angular", &angular.x, 3);
     set_angular(angular);
 
     bool has_collider = false;
-    serializer->read_bool("has_collider", has_collider);
+    serializer.read_bool("has_collider", has_collider);
     if (has_collider) {
         Ref new_collider = new Collider();
-        serializer->load_object("collider");
+        serializer.load_object("collider");
         new_collider->deserialize(serializer);
-        serializer->unload_object();
+        serializer.unload_object();
         this->set_collider(new_collider);
     }
 }
@@ -311,7 +311,7 @@ titian::Ref<titian::Entity> titian::Entity::clone() const
 
 void titian::Entity::generate_actor(const px::PxTransform& transform, const bool dynamic)
 {
-    px::PxPhysics* physics = Layers::get<AppLayer>()->physics;
+    px::PxPhysics* physics = Layers::get<AppLayer>().physics;
 
     if (m_actor)
         m_actor->release();

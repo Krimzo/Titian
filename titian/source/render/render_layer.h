@@ -16,11 +16,11 @@ namespace titian {
 	{
 		Vector<Ref<RenderPass>> passes;
 		
-		Ref<RasterStates> raster_states;
-		Ref<DepthStates> depth_states;
-		Ref<SamplerStates> sampler_states;
-		Ref<ShaderStates> shader_states;
-		Ref<BlendStates> blend_states;
+		RasterStates raster_states;
+		DepthStates depth_states;
+		SamplerStates sampler_states;
+		ShaderStates shader_states;
+		BlendStates blend_states;
 
 		dx::Buffer screen_mesh;
 

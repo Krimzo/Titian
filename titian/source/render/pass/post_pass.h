@@ -9,7 +9,7 @@ namespace titian {
     {
         PostPass();
 
-        void state_package(StatePackage* package) override;
-        void render_self(StatePackage* package) override;
+        void state_package(StatePackage& package) override;
+        void render_self(StatePackage& package) override;
     };
 }

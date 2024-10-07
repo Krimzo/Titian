@@ -49,7 +49,7 @@ void titian::SandboxPiecePhysicsTest::setup_objects(Scene* scene)
     Ref<Texture> color_texture;
     Ref<Texture> normal_texture;
 
-    const auto create_texture = [&](Ref<Texture>& texture, const char* filename)
+    const auto create_texture = [&](Ref<Texture>& texture, str filename)
     {
         texture = new Texture();
         texture->data_buffer.load_from_file(filename);

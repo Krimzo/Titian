@@ -16,8 +16,8 @@ namespace titian {
 		void render_gui() override;
 
     private:
-        void main_camera_info(Scene* scene);
-        void main_ambient_info(Scene* scene);
-        void main_directional_info(Scene* scene);
+        void main_camera_info(Scene& scene);
+        void main_ambient_info(Scene& scene);
+        void main_directional_info(Scene& scene);
 	};
 }

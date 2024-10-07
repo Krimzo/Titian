@@ -11,22 +11,22 @@ void titian::GUISectionViewport::render_gui()
 
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 
-    AppLayer* app_layer = Layers::get<AppLayer>();
-    RenderLayer* render_layer = Layers::get<RenderLayer>();
-	GameLayer* game_layer = Layers::get<GameLayer>();
-    EditorLayer* editor_layer = Layers::get<EditorLayer>();
+    AppLayer& app_layer = Layers::get<AppLayer>();
+    RenderLayer& render_layer = Layers::get<RenderLayer>();
+	GameLayer& game_layer = Layers::get<GameLayer>();
+    EditorLayer& editor_layer = Layers::get<EditorLayer>();
 
-    kl::GPU* gpu = &app_layer->gpu;
-    Ref<Scene>& scene = game_layer->scene;
-    Camera* main_camera = scene->get_casted<Camera>(scene->main_camera_name);
+    kl::GPU& gpu = app_layer.gpu;
+    Scene& scene = *game_layer.scene;
+    Camera* main_camera = scene.get_casted<Camera>(scene.main_camera_name);
 
     if (im::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
         const ImVec2 content_region = im::GetContentRegionAvail();
-        editor_layer->is_viewport_focused = im::IsWindowFocused();
+        editor_layer.is_viewport_focused = im::IsWindowFocused();
 
         const ImVec2 win_content_min = im::GetWindowPos() + im::GetWindowContentRegionMin();
         const ImVec2 win_content_max = win_content_min + content_region;
-        editor_layer->is_over_viewport = im::IsMouseHoveringRect(win_content_min, win_content_max);
+        editor_layer.is_over_viewport = im::IsMouseHoveringRect(win_content_min, win_content_max);
 
         if (main_camera) {
             main_camera->resize({ (int) content_region.x, (int) content_region.y });
@@ -55,8 +55,8 @@ void titian::GUISectionViewport::render_gui()
         if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
             if (classify_file(file.value()) == FileType::BINARY_SCENE) {
                 if (const BinarySerializer serializer{ file.value(), false }) {
-                    game_layer->reset_scene();
-                    scene->deserialize(&serializer);
+                    game_layer.reset_scene();
+                    scene.deserialize(serializer);
                 }
                 else {
                     Logger::log("Failed to load BINARY scene: ", file.value());
@@ -64,8 +64,8 @@ void titian::GUISectionViewport::render_gui()
             }
             else if (classify_file(file.value()) == FileType::TEXT_SCENE) {
                 if (const TextSerializer serializer{ file.value(), false }) {
-                    game_layer->reset_scene();
-                    scene->deserialize(&serializer);
+                    game_layer.reset_scene();
+                    scene.deserialize(serializer);
                 }
                 else {
                     Logger::log("Failed to load TEXT scene: ", file.value());
@@ -73,46 +73,46 @@ void titian::GUISectionViewport::render_gui()
             }
         }
         if (auto entity_type = gui_get_drag_drop<String>(DRAG_BASIC_ENTITY_ID)) {
-            const String name = scene->generate_unique_name(entity_type.value(), scene->entities());
+            const String name = scene.generate_unique_name(entity_type.value(), scene.entities());
             const Float3 position = get_mouse_3d();
             if (entity_type.value() == DRAG_ENTITY_ENTITY) {
                 Ref entity = new Entity();
                 entity->set_position(position);
-				scene->add_entity(name, entity);
+				scene.add_entity(name, entity);
             }
             else if (entity_type.value() == DRAG_ENTITY_CAMERA) {
                 Ref entity = new Camera();
                 entity->set_position(position);
-                scene->add_entity(name, entity);
+                scene.add_entity(name, entity);
             }
             else if (entity_type.value() == DRAG_ENTITY_AMBIENT) {
                 Ref entity = new AmbientLight();
                 entity->set_position(position);
-                scene->add_entity(name, entity);
+                scene.add_entity(name, entity);
             }
             else if (entity_type.value() == DRAG_ENTITY_DIRECTIONAL) {
                 Ref entity = new DirectionalLight();
                 entity->set_position(position);
-                scene->add_entity(name, entity);
+                scene.add_entity(name, entity);
             }
         }
         if (auto entity_type = gui_get_drag_drop<String>(DRAG_ANIMATION_ENTITY_ID)) {
-            const String name = scene->generate_unique_name(entity_type.value(), scene->entities());
+            const String name = scene.generate_unique_name(entity_type.value(), scene.entities());
             const Float3 position = get_mouse_3d();
             Ref entity = new Entity();
 			entity->set_position(position);
             entity->animation_name = entity_type.value();
             entity->material_name = "white";
-            scene->add_entity(name, entity);
+            scene.add_entity(name, entity);
         }
 
         const ImVec2 viewport_max = im::GetWindowPos() + im::GetWindowSize();
         if (im::IsWindowFocused() && im::IsMouseHoveringRect(im::GetWindowPos(), viewport_max)) {
             if (im::IsKeyPressed(ImGuiKey_Delete)) {
-                for (auto& name : editor_layer->selected_entities) {
-					scene->remove_entity(name);
+                for (auto& name : editor_layer.selected_entities) {
+					scene.remove_entity(name);
                 }
-                editor_layer->selected_entities.clear();
+                editor_layer.selected_entities.clear();
             }
             if (im::IsMouseClicked(ImGuiMouseButton_Left) && !ImGuizmo::IsOver()) {
                 m_rect_selection_first = window_mouse_position();
@@ -141,34 +141,34 @@ void titian::GUISectionViewport::render_gui()
                     const Set<uint32_t> entity_ids = read_id_texture(rect_selection_first, rect_selection_last);
 
                     if (!im::IsKeyDown(ImGuiKey_LeftCtrl) && !im::IsKeyDown(ImGuiKey_LeftShift)) {
-                        editor_layer->selected_entities.clear();
+                        editor_layer.selected_entities.clear();
                     }
                     
                     if (entity_ids.size() == 1) {
                         uint32_t counter = 0;
-                        for (const auto& [name, _] : scene->entities()) {
+                        for (const auto& [name, _] : scene.entities()) {
                             counter += 1;
                             if (!entity_ids.contains(counter)) {
                                 continue;
                             }
 
-                            if (editor_layer->selected_entities.contains(name)) {
-                                editor_layer->selected_entities.erase(name);
+                            if (editor_layer.selected_entities.contains(name)) {
+                                editor_layer.selected_entities.erase(name);
                             }
                             else {
-                                editor_layer->selected_entities.insert(name);
+                                editor_layer.selected_entities.insert(name);
                             }
                             break;
                         }
                     }
                     else if (entity_ids.size() > 1) {
                         uint32_t counter = 0;
-                        for (const auto& [name, _] : scene->entities()) {
+                        for (const auto& [name, _] : scene.entities()) {
                             counter += 1;
                             if (!entity_ids.contains(counter)) {
                                 continue;
                             }
-                            editor_layer->selected_entities.insert(name);
+                            editor_layer.selected_entities.insert(name);
                         }
                     }
                 }
@@ -180,29 +180,29 @@ void titian::GUISectionViewport::render_gui()
 
         if (im::IsWindowFocused()) {
             if (im::IsKeyPressed(ImGuiKey_1)) {
-                editor_layer->gizmo_operation = (editor_layer->gizmo_operation != ImGuizmo::OPERATION::SCALE)
+                editor_layer.gizmo_operation = (editor_layer.gizmo_operation != ImGuizmo::OPERATION::SCALE)
                     ? ImGuizmo::OPERATION::SCALE
                     : ImGuizmo::OPERATION::NONE;
             }
             if (im::IsKeyPressed(ImGuiKey_2)) {
-                editor_layer->gizmo_operation = (editor_layer->gizmo_operation != ImGuizmo::OPERATION::ROTATE)
+                editor_layer.gizmo_operation = (editor_layer.gizmo_operation != ImGuizmo::OPERATION::ROTATE)
                     ? ImGuizmo::OPERATION::ROTATE
                     : ImGuizmo::OPERATION::NONE;
             }
             if (im::IsKeyPressed(ImGuiKey_3)) {
-                editor_layer->gizmo_operation = (editor_layer->gizmo_operation != ImGuizmo::OPERATION::TRANSLATE)
+                editor_layer.gizmo_operation = (editor_layer.gizmo_operation != ImGuizmo::OPERATION::TRANSLATE)
                     ? ImGuizmo::OPERATION::TRANSLATE
                     : ImGuizmo::OPERATION::NONE;
             }
             if (im::IsKeyPressed(ImGuiKey_4)) {
-                editor_layer->gizmo_mode = (editor_layer->gizmo_mode != ImGuizmo::MODE::WORLD)
+                editor_layer.gizmo_mode = (editor_layer.gizmo_mode != ImGuizmo::MODE::WORLD)
                     ? ImGuizmo::MODE::WORLD
                     : ImGuizmo::MODE::LOCAL;
             }
         }
         Set<Entity*> entities;
-        for (const auto& sel_ent : editor_layer->selected_entities) {
-            if (Entity* entity = scene->helper_get_entity(sel_ent)) {
+        for (const auto& sel_ent : editor_layer.selected_entities) {
+            if (Entity* entity = scene.helper_get_entity(sel_ent)) {
 				entities.insert(entity);
             }
         }
@@ -211,7 +211,7 @@ void titian::GUISectionViewport::render_gui()
         }
     }
     else {
-        editor_layer->is_viewport_focused = false;
+        editor_layer.is_viewport_focused = false;
     }
     im::End();
 
@@ -253,19 +253,19 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_id_texture(const Int2 fir
     }
     const Int2 size = max_coords - min_coords;
 
-    const kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    Scene* scene = &Layers::get<GameLayer>()->scene;
+    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    Scene& scene = *Layers::get<GameLayer>().scene;
 
-    Camera* main_camera = scene->get_casted<Camera>(scene->main_camera_name);
+    Camera* main_camera = scene.get_casted<Camera>(scene.main_camera_name);
     if (!main_camera)
         return {};
 
     main_camera->resize_staging(size);
-    gpu->copy_resource_region(main_camera->index_staging->graphics_buffer,
+    gpu.copy_resource_region(main_camera->index_staging->graphics_buffer,
         main_camera->index_texture->graphics_buffer, min_coords, max_coords);
 
     Vector<float> values(size.x * size.y);
-    gpu->read_from_texture(values.data(), main_camera->index_staging->graphics_buffer, size, sizeof(float));
+    gpu.read_from_texture(values.data(), main_camera->index_staging->graphics_buffer, size, sizeof(float));
 
     Set<uint32_t> results;
     for (float value : values) {
@@ -276,17 +276,17 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_id_texture(const Int2 fir
 
 titian::Optional<titian::Float3> titian::GUISectionViewport::read_depth_texture(const Int2 coords)
 {
-    const kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
-    Scene* scene = &Layers::get<GameLayer>()->scene;
+    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    Scene& scene = *Layers::get<GameLayer>().scene;
 
-    Camera* main_camera = scene->get_casted<Camera>(scene->main_camera_name);
+    Camera* main_camera = scene.get_casted<Camera>(scene.main_camera_name);
     if (!main_camera)
         return std::nullopt;
 
-    gpu->copy_resource(main_camera->depth_staging->graphics_buffer, main_camera->depth_texture->graphics_buffer);
+    gpu.copy_resource(main_camera->depth_staging->graphics_buffer, main_camera->depth_texture->graphics_buffer);
 
     float depth = 0.0f;
-    gpu->map_read_resource(main_camera->depth_staging->graphics_buffer, [&](const byte* ptr, const uint32_t pitch)
+    gpu.map_read_resource(main_camera->depth_staging->graphics_buffer, [&](const byte* ptr, const uint32_t pitch)
     {
         kl::copy<float>(&depth, ptr + coords.x * sizeof(float) + coords.y * pitch, 1);
     });
@@ -300,17 +300,17 @@ titian::Optional<titian::Float3> titian::GUISectionViewport::read_depth_texture(
 
 void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
 {
-	EditorLayer* editor_layer = Layers::get<EditorLayer>();
-	GameLayer* game_layer = Layers::get<GameLayer>();
-	AppLayer* app_layer = Layers::get<AppLayer>();
+	EditorLayer& editor_layer = Layers::get<EditorLayer>();
+	GameLayer& game_layer = Layers::get<GameLayer>();
+	AppLayer& app_layer = Layers::get<AppLayer>();
 
-    if (editor_layer->gizmo_operation == ImGuizmo::OPERATION::NONE)
+    if (editor_layer.gizmo_operation == ImGuizmo::OPERATION::NONE)
         return;
 
-    kl::Window* window = &app_layer->window;
-    Scene* scene = &game_layer->scene;
+    kl::Window& window = app_layer.window;
+    Scene& scene = *game_layer.scene;
 
-    Camera* camera = scene->get_casted<Camera>(scene->main_camera_name);
+    Camera* camera = scene.get_casted<Camera>(scene.main_camera_name);
     if (!camera)
         return;
 
@@ -323,9 +323,9 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
     ImGuizmo::SetRect(viewport_position.x, viewport_position.y, viewport_size.x, viewport_size.y);
 
     Float3 selected_snap;
-    if (window->keyboard.shift) {
+    if (window.keyboard.shift) {
         static constexpr Float3 predefined_snaps[3] = { Float3{ 0.1f }, Float3{ 15.0f }, Float3{ 1.0f } };
-        switch (editor_layer->gizmo_operation)
+        switch (editor_layer.gizmo_operation)
         {
         case ImGuizmo::OPERATION::SCALE: selected_snap = predefined_snaps[0]; break;
         case ImGuizmo::OPERATION::ROTATE: selected_snap = predefined_snaps[1]; break;
@@ -351,7 +351,7 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
     }
 
     ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
-        editor_layer->gizmo_operation, editor_layer->gizmo_mode,
+        editor_layer.gizmo_operation, editor_layer.gizmo_mode,
         transform_matrix.data, nullptr,
         &selected_snap.x);
 
@@ -364,16 +364,16 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
         m_was_using = true;
         if (im::IsKeyDown(ImGuiKey_LeftAlt)) {
             StringSet new_entities;
-            for (const String& entity_name : editor_layer->selected_entities) {
-                Entity* entity = scene->helper_get_entity(entity_name);
+            for (const String& entity_name : editor_layer.selected_entities) {
+                Entity* entity = scene.helper_get_entity(entity_name);
                 if (!entity)
                     continue;
 
-                const String new_name = scene->generate_unique_name(entity_name, scene->entities());
-                scene->add_entity(new_name, entity->clone());
+                const String new_name = scene.generate_unique_name(entity_name, scene.entities());
+                scene.add_entity(new_name, entity->clone());
                 new_entities.insert(new_name);
             }
-            editor_layer->selected_entities = new_entities;
+            editor_layer.selected_entities = new_entities;
             return;
         }
     }
@@ -390,7 +390,7 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
     }
     else {
         Float4x4 position_transform;
-        if (editor_layer->gizmo_operation == ImGuizmo::OPERATION::SCALE) {
+        if (editor_layer.gizmo_operation == ImGuizmo::OPERATION::SCALE) {
             position_transform =
                 Float4x4::translation(collective_center)
                 * Float4x4::scaling(Float3{ 1.0f } + decomposed_parts[0] - m_last_scaling)
@@ -400,7 +400,7 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
         else {
             position_transform = kl::transpose(transform_matrix) * Float4x4::translation(-collective_center);
         }
-        if (editor_layer->gizmo_mode == ImGuizmo::MODE::LOCAL) {
+        if (editor_layer.gizmo_mode == ImGuizmo::MODE::LOCAL) {
             for (Entity* entity : entities) {
                 entity->set_rotation(entity->rotation() + Float3{ -decomposed_parts[1].x, -decomposed_parts[1].y, decomposed_parts[1].z });
             }

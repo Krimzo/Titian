@@ -45,8 +45,8 @@ namespace titian {
         Scene();
         ~Scene() override;
 
-        void serialize(Serializer* serializer) const override;
-        void deserialize(const Serializer* serializer) override;
+        void serialize(Serializer& serializer) const override;
+        void deserialize(const Serializer& serializer) override;
         
         void onConstraintBreak(px::PxConstraintInfo* constraints, px::PxU32 count) override;
         void onWake(px::PxActor** actors, px::PxU32 count) override;
@@ -115,10 +115,10 @@ namespace titian {
         Optional<AssimpData> get_assimp_data(const StringView& path) const;
         void load_assimp_data(const AssimpData& data);
 
-        Ref<Mesh> load_assimp_mesh(const aiScene* scene, const aiMesh* mesh);
-		Ref<Animation> load_assimp_animation(const aiScene* scene, const aiAnimation* animation);
-		Ref<Texture> load_assimp_texture(const aiScene* scene, const aiTexture* texture);
-		Ref<Material> load_assimp_material(const aiScene* scene, const aiMaterial* material);
+        Ref<Mesh> load_assimp_mesh(const aiScene& scene, const aiMesh& mesh);
+		Ref<Animation> load_assimp_animation(const aiScene& scene, const aiAnimation& animation);
+		Ref<Texture> load_assimp_texture(const aiScene& scene, const aiTexture& texture);
+		Ref<Material> load_assimp_material(const aiScene& scene, const aiMaterial& material);
 
         template<typename T>
         static String generate_unique_name(const StringView& name, const StringMap<T>& map)

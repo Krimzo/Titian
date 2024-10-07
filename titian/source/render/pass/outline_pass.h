@@ -10,8 +10,8 @@ namespace titian {
     {
         OutlinePass();
 
-        void state_package(StatePackage* package) override;
-        void render_self(StatePackage* package) override;
+        void state_package(StatePackage& package) override;
+        void render_self(StatePackage& package) override;
 
     private:
         dx::Buffer m_selected_entities_buff;

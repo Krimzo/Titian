@@ -6,28 +6,28 @@ titian::DirectionalLight::DirectionalLight()
     set_resolution(2500);
 }
 
-void titian::DirectionalLight::serialize(Serializer* serializer) const
+void titian::DirectionalLight::serialize(Serializer& serializer) const
 {
     Entity::serialize(serializer);
 
-    serializer->write_float_array("color", &color.x, 3);
-    serializer->write_float("point_size", point_size);
-    serializer->write_float_array("cascade_splits", cascade_splits, (int) std::size(cascade_splits));
+    serializer.write_float_array("color", &color.x, 3);
+    serializer.write_float("point_size", point_size);
+    serializer.write_float_array("cascade_splits", cascade_splits, (int) std::size(cascade_splits));
 
-    serializer->write_int("resolution", m_resolution);
-    serializer->write_float_array("direction", &m_direction.x, 3);
+    serializer.write_int("resolution", m_resolution);
+    serializer.write_float_array("direction", &m_direction.x, 3);
 }
 
-void titian::DirectionalLight::deserialize(const Serializer* serializer)
+void titian::DirectionalLight::deserialize(const Serializer& serializer)
 {
     Entity::deserialize(serializer);
 
-    serializer->read_float_array("color", &color.x, 3);
-    serializer->read_float("point_size", point_size);
-    serializer->read_float_array("cascade_splits", cascade_splits, (int) std::size(cascade_splits));
+    serializer.read_float_array("color", &color.x, 3);
+    serializer.read_float("point_size", point_size);
+    serializer.read_float_array("cascade_splits", cascade_splits, (int) std::size(cascade_splits));
 
-    serializer->read_int("resolution", m_resolution);
-    serializer->read_float_array("direction", &m_direction.x, 3);
+    serializer.read_int("resolution", m_resolution);
+    serializer.read_float_array("direction", &m_direction.x, 3);
 
     set_resolution(m_resolution);
 }
@@ -55,10 +55,10 @@ void titian::DirectionalLight::set_resolution(const int resolution)
     shadow_shader_view_descriptor.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     shadow_shader_view_descriptor.Texture2D.MipLevels = 1;
 
-    kl::GPU* gpu = &Layers::get<AppLayer>()->gpu;
+    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
     for (auto& cascade : m_cascades) {
         cascade = new Texture();
-        cascade->graphics_buffer = gpu->create_texture(&shadow_map_descriptor, nullptr);
+        cascade->graphics_buffer = gpu.create_texture(&shadow_map_descriptor, nullptr);
         cascade->create_depth_view(&shadow_depth_view_descriptor);
         cascade->create_shader_view(&shadow_shader_view_descriptor);
     }
