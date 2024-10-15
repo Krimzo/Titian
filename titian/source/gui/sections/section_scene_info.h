@@ -2,10 +2,9 @@
 
 #include "gui/gui_section.h"
 #include "editor/editor_layer.h"
-
+#include "scene/light/ambient_light.h"
+#include "scene/light/directional_light.h"
 #include "scene/camera.h"
-#include "light/ambient_light.h"
-#include "light/directional_light.h"
 
 
 namespace titian {

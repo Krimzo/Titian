@@ -1,14 +1,12 @@
 #pragma once
 
-#include "gui/gui_section.h"
 #include "editor/editor_layer.h"
 #include "gui/gui_layer.h"
-
-#include "scripting/native_script.h"
-#include "scripting/interp_script.h"
-#include "scripting/node_script.h"
-
+#include "gui/gui_section.h"
 #include "gui/editors/code_editor.h"
+#include "script/native_script.h"
+#include "script/interp_script.h"
+#include "script/node_script.h"
 
 
 namespace titian {

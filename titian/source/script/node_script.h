@@ -1,8 +1,8 @@
 #pragma once
 
-#include "scripting/script.h"
+#include "script/script.h"
 #include "scene/scene.h"
-#include "ui/ui_funcs.h"
+#include "gui/ui/ui_funcs.h"
 
 
 template<typename T, typename = void> struct has_less_operator : std::false_type {};
@@ -1181,64 +1181,64 @@ namespace titian {
 			addIN<String>("mesh_name");
 			addOUT<void*>("mesh")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>().scene;
+				Scene& scene = Layers::get<GameLayer>().scene();
 				return scene.helper_get_mesh(get_value<String>("mesh_name"));
 			});
 
 			addIN<String>("animation_name");
 			addOUT<void*>("animation")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>().scene;
+				Scene& scene = Layers::get<GameLayer>().scene();
 				return scene.helper_get_animation(get_value<String>("animation_name"));
 			});
 
 			addIN<String>("texture_name");
 			addOUT<void*>("texture")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>().scene;
+				Scene& scene = Layers::get<GameLayer>().scene();
 				return scene.helper_get_texture(get_value<String>("texture_name"));
 			});
 
 			addIN<String>("material_name");
 			addOUT<void*>("material")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>().scene;
+				Scene& scene = Layers::get<GameLayer>().scene();
 				return scene.helper_get_material(get_value<String>("material_name"));
 			});
 
 			addIN<String>("shader_name");
 			addOUT<void*>("shader")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>().scene;
+				Scene& scene = Layers::get<GameLayer>().scene();
 				return scene.helper_get_shader(get_value<String>("shader_name"));
 			});
 
 			addIN<String>("entity_name");
 			addOUT<void*>("entity")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>().scene;
+				Scene& scene = Layers::get<GameLayer>().scene();
 				return scene.helper_get_entity(get_value<String>("entity_name"));
 			});
 
 			addOUT<Float3>("gravity")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>().scene;
+				Scene& scene = Layers::get<GameLayer>().scene();
 				return scene.gravity();
 			});
 
 			addOUT<String>("main_camera_name")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>().scene;
+				Scene& scene = Layers::get<GameLayer>().scene();
 				return scene.main_camera_name;
 			});
 			addOUT<String>("main_ambient_light_name")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>().scene;
+				Scene& scene = Layers::get<GameLayer>().scene();
 				return scene.main_ambient_light_name;
 			});
 			addOUT<String>("main_directional_light_name")->behaviour([this]()
 			{
-				Scene& scene = *Layers::get<GameLayer>().scene;
+				Scene& scene = Layers::get<GameLayer>().scene();
 				return scene.main_directional_light_name;
 			});
 		}
@@ -1253,7 +1253,7 @@ namespace titian {
 			addOUT<int32_t>("topology")->behaviour([this]()
 			{
 				if (Mesh* ptr = get_casted_value<void*, Mesh*>("ptr")) {
-					return ptr->topology;
+					return (int32_t) ptr->topology;
 				}
 				return int32_t{};
 			});
@@ -1407,10 +1407,10 @@ namespace titian {
 			: Node(parent, title, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
-			addOUT<bool>("casts_shadows")->behaviour([this]()
+			addOUT<bool>("shadows")->behaviour([this]()
 			{
 				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
-					return ptr->casts_shadows;
+					return ptr->shadows;
 				}
 				return bool{};
 			});
@@ -1456,6 +1456,27 @@ namespace titian {
 				}
 				return float{};
 			});
+			addOUT<float>("static_friction")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->static_friction();
+				}
+				return float{};
+			});
+			addOUT<float>("dynamic_friction")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->dynamic_friction();
+				}
+				return float{};
+			});
+			addOUT<float>("restitution")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->restitution();
+				}
+				return float{};
+			});
 			addOUT<Float3>("scale")->behaviour([this]()
 			{
 				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
@@ -1488,6 +1509,20 @@ namespace titian {
 			{
 				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
 					return ptr->angular();
+				}
+				return Float3{};
+			});
+			addOUT<Float3>("collider_rotation")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->collider_rotation();
+				}
+				return Float3{};
+			});
+			addOUT<Float3>("collider_offset")->behaviour([this]()
+			{
+				if (Entity* ptr = get_casted_value<void*, Entity*>("ptr")) {
+					return ptr->collider_offset();
 				}
 				return Float3{};
 			});
@@ -1534,7 +1569,7 @@ namespace titian {
 
 		void call() override
 		{
-			Scene& scene = *Layers::get<GameLayer>().scene;
+			Scene& scene = Layers::get<GameLayer>().scene();
 			if (input_connected("mesh_name")) {
 				mesh_ptr = scene.helper_new_mesh(get_value<String>("mesh_name"));
 			}
@@ -1587,7 +1622,7 @@ namespace titian {
 			}
 
 			if (input_connected("topology")) {
-				ptr->topology = get_value<int32_t>("topology");
+				ptr->topology = (D3D_PRIMITIVE_TOPOLOGY) get_value<int32_t>("topology");
 			}
 			if (input_connected("wireframe")) {
 				ptr->render_wireframe = get_value<bool>("wireframe");
@@ -1736,19 +1771,24 @@ namespace titian {
 			: FlowNode(parent, title, true, true, ne::NodeStyle::purple())
 		{
 			addIN<void*>("ptr");
-			addIN<bool>("casts_shadows");
+			addIN<bool>("shadows");
 			addIN<String>("animation_name");
 			addIN<String>("material_name");
 			addIN<String>("collider_mesh_name");
 			addIN<bool>("dynamic");
 			addIN<bool>("gravity");
 			addIN<float>("mass");
-			addIN<float>("angular_damping"),
+			addIN<float>("angular_damping");
+			addIN<float>("static_friction");
+			addIN<float>("dynamic_friction");
+			addIN<float>("restitution");
 			addIN<Float3>("scale");
 			addIN<Float3>("rotation");
 			addIN<Float3>("position");
 			addIN<Float3>("velocity");
 			addIN<Float3>("angular");
+			addIN<Float3>("collider_rotation");
+			addIN<Float3>("collider_offset");
 		}
 
 		void call() override
@@ -1758,8 +1798,8 @@ namespace titian {
 				return;
 			}
 
-			if (input_connected("casts_shadows")) {
-				ptr->casts_shadows = get_value<bool>("casts_shadows");
+			if (input_connected("shadows")) {
+				ptr->shadows = get_value<bool>("shadows");
 			}
 			if (input_connected("animation_name")) {
 				ptr->animation_name = get_value<String>("animation_name");
@@ -1779,6 +1819,15 @@ namespace titian {
 			if (input_connected("angular_damping")) {
 				ptr->set_angular_damping(get_value<float>("angular_damping"));
 			}
+			if (input_connected("static_friction")) {
+				ptr->set_static_friction(get_value<float>("static_friction"));
+			}
+			if (input_connected("dynamic_friction")) {
+				ptr->set_dynamic_friction(get_value<float>("dynamic_friction"));
+			}
+			if (input_connected("restitution")) {
+				ptr->set_restitution(get_value<float>("restitution"));
+			}
 			if (input_connected("scale")) {
 				ptr->set_scale(get_value<Float3>("scale"));
 			}
@@ -1793,6 +1842,12 @@ namespace titian {
 			}
 			if (input_connected("angular")) {
 				ptr->set_angular(get_value<Float3>("angular"));
+			}
+			if (input_connected("collider_rotation")) {
+				ptr->set_collider_rotation(get_value<Float3>("collider_rotation"));
+			}
+			if (input_connected("collider_offset")) {
+				ptr->set_collider_offset(get_value<Float3>("collider_offset"));
 			}
 			call_next();
 		}
@@ -1840,7 +1895,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene->helper_iterate_meshes([&](const String& name, Mesh* ptr)
+			Layers::get<GameLayer>().scene().helper_iterate_meshes([&](const String& name, Mesh* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1855,7 +1910,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene->helper_iterate_animations([&](const String& name, Animation* ptr)
+			Layers::get<GameLayer>().scene().helper_iterate_animations([&](const String& name, Animation* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1870,7 +1925,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene->helper_iterate_textures([&](const String& name, Texture* ptr)
+			Layers::get<GameLayer>().scene().helper_iterate_textures([&](const String& name, Texture* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1885,7 +1940,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene->helper_iterate_materials([&](const String& name, Material* ptr)
+			Layers::get<GameLayer>().scene().helper_iterate_materials([&](const String& name, Material* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1900,7 +1955,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene->helper_iterate_shaders([&](const String& name, Shader* ptr)
+			Layers::get<GameLayer>().scene().helper_iterate_shaders([&](const String& name, Shader* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1915,7 +1970,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene->helper_iterate_entities([&](const String& name, Entity* ptr)
+			Layers::get<GameLayer>().scene().helper_iterate_entities([&](const String& name, Entity* ptr)
 			{
 				func(&name, ptr);
 			});

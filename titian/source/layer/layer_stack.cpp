@@ -8,9 +8,10 @@ void titian::LayerStack::push_layer(Layer* layer)
 
 bool titian::LayerStack::process_layers()
 {
-	for (auto& layer : layers) {
-		const bool state = layer->update();
-		if (!state) return false;
+	for (Layer* layer : layers)
+	{
+		if (!layer->update())
+			return false;
 	}
 	return true;
 }

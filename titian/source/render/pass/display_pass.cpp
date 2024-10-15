@@ -24,7 +24,7 @@ void titian::DisplayPass::render_self(StatePackage& package)
 
     gpu.bind_internal_views();
     gpu.set_viewport_size(window_size);
-    gpu.bind_shader_view_for_pixel_shader(package.camera->screen_texture->shader_view, 0);
+    gpu.bind_shader_view_for_pixel_shader(package.camera->screen_texture.shader_view, 0);
 
     gpu.draw(render_layer.screen_mesh);
     bench_add_draw_call();

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "serialization/binary_serializer.h"
-#include "serialization/text_serializer.h"
+#include "serial/binary_serializer.h"
+#include "serial/text_serializer.h"
 
 
 namespace titian {

@@ -3,7 +3,7 @@
 #include "packager.h"
 #include "layer/layer_stack.h"
 
-#include "application/app_layer.h"
+#include "app/app_layer.h"
 #include "editor/game_layer.h"
 #include "editor/editor_layer.h"
 #include "render/render_layer.h"
@@ -37,11 +37,11 @@
 namespace titian {
     struct TitianEditor : LayerStack
     {
-        AppLayer app_layer = {};
-        GameLayer game_layer = {};
-        EditorLayer editor_layer = {};
-        RenderLayer render_layer = {};
-        GUILayer gui_layer = {};
+        AppLayer app_layer;
+        GameLayer game_layer;
+        EditorLayer editor_layer;
+        RenderLayer render_layer;
+        GUILayer gui_layer;
 
         TitianEditor();
         ~TitianEditor() override;

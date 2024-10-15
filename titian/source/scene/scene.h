@@ -1,16 +1,13 @@
 ﻿#pragma once
 
-#include "components/mesh.h"
-#include "components/animation.h"
-#include "components/texture.h"
-#include "components/material.h"
-#include "components/shader.h"
-#include "scripting/script.h"
+#include "scene/components/mesh.h"
+#include "scene/components/animation.h"
+#include "scene/components/texture.h"
+#include "scene/components/material.h"
+#include "scene/components/shader.h"
+#include "script/script.h"
+#include "scene/scene_defaults.h"
 #include "scene/entity.h"
-
-#include "scene/default/default_meshes.h"
-#include "scene/default/default_animations.h"
-#include "scene/default/default_materials.h"
 
 
 namespace titian {
@@ -34,9 +31,9 @@ namespace titian {
         StringMap<Ref<Shader>> shaders;
         StringMap<Ref<Script>> scripts;
 
-        Ref<DefaultMeshes> default_meshes;
-        Ref<DefaultAnimations> default_animations;
-        Ref<DefaultMaterials> default_materials;
+        DefaultMeshes default_meshes;
+        DefaultAnimations default_animations;
+        DefaultMaterials default_materials;
 
         String main_camera_name = "/";
         String main_ambient_light_name = "/";
@@ -71,11 +68,6 @@ namespace titian {
         {
             return dynamic_cast<T*>(helper_get_entity(id));
         }
-
-        Ref<Collider> new_box_collider(const Float3& scale) const;
-        Ref<Collider> new_sphere_collider(float radius) const;
-        Ref<Collider> new_capsule_collider(float radius, float height) const;
-        Ref<Collider> new_collider(px::PxGeometryType::Enum type) const;
 
         Mesh* helper_new_mesh(const String& id);
         Animation* helper_new_animation(const String& id);
@@ -137,7 +129,7 @@ namespace titian {
         }
 
     private:
-        px::PxScene* m_scene = nullptr;
+        px::PxScene& m_scene;
         StringMap<Ref<Entity>> m_entities;
     };
 }

@@ -38,3 +38,18 @@ bool titian::Material::is_transparent() const
 {
 	return color.w < 1.0f;
 }
+
+titian::Ref<titian::Material> titian::Material::clone() const
+{
+	Ref material = new Material();
+	material->texture_blend = texture_blend;
+	material->reflectivity_factor = reflectivity_factor;
+	material->refraction_index = refraction_index;
+	material->color = color;
+	material->custom_data = custom_data;
+	material->color_texture_name = color_texture_name;
+	material->normal_texture_name = normal_texture_name;
+	material->roughness_texture_name = roughness_texture_name;
+	material->shader_name = shader_name;
+	return material;
+}

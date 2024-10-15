@@ -4,13 +4,12 @@
 titian::GUISectionHelper::GUISectionHelper()
     : GUISection("GUISectionHelper")
 {
-    const auto create_texture = [&](Ref<Texture>& texture, str filename)
+    const auto create_texture = [&](Texture& texture, str filename)
     {
-        texture = new Texture();
-        texture->data_buffer.load_from_file(filename);
-        texture->reload_as_2D();
-        texture->create_shader_view();
-        kl::assert(texture->shader_view, "Failed to init texture: ", filename);
+        texture.data_buffer.load_from_file(filename);
+        texture.reload_as_2D();
+        texture.create_shader_view();
+        kl::assert(texture.shader_view, "Failed to init texture: ", filename);
     };
 
     WorkQueue queue;
@@ -24,7 +23,7 @@ void titian::GUISectionHelper::render_gui()
     const TimeBomb _ = bench_time_bomb();
 
     GUILayer& gui_layer = Layers::get<GUILayer>();
-    Scene& scene = *Layers::get<GameLayer>().scene;
+    Scene& scene = Layers::get<GameLayer>().scene();
 
     if (im::Begin("Helper", nullptr, ImGuiWindowFlags_NoScrollbar)) {
         const float icon_size = m_icon_size * gui_layer.dpi_scaling;
@@ -62,7 +61,7 @@ void titian::GUISectionHelper::handle_basic_entry(const StringView& name) const
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
     im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
-    const dx::ShaderView icon = basic_entity_texture->shader_view;
+    const dx::ShaderView icon = basic_entity_texture.shader_view;
     const float icon_size = m_icon_size * Layers::get<GUILayer>().dpi_scaling;
     const float text_height = im::CalcTextSize(name.data()).y;
 
@@ -84,7 +83,7 @@ void titian::GUISectionHelper::handle_animation_entry(const StringView& name) co
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
     im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
-    const dx::ShaderView icon = animation_entity_texture->shader_view;
+    const dx::ShaderView icon = animation_entity_texture.shader_view;
     const float icon_size = m_icon_size * Layers::get<GUILayer>().dpi_scaling;
     const float text_height = im::CalcTextSize(name.data()).y;
 

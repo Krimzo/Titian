@@ -1,31 +1,45 @@
 #include "titian.h"
 
 
+static const px::PxTransform DEFAULT_TRANSFORM = {
+    px::PxVec3{ px::PxZero },
+    px::PxQuat{ px::PxIdentity },
+};
+
 titian::Entity::Entity()
+	: m_actor(*Layers::get<AppLayer>().physics.createRigidDynamic(DEFAULT_TRANSFORM))
+    , m_material(*Layers::get<AppLayer>().physics.createMaterial(0.25f, 0.25f, 0.25f))
 {
-    px::PxTransform transform{};
-    transform.q = px::PxQuat(px::PxIdentity);
-    transform.p = px::PxVec3(px::PxZero);
-    generate_actor(transform, false);
+    m_actor.userData = this;
+    set_dynamic(false);
+    set_gravity(false);
+    set_mass(1.0f);
+    set_angular_damping(0.0f);
 }
 
 titian::Entity::~Entity()
 {
-    if (m_actor) m_actor->release();
+    if (auto scene = m_actor.getScene())
+		scene->removeActor(m_actor);
+    m_material.release();
+    m_actor.release();
 }
 
 void titian::Entity::serialize(Serializer& serializer) const
 {
     serializer.write_string("entity_type", typeid(*this).name());
 
-    serializer.write_bool("casts_shadows", casts_shadows);
-
+    serializer.write_bool("shadows", shadows);
     serializer.write_string("animation_name", animation_name);
     serializer.write_string("material_name", material_name);
 
     serializer.write_bool("dynamic", dynamic());
     serializer.write_bool("gravity", gravity());
     serializer.write_float("mass", mass());
+	serializer.write_float("angular_damping", angular_damping());
+	serializer.write_float("static_friction", static_friction());
+	serializer.write_float("dynamic_friction", dynamic_friction());
+	serializer.write_float("restitution", restitution());
 
     const Float3 scale = this->scale();
     serializer.write_float_array("scale", &scale.x, 3);
@@ -42,19 +56,49 @@ void titian::Entity::serialize(Serializer& serializer) const
     const Float3 angular = this->angular();
     serializer.write_float_array("angular", &angular.x, 3);
 
-    const bool has_collider = m_collider;
-    serializer.write_bool("has_collider", has_collider);
-    if (has_collider) {
-        serializer.push_object("collider");
-        m_collider->serialize(serializer);
-        serializer.pop_object();
+    const px::PxGeometryType::Enum geometry_type = this->geometry_type();
+    serializer.write_int("geometry_type", geometry_type);
+
+    auto shape = collider_shape();
+
+    serializer.push_object("geometry");
+    switch (geometry_type)
+    {
+    case px::PxGeometryType::Enum::eBOX:
+    {
+        px::PxBoxGeometry geometry{};
+        if (shape) shape->getBoxGeometry(geometry);
+        serializer.write_float_array("half_extents", &geometry.halfExtents.x, 3);
+        break;
     }
+    case px::PxGeometryType::Enum::eSPHERE:
+    {
+        px::PxSphereGeometry geometry{};
+        if (shape) shape->getSphereGeometry(geometry);
+        serializer.write_float("radius", geometry.radius);
+        break;
+    }
+    case px::PxGeometryType::Enum::eCAPSULE:
+    {
+        px::PxCapsuleGeometry geometry{};
+        if (shape) shape->getCapsuleGeometry(geometry);
+        serializer.write_float("half_height", geometry.halfHeight);
+        serializer.write_float("radius", geometry.radius);
+        break;
+    }
+    }
+    serializer.pop_object();
+
+    const Float3 collider_rotation = this->collider_rotation();
+    serializer.write_float_array("collider_rotation", &collider_rotation.x, 3);
+
+    const Float3 collider_offset = this->collider_offset();
+    serializer.write_float_array("collider_offset", &collider_offset.x, 3);
 }
 
 void titian::Entity::deserialize(const Serializer& serializer)
 {
-    serializer.read_bool("casts_shadows", casts_shadows);
-
+    serializer.read_bool("shadows", shadows);
     serializer.read_string("animation_name", animation_name);
     serializer.read_string("material_name", material_name);
 
@@ -69,6 +113,22 @@ void titian::Entity::deserialize(const Serializer& serializer)
     float mass = 0.0f;
     serializer.read_float("mass", mass);
     set_mass(mass);
+
+	float angular_damping = 0.0f;
+	serializer.read_float("angular_damping", angular_damping);
+	set_angular_damping(angular_damping);
+
+	float static_friction = 0.0f;
+	serializer.read_float("static_friction", static_friction);
+	set_static_friction(static_friction);
+
+	float dynamic_friction = 0.0f;
+	serializer.read_float("dynamic_friction", dynamic_friction);
+	set_dynamic_friction(dynamic_friction);
+
+	float restitution = 0.0f;
+	serializer.read_float("restitution", restitution);
+	set_restitution(restitution);
 
 	Float3 scale;
     serializer.read_float_array("scale", &scale.x, 3);
@@ -90,94 +150,137 @@ void titian::Entity::deserialize(const Serializer& serializer)
     serializer.read_float_array("angular", &angular.x, 3);
     set_angular(angular);
 
-    bool has_collider = false;
-    serializer.read_bool("has_collider", has_collider);
-    if (has_collider) {
-        Ref new_collider = new Collider();
-        serializer.load_object("collider");
-        new_collider->deserialize(serializer);
-        serializer.unload_object();
-        this->set_collider(new_collider);
+    px::PxGeometryType::Enum geometry_type{};
+    serializer.read_int("geometry_type", (int32_t&) geometry_type);
+
+    serializer.load_object("geometry");
+    switch (geometry_type)
+    {
+    case px::PxGeometryType::Enum::eBOX:
+    {
+        px::PxBoxGeometry geometry{};
+        serializer.read_float_array("half_extents", &geometry.halfExtents.x, 3);
+        set_collider_geometry(geometry);
+        break;
     }
+    case px::PxGeometryType::Enum::eSPHERE:
+    {
+        px::PxSphereGeometry geometry{};
+        serializer.read_float("radius", geometry.radius);
+        set_collider_geometry(geometry);
+        break;
+    }
+    case px::PxGeometryType::Enum::eCAPSULE:
+    {
+        px::PxCapsuleGeometry geometry{};
+        serializer.read_float("half_height", geometry.halfHeight);
+        serializer.read_float("radius", geometry.radius);
+        set_collider_geometry(geometry);
+        break;
+    }
+    }
+    serializer.unload_object();
+
+    Float3 collider_rotation;
+    serializer.read_float_array("collider_rotation", &collider_rotation.x, 3);
+    set_collider_rotation(collider_rotation);
+
+    Float3 collider_offset;
+    serializer.read_float_array("collider_offset", &collider_offset.x, 3);
+    set_collider_offset(collider_offset);
 }
 
-px::PxRigidActor* titian::Entity::actor() const
+px::PxRigidDynamic& titian::Entity::actor() const
 {
     return m_actor;
 }
 
+px::PxGeometryType::Enum titian::Entity::geometry_type() const
+{
+    if (auto shape = collider_shape())
+		return shape->getGeometryType();
+    return px::PxGeometryType::eINVALID;
+}
+
+void titian::Entity::wake_up()
+{
+    if (m_actor.getScene())
+        m_actor.wakeUp();
+}
+
 void titian::Entity::set_dynamic(const bool enabled)
 {
-    const px::PxTransform old_transform = m_actor->getGlobalPose();
-    Ref<Collider> old_collider = m_collider;
-    set_collider(nullptr);
-    generate_actor(old_transform, enabled);
-    set_collider(old_collider);
+    m_actor.setRigidBodyFlag(px::PxRigidBodyFlag::eKINEMATIC, !enabled);
+    wake_up();
 }
 
 bool titian::Entity::dynamic() const
 {
-    return m_actor->getType() == px::PxActorType::Enum::eRIGID_DYNAMIC;
+    const px::PxRigidBodyFlags flags = m_actor.getRigidBodyFlags();
+    return !flags.isSet(px::PxRigidBodyFlag::eKINEMATIC);
 }
 
 void titian::Entity::set_gravity(const bool enabled)
 {
-    if (!dynamic())
-        return;
-
-    m_actor->setActorFlag(px::PxActorFlag::eDISABLE_GRAVITY, !enabled);
-    if (!enabled)
-        return;
-
-    px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
-    if (actor->getScene()) {
-        actor->wakeUp();
-    }
+    m_actor.setActorFlag(px::PxActorFlag::eDISABLE_GRAVITY, !enabled);
+    wake_up();
 }
 
 bool titian::Entity::gravity() const
 {
-    if (!dynamic())
-        return false;
-
-    const px::PxActorFlags flags = m_actor->getActorFlags();
+    const px::PxActorFlags flags = m_actor.getActorFlags();
     return !flags.isSet(px::PxActorFlag::eDISABLE_GRAVITY);
 }
 
 void titian::Entity::set_mass(const float mass)
 {
-    if (!dynamic())
-        return;
-
-    px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
-    actor->setMass(mass);
+    m_actor.setMass(mass);
+    wake_up();
 }
 
 float titian::Entity::mass() const
 {
-    if (!dynamic())
-        return 0.0f;
-
-    const px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
-    return actor->getMass();
+    return m_actor.getMass();
 }
 
 void titian::Entity::set_angular_damping(float damping)
 {
-    if (!dynamic())
-		return;
-
-	px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
-	actor->setAngularDamping(damping);
+    m_actor.setAngularDamping(damping);
 }
 
 float titian::Entity::angular_damping() const
 {
-    if (!dynamic())
-		return 0.0f;
+	return m_actor.getAngularDamping();
+}
 
-	const px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
-	return actor->getAngularDamping();
+void titian::Entity::set_static_friction(float friction)
+{
+	m_material.setStaticFriction(friction);
+}
+
+float titian::Entity::static_friction() const
+{
+    return m_material.getStaticFriction();
+}
+
+void titian::Entity::set_dynamic_friction(float friction)
+{
+	m_material.setDynamicFriction(friction);
+}
+
+float titian::Entity::dynamic_friction() const
+{
+    return m_material.getDynamicFriction();
+}
+
+void titian::Entity::set_restitution(float restitution)
+{
+	m_material.setRestitution(restitution);
+}
+
+float titian::Entity::restitution() const
+{
+    return m_material.getRestitution();
 }
 
 void titian::Entity::set_scale(const Float3& scale)
@@ -192,82 +295,130 @@ titian::Float3 titian::Entity::scale() const
 
 void titian::Entity::set_rotation(const Float3& rotation)
 {
-    px::PxTransform transform = m_actor->getGlobalPose();
+    px::PxTransform transform = m_actor.getGlobalPose();
     transform.q = px_cast(Float4{ kl::to_quaternion(rotation) });
-    m_actor->setGlobalPose(transform);
+    m_actor.setGlobalPose(transform);
 }
 
 titian::Float3 titian::Entity::rotation() const
 {
-    const px::PxTransform transform = m_actor->getGlobalPose();
+    const px::PxTransform transform = m_actor.getGlobalPose();
     return kl::to_euler(Quaternion{ px_cast(transform.q) });
 }
 
 void titian::Entity::set_position(const Float3& position)
 {
-    px::PxTransform transform = m_actor->getGlobalPose();
+    px::PxTransform transform = m_actor.getGlobalPose();
     transform.p = px_cast(position);
-    m_actor->setGlobalPose(transform);
+    m_actor.setGlobalPose(transform);
 }
 
 titian::Float3 titian::Entity::position() const
 {
-    const px::PxTransform transform = m_actor->getGlobalPose();
+    const px::PxTransform transform = m_actor.getGlobalPose();
     return px_cast(transform.p);
 }
 
 void titian::Entity::set_velocity(const Float3& velocity)
 {
-    if (!dynamic())
-        return;
-
-    px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
-    actor->setLinearVelocity(px_cast(velocity));
+    m_actor.setLinearVelocity(px_cast(velocity));
 }
 
 titian::Float3 titian::Entity::velocity() const
 {
-    if (!dynamic())
-        return {};
-
-    const px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
-    const px::PxVec3 velocity = actor->getLinearVelocity();
-    return px_cast(velocity);
+    return px_cast(m_actor.getLinearVelocity());
 }
 
 void titian::Entity::set_angular(const Float3& angular)
 {
-    if (!dynamic())
-        return;
-
-    px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
-    actor->setAngularVelocity(px_cast(angular));
+    m_actor.setAngularVelocity(px_cast(angular));
 }
 
 titian::Float3 titian::Entity::angular() const
 {
-    if (!dynamic())
+    return px_cast(m_actor.getAngularVelocity());
+}
+
+void titian::Entity::set_collider_rotation(const Float3& rotation)
+{
+    auto shape = collider_shape();
+    if (!shape)
+        return;
+
+    px::PxTransform transform = shape->getLocalPose();
+    transform.q = px_cast(Float4{ kl::to_quaternion(rotation) });
+    shape->setLocalPose(transform);
+}
+
+titian::Float3 titian::Entity::collider_rotation() const
+{
+    auto shape = collider_shape();
+    if (!shape)
         return {};
 
-    const px::PxRigidDynamic* actor = (px::PxRigidDynamic*) m_actor;
-    const px::PxVec3 angular = actor->getAngularVelocity();
-    return px_cast(angular);
+    const px::PxTransform transform = shape->getLocalPose();
+    return kl::to_euler(Quaternion{ px_cast(transform.q) });
 }
 
-void titian::Entity::set_collider(const Ref<Collider>& collider)
+void titian::Entity::set_collider_offset(const Float3& position)
 {
-    if (m_collider) {
-        m_actor->detachShape(*m_collider->shape());
-    }
-    if (collider) {
-        m_actor->attachShape(*collider->shape());
-    }
-    m_collider = collider;
+    auto shape = collider_shape();
+    if (!shape)
+        return;
+
+    px::PxTransform transform = shape->getLocalPose();
+    transform.p = px_cast(position);
+    shape->setLocalPose(transform);
 }
 
-titian::Ref<titian::Collider> titian::Entity::collider() const
+titian::Float3 titian::Entity::collider_offset() const
 {
-    return m_collider;
+    auto shape = collider_shape();
+    if (!shape)
+        return {};
+
+    const px::PxTransform transform = shape->getLocalPose();
+    return px_cast(transform.p);
+}
+
+void titian::Entity::set_collider_geometry(const px::PxGeometry& geometry)
+{
+    px::PxTransform old_transform = DEFAULT_TRANSFORM;
+    if (auto shape = collider_shape()) {
+		old_transform = shape->getLocalPose();
+        m_actor.detachShape(*shape);
+    }
+    px::PxRigidActorExt::createExclusiveShape(m_actor, geometry, m_material);
+    if (auto shape = collider_shape())
+		shape->setLocalPose(old_transform);
+}
+
+px::PxGeometryHolder titian::Entity::collider_geometry() const
+{
+    if (auto shape = collider_shape())
+        return shape->getGeometry();
+    return {};
+}
+
+void titian::Entity::set_box_collider(const Float3& scale)
+{
+	set_collider_geometry(px::PxBoxGeometry{ px_cast(scale) * 0.5f });
+}
+
+void titian::Entity::set_sphere_collider(const float radius)
+{
+    set_collider_geometry(px::PxSphereGeometry{ radius });
+}
+
+void titian::Entity::set_capsule_collider(const float radius, const float height)
+{
+    set_collider_geometry(px::PxCapsuleGeometry{ radius, height });
+}
+
+void titian::Entity::remove_collider()
+{
+    if (auto shape = collider_shape())
+        m_actor.detachShape(*shape);
 }
 
 titian::Float4x4 titian::Entity::model_matrix() const
@@ -279,53 +430,70 @@ titian::Float4x4 titian::Entity::model_matrix() const
 
 titian::Float4x4 titian::Entity::collider_matrix() const
 {
-    if (!m_collider)
-        return {};
     return Float4x4::translation(position())
         * Float4x4::rotation(rotation())
-        * Float4x4::translation(m_collider->offset())
-        * Float4x4::rotation(m_collider->rotation())
-        * m_collider->scaling_matrix();
+        * Float4x4::translation(collider_offset())
+        * Float4x4::rotation(collider_rotation())
+        * collider_scaling_matrix();
 }
 
 titian::Ref<titian::Entity> titian::Entity::clone() const
 {
     Ref entity = new Entity();
-    entity->casts_shadows = casts_shadows;
+    entity->shadows = shadows;
     entity->animation_name = animation_name;
     entity->material_name = material_name;
-    entity->set_dynamic(dynamic());
+	entity->set_dynamic(dynamic());
     entity->set_gravity(gravity());
     entity->set_mass(mass());
     entity->set_angular_damping(angular_damping());
+    entity->set_static_friction(static_friction());
+    entity->set_dynamic_friction(dynamic_friction());
+    entity->set_restitution(restitution());
     entity->set_scale(scale());
     entity->set_rotation(rotation());
     entity->set_position(position());
     entity->set_velocity(velocity());
     entity->set_angular(angular());
-    if (auto collider = this->collider()) {
-        entity->set_collider(collider->clone());
-    }
+    entity->set_collider_rotation(collider_rotation());
+    entity->set_collider_offset(collider_offset());
+    entity->set_collider_geometry(collider_geometry().any());
     return entity;
 }
 
-void titian::Entity::generate_actor(const px::PxTransform& transform, const bool dynamic)
+px::PxShape* titian::Entity::collider_shape() const
 {
-    px::PxPhysics* physics = Layers::get<AppLayer>().physics;
+	px::PxShape* shape = nullptr;
+	m_actor.getShapes(&shape, 1);
+	return shape;
+}
 
-    if (m_actor)
-        m_actor->release();
+titian::Float4x4 titian::Entity::collider_scaling_matrix() const
+{
+    auto shape = collider_shape();
+    if (!shape)
+        return {};
 
-    if (dynamic) {
-        m_actor = physics->createRigidDynamic(transform);
+    switch (shape->getGeometryType())
+    {
+    case px::PxGeometryType::Enum::eBOX:
+    {
+        px::PxBoxGeometry geometry{};
+        shape->getBoxGeometry(geometry);
+        return Float4x4::scaling(px_cast(geometry.halfExtents) * 2.0f);
     }
-    else {
-        m_actor = physics->createRigidStatic(transform);
+    case px::PxGeometryType::Enum::eSPHERE:
+    {
+        px::PxSphereGeometry geometry{};
+        shape->getSphereGeometry(geometry);
+        return Float4x4::scaling(Float3{ geometry.radius });
     }
-    kl::assert(m_actor, "Failed to create physics actor");
-
-    m_actor->userData = this;
-    set_gravity(false);
-    set_mass(1.0f);
-    set_angular_damping(0.0f);
+    case px::PxGeometryType::Enum::eCAPSULE:
+    {
+        px::PxCapsuleGeometry geometry{};
+        shape->getCapsuleGeometry(geometry);
+        return Float4x4::scaling(Float3{ geometry.halfHeight * 0.5f, Float2{geometry.radius} });
+    }
+    }
+    return {};
 }

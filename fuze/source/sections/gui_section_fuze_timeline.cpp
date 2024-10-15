@@ -65,15 +65,15 @@ void titian::GUISectionFuzeTimeline::handle_input(const int scroll)
 				im::CloseCurrentPopup();
 			}
 			if (im::Button("Move Up", { -1.0f, 0.0f })) {
-				video_layer.move_track_up(video_layer.selected_track);
+				video_layer.move_track_up(*video_layer.selected_track);
 				im::CloseCurrentPopup();
 			}
 			if (im::Button("Move Down", { -1.0f, 0.0f })) {
-				video_layer.move_track_down(video_layer.selected_track);
+				video_layer.move_track_down(*video_layer.selected_track);
 				im::CloseCurrentPopup();
 			}
 			if (im::Button("Delete Track", { -1.0f, 0.0f })) {
-				video_layer.delete_track(video_layer.selected_track);
+				video_layer.delete_track(*video_layer.selected_track);
 				video_layer.selected_track = {};
 				im::CloseCurrentPopup();
 			}
@@ -83,7 +83,7 @@ void titian::GUISectionFuzeTimeline::handle_input(const int scroll)
 				video_layer.selected_media->name = opt_name.value();
 				im::CloseCurrentPopup();
 			}
-			float offset = video_layer.get_offset(video_layer.selected_media);
+			float offset = video_layer.get_offset(*video_layer.selected_media);
 			if (im::DragFloat("Offset", &offset, 0.1f, 0.0f, 1'000'000.0f)) {
 				video_layer.update_offset(video_layer.selected_media, offset);
 			}
@@ -91,11 +91,11 @@ void titian::GUISectionFuzeTimeline::handle_input(const int scroll)
 			if (video_layer.selected_media->type == MediaType::VIDEO
 				&& video_layer.selected_media->has_audio()
 				&& im::Button("Split Audio", { -1.0f, 0.0f })) {
-				video_layer.split_audio(video_layer.selected_media);
+				video_layer.split_audio(*video_layer.selected_media);
 				im::CloseCurrentPopup();
 			}
 			if (im::Button("Delete Media", { -1.0f, 0.0f })) {
-				video_layer.delete_media(video_layer.selected_media);
+				video_layer.delete_media(*video_layer.selected_media);
 				video_layer.selected_media = {};
 				im::CloseCurrentPopup();
 			}
@@ -299,7 +299,7 @@ void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, con
 		const float mouse_delta = im::GetMousePos().x - info.old_mouse.x;
 		const float offset_delta = (mouse_delta / col_width) * horizontal_view;
 		const float offset = (horizontal_offset - info.horiz_offset) + (info.offset + offset_delta);
-		video_layer.tracks[info.track_index]->remove_media(info.media);
+		video_layer.tracks[info.track_index]->remove_media(*info.media);
 		track->insert_media(offset, info.media);
 	}
 
@@ -364,14 +364,14 @@ void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, con
 						float right = kl::min(left + core_width * core, bottom_right.x);
 						left = kl::clamp(left, col_min.x, bottom_right_clamped.x);
 						right = kl::clamp(right, col_min.x, bottom_right_clamped.x);
-						const ImColor color = state ? color_classify(media) : ImColor(205, 120, 115);
+						const ImColor color = state ? color_classify(*media) : ImColor(205, 120, 115);
 						draw_list.AddRectFilled(ImVec2(left, top_left_clamped.y), ImVec2(right, bottom_right_clamped.y), color);
 						width_offset += core_width;
 					}
 				}
 			}
 			else {
-				draw_list.AddRectFilled(top_left_clamped, bottom_right_clamped, color_classify(media));
+				draw_list.AddRectFilled(top_left_clamped, bottom_right_clamped, color_classify(*media));
 			}
 
 			if (video_layer.selected_media == media) {
@@ -391,14 +391,14 @@ void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, con
 						float right = left + core_width * core;
 						left = kl::clamp(left, left_x, right_x);
 						right = kl::clamp(right, left_x, right_x);
-						const ImColor color = state ? color_classify(media) : ImColor(205, 120, 115);
+						const ImColor color = state ? color_classify(*media) : ImColor(205, 120, 115);
 						draw_list.AddRectFilled(ImVec2(left, col_min.y), ImVec2(right, col_max.y), color);
 						width_offset += core_width;
 					}
 				}
 			}
 			else {
-				draw_list.AddRectFilled(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), color_classify(media));
+				draw_list.AddRectFilled(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), color_classify(*media));
 			}
 			if (video_layer.selected_media == media) {
 				draw_list.AddRect(ImVec2(left_x, col_min.y), ImVec2(right_x, col_max.y), ImColor(255, 255, 255));
@@ -425,13 +425,13 @@ void titian::GUISectionFuzeTimeline::render_pointer(const ImVec2 total_min, cons
 	}
 }
 
-ImColor titian::GUISectionFuzeTimeline::color_classify(const Ref<Media>& media)
+ImColor titian::GUISectionFuzeTimeline::color_classify(const Media& media)
 {
 	static constexpr ImColor IMAGE_COLOR = ImColor(215, 180, 125);
 	static constexpr ImColor AUDIO_COLOR = ImColor(125, 180, 215);
 	static constexpr ImColor VIDEO_COLOR = ImColor(135, 215, 135);
 
-	switch (media->type)
+	switch (media.type)
 	{
 	case MediaType::IMAGE:
 		return IMAGE_COLOR;
@@ -440,7 +440,7 @@ ImColor titian::GUISectionFuzeTimeline::color_classify(const Ref<Media>& media)
 		return AUDIO_COLOR;
 
 	case MediaType::VIDEO:
-		if (media->has_audio()) {
+		if (media.has_audio()) {
 			return ImVec4(VIDEO_COLOR) * ImVec4(0.5f, 0.5f, 0.5f, 0.5f) + ImVec4(AUDIO_COLOR) * ImVec4(0.5f, 0.5f, 0.5f, 0.5f);
 		}
 		else {

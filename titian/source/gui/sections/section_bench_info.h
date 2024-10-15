@@ -5,11 +5,15 @@
 
 
 namespace titian {
+    struct TitianEditor;
+}
+
+namespace titian {
     struct GUISectionBenchInfo : GUISection
     {
-        void* editor = nullptr;
+        TitianEditor& editor;
 
-        GUISectionBenchInfo(void* editor);
+        GUISectionBenchInfo(TitianEditor& editor);
 
         void render_gui() override;
     };

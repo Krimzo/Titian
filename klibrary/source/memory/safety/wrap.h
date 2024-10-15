@@ -43,6 +43,9 @@ namespace kl {
 			requires std::is_base_of_v<T, D> and (S >= DS)
 		Wrap& operator=(Wrap<D, DS>&& other)
 		{
+			if (this == _addr(other))
+				return *this;
+
 			destroy();
 			clear();
 			m_valid = other.m_valid;
@@ -112,9 +115,10 @@ namespace kl {
 
 		void destroy()
 		{
-			if (m_valid) {
-				(**this).~T();
-			}
+			if (!m_valid)
+				return;
+			m_valid = false;
+			(**this).~T();
 		}
 
 		void clear()

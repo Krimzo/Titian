@@ -12,7 +12,7 @@ void titian::GUISectionShaderEditor::render_gui()
 	const TimeBomb _ = bench_time_bomb();
 
 	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-	Scene& scene = *Layers::get<GameLayer>().scene;
+	Scene& scene = Layers::get<GameLayer>().scene();
 
 	if (im::Begin("Shader Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const float available_width = im::GetContentRegionAvail().x;

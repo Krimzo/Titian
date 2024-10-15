@@ -10,47 +10,35 @@ static px::PxFilterFlags filter_shader(
     const void* constantBlock,
     px::PxU32 constantBlockSize)
 {
-    pairFlags = px::PxPairFlag::eCONTACT_DEFAULT;
-    pairFlags |= px::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+    pairFlags = px::PxPairFlag::eCONTACT_DEFAULT | px::PxPairFlag::eNOTIFY_TOUCH_FOUND;
     return px::PxFilterFlag::eDEFAULT;
 }
 
-titian::Scene::Scene()
+static px::PxScene& make_px_scene(titian::Scene& parent)
 {
-    px::PxPhysics& physics = *Layers::get<AppLayer>().physics;
-    px::PxCpuDispatcher& cpu_dispatcher = *Layers::get<AppLayer>().cpu_dispatcher;
-
+    using namespace titian;
+    px::PxPhysics& physics = Layers::get<AppLayer>().physics;
+    px::PxCpuDispatcher& cpu_dispatcher = Layers::get<AppLayer>().cpu_dispatcher;
     px::PxSceneDesc scene_descriptor = { physics.getTolerancesScale() };
     scene_descriptor.gravity.y = -9.81f;
     scene_descriptor.cpuDispatcher = &cpu_dispatcher;
     scene_descriptor.filterShader = filter_shader;
-    scene_descriptor.simulationEventCallback = this;
-
-    m_scene = physics.createScene(scene_descriptor);
-    kl::assert(m_scene, "Failed to create physics scene");
-
-    default_meshes = new DefaultMeshes();
-    kl::assert(default_meshes, "Failed to init default meshes");
-
-    default_animations = new DefaultAnimations();
-    kl::assert(default_animations, "Failed to init default animations");
-
-    default_materials = new DefaultMaterials();
-    kl::assert(default_materials, "Failed to init default materials");
+    scene_descriptor.simulationEventCallback = &parent;
+    return *physics.createScene(scene_descriptor);
 }
+
+titian::Scene::Scene()
+	: m_scene(make_px_scene(*this))
+{}
 
 titian::Scene::~Scene()
 {
-    default_meshes.free();
-    default_materials.free();
-    meshes.clear();
-    textures.clear();
-    materials.clear();
+    m_entities.clear();
     scripts.clear();
-    while (!m_entities.empty()) {
-        remove_entity(m_entities.begin()->first);
-    }
-    m_scene->release();
+    materials.clear();
+    textures.clear();
+    meshes.clear();
+    m_scene.release();
 }
 
 void titian::Scene::serialize(Serializer& serializer) const
@@ -214,18 +202,18 @@ void titian::Scene::onAdvance(const px::PxRigidBody* const* bodyBuffer, const px
 
 void titian::Scene::set_gravity(const Float3& gravity)
 {
-    m_scene->setGravity(px_cast(gravity));
+    m_scene.setGravity(px_cast(gravity));
 }
 
 titian::Float3 titian::Scene::gravity() const
 {
-    return px_cast(m_scene->getGravity());
+    return px_cast(m_scene.getGravity());
 }
 
 void titian::Scene::update_physics(const float delta_t)
 {
-    m_scene->simulate(delta_t);
-    m_scene->fetchResults(true);
+    m_scene.simulate(delta_t);
+    m_scene.fetchResults(true);
 }
 
 void titian::Scene::update_scripts()
@@ -245,7 +233,8 @@ void titian::Scene::update_ui()
 void titian::Scene::add_entity(const String& id, const Ref<Entity>& entity)
 {
     m_entities[id] = entity;
-    m_scene->addActor(*entity->actor());
+    m_scene.addActor(entity->actor());
+    entity->wake_up();
 }
 
 void titian::Scene::remove_entity(const StringView& id)
@@ -254,40 +243,8 @@ void titian::Scene::remove_entity(const StringView& id)
     if (it == m_entities.end())
         return;
 
-    m_scene->removeActor(*it->second->actor());
+    m_scene.removeActor(it->second->actor());
     m_entities.erase(it);
-}
-
-titian::Ref<titian::Collider> titian::Scene::new_box_collider(const Float3& scale) const
-{
-    Ref result = new Collider();
-    result->set_geometry(px::PxBoxGeometry{ px_cast(scale) * 0.5f });
-    return result;
-}
-
-titian::Ref<titian::Collider> titian::Scene::new_sphere_collider(const float radius) const
-{
-    Ref result = new Collider();
-    result->set_geometry(px::PxSphereGeometry{ radius });
-    return result;
-}
-
-titian::Ref<titian::Collider> titian::Scene::new_capsule_collider(const float radius, const float height) const
-{
-    Ref result = new Collider();
-    result->set_geometry(px::PxCapsuleGeometry{ radius, height });
-    return result;
-}
-
-titian::Ref<titian::Collider> titian::Scene::new_collider(const px::PxGeometryType::Enum type) const
-{
-    switch (type)
-    {
-    case px::PxGeometryType::Enum::eBOX: return new_box_collider(Float3{ 1.0f });
-    case px::PxGeometryType::Enum::eSPHERE: return new_sphere_collider(1.0f);
-    case px::PxGeometryType::Enum::eCAPSULE: return new_capsule_collider(1.0f, 2.0f);
-    }
-    return {};
 }
 
 titian::Mesh* titian::Scene::helper_new_mesh(const String& id)

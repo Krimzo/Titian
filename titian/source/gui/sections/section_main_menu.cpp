@@ -4,13 +4,12 @@
 titian::GUISectionMainMenu::GUISectionMainMenu()
     : GUISection("GUISectionMainMenu")
 {
-    const auto create_texture = [&](Ref<Texture>& texture, str filename)
+    const auto create_texture = [&](Texture& texture, str filename)
     {
-        texture = new Texture();
-        texture->data_buffer.load_from_file(filename);
-        texture->reload_as_2D();
-        texture->create_shader_view(nullptr);
-        kl::assert(texture->shader_view, "Failed to init texture: ", filename);
+        texture.data_buffer.load_from_file(filename);
+        texture.reload_as_2D();
+        texture.create_shader_view(nullptr);
+        kl::assert(texture.shader_view, "Failed to init texture: ", filename);
     };
 
     WorkQueue queue;
@@ -30,7 +29,7 @@ void titian::GUISectionMainMenu::render_gui()
     GUILayer& gui_layer = Layers::get<GUILayer>();
     EditorLayer& editor_layer = Layers::get<EditorLayer>();
 
-    Scene& scene = *game_layer.scene;
+    Scene& scene = game_layer.scene();
 
     if (m_testing_exit) {
         if (im::Begin("Exit?", nullptr, ImGuiWindowFlags_NoScrollbar)) {
@@ -119,9 +118,8 @@ void titian::GUISectionMainMenu::render_gui()
                         if (auto file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_TITIAN } })) {
                             const String stem_name = fs::path(file.value()).stem().string();
                             if (const BinarySerializer serializer{ file.value(), false }) {
-                                Ref scene = new Scene();
-                                scene->deserialize(serializer);
-                                game_layer.scene = scene;
+                                game_layer.reset_scene();
+                                game_layer.scene().deserialize(serializer);
                             }
                         }
                     }
@@ -129,9 +127,8 @@ void titian::GUISectionMainMenu::render_gui()
                         if (auto file = kl::choose_file(false, { { "Scene File", FILE_EXTENSION_JSON } })) {
                             const String stem_name = fs::path(file.value()).stem().string();
                             if (const TextSerializer serializer{ file.value(), false }) {
-                                Ref scene = new Scene();
-                                scene->deserialize(serializer);
-                                game_layer.scene = scene;
+                                game_layer.reset_scene();
+                                game_layer.scene().deserialize(serializer);
                             }
                         }
                     }
@@ -423,17 +420,17 @@ void titian::GUISectionMainMenu::render_gui()
 
         constexpr float button_image_size = 16.0f;
         
-        const bool is_start_enabled = !game_layer.game_running || game_layer.game_paused;
+        const bool is_start_enabled = !game_layer.game_running() || game_layer.game_paused();
         const ImVec4 start_tint_color = is_start_enabled ? ImColor(200, 200, 200) : ImColor(75, 75, 75);
 
         im::PushItemFlag(ImGuiItemFlags_Disabled, !is_start_enabled);
-        if (im::ImageButton("StartButton", m_start_button_texture->shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), start_tint_color)) {
-            if (game_layer.game_paused) {
+        if (im::ImageButton("StartButton", m_start_button_texture.shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), start_tint_color)) {
+            if (game_layer.game_paused()) {
                 game_layer.resume_game();
             }
             else {
                 if (BinarySerializer serializer{ m_temp_path, true }) {
-                    game_layer.scene->serialize(serializer);
+                    game_layer.scene().serialize(serializer);
                 }
                 game_layer.start_game();
             }
@@ -441,25 +438,25 @@ void titian::GUISectionMainMenu::render_gui()
         m_control_buttons_width += im::GetItemRectSize().x;
         im::PopItemFlag();
 
-        const bool is_pause_enabled = game_layer.game_running && !game_layer.game_paused;
+        const bool is_pause_enabled = game_layer.game_running() && !game_layer.game_paused();
         const ImVec4 pause_tint_color = is_pause_enabled ? ImColor(200, 200, 200) : ImColor(75, 75, 75);
 
         im::PushItemFlag(ImGuiItemFlags_Disabled, !is_pause_enabled);
-        if (im::ImageButton("PauseButton", m_pause_button_texture->shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), pause_tint_color)) {
+        if (im::ImageButton("PauseButton", m_pause_button_texture.shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), pause_tint_color)) {
             game_layer.pause_game();
         }
         m_control_buttons_width += im::GetItemRectSize().x;
         im::PopItemFlag();
 
-        const bool is_stop_enabled = game_layer.game_running || game_layer.game_paused;
+        const bool is_stop_enabled = game_layer.game_running() || game_layer.game_paused();
         const ImVec4 stop_tint_color = is_stop_enabled ? ImColor(200, 200, 200) : ImColor(75, 75, 75);
 
         im::PushItemFlag(ImGuiItemFlags_Disabled, !is_stop_enabled);
-        if (im::ImageButton("StopButton", m_stop_button_texture->shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), stop_tint_color)) {
+        if (im::ImageButton("StopButton", m_stop_button_texture.shader_view.get(), ImVec2(button_image_size, button_image_size), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImVec4(0.0f, 0.0f, 0.0f, 0.0f), stop_tint_color)) {
             game_layer.stop_game();
             if (const BinarySerializer serializer{ m_temp_path, false }) {
                 game_layer.reset_scene();
-                game_layer.scene->deserialize(serializer);
+                game_layer.scene().deserialize(serializer);
             }
         }
         m_control_buttons_width += im::GetItemRectSize().x;

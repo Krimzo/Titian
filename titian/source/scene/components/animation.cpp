@@ -219,6 +219,32 @@ void titian::Animation::bind_matrices(const int slot) const
 	gpu.bind_shader_view_for_vertex_shader(m_matrices_view, slot);
 }
 
+titian::Ref<titian::Animation> titian::Animation::clone() const
+{
+	Ref animation = new Animation();
+	animation->animation_type = animation_type;
+	animation->ticks_per_second = ticks_per_second;
+	animation->duration_in_ticks = duration_in_ticks;
+	animation->meshes = meshes;
+	animation->channels = channels;
+
+	Function<void(const AnimationNode*, AnimationNode*)> rec_helper;
+	rec_helper = [&](const AnimationNode* source, AnimationNode* target)
+	{
+		if (!source || !target)
+			return;
+		target->channel_index = source->channel_index;
+		target->children.resize(source->children.size());
+		for (int i = 0; i < source->children.size(); i++) {
+			target->children[i] = new AnimationNode();
+			rec_helper(&source->children[i], &target->children[i]);
+		}
+	};
+	rec_helper(&animation_root, &animation->animation_root);
+
+	return animation;
+}
+
 void titian::Animation::upload_matrices()
 {
 	if (m_final_matrices.empty()) {

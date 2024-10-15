@@ -13,38 +13,42 @@ void titian::GameLayer::init()
 bool titian::GameLayer::update()
 {
 	const TimeBomb _ = bench_time_bomb();
-
-	if (game_running && !game_paused) {
+	if (m_game_running && !m_game_paused) {
 		const float delta_time = Layers::get<AppLayer>().timer.delta();
-		scene->update_physics(delta_time);
-		scene->update_scripts();
+		m_scene->update_physics(delta_time);
+		m_scene->update_scripts();
 	}
 	return true;
 }
 
 void titian::GameLayer::reset_scene()
 {
-	scene = new Scene();
+	m_scene = new Scene();
+}
+
+titian::Scene& titian::GameLayer::scene()
+{
+	return *m_scene;
 }
 
 void titian::GameLayer::start_game()
 {
 	AppLayer& app_layer = Layers::get<AppLayer>();
 
-	for (auto& [_, shader] : scene->shaders) {
+	for (auto& [_, shader] : m_scene->shaders) {
 		shader->reload();
 	}
-	for (auto& [_, script] : scene->scripts) {
+	for (auto& [_, script] : m_scene->scripts) {
 		script->reload();
 	}
 
 	app_layer.timer.restart();
-	for (auto& [_, script] : scene->scripts) {
-		script->call_start(*scene);
+	for (auto& [_, script] : m_scene->scripts) {
+		script->call_start(*m_scene);
 	}
 
-	game_running = true;
-	game_paused = false;
+	m_game_running = true;
+	m_game_paused = false;
 	Logger::log("Game started.");
 	app_layer.timer.restart();
 }
@@ -52,19 +56,29 @@ void titian::GameLayer::start_game()
 void titian::GameLayer::pause_game()
 {
 	Layers::get<AppLayer>().timer.pause();
-	game_paused = true;
+	m_game_paused = true;
 }
 
 void titian::GameLayer::resume_game()
 {
-	game_paused = false;
+	m_game_paused = false;
 	Layers::get<AppLayer>().timer.resume();
 }
 
 void titian::GameLayer::stop_game()
 {
 	Layers::get<AppLayer>().timer.stop();
-	game_running = false;
-	game_paused = false;
+	m_game_running = false;
+	m_game_paused = false;
 	Logger::log("Game stopped.");
+}
+
+bool titian::GameLayer::game_running() const
+{
+	return m_game_running;
+}
+
+bool titian::GameLayer::game_paused() const
+{
+	return m_game_paused;
 }

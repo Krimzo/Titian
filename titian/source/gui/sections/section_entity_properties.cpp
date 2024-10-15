@@ -11,7 +11,7 @@ void titian::GUISectionEntityProperties::render_gui()
 
     EditorLayer& editor_layer = Layers::get<EditorLayer>();
 	GameLayer& game_layer = Layers::get<GameLayer>();
-    Scene& scene = *game_layer.scene;
+    Scene& scene = game_layer.scene();
 
     if (im::Begin("Entity properties") && !editor_layer.selected_entities.empty()) {
         const String entity_name = *(--editor_layer.selected_entities.end());
@@ -24,7 +24,7 @@ void titian::GUISectionEntityProperties::render_gui()
             edit_entity_transform(scene, *entity);
             edit_entity_animation(scene, *entity);
             edit_entity_material(scene, *entity);
-            edit_entity_physics(scene, entity_name, entity);
+            edit_entity_physics(scene, *entity);
             edit_entity_collider(scene, *entity);
             edit_entity_other(scene, *entity);
         }
@@ -241,49 +241,45 @@ void titian::GUISectionEntityProperties::edit_entity_material(Scene& scene, Enti
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_physics(Scene& scene, const String& entity_name, Ref<Entity>& entity)
+void titian::GUISectionEntityProperties::edit_entity_physics(Scene& scene, Entity& entity)
 {
     im::Separator();
     im::Text("Physics");
 
-    bool dynamic = entity->dynamic();
+    bool dynamic = entity.dynamic();
     if (im::Checkbox("Dynamic", &dynamic)) {
-        scene.remove_entity(entity_name);
-        entity->set_dynamic(dynamic);
-        scene.add_entity(entity_name, entity);
+        entity.set_dynamic(dynamic);
     }
 
-    if (dynamic) {
-        bool gravity = entity->gravity();
-        if (im::Checkbox("Gravity", &gravity)) {
-            entity->set_gravity(gravity);
-        }
+    bool gravity = entity.gravity();
+    if (im::Checkbox("Gravity", &gravity)) {
+        entity.set_gravity(gravity);
+    }
 
-        float mass = entity->mass();
-        if (im::DragFloat("Mass", &mass, 1.0f, 0.0f, 1e9f)) {
-            entity->set_mass(mass);
-        }
+    float mass = entity.mass();
+    if (im::DragFloat("Mass", &mass, 1.0f, 0.0f, 1e9f)) {
+        entity.set_mass(mass);
+    }
 
-        float angular_damping = entity->angular_damping();
-		if (im::DragFloat("Angular Damping", &angular_damping, 0.01f, 0.0f, 1.0f)) {
-			entity->set_angular_damping(angular_damping);
-		}
+    float angular_damping = entity.angular_damping();
+    if (im::DragFloat("Angular Damping", &angular_damping, 0.01f, 0.0f, 1.0f)) {
+        entity.set_angular_damping(angular_damping);
+    }
 
-        Float3 velocity = entity->velocity();
-        if (im::DragFloat3("Velocity", &velocity.x)) {
-            entity->set_velocity(velocity);
-        }
+    Float3 velocity = entity.velocity();
+    if (im::DragFloat3("Velocity", &velocity.x)) {
+        entity.set_velocity(velocity);
+    }
 
-        Float3 angular = entity->angular() * kl::to_degrees();
-        if (im::DragFloat3("Angular", &angular.x)) {
-            entity->set_angular(angular * kl::to_radians());
-        }
+    Float3 angular = entity.angular() * kl::to_degrees();
+    if (im::DragFloat3("Angular", &angular.x)) {
+        entity.set_angular(angular * kl::to_radians());
     }
 }
 
 void titian::GUISectionEntityProperties::edit_entity_collider(Scene& scene, Entity& entity)
 {
-    static const Map<px::PxGeometryType::Enum, String> possible_colliders = {
+    static const Map<px::PxGeometryType::Enum, String> possible_geometries = {
         { px::PxGeometryType::Enum::eINVALID, "/" },
         { px::PxGeometryType::Enum::eBOX, "box" },
         { px::PxGeometryType::Enum::eSPHERE, "sphere" },
@@ -293,92 +289,86 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene& scene, Enti
     im::Separator();
     im::Text("Collider");
 
-    Ref<Collider> collider = entity.collider();
-    px::PxGeometryType::Enum collider_type = collider ? collider->type() : px::PxGeometryType::Enum::eINVALID;
-    String collider_name = possible_colliders.contains(collider_type) ? possible_colliders.at(collider_type) : "mesh_";
+    px::PxGeometryType::Enum geometry_type = entity.geometry_type();
+    String collider_name = possible_geometries.contains(geometry_type) ? possible_geometries.at(geometry_type) : "/";
 
     if (im::BeginCombo("Bound Collider", collider_name.data())) {
-        for (auto& [type, name] : possible_colliders) {
-            if (im::Selectable(name.data(), type == collider_type)) {
-                collider = scene.new_collider(type);
-                collider_type = (collider ? collider->type() : px::PxGeometryType::Enum::eINVALID);
-                entity.set_collider(collider);
+        for (auto& [type, name] : possible_geometries) {
+            if (im::Selectable(name.data(), type == geometry_type)) {
+                geometry_type = type;
+                switch (type)
+                {
+                case px::PxGeometryType::Enum::eINVALID: entity.remove_collider(); break;
+                case px::PxGeometryType::Enum::eBOX: entity.set_box_collider({ 1.0f, 1.0f, 1.0f }); break;
+                case px::PxGeometryType::Enum::eSPHERE: entity.set_sphere_collider(1.0f); break;
+				case px::PxGeometryType::Enum::eCAPSULE: entity.set_capsule_collider(1.0f, 2.0f); break;
+                }
             }
         }
         im::EndCombo();
     }
-    if (!collider) {
-        return;
-    }
 
-    float restitution = collider->restitution();
+    float restitution = entity.restitution();
     if (im::DragFloat("Restitution", &restitution, 0.1f, 0.0f, 1e9f)) {
-        collider->set_restitution(restitution);
+        entity.set_restitution(restitution);
     }
 
-    float static_friction = collider->static_friction();
+    float static_friction = entity.static_friction();
     if (im::DragFloat("Static Friction", &static_friction, 0.1f, 0.0f, 1e9f)) {
-        collider->set_static_friction(static_friction);
+        entity.set_static_friction(static_friction);
     }
 
-    float dynamic_friction = collider->dynamic_friction();
+    float dynamic_friction = entity.dynamic_friction();
     if (im::DragFloat("Dynamic Friction", &dynamic_friction, 0.1f, 0.0f, 1e9f)) {
-        collider->set_dynamic_friction(dynamic_friction);
+        entity.set_dynamic_friction(dynamic_friction);
     }
 
-    int geometry_type = 0;
-    px::PxBoxGeometry box_geometry{};
-    px::PxTriangleMeshGeometry mesh_geometry{};
-    px::PxShape* collider_shape = collider->shape();
-    if (collider_type == px::PxGeometryType::Enum::eBOX) {
-        collider_shape->getBoxGeometry(box_geometry);
-        Float3 box_size = px_cast(box_geometry.halfExtents) * 2.0f;
-        if (im::DragFloat3("Size", &box_size.x, 0.5f, 0.0f, 1e9f)) {
-            box_geometry.halfExtents = px_cast(box_size) * 0.5f;
-            collider_shape->setGeometry(box_geometry);
+    const auto geometry = entity.collider_geometry();
+    switch (geometry.getType())
+    {
+    case px::PxGeometryType::Enum::eBOX:
+    {
+        px::PxBoxGeometry box_geometry = geometry.box();
+        box_geometry.halfExtents *= 2.0f;
+        if (im::DragFloat3("Box Size", &box_geometry.halfExtents.x, 0.1f, 0.0f, 1e9f)) {
+            box_geometry.halfExtents *= 0.5f;
+            entity.set_collider_geometry(box_geometry);
         }
-        geometry_type = 1;
+        break;
     }
-    else if (collider_type == px::PxGeometryType::Enum::eSPHERE) {
-        px::PxSphereGeometry geometry = {};
-        collider_shape->getSphereGeometry(geometry);
-
-        if (im::DragFloat("Radius", &geometry.radius, 0.5f, 0.0f, 1e9f)) {
-            collider_shape->setGeometry(geometry);
+    case px::PxGeometryType::Enum::eSPHERE:
+    {
+        px::PxSphereGeometry sphere_geometry = geometry.sphere();
+        if (im::DragFloat("Sphere Radius", &sphere_geometry.radius, 0.1f, 0.0f, 1e9f)) {
+			entity.set_collider_geometry(sphere_geometry);
         }
+        break;
     }
-    else if (collider_type == px::PxGeometryType::Enum::eCAPSULE) {
-        px::PxCapsuleGeometry geometry = {};
-        collider_shape->getCapsuleGeometry(geometry);
-
-        if (im::DragFloat("Radius", &geometry.radius, 0.5f, 0.0f, 1e9f)) {
-            collider_shape->setGeometry(geometry);
+    case px::PxGeometryType::Enum::eCAPSULE:
+    {
+        px::PxCapsuleGeometry capsule_geometry = geometry.capsule();
+        if (im::DragFloat("Capsule Radius", &capsule_geometry.radius, 0.5f, 0.0f, 1e9f)) {
+            entity.set_collider_geometry(capsule_geometry);
         }
-        if (im::DragFloat("Height", &geometry.halfHeight, 0.5f, 0.0f, 1e9f)) {
-            collider_shape->setGeometry(geometry);
+        if (im::DragFloat("Capsule Height", &capsule_geometry.halfHeight, 0.5f, 0.0f, 1e9f)) {
+            entity.set_collider_geometry(capsule_geometry);
         }
+        break;
     }
-
-    Float3 rotation = collider->rotation();
-    if (im::DragFloat3("Offset Rotation", &rotation.x)) {
-        collider->set_rotation(rotation);
     }
 
-    Float3 offset = collider->offset();
-    if (im::DragFloat3("Offset Position", &offset.x)) {
-        collider->set_offset(offset);
+    Float3 collider_rotation = entity.collider_rotation();
+    if (im::DragFloat3("Collider Rotation", &collider_rotation.x)) {
+        entity.set_collider_rotation(collider_rotation);
     }
 
-    if (geometry_type != 0 && im::Button("Load size from scale")) {
-        const Float3 scale = entity.scale();
-        if (geometry_type == 1) {
-            box_geometry.halfExtents = px_cast(scale) * 0.5f;
-            collider_shape->setGeometry(box_geometry);
-        }
-        else {
-            mesh_geometry.scale = px_cast(scale);
-            collider_shape->setGeometry(mesh_geometry);
-        }
+    Float3 collider_offset = entity.collider_offset();
+    if (im::DragFloat3("Collider Offset", &collider_offset.x)) {
+        entity.set_collider_offset(collider_offset);
+    }
+
+    if (geometry_type == px::PxGeometryType::Enum::eBOX && im::Button("Copy scale")) {
+        entity.set_box_collider(entity.scale());
     }
 }
 
@@ -387,5 +377,5 @@ void titian::GUISectionEntityProperties::edit_entity_other(Scene& scene, Entity&
     im::Separator();
     im::Text("Other Properties");
 
-    im::Checkbox("Casts Shadows", &entity.casts_shadows);
+    im::Checkbox("Shadows", &entity.shadows);
 }

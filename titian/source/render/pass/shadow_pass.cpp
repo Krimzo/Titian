@@ -18,7 +18,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
     RenderLayer& render_layer = Layers::get<RenderLayer>();
     kl::Timer& timer = Layers::get<AppLayer>().timer;
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = *Layers::get<GameLayer>().scene;
+    Scene& scene = Layers::get<GameLayer>().scene();
 
     DirectionalLight* dir_light = scene.get_casted<DirectionalLight>(scene.main_directional_light_name);
     if (!dir_light)
@@ -42,9 +42,8 @@ void titian::ShadowPass::render_self(StatePackage& package)
     
     const auto schedule_entity_helper = [&](Entity* entity)
     {
-        if (!entity->casts_shadows) {
+        if (!entity->shadows)
             return;
-        }
 
         RenderInfo info{};
         info.animation = scene.helper_get_animation(entity->animation_name);
@@ -94,7 +93,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
             CB cb = info.cb;
             cb.WVP = VP * cb.WVP;
             package.shader_state.upload(cb);
-            gpu.draw(info.mesh->graphics_buffer, info.mesh->casted_topology(), sizeof(Vertex));
+            gpu.draw(info.mesh->graphics_buffer, info.mesh->topology, sizeof(Vertex));
             bench_add_draw_call();
         }
     }

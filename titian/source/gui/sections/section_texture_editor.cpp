@@ -9,7 +9,7 @@ void titian::GUISectionTextureEditor::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    Scene& scene = *Layers::get<GameLayer>().scene;
+    Scene& scene = Layers::get<GameLayer>().scene();
 
     Ref<Texture> texture;
     if (scene.textures.contains(selected_texture)) {

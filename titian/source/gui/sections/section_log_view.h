@@ -2,7 +2,7 @@
 
 #include "gui/gui_section.h"
 #include "gui/gui_layer.h"
-#include "application/logger.h"
+#include "app/logger.h"
 
 
 namespace titian {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "serialization/serialization.h"
+#include "serial/serial.h"
 
 
 namespace titian {
@@ -24,5 +24,7 @@ namespace titian {
 		void deserialize(const Serializer& serializer) override;
 
 		bool is_transparent() const;
+
+		Ref<Material> clone() const;
 	};
 }

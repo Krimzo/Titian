@@ -6,7 +6,7 @@
 namespace titian {
     struct SandboxPieceTest : SandboxPiece
     {
-        SandboxPieceTest(TitianEditor* editor);
+        SandboxPieceTest(TitianEditor& editor);
 
         void setup_self() override;
     };

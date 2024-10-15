@@ -8,9 +8,9 @@
 namespace titian {
     struct GUISectionMaterialEditor : GUISection
     {
-        Ref<Camera> camera;
-        Ref<Texture> render_texture;
-        Ref<Texture> depth_texture;
+        Camera camera;
+        Texture render_texture;
+        Texture depth_texture;
 
         bool was_focused = true;
         Float2 initial_camera_info = { 40, 30 };

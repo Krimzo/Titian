@@ -4,13 +4,12 @@
 titian::GUISectionExplorer::GUISectionExplorer()
     : GUISection("GUISectionExplorer")
 {
-    const auto create_texture = [&](Ref<Texture>& texture, str filename)
+    const auto create_texture = [&](Texture& texture, str filename)
     {
-        texture = new Texture();
-        texture->data_buffer.load_from_file(filename);
-        texture->reload_as_2D();
-        texture->create_shader_view();
-        kl::assert(texture->shader_view, "Failed to init texture: ", filename);
+        texture.data_buffer.load_from_file(filename);
+        texture.reload_as_2D();
+        texture.create_shader_view();
+        kl::assert(texture.shader_view, "Failed to init texture: ", filename);
     };
 
     WorkQueue queue;
@@ -203,7 +202,7 @@ void titian::GUISectionExplorer::handle_file_entry(const fs::path& file)
 void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, const bool is_parent_dir)
 {
     const String path = fs::absolute(dir).string();
-    const dx::ShaderView icon = is_parent_dir ? parent_dir_texture->shader_view : default_dir_texture->shader_view;
+    const dx::ShaderView icon = is_parent_dir ? parent_dir_texture.shader_view : default_dir_texture.shader_view;
 
     constexpr float padding = 5.0f;
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
@@ -282,18 +281,19 @@ void titian::GUISectionExplorer::handle_item_transfer(const StringView& item, co
 
 dx::ShaderView titian::GUISectionExplorer::file_icon(const FileType type)
 {
-    switch (type) {
+    switch (type)
+    {
     case FileType::MESH:
-        return mesh_file_texture->shader_view;
+        return mesh_file_texture.shader_view;
     case FileType::TEXTURE:
-        return texture_file_texture->shader_view;
+        return texture_file_texture.shader_view;
     case FileType::SCRIPT:
-        return script_file_texture->shader_view;
+        return script_file_texture.shader_view;
     case FileType::SHADER:
-        return shader_file_texture->shader_view;
+        return shader_file_texture.shader_view;
     case FileType::BINARY_SCENE:
     case FileType::TEXT_SCENE:
-        return scene_file_texture->shader_view;
+        return scene_file_texture.shader_view;
     }
-    return default_file_texture->shader_view;
+    return default_file_texture.shader_view;
 }

@@ -14,12 +14,14 @@ bool titian::EditorLayer::update()
 
     AppLayer& app_layer = Layers::get<AppLayer>();
 	GameLayer& game_layer = Layers::get<GameLayer>();
-    
+
+    Scene& scene = game_layer.scene();
+
     if (!is_viewport_focused || !is_over_viewport) {
         return true;
     }
 
-    Camera* camera = game_layer.scene->get_casted<Camera>(game_layer.scene->main_camera_name);
+    Camera* camera = scene.get_casted<Camera>(scene.main_camera_name);
     if (!camera) {
         return true;
     }

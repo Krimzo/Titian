@@ -1,7 +1,7 @@
 #include "sandbox.h"
 
 
-titian::SandboxPieceMonkes::SandboxPieceMonkes(TitianEditor* editor, const int size)
+titian::SandboxPieceMonkes::SandboxPieceMonkes(TitianEditor& editor, const int size)
     : SandboxPiece(editor)
 {
     this->size = size;
@@ -9,17 +9,17 @@ titian::SandboxPieceMonkes::SandboxPieceMonkes(TitianEditor* editor, const int s
 
 void titian::SandboxPieceMonkes::setup_self()
 {
-    Scene* scene = &editor->game_layer.scene;
-    kl::GPU* gpu = &editor->app_layer.gpu;
+    kl::GPU& gpu = editor.app_layer.gpu;
+    Scene& scene = editor.game_layer.scene();
 
     const int entity_count = size * size;
     const int half_size = size / 2;
 
     Ref<Mesh> monke_mesh;
-    if (auto opt_data = scene->get_assimp_data("package/meshes/monke.obj")) {
+    if (auto opt_data = scene.get_assimp_data("package/meshes/monke.obj")) {
         const aiScene& ai_scene = *opt_data.value().importer->GetScene();
         for (uint32_t i = 0; i < ai_scene.mNumMeshes; i++) {
-            monke_mesh = scene->load_assimp_mesh(ai_scene, *ai_scene.mMeshes[i]);
+            monke_mesh = scene.load_assimp_mesh(ai_scene, *ai_scene.mMeshes[i]);
             break;
         }
     }
@@ -29,8 +29,8 @@ void titian::SandboxPieceMonkes::setup_self()
     Ref monke_animation = new Animation();
     monke_animation->meshes = { "monke" };
 
-    scene->meshes["monke"] = monke_mesh;
-    scene->animations["monke"] = monke_animation;
+    scene.meshes["monke"] = monke_mesh;
+    scene.animations["monke"] = monke_animation;
 
     for (int i = 0; i < entity_count; i++) {
         const int x = i % size;
@@ -46,7 +46,7 @@ void titian::SandboxPieceMonkes::setup_self()
         material->color = kl::colors::CYAN;
         material->reflectivity_factor = -i / (entity_count - 1.0f);
         material->refraction_index = 1.5f;
-        scene->materials[material_name] = material;
+        scene.materials[material_name] = material;
 
         Ref monke = new Entity();
         monke->set_scale(Float3{ 0.5f });
@@ -58,6 +58,6 @@ void titian::SandboxPieceMonkes::setup_self()
 
         monke->animation_name = animation_name;
         monke->material_name = material_name;
-        scene->add_entity(entity_name, monke);
+        scene.add_entity(entity_name, monke);
     }
 }

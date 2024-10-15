@@ -13,7 +13,7 @@ namespace titian {
 		Track();
 
 		void insert_media(float offset, const Ref<Media>& med);
-		void remove_media(const Ref<Media>& med);
+		void remove_media(const Media& med);
 
 		Ref<Media> get_media(float time, float& out_offset) const;
 

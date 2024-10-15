@@ -15,31 +15,28 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\application\app_layer.cpp">
+    <ClCompile Include="source\app\app_layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\application\log_info.cpp">
+    <ClCompile Include="source\app\log_info.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\application\logger.cpp">
+    <ClCompile Include="source\app\logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\components\animation.cpp">
+    <ClCompile Include="source\scene\components\animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\components\collider.cpp">
+    <ClCompile Include="source\scene\components\material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\components\material.cpp">
+    <ClCompile Include="source\scene\components\mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\components\mesh.cpp">
+    <ClCompile Include="source\scene\components\shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\components\shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\components\texture.cpp">
+    <ClCompile Include="source\scene\components\texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\editor\editor_layer.cpp">
@@ -108,10 +105,10 @@
     <ClCompile Include="source\layer\layer_stack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\light\ambient_light.cpp">
+    <ClCompile Include="source\scene\light\ambient_light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\light\directional_light.cpp">
+    <ClCompile Include="source\scene\light\directional_light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\render\pass\display_pass.cpp">
@@ -156,15 +153,6 @@
     <ClCompile Include="source\render\render_pass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\default\default_animations.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scene\default\default_materials.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scene\default\default_meshes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\scene\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -174,19 +162,19 @@
     <ClCompile Include="source\scene\scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\scripting\interp_script.cpp">
+    <ClCompile Include="source\script\interp_script.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\scripting\native_script.cpp">
+    <ClCompile Include="source\script\native_script.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\scripting\node_script.cpp">
+    <ClCompile Include="source\script\node_script.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\scripting\script.cpp">
+    <ClCompile Include="source\script\script.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\serialization\binary_serializer.cpp">
+    <ClCompile Include="source\serial\binary_serializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\titian_editor.cpp">
@@ -195,16 +183,16 @@
     <ClCompile Include="source\titian_game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\ui\ui_funcs.cpp">
+    <ClCompile Include="source\gui\ui\ui_funcs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\titian.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\serialization\text_serializer.cpp">
+    <ClCompile Include="source\serial\text_serializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\serialization\serialization.cpp">
+    <ClCompile Include="source\serial\serial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\utility\async_util.cpp">
@@ -228,33 +216,33 @@
     <ClCompile Include="source\utility\helper_util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\scene\scene_defaults.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\application\app_layer.h">
+    <ClInclude Include="source\app\app_layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\application\log_info.h">
+    <ClInclude Include="source\app\log_info.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\application\logger.h">
+    <ClInclude Include="source\app\logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\components\animation.h">
+    <ClInclude Include="source\scene\components\animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\components\collider.h">
+    <ClInclude Include="source\scene\components\material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\components\material.h">
+    <ClInclude Include="source\scene\components\mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\components\mesh.h">
+    <ClInclude Include="source\scene\components\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\components\shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\components\texture.h">
+    <ClInclude Include="source\scene\components\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\editor\editor_layer.h">
@@ -323,10 +311,10 @@
     <ClInclude Include="source\layer\layer_stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\light\ambient_light.h">
+    <ClInclude Include="source\scene\light\ambient_light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\light\directional_light.h">
+    <ClInclude Include="source\scene\light\directional_light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\render\pass\display_pass.h">
@@ -371,15 +359,6 @@
     <ClInclude Include="source\render\render_pass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\default\default_animations.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\scene\default\default_materials.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\scene\default\default_meshes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\scene\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -389,19 +368,19 @@
     <ClInclude Include="source\scene\scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\scripting\interp_script.h">
+    <ClInclude Include="source\script\interp_script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\scripting\native_script.h">
+    <ClInclude Include="source\script\native_script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\scripting\node_script.h">
+    <ClInclude Include="source\script\node_script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\scripting\script.h">
+    <ClInclude Include="source\script\script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\serialization\binary_serializer.h">
+    <ClInclude Include="source\serial\binary_serializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\titian_editor.h">
@@ -410,7 +389,7 @@
     <ClInclude Include="source\titian_game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\ui\ui_funcs.h">
+    <ClInclude Include="source\gui\ui\ui_funcs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\async_util.h">
@@ -431,16 +410,19 @@
     <ClInclude Include="source\titian.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\serialization\text_serializer.h">
+    <ClInclude Include="source\serial\text_serializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\serialization\serialization.h">
+    <ClInclude Include="source\serial\serial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\gui\sections\section_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\helper_util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\scene_defaults.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

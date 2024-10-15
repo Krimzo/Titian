@@ -12,7 +12,7 @@ void titian::GUISectionScriptEditor::render_gui()
 	const TimeBomb _ = bench_time_bomb();
 
 	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-	Scene& scene = *Layers::get<GameLayer>().scene;
+	Scene& scene = Layers::get<GameLayer>().scene();
 
 	Ref<Script> script;
 	if (scene.scripts.contains(selected_script)) {

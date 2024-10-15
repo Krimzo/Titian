@@ -439,18 +439,27 @@ void titian::InterpScript::load_engine_parts()
 
 	m_engine->new_usertype<Entity>(
 		"Entity",
-		"casts_shadows", &Entity::casts_shadows,
+		"shadows", &Entity::shadows,
 		"animation_name", &Entity::animation_name,
 		"material_name", &Entity::material_name,
 		"dynamic", sl::property(&Entity::dynamic, &Entity::set_dynamic),
 		"gravity", sl::property(&Entity::gravity, &Entity::set_gravity),
 		"mass", sl::property(&Entity::mass, &Entity::set_mass),
 		"angular_damping", sl::property(&Entity::angular_damping, &Entity::set_angular_damping),
+		"static_friction", sl::property(&Entity::static_friction, &Entity::set_static_friction),
+		"dynamic_friction", sl::property(&Entity::dynamic_friction, &Entity::set_dynamic_friction),
+		"restitution", sl::property(&Entity::restitution, &Entity::set_restitution),
 		"scale", sl::property(&Entity::scale, &Entity::set_scale),
 		"rotation", sl::property(&Entity::rotation, &Entity::set_rotation),
 		"position", sl::property(&Entity::position, &Entity::set_position),
 		"velocity", sl::property(&Entity::velocity, &Entity::set_velocity),
 		"angular", sl::property(&Entity::angular, &Entity::set_angular),
+		"collider_rotation", sl::property(&Entity::collider_rotation, &Entity::set_collider_rotation),
+		"collider_offset", sl::property(&Entity::collider_offset, &Entity::set_collider_offset),
+		"set_box_collider", &Entity::set_box_collider,
+		"set_sphere_collider", &Entity::set_sphere_collider,
+		"set_capsule_collider", &Entity::set_capsule_collider,
+		"remove_collider", &Entity::remove_collider,
 		"model_matrix", &Entity::model_matrix,
 		"collider_matrix", &Entity::collider_matrix
 	);

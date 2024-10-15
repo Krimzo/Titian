@@ -1,6 +1,6 @@
 #pragma once
 
-#include "scripting/script.h"
+#include "script/script.h"
 #include "scene/scene.h"
 
 

@@ -11,7 +11,7 @@ void titian::GUISectionSceneEntities::render_gui()
 
 	EditorLayer& editor_layer = Layers::get<EditorLayer>();
 	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-	Scene& scene = *Layers::get<GameLayer>().scene;
+	Scene& scene = Layers::get<GameLayer>().scene();
 
 	if (im::Begin("Scene Entities")) {
 		if (im::BeginPopupContextWindow("NewEntity", ImGuiPopupFlags_MouseButtonMiddle)) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "serialization/serialization.h"
+#include "serial/serial.h"
 
 
 namespace titian {
@@ -59,6 +59,8 @@ namespace titian {
 
 		void update(Scene& scene, float current_time);
 		void bind_matrices(int slot) const;
+
+		Ref<Animation> clone() const;
 
 	private:
 		Float4x4 m_global_inverse_transform;

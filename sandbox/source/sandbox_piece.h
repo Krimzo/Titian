@@ -6,9 +6,9 @@
 namespace titian {
 	struct SandboxPiece
 	{
-		TitianEditor* editor = nullptr;
+		TitianEditor& editor;
 
-		SandboxPiece(TitianEditor* editor);
+		SandboxPiece(TitianEditor& editor);
 		virtual ~SandboxPiece() = default;
 
 		virtual void setup_self() = 0;

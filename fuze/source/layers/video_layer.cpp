@@ -241,27 +241,27 @@ void titian::VideoLayer::load_video(const StringView& path)
 	selected_track->insert_media(current_time, media);
 }
 
-int titian::VideoLayer::find_track(const Ref<Track>& track) const
+int titian::VideoLayer::find_track(const Track& track) const
 {
 	for (int i = 0; i < (int) tracks.size(); i++) {
-		if (tracks[i] == track) {
+		if (&tracks[i] == &track) {
 			return i;
 		}
 	}
 	return -1;
 }
 
-void titian::VideoLayer::delete_track(const Ref<Track>& track)
+void titian::VideoLayer::delete_track(const Track& track)
 {
 	for (int i = 0; i < (int) tracks.size(); i++) {
-		if (tracks[i] == track) {
+		if (&tracks[i] == &track) {
 			tracks.erase(tracks.begin() + i);
 			return;
 		}
 	}
 }
 
-void titian::VideoLayer::move_track_up(const Ref<Track>& track)
+void titian::VideoLayer::move_track_up(const Track& track)
 {
 	const int index = find_track(track);
 	if (index > 0) {
@@ -269,7 +269,7 @@ void titian::VideoLayer::move_track_up(const Ref<Track>& track)
 	}
 }
 
-void titian::VideoLayer::move_track_down(const Ref<Track>& track)
+void titian::VideoLayer::move_track_down(const Track& track)
 {
 	const int index = find_track(track);
 	if (index >= 0 && index < (int) tracks.size() - 1) {
@@ -277,11 +277,11 @@ void titian::VideoLayer::move_track_down(const Ref<Track>& track)
 	}
 }
 
-titian::Ref<titian::Track> titian::VideoLayer::find_track(const Ref<Media>& media) const
+titian::Ref<titian::Track> titian::VideoLayer::find_track(const Media& media) const
 {
 	for (const auto& track : tracks) {
 		for (const auto& [_, med] : track->media) {
-			if (med == media) {
+			if (&med == &media) {
 				return track;
 			}
 		}
@@ -289,11 +289,11 @@ titian::Ref<titian::Track> titian::VideoLayer::find_track(const Ref<Media>& medi
 	return {};
 }
 
-void titian::VideoLayer::delete_media(const Ref<Media>& media)
+void titian::VideoLayer::delete_media(const Media& media)
 {
 	for (auto& track : tracks) {
 		for (const auto& [offset, med] : track->media) {
-			if (med == media) {
+			if (&med == &media) {
 				track->media.erase(offset);
 				return;
 			}
@@ -301,11 +301,11 @@ void titian::VideoLayer::delete_media(const Ref<Media>& media)
 	}
 }
 
-float titian::VideoLayer::get_offset(const Ref<Media>& media) const
+float titian::VideoLayer::get_offset(const Media& media) const
 {
 	for (const auto& track : tracks) {
 		for (const auto& [offset, med] : track->media) {
-			if (med == media) {
+			if (&med == &media) {
 				return offset;
 			}
 		}
@@ -313,22 +313,22 @@ float titian::VideoLayer::get_offset(const Ref<Media>& media) const
 	return 0.0f;
 }
 
-void titian::VideoLayer::update_offset(const Ref<Media>& media, const float offset)
+void titian::VideoLayer::update_offset(const Ref<Media> media, const float offset)
 {
-	Ref track = find_track(media);
+	Ref track = find_track(*media);
 	if (!track) {
 		return;
 	}
 	if (track->media.contains(offset)) {
 		return;
 	}
-	track->remove_media(media);
+	track->remove_media(*media);
 	track->insert_media(offset, media);
 }
 
-void titian::VideoLayer::split_audio(Ref<Media>& media)
+void titian::VideoLayer::split_audio(Media& media)
 {
-	if (media->audio->duration() <= 0.0f) {
+	if (media.audio->duration() <= 0.0f) {
 		return;
 	}
 
@@ -336,7 +336,7 @@ void titian::VideoLayer::split_audio(Ref<Media>& media)
 	float media_offset = 0.0f;
 	for (int i = 0; i < (int) tracks.size(); i++) {
 		for (auto& [offset, med] : tracks[i]->media) {
-			if (med == media) {
+			if (&med == &media) {
 				next_track_index = i + 1;
 				media_offset = offset;
 				goto media_loop_end;
@@ -359,11 +359,11 @@ media_loop_end:
 
 	Ref new_media = new Media();
 	new_media->audio = new Audio();
-	new_media->audio->out_audio = media->audio->out_audio;
-	media->audio->out_audio.clear();
+	new_media->audio->out_audio = media.audio->out_audio;
+	media.audio->out_audio.clear();
 	new_media->duration = new_media->audio->duration();
 	new_media->type = MediaType::AUDIO;
-	new_media->name = media->name;
+	new_media->name = media.name;
 	tracks[next_track_index]->insert_media(media_offset, new_media);
 }
 

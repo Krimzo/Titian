@@ -25,7 +25,7 @@ void titian::OutlinePass::render_self(StatePackage& package)
         return;
 
     Vector<float> entitiy_indices;
-    for (uint32_t counter = 0; const auto& [name, _] : game_layer.scene->entities()) {
+    for (uint32_t counter = 0; const auto& [name, _] : game_layer.scene().entities()) {
         counter += 1;
         if (editor_layer.selected_entities.contains(name)) {
 			entitiy_indices.push_back(float(counter));
@@ -35,8 +35,8 @@ void titian::OutlinePass::render_self(StatePackage& package)
         return;
 
     load_selected_entities(entitiy_indices);
-    gpu.bind_target_depth_view(package.camera->screen_texture->target_view, package.camera->depth_texture->depth_view);
-    gpu.bind_shader_view_for_pixel_shader(package.camera->index_texture->shader_view, 0);
+    gpu.bind_target_depth_view(package.camera->screen_texture.target_view, package.camera->depth_texture.depth_view);
+    gpu.bind_shader_view_for_pixel_shader(package.camera->index_texture.shader_view, 0);
     gpu.bind_shader_view_for_pixel_shader(m_selected_entities_view, 1);
 
     struct alignas(16) CB

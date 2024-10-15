@@ -6,7 +6,7 @@
 namespace titian {
 	struct LayerStack
 	{
-		Vector<Layer*> layers = {};
+		Vector<Layer*> layers;
 
 		LayerStack() = default;
 		virtual ~LayerStack() = default;

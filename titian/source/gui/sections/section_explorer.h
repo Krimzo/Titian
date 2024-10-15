@@ -1,23 +1,23 @@
 #pragma once
 
+#include "app/app_layer.h"
 #include "gui/gui_section.h"
-#include "application/app_layer.h"
-#include "components/texture.h"
 #include "utility/string_util.h"
 #include "utility/file_util.h"
+#include "scene/components/texture.h"
 
 
 namespace titian {
     struct GUISectionExplorer : GUISection
 	{
-        Ref<Texture> default_file_texture;
-        Ref<Texture> mesh_file_texture;
-        Ref<Texture> texture_file_texture;
-        Ref<Texture> script_file_texture;
-        Ref<Texture> shader_file_texture;
-        Ref<Texture> scene_file_texture;
-        Ref<Texture> default_dir_texture;
-        Ref<Texture> parent_dir_texture;
+        Texture default_file_texture;
+        Texture mesh_file_texture;
+        Texture texture_file_texture;
+        Texture script_file_texture;
+        Texture shader_file_texture;
+        Texture scene_file_texture;
+        Texture default_dir_texture;
+        Texture parent_dir_texture;
 
         GUISectionExplorer();
 

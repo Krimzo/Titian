@@ -3,8 +3,8 @@
 #include "gui/gui_section.h"
 #include "render/render_layer.h"
 #include "editor/editor_layer.h"
-#include "serialization/binary_serializer.h"
-#include "serialization/text_serializer.h"
+#include "serial/binary_serializer.h"
+#include "serial/text_serializer.h"
 
 
 namespace titian {
@@ -17,9 +17,9 @@ namespace titian {
     private:
         const String m_temp_path = "temp.titian";
 
-        Ref<Texture> m_start_button_texture = nullptr;
-        Ref<Texture> m_pause_button_texture = nullptr;
-        Ref<Texture> m_stop_button_texture = nullptr;
+        Texture m_start_button_texture;
+        Texture m_pause_button_texture;
+        Texture m_stop_button_texture;
 
         bool m_testing_exit = false;
 

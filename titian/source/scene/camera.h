@@ -36,12 +36,12 @@ namespace titian {
         String target_texture_name = "/";
         String shader_name = "/";
 
-        Ref<Texture> screen_texture;
-        Ref<Texture> color_texture;
-        Ref<Texture> depth_texture;
-        Ref<Texture> depth_staging;
-        Ref<Texture> index_texture;
-        Ref<Texture> index_staging;
+        Texture screen_texture;
+        Texture color_texture;
+        Texture depth_texture;
+        Texture depth_staging;
+        Texture index_texture;
+        Texture index_staging;
 
         Camera();
 

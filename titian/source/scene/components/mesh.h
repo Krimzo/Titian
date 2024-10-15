@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "serialization/serialization.h"
+#include "serial/serial.h"
 
 
 namespace titian {
@@ -30,7 +30,7 @@ namespace titian {
 namespace titian {
     struct Mesh : Serializable
     {
-        int topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
         bool render_wireframe = false;
 
         Vector<Vertex> data_buffer;
@@ -44,10 +44,10 @@ namespace titian {
         void serialize(Serializer& serializer) const override;
         void deserialize(const Serializer& serializer) override;
 
-        D3D_PRIMITIVE_TOPOLOGY casted_topology() const;
-
         void load_vertices(const Vector<kl::Vertex<float>>& vertices);
         void load_triangles(const Vector<kl::Triangle<float>>& triangles);
         void reload();
+
+        Ref<Mesh> clone() const;
     };
 }

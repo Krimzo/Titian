@@ -22,7 +22,7 @@ bool titian::RenderLayer::update()
 
 	AppLayer& app_layer = Layers::get<AppLayer>();
 	kl::GPU& gpu = app_layer.gpu;
-	Scene& scene = *Layers::get<GameLayer>().scene;
+	Scene& scene = Layers::get<GameLayer>().scene();
 
 	gpu.clear_internal();
 
@@ -42,7 +42,7 @@ bool titian::RenderLayer::update()
 					pass->process(camera);
 				}
 				if (Texture* texture = scene.helper_get_texture(camera->target_texture_name)) {
-					texture->copy_other(camera->screen_texture->graphics_buffer);
+					texture->copy_other(camera->screen_texture.graphics_buffer);
 				}
 			}
 		}
@@ -58,7 +58,7 @@ bool titian::RenderLayer::update()
 				pass->process(camera);
 			}
 			if (Texture* texture = scene.helper_get_texture(camera->target_texture_name)) {
-				texture->copy_other(camera->screen_texture->graphics_buffer);
+				texture->copy_other(camera->screen_texture.graphics_buffer);
 			}
 		}
 	}
@@ -71,7 +71,9 @@ bool titian::RenderLayer::update()
 
 void titian::RenderLayer::present() const
 {
-	Scene& scene = *Layers::get<GameLayer>().scene;
+	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	Scene& scene = Layers::get<GameLayer>().scene();
+
 	Camera* main_camera = scene.get_casted<Camera>(scene.main_camera_name);
-	Layers::get<AppLayer>().gpu.swap_buffers(main_camera ? main_camera->v_sync : true);
+	gpu.swap_buffers(main_camera ? main_camera->v_sync : true);
 }

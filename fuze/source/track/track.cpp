@@ -13,10 +13,10 @@ void titian::Track::insert_media(const float offset, const Ref<Media>& new_med)
 	readjust_media();
 }
 
-void titian::Track::remove_media(const Ref<Media>& new_med)
+void titian::Track::remove_media(const Media& new_med)
 {
 	for (auto it = media.begin(); it != media.end(); it++) {
-		if (it->second == new_med) {
+		if (&it->second == &new_med) {
 			media.erase(it);
 			break;
 		}

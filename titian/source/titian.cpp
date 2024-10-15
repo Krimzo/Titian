@@ -18,11 +18,7 @@ int titian::titian_entry(int argc, str* argv, EntryType type)
 		else {
 			Logger::log("Entry scene defaulting to ", entry_scene);
 		}
-
-		Ref game = new TitianGame(entry_scene);
-		if (game->is_valid()) {
-			layer_stack = game;
-		}
+		layer_stack = new TitianGame(entry_scene);
 	}
 	else if (type == EntryType::GAME_EDITOR) {
 		layer_stack = new TitianEditor();
@@ -31,8 +27,9 @@ int titian::titian_entry(int argc, str* argv, EntryType type)
 		Logger::log("Invalid entry type");
 	}
 	
-	if (layer_stack) {
-		while (layer_stack->process_layers());
-	}
+	if (!layer_stack)
+		return 1;
+	
+	while (layer_stack->process_layers());
 	return 0;
 }

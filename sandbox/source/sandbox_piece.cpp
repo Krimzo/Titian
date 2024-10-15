@@ -1,7 +1,6 @@
 #include "sandbox.h"
 
 
-titian::SandboxPiece::SandboxPiece(TitianEditor* editor)
-{
-	this->editor = editor;
-}
+titian::SandboxPiece::SandboxPiece(TitianEditor& editor)
+	: editor(editor)
+{}

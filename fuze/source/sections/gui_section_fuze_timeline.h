@@ -39,6 +39,6 @@ namespace titian {
         void render_track(ImVec2 cell_padding, float row_height, int i, float header_height, const ImVec2& total_min, ImVec2& total_max);
         void render_pointer(ImVec2 total_min, ImVec2 total_max);
 
-        static ImColor color_classify(const Ref<Media>& media);
+        static ImColor color_classify(const Media& media);
     };
 }

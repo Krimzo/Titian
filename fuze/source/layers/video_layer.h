@@ -51,16 +51,16 @@ namespace titian {
 		void load_audio(const StringView& path);
 		void load_video(const StringView& path);
 
-		int find_track(const Ref<Track>& track) const;
-		void delete_track(const Ref<Track>& track);
-		void move_track_up(const Ref<Track>& track);
-		void move_track_down(const Ref<Track>& track);
+		int find_track(const Track& track) const;
+		void delete_track(const Track& track);
+		void move_track_up(const Track& track);
+		void move_track_down(const Track& track);
 
-		Ref<Track> find_track(const Ref<Media>& media) const;
-		void delete_media(const Ref<Media>& media);
-		float get_offset(const Ref<Media>& media) const;
-		void update_offset(const Ref<Media>& media, float offset);
-		void split_audio(Ref<Media>& media);
+		Ref<Track> find_track(const Media& media) const;
+		void delete_media(const Media& media);
+		float get_offset(const Media& media) const;
+		void update_offset(Ref<Media> media, float offset);
+		void split_audio(Media& media);
 
 	private:
 		bool m_playing = false;

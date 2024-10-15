@@ -57,10 +57,9 @@ void titian::DirectionalLight::set_resolution(const int resolution)
 
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
     for (auto& cascade : m_cascades) {
-        cascade = new Texture();
-        cascade->graphics_buffer = gpu.create_texture(&shadow_map_descriptor, nullptr);
-        cascade->create_depth_view(&shadow_depth_view_descriptor);
-        cascade->create_shader_view(&shadow_shader_view_descriptor);
+        cascade.graphics_buffer = gpu.create_texture(&shadow_map_descriptor, nullptr);
+        cascade.create_depth_view(&shadow_depth_view_descriptor);
+        cascade.create_shader_view(&shadow_shader_view_descriptor);
     }
 }
 
@@ -81,12 +80,12 @@ titian::Float3 titian::DirectionalLight::direction() const
 
 dx::DepthView titian::DirectionalLight::depth_view(const int cascade_index) const
 {
-    return m_cascades[cascade_index]->depth_view;
+    return m_cascades[cascade_index].depth_view;
 }
 
 dx::ShaderView titian::DirectionalLight::shader_view(const int cascade_index) const
 {
-    return m_cascades[cascade_index]->shader_view;
+    return m_cascades[cascade_index].shader_view;
 }
 
 titian::Float4x4 titian::DirectionalLight::light_matrix(Camera* camera, const int cascade_index) const

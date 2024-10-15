@@ -14,9 +14,8 @@ namespace titian {
 		px::PxDefaultAllocator allocator = {};
 		px::PxDefaultErrorCallback error_callback = {};
 		px::PxFoundation& foundation = *PxCreateFoundation(PX_PHYSICS_VERSION, allocator, error_callback);
-
-		px::PxPhysics* physics = nullptr;
-		px::PxDefaultCpuDispatcher* cpu_dispatcher = nullptr;
+		px::PxPhysics& physics = *PxCreatePhysics(PX_PHYSICS_VERSION, foundation, px::PxTolerancesScale{});
+		px::PxDefaultCpuDispatcher& cpu_dispatcher = *px::PxDefaultCpuDispatcherCreate(2);
 
 		AppLayer();
 		~AppLayer() override;

@@ -45,7 +45,7 @@ void titian::Mesh::serialize(Serializer& serializer) const
 
 void titian::Mesh::deserialize(const Serializer& serializer)
 {
-    serializer.read_int("topology", topology);
+    serializer.read_int("topology", (int32_t&) topology);
     serializer.read_bool("render_wireframe", render_wireframe);
 
     int32_t data_buffer_size = 0;
@@ -93,11 +93,6 @@ void titian::Mesh::deserialize(const Serializer& serializer)
     this->reload();
 }
 
-D3D_PRIMITIVE_TOPOLOGY titian::Mesh::casted_topology() const
-{
-    return D3D_PRIMITIVE_TOPOLOGY(topology);
-}
-
 void titian::Mesh::load_vertices(const Vector<kl::Vertex<float>>& vertices)
 {
 	data_buffer.resize(vertices.size());
@@ -125,5 +120,33 @@ void titian::Mesh::reload()
         return;
     }
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    graphics_buffer = gpu.create_vertex_buffer(data_buffer.data(), (UINT) (data_buffer.size() * sizeof(Vertex)));
+    graphics_buffer = gpu.create_vertex_buffer(data_buffer.data(), UINT(data_buffer.size() * sizeof(Vertex)));
+}
+
+titian::Ref<titian::Mesh> titian::Mesh::clone() const
+{
+    Ref mesh = new Mesh();
+    mesh->topology = topology;
+    mesh->render_wireframe = render_wireframe;
+    mesh->data_buffer = data_buffer;
+    // mesh->graphics_buffer <- reload()
+    mesh->bone_matrices = bone_matrices;
+
+    Function<void(const SkeletonNode*, SkeletonNode*)> rec_helper;
+    rec_helper = [&](const SkeletonNode* source, SkeletonNode* target)
+    {
+        if (!source || !target)
+            return;
+        target->bone_index = source->bone_index;
+		target->transformation = source->transformation;
+        target->children.resize(source->children.size());
+        for (int i = 0; i < source->children.size(); i++) {
+            target->children[i] = new SkeletonNode();
+			rec_helper(&source->children[i], &target->children[i]);
+        }
+    };
+    rec_helper(&skeleton_root, &mesh->skeleton_root);
+
+    mesh->reload();
+    return mesh;
 }

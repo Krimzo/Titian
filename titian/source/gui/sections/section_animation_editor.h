@@ -8,9 +8,9 @@
 namespace titian {
     struct GUISectionAnimationEditor : GUISection
     {
-        Ref<Camera> camera;
-        Ref<Texture> render_texture;
-        Ref<Texture> depth_texture;
+        Camera camera;
+        Texture render_texture;
+        Texture depth_texture;
 
         Float4 line_color = kl::colors::WHITE;
         Float3 sun_direction = { 0.0f, -1.0f, 0.0f };

@@ -6,7 +6,7 @@
 namespace titian {
     struct SandboxPiecePrepare : SandboxPiece
     {
-        SandboxPiecePrepare(TitianEditor* editor);
+        SandboxPiecePrepare(TitianEditor& editor);
 
         void setup_self() override;
     };

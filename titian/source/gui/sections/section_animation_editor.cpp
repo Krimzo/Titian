@@ -4,16 +4,10 @@
 titian::GUISectionAnimationEditor::GUISectionAnimationEditor()
     : GUISection("GUISectionAnimationEditor")
 {
-    camera = new Camera();
-    render_texture = new Texture();
-    depth_texture = new Texture();
-
     sun_direction = kl::normalize(Float3(-0.5f, -0.75f, 1.0f));
-
-    camera->background = RGB{ 30, 30, 30 };
-    camera->set_position({ -0.34f, 0.18f, -0.94f });
-    camera->speed = 3.1f;
-
+    camera.background = RGB{ 30, 30, 30 };
+    camera.set_position({ -0.34f, 0.18f, -0.94f });
+    camera.speed = 3.1f;
     m_timer.stop();
 }
 
@@ -22,7 +16,7 @@ void titian::GUISectionAnimationEditor::render_gui()
     const TimeBomb _ = bench_time_bomb();
 
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = *Layers::get<GameLayer>().scene;
+    Scene& scene = Layers::get<GameLayer>().scene();
 
     Ref<Animation> animation;
     if (scene.animations.contains(selected_animation)) {
@@ -51,8 +45,8 @@ void titian::GUISectionAnimationEditor::render_gui()
             }
             if (animation) {
                 render_selected_animation(*animation, viewport_size);
-                const dx::ShaderView& shader_view = render_texture->shader_view;
-                im::Image(render_texture->shader_view.get(), { (float) viewport_size.x, (float) viewport_size.y });
+                const dx::ShaderView& shader_view = render_texture.shader_view;
+                im::Image(render_texture.shader_view.get(), { (float) viewport_size.x, (float) viewport_size.y });
             }
             was_focused = im::IsWindowFocused();
         }
@@ -153,23 +147,23 @@ void titian::GUISectionAnimationEditor::update_animation_camera(Scene& scene)
     const int scroll = Layers::get<AppLayer>().window.mouse.scroll();
     if (im::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = im::GetMouseDragDelta(ImGuiMouseButton_Right);
-        camera_info.x = initial_camera_info.x + drag_delta.x * camera->sensitivity;
-        camera_info.y = initial_camera_info.y + drag_delta.y * camera->sensitivity;
+        camera_info.x = initial_camera_info.x + drag_delta.x * camera.sensitivity;
+        camera_info.y = initial_camera_info.y + drag_delta.y * camera.sensitivity;
         camera_info.y = kl::clamp(camera_info.y, -85.0f, 85.0f);
 
-        camera->set_position({
+        camera.set_position({
             kl::sin_d(camera_info.x),
             kl::tan_d(camera_info.y),
             kl::cos_d(camera_info.x),
         });
 
-        camera->speed -= scroll * 0.1f;
-        camera->speed = kl::max(camera->speed, 0.1f);
+        camera.speed -= scroll * 0.1f;
+        camera.speed = kl::max(camera.speed, 0.1f);
     }
 
-    const float camera_distance = camera->speed;
-    camera->set_position(kl::normalize(camera->position()) * camera_distance);
-    camera->set_forward(-camera->position());
+    const float camera_distance = camera.speed;
+    camera.set_position(kl::normalize(camera.position()) * camera_distance);
+    camera.set_forward(-camera.position());
 }
 
 void titian::GUISectionAnimationEditor::render_selected_animation(Animation& animation, const Int2 viewport_size)
@@ -180,14 +174,14 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
 
     RenderLayer& render_layer = Layers::get<RenderLayer>();
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = *Layers::get<GameLayer>().scene;
+    Scene& scene = Layers::get<GameLayer>().scene();
 
-    if (render_texture->resolution() != viewport_size) {
-        render_texture->graphics_buffer = gpu.create_target_texture(viewport_size);
-        render_texture->create_target_view(nullptr);
-        render_texture->create_shader_view(nullptr);
+    if (render_texture.resolution() != viewport_size) {
+        render_texture.graphics_buffer = gpu.create_target_texture(viewport_size);
+        render_texture.create_target_view(nullptr);
+        render_texture.create_shader_view(nullptr);
     }
-    if (depth_texture->resolution() != viewport_size) {
+    if (depth_texture.resolution() != viewport_size) {
         dx::TextureDescriptor descriptor = {};
         descriptor.Width = viewport_size.x;
         descriptor.Height = viewport_size.y;
@@ -197,12 +191,12 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
         descriptor.SampleDesc.Count = 1;
         descriptor.Usage = D3D11_USAGE_DEFAULT;
         descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-        depth_texture->graphics_buffer = gpu.create_texture(&descriptor, nullptr);
-        depth_texture->create_depth_view(nullptr);
+        depth_texture.graphics_buffer = gpu.create_texture(&descriptor, nullptr);
+        depth_texture.create_depth_view(nullptr);
     }
 
-    gpu.clear_target_view(render_texture->target_view, camera->background);
-    gpu.clear_depth_view(depth_texture->depth_view, 1.0f, 0xFF);
+    gpu.clear_target_view(render_texture.target_view, camera.background);
+    gpu.clear_depth_view(depth_texture.depth_view, 1.0f, 0xFF);
 
     Mesh* mesh = nullptr;
     if (animation.animation_type == AnimationType::SEQUENTIAL) {
@@ -220,7 +214,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
         return;
     }
 
-    gpu.bind_target_depth_view(render_texture->target_view, depth_texture->depth_view);
+    gpu.bind_target_depth_view(render_texture.target_view, depth_texture.depth_view);
 
     const Int2 old_viewport_size = gpu.viewport_size();
     gpu.set_viewport_size(viewport_size);
@@ -231,7 +225,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
     kl::RenderShaders& render_shaders = render_layer.shader_states.solid_lit_pass;
     gpu.bind_render_shaders(render_shaders);
 
-    camera->update_aspect_ratio(viewport_size);
+    camera.update_aspect_ratio(viewport_size);
 
     struct alignas(16) CB
     {
@@ -242,7 +236,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
         float IS_SKELETAL;
     } cb = {};
 
-    cb.WVP = camera->camera_matrix();
+    cb.WVP = camera.camera_matrix();
     cb.OBJECT_COLOR = line_color;
     cb.SUN_DIRECTION = sun_direction;
 
@@ -253,7 +247,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
     }
 
     render_shaders.upload(cb);
-    gpu.draw(mesh->graphics_buffer, mesh->casted_topology(), sizeof(Vertex));
+    gpu.draw(mesh->graphics_buffer, mesh->topology, sizeof(Vertex));
 
     gpu.unbind_shader_view_for_vertex_shader(0);
     gpu.bind_internal_views();
@@ -264,7 +258,7 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
 {
     GUILayer& gui_layer = Layers::get<GUILayer>();
     kl::Window& window = Layers::get<AppLayer>().window;
-    Scene& scene = *Layers::get<GameLayer>().scene;
+    Scene& scene = Layers::get<GameLayer>().scene();
 
     if (im::Begin("Animation Properties") && animation) {
         if (im::IsWindowFocused()) {

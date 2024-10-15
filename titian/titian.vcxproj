@@ -126,15 +126,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\application\app_layer.cpp" />
-    <ClCompile Include="source\application\logger.cpp" />
-    <ClCompile Include="source\application\log_info.cpp" />
-    <ClCompile Include="source\components\animation.cpp" />
-    <ClCompile Include="source\components\collider.cpp" />
-    <ClCompile Include="source\components\material.cpp" />
-    <ClCompile Include="source\components\mesh.cpp" />
-    <ClCompile Include="source\components\shader.cpp" />
-    <ClCompile Include="source\components\texture.cpp" />
+    <ClCompile Include="source\app\app_layer.cpp" />
+    <ClCompile Include="source\app\logger.cpp" />
+    <ClCompile Include="source\app\log_info.cpp" />
+    <ClCompile Include="source\scene\components\animation.cpp" />
+    <ClCompile Include="source\scene\components\material.cpp" />
+    <ClCompile Include="source\scene\components\mesh.cpp" />
+    <ClCompile Include="source\scene\components\shader.cpp" />
+    <ClCompile Include="source\scene\components\texture.cpp" />
     <ClCompile Include="source\editor\editor_layer.cpp" />
     <ClCompile Include="source\editor\game_layer.cpp" />
     <ClCompile Include="source\gui\editors\code_editor.cpp" />
@@ -158,8 +157,8 @@
     <ClCompile Include="source\gui\sections\section_viewport.cpp" />
     <ClCompile Include="source\layer\layer.cpp" />
     <ClCompile Include="source\layer\layer_stack.cpp" />
-    <ClCompile Include="source\light\ambient_light.cpp" />
-    <ClCompile Include="source\light\directional_light.cpp" />
+    <ClCompile Include="source\scene\light\ambient_light.cpp" />
+    <ClCompile Include="source\scene\light\directional_light.cpp" />
     <ClCompile Include="source\render\pass\display_pass.cpp" />
     <ClCompile Include="source\render\pass\editor_pass.cpp" />
     <ClCompile Include="source\render\pass\outline_pass.cpp" />
@@ -175,25 +174,23 @@
     <ClCompile Include="source\render\states\sampler_states.cpp" />
     <ClCompile Include="source\render\states\shader_states.cpp" />
     <ClCompile Include="source\scene\camera.cpp" />
-    <ClCompile Include="source\scene\default\default_animations.cpp" />
-    <ClCompile Include="source\scene\default\default_materials.cpp" />
-    <ClCompile Include="source\scene\default\default_meshes.cpp" />
     <ClCompile Include="source\scene\entity.cpp" />
     <ClCompile Include="source\scene\scene.cpp" />
-    <ClCompile Include="source\scripting\interp_script.cpp" />
-    <ClCompile Include="source\scripting\native_script.cpp" />
-    <ClCompile Include="source\scripting\node_script.cpp" />
-    <ClCompile Include="source\scripting\script.cpp" />
-    <ClCompile Include="source\serialization\binary_serializer.cpp" />
-    <ClCompile Include="source\serialization\serialization.cpp" />
-    <ClCompile Include="source\serialization\text_serializer.cpp" />
+    <ClCompile Include="source\scene\scene_defaults.cpp" />
+    <ClCompile Include="source\script\interp_script.cpp" />
+    <ClCompile Include="source\script\native_script.cpp" />
+    <ClCompile Include="source\script\node_script.cpp" />
+    <ClCompile Include="source\script\script.cpp" />
+    <ClCompile Include="source\serial\binary_serializer.cpp" />
+    <ClCompile Include="source\serial\serial.cpp" />
+    <ClCompile Include="source\serial\text_serializer.cpp" />
     <ClCompile Include="source\titian_editor.cpp" />
     <ClCompile Include="source\titian_game.cpp" />
     <ClCompile Include="source\titian.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\ui\ui_funcs.cpp" />
+    <ClCompile Include="source\gui\ui\ui_funcs.cpp" />
     <ClCompile Include="source\utility\async_util.cpp" />
     <ClCompile Include="source\utility\bench_util.cpp" />
     <ClCompile Include="source\utility\file_util.cpp" />
@@ -202,15 +199,14 @@
     <ClCompile Include="source\utility\string_util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\application\app_layer.h" />
-    <ClInclude Include="source\application\logger.h" />
-    <ClInclude Include="source\application\log_info.h" />
-    <ClInclude Include="source\components\animation.h" />
-    <ClInclude Include="source\components\collider.h" />
-    <ClInclude Include="source\components\material.h" />
-    <ClInclude Include="source\components\mesh.h" />
-    <ClInclude Include="source\components\shader.h" />
-    <ClInclude Include="source\components\texture.h" />
+    <ClInclude Include="source\app\app_layer.h" />
+    <ClInclude Include="source\app\logger.h" />
+    <ClInclude Include="source\app\log_info.h" />
+    <ClInclude Include="source\scene\components\animation.h" />
+    <ClInclude Include="source\scene\components\material.h" />
+    <ClInclude Include="source\scene\components\mesh.h" />
+    <ClInclude Include="source\scene\components\shader.h" />
+    <ClInclude Include="source\scene\components\texture.h" />
     <ClInclude Include="source\editor\editor_layer.h" />
     <ClInclude Include="source\editor\game_layer.h" />
     <ClInclude Include="source\gui\editors\code_editor.h" />
@@ -234,8 +230,8 @@
     <ClInclude Include="source\gui\sections\section_viewport.h" />
     <ClInclude Include="source\layer\layer.h" />
     <ClInclude Include="source\layer\layer_stack.h" />
-    <ClInclude Include="source\light\ambient_light.h" />
-    <ClInclude Include="source\light\directional_light.h" />
+    <ClInclude Include="source\scene\light\ambient_light.h" />
+    <ClInclude Include="source\scene\light\directional_light.h" />
     <ClInclude Include="source\render\pass\display_pass.h" />
     <ClInclude Include="source\render\pass\editor_pass.h" />
     <ClInclude Include="source\render\pass\outline_pass.h" />
@@ -251,22 +247,20 @@
     <ClInclude Include="source\render\states\sampler_states.h" />
     <ClInclude Include="source\render\states\shader_states.h" />
     <ClInclude Include="source\scene\camera.h" />
-    <ClInclude Include="source\scene\default\default_animations.h" />
-    <ClInclude Include="source\scene\default\default_materials.h" />
-    <ClInclude Include="source\scene\default\default_meshes.h" />
     <ClInclude Include="source\scene\entity.h" />
     <ClInclude Include="source\scene\scene.h" />
-    <ClInclude Include="source\scripting\interp_script.h" />
-    <ClInclude Include="source\scripting\native_script.h" />
-    <ClInclude Include="source\scripting\node_script.h" />
-    <ClInclude Include="source\scripting\script.h" />
-    <ClInclude Include="source\serialization\binary_serializer.h" />
-    <ClInclude Include="source\serialization\serialization.h" />
-    <ClInclude Include="source\serialization\text_serializer.h" />
+    <ClInclude Include="source\scene\scene_defaults.h" />
+    <ClInclude Include="source\script\interp_script.h" />
+    <ClInclude Include="source\script\native_script.h" />
+    <ClInclude Include="source\script\node_script.h" />
+    <ClInclude Include="source\script\script.h" />
+    <ClInclude Include="source\serial\binary_serializer.h" />
+    <ClInclude Include="source\serial\serial.h" />
+    <ClInclude Include="source\serial\text_serializer.h" />
     <ClInclude Include="source\titian_editor.h" />
     <ClInclude Include="source\titian_game.h" />
     <ClInclude Include="source\titian.h" />
-    <ClInclude Include="source\ui\ui_funcs.h" />
+    <ClInclude Include="source\gui\ui\ui_funcs.h" />
     <ClInclude Include="source\utility\async_util.h" />
     <ClInclude Include="source\utility\helper_util.h" />
     <ClInclude Include="source\utility\file_util.h" />

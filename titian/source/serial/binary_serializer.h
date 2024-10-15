@@ -1,13 +1,13 @@
 #pragma once
 
-#include "serialization/serialization.h"
+#include "serial/serial.h"
 
 
 namespace titian {
-	struct TextSerializer : Serializer
+	struct BinarySerializer : Serializer
 	{
-		TextSerializer(const StringView& path, bool write);
-		~TextSerializer();
+		BinarySerializer(const StringView& path, bool write);
+		~BinarySerializer() override;
 
 		operator bool() const override;
 
@@ -42,13 +42,7 @@ namespace titian {
 		const String m_path;
 		const bool m_writing;
 
-		js::Object m_container;
-		mutable Vector<js::Object*> m_stack = { &m_container };
+		kl::File m_file;
 		bool m_is_valid = false;
-
-		auto& current() const
-		{
-			return *m_stack.back();
-		}
 	};
 }

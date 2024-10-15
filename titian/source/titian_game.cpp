@@ -28,11 +28,8 @@ titian::TitianGame::TitianGame(const StringView& entry_scene)
         ? (Serializer*) new TextSerializer(entry_scene, false)
         : (Serializer*) new BinarySerializer(entry_scene, false);
     if (*serializer) {
-        game_layer.scene->deserialize(*serializer);
+        game_layer.scene().deserialize(*serializer);
         game_layer.start_game();
-    }
-    else {
-        m_is_valid = false;
     }
 }
 
@@ -40,9 +37,4 @@ titian::TitianGame::~TitianGame()
 {
     gui_layer.sections.clear();
     render_layer.passes.clear();
-}
-
-bool titian::TitianGame::is_valid() const
-{
-    return m_is_valid;
 }

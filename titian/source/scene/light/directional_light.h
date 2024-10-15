@@ -1,6 +1,6 @@
 #pragma once
 
-#include "components/texture.h"
+#include "scene/components/texture.h"
 #include "scene/camera.h"
 
 
@@ -32,6 +32,6 @@ namespace titian {
 	private:
 		int m_resolution = 0;
         Float3 m_direction = { 0.0f, -1.0f, 0.0f };
-		Ref<Texture> m_cascades[CASCADE_COUNT] = {};
+		Texture m_cascades[CASCADE_COUNT] = {};
 	};
 }

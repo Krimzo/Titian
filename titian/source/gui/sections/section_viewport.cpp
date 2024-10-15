@@ -17,7 +17,7 @@ void titian::GUISectionViewport::render_gui()
     EditorLayer& editor_layer = Layers::get<EditorLayer>();
 
     kl::GPU& gpu = app_layer.gpu;
-    Scene& scene = *game_layer.scene;
+    Scene& scene = game_layer.scene();
     Camera* main_camera = scene.get_casted<Camera>(scene.main_camera_name);
 
     if (im::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
@@ -30,7 +30,7 @@ void titian::GUISectionViewport::render_gui()
 
         if (main_camera) {
             main_camera->resize({ (int) content_region.x, (int) content_region.y });
-            im::Image(main_camera->screen_texture->shader_view.get(), content_region);
+            im::Image(main_camera->screen_texture.shader_view.get(), content_region);
         }
         else {
             im::Image(nullptr, content_region);
@@ -254,18 +254,18 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_id_texture(const Int2 fir
     const Int2 size = max_coords - min_coords;
 
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = *Layers::get<GameLayer>().scene;
+    Scene& scene = Layers::get<GameLayer>().scene();
 
     Camera* main_camera = scene.get_casted<Camera>(scene.main_camera_name);
     if (!main_camera)
         return {};
 
     main_camera->resize_staging(size);
-    gpu.copy_resource_region(main_camera->index_staging->graphics_buffer,
-        main_camera->index_texture->graphics_buffer, min_coords, max_coords);
+    gpu.copy_resource_region(main_camera->index_staging.graphics_buffer,
+        main_camera->index_texture.graphics_buffer, min_coords, max_coords);
 
     Vector<float> values(size.x * size.y);
-    gpu.read_from_texture(values.data(), main_camera->index_staging->graphics_buffer, size, sizeof(float));
+    gpu.read_from_texture(values.data(), main_camera->index_staging.graphics_buffer, size, sizeof(float));
 
     Set<uint32_t> results;
     for (float value : values) {
@@ -277,16 +277,16 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_id_texture(const Int2 fir
 titian::Optional<titian::Float3> titian::GUISectionViewport::read_depth_texture(const Int2 coords)
 {
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = *Layers::get<GameLayer>().scene;
+    Scene& scene = Layers::get<GameLayer>().scene();
 
     Camera* main_camera = scene.get_casted<Camera>(scene.main_camera_name);
     if (!main_camera)
         return std::nullopt;
 
-    gpu.copy_resource(main_camera->depth_staging->graphics_buffer, main_camera->depth_texture->graphics_buffer);
+    gpu.copy_resource(main_camera->depth_staging.graphics_buffer, main_camera->depth_texture.graphics_buffer);
 
     float depth = 0.0f;
-    gpu.map_read_resource(main_camera->depth_staging->graphics_buffer, [&](const byte* ptr, const uint32_t pitch)
+    gpu.map_read_resource(main_camera->depth_staging.graphics_buffer, [&](const byte* ptr, const uint32_t pitch)
     {
         kl::copy<float>(&depth, ptr + coords.x * sizeof(float) + coords.y * pitch, 1);
     });
@@ -308,7 +308,7 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
         return;
 
     kl::Window& window = app_layer.window;
-    Scene& scene = *game_layer.scene;
+    Scene& scene = game_layer.scene();
 
     Camera* camera = scene.get_casted<Camera>(scene.main_camera_name);
     if (!camera)

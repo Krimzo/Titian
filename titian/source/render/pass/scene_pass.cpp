@@ -19,7 +19,7 @@ void titian::ScenePass::render_self(StatePackage& package)
 	RenderLayer& render_layer = Layers::get<RenderLayer>();
     kl::Timer& timer = Layers::get<AppLayer>().timer;
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = *Layers::get<GameLayer>().scene;
+    Scene& scene = Layers::get<GameLayer>().scene();
 
     struct alignas(16) CB
     {
@@ -87,9 +87,9 @@ void titian::ScenePass::render_self(StatePackage& package)
     cb.DELTA_TIME = timer.delta();
 
     gpu.bind_target_depth_views({
-        package.camera->color_texture->target_view.get(),
-        package.camera->index_texture->target_view.get() },
-        package.camera->depth_texture->depth_view);
+        package.camera->color_texture.target_view.get(),
+        package.camera->index_texture.target_view.get(), },
+        package.camera->depth_texture.depth_view);
     gpu.bind_sampler_state_for_pixel_shader(render_layer.sampler_states.linear, 0);
     gpu.bind_sampler_state_for_pixel_shader(render_layer.sampler_states.shadow, 1);
     gpu.bind_sampler_state_for_pixel_shader(render_layer.sampler_states.linear, 2);
@@ -219,7 +219,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         if (*info.render_shaders) {
             info.render_shaders->upload(cb);
             gpu.bind_render_shaders(*info.render_shaders);
-            gpu.draw(info.mesh->graphics_buffer, info.mesh->casted_topology(), sizeof(Vertex));
+            gpu.draw(info.mesh->graphics_buffer, info.mesh->topology, sizeof(Vertex));
             bench_add_draw_call();
         }
     };

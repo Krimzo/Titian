@@ -1,12 +1,11 @@
 #pragma once
 
-#include "gui/gui_section.h"
 #include "editor/editor_layer.h"
 #include "gui/gui_layer.h"
-
+#include "gui/gui_section.h"
+#include "scene/light/ambient_light.h"
+#include "scene/light/directional_light.h"
 #include "scene/camera.h"
-#include "light/ambient_light.h"
-#include "light/directional_light.h"
 
 
 namespace titian {
@@ -25,7 +24,7 @@ namespace titian {
         void edit_entity_transform(Scene& scene, Entity& entity);
         void edit_entity_animation(Scene& scene, Entity& entity);
         void edit_entity_material(Scene& scene, Entity& entity);
-        void edit_entity_physics(Scene& scene, const String& entity_name, Ref<Entity>& entity);
+        void edit_entity_physics(Scene& scene, Entity& entity);
         void edit_entity_collider(Scene& scene, Entity& entity);
         void edit_entity_other(Scene& scene, Entity& entity);
     };
