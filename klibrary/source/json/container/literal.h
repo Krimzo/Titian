@@ -43,30 +43,30 @@ namespace kl::json {
 }
 
 namespace kl::json {
-	inline Wrap<Literal> make_null()
+	inline Ref<Literal> make_null()
 	{
-		Wrap result = Wrap<Literal>::make();
+		Ref result = new Literal();
 		result->put_null();
 		return result;
 	}
 
-	inline Wrap<Literal> make_bool(bool value)
+	inline Ref<Literal> make_bool(bool value)
 	{
-		Wrap result = Wrap<Literal>::make();
+		Ref result = new Literal();
 		result->put_bool(value);
 		return result;
 	}
 
-	inline Wrap<Literal> make_number(double value)
+	inline Ref<Literal> make_number(double value)
 	{
-		Wrap result = Wrap<Literal>::make();
+		Ref result = new Literal();
 		result->put_number(value);
 		return result;
 	}
 
-	inline Wrap<Literal> make_string(const std::string_view& value)
+	inline Ref<Literal> make_string(const std::string_view& value)
 	{
-		Wrap result = Wrap<Literal>::make();
+		Ref result = new Literal();
 		result->put_string(value);
 		return result;
 	}

@@ -68,8 +68,8 @@
     <ClInclude Include="source\memory\files\file.h" />
     <ClInclude Include="source\memory\files\dll.h" />
     <ClInclude Include="source\memory\memory.h" />
+    <ClInclude Include="source\memory\safety\com_ref.h" />
     <ClInclude Include="source\memory\safety\ref.h" />
-    <ClInclude Include="source\memory\safety\wrap.h" />
     <ClInclude Include="source\render\components\material.h" />
     <ClInclude Include="source\render\components\mesh.h" />
     <ClInclude Include="source\render\components\texture.h" />

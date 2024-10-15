@@ -23,7 +23,7 @@ bool titian::GameLayer::update()
 
 void titian::GameLayer::reset_scene()
 {
-	m_scene = new Scene();
+	m_scene.emplace();
 }
 
 titian::Scene& titian::GameLayer::scene()

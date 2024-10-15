@@ -127,20 +127,19 @@ namespace kl {
             return bool(m_instance);
         }
 
-        template<typename T = uint32_t>
-        T count() const
+        template<typename N = uint32_t>
+        N count() const
         {
             if (m_count) {
-                return T(*m_count);
+                return N(*m_count);
             }
-            return T(0);
+            return N(0);
         }
 
-        template<typename T>
+        template<typename D>
         bool is() const
         {
-            return bool(
-                dynamic_cast<T*>(m_instance));
+            return (bool) dynamic_cast<D*>(m_instance);
         }
 
     private:
@@ -154,13 +153,13 @@ namespace kl {
             }
         }
 
-        template<typename T = uint32_t>
-        T decrease_count() const
+        template<typename N = uint32_t>
+        N decrease_count() const
         {
             if (m_count) {
-                return T(--(*m_count));
+                return N(--(*m_count));
             }
-            return T(-1);
+            return N(-1);
         }
 
         void allocate()

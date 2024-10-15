@@ -4,7 +4,7 @@
 
 
 namespace kl::json {
-	struct Array : ArrayStorageType<ContainerWrap>, Container
+	struct Array : ArrayStorage, Container
 	{
 		Array();
 		Array(const std::string_view& data);

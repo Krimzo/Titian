@@ -4,14 +4,6 @@
 
 
 namespace kl::json {
-    template<typename K, typename V>
-    using ObjectStorageType = std::map<K, V, std::less<>>;
-
-	template<typename T>
-	using ArrayStorageType = std::vector<T>;
-}
-
-namespace kl::json {
 	struct Standard
 	{
         static inline const std::string null_value = "null";

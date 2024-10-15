@@ -379,14 +379,14 @@ void titian::GUISectionMainMenu::render_gui()
                     gui_layer.reload_colors();
 
                     const RGB special_color = gui_layer.special_color;
-                    kl::Wrap special_wrap = kl::Wrap<js::Array>::make();
+                    Ref special_wrap = new js::Array();
                     special_wrap->push_back(js::make_number(special_color.r));
                     special_wrap->push_back(js::make_number(special_color.g));
                     special_wrap->push_back(js::make_number(special_color.b));
                     _conf_data[CONF_SPECIAL_COLOR] = std::move(special_wrap);
 
                     const RGB alternate_color = gui_layer.alternate_color;
-                    kl::Wrap alternate_wrap = kl::Wrap<js::Array>::make();
+                    Ref alternate_wrap = new js::Array();
                     alternate_wrap->push_back(js::make_number(alternate_color.r));
                     alternate_wrap->push_back(js::make_number(alternate_color.g));
                     alternate_wrap->push_back(js::make_number(alternate_color.b));

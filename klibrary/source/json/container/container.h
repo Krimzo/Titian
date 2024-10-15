@@ -31,5 +31,6 @@ namespace kl::json {
 }
 
 namespace kl::json {
-	using ContainerWrap = Wrap<Container, sizeof(std::string) + 16>;
+	using ObjectStorage = std::map<std::string, Ref<Container>, std::less<>>;
+	using ArrayStorage = std::vector<Ref<Container>>;
 }

@@ -50,9 +50,6 @@ namespace titian {
 	using Ref = kl::Ref<T>;
 
 	template<typename T>
-	using Wrap = kl::Wrap<T>;
-
-	template<typename T>
 	using Optional = std::optional<T>;
 
 	template<typename T>

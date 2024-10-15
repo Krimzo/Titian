@@ -42,8 +42,7 @@ namespace titian {
 		const String m_path;
 		const bool m_writing;
 
-		js::Object m_container;
-		mutable Vector<js::Object*> m_stack = { &m_container };
+		mutable Vector<Ref<js::Object>> m_stack = { new js::Object() };
 		bool m_is_valid = false;
 
 		auto& current() const

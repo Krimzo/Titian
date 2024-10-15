@@ -12,24 +12,23 @@ kl::json::Object::Object(const std::string_view& data)
 
 bool kl::json::Object::compile(std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last)
 {
-    if (first == last) {
+    if (first == last)
         return false;
-    }
 
     int depth = 0;
     std::optional<std::string> key;
     for (auto it = first; it != last; ++it) {
         if (depth == 1) {
             if (key) {
-                ContainerWrap container;
+                Ref<Container> container;
                 if (it->type == TokenType::_ARRAY_START) {
-                    container = Wrap<Array>::make();
+                    container = new Array();
                 }
                 else if (it->type == TokenType::_OBJECT_START) {
-                    container = Wrap<Object>::make();
+                    container = new Object();
                 }
                 else {
-                    container = Wrap<Literal>::make();
+                    container = new Literal();
                 }
                 if (container->compile(it, last)) {
                     (*this)[key.value()] = std::move(container);
@@ -45,9 +44,8 @@ bool kl::json::Object::compile(std::vector<Token>::const_iterator first, std::ve
         }
         else if (it->type == TokenType::_OBJECT_END || it->type == TokenType::_ARRAY_END) {
             depth -= 1;
-            if (depth <= 0) {
+            if (depth <= 0)
                 break;
-            }
         }
     }
     return true;

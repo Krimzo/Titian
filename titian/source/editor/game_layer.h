@@ -24,8 +24,8 @@ namespace titian {
 		bool game_paused() const;
 
 	private:
-		Ref<Scene> m_scene;
-		bool m_game_running : 1 = false;
-		bool m_game_paused : 1 = false;
+		Optional<Scene> m_scene;
+		bool m_game_running = false;
+		bool m_game_paused = false;
 	};
 }
