@@ -29,9 +29,9 @@ titian::BinarySerializer::BinarySerializer(const StringView& path, const bool wr
 
 titian::BinarySerializer::~BinarySerializer()
 {
-	if (*this) {
-		Logger::log("Closed BINARY ", m_writing ? "serialization" : "deserialization", " file [", m_path, "]");
-	}
+	if (!*this)
+		return;
+	Logger::log("Closed BINARY ", m_writing ? "serialization" : "deserialization", " file [", m_path, "]");
 }
 
 titian::BinarySerializer::operator bool() const

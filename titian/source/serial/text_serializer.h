@@ -7,7 +7,7 @@ namespace titian {
 	struct TextSerializer : Serializer
 	{
 		TextSerializer(const StringView& path, bool write);
-		~TextSerializer();
+		~TextSerializer() override;
 
 		operator bool() const override;
 

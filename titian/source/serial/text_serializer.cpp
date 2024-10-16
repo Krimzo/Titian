@@ -30,7 +30,7 @@ titian::TextSerializer::TextSerializer(const StringView& path, const bool write)
 titian::TextSerializer::~TextSerializer()
 {
 	kl::assert(m_stack.size() == 1, "TextSerializer stack size should be 1");
-	if (!m_is_valid)
+	if (!*this)
 		return;
 	if (m_writing)
 		kl::write_file(m_path, current().decompile());
