@@ -4,20 +4,20 @@
 
 
 namespace kl {
-    template<typename T = float>
-    struct Complex
+    template<typename T>
+    struct Complex_T
     {
         T r = {};
         T i = {};
 
-        constexpr Complex()
+        constexpr Complex_T()
         {}
 
-        constexpr Complex(T r, T i)
+        constexpr Complex_T(T r, T i)
             : r(r), i(i)
         {}
 
-        explicit constexpr Complex(T angle)
+        explicit constexpr Complex_T(T angle)
             : r(cos_d(angle)), i(sin_d(angle))
         {}
 
@@ -36,39 +36,39 @@ namespace kl {
             return { r, i };
         }
 
-        constexpr bool operator==(const Complex<T>& other) const
+        constexpr bool operator==(const Complex_T<T>& other) const
         {
             return r == other.r && i == other.i;
         }
 
-        constexpr bool operator!=(const Complex<T>& other) const
+        constexpr bool operator!=(const Complex_T<T>& other) const
         {
             return !(*this == other);
         }
 
-        constexpr Complex<T> operator+(const Complex<T>& other) const
+        constexpr Complex_T<T> operator+(const Complex_T<T>& other) const
         {
             return { r + other.r, i + other.i };
         }
 
-        constexpr void operator+=(const Complex<T>& other)
+        constexpr void operator+=(const Complex_T<T>& other)
         {
             r += other.r;
             i += other.i;
         }
 
-        constexpr Complex<T> operator-(const Complex<T>& other) const
+        constexpr Complex_T<T> operator-(const Complex_T<T>& other) const
         {
             return { r - other.r, i - other.i };
         }
 
-        constexpr void operator-=(const Complex<T>& other)
+        constexpr void operator-=(const Complex_T<T>& other)
         {
             r -= other.r;
             i -= other.i;
         }
 
-        constexpr Complex<T> operator*(T value) const
+        constexpr Complex_T<T> operator*(T value) const
         {
             return { r * value, i * value };
         }
@@ -79,7 +79,7 @@ namespace kl {
             i *= value;
         }
 
-        constexpr Complex<T> operator*(const Complex<T>& other) const
+        constexpr Complex_T<T> operator*(const Complex_T<T>& other) const
         {
             return {
                 r * other.r - i * other.i,
@@ -87,12 +87,12 @@ namespace kl {
             };
         }
 
-        constexpr void operator*=(const Complex<T>& other)
+        constexpr void operator*=(const Complex_T<T>& other)
         {
             *this = *this * other;
         }
 
-        constexpr Complex<T> operator-() const
+        constexpr Complex_T<T> operator-() const
         {
             return { -r, -i };
         }
@@ -105,8 +105,13 @@ namespace kl {
 }
 
 namespace kl {
+    using Complex = Complex_T<float>;
+	using ComplexD = Complex_T<double>;
+}
+
+namespace kl {
     template<typename T>
-    std::ostream& operator<<(std::ostream& stream, const Complex<T>& complex)
+    std::ostream& operator<<(std::ostream& stream, const Complex_T<T>& complex)
     {
         stream << std::setprecision(2);
         stream << "(" << complex.r << " + " << complex.i << "i)";

@@ -2,10 +2,10 @@
 
 struct VS_OUT
 {
-    float4 screen : SV_Position;
+    float4 position : SV_Position;
     float3 world : VS_World;
-    float2 textur : VS_Texture;
     float3 normal : VS_Normal;
+    float2 uv : VS_UV;
     float4 light_coords[SHADOW_CASCADE_COUNT] : VS_Light;
 };
 
@@ -126,16 +126,8 @@ float get_shadow(VS_OUT data, int half_kernel_size)
     return pcf_value;
 }
 
-#define _CUSTOM_VERTEX_SHADER_PLACEHOLDER
-
-#define _CUSTOM_PIXEL_SHADER_PLACEHOLDER
-
-VS_OUT v_shader(float3 position : KL_Position, float2 textur : KL_Texture, float3 normal : KL_Normal, int4 bone_indices : KL_BoneIndices, float4 bone_weights : KL_BoneWeights)
+VS_OUT v_shader(float3 position : KL_Position, float3 normal : KL_Normal, float2 uv : KL_UV, int4 bone_indices : KL_BoneIndices, float4 bone_weights : KL_BoneWeights)
 {
-#ifdef _CUSTOM_VERTEX_SHADER
-    _vertex_pre(position, textur, normal);
-#endif
-    
     if (IS_SKELETAL)
     {
         float4x4 bone_mat = BONES_BUFFER[bone_indices[0]] * bone_weights[0]
@@ -148,9 +140,9 @@ VS_OUT v_shader(float3 position : KL_Position, float2 textur : KL_Texture, float
 
     VS_OUT data;
     data.world = mul(float4(position, 1.0f), W).xyz;
-    data.screen = mul(float4(data.world, 1.0f), VP);
-    data.textur = textur;
+    data.position = mul(float4(data.world, 1.0f), VP);
     data.normal = mul(float4(normal, 0.0f), W).xyz;
+    data.uv = uv;
 
     for (int i = 0; i < SHADOW_CASCADE_COUNT; i++)
     {
@@ -158,27 +150,15 @@ VS_OUT v_shader(float3 position : KL_Position, float2 textur : KL_Texture, float
         data.light_coords[i].xy *= float2(0.5f, -0.5f);
         data.light_coords[i].xy += 0.5f;
     }
-    
-#ifdef _CUSTOM_VERTEX_SHADER
-    _vertex_post(data);
-#endif
     return data;
 }
 
 PS_OUT p_shader(VS_OUT data)
 {
     float3 vertex_normal = normalize(data.normal);
-    data.normal = get_normal(data.world, vertex_normal, data.textur);
+    data.normal = get_normal(data.world, vertex_normal, data.uv);
     
-    PS_OUT result;
-    result.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    result.index = OBJECT_INDEX;
-#ifdef _CUSTOM_PIXEL_SHADER
-    if (_pixel_pre(data, result.color))
-        return result;
-#endif
-    
-    float pixel_reflectivity = get_reflectivity(data.textur);
+    float pixel_reflectivity = get_reflectivity(data.uv);
     float3 pixel_dir = normalize(data.world - CAMERA_POSITION);
     
     float ambient_factor = saturate(dot(vertex_normal, data.normal));
@@ -194,24 +174,24 @@ PS_OUT p_shader(VS_OUT data)
     float3 shadow = get_shadow(data, 1);
     float3 light = max((diffuse + specular) * (1.0f - shadow), ambient);
 
-    float4 texture_color = COLOR_TEXTURE.Sample(MATERIAL_SAMPLER, data.textur);
-    result.color = lerp(MATERIAL_COLOR, texture_color, TEXTURE_BLEND) * float4(light, 1.0f);
+    float4 texture_color = COLOR_TEXTURE.Sample(MATERIAL_SAMPLER, data.uv);
+    float4 color = lerp(MATERIAL_COLOR, texture_color, TEXTURE_BLEND) * float4(light, 1.0f);
     
     if (pixel_reflectivity >= 0.0f)
     {
         float3 refl_pixel_dir = reflect(pixel_dir, data.normal);
         float4 refl_pixel_color = CAMERA_HAS_SKYBOX ? SKYBOX_TEXTURE.Sample(SKYBOX_SAMPLER, refl_pixel_dir) : CAMERA_BACKGROUND;
-        result.color = lerp(result.color, refl_pixel_color, pixel_reflectivity);
+        color.xyz = lerp(color.xyz, refl_pixel_color.xyz, pixel_reflectivity);
     }
     else
     {
         float3 refr_pixel_dir = refract(pixel_dir, data.normal, 1.0f / REFRACTION_INDEX);
         float4 refr_pixel_color = CAMERA_HAS_SKYBOX ? SKYBOX_TEXTURE.Sample(SKYBOX_SAMPLER, refr_pixel_dir) : CAMERA_BACKGROUND;
-        result.color = lerp(result.color, refr_pixel_color, -pixel_reflectivity);
+        color.xyz = lerp(color.xyz, refr_pixel_color.xyz, -pixel_reflectivity);
     }
     
-#ifdef _CUSTOM_PIXEL_SHADER
-    _pixel_post(data, result.color);
-#endif
+    PS_OUT result;
+    result.color = color;
+    result.index = OBJECT_INDEX;
     return result;
 }

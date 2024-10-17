@@ -6,7 +6,7 @@ titian::GUISectionMainMenu::GUISectionMainMenu()
 {
     const auto create_texture = [&](Texture& texture, str filename)
     {
-        texture.data_buffer.load_from_file(filename);
+        texture.image.load_from_file(filename);
         texture.reload_as_2D();
         texture.create_shader_view(nullptr);
         kl::assert(texture.shader_view, "Failed to init texture: ", filename);
@@ -71,7 +71,7 @@ void titian::GUISectionMainMenu::render_gui()
                         const String stem_name = fs::path(file.value()).stem().string();
 
                         Texture* texture = scene.helper_new_texture(stem_name);
-                        texture->data_buffer.load_from_file(file.value());
+                        texture->image.load_from_file(file.value());
                         texture->reload_as_2D();
                         texture->create_shader_view();
                     }
@@ -110,7 +110,7 @@ void titian::GUISectionMainMenu::render_gui()
                         const String stem_name = fs::path(file.value()).stem().string();
 
                         Shader* shader = scene.helper_new_shader(stem_name);
-                        shader->data_buffer = kl::read_file(file.value());
+                        shader->source = kl::read_file(file.value());
                     }
                 }
                 if (im::BeginMenu("Scene")) {
@@ -151,13 +151,13 @@ void titian::GUISectionMainMenu::render_gui()
                                     if (extension.empty()) {
 										file.value() += FILE_EXTENSION_JPG;
                                     }
-                                    texture->data_buffer.save_to_file(file.value(), kl::ImageType::JPG);
+                                    texture->image.save_to_file(file.value(), kl::ImageType::JPG);
                                 }
                                 else if (type_index == 1) {
                                     if (extension.empty()) {
                                         file.value() += FILE_EXTENSION_PNG;
                                     }
-                                    texture->data_buffer.save_to_file(file.value(), kl::ImageType::PNG);
+                                    texture->image.save_to_file(file.value(), kl::ImageType::PNG);
                                 }
                             }
                         }
@@ -220,7 +220,7 @@ void titian::GUISectionMainMenu::render_gui()
                                 if (extension.empty()) {
                                     file.value() += FILE_EXTENSION_HLSL;
                                 }
-                                kl::write_file(file.value(), shader->data_buffer);
+                                kl::write_file(file.value(), shader->source);
                             }
                         }
                     }

@@ -6,8 +6,8 @@
 namespace kl {
     struct Mesh
     {
-        std::vector<Vertex<float>> data_buffer;
-        dx::Buffer graphics_buffer;
+        std::vector<Vertex> vertices;
+        dx::Buffer buffer;
 
         Mesh(kl::GPU& gpu);
 

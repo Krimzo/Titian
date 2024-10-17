@@ -10,7 +10,7 @@ void titian::ShadowPass::state_package(StatePackage& package)
     RenderLayer& render_layer = Layers::get<RenderLayer>();
     package.raster_state = render_layer.raster_states.shadow;
     package.depth_state = render_layer.depth_states.enabled;
-    package.shader_state = render_layer.shader_states.shadow_pass;
+    package.shaders = render_layer.shader_states.shadow_pass;
 }
 
 void titian::ShadowPass::render_self(StatePackage& package)
@@ -92,8 +92,8 @@ void titian::ShadowPass::render_self(StatePackage& package)
 
             CB cb = info.cb;
             cb.WVP = VP * cb.WVP;
-            package.shader_state.upload(cb);
-            gpu.draw(info.mesh->graphics_buffer, info.mesh->topology, sizeof(Vertex));
+            package.shaders.upload(cb);
+            gpu.draw(info.mesh->buffer, info.mesh->topology, sizeof(Vertex));
             bench_add_draw_call();
         }
     }

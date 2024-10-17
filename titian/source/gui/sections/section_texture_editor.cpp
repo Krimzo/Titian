@@ -42,7 +42,7 @@ void titian::GUISectionTextureEditor::render_gui()
             if (classify_file(file.value()) == FileType::TEXTURE) {
                 const String name = fs::path(file.value()).filename().string();
                 Texture* texture = scene.helper_new_texture(scene.generate_unique_name(name, scene.textures));
-                texture->data_buffer.load_from_file(file.value());
+                texture->image.load_from_file(file.value());
                 texture->reload_as_2D();
                 texture->create_shader_view();
             }

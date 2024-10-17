@@ -119,64 +119,62 @@ bool kl::write_file(const std::string_view& filepath, const std::string_view& da
     return true;
 }
 
-std::vector<kl::Vertex<float>> kl::parse_obj_file(const std::string_view& filepath, const bool flip_z)
+std::vector<kl::Vertex> kl::parse_obj_file(const std::string_view& filepath, const bool flip_z)
 {
     std::ifstream file{ filepath.data() };
-    if (!verify(file.is_open(), "Failed to open file \"", filepath, "\"")) {
+    if (!verify(file.is_open(), "Failed to open file \"", filepath, "\""))
         return {};
-    }
 
-    std::vector<Float3> world_data;
-    std::vector<Float2> texture_data;
+    std::vector<Float3> position_data;
     std::vector<Float3> normal_data;
-    std::vector<Vertex<float>> vertex_data;
+    std::vector<Float2> uv_data;
+    std::vector<Vertex> vertex_data;
 
     const float z_flip = flip_z ? -1.0f : 1.0f;
     for (std::string line; std::getline(file, line);) {
         const std::vector<std::string> parts = split_string(line, ' ');
 
         if (parts.size() == 4 && parts.front() == "v") {
-            Float3 result{};
-            result.x = (float) parse_float(parts[1]).value_or(0.0);
-            result.y = (float) parse_float(parts[2]).value_or(0.0);
-            result.z = (float) parse_float(parts[3]).value_or(0.0) * z_flip;
-            world_data.push_back(result);
-            continue;
-        }
-
-        if (parts.size() == 3 && parts.front() == "vt") {
-            Float2 result{};
-            result.x = (float) parse_float(parts[1]).value_or(0.0);
-            result.y = (float) parse_float(parts[2]).value_or(0.0);
-            texture_data.push_back(result);
+            Float3 position{};
+            position.x = (float) parse_float(parts[1]).value_or(0.0);
+            position.y = (float) parse_float(parts[2]).value_or(0.0);
+            position.z = (float) parse_float(parts[3]).value_or(0.0) * z_flip;
+            position_data.push_back(position);
             continue;
         }
 
         if (parts.size() == 4 && parts.front() == "vn") {
-            Float3 result{};
-            result.x = (float) parse_float(parts[1]).value_or(0.0);
-            result.y = (float) parse_float(parts[2]).value_or(0.0);
-            result.z = (float) parse_float(parts[3]).value_or(0.0) * z_flip;
-            normal_data.push_back(result);
+            Float3 normal{};
+            normal.x = (float) parse_float(parts[1]).value_or(0.0);
+            normal.y = (float) parse_float(parts[2]).value_or(0.0);
+            normal.z = (float) parse_float(parts[3]).value_or(0.0) * z_flip;
+            normal_data.push_back(normal);
+            continue;
+        }
+
+        if (parts.size() == 3 && parts.front() == "vt") {
+            Float2 uv{};
+            uv.x = (float) parse_float(parts[1]).value_or(0.0);
+            uv.y = (float) parse_float(parts[2]).value_or(0.0);
+            uv_data.push_back(uv);
             continue;
         }
 
         if (parts.size() == 4 && parts.front() == "f") {
             for (int i = 1; i <= 3; i++) {
                 const std::vector<std::string> line_part_parts = split_string(parts[i], '/');
-                if (line_part_parts.size() != 3) {
+                if (line_part_parts.size() != 3)
                     continue;
-                }
 
                 Vertex vertex;
-                if (uint64_t index = parse_int(line_part_parts[0]).value_or(0) - 1; index >= 0 && index < world_data.size()) {
-                    vertex.world = world_data[index];
-                }
-                if (uint64_t index = parse_int(line_part_parts[1]).value_or(0) - 1; index >= 0 && index < texture_data.size()) {
-                    vertex.texture = texture_data[index];
+                if (uint64_t index = parse_int(line_part_parts[0]).value_or(0) - 1; index >= 0 && index < position_data.size()) {
+                    vertex.position = position_data[index];
                 }
                 if (uint64_t index = parse_int(line_part_parts[2]).value_or(0) - 1; index >= 0 && index < normal_data.size()) {
                     vertex.normal = normal_data[index];
+                }
+                if (uint64_t index = parse_int(line_part_parts[1]).value_or(0) - 1; index >= 0 && index < uv_data.size()) {
+                    vertex.uv = uv_data[index];
                 }
                 vertex_data.push_back(vertex);
             }

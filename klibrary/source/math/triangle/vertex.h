@@ -4,39 +4,36 @@
 
 
 namespace kl {
-    template<typename T = float>
-    struct Vertex
+    template<typename T>
+    struct Vertex_T
     {
-        Vector3<T> world;
-        Vector2<T> texture;
+        union { Vector3<T> position; struct { T x, y, z; }; };
         Vector3<T> normal;
+        Vector2<T> uv;
 
-        constexpr Vertex()
+        constexpr Vertex_T()
         {}
 
-        constexpr Vertex(const Vector3<T>& world)
-            : world(world)
+        constexpr Vertex_T(const Vector3<T>& position)
+			: position(position)
         {}
 
-        constexpr Vertex(const Vector3<T>& world, const Vector2<T>& texture)
-            : world(world), texture(texture)
-        {}
-
-        constexpr Vertex(const Vector3<T>& world, const Vector3<T>& normal)
-            : world(world), normal(normal)
-        {}
-
-        constexpr Vertex(const Vector3<T>& world, const Vector2<T>& texture, const Vector3<T>& normal)
-            : world(world), texture(texture), normal(normal)
+        constexpr Vertex_T(const Vector3<T>& position, const Vector3<T>& normal, const Vector2<T>& uv)
+            : position(position), normal(normal), uv(uv)
         {}
     };
 }
 
 namespace kl {
+    using Vertex = Vertex_T<float>;
+	using VertexD = Vertex_T<double>;
+}
+
+namespace kl {
     template<typename T>
-    std::ostream& operator<<(std::ostream& stream, const Vertex<T>& vertex)
+    std::ostream& operator<<(std::ostream& stream, const Vertex_T<T>& vertex)
     {
-        stream << "{" << vertex.world << ", " << vertex.texture << ", " << vertex.normal << "}";
+        stream << "{" << vertex.position << ", " << vertex.normal << ", " << vertex.uv << "}";
         return stream;
     }
 }

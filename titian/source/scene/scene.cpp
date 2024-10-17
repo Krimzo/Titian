@@ -520,17 +520,17 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene& scene, 
     Vector<Vertex> vertices(mesh.mNumVertices);
     if (mesh.HasPositions()) {
         for (uint32_t i = 0; i < mesh.mNumVertices; i++) {
-            vertices[i].world = { mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z };
-        }
-    }
-    if (mesh.HasTextureCoords(0)) {
-        for (uint32_t i = 0; i < mesh.mNumVertices; i++) {
-            vertices[i].texture = { mesh.mTextureCoords[0][i].x, mesh.mTextureCoords[0][i].y };
+            vertices[i].position = { mesh.mVertices[i].x, mesh.mVertices[i].y, mesh.mVertices[i].z };
         }
     }
     if (mesh.HasNormals()) {
         for (uint32_t i = 0; i < mesh.mNumVertices; i++) {
             vertices[i].normal = { mesh.mNormals[i].x, mesh.mNormals[i].y, mesh.mNormals[i].z };
+        }
+    }
+    if (mesh.HasTextureCoords(0)) {
+        for (uint32_t i = 0; i < mesh.mNumVertices; i++) {
+            vertices[i].uv = { mesh.mTextureCoords[0][i].x, mesh.mTextureCoords[0][i].y };
         }
     }
     if (mesh.HasBones()) {
@@ -585,12 +585,12 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene& scene, 
         mesh_object->skeleton_root = recur_helper(scene.mRootNode);
     }
 
-    mesh_object->data_buffer.reserve((size_t) mesh.mNumFaces * 3);
+    mesh_object->vertices.reserve((size_t) mesh.mNumFaces * 3);
     for (uint32_t i = 0; i < mesh.mNumFaces; i++) {
         const auto& face = mesh.mFaces[i];
         for (uint32_t j = 0; j < face.mNumIndices; j++) {
             const uint32_t index = face.mIndices[j];
-            mesh_object->data_buffer.push_back(vertices[index]);
+            mesh_object->vertices.push_back(vertices[index]);
         }
     }
 
@@ -658,11 +658,11 @@ titian::Ref<titian::Texture> titian::Scene::load_assimp_texture(const aiScene& s
 {
     Ref texture_object = new Texture();
     if (texture.mHeight == 0) {
-        texture_object->data_buffer.load_from_memory(texture.pcData, texture.mWidth);
+        texture_object->image.load_from_memory(texture.pcData, texture.mWidth);
 	}
     else {
-        texture_object->data_buffer.resize({ (int) texture.mWidth, (int) texture.mHeight });
-        kl::copy<RGB>(texture_object->data_buffer.ptr(), texture.pcData, texture_object->data_buffer.pixel_count());
+        texture_object->image.resize({ (int) texture.mWidth, (int) texture.mHeight });
+        kl::copy<RGB>(texture_object->image.ptr(), texture.pcData, texture_object->image.pixel_count());
     }
     texture_object->reload_as_2D();
     texture_object->create_shader_view();

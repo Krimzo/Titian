@@ -263,11 +263,11 @@ kl::ComputeShader kl::GPU::create_compute_shader(const std::string_view& shader_
     return holder;
 }
 
-kl::RenderShaders kl::GPU::create_render_shaders(const std::string_view& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors) const
+kl::Shaders kl::GPU::create_shaders(const std::string_view& shader_sources, const std::vector<dx::LayoutDescriptor>& descriptors) const
 {
     const CompiledShader compiled_vertex_shader = compile_vertex_shader(shader_sources);
     const CompiledShader compiled_pixel_shader = compile_pixel_shader(shader_sources);
-    RenderShaders shaders{ this };
+    Shaders shaders{ this };
     shaders.input_layout = create_input_layout(compiled_vertex_shader, descriptors);
     shaders.vertex_shader = DeviceHolder::create_vertex_shader(compiled_vertex_shader);
     shaders.pixel_shader = DeviceHolder::create_pixel_shader(compiled_pixel_shader);

@@ -1,7 +1,7 @@
 struct VS_OUT
 {
-    float4 position : SV_POSITION;
-    float2 textur : VS_TEXTURE;
+    float4 position : SV_Position;
+    float2 uv : VS_UV;
 };
 
 float4x4 CUSTOM_DATA;
@@ -14,11 +14,11 @@ Texture2D<float> INDEX_TEXTURE : register(t2);
 SamplerState LINEAR_SAMPLER : register(s0);
 SamplerState NON_LINEAR_SAMPLER : register(s1);
 
-VS_OUT v_shader(float3 position : KL_Position, float2 textur : KL_Texture)
+VS_OUT v_shader(float3 position : KL_Position, float2 uv : KL_UV)
 {
     VS_OUT data;
     data.position = float4(position, 1.0f);
-    data.textur = textur;
+    data.uv = uv;
     return data;
 }
 

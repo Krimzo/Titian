@@ -19,31 +19,31 @@
 
 namespace kl {
     template<typename T>
-    constexpr Complex<T> abs(const Complex<T>& num)
+    constexpr Complex_T<T> abs(const Complex_T<T>& num)
     {
         return apply<2>((T(*)(T)) abs<T>, num);
     }
 
     template<typename T>
-    constexpr Complex<T> min(const Complex<T>& num1, const Complex<T>& num2)
+    constexpr Complex_T<T> min(const Complex_T<T>& num1, const Complex_T<T>& num2)
     {
         return apply<2>((T(*)(T, T)) min<T>, num1, num2);
     }
 
     template<typename T>
-    constexpr Complex<T> max(const Complex<T>& num1, const Complex<T>& num2)
+    constexpr Complex_T<T> max(const Complex_T<T>& num1, const Complex_T<T>& num2)
     {
         return apply<2>((T(*)(T, T)) max<T>, num1, num2);
     }
 
     template<typename T>
-    constexpr Complex<T> normalize(const Complex<T>& num)
+    constexpr Complex_T<T> normalize(const Complex_T<T>& num)
     {
         return num * (T(1) / num.length());
     }
 
     template<typename T>
-    constexpr Complex<T> inverse(const Complex<T>& num)
+    constexpr Complex_T<T> inverse(const Complex_T<T>& num)
     {
         const T sqr_sum = num.r * num.r + num.i * num.i;
         if (sqr_sum == T(0)) {
@@ -53,31 +53,31 @@ namespace kl {
     }
 
     template<typename T>
-    constexpr Quaternion<T> abs(const Quaternion<T>& num)
+    constexpr Quaternion_T<T> abs(const Quaternion_T<T>& num)
     {
         return apply<4>((T(*)(T)) abs<T>, num);
     }
 
     template<typename T>
-    constexpr Quaternion<T> min(const Quaternion<T>& num1, const Quaternion<T>& num2)
+    constexpr Quaternion_T<T> min(const Quaternion_T<T>& num1, const Quaternion_T<T>& num2)
     {
         return apply<4>((T(*)(T, T)) min<T>, num1, num2);
     }
 
     template<typename T>
-    constexpr Quaternion<T> max(const Quaternion<T>& num1, const Quaternion<T>& num2)
+    constexpr Quaternion_T<T> max(const Quaternion_T<T>& num1, const Quaternion_T<T>& num2)
     {
         return apply<4>((T(*)(T, T)) max<T>, num1, num2);
     }
 
     template<typename T>
-    constexpr Quaternion<T> normalize(const Quaternion<T>& num)
+    constexpr Quaternion_T<T> normalize(const Quaternion_T<T>& num)
     {
         return num * (T(1) / num.length());
     }
 
     template<typename T>
-    constexpr Quaternion<T> inverse(const Quaternion<T>& num)
+    constexpr Quaternion_T<T> inverse(const Quaternion_T<T>& num)
     {
         return { num.w, -num.x, -num.y, -num.z };
     }
@@ -183,8 +183,8 @@ namespace kl {
     template<typename T>
     constexpr Vector3<T> rotate(const Vector3<T>& vec, const Vector3<T>& axis, float angle)
     {
-        const Quaternion<T> quat{ axis, angle };
-        const Quaternion<T> inv_quat = inverse(quat);
+        const Quaternion_T<T> quat{ axis, angle };
+        const Quaternion_T<T> inv_quat = inverse(quat);
         return quat * vec * inv_quat;
     }
 
@@ -437,7 +437,7 @@ namespace kl {
     }
 
     template<typename T>
-    constexpr Quaternion<T> to_quaternion(const Vector3<T>& euler)
+    constexpr Quaternion_T<T> to_quaternion(const Vector3<T>& euler)
     {
         const T cr = cos_d(euler.x * T(0.5));
         const T sr = sin_d(euler.x * T(0.5));
@@ -454,7 +454,7 @@ namespace kl {
     }
 
     template<typename T>
-    constexpr Vector3<T> to_euler(const Quaternion<T>& quat)
+    constexpr Vector3<T> to_euler(const Quaternion_T<T>& quat)
     {
         const T       sin_p = T(+2) * (quat.w * quat.y - quat.z * quat.x) + T(0);
         const T sin_r_cos_p = T(+2) * (quat.w * quat.x + quat.y * quat.z) + T(0);
@@ -471,11 +471,11 @@ namespace kl {
     }
 
     template<typename T>
-    constexpr Quaternion<T> to_quaternion(const Vector3<T>& original, const Vector3<T>& target)
+    constexpr Quaternion_T<T> to_quaternion(const Vector3<T>& original, const Vector3<T>& target)
     {
         const Vector3<T> axis = normalize(cross(original, target));
         const T angl = angle(original, target);
-        return Quaternion{ axis, angl };
+        return Quaternion_T{ axis, angl };
     }
 
     template<typename T>

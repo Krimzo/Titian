@@ -1679,7 +1679,7 @@ namespace titian {
 			}
 
 			if (input_connected("size")) {
-				ptr->data_buffer.resize(get_value<Int2>("size"));
+				ptr->image.resize(get_value<Int2>("size"));
 				if (ptr->is_cube()) {
 					ptr->reload_as_cube();
 				}

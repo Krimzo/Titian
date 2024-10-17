@@ -29,10 +29,8 @@
     <ClInclude Include="source\graphics\gpu_12\gpu_12_fence.h" />
     <ClInclude Include="source\graphics\gpu_12\gpu_12_queue.h" />
     <ClInclude Include="source\graphics\graphics.h" />
-    <ClInclude Include="source\graphics\shaders\compiled_shader.h" />
-    <ClInclude Include="source\graphics\shaders\render_shaders.h" />
+    <ClInclude Include="source\graphics\shaders\shaders.h" />
     <ClInclude Include="source\graphics\shaders\shader_compiler.h" />
-    <ClInclude Include="source\graphics\shaders\shader_holder.h" />
     <ClInclude Include="source\graphics\text\text_raster.h" />
     <ClInclude Include="source\json\container\array.h" />
     <ClInclude Include="source\json\container\container.h" />
@@ -107,10 +105,8 @@
     <ClCompile Include="source\graphics\gpu_12\gpu_12_commands.cpp" />
     <ClCompile Include="source\graphics\gpu_12\gpu_12_fence.cpp" />
     <ClCompile Include="source\graphics\gpu_12\gpu_12_queue.cpp" />
-    <ClCompile Include="source\graphics\shaders\compiled_shader.cpp" />
-    <ClCompile Include="source\graphics\shaders\render_shaders.cpp" />
+    <ClCompile Include="source\graphics\shaders\shaders.cpp" />
     <ClCompile Include="source\graphics\shaders\shader_compiler.cpp" />
-    <ClCompile Include="source\graphics\shaders\shader_holder.cpp" />
     <ClCompile Include="source\graphics\text\text_raster.cpp" />
     <ClCompile Include="source\json\container\array.cpp" />
     <ClCompile Include="source\json\container\literal.cpp" />

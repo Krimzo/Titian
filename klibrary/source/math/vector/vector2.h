@@ -6,7 +6,7 @@
 
 namespace kl {
     template<typename T>
-    struct Complex;
+    struct Complex_T;
 }
 
 namespace kl {
@@ -43,7 +43,7 @@ namespace kl {
 			return { O(x), O(y) };
 		}
 
-        constexpr operator Complex<T>() const
+        constexpr operator Complex_T<T>() const
 		{
 			return { x, y };
 		}

@@ -10,8 +10,8 @@ void titian::ScenePass::state_package(StatePackage& package)
     RenderLayer& render_layer = Layers::get<RenderLayer>();
     package.raster_state = package.camera->render_wireframe ? render_layer.raster_states.wireframe : dx::RasterState{};
     package.depth_state = render_layer.depth_states.enabled;
-    package.shader_state = render_layer.shader_states.scene_pass;
     package.blend_state = render_layer.blend_states.enabled;
+    package.shaders = render_layer.shader_states.scene_pass;
 }
 
 void titian::ScenePass::render_self(StatePackage& package)
@@ -110,7 +110,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         const Texture* color_texture = nullptr;
 		const Texture* normal_texture = nullptr;
 		const Texture* roughness_texture = nullptr;
-        kl::RenderShaders* render_shaders = nullptr;
+        kl::Shaders* shaders = nullptr;
         float camera_distance = 0.0f;
     };
 
@@ -143,10 +143,10 @@ void titian::ScenePass::render_self(StatePackage& package)
         info.roughness_texture = scene.helper_get_texture(info.material->roughness_texture_name);
 
         if (Shader* shader = scene.helper_get_shader(info.material->shader_name)) {
-            info.render_shaders = &shader->graphics_buffer;
+            info.shaders = &shader->shaders;
         }
         else {
-            info.render_shaders = &package.shader_state;
+            info.shaders = &package.shaders;
         }
         info.camera_distance = (entity->position() - package.camera->position()).length();
         to_render.push_back(info);
@@ -216,10 +216,10 @@ void titian::ScenePass::render_self(StatePackage& package)
 
         cb.CUSTOM_DATA = info.material->custom_data;
 
-        if (*info.render_shaders) {
-            info.render_shaders->upload(cb);
-            gpu.bind_render_shaders(*info.render_shaders);
-            gpu.draw(info.mesh->graphics_buffer, info.mesh->topology, sizeof(Vertex));
+        if (*info.shaders) {
+            info.shaders->upload(cb);
+            gpu.bind_shaders(*info.shaders);
+            gpu.draw(info.mesh->buffer, info.mesh->topology, sizeof(Vertex));
             bench_add_draw_call();
         }
     };

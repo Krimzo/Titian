@@ -9,8 +9,8 @@ namespace titian {
 	{
 		dx::RasterState raster_state;
 		dx::DepthState depth_state;
-		kl::RenderShaders shader_state;
 		dx::BlendState blend_state;
+		kl::Shaders shaders;
 		Camera* camera = nullptr;
 	};
 }

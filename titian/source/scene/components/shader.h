@@ -22,9 +22,8 @@ namespace titian {
 	struct Shader : Serializable
 	{
 		ShaderType shader_type;
-
-		String data_buffer;
-		kl::RenderShaders graphics_buffer;
+		String source;
+		kl::Shaders shaders;
 
 		Shader(ShaderType type = ShaderType::MATERIAL);
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics/shaders/render_shaders.h"
+#include "graphics/shaders/shaders.h"
 #include "math/math.h"
 
 
@@ -79,10 +79,10 @@ namespace kl {
         void set_draw_type(D3D_PRIMITIVE_TOPOLOGY draw_type) const;
 
         void draw(UINT vertex_count, UINT start_index) const;
-        void draw(const dx::Buffer& vertex_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(Vertex<float>)) const;
+        void draw(const dx::Buffer& vertex_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(Vertex)) const;
 
         void draw_indexed(UINT index_count, UINT start_index, INT base_vertex) const;
-        void draw_indexed(const dx::Buffer& vertex_buffer, const dx::Buffer& index_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(Vertex<float>)) const;
+        void draw_indexed(const dx::Buffer& vertex_buffer, const dx::Buffer& index_buffer, D3D_PRIMITIVE_TOPOLOGY draw_type = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, UINT stride = sizeof(Vertex)) const;
 
         void clear_target_view(const dx::TargetView& view, const Float4& color = {}) const;
         void clear_depth_view(const dx::DepthView& view, float depth = 1.0f, UINT8 stencil = 0xFF) const;
@@ -118,8 +118,8 @@ namespace kl {
         void bind_compute_shader(const dx::ComputeShader& shader) const;
         void unbind_compute_shader() const;
 
-        void bind_render_shaders(const RenderShaders& shaders) const;
-        void unbind_render_shaders() const;
+        void bind_shaders(const Shaders& shaders) const;
+        void unbind_shaders() const;
 
         void dispatch_compute_shader(UINT x, UINT y, UINT z) const;
         void execute_compute_shader(const dx::ComputeShader& shader, UINT x, UINT y, UINT z) const;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics/shaders/compiled_shader.h"
+#include "graphics/shaders/shader_compiler.h"
 #include "media/image/image.h"
 
 
@@ -24,8 +24,8 @@ namespace kl {
         dx::Buffer create_buffer(const dx::BufferDescriptor* descriptor, const dx::SubresourceDescriptor* subresource_data) const;
         
         dx::Buffer create_vertex_buffer(const void* data, UINT byte_size) const;
-        dx::Buffer create_vertex_buffer(const std::vector<Vertex<float>>& vertices) const;
-        dx::Buffer create_vertex_buffer(const std::vector<Triangle<float>>& triangles) const;
+        dx::Buffer create_vertex_buffer(const std::vector<Vertex>& vertices) const;
+        dx::Buffer create_vertex_buffer(const std::vector<Triangle>& triangles) const;
         dx::Buffer create_vertex_buffer(const std::string_view& filepath, bool flip_z = true) const;
 
         dx::Buffer create_index_buffer(const uint32_t* data, UINT element_count) const;
@@ -35,11 +35,11 @@ namespace kl {
         dx::Buffer create_structured_buffer(const void* data, UINT element_count, UINT element_size, bool has_unordered_access = false, bool cpu_read = false) const;
         dx::Buffer create_staging_buffer(const dx::Buffer& buffer, UINT byte_size) const;
 
-        static std::vector<Triangle<float>> generate_screen_mesh();
-        static std::vector<Triangle<float>> generate_plane_mesh(float size, int complexity);
-        static std::vector<Triangle<float>> generate_cube_mesh(float size);
-        static std::vector<Triangle<float>> generate_sphere_mesh(float radius, int complexity, bool smooth);
-        static std::vector<Triangle<float>> generate_capsule_mesh(float radius, float height, int sectors, int rings);
+        static std::vector<Triangle> generate_screen_mesh();
+        static std::vector<Triangle> generate_plane_mesh(float size, int complexity);
+        static std::vector<Triangle> generate_cube_mesh(float size);
+        static std::vector<Triangle> generate_sphere_mesh(float radius, int complexity, bool smooth);
+        static std::vector<Triangle> generate_capsule_mesh(float radius, float height, int sectors, int rings);
 
         dx::Buffer create_screen_mesh() const;
         dx::Buffer create_plane_mesh(float size, int complexity) const;

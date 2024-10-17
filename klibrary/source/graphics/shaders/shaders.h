@@ -24,7 +24,7 @@ namespace kl {
         dx::Buffer cbuffer;
 
         CBuffer(const GPU* gpu);
-        
+
         void upload(const void* data, UINT byte_size);
         void bind(ShaderType type, int index) const;
     };
@@ -74,8 +74,29 @@ namespace kl {
 }
 
 namespace kl {
+    struct Shaders : private CBuffer
+    {
+        dx::InputLayout input_layout;
+        dx::VertexShader vertex_shader;
+        dx::PixelShader pixel_shader;
+
+        Shaders(const GPU* gpu = nullptr);
+
+        operator bool() const;
+
+        template<typename T>
+        void upload(const T& object, int index = 0)
+        {
+            CBuffer::upload(&object, sizeof(T));
+            CBuffer::bind(ShaderType::VERTEX, index);
+            CBuffer::bind(ShaderType::PIXEL, index);
+        }
+    };
+}
+
+namespace kl {
     using VertexShader = ShaderHolder<dx::VertexShader>;
-	using PixelShader = ShaderHolder<dx::PixelShader>;
-	using GeometryShader = ShaderHolder<dx::GeometryShader>;
-	using ComputeShader = ShaderHolder<dx::ComputeShader>;
+    using PixelShader = ShaderHolder<dx::PixelShader>;
+    using GeometryShader = ShaderHolder<dx::GeometryShader>;
+    using ComputeShader = ShaderHolder<dx::ComputeShader>;
 }

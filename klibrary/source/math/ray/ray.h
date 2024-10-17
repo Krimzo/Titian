@@ -8,21 +8,21 @@
 
 
 namespace kl {
-    template<typename T = float>
-    struct Ray
+    template<typename T>
+    struct Ray_T
     {
-        Vector3<T> origin;
+        union { Vector3<T> origin; struct { T x, y, z; }; };
 
-        constexpr Ray()
+        constexpr Ray_T()
         {}
 
-        constexpr Ray(const Vector3<T>& origin, const Vector3<T>& direction)
+        constexpr Ray_T(const Vector3<T>& origin, const Vector3<T>& direction)
 			: origin(origin)
         {
             set_direction(direction);
         }
 
-        constexpr Ray(const Vector3<T>& origin, const Matrix4x4<T>& inv_cam, const Vector2<T>& ndc)
+        constexpr Ray_T(const Vector3<T>& origin, const Matrix4x4<T>& inv_cam, const Vector2<T>& ndc)
             : origin(origin)
         {
             Vector4<T> ndc_pos = inv_cam * Vector4<T>(ndc, T(1), T(1));
@@ -39,7 +39,7 @@ namespace kl {
 			return m_direction;
         }
 
-        constexpr bool intersect_plane(const Plane<T>& plane, Vector3<T>* out_intersection) const
+        constexpr bool intersect_plane(const Plane_T<T>& plane, Vector3<T>* out_intersection) const
         {
             const T denom = dot(plane.normal(), m_direction);
             if (abs(denom) <= T(0.0001))
@@ -55,7 +55,7 @@ namespace kl {
             return true;
         }
 
-        constexpr bool intersect_sphere(const Sphere<T>& sphere, Vector3<T>* out_intersection) const
+        constexpr bool intersect_sphere(const Sphere_T<T>& sphere, Vector3<T>* out_intersection) const
         {
             if (sphere.contains(origin)) {
                 if (out_intersection) {
@@ -83,7 +83,7 @@ namespace kl {
             return true;
         }
 
-        constexpr bool intersect_aabb(const AABB<T>& aabb, Vector3<T>* out_intersection) const
+        constexpr bool intersect_aabb(const AABB_T<T>& aabb, Vector3<T>* out_intersection) const
         {
             if (aabb.contains(origin)) {
                 if (out_intersection) {
@@ -108,13 +108,13 @@ namespace kl {
             return true;
         }
 
-        constexpr bool intersect_triangle(const Triangle<T>& triangle, Vector3<T>* out_intersection) const
+        constexpr bool intersect_triangle(const Triangle_T<T>& triangle, Vector3<T>* out_intersection) const
         {
-            const Vector3<T> edge1 = triangle.b.world - triangle.a.world;
-            const Vector3<T> edge2 = triangle.c.world - triangle.a.world;
+            const Vector3<T> edge1 = triangle.b.position - triangle.a.position;
+            const Vector3<T> edge2 = triangle.c.position - triangle.a.position;
 
             const Vector3<T> h = cross(m_direction, edge2);
-            const Vector3<T> s = origin - triangle.a.world;
+            const Vector3<T> s = origin - triangle.a.position;
             const T f = T(1) / dot(edge1, h);
             const T u = dot(s, h) * f;
             if (u < T(0) || u > T(1))
@@ -141,8 +141,13 @@ namespace kl {
 }
 
 namespace kl {
+    using Ray = Ray_T<float>;
+	using RayD = Ray_T<double>;
+}
+
+namespace kl {
     template<typename T>
-    std::ostream& operator<<(std::ostream& stream, const Ray<T>& ray)
+    std::ostream& operator<<(std::ostream& stream, const Ray_T<T>& ray)
     {
         stream << "{" << ray.origin << ", " << ray.direction() << "}";
         return stream;

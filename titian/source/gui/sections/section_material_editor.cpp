@@ -196,7 +196,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Material& materi
     GameLayer& game_layer = Layers::get<GameLayer>();
 
     if (render_texture.resolution() != viewport_size) {
-        render_texture.graphics_buffer = gpu.create_target_texture(viewport_size);
+        render_texture.texture = gpu.create_target_texture(viewport_size);
         render_texture.create_target_view(nullptr);
         render_texture.create_shader_view(nullptr);
     }
@@ -210,7 +210,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Material& materi
         descriptor.SampleDesc.Count = 1;
         descriptor.Usage = D3D11_USAGE_DEFAULT;
         descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-        depth_texture.graphics_buffer = gpu.create_texture(&descriptor, nullptr);
+        depth_texture.texture = gpu.create_texture(&descriptor, nullptr);
         depth_texture.create_depth_view(nullptr);
     }
 
@@ -303,15 +303,16 @@ void titian::GUISectionMaterialEditor::render_selected_material(Material& materi
     cb.REFRACTION_INDEX = material.refraction_index;
     cb.CUSTOM_DATA = material.custom_data;
 
-    kl::RenderShaders* render_shaders = &render_layer.shader_states.scene_pass;
+    kl::Shaders* shaders = &render_layer.shader_states.scene_pass;
     if (Shader* shader = scene.helper_get_shader(material.shader_name)) {
-        render_shaders = &shader->graphics_buffer;
+        shaders = &shader->shaders;
     }
-    if (*render_shaders) {
-        render_shaders->upload(cb);
-        gpu.bind_render_shaders(*render_shaders);
+
+    if (*shaders) {
+        gpu.bind_shaders(*shaders);
+        shaders->upload(cb);
         Mesh& mesh = scene.default_meshes.cube;
-        gpu.draw(mesh.graphics_buffer, mesh.topology, sizeof(Vertex));
+        gpu.draw(mesh.buffer, mesh.topology, sizeof(Vertex));
     }
 
     gpu.bind_internal_views();

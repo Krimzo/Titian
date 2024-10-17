@@ -9,10 +9,10 @@ void titian::Mesh::serialize(Serializer& serializer) const
     serializer.write_int("topology", topology);
     serializer.write_bool("render_wireframe", render_wireframe);
 
-    serializer.write_int("data_buffer_size", (int32_t) data_buffer.size());
+    serializer.write_int("vertex_count", (int32_t) vertices.size());
     int counter = 0;
-    for (const auto& data : data_buffer) {
-		serializer.write_byte_array(kl::format("__vertex_", counter), &data, sizeof(Vertex));
+    for (const auto& vertex : vertices) {
+		serializer.write_byte_array(kl::format("__vertex_", counter), &vertex, sizeof(Vertex));
         counter += 1;
     }
 
@@ -48,12 +48,12 @@ void titian::Mesh::deserialize(const Serializer& serializer)
     serializer.read_int("topology", (int32_t&) topology);
     serializer.read_bool("render_wireframe", render_wireframe);
 
-    int32_t data_buffer_size = 0;
-    serializer.read_int("data_buffer_size", data_buffer_size);
-    data_buffer.resize(data_buffer_size);
+    int32_t vertex_count = 0;
+    serializer.read_int("vertex_count", vertex_count);
+    vertices.resize(vertex_count);
     int counter = 0;
-    for (auto& data : data_buffer) {
-        serializer.read_byte_array(kl::format("__vertex_", counter), &data, sizeof(Vertex));
+    for (auto& vertex : vertices) {
+        serializer.read_byte_array(kl::format("__vertex_", counter), &vertex, sizeof(Vertex));
         counter += 1;
     }
 
@@ -93,34 +93,34 @@ void titian::Mesh::deserialize(const Serializer& serializer)
     this->reload();
 }
 
-void titian::Mesh::load_vertices(const Vector<kl::Vertex<float>>& vertices)
+void titian::Mesh::load_vertices(const Vector<kl::Vertex>& vertices)
 {
-	data_buffer.resize(vertices.size());
+	this->vertices.resize(vertices.size());
     for (size_t i = 0; i < vertices.size(); i++) {
-        reinterpret_cast<kl::Vertex<float>&>(data_buffer[i]) = vertices[i];
+        reinterpret_cast<kl::Vertex&>(this->vertices[i]) = vertices[i];
     }
     reload();
 }
 
-void titian::Mesh::load_triangles(const Vector<kl::Triangle<float>>& triangles)
+void titian::Mesh::load_triangles(const Vector<kl::Triangle>& triangles)
 {
-    data_buffer.resize(triangles.size() * 3);
+    vertices.resize(triangles.size() * 3);
     for (size_t i = 0; i < triangles.size(); i++) {
-        reinterpret_cast<kl::Vertex<float>&>(data_buffer[i * 3 + 0]) = triangles[i].a;
-        reinterpret_cast<kl::Vertex<float>&>(data_buffer[i * 3 + 1]) = triangles[i].b;
-        reinterpret_cast<kl::Vertex<float>&>(data_buffer[i * 3 + 2]) = triangles[i].c;
+        reinterpret_cast<kl::Vertex&>(vertices[i * 3 + 0]) = triangles[i].a;
+        reinterpret_cast<kl::Vertex&>(vertices[i * 3 + 1]) = triangles[i].b;
+        reinterpret_cast<kl::Vertex&>(vertices[i * 3 + 2]) = triangles[i].c;
     }
     reload();
 }
 
 void titian::Mesh::reload()
 {
-    graphics_buffer = {};
-    if (data_buffer.empty()) {
+    if (vertices.empty()) {
+        buffer = {};
         return;
     }
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    graphics_buffer = gpu.create_vertex_buffer(data_buffer.data(), UINT(data_buffer.size() * sizeof(Vertex)));
+    buffer = gpu.create_vertex_buffer(vertices.data(), UINT(vertices.size() * sizeof(Vertex)));
 }
 
 titian::Ref<titian::Mesh> titian::Mesh::clone() const
@@ -128,8 +128,7 @@ titian::Ref<titian::Mesh> titian::Mesh::clone() const
     Ref mesh = new Mesh();
     mesh->topology = topology;
     mesh->render_wireframe = render_wireframe;
-    mesh->data_buffer = data_buffer;
-    // mesh->graphics_buffer <- reload()
+    mesh->vertices = vertices;
     mesh->bone_matrices = bone_matrices;
 
     Function<void(const SkeletonNode*, SkeletonNode*)> rec_helper;

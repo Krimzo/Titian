@@ -4,16 +4,16 @@
 
 
 namespace kl {
-    template<typename T = float>
-    struct AABB
+    template<typename T>
+    struct AABB_T
     {
-        Vector3<T> position;
+        union { Vector3<T> position; struct { T x, y, z; }; };
         Vector3<T> size;
 
-        constexpr AABB()
+        constexpr AABB_T()
         {}
 
-        constexpr AABB(const Vector3<T>& position, const Vector3<T>& size)
+        constexpr AABB_T(const Vector3<T>& position, const Vector3<T>& size)
             : position(position), size(size)
         {}
 
@@ -40,8 +40,13 @@ namespace kl {
 }
 
 namespace kl {
+    using AABB = AABB_T<float>;
+    using AABBD = AABB_T<double>;
+}
+
+namespace kl {
     template<typename T>
-    std::ostream& operator<<(std::ostream& stream, const AABB<T>& aabb)
+    std::ostream& operator<<(std::ostream& stream, const AABB_T<T>& aabb)
     {
         stream << "{" << aabb.position << ", " << aabb.size << "}";
         return stream;

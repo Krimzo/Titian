@@ -7,5 +7,5 @@ kl::Mesh::Mesh(kl::GPU& gpu)
 
 void kl::Mesh::reload()
 {
-    graphics_buffer = m_gpu.create_vertex_buffer(data_buffer);
+    buffer = m_gpu.create_vertex_buffer(vertices);
 }

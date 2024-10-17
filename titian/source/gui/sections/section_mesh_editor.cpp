@@ -229,7 +229,7 @@ void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, const Int2 v
         return;
 
     if (render_texture.resolution() != viewport_size) {
-        render_texture.graphics_buffer = gpu.create_target_texture(viewport_size);
+        render_texture.texture = gpu.create_target_texture(viewport_size);
         render_texture.create_target_view(nullptr);
         render_texture.create_shader_view(nullptr);
     }
@@ -243,7 +243,7 @@ void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, const Int2 v
         descriptor.SampleDesc.Count = 1;
         descriptor.Usage = D3D11_USAGE_DEFAULT;
         descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-        depth_texture.graphics_buffer = gpu.create_texture(&descriptor, nullptr);
+        depth_texture.texture = gpu.create_texture(&descriptor, nullptr);
         depth_texture.create_depth_view(nullptr);
     }
     
@@ -258,8 +258,8 @@ void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, const Int2 v
     gpu.bind_raster_state(mesh.render_wireframe ? render_layer.raster_states.wireframe : render_layer.raster_states.solid);
     gpu.bind_depth_state(render_layer.depth_states.enabled);
 
-    kl::RenderShaders& render_shaders = render_layer.shader_states.solid_lit_pass;
-    gpu.bind_render_shaders(render_shaders);
+    kl::Shaders& shaders = render_layer.shader_states.solid_lit_pass;
+    gpu.bind_shaders(shaders);
 
     camera.update_aspect_ratio(viewport_size);
 
@@ -275,9 +275,9 @@ void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, const Int2 v
     cb.WVP = camera.camera_matrix();
     cb.OBJECT_COLOR = line_color;
     cb.SUN_DIRECTION = sun_direction;
+    shaders.upload(cb);
 
-    render_shaders.upload(cb);
-    gpu.draw(mesh.graphics_buffer, mesh.topology, sizeof(Vertex));
+    gpu.draw(mesh.buffer, mesh.topology, sizeof(Vertex));
 
     gpu.bind_internal_views();
     gpu.set_viewport_size(old_viewport_size);
@@ -301,7 +301,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
         im::SameLine();
         gui_colored_text(selected_mesh, gui_layer.special_color);
 
-        int vertex_count = int(mesh->data_buffer.size());
+        int vertex_count = (int) mesh->vertices.size();
         im::DragInt("Vertex Count", &vertex_count, 0);
 
         String topology_name = "Point";
@@ -338,7 +338,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
 
             int change_counter = 0;
             for (int i = m_starting_vertex_index; i < (m_starting_vertex_index + m_vertex_display_count) && i < vertex_count; i++) {
-                Vertex& vertex = mesh->data_buffer[i];
+                Vertex& vertex = mesh->vertices[i];
 
                 const String vertex_name = kl::format(i + 1, ". Vertex");
                 if (im::Selectable(vertex_name.data(), m_selected_vertex_index == i)) {
@@ -347,16 +347,16 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
 
                 if (im::BeginPopupContextItem(vertex_name.data(), ImGuiPopupFlags_MouseButtonRight)) {
                     if (im::Button("Delete")) {
-                        mesh->data_buffer.erase(mesh->data_buffer.begin() + i);
+                        mesh->vertices.erase(mesh->vertices.begin() + i);
                         mesh->reload();
                         im::CloseCurrentPopup();
                     }
                     im::EndPopup();
                 }
 
-                const bool world_edited = im::DragFloat3(kl::format("World##MeshEditor", i).data(), &vertex.world.x, 0.1f);
-                const bool texture_edited = im::DragFloat2(kl::format("Texture##MeshEditor", i).data(), &vertex.texture.x, 0.1f);
+                const bool world_edited = im::DragFloat3(kl::format("World##MeshEditor", i).data(), &vertex.position.x, 0.1f);
                 const bool normal_edited = im::DragFloat3(kl::format("Normal##MeshEditor", i).data(), &vertex.normal.x, 0.1f);
+                const bool uv_edited = im::DragFloat2(kl::format("UV##MeshEditor", i).data(), &vertex.uv.x, 0.1f);
 
                 for (int j = 0; j < MAX_BONE_REFS; j++) {
                     int bone_index = vertex.bone_indices[j];
@@ -370,8 +370,8 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
                 }
 
                 change_counter += int(world_edited);
-                change_counter += int(texture_edited);
                 change_counter += int(normal_edited);
+                change_counter += int(uv_edited);
             }
             if (change_counter > 0) {
                 mesh->reload();
@@ -388,7 +388,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
             im::SliderInt("Index", &m_new_vertex_index, 0, vertex_count);
             if (im::Button("Create New")) {
                 if (m_new_vertex_index >= 0 && m_new_vertex_index <= vertex_count) {
-                    mesh->data_buffer.insert(mesh->data_buffer.begin() + m_new_vertex_index, Vertex());
+                    mesh->vertices.insert(mesh->vertices.begin() + m_new_vertex_index, Vertex());
                     mesh->reload();
                     im::CloseCurrentPopup();
                 }
@@ -403,11 +403,11 @@ void titian::GUISectionMeshEditor::render_gizmos(Mesh& mesh)
 {
     kl::Window& window = Layers::get<AppLayer>().window;
 
-    auto& mesh_data = mesh.data_buffer;
+    auto& mesh_data = mesh.vertices;
     if (m_selected_vertex_index < 0 || m_selected_vertex_index >= mesh_data.size()) {
         return;
     }
-    Vertex* selected_vertex = &mesh_data[m_selected_vertex_index];
+    Vertex& selected_vertex = mesh_data[m_selected_vertex_index];
 
     const float viewport_tab_height = im::GetWindowContentRegionMin().y;
     const Float2 viewport_position = { im::GetWindowPos().x, im::GetWindowPos().y + viewport_tab_height };
@@ -424,7 +424,7 @@ void titian::GUISectionMeshEditor::render_gizmos(Mesh& mesh)
 
     const Float4x4 view_matrix = kl::transpose(camera.view_matrix());
     const Float4x4 projection_matrix = kl::transpose(camera.projection_matrix());
-    Float4x4 transform_matrix = kl::transpose(Float4x4::translation(selected_vertex->world));
+    Float4x4 transform_matrix = kl::transpose(Float4x4::translation(selected_vertex.position));
 
     ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data,
         ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
@@ -436,7 +436,7 @@ void titian::GUISectionMeshEditor::render_gizmos(Mesh& mesh)
         ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data,
             &decomposed_parts[2].x, &decomposed_parts[1].x, &decomposed_parts[0].x);
 
-        selected_vertex->world = decomposed_parts[2];
+        selected_vertex.position = decomposed_parts[2];
         mesh.reload();
     }
 }

@@ -5,7 +5,7 @@
 
 namespace kl {
     template<typename T>
-    struct Quaternion;
+    struct Quaternion_T;
 }
 
 namespace kl {
@@ -51,7 +51,7 @@ namespace kl {
 			return { O(x), O(y), O(z) };
 		}
 
-		constexpr operator Quaternion<T>() const
+		constexpr operator Quaternion_T<T>() const
 		{
 			return { x, y, z };
 		}

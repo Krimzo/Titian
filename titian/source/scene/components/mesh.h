@@ -4,12 +4,13 @@
 
 
 namespace titian {
-    struct Vertex
+    using Byte4 = kl::Vector4<byte>;
+}
+
+namespace titian {
+    struct Vertex : kl::Vertex
     {
-        Float3 world;
-        Float2 texture;
-        Float3 normal;
-        kl::Vector4<byte> bone_indices;
+        Byte4 bone_indices;
         Float4 bone_weights;
     };
 }
@@ -33,8 +34,8 @@ namespace titian {
         D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
         bool render_wireframe = false;
 
-        Vector<Vertex> data_buffer;
-        dx::Buffer graphics_buffer;
+        Vector<Vertex> vertices;
+        dx::Buffer buffer;
 
         Vector<Float4x4> bone_matrices;
         Ref<SkeletonNode> skeleton_root;
@@ -44,8 +45,8 @@ namespace titian {
         void serialize(Serializer& serializer) const override;
         void deserialize(const Serializer& serializer) override;
 
-        void load_vertices(const Vector<kl::Vertex<float>>& vertices);
-        void load_triangles(const Vector<kl::Triangle<float>>& triangles);
+        void load_vertices(const Vector<kl::Vertex>& vertices);
+        void load_triangles(const Vector<kl::Triangle>& triangles);
         void reload();
 
         Ref<Mesh> clone() const;

@@ -63,7 +63,7 @@ namespace kl {
 			return { O(x), O(y), O(z), O(w) };
 		}
 
-		constexpr operator Quaternion<T>() const
+		constexpr operator Quaternion_T<T>() const
 		{
 			return { w, x, y, z };
 		}

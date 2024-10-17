@@ -109,7 +109,7 @@ namespace kl {
 
 		dx12::AccelerationStructure create_acceleration_structure(const dx12::AccelerationInputs& inputs, UINT64* update_scratch_size = nullptr);
 		dx12::AccelerationStructure create_blas(const D3D12_RAYTRACING_GEOMETRY_DESC* geometry_descriptor, UINT64* update_scratch_size = nullptr);
-		dx12::AccelerationStructure create_triangle_blas(const dx12::Resource& vertex_buffer, UINT vertex_stride = sizeof(kl::Vertex<float>));
+		dx12::AccelerationStructure create_triangle_blas(const dx12::Resource& vertex_buffer, UINT vertex_stride = sizeof(kl::Vertex));
 		dx12::AccelerationStructure create_tlas(const dx12::Resource& instances, UINT64* update_scratch_size = nullptr);
 
 		dx12::PipelineState create_default_rasterization_pipeline(
@@ -117,8 +117,8 @@ namespace kl {
 			const std::string_view& shader_source,
 			const std::vector<std::pair<std::string, DXGI_FORMAT>>& input_layout_parts = {
 				{ "KL_Position", DXGI_FORMAT_R32G32B32_FLOAT },
-				{ "KL_Texture", DXGI_FORMAT_R32G32_FLOAT },
 				{ "KL_Normal", DXGI_FORMAT_R32G32B32_FLOAT },
+				{ "KL_UV", DXGI_FORMAT_R32G32_FLOAT },
 			},
 			D3D12_PRIMITIVE_TOPOLOGY_TYPE primitive_topology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE
 		) const;
@@ -127,7 +127,7 @@ namespace kl {
 			const std::string_view& compiled_shaders,
 			const dx12::RootSignature& root_signature,
 			UINT max_recursion_depth = 5,
-			UINT max_attribute_size = sizeof(kl::Vertex<float>),
+			UINT max_attribute_size = sizeof(kl::Vertex),
 			UINT max_payload_size = 16
 		) const;
 

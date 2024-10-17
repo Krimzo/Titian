@@ -10,7 +10,7 @@ void titian::OutlinePass::state_package(StatePackage& package)
     RenderLayer& render_layer = Layers::get<RenderLayer>();
     package.raster_state = render_layer.raster_states.solid;
     package.depth_state = render_layer.depth_states.disabled;
-    package.shader_state = render_layer.shader_states.outline_pass;
+    package.shaders = render_layer.shader_states.outline_pass;
 }
 
 void titian::OutlinePass::render_self(StatePackage& package)
@@ -50,7 +50,7 @@ void titian::OutlinePass::render_self(StatePackage& package)
     cb.OUTLINE_COLOR = gui_layer.special_color;
     cb.OUTLINE_SIZE = editor_layer.outline_size;
     cb.SELECTED_COUNT = (int) entitiy_indices.size();
-    package.shader_state.upload(cb);
+    package.shaders.upload(cb);
 
     gpu.draw(render_layer.screen_mesh);
     bench_add_draw_call();

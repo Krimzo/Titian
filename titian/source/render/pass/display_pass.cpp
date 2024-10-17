@@ -10,7 +10,7 @@ void titian::DisplayPass::state_package(StatePackage& package)
     RenderLayer& render_layer = Layers::get<RenderLayer>();
     package.raster_state = render_layer.raster_states.solid;
     package.depth_state = render_layer.depth_states.disabled;
-    package.shader_state = render_layer.shader_states.display_pass;
+    package.shaders = render_layer.shader_states.display_pass;
 }
 
 void titian::DisplayPass::render_self(StatePackage& package)

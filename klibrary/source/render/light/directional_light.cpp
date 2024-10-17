@@ -32,7 +32,7 @@ void kl::DirectionalLight::set_resolution(const int resolution)
 
     for (auto& cascade : m_cascades) {
         cascade = new Texture(m_gpu);
-        cascade->graphics_buffer = m_gpu.create_texture(&shadow_map_descriptor, nullptr);
+        cascade->texture = m_gpu.create_texture(&shadow_map_descriptor, nullptr);
         cascade->create_depth_view(&shadow_depth_view_descriptor);
         cascade->create_shader_view(&shadow_shader_view_descriptor);
     }

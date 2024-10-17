@@ -187,20 +187,20 @@ void titian::Camera::resize(const Int2 new_size)
     screen_desc.SampleDesc.Count = 1;
     screen_desc.Usage = D3D11_USAGE_DEFAULT;
     screen_desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    screen_texture.graphics_buffer = gpu.create_texture(&screen_desc, nullptr);
+    screen_texture.texture = gpu.create_texture(&screen_desc, nullptr);
     screen_texture.create_target_view(nullptr);
     screen_texture.create_shader_view(nullptr);
 
     dx::TextureDescriptor color_desc = screen_desc;
-    color_texture.graphics_buffer = gpu.create_texture(&color_desc, nullptr);
+    color_texture.texture = gpu.create_texture(&color_desc, nullptr);
     color_texture.create_target_view(nullptr);
     color_texture.create_shader_view(nullptr);
 
     dx::TextureDescriptor depth_desc = color_desc;
     depth_desc.Format = DXGI_FORMAT_R32_TYPELESS;
     depth_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-    depth_texture.graphics_buffer = gpu.create_texture(&depth_desc, nullptr);
-    depth_staging.graphics_buffer = gpu.create_staging_texture(depth_texture.graphics_buffer);
+    depth_texture.texture = gpu.create_texture(&depth_desc, nullptr);
+    depth_staging.texture = gpu.create_staging_texture(depth_texture.texture);
 
     dx::DepthViewDescriptor depth_dv_desc{};
     depth_dv_desc.Format = DXGI_FORMAT_D32_FLOAT;
@@ -215,7 +215,7 @@ void titian::Camera::resize(const Int2 new_size)
 
     dx::TextureDescriptor index_desc = screen_desc;
     index_desc.Format = DXGI_FORMAT_R32_FLOAT;
-    index_texture.graphics_buffer = gpu.create_texture(&index_desc, nullptr);
+    index_texture.texture = gpu.create_texture(&index_desc, nullptr);
     index_texture.create_target_view(nullptr);
     index_texture.create_shader_view(nullptr);
 }
@@ -229,7 +229,7 @@ void titian::Camera::resize_staging(const Int2 new_size)
         return;
     }
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    index_staging.graphics_buffer = gpu.create_staging_texture(index_texture.graphics_buffer, new_size);
+    index_staging.texture = gpu.create_staging_texture(index_texture.texture, new_size);
 }
 
 titian::Int2 titian::Camera::resolution() const

@@ -5,7 +5,7 @@ titian::EditorPass::EditorPass()
     : RenderPass("EditorPass")
 {
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    const kl::Vertex<float> frustum_vertices[8] = {
+    const kl::Vertex frustum_vertices[8] = {
         { {  1.0f,  1.0f, -1.0f } },
         { { -1.0f,  1.0f, -1.0f } },
         { {  1.0f, -1.0f, -1.0f } },
@@ -15,7 +15,7 @@ titian::EditorPass::EditorPass()
         { {  1.0f, -1.0f,  1.0f } },
         { { -1.0f, -1.0f,  1.0f } },
     };
-    const Vector<kl::Vertex<float>> frustum_data = {
+    const Vector<kl::Vertex> frustum_data = {
         frustum_vertices[0], frustum_vertices[1],
         frustum_vertices[0], frustum_vertices[2],
         frustum_vertices[3], frustum_vertices[1],
@@ -37,7 +37,7 @@ void titian::EditorPass::state_package(StatePackage& package)
     RenderLayer& render_layer = Layers::get<RenderLayer>();
     package.raster_state = render_layer.raster_states.wireframe;
     package.depth_state = render_layer.depth_states.enabled;
-    package.shader_state = render_layer.shader_states.solid_pass;
+    package.shaders = render_layer.shader_states.solid_pass;
 }
 
 void titian::EditorPass::render_self(StatePackage& package)
@@ -73,22 +73,22 @@ void titian::EditorPass::render_self(StatePackage& package)
             CB cb{};
             cb.WVP = package.camera->camera_matrix() * entity->collider_matrix();
             cb.SOLID_COLOR = gui_layer.alternate_color;
-            package.shader_state.upload(cb);
+            package.shaders.upload(cb);
 
             switch (entity->geometry_type())
             {
             case px::PxGeometryType::Enum::eBOX:
-                gpu.draw(cube.graphics_buffer, cube.topology, sizeof(Vertex));
+                gpu.draw(cube.buffer, cube.topology, sizeof(Vertex));
                 bench_add_draw_call();
                 break;
 
             case px::PxGeometryType::Enum::eSPHERE:
-                gpu.draw(sphere.graphics_buffer, sphere.topology, sizeof(Vertex));
+                gpu.draw(sphere.buffer, sphere.topology, sizeof(Vertex));
                 bench_add_draw_call();
                 break;
 
             case px::PxGeometryType::Enum::eCAPSULE:
-                gpu.draw(capsule.graphics_buffer, capsule.topology, sizeof(Vertex));
+                gpu.draw(capsule.buffer, capsule.topology, sizeof(Vertex));
                 bench_add_draw_call();
                 break;
             }
@@ -98,7 +98,7 @@ void titian::EditorPass::render_self(StatePackage& package)
             CB cb{};
             cb.WVP = package.camera->camera_matrix() * kl::inverse(camera->camera_matrix());
             cb.SOLID_COLOR = gui_layer.special_color;
-            package.shader_state.upload(cb);
+            package.shaders.upload(cb);
             gpu.draw(frustum_mesh, D3D_PRIMITIVE_TOPOLOGY_LINELIST);
             bench_add_draw_call();
         }

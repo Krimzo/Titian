@@ -42,7 +42,7 @@ bool titian::RenderLayer::update()
 					pass->process(camera);
 				}
 				if (Texture* texture = scene.helper_get_texture(camera->target_texture_name)) {
-					texture->copy_other(camera->screen_texture.graphics_buffer);
+					texture->copy_other(camera->screen_texture.texture);
 				}
 			}
 		}
@@ -58,7 +58,7 @@ bool titian::RenderLayer::update()
 				pass->process(camera);
 			}
 			if (Texture* texture = scene.helper_get_texture(camera->target_texture_name)) {
-				texture->copy_other(camera->screen_texture.graphics_buffer);
+				texture->copy_other(camera->screen_texture.texture);
 			}
 		}
 	}

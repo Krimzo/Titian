@@ -43,7 +43,7 @@ void titian::GUISectionShaderEditor::render_gui()
 			if (classify_file(file.value()) == FileType::SHADER) {
 				const String name = fs::path(file.value()).filename().string();
 				Shader* shader = scene.helper_new_shader(scene.generate_unique_name(name, scene.shaders));
-				shader->data_buffer = kl::read_file(file.value());
+				shader->source = kl::read_file(file.value());
 				shader->reload();
 			}
 		}
@@ -153,9 +153,9 @@ void titian::GUISectionShaderEditor::edit_shader(Shader& shader)
 {
 	if (&shader != m_last_shader) {
 		m_last_shader = &shader;
-		m_editor.load(shader.data_buffer);
+		m_editor.load(shader.source);
 	}
 	im::PushFont(Layers::get<GUILayer>().roboto_font_large);
-	m_editor.edit(shader.data_buffer);
+	m_editor.edit(shader.source);
 	im::PopFont();
 }

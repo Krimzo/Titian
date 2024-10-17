@@ -5,7 +5,7 @@ kl::CBuffer::CBuffer(const GPU* gpu)
     : gpu(gpu)
 {}
 
-void kl::CBuffer::upload(const void* data, UINT byte_size)
+void kl::CBuffer::upload(const void* data, const UINT byte_size)
 {
     assert(byte_size % 16 == 0, "CBuffers must have 16 byte alignment");
     const UINT buffer_size = cbuffer ? gpu->buffer_size(cbuffer) : 0;
@@ -24,4 +24,13 @@ void kl::CBuffer::bind(const ShaderType type, const int index) const
     case ShaderType::GEOMETRY: gpu->bind_cb_for_geometry_shader(cbuffer, index); break;
     case ShaderType::COMPUTE: gpu->bind_cb_for_compute_shader(cbuffer, index); break;
     }
+}
+
+kl::Shaders::Shaders(const GPU* gpu)
+    : CBuffer(gpu)
+{}
+
+kl::Shaders::operator bool() const
+{
+    return gpu && vertex_shader && pixel_shader;
 }

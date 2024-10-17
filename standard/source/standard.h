@@ -31,8 +31,8 @@ namespace titian {
 	using Float3x3 = kl::Float3x3;
 	using Float4x4 = kl::Float4x4;
 
-	using Complex = kl::Complex<float>;
-	using Quaternion = kl::Quaternion<float>;
+	using Complex = kl::Complex;
+	using Quaternion = kl::Quaternion;
 
 	using RGB = kl::RGB;
 	using YUV = kl::YUV;

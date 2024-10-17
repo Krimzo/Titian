@@ -7,8 +7,8 @@
 namespace kl {
     struct Texture
     {
-        Image data_buffer;
-        dx::Texture graphics_buffer;
+        Image image;
+        dx::Texture texture;
 
         dx::TargetView target_view;
         dx::DepthView depth_view;

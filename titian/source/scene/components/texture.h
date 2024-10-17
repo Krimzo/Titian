@@ -8,8 +8,8 @@ namespace titian {
 	{
 		static constexpr kl::ImageType COMPRESSION_TYPE = kl::ImageType::JPG;
 
-		kl::Image data_buffer;
-		dx::Texture graphics_buffer;
+		kl::Image image;
+		dx::Texture texture;
 
 		dx::TargetView target_view;
 		dx::DepthView depth_view;

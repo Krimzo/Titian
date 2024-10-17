@@ -177,7 +177,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
     Scene& scene = Layers::get<GameLayer>().scene();
 
     if (render_texture.resolution() != viewport_size) {
-        render_texture.graphics_buffer = gpu.create_target_texture(viewport_size);
+        render_texture.texture = gpu.create_target_texture(viewport_size);
         render_texture.create_target_view(nullptr);
         render_texture.create_shader_view(nullptr);
     }
@@ -191,7 +191,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
         descriptor.SampleDesc.Count = 1;
         descriptor.Usage = D3D11_USAGE_DEFAULT;
         descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-        depth_texture.graphics_buffer = gpu.create_texture(&descriptor, nullptr);
+        depth_texture.texture = gpu.create_texture(&descriptor, nullptr);
         depth_texture.create_depth_view(nullptr);
     }
 
@@ -222,8 +222,8 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
     gpu.bind_raster_state(mesh->render_wireframe ? render_layer.raster_states.wireframe : render_layer.raster_states.solid);
     gpu.bind_depth_state(render_layer.depth_states.enabled);
 
-    kl::RenderShaders& render_shaders = render_layer.shader_states.solid_lit_pass;
-    gpu.bind_render_shaders(render_shaders);
+    kl::Shaders& shaders = render_layer.shader_states.solid_lit_pass;
+    gpu.bind_shaders(shaders);
 
     camera.update_aspect_ratio(viewport_size);
 
@@ -246,8 +246,8 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
         cb.IS_SKELETAL = 1.0f;
     }
 
-    render_shaders.upload(cb);
-    gpu.draw(mesh->graphics_buffer, mesh->topology, sizeof(Vertex));
+    shaders.upload(cb);
+    gpu.draw(mesh->buffer, mesh->topology, sizeof(Vertex));
 
     gpu.unbind_shader_view_for_vertex_shader(0);
     gpu.bind_internal_views();

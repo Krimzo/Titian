@@ -124,14 +124,14 @@ kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const void* data, const UI
     return create_buffer(&descriptor, &subresource_data);
 }
 
-kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::vector<Vertex<float>>& vertices) const
+kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::vector<Vertex>& vertices) const
 {
-    return create_vertex_buffer(vertices.data(), UINT(vertices.size() * sizeof(Vertex<float>)));
+    return create_vertex_buffer(vertices.data(), UINT(vertices.size() * sizeof(Vertex)));
 }
 
-kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::vector<Triangle<float>>& triangles) const
+kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::vector<Triangle>& triangles) const
 {
-    return create_vertex_buffer(triangles.data(), UINT(triangles.size() * sizeof(Triangle<float>)));
+    return create_vertex_buffer(triangles.data(), UINT(triangles.size() * sizeof(Triangle)));
 }
 
 kl::dx::Buffer kl::DeviceHolder::create_vertex_buffer(const std::string_view& filepath, const bool flip_z) const
@@ -192,26 +192,26 @@ kl::dx::Buffer kl::DeviceHolder::create_staging_buffer(const dx::Buffer& buffer,
     return create_buffer(&descriptor, nullptr);
 }
 
-std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_screen_mesh()
+std::vector<kl::Triangle> kl::DeviceHolder::generate_screen_mesh()
 {
-    std::vector<Triangle<float>> triangles;
+    std::vector<Triangle> triangles;
     triangles.emplace_back(
-        Vertex{ { -1.0f,  1.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f } },
-        Vertex{ {  1.0f,  1.0f, 0.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, -1.0f } },
-        Vertex{ {  1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, -1.0f } }
+        Vertex{ { -1.0f,  1.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f } },
+        Vertex{ {  1.0f,  1.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 1.0f, 0.0f } },
+        Vertex{ {  1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 1.0f, 1.0f } }
     );
     triangles.emplace_back(
-        Vertex{ { -1.0f,  1.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f } },
-        Vertex{ {  1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, -1.0f } },
-        Vertex{ { -1.0f, -1.0f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f } }
+        Vertex{ { -1.0f,  1.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 0.0f } },
+        Vertex{ {  1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 1.0f, 1.0f } },
+        Vertex{ { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 1.0f } }
     );
     return triangles;
 }
 
-std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_plane_mesh(const float size, const int complexity)
+std::vector<kl::Triangle> kl::DeviceHolder::generate_plane_mesh(const float size, const int complexity)
 {
     assert(complexity >= 2, "Plane complexity must be at least 2");
-    std::vector<Triangle<float>> triangles;
+    std::vector<Triangle> triangles;
     triangles.reserve(size_t(complexity - 1) * size_t(complexity - 1) * 2);
     const float incr = size / (complexity - 1);
     for (int x = 0; x < complexity - 1; x++) {
@@ -221,67 +221,68 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_plane_mesh(const flo
 			const Float3 rb = lb + Float3{ incr, 0.0f, 0.0f };
             const Float3 rt = lb + Float3{ incr, 0.0f, incr };
             triangles.emplace_back(
-                Vertex{ lb, { float(x + 0) / (complexity - 1), 1.0f - float(z + 0) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
-                Vertex{ lt, { float(x + 0) / (complexity - 1), 1.0f - float(z + 1) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
-                Vertex{ rt, { float(x + 1) / (complexity - 1), 1.0f - float(z + 1) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } }
+                Vertex{ lb, { 0.0f, 1.0f, 0.0f }, { float(x + 0) / (complexity - 1), 1.0f - float(z + 0) / (complexity - 1) } },
+                Vertex{ lt, { 0.0f, 1.0f, 0.0f }, { float(x + 0) / (complexity - 1), 1.0f - float(z + 1) / (complexity - 1) } },
+                Vertex{ rt, { 0.0f, 1.0f, 0.0f }, { float(x + 1) / (complexity - 1), 1.0f - float(z + 1) / (complexity - 1) } }
             );
             triangles.emplace_back(
-                Vertex{ lb, { float(x + 0) / (complexity - 1), 1.0f - float(z + 0) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
-                Vertex{ rt, { float(x + 1) / (complexity - 1), 1.0f - float(z + 1) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } },
-                Vertex{ rb, { float(x + 1) / (complexity - 1), 1.0f - float(z + 0) / (complexity - 1) }, { 0.0f, 1.0f, 0.0f } }
+                Vertex{ lb, { 0.0f, 1.0f, 0.0f }, { float(x + 0) / (complexity - 1), 1.0f - float(z + 0) / (complexity - 1) } },
+                Vertex{ rt, { 0.0f, 1.0f, 0.0f }, { float(x + 1) / (complexity - 1), 1.0f - float(z + 1) / (complexity - 1) } },
+                Vertex{ rb, { 0.0f, 1.0f, 0.0f }, { float(x + 1) / (complexity - 1), 1.0f - float(z + 0) / (complexity - 1) } }
             );
         }
     }
     return triangles;
 }
 
-std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_cube_mesh(const float size)
+std::vector<kl::Triangle> kl::DeviceHolder::generate_cube_mesh(const float size)
 {
-    static constexpr Triangle<float> face[2] = {
-        Triangle<float>{
-            { { -0.5f, -0.5f, -0.5f }, { 0.0f, 0.0f }, { 0.0f, -1.0f, 0.0f } },
-            { {  0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f } },
-            { {  0.5f, -0.5f,  0.5f }, { 1.0f, 1.0f }, { 0.0f, -1.0f, 0.0f } },
+    static constexpr Triangle face[2] = {
+        Triangle{
+            { { -0.5f, -0.5f, -0.5f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, 0.0f } },
+            { {  0.5f, -0.5f, -0.5f }, { 0.0f, -1.0f, 0.0f }, { 1.0f, 0.0f } },
+            { {  0.5f, -0.5f,  0.5f }, { 0.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
         },
-        Triangle<float>{
-            { { -0.5f, -0.5f, -0.5f }, { 0.0f, 0.0f }, { 0.0f, -1.0f, 0.0f } },
-            { {  0.5f, -0.5f,  0.5f }, { 1.0f, 1.0f }, { 0.0f, -1.0f, 0.0f } },
-            { { -0.5f, -0.5f,  0.5f }, { 0.0f, 1.0f }, { 0.0f, -1.0f, 0.0f } },
+        Triangle{
+            { { -0.5f, -0.5f, -0.5f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, 0.0f } },
+            { {  0.5f, -0.5f,  0.5f }, { 0.0f, -1.0f, 0.0f }, { 1.0f, 1.0f } },
+            { { -0.5f, -0.5f,  0.5f }, { 0.0f, -1.0f, 0.0f }, { 0.0f, 1.0f } },
         },
     };
-    static constexpr auto mul_vr = [](const Vertex<float>& vertex, const Float3& other) -> kl::Vertex<float>
+    static constexpr auto mul_vr = [](const Vertex& vertex, const Float3& other) -> Vertex
     {
-        Vertex<float> result;
-        result.world = vertex.world * other;
-        result.texture = vertex.texture;
+        Vertex result;
+        result.position = vertex.position * other;
         result.normal = vertex.normal;
+        result.uv = vertex.uv;
         return result;
     };
-    static constexpr auto mul_tr = [](const Triangle<float>& triangle, const Float3& other) -> kl::Triangle<float>
+    static constexpr auto rotate_vr = [](const Vertex& vertex, const Float3& axis, const float angle) -> Vertex
     {
-        Triangle<float> result;
+        Vertex result;
+        result.position = rotate(vertex.position, axis, angle);
+        result.normal = rotate(vertex.normal, axis, angle);
+        result.uv = vertex.uv;
+        return result;
+    };
+    static constexpr auto mul_tr = [](const Triangle& triangle, const Float3& other) -> Triangle
+    {
+        Triangle result;
         result.a = mul_vr(triangle.a, other);
         result.b = mul_vr(triangle.b, other);
         result.c = mul_vr(triangle.c, other);
         return result;
     };
-    static constexpr auto rotate_vr = [](const Vertex<float>& vertex, const Float3& axis, const float angle) -> kl::Vertex<float>
+    static constexpr auto rotate_tr = [](const Triangle& triangle, const Float3& axis, const float angle) -> Triangle
     {
-        Vertex<float> result;
-        result.world = rotate(vertex.world, axis, angle);
-        result.texture = vertex.texture;
-        result.normal = rotate(vertex.normal, axis, angle);
-        return result;
-    };
-    static constexpr auto rotate_tr = [](const Triangle<float>& triangle, const Float3& axis, const float angle) -> kl::Triangle<float>
-    {
-        Triangle<float> result;
+        Triangle result;
         result.a = rotate_vr(triangle.a, axis, angle);
         result.b = rotate_vr(triangle.b, axis, angle);
         result.c = rotate_vr(triangle.c, axis, angle);
         return result;
     };
-    std::vector<Triangle<float>> triangles;
+
+    std::vector<Triangle> triangles;
     for (const auto& triangle : face) {
         triangles.push_back(mul_tr(triangle, Float3{ size }));
         triangles.push_back(rotate_tr(triangles.back(), { 1.0f, 0.0f, 0.0f }, 90.0f));
@@ -293,7 +294,7 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_cube_mesh(const floa
     return triangles;
 }
 
-std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_sphere_mesh(const float radius, const int complexity, const bool smooth)
+std::vector<kl::Triangle> kl::DeviceHolder::generate_sphere_mesh(const float radius, const int complexity, const bool smooth)
 {
     static constexpr float X = 0.525731112119133606f;
     static constexpr float Z = 0.850650808352039932f;
@@ -309,40 +310,40 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_sphere_mesh(const fl
         { 7, 10,  3 }, { 7, 6, 10 }, { 7, 11, 6 }, { 11, 0, 6 }, { 0, 1,  6 },
         { 6,  1, 10 }, { 9, 0, 11 }, { 9, 11, 2 }, {  9, 2, 5 }, { 7, 2, 11 },
     };
-    static constexpr auto subdivide_single = [](const Triangle<float>& triangle, std::vector<Triangle<float>>& triangles)
+    static constexpr auto subdivide_single = [](const Triangle& triangle, std::vector<Triangle>& triangles)
     {
         auto& a = triangle.a;
 		auto& b = triangle.b;
 		auto& c = triangle.c;
-        const Float3 ab = normalize((triangle.a.world + triangle.b.world) * 0.5f);
-        const Float3 bc = normalize((triangle.b.world + triangle.c.world) * 0.5f);
-        const Float3 ca = normalize((triangle.c.world + triangle.a.world) * 0.5f);
+        const Float3 ab = normalize((triangle.a.position + triangle.b.position) * 0.5f);
+        const Float3 bc = normalize((triangle.b.position + triangle.c.position) * 0.5f);
+        const Float3 ca = normalize((triangle.c.position + triangle.a.position) * 0.5f);
         triangles.emplace_back(a, ab, ca);
         triangles.emplace_back(ab, b, bc);
         triangles.emplace_back(ca, bc, c);
         triangles.emplace_back(ab, bc, ca);
     };
-    static constexpr auto subdivide_multiple = [](const std::vector<Triangle<float>>& triangles) -> std::vector<Triangle<float>>
+    static constexpr auto subdivide_multiple = [](const std::vector<Triangle>& triangles) -> std::vector<Triangle>
     {
-        std::vector<Triangle<float>> result;
+        std::vector<Triangle> result;
         for (const auto& triangle : triangles) {
             subdivide_single(triangle, result);
         }
         return result;
     };
 
-    std::vector<Triangle<float>> triangles;
+    std::vector<Triangle> triangles;
     for (const auto& index : indices) {
         triangles.emplace_back(vertices[index.z], vertices[index.y], vertices[index.x]);
     }
     for (int i = 0; i < complexity; i++) {
         triangles = subdivide_multiple(triangles);
     }
-    std::for_each(std::execution::par, triangles.begin(), triangles.end(), [radius, smooth](Triangle<float>& triangle)
+    std::for_each(std::execution::par, triangles.begin(), triangles.end(), [radius, smooth](Triangle& triangle)
     {
-        const Float3 a_norm = normalize(triangle.a.world);
-		const Float3 b_norm = normalize(triangle.b.world);
-		const Float3 c_norm = normalize(triangle.c.world);
+        const Float3 a_norm = normalize(triangle.a.position);
+		const Float3 b_norm = normalize(triangle.b.position);
+		const Float3 c_norm = normalize(triangle.c.position);
         if (smooth) {
             triangle.a.normal = a_norm;
             triangle.b.normal = b_norm;
@@ -354,18 +355,18 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_sphere_mesh(const fl
             triangle.b.normal = normal;
             triangle.c.normal = normal;
         }
-        triangle.a.world = a_norm * radius;
-        triangle.b.world = b_norm * radius;
-        triangle.c.world = c_norm * radius;
+        triangle.a.position = a_norm * radius;
+        triangle.b.position = b_norm * radius;
+        triangle.c.position = c_norm * radius;
     });
     return triangles;
 }
 
-std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_capsule_mesh(const float radius, const float height, const int sectors, const int rings)
+std::vector<kl::Triangle> kl::DeviceHolder::generate_capsule_mesh(const float radius, const float height, const int sectors, const int rings)
 {
     const auto gen_hem = [&]
     {
-        std::vector<Triangle<float>> triangles;
+        std::vector<Triangle> triangles;
         const float half_height = height * 0.5f;
         const Float3 top_center = Float3{ 0.0f, half_height, 0.0f };
         for (int i = 0; i < sectors; i++) {
@@ -398,7 +399,7 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_capsule_mesh(const f
     };
     const auto gen_cyl = [&]
     {
-        std::vector<Triangle<float>> triangles;
+        std::vector<Triangle> triangles;
         const float half_height = height * 0.5f;
         for (int i = 0; i < sectors; i++) {
             const float first_phi = (float(i) / sectors) * 2.0f * pi();
@@ -422,32 +423,32 @@ std::vector<kl::Triangle<float>> kl::DeviceHolder::generate_capsule_mesh(const f
     };
 
     auto top_hem = gen_hem();
-    std::for_each(std::execution::par, top_hem.begin(), top_hem.end(), [](Triangle<float>& triangle)
+    std::for_each(std::execution::par, top_hem.begin(), top_hem.end(), [](Triangle& triangle)
     {
         std::swap(triangle.a, triangle.c);
     });
     auto cylinder = gen_cyl();
-    std::for_each(std::execution::par, cylinder.begin(), cylinder.end(), [](Triangle<float>& triangle)
+    std::for_each(std::execution::par, cylinder.begin(), cylinder.end(), [](Triangle& triangle)
     {
         std::swap(triangle.a, triangle.c);
     });
     auto bottom_hem = gen_hem();
-    std::for_each(std::execution::par, bottom_hem.begin(), bottom_hem.end(), [](Triangle<float>& triangle)
+    std::for_each(std::execution::par, bottom_hem.begin(), bottom_hem.end(), [](Triangle& triangle)
     {
-        triangle.a.world.y *= -1.0f;
-        triangle.b.world.y *= -1.0f;
-        triangle.c.world.y *= -1.0f;
+        triangle.a.position.y *= -1.0f;
+        triangle.b.position.y *= -1.0f;
+        triangle.c.position.y *= -1.0f;
     });
 
-    std::vector<Triangle<float>> triangles;
+    std::vector<Triangle> triangles;
     triangles.insert(triangles.end(), top_hem.begin(), top_hem.end());
 	triangles.insert(triangles.end(), cylinder.begin(), cylinder.end());
 	triangles.insert(triangles.end(), bottom_hem.begin(), bottom_hem.end());
-    std::for_each(std::execution::par, triangles.begin(), triangles.end(), [](Triangle<float>& triangle)
+    std::for_each(std::execution::par, triangles.begin(), triangles.end(), [](Triangle& triangle)
     {
-        std::swap(triangle.a.world.x, triangle.a.world.y);
-        std::swap(triangle.b.world.x, triangle.b.world.y);
-        std::swap(triangle.c.world.x, triangle.c.world.y);
+        std::swap(triangle.a.x, triangle.a.y);
+        std::swap(triangle.b.x, triangle.b.y);
+        std::swap(triangle.c.x, triangle.c.y);
         const Float3 normal = triangle.normal();
         triangle.a.normal = normal;
         triangle.b.normal = normal;
@@ -605,8 +606,8 @@ kl::dx::InputLayout kl::DeviceHolder::create_input_layout(const CompiledShader& 
 {
     static constexpr dx::LayoutDescriptor default_layout_descriptors[3] = {
         { "KL_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "KL_Texture", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "KL_Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "KL_UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
     const dx::LayoutDescriptor* descriptors_ptr = !descriptors.empty() ? descriptors.data() : default_layout_descriptors;
     const UINT descriptors_count = !descriptors.empty() ? (UINT) descriptors.size() : (UINT) std::size(default_layout_descriptors);

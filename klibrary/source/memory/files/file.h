@@ -73,6 +73,6 @@ namespace kl {
     std::string read_file(const std::string_view& filepath);
     bool write_file(const std::string_view& filepath, const std::string_view& data);
 
-    std::vector<Vertex<float>> parse_obj_file(const std::string_view& filepath, bool flip_z = true);
+    std::vector<Vertex> parse_obj_file(const std::string_view& filepath, bool flip_z = true);
     std::optional<std::string> choose_file(bool save, const std::vector<std::pair<std::string_view, std::string_view>>& filters = { { "All Files", ".*" } }, int* out_index = nullptr);
 }

@@ -6,7 +6,7 @@ void kl::Camera::update_aspect_ratio(const Int2 size)
     aspect_ratio = size.x / (float) size.y;
 }
 
-kl::Ray<float> kl::Camera::ray() const
+kl::Ray kl::Camera::ray() const
 {
     return { position, m_forward };
 }

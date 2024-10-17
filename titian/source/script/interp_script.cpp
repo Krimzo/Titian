@@ -271,59 +271,59 @@ void titian::InterpScript::load_engine_parts()
 			CONST_METHOD(Quaternion, Quaternion, operator*, const Quaternion&))
 	);
 
-	m_engine->new_usertype<kl::Vertex<float>>(
+	m_engine->new_usertype<kl::Vertex>(
 		"Vertex",
-		sl::constructors<kl::Vertex<float>(),
-			kl::Vertex<float>(Float3), kl::Vertex<float>(Float3, Float2), kl::Vertex<float>(Float3, Float3), kl::Vertex<float>(Float3, Float2, Float3)>(),
-		"world", &kl::Vertex<float>::world,
-		"normal", &kl::Vertex<float>::normal,
-		"texture", &kl::Vertex<float>::texture
+		sl::constructors<kl::Vertex(),
+			kl::Vertex(Float3), kl::Vertex(Float3, Float3, Float2)>(),
+		"position", &kl::Vertex::position,
+		"normal", &kl::Vertex::normal,
+		"uv", &kl::Vertex::uv
 	);
 
-	m_engine->new_usertype<kl::Triangle<float>>(
+	m_engine->new_usertype<kl::Triangle>(
 		"Triangle",
-		sl::constructors<kl::Triangle<float>(),
-			kl::Triangle<float>(kl::Vertex<float>, kl::Vertex<float>, kl::Vertex<float>)>(),
-		"a", &kl::Triangle<float>::a,
-		"b", &kl::Triangle<float>::b,
-		"c", &kl::Triangle<float>::c
+		sl::constructors<kl::Triangle(),
+			kl::Triangle(kl::Vertex, kl::Vertex, kl::Vertex)>(),
+		"a", &kl::Triangle::a,
+		"b", &kl::Triangle::b,
+		"c", &kl::Triangle::c
 	);
 
-	m_engine->new_usertype<kl::Plane<float>>(
+	m_engine->new_usertype<kl::Plane>(
 		"Plane",
-		sl::constructors<kl::Plane<float>(),
-			kl::Plane<float>(Float3, Float3)>(),
-		"position", &kl::Plane<float>::position,
-		"normal", sl::overload(&kl::Plane<float>::normal, &kl::Plane<float>::set_normal),
-		"in_front", &kl::Plane<float>::in_front
+		sl::constructors<kl::Plane(),
+			kl::Plane(Float3, Float3)>(),
+		"position", &kl::Plane::position,
+		"normal", sl::overload(&kl::Plane::normal, &kl::Plane::set_normal),
+		"in_front", &kl::Plane::in_front
 	);
 
-	m_engine->new_usertype<kl::Sphere<float>>(
+	m_engine->new_usertype<kl::Sphere>(
 		"Sphere",
-		sl::constructors<kl::Sphere<float>(),
-			kl::Sphere<float>(Float3, float)>(),
-		"position", &kl::Sphere<float>::position,
-		"radius", &kl::Sphere<float>::radius
+		sl::constructors<kl::Sphere(),
+			kl::Sphere(Float3, float)>(),
+		"position", &kl::Sphere::position,
+		"radius", &kl::Sphere::radius
 	);
 
-	m_engine->new_usertype<kl::AABB<float>>(
+	m_engine->new_usertype<kl::AABB>(
 		"AABB",
-		sl::constructors<kl::AABB<float>(),
-			kl::AABB<float>(Float3, Float3)>(),
-		"position", &kl::AABB<float>::position,
-		"size", &kl::AABB<float>::size
+		sl::constructors<kl::AABB(),
+			kl::AABB(Float3, Float3)>(),
+		"position", &kl::AABB::position,
+		"size", &kl::AABB::size
 	);
 
-	m_engine->new_usertype<kl::Ray<float>>(
+	m_engine->new_usertype<kl::Ray>(
 		"Ray",
-		sl::constructors<kl::Ray<float>(),
-			kl::Ray<float>(Float3, Float3), kl::Ray<float>(Float3, Float4x4, Float2)>(),
-		"origin", &kl::Ray<float>::origin,
-		"direction", sl::property(&kl::Ray<float>::direction, &kl::Ray<float>::set_direction),
-		"intersect_plane", &kl::Ray<float>::intersect_plane,
-		"intersect_sphere", &kl::Ray<float>::intersect_sphere,
-		"intersect_aabb", &kl::Ray<float>::intersect_aabb,
-		"intersect_triangle", &kl::Ray<float>::intersect_triangle
+		sl::constructors<kl::Ray(),
+			kl::Ray(Float3, Float3), kl::Ray(Float3, Float4x4, Float2)>(),
+		"origin", &kl::Ray::origin,
+		"direction", sl::property(&kl::Ray::direction, &kl::Ray::set_direction),
+		"intersect_plane", &kl::Ray::intersect_plane,
+		"intersect_sphere", &kl::Ray::intersect_sphere,
+		"intersect_aabb", &kl::Ray::intersect_aabb,
+		"intersect_triangle", &kl::Ray::intersect_triangle
 	);
 
 	m_engine->new_usertype<RGB>(
@@ -385,7 +385,7 @@ void titian::InterpScript::load_engine_parts()
 
 	m_engine->new_usertype<Mesh>(
 		"Mesh",
-		"data_buffer", &Mesh::data_buffer,
+		"vertices", &Mesh::vertices,
 		"topology", &Mesh::topology,
 		"render_wireframe", &Mesh::render_wireframe,
 		"load_vertices", &Mesh::load_vertices,
@@ -406,7 +406,7 @@ void titian::InterpScript::load_engine_parts()
 
 	m_engine->new_usertype<Texture>(
 		"Texture",
-		"data_buffer", &Texture::data_buffer,
+		"image", &Texture::image,
 		"is_cube", &Texture::is_cube,
 		"reload_as_2D", &Texture::reload_as_2D,
 		"reload_as_cube", &Texture::reload_as_cube,
@@ -433,7 +433,7 @@ void titian::InterpScript::load_engine_parts()
 	m_engine->new_usertype<Shader>(
 		"Shader",
 		"shader_type", &Shader::shader_type,
-		"data_buffer", &Shader::data_buffer,
+		"source", &Shader::source,
 		"reload", &Shader::reload
 	);
 
@@ -686,11 +686,12 @@ void titian::InterpScript::load_engine_parts()
 	(*m_engine)["new_float4_vector"] = []() { return Vector<Float4>{}; };
 	(*m_engine)["new_complex_vector"] = []() { return Vector<Complex>{}; };
 	(*m_engine)["new_quat_vector"] = []() { return Vector<Quaternion>{}; };
-	(*m_engine)["new_vertex_vector"] = []() { return Vector<kl::Vertex<float>>{}; };
-	(*m_engine)["new_triangle_vector"] = []() { return Vector<kl::Triangle<float>>{}; };
-	(*m_engine)["new_plane_vector"] = []() { return Vector<kl::Plane<float>>{}; };
-	(*m_engine)["new_sphere_vector"] = []() { return Vector<kl::Sphere<float>>{}; };
-	(*m_engine)["new_ray_vector"] = []() { return Vector<kl::Ray<float>>{}; };
+	(*m_engine)["new_vertex_vector"] = []() { return Vector<kl::Vertex>{}; };
+	(*m_engine)["new_triangle_vector"] = []() { return Vector<kl::Triangle>{}; };
+	(*m_engine)["new_plane_vector"] = []() { return Vector<kl::Plane>{}; };
+	(*m_engine)["new_sphere_vector"] = []() { return Vector<kl::Sphere>{}; };
+	(*m_engine)["new_aabb_vector"] = []() { return Vector<kl::AABB>{}; };
+	(*m_engine)["new_ray_vector"] = []() { return Vector<kl::Ray>{}; };
 	(*m_engine)["new_color_vector"] = []() { return Vector<RGB>{}; };
 	(*m_engine)["new_string_vector"] = []() { return Vector<String>{}; };
 
@@ -739,11 +740,12 @@ void titian::InterpScript::load_engine_parts()
 		&Logger::log<const Float4&>,
 		&Logger::log<Complex>,
 		&Logger::log<const Quaternion&>,
-		&Logger::log<const kl::Vertex<float>&>,
-		&Logger::log<const kl::Triangle<float>&>,
-		&Logger::log<const kl::Plane<float>&>,
-		&Logger::log<const kl::Sphere<float>&>,
-		&Logger::log<const kl::Ray<float>&>);
+		&Logger::log<const kl::Vertex&>,
+		&Logger::log<const kl::Triangle&>,
+		&Logger::log<const kl::Plane&>,
+		&Logger::log<const kl::Sphere&>,
+		&Logger::log<const kl::AABB&>,
+		&Logger::log<const kl::Ray&>);
 	(*m_engine)["print"] = (*m_engine)["log"];
 
 	(*m_engine)["elapsed_t"] = [] { return Layers::get<AppLayer>().timer.elapsed(); };
