@@ -21,10 +21,10 @@ bool kl::json::Object::compile(std::vector<Token>::const_iterator first, std::ve
         if (depth == 1) {
             if (key) {
                 Ref<Container> container;
-                if (it->type == TokenType::_ARRAY_START) {
+                if (it->type == TokenType::ARRAY_START) {
                     container = new Array();
                 }
-                else if (it->type == TokenType::_OBJECT_START) {
+                else if (it->type == TokenType::OBJECT_START) {
                     container = new Object();
                 }
                 else {
@@ -35,16 +35,15 @@ bool kl::json::Object::compile(std::vector<Token>::const_iterator first, std::ve
                 }
                 key.reset();
             }
-            else if (it->type == TokenType::_STRING) {
+            else if (it->type == TokenType::LIT_STRING) {
                 key = it->value;
             }
         }
-        if (it->type == TokenType::_OBJECT_START || it->type == TokenType::_ARRAY_START) {
+        if (it->type == TokenType::OBJECT_START || it->type == TokenType::ARRAY_START) {
             depth += 1;
         }
-        else if (it->type == TokenType::_OBJECT_END || it->type == TokenType::_ARRAY_END) {
-            depth -= 1;
-            if (depth <= 0)
+        else if (it->type == TokenType::OBJECT_END || it->type == TokenType::ARRAY_END) {
+            if (--depth == 0)
                 break;
         }
     }
@@ -53,43 +52,42 @@ bool kl::json::Object::compile(std::vector<Token>::const_iterator first, std::ve
 
 std::string kl::json::Object::decompile(const int depth) const
 {
-    if (empty()) {
-        return format(Standard::object_start_literal, Standard::object_end_literal);
-    }
+    if (empty())
+        return format(Standard::object_start, Standard::object_end);
 
     size_t counter = 0;
     std::stringstream stream;
     if (depth >= 0) {
         const std::string map_depth(depth * 2, ' ');
         const std::string content_depth((depth + 1) * 2, ' ');
-        stream << Standard::object_start_literal << '\n';
+        stream << Standard::object_start << '\n';
         for (const auto& [key, value] : *this) {
             std::string name = key;
             Lexer::from_escaping(name);
-            stream << content_depth << Standard::string_literal << name << Standard::string_literal;
-            stream << Standard::assign_literal << ' ';
+            stream << content_depth << Standard::string << name << Standard::string;
+            stream << Standard::assign << ' ';
             stream << value->decompile(depth + 1);
             if (++counter != size()) {
-                stream << Standard::splitter_literal;
+                stream << Standard::splitter;
             }
             stream << '\n';
         }
-        stream << map_depth << Standard::object_end_literal;
+        stream << map_depth << Standard::object_end;
     }
     else {
-        stream << Standard::object_start_literal << ' ';
+        stream << Standard::object_start << ' ';
         for (const auto& [key, value] : *this) {
             std::string name = key;
             Lexer::from_escaping(name);
-            stream << Standard::string_literal << name << Standard::string_literal;
-            stream << Standard::assign_literal << ' ';
+            stream << Standard::string << name << Standard::string;
+            stream << Standard::assign << ' ';
             stream << value->decompile(-1);
             if (++counter != size()) {
-                stream << Standard::splitter_literal;
+                stream << Standard::splitter;
             }
             stream << ' ';
         }
-        stream << Standard::object_end_literal;
+        stream << Standard::object_end;
     }
     return stream.str();
 }

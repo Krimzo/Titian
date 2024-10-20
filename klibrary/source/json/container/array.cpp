@@ -19,10 +19,10 @@ bool kl::json::Array::compile(std::vector<Token>::const_iterator first, std::vec
     for (auto it = first; it != last; ++it) {
         if (depth == 1) {
             Ref<Container> container;
-            if (it->type == TokenType::_ARRAY_START) {
+            if (it->type == TokenType::ARRAY_START) {
                 container = new Array();
             }
-            else if (it->type == TokenType::_OBJECT_START) {
+            else if (it->type == TokenType::OBJECT_START) {
                 container = new Object();
             }
             else {
@@ -32,12 +32,11 @@ bool kl::json::Array::compile(std::vector<Token>::const_iterator first, std::vec
                 push_back(std::move(container));
             }
         }
-        if (it->type == TokenType::_OBJECT_START || it->type == TokenType::_ARRAY_START) {
+        if (it->type == TokenType::OBJECT_START || it->type == TokenType::ARRAY_START) {
             depth += 1;
         }
-        else if (it->type == TokenType::_OBJECT_END || it->type == TokenType::_ARRAY_END) {
-            depth -= 1;
-            if (depth <= 0)
+        else if (it->type == TokenType::OBJECT_END || it->type == TokenType::ARRAY_END) {
+            if (--depth == 0)
                 break;
         }
     }
@@ -46,18 +45,17 @@ bool kl::json::Array::compile(std::vector<Token>::const_iterator first, std::vec
 
 std::string kl::json::Array::decompile(const int depth) const
 {
-    if (empty()) {
-        return format(Standard::array_start_literal, Standard::array_end_literal);
-    }
+    if (empty())
+        return format(Standard::array_start, Standard::array_end);
 
     std::stringstream stream;
-    stream << Standard::array_start_literal;
+    stream << Standard::array_start;
     for (size_t i = 0; i < size(); i++) {
         stream << (*this)[i]->decompile(-1);
         if ((i + 1) != size()) {
-            stream << Standard::splitter_literal << ' ';
+            stream << Standard::splitter << ' ';
         }
     }
-    stream << Standard::array_end_literal;
+    stream << Standard::array_end;
     return stream.str();
 }

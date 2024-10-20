@@ -6,36 +6,36 @@
 namespace kl::json {
 	struct Standard
 	{
-        static inline const std::string null_value = "null";
-        static inline const std::string false_value = "false";
-        static inline const std::string true_value = "true";
+        static constexpr std::string_view null_val = "null";
+        static constexpr std::string_view false_val = "false";
+        static constexpr std::string_view true_val = "true";
 
-        static constexpr char string_literal = '"';
-        static constexpr char string_escaping = '\\';
+        static constexpr char string = '"';
+        static constexpr char escaping = '\\';
 
-        static constexpr char splitter_literal = ',';
-        static constexpr char assign_literal = ':';
+        static constexpr char splitter = ',';
+        static constexpr char assign = ':';
 
-        static constexpr char object_start_literal = '{';
-        static constexpr char object_end_literal = '}';
+        static constexpr char object_start = '{';
+        static constexpr char object_end = '}';
 
-        static constexpr char array_start_literal = '[';
-        static constexpr char array_end_literal = ']';
+        static constexpr char array_start = '[';
+        static constexpr char array_end = ']';
 	};
 }
 
 namespace kl::json {
 	enum struct TokenType : int32_t
 	{
-		_NULL = 0,
-		_FALSE,
-		_TRUE,
-		_NUMBER,
-		_STRING,
-		_OBJECT_START,
-		_OBJECT_END,
-		_ARRAY_START,
-		_ARRAY_END,
+		VAL_NULL = 0,
+		VAL_FALSE,
+		VAL_TRUE,
+		LIT_NUMBER,
+		LIT_STRING,
+		OBJECT_START,
+		OBJECT_END,
+		ARRAY_START,
+		ARRAY_END,
 	};
 }
 
