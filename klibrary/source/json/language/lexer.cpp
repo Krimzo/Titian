@@ -14,7 +14,8 @@ void kl::json::Lexer::from_escaping(std::string& str)
 
 char kl::json::Lexer::to_escaping(const char c)
 {
-	switch (c) {
+	switch (c)
+	{
 	case 'b': return '\b';
 	case 'f': return '\f';
 	case 'n': return '\n';
@@ -52,7 +53,6 @@ std::vector<kl::json::Token> kl::json::Lexer::parse(const std::string_view& data
 			break;
 
 		case '-':
-		case '.':
 		case '0':
 		case '1':
 		case '2':
@@ -113,6 +113,8 @@ void kl::json::Lexer::parse_number(const std::string_view& data, std::vector<Tok
 		{
 		case '-':
 		case '.':
+		case 'e':
+		case 'E':
 		case '0':
 		case '1':
 		case '2':

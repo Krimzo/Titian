@@ -54,7 +54,7 @@ std::string kl::json::Literal::decompile(const int depth) const
         if (int_value == flt_value) {
             return std::to_string(int_value);
         }
-        return std::to_string(flt_value);
+        return format(flt_value);
 	}
     if (auto opt = get_string()) {
         Lexer::from_escaping(opt.value());
