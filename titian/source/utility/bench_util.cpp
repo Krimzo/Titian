@@ -8,7 +8,7 @@ titian::TimeBomb::TimeBomb(Function<void(float)> callback)
 
 titian::TimeBomb::~TimeBomb()
 {
-	m_callback(kl::time::calculate(m_start_time, kl::time::now()));
+	m_callback(kl::time::elapsed(m_start_time));
 }
 
 titian::BenchmarkInfo::BenchmarkInfo(const StringView& bench_name)

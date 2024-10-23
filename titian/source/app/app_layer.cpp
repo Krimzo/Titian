@@ -24,8 +24,7 @@ void titian::AppLayer::init(const StringView& name)
 bool titian::AppLayer::update()
 {
 	const TimeBomb _ = bench_time_bomb();
-
-	timer.update_delta();
+	timer.update();
 	return window.process();
 }
 

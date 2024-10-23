@@ -3,7 +3,7 @@
 
 kl::Date::Date()
 {
-    std::tm date_now = {};
+    std::tm date_now{};
     const time_t current_time = std::time(nullptr);
     localtime_s(&date_now, &current_time);
     year = date_now.tm_year + 1900;

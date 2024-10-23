@@ -5,12 +5,13 @@
 
 
 namespace kl::time {
-    uint64_t now();
     uint64_t cpu_frequency();
+    uint64_t now();
 
-    float calculate(uint64_t start, uint64_t end);
+    float elapsed(uint64_t start, uint64_t end);
+    float elapsed(uint64_t from);
     float delta();
 
     void wait(float seconds);
-    bool sleep(float seconds);
+    void sleep(float seconds);
 }

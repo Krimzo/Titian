@@ -191,12 +191,12 @@ std::optional<std::string> kl::choose_file(const bool save, const std::vector<st
     }
     const std::string filter_data = filter_buffer.str();
 
-    char file_buffer[256] = {};
+    char file_buffer[512] = {};
     OPENFILENAMEA dialog_info = {};
     dialog_info.lStructSize = sizeof(dialog_info);
     dialog_info.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
     dialog_info.lpstrFile = file_buffer;
-    dialog_info.nMaxFile = sizeof(file_buffer);
+    dialog_info.nMaxFile = sizeof(file_buffer) - 1;
     dialog_info.lpstrFilter = filter_data.data();
     dialog_info.nFilterIndex = 1;
 

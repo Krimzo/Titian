@@ -126,7 +126,7 @@ void titian::GUISectionFuzeTimeline::handle_input(const int scroll)
 			}
 			else {
 				video_layer.stop();
-				app_layer.timer.stop();
+				app_layer.timer.reset();
 			}
 		}
 		if (video_layer.can_edit() && im::IsKeyPressed(ImGuiKey_Home)) {

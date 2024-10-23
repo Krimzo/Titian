@@ -8,7 +8,7 @@ titian::GUISectionAnimationEditor::GUISectionAnimationEditor()
     camera.background = RGB{ 30, 30, 30 };
     camera.set_position({ -0.34f, 0.18f, -0.94f });
     camera.speed = 3.1f;
-    m_timer.stop();
+    m_timer.reset();
 }
 
 void titian::GUISectionAnimationEditor::render_gui()
@@ -17,6 +17,8 @@ void titian::GUISectionAnimationEditor::render_gui()
 
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
     Scene& scene = Layers::get<GameLayer>().scene();
+
+    m_timer.update();
 
     Ref<Animation> animation;
     if (scene.animations.contains(selected_animation)) {
@@ -283,7 +285,7 @@ void titian::GUISectionAnimationEditor::show_animation_properties(Animation* ani
                 m_timer.restart();
             }
             else {
-                m_timer.stop();
+                m_timer.reset();
             }
         }
 

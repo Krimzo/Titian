@@ -5,6 +5,15 @@
 
 
 namespace titian {
+	enum struct GameState
+	{
+		STOPPED = 0,
+		PAUSED,
+		RUNNING,
+	};
+}
+
+namespace titian {
 	struct GameLayer : Layer
 	{
 		GameLayer();
@@ -25,7 +34,6 @@ namespace titian {
 
 	private:
 		Optional<Scene> m_scene;
-		bool m_game_running = false;
-		bool m_game_paused = false;
+		GameState m_game_state = GameState::STOPPED;
 	};
 }

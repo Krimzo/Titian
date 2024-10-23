@@ -13,9 +13,8 @@ void titian::GameLayer::init()
 bool titian::GameLayer::update()
 {
 	const TimeBomb _ = bench_time_bomb();
-	if (m_game_running && !m_game_paused) {
-		const float delta_time = Layers::get<AppLayer>().timer.delta();
-		m_scene->update_physics(delta_time);
+	if (m_game_state == GameState::RUNNING) {
+		m_scene->update_physics(Layers::get<AppLayer>().timer.delta());
 		m_scene->update_scripts();
 	}
 	return true;
@@ -33,6 +32,9 @@ titian::Scene& titian::GameLayer::scene()
 
 void titian::GameLayer::start_game()
 {
+	if (m_game_state != GameState::STOPPED)
+		return;
+
 	AppLayer& app_layer = Layers::get<AppLayer>();
 
 	for (auto& [_, shader] : m_scene->shaders) {
@@ -42,43 +44,47 @@ void titian::GameLayer::start_game()
 		script->reload();
 	}
 
-	app_layer.timer.restart();
+	app_layer.timer.reset();
 	for (auto& [_, script] : m_scene->scripts) {
 		script->call_start(*m_scene);
 	}
 
-	m_game_running = true;
-	m_game_paused = false;
+	app_layer.timer.start();
+	m_game_state = GameState::RUNNING;
 	Logger::log("Game started.");
-	app_layer.timer.restart();
 }
 
 void titian::GameLayer::pause_game()
 {
-	Layers::get<AppLayer>().timer.pause();
-	m_game_paused = true;
+	if (m_game_state != GameState::RUNNING)
+		return;
+	Layers::get<AppLayer>().timer.stop();
+	m_game_state = GameState::PAUSED;
 }
 
 void titian::GameLayer::resume_game()
 {
-	m_game_paused = false;
-	Layers::get<AppLayer>().timer.resume();
+	if (m_game_state != GameState::PAUSED)
+		return;
+	Layers::get<AppLayer>().timer.start();
+	m_game_state = GameState::RUNNING;
 }
 
 void titian::GameLayer::stop_game()
 {
-	Layers::get<AppLayer>().timer.stop();
-	m_game_running = false;
-	m_game_paused = false;
+	if (m_game_state == GameState::STOPPED)
+		return;
+	Layers::get<AppLayer>().timer.reset();
+	m_game_state = GameState::STOPPED;
 	Logger::log("Game stopped.");
 }
 
 bool titian::GameLayer::game_running() const
 {
-	return m_game_running;
+	return m_game_state == GameState::RUNNING;
 }
 
 bool titian::GameLayer::game_paused() const
 {
-	return m_game_paused;
+	return m_game_state == GameState::PAUSED;
 }

@@ -26,7 +26,7 @@ void titian::GUISectionEntityProperties::render_gui()
             edit_entity_material(scene, *entity);
             edit_entity_physics(scene, *entity);
             edit_entity_collider(scene, *entity);
-            edit_entity_other(scene, *entity);
+            edit_entity_properties(scene, *entity);
         }
     }
     im::End();
@@ -372,10 +372,10 @@ void titian::GUISectionEntityProperties::edit_entity_collider(Scene& scene, Enti
     }
 }
 
-void titian::GUISectionEntityProperties::edit_entity_other(Scene& scene, Entity& entity)
+void titian::GUISectionEntityProperties::edit_entity_properties(Scene& scene, Entity& entity)
 {
     im::Separator();
-    im::Text("Other Properties");
+    im::Text("Properties");
 
     im::Checkbox("Shadows", &entity.shadows);
 }

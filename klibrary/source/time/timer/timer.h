@@ -8,26 +8,22 @@ namespace kl {
     {
         Timer();
 
-        void update_delta();
-        float delta() const;
-
-        void reset_elapsed();
-        float elapsed() const;
+        void update();
 
         void stop();
+        void start();
+
+        void reset();
         void restart();
 
-        void pause();
-        void resume();
-
-        bool is_running() const;
+        bool active() const;
+        float delta() const;
+        float elapsed() const;
 
     private:
-        uint64_t m_delta_start;
-        uint64_t m_delta_end;
-        uint64_t m_elapsed_start;
-
-        float m_old_elapsed = 0.0f;
-        bool m_is_running = true;
+        uint64_t m_last = 0;
+        float m_delta = 0.0f;
+        float m_elapsed = 0.0f;
+        bool m_active = false;
     };
 }

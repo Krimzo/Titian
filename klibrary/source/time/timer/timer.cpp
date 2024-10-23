@@ -3,72 +3,54 @@
 
 kl::Timer::Timer()
 {
+    restart();
+}
+
+void kl::Timer::update()
+{
     const uint64_t now = time::now();
-    m_delta_start = now;
-    m_delta_end = now;
-    m_elapsed_start = now;
-}
-
-void kl::Timer::update_delta()
-{
-    m_delta_start = m_delta_end;
-    m_delta_end = time::now();
-}
-
-float kl::Timer::delta() const
-{
-    return time::calculate(m_delta_start, m_delta_end);
-}
-
-void kl::Timer::reset_elapsed()
-{
-    m_old_elapsed = 0.0f;
-    m_elapsed_start = time::now();
-}
-
-float kl::Timer::elapsed() const
-{
-    if (!m_is_running) {
-        return m_old_elapsed;
+    m_delta = time::elapsed(m_last, now);
+    if (m_active) {
+        m_elapsed += m_delta;
     }
-    const float elapsed = time::calculate(m_elapsed_start, time::now());
-    return m_old_elapsed + elapsed;
+    m_last = now;
 }
 
 void kl::Timer::stop()
 {
-    update_delta();
-    reset_elapsed();
-    m_is_running = false;
+    m_active = false;
+}
+
+void kl::Timer::start()
+{
+    m_active = true;
+}
+
+void kl::Timer::reset()
+{
+    m_last = time::now();
+    m_delta = 0.0f;
+    m_elapsed = 0.0f;
+    m_active = false;
 }
 
 void kl::Timer::restart()
 {
-    update_delta();
-    reset_elapsed();
-    m_is_running = true;
+    reset();
+    start();
 }
 
-void kl::Timer::pause()
+bool kl::Timer::active() const
 {
-    if (!m_is_running) {
-        return;
-    }
-    m_old_elapsed += time::calculate(m_elapsed_start, time::now());
-    m_is_running = false;
+    return m_active;
 }
 
-void kl::Timer::resume()
+float kl::Timer::delta() const
 {
-    if (m_is_running) {
-        return;
-    }
-	update_delta();
-    m_elapsed_start = time::now();
-    m_is_running = true;
+    return m_delta;
 }
 
-bool kl::Timer::is_running() const
+float kl::Timer::elapsed() const
 {
-    return m_is_running;
+	return m_elapsed;
 }

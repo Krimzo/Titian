@@ -278,11 +278,6 @@ void titian::GUISectionMainMenu::render_gui()
         static Optional<AssimpData> opt_assimp_data;
         if (im::BeginMenu("Tools")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
-            if (im::MenuItem("Import Packed")) {
-                if (auto file_path = kl::choose_file(false, { { "GLTF File", FILE_EXTENSION_GLB }, { "FBX File", FILE_EXTENSION_FBX } })) {
-                    opt_assimp_data = scene.get_assimp_data(file_path.value());
-                }
-            }
             if (im::MenuItem("Quick Setup")) {
                 Ref camera = new Camera();
                 camera->set_position(Float3{ 1.5f });
@@ -315,6 +310,13 @@ void titian::GUISectionMainMenu::render_gui()
                 Ref material = new Material();
                 material->color = kl::colors::WHITE;
                 scene.materials["white"] = material;
+            }
+            if (im::MenuItem("Import Packed")) {
+                if (auto file_path = kl::choose_file(false, { { "GLTF File", FILE_EXTENSION_GLB }, { "FBX File", FILE_EXTENSION_FBX } })) {
+                    opt_assimp_data = scene.get_assimp_data(file_path.value());
+                }
+            }
+            if (im::MenuItem("Render Traced", nullptr, false, !game_layer.game_running())) {
             }
             im::PopStyleVar();
             im::EndMenu();
