@@ -134,16 +134,6 @@ namespace kl {
 			return (T) std::sqrt(x * x + y * y);
 		}
 
-		constexpr T to_index(T width) const
-		{
-			return x + y * width;
-		}
-
-		static constexpr Vector2<T> from_index(T index, T width)
-		{
-			return { index % width, index / width };
-		}
-
 		constexpr bool in_bounds(const Vector2<T>& lower_incl, const Vector2<T>& upper_excl) const
 		{
 			return x >= lower_incl.x && x < upper_excl.x
@@ -153,6 +143,16 @@ namespace kl {
 		constexpr bool in_bounds(const Vector2<T>& upper_excl) const
 		{
 			return in_bounds({}, upper_excl);
+		}
+
+		constexpr T to_index(T width) const
+		{
+			return x + y * width;
+		}
+
+		static constexpr Vector2<T> from_index(T index, T width)
+		{
+			return { index % width, index / width };
 		}
     };
 }

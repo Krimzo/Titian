@@ -181,6 +181,18 @@ namespace kl {
 		{
 			return (T) std::sqrt(x * x + y * y + z * z);
 		}
+
+		constexpr bool in_bounds(const Vector3<T>& lower_incl, const Vector3<T>& upper_excl) const
+		{
+			return x >= lower_incl.x && x < upper_excl.x
+				&& y >= lower_incl.y && y < upper_excl.y
+				&& z >= lower_incl.z && z < upper_excl.z;
+		}
+
+		constexpr bool in_bounds(const Vector3<T>& upper_excl) const
+		{
+			return in_bounds({}, upper_excl);
+		}
 	};
 }
 

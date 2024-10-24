@@ -93,7 +93,7 @@ void titian::ShadowPass::render_self(StatePackage& package)
             CB cb = info.cb;
             cb.WVP = VP * cb.WVP;
             package.shaders.upload(cb);
-            gpu.draw(info.mesh->buffer, info.mesh->topology, sizeof(Vertex));
+            gpu.draw(info.mesh->buffer, info.mesh->d3d_topology(), sizeof(Vertex));
             bench_add_draw_call();
         }
     }

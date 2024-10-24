@@ -262,7 +262,7 @@ void titian::GUISectionEntityProperties::edit_entity_physics(Scene& scene, Entit
     }
 
     float angular_damping = entity.angular_damping();
-    if (im::DragFloat("Angular Damping", &angular_damping, 0.01f, 0.0f, 1.0f)) {
+    if (im::DragFloat("Damping", &angular_damping, 0.01f, 0.0f, 1.0f)) {
         entity.set_angular_damping(angular_damping);
     }
 

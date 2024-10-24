@@ -76,12 +76,12 @@ namespace titian {
         Shader* helper_new_shader(const String& id);
         Entity* helper_new_entity(const String& id);
 
-        Mesh* helper_get_mesh(const StringView& id);
-        Animation* helper_get_animation(const StringView& id);
-        Texture* helper_get_texture(const StringView& id);
-        Material* helper_get_material(const StringView& id);
-        Shader* helper_get_shader(const StringView& id);
-        Entity* helper_get_entity(const StringView& id);
+        Mesh* helper_get_mesh(const StringView& id) const;
+        Animation* helper_get_animation(const StringView& id) const;
+        Texture* helper_get_texture(const StringView& id) const;
+        Material* helper_get_material(const StringView& id) const;
+        Shader* helper_get_shader(const StringView& id) const;
+        Entity* helper_get_entity(const StringView& id) const;
 
         void helper_remove_mesh(const StringView& id);
         void helper_remove_animation(const StringView& id);

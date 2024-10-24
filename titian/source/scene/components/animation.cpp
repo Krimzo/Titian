@@ -180,7 +180,7 @@ int titian::Animation::get_index(const float time) const
 	return int(time * ticks_per_second) % (int) meshes.size();
 }
 
-titian::Mesh* titian::Animation::get_mesh(Scene& scene, const float time) const
+titian::Mesh* titian::Animation::get_mesh(const Scene& scene, const float time) const
 {
 	if (meshes.empty()) {
 		return nullptr;
@@ -192,7 +192,7 @@ titian::Mesh* titian::Animation::get_mesh(Scene& scene, const float time) const
 	return scene.helper_get_mesh(meshes[index]);
 }
 
-void titian::Animation::update(Scene& scene, const float current_time)
+void titian::Animation::update(const Scene& scene, const float current_time)
 {
 	if (animation_type != AnimationType::SKELETAL || meshes.empty() || !animation_root) {
 		return;

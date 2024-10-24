@@ -219,7 +219,7 @@ void titian::ScenePass::render_self(StatePackage& package)
         if (*info.shaders) {
             info.shaders->upload(cb);
             gpu.bind_shaders(*info.shaders);
-            gpu.draw(info.mesh->buffer, info.mesh->topology, sizeof(Vertex));
+            gpu.draw(info.mesh->buffer, info.mesh->d3d_topology(), sizeof(Vertex));
             bench_add_draw_call();
         }
     };

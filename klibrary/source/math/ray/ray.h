@@ -22,11 +22,11 @@ namespace kl {
             set_direction(direction);
         }
 
-        constexpr Ray_T(const Vector3<T>& origin, const Matrix4x4<T>& inv_cam, const Vector2<T>& ndc)
-            : origin(origin)
+        constexpr Ray_T(const Vector3<T>& cam_pos, const Matrix4x4<T>& inv_cam, const Vector2<T>& ndc)
+            : origin(cam_pos)
         {
             Vector4<T> ndc_pos = inv_cam * Vector4<T>(ndc, T(1), T(1));
-            set_direction(ndc_pos.xyz() / ndc_pos.w - origin);
+            set_direction(ndc_pos.xyz() / ndc_pos.w - cam_pos);
         }
 
         constexpr void set_direction(const Vector3<T>& direction)

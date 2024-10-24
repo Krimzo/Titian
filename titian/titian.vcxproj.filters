@@ -219,6 +219,9 @@
     <ClCompile Include="source\scene\scene_defaults.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\render\tracing\tracing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\app\app_layer.h">
@@ -423,6 +426,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\scene\scene_defaults.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\tracing\tracing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

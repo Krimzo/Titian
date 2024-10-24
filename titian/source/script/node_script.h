@@ -1622,7 +1622,7 @@ namespace titian {
 			}
 
 			if (input_connected("topology")) {
-				ptr->topology = (D3D_PRIMITIVE_TOPOLOGY) get_value<int32_t>("topology");
+				ptr->topology = (MeshTopology) get_value<int32_t>("topology");
 			}
 			if (input_connected("wireframe")) {
 				ptr->render_wireframe = get_value<bool>("wireframe");

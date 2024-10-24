@@ -249,7 +249,7 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
     }
 
     shaders.upload(cb);
-    gpu.draw(mesh->buffer, mesh->topology, sizeof(Vertex));
+    gpu.draw(mesh->buffer, mesh->d3d_topology(), sizeof(Vertex));
 
     gpu.unbind_shader_view_for_vertex_shader(0);
     gpu.bind_internal_views();

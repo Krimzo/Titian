@@ -33,6 +33,8 @@
 #include "gui/sections/section_entity_properties.h"
 #include "gui/sections/section_bench_info.h"
 
+#include "render/tracing/tracing.h"
+
 
 namespace titian {
     struct TitianEditor : LayerStack

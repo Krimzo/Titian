@@ -78,17 +78,17 @@ void titian::EditorPass::render_self(StatePackage& package)
             switch (entity->geometry_type())
             {
             case px::PxGeometryType::Enum::eBOX:
-                gpu.draw(cube.buffer, cube.topology, sizeof(Vertex));
+                gpu.draw(cube.buffer, cube.d3d_topology(), sizeof(Vertex));
                 bench_add_draw_call();
                 break;
 
             case px::PxGeometryType::Enum::eSPHERE:
-                gpu.draw(sphere.buffer, sphere.topology, sizeof(Vertex));
+                gpu.draw(sphere.buffer, sphere.d3d_topology(), sizeof(Vertex));
                 bench_add_draw_call();
                 break;
 
             case px::PxGeometryType::Enum::eCAPSULE:
-                gpu.draw(capsule.buffer, capsule.topology, sizeof(Vertex));
+                gpu.draw(capsule.buffer, capsule.d3d_topology(), sizeof(Vertex));
                 bench_add_draw_call();
                 break;
             }

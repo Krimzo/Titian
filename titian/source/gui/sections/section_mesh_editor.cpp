@@ -277,7 +277,7 @@ void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, const Int2 v
     cb.SUN_DIRECTION = sun_direction;
     shaders.upload(cb);
 
-    gpu.draw(mesh.buffer, mesh.topology, sizeof(Vertex));
+    gpu.draw(mesh.buffer, mesh.d3d_topology(), sizeof(Vertex));
 
     gpu.bind_internal_views();
     gpu.set_viewport_size(old_viewport_size);
@@ -304,23 +304,26 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
         int vertex_count = (int) mesh->vertices.size();
         im::DragInt("Vertex Count", &vertex_count, 0);
 
-        String topology_name = "Point";
-        if (mesh->topology == D3D_PRIMITIVE_TOPOLOGY_LINELIST) {
-            topology_name = "Line";
+        String topology_name;
+        if (mesh->topology == MeshTopology::POINTS) {
+            topology_name = "Points";
         }
-        else if (mesh->topology == D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST) {
-            topology_name = "Triangle";
+        else if (mesh->topology == MeshTopology::LINES) {
+            topology_name = "Lines";
+        }
+        else {
+            topology_name = "Triangles";
         }
 
         if (im::BeginCombo("Topology", topology_name.data())) {
-            if (im::Selectable("Point", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_POINTLIST)) {
-                mesh->topology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+            if (im::Selectable("Points", mesh->topology == MeshTopology::POINTS)) {
+                mesh->topology = MeshTopology::POINTS;
             }
-            if (im::Selectable("Line", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_LINELIST)) {
-                mesh->topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+            if (im::Selectable("Lines", mesh->topology == MeshTopology::LINES)) {
+                mesh->topology = MeshTopology::LINES;
             }
-            if (im::Selectable("Triangle", mesh->topology == D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)) {
-                mesh->topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+            if (im::Selectable("Triangles", mesh->topology == MeshTopology::TRIANGLES)) {
+                mesh->topology = MeshTopology::TRIANGLES;
             }
             im::EndCombo();
         }

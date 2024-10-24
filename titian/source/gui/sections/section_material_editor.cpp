@@ -312,7 +312,7 @@ void titian::GUISectionMaterialEditor::render_selected_material(Material& materi
         gpu.bind_shaders(*shaders);
         shaders->upload(cb);
         Mesh& mesh = scene.default_meshes.cube;
-        gpu.draw(mesh.buffer, mesh.topology, sizeof(Vertex));
+        gpu.draw(mesh.buffer, mesh.d3d_topology(), sizeof(Vertex));
     }
 
     gpu.bind_internal_views();

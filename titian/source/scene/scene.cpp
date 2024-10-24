@@ -289,7 +289,7 @@ titian::Entity* titian::Scene::helper_new_entity(const String& id)
     return &entity;
 }
 
-titian::Mesh* titian::Scene::helper_get_mesh(const StringView& id)
+titian::Mesh* titian::Scene::helper_get_mesh(const StringView& id) const
 {
     const auto it = meshes.find(id);
     if (it != meshes.end()) {
@@ -298,7 +298,7 @@ titian::Mesh* titian::Scene::helper_get_mesh(const StringView& id)
     return nullptr;
 }
 
-titian::Animation* titian::Scene::helper_get_animation(const StringView& id)
+titian::Animation* titian::Scene::helper_get_animation(const StringView& id) const
 {
     const auto it = animations.find(id);
     if (it != animations.end()) {
@@ -307,7 +307,7 @@ titian::Animation* titian::Scene::helper_get_animation(const StringView& id)
     return nullptr;
 }
 
-titian::Texture* titian::Scene::helper_get_texture(const StringView& id)
+titian::Texture* titian::Scene::helper_get_texture(const StringView& id) const
 {
     const auto it = textures.find(id);
     if (it != textures.end()) {
@@ -316,7 +316,7 @@ titian::Texture* titian::Scene::helper_get_texture(const StringView& id)
     return nullptr;
 }
 
-titian::Material* titian::Scene::helper_get_material(const StringView& id)
+titian::Material* titian::Scene::helper_get_material(const StringView& id) const
 {
     const auto it = materials.find(id);
     if (it != materials.end()) {
@@ -325,7 +325,7 @@ titian::Material* titian::Scene::helper_get_material(const StringView& id)
     return nullptr;
 }
 
-titian::Shader* titian::Scene::helper_get_shader(const StringView& id)
+titian::Shader* titian::Scene::helper_get_shader(const StringView& id) const
 {
     const auto it = shaders.find(id);
     if (it != shaders.end()) {
@@ -334,7 +334,7 @@ titian::Shader* titian::Scene::helper_get_shader(const StringView& id)
     return nullptr;
 }
 
-titian::Entity* titian::Scene::helper_get_entity(const StringView& id)
+titian::Entity* titian::Scene::helper_get_entity(const StringView& id) const
 {
     const auto it = m_entities.find(id);
     if (it != m_entities.end()) {

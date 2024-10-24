@@ -316,7 +316,12 @@ void titian::GUISectionMainMenu::render_gui()
                     opt_assimp_data = scene.get_assimp_data(file_path.value());
                 }
             }
-            if (im::MenuItem("Render Traced", nullptr, false, !game_layer.game_running())) {
+            if (im::BeginMenu("Raytracing", !game_layer.game_running())) {
+                im::DragInt2("Resolution", &m_trace_resolution.x, 1.0f, 1, 8192);
+                if (im::MenuItem("Render")) {
+                    Tracing::render(scene, m_trace_resolution);
+                }
+                im::EndMenu();
             }
             im::PopStyleVar();
             im::EndMenu();

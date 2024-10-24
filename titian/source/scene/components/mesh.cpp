@@ -6,7 +6,7 @@ titian::Mesh::Mesh()
 
 void titian::Mesh::serialize(Serializer& serializer) const
 {
-    serializer.write_int("topology", topology);
+    serializer.write_int("topology", (int32_t) topology);
     serializer.write_bool("render_wireframe", render_wireframe);
 
     serializer.write_int("vertex_count", (int32_t) vertices.size());
@@ -121,6 +121,11 @@ void titian::Mesh::reload()
     }
     kl::GPU& gpu = Layers::get<AppLayer>().gpu;
     buffer = gpu.create_vertex_buffer(vertices.data(), UINT(vertices.size() * sizeof(Vertex)));
+}
+
+D3D11_PRIMITIVE_TOPOLOGY titian::Mesh::d3d_topology() const
+{
+    return D3D11_PRIMITIVE_TOPOLOGY(topology);
 }
 
 titian::Ref<titian::Mesh> titian::Mesh::clone() const

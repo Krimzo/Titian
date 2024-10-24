@@ -25,13 +25,18 @@ namespace titian {
 }
 
 namespace titian {
-    struct Scene;
+    enum struct MeshTopology
+    {
+        POINTS = D3D_PRIMITIVE_TOPOLOGY_POINTLIST,
+        LINES = D3D_PRIMITIVE_TOPOLOGY_LINELIST,
+        TRIANGLES = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+    };
 }
 
 namespace titian {
     struct Mesh : Serializable
     {
-        D3D_PRIMITIVE_TOPOLOGY topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+        MeshTopology topology = MeshTopology::TRIANGLES;
         bool render_wireframe = false;
 
         Vector<Vertex> vertices;
@@ -48,6 +53,8 @@ namespace titian {
         void load_vertices(const Vector<kl::Vertex>& vertices);
         void load_triangles(const Vector<kl::Triangle>& triangles);
         void reload();
+
+        D3D11_PRIMITIVE_TOPOLOGY d3d_topology() const;
 
         Ref<Mesh> clone() const;
     };

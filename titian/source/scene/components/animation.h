@@ -55,9 +55,9 @@ namespace titian {
 		void deserialize(const Serializer& serializer) override;
 
 		int get_index(float index) const;
-		Mesh* get_mesh(Scene& scene, float time) const;
+		Mesh* get_mesh(const Scene& scene, float time) const;
 
-		void update(Scene& scene, float current_time);
+		void update(const Scene& scene, float current_time);
 		void bind_matrices(int slot) const;
 
 		Ref<Animation> clone() const;
