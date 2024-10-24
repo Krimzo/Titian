@@ -138,10 +138,10 @@ namespace kl {
     }
 
     template<typename T>
-    constexpr Vector2<T> reflect(const Vector2<T>& vec, const Vector2<T>& point)
+    constexpr Vector2<T> reflect(const Vector2<T>& vec, Vector2<T> point)
     {
-        const Vector2<T> normalized = normalize(point);
-        return vec - (normalized * (vec * normalized) * T(2));
+        point = normalize(point);
+        return vec - (point * dot(vec, point) * T(2));
     }
 
     template<typename T>
@@ -189,10 +189,22 @@ namespace kl {
     }
 
     template<typename T>
-    constexpr Vector3<T> reflect(const Vector3<T>& first, Vector3<T> normal)
+    constexpr Vector3<T> reflect(const Vector3<T>& vec, Vector3<T> normal)
     {
         normal = normalize(normal);
-        return first - (normal * (first * normal) * T(2));
+        return vec - (normal * dot(vec, normal) * T(2));
+    }
+
+    template<typename T>
+    constexpr Vector3<T> refract(const Vector3<T>& vec, Vector3<T> normal, T eta)
+    {
+        normal = normalize(normal);
+        const float cos_i = -dot(vec, normal);
+        const float sin_t2 = eta * eta * (1.0f - cos_i * cos_i);
+        if (sin_t2 > 1.0f)
+            return {};
+        const float cos_t = sqrt(1.0f - sin_t2);
+        return vec * eta + normal * (eta * cos_i - cos_t);
     }
 
     template<typename T>

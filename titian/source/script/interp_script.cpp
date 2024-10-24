@@ -852,9 +852,11 @@ void titian::InterpScript::load_engine_parts()
 	);
 
 	(*m_engine)["reflect"] = sl::overload(
-		FUNCTION(Float2, kl::reflect, const Float2&, const Float2&),
+		FUNCTION(Float2, kl::reflect, const Float2&, Float2),
 		FUNCTION(Float3, kl::reflect, const Float3&, Float3)
 	);
+
+	(*m_engine)["refract"] = &kl::refract<float>;
 
 	(*m_engine)["gen_random_bool"] = &kl::random::gen_bool;
 	(*m_engine)["gen_random_int"] = FUNCTION(int, kl::random::gen_int, int, int);

@@ -81,11 +81,11 @@ namespace kl {
                     interpolate(weights, { a.y, b.y, c.y }),
                     interpolate(weights, { a.z, b.z, c.z }),
                 },
-                Vector3<T>{
+                normalize( Vector3<T>{
                     interpolate(weights, { a.normal.x, b.normal.x, c.normal.x }),
                     interpolate(weights, { a.normal.y, b.normal.y, c.normal.y }),
                     interpolate(weights, { a.normal.z, b.normal.z, c.normal.z }),
-                },
+                } ),
                 Vector2<T>{
                     interpolate(weights, { a.uv.x, b.uv.x, c.uv.x }),
                     interpolate(weights, { a.uv.y, b.uv.y, c.uv.y }),
