@@ -15,8 +15,6 @@ namespace kl {
         dx::ShaderView shader_view;
         dx::AccessView access_view;
 
-        bool is_cube = false;
-
         Texture(GPU& gpu);
 
         void reload(bool has_unordered_access = false, bool is_target = false);
@@ -26,6 +24,9 @@ namespace kl {
         void create_depth_view(const dx::DepthViewDescriptor* descriptor = nullptr);
         void create_shader_view(const dx::ShaderViewDescriptor* descriptor = nullptr);
         void create_access_view(const dx::AccessViewDescriptor* descriptor = nullptr);
+
+        bool is_cube() const;
+        Int2 resolution() const;
 
     private:
         GPU& m_gpu;

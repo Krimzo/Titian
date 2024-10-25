@@ -8,7 +8,8 @@ namespace titian {
 	{
 		kl::Image faces[6];
 
-		TracingTextureCube(const kl::Image& image);
+		void load_cube(const kl::Image& image);
+		void load_2D(const kl::Image& image);
 
 		RGB sample(const Float3& direction) const;
 	};
@@ -92,6 +93,7 @@ namespace titian {
 
 		static void convert_scene(const Scene& scene, Int2 resolution, TracingScene& tracing_scene);
 		static Ref<TracingEntity> convert_entity(const Scene& scene, const Entity& entity);
+		static Optional<TracingTextureCube> convert_texture_cube(const Texture* texture);
 		static TracingMaterial convert_material(const Scene& scene, const Material& material);
 		static kl::Vertex convert_vertex(const Float4x4& model_matrix, const Vertex& vertex);
 

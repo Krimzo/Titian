@@ -33,8 +33,5 @@ namespace titian {
 		Int2 resolution() const;
 
 		void copy_other(const dx::Texture& texture);
-
-	private:
-		bool m_is_cube = false;
 	};
 }

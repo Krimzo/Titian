@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-titian::TracingTextureCube::TracingTextureCube(const kl::Image& image)
+void titian::TracingTextureCube::load_cube(const kl::Image& image)
 {
 	const int part_size = image.width() / 4;
 	faces[0] = image.rectangle(Int2(2, 1) * part_size, Int2(3, 2) * part_size);
@@ -10,6 +10,13 @@ titian::TracingTextureCube::TracingTextureCube(const kl::Image& image)
 	faces[3] = image.rectangle(Int2(1, 2) * part_size, Int2(2, 3) * part_size);
 	faces[4] = image.rectangle(Int2(1, 1) * part_size, Int2(2, 2) * part_size);
 	faces[5] = image.rectangle(Int2(3, 1) * part_size, Int2(4, 2) * part_size);
+}
+
+void titian::TracingTextureCube::load_2D(const kl::Image& image)
+{
+	for (auto& face : faces) {
+		face = image;
+	}
 }
 
 titian::RGB titian::TracingTextureCube::sample(const Float3& direction) const
@@ -246,11 +253,7 @@ void titian::Tracing::convert_scene(const Scene& scene, const Int2 resolution, T
 		lock.unlock();
 	});
 	if (Camera* camera = dynamic_cast<Camera*>(scene.helper_get_entity(scene.main_camera_name))) {
-		Optional<TracingTextureCube> skybox;
-		Texture* skybox_tex = scene.helper_get_texture(camera->skybox_texture_name);
-		if (skybox_tex && skybox_tex->image.width() % 4 == 0 && skybox_tex->image.height() % 3 == 0) {
-			skybox.emplace(skybox_tex->image);
-		}
+		Texture* skybox = scene.helper_get_texture(camera->skybox_texture_name);
 		const float old_ar = camera->aspect_ratio;
 		camera->update_aspect_ratio(resolution);
 		tracing_scene.camera_data.emplace(
@@ -258,7 +261,7 @@ void titian::Tracing::convert_scene(const Scene& scene, const Int2 resolution, T
 			kl::inverse(camera->camera_matrix()),
 			camera->render_wireframe,
 			camera->background,
-			std::move(skybox)
+			convert_texture_cube(skybox)
 		);
 		camera->aspect_ratio = old_ar;
 	}
@@ -318,6 +321,22 @@ titian::Ref<titian::TracingEntity> titian::Tracing::convert_entity(const Scene& 
 
 	result->aabb.position = (min_point + max_point) * 0.5f;
 	result->aabb.size = (max_point - min_point) * 0.5f;
+	return result;
+}
+
+titian::Optional<titian::TracingTextureCube> titian::Tracing::convert_texture_cube(const Texture* texture)
+{
+	if (!texture)
+		return std::nullopt;
+
+	Optional<TracingTextureCube> result = TracingTextureCube{};
+	const kl::Image& image = texture->image;
+	if (texture->is_cube() && image.width() % 4 == 0 && image.height() % 3 == 0) {
+		result->load_cube(image);
+	}
+	else {
+		result->load_2D(image);
+	}
 	return result;
 }
 
