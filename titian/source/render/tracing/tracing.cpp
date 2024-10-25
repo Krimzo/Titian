@@ -1,6 +1,50 @@
 #include "titian.h"
 
 
+titian::TracingTextureCube::TracingTextureCube(const kl::Image& image)
+{
+	const int part_size = image.width() / 4;
+	faces[0] = image.rectangle(Int2(2, 1) * part_size, Int2(3, 2) * part_size);
+	faces[1] = image.rectangle(Int2(0, 1) * part_size, Int2(1, 2) * part_size);
+	faces[2] = image.rectangle(Int2(1, 0) * part_size, Int2(2, 1) * part_size);
+	faces[3] = image.rectangle(Int2(1, 2) * part_size, Int2(2, 3) * part_size);
+	faces[4] = image.rectangle(Int2(1, 1) * part_size, Int2(2, 2) * part_size);
+	faces[5] = image.rectangle(Int2(3, 1) * part_size, Int2(4, 2) * part_size);
+}
+
+titian::RGB titian::TracingTextureCube::sample(const Float3& direction) const
+{
+	const auto [x, y, z] = kl::normalize(direction);
+	const auto [ax, ay, az] = kl::abs(Float3(x, y, z));
+	auto [u, v] = Float2();
+	int face_index = 0;
+
+	if (ax >= ay && ax >= az) {
+		if (x > 0) { face_index = 0; u = -z / ax; v = -y / ax; }
+		else       { face_index = 1; u =  z / ax; v = -y / ax; }
+	}
+	else if (ay >= ax && ay >= az) {
+		if (y > 0) { face_index = 2; u =  x / ay; v =  z / ay; }
+		else       { face_index = 3; u =  x / ay; v = -z / ay; }
+	}
+	else {
+		if (z > 0) { face_index = 4; u =  x / az; v = -y / az; }
+		else       { face_index = 5; u = -x / az; v = -y / az; }
+	}
+
+	u = u * 0.5f + 0.5f;
+	v = v * 0.5f + 0.5f;
+	return faces[face_index].sample({ u, v });
+}
+
+titian::RGB titian::TracingScene::CameraData::sample_background(const Float3& direction) const
+{
+	if (skybox) {
+		return skybox->sample(direction);
+	}
+	return background;
+}
+
 titian::Optional<titian::TracingScene::TracePayload> titian::TracingScene::trace(const kl::Ray& ray, const kl::Triangle* blacklist) const
 {
 	Float3 intersection;
@@ -109,21 +153,21 @@ titian::RGB titian::Tracing::render_pixel(const TracingScene& tracing_scene, con
 		return RGB{};
 
 	const TracingScene::CameraData& camera_data = *tracing_scene.camera_data;
-	if (camera_data.wireframe)
-		return camera_data.background;
-
 	const kl::Ray ray{ camera_data.position, camera_data.inv_mat, ndc };
+	if (camera_data.wireframe)
+		return camera_data.sample_background(ray.direction());
+
 	return render_ray(tracing_scene, ray, 0, nullptr);
 }
 
 titian::RGB titian::Tracing::render_ray(const TracingScene& tracing_scene, const kl::Ray& ray, const int depth, kl::Triangle* blacklist)
 {
 	if (depth > MAX_DEPTH)
-		return tracing_scene.camera_data->background;
+		return tracing_scene.camera_data->sample_background(ray.direction());
 
 	Optional<TracingScene::TracePayload> payload = tracing_scene.trace(ray, blacklist);
 	if (!payload)
-		return tracing_scene.camera_data->background;
+		return tracing_scene.camera_data->sample_background(ray.direction());
 
 	auto& material = payload->entity.material;
 
@@ -156,8 +200,7 @@ titian::RGB titian::Tracing::render_ray(const TracingScene& tracing_scene, const
 		const kl::Ray shadow_ray{ payload->intersect, -directional.direction };
 		if (!tracing_scene.trace(shadow_ray, &payload->triangle)) {
 			float diffuse_factor = kl::max(kl::dot(-directional.direction, normal), 0.0f);
-			Float3 diffse = directional.color * diffuse_factor;
-			light = kl::max(light, diffse);
+			light = kl::max(light, directional.color * diffuse_factor);
 		}
 	}
 	color *= light;
@@ -203,6 +246,11 @@ void titian::Tracing::convert_scene(const Scene& scene, const Int2 resolution, T
 		lock.unlock();
 	});
 	if (Camera* camera = dynamic_cast<Camera*>(scene.helper_get_entity(scene.main_camera_name))) {
+		Optional<TracingTextureCube> skybox;
+		Texture* skybox_tex = scene.helper_get_texture(camera->skybox_texture_name);
+		if (skybox_tex && skybox_tex->image.width() % 4 == 0 && skybox_tex->image.height() % 3 == 0) {
+			skybox.emplace(skybox_tex->image);
+		}
 		const float old_ar = camera->aspect_ratio;
 		camera->update_aspect_ratio(resolution);
 		tracing_scene.camera_data.emplace(
@@ -210,7 +258,7 @@ void titian::Tracing::convert_scene(const Scene& scene, const Int2 resolution, T
 			kl::inverse(camera->camera_matrix()),
 			camera->render_wireframe,
 			camera->background,
-			scene.helper_get_texture(camera->skybox_texture_name)
+			std::move(skybox)
 		);
 		camera->aspect_ratio = old_ar;
 	}

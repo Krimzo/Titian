@@ -4,6 +4,17 @@
 
 
 namespace titian {
+	struct TracingTextureCube
+	{
+		kl::Image faces[6];
+
+		TracingTextureCube(const kl::Image& image);
+
+		RGB sample(const Float3& direction) const;
+	};
+}
+
+namespace titian {
 	struct TracingMaterial
 	{
 		float texture_blend = 0.0f;
@@ -34,7 +45,9 @@ namespace titian {
 			Float4x4 inv_mat;
 			bool wireframe = false;
 			Float4 background;
-			Texture* skybox = nullptr;
+			Optional<TracingTextureCube> skybox;
+
+			RGB sample_background(const Float3& direction) const;
 		};
 
 		struct AmbientData

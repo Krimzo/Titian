@@ -509,18 +509,18 @@ kl::dx::Texture kl::DeviceHolder::create_texture(const Image& image, const bool 
     return create_texture(&descriptor, &data);
 }
 
-kl::dx::Texture kl::DeviceHolder::create_cube_texture(const Image& front, const Image& back, const Image& left, const Image& right, const Image& top, const Image& bottom) const
+kl::dx::Texture kl::DeviceHolder::create_cube_texture(const Image& right, const Image& left, const Image& top, const Image& bottom, const Image& front, const Image& back) const
 {
-    if (!verify(front.size() == back.size()
-        && front.size() == left.size()
-        && front.size() == right.size()
-        && front.size() == top.size()
-        && front.size() == bottom.size(), "Sizes of the 6 given images do not match")) {
+    if (!verify(right.size() == left.size()
+        && right.size() == top.size()
+        && right.size() == bottom.size()
+        && right.size() == front.size()
+        && right.size() == back.size(), "Sizes of the 6 given images do not match")) {
         return {};
     }
     dx::TextureDescriptor descriptor{};
-    descriptor.Width = front.width();
-    descriptor.Height = front.height();
+    descriptor.Width = right.width();
+    descriptor.Height = right.height();
     descriptor.MipLevels = 1;
     descriptor.ArraySize = 6;
     descriptor.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -528,7 +528,7 @@ kl::dx::Texture kl::DeviceHolder::create_cube_texture(const Image& front, const 
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     descriptor.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-    const UINT mem_pitch = UINT(front.width() * sizeof(RGB));
+    const UINT mem_pitch = UINT(right.width() * sizeof(RGB));
     const dx::SubresourceDescriptor data[6] = {
         { right.ptr(), mem_pitch, 0 },
         { left.ptr(), mem_pitch, 0 },
