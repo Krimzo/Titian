@@ -93,6 +93,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="package\shaders\video_clear_shader.hlsl" />
+    <None Include="package\shaders\video_mix_shader.hlsl" />
     <ClCompile Include="source\effects\audio_effect.cpp" />
     <ClCompile Include="source\effects\audio_effects.cpp" />
     <ClCompile Include="source\effects\effect_package.cpp" />

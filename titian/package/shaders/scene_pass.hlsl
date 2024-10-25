@@ -105,7 +105,7 @@ float get_shadow(VS_OUT data, int half_kernel_size)
     if (!RECEIVES_SHADOWS)
         return 0.0f;
     
-    float pcf_value = 0.0f;
+    float pcf_value;
     float camera_z = abs(mul(float4(data.world, 1.0f), V).z);
     if (camera_z < SHADOW_CASCADES.x)
     {

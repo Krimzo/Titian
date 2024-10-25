@@ -126,6 +126,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="package\shaders\scene_pass.hlsl" />
+    <None Include="package\shaders\display_pass.hlsl" />
+    <None Include="package\shaders\outline_pass.hlsl" />
+    <None Include="package\shaders\post_pass.hlsl" />
+    <None Include="package\shaders\shadow_pass.hlsl" />
+    <None Include="package\shaders\skybox_pass.hlsl" />
+    <None Include="package\shaders\solid_lit_pass.hlsl" />
+    <None Include="package\shaders\solid_pass.hlsl" />
     <ClCompile Include="source\app\app_layer.cpp" />
     <ClCompile Include="source\app\logger.cpp" />
     <ClCompile Include="source\app\log_info.cpp" />

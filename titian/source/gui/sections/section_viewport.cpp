@@ -73,7 +73,7 @@ void titian::GUISectionViewport::render_gui()
             }
         }
         if (auto entity_type = gui_get_drag_drop<String>(DRAG_BASIC_ENTITY_ID)) {
-            const String name = scene.generate_unique_name(entity_type.value(), scene.entities());
+            const String name = Scene::generate_unique_name(entity_type.value(), scene.entities());
             const Float3 position = get_mouse_3d();
             if (entity_type.value() == DRAG_ENTITY_ENTITY) {
                 Ref entity = new Entity();
@@ -97,7 +97,7 @@ void titian::GUISectionViewport::render_gui()
             }
         }
         if (auto entity_type = gui_get_drag_drop<String>(DRAG_ANIMATION_ENTITY_ID)) {
-            const String name = scene.generate_unique_name(entity_type.value(), scene.entities());
+            const String name = Scene::generate_unique_name(entity_type.value(), scene.entities());
             const Float3 position = get_mouse_3d();
             Ref entity = new Entity();
 			entity->set_position(position);
@@ -369,7 +369,7 @@ void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
                 if (!entity)
                     continue;
 
-                const String new_name = scene.generate_unique_name(entity_name, scene.entities());
+                const String new_name = Scene::generate_unique_name(entity_name, scene.entities());
                 scene.add_entity(new_name, entity->clone());
                 new_entities.insert(new_name);
             }

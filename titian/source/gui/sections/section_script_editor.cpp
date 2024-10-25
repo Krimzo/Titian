@@ -51,13 +51,13 @@ void titian::GUISectionScriptEditor::render_gui()
 				Ref script = new InterpScript();
 				script->source = kl::read_file(path.string());
 				script->reload();
-				scene.scripts[scene.generate_unique_name(path.filename().string(), scene.scripts)] = script;
+				scene.scripts[Scene::generate_unique_name(path.filename().string(), scene.scripts)] = script;
 			}
 			else if (extension == FILE_EXTENSION_DLL) {
 				Ref script = new NativeScript();
 				script->data = kl::read_file(path.string());
 				script->reload();
-				scene.scripts[scene.generate_unique_name(path.filename().string(), scene.scripts)] = script;
+				scene.scripts[Scene::generate_unique_name(path.filename().string(), scene.scripts)] = script;
 			}
 		}
 

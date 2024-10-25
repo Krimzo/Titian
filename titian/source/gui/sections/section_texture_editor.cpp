@@ -41,7 +41,7 @@ void titian::GUISectionTextureEditor::render_gui()
         if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
             if (classify_file(file.value()) == FileType::TEXTURE) {
                 const String name = fs::path(file.value()).filename().string();
-                Texture* texture = scene.helper_new_texture(scene.generate_unique_name(name, scene.textures));
+                Texture* texture = scene.helper_new_texture(Scene::generate_unique_name(name, scene.textures));
                 texture->image.load_from_file(file.value());
                 texture->reload_as_2D();
                 texture->create_shader_view();

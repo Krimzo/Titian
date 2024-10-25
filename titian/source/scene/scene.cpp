@@ -189,7 +189,7 @@ void titian::Scene::onContact(const px::PxContactPairHeader& pairHeader, const p
     if (!entity_0 || !entity_1)
         return;
 
-    for (auto& [_, script] : scripts) {
+    for (auto& script : scripts | std::views::values) {
         script->call_collision(*this, *entity_0, *entity_1);
     }
 }
@@ -218,14 +218,14 @@ void titian::Scene::update_physics(const float delta_t)
 
 void titian::Scene::update_scripts()
 {
-    for (auto& [_, script] : scripts) {
+    for (auto& script : scripts | std::views::values) {
         script->call_update(*this);
     }
 }
 
 void titian::Scene::update_ui()
 {
-    for (auto& [_, script] : scripts) {
+    for (auto& script : scripts | std::views::values) {
         script->call_ui(*this);
     }
 }
@@ -420,32 +420,32 @@ bool titian::Scene::helper_contains_entity(const StringView& id) const
 
 void titian::Scene::helper_iterate_meshes(const Function<void(const String&, Mesh*)>& func)
 {
-    std::for_each(meshes.begin(), meshes.end(), [&](auto& entry) { func(entry.first, &entry.second); });
+    std::ranges::for_each(meshes, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
 void titian::Scene::helper_iterate_animations(const Function<void(const String&, Animation*)>& func)
 {
-    std::for_each(animations.begin(), animations.end(), [&](auto& entry) { func(entry.first, &entry.second); });
+    std::ranges::for_each(animations, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
 void titian::Scene::helper_iterate_textures(const Function<void(const String&, Texture*)>& func)
 {
-    std::for_each(textures.begin(), textures.end(), [&](auto& entry) { func(entry.first, &entry.second); });
+    std::ranges::for_each(textures, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
 void titian::Scene::helper_iterate_materials(const Function<void(const String&, Material*)>& func)
 {
-    std::for_each(materials.begin(), materials.end(), [&](auto& entry) { func(entry.first, &entry.second); });
+    std::ranges::for_each(materials, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
 void titian::Scene::helper_iterate_shaders(const Function<void(const String&, Shader*)>& func)
 {
-    std::for_each(shaders.begin(), shaders.end(), [&](auto& entry) { func(entry.first, &entry.second); });
+    std::ranges::for_each(shaders, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
 void titian::Scene::helper_iterate_entities(const Function<void(const String&, Entity*)>& func)
 {
-    std::for_each(m_entities.begin(), m_entities.end(), [&](auto& entry) { func(entry.first, &entry.second); });
+    std::ranges::for_each(m_entities, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
 titian::Optional<titian::AssimpData> titian::Scene::get_assimp_data(const StringView& path) const
@@ -608,27 +608,27 @@ titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScen
     animation_object->channels.resize(animation.mNumChannels);
     for (uint32_t i = 0; i < animation.mNumChannels; i++) {
         auto& channel = animation.mChannels[i];
-        auto& anim_channel = animation_object->channels[i];
+        auto& [scalings, rotations, positions] = animation_object->channels[i];
         
-        anim_channel.scalings.resize(channel->mNumScalingKeys);
+        scalings.resize(channel->mNumScalingKeys);
         for (uint32_t j = 0; j < channel->mNumScalingKeys; j++) {
             auto& key = channel->mScalingKeys[j];
-            anim_channel.scalings[j].first = (float) key.mTime;
-            anim_channel.scalings[j].second = key.mValue;
+            scalings[j].first = (float) key.mTime;
+            scalings[j].second = key.mValue;
         }
 
-		anim_channel.rotations.resize(channel->mNumRotationKeys);
+		rotations.resize(channel->mNumRotationKeys);
         for (uint32_t j = 0; j < channel->mNumRotationKeys; j++) {
             auto& key = channel->mRotationKeys[j];
-            anim_channel.rotations[j].first = (float) key.mTime;
-			anim_channel.rotations[j].second = key.mValue;
+            rotations[j].first = (float) key.mTime;
+			rotations[j].second = key.mValue;
         }
 
-		anim_channel.positions.resize(channel->mNumPositionKeys);
+		positions.resize(channel->mNumPositionKeys);
 		for (uint32_t j = 0; j < channel->mNumPositionKeys; j++) {
 			auto& key = channel->mPositionKeys[j];
-			anim_channel.positions[j].first = (float) key.mTime;
-			anim_channel.positions[j].second = key.mValue;
+			positions[j].first = (float) key.mTime;
+			positions[j].second = key.mValue;
 		}
 	}
 

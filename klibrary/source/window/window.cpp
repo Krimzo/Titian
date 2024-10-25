@@ -12,7 +12,8 @@ kl::Window::Window(const std::string_view& name)
     window_class.style = CS_OWNDC;
     window_class.lpfnWndProc = [](const HWND window_handle, const UINT message, const WPARAM w_param, const LPARAM l_param)
     {
-        return ((Window*) GetWindowLongPtrA(window_handle, GWLP_USERDATA))->window_procedure(window_handle, message, w_param, l_param);
+        const Window* self = reinterpret_cast<const Window*>(GetWindowLongPtrA(window_handle, GWLP_USERDATA));
+        return self->window_procedure(window_handle, message, w_param, l_param);
     };
     window_class.hInstance = m_instance;
     window_class.lpszClassName = name.data();

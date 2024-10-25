@@ -42,7 +42,7 @@ void titian::GUISectionShaderEditor::render_gui()
 		if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
 			if (classify_file(file.value()) == FileType::SHADER) {
 				const String name = fs::path(file.value()).filename().string();
-				Shader* shader = scene.helper_new_shader(scene.generate_unique_name(name, scene.shaders));
+				Shader* shader = scene.helper_new_shader(Scene::generate_unique_name(name, scene.shaders));
 				shader->source = kl::read_file(file.value());
 				shader->reload();
 			}
