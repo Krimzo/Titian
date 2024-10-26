@@ -19,10 +19,6 @@ namespace kl::dx12 {
 namespace kl {
 	struct GPU12 : NoCopy, ShaderCompiler
 	{
-		GPU12Queue queue{};
-		GPU12Commands commands{};
-		GPU12Fence fence{};
-
 		GPU12(HWND window, bool debug = IS_DEBUG);
 		virtual ~GPU12();
 
@@ -44,7 +40,7 @@ namespace kl {
 		dx12::CommandList create_command_list(const dx12::CommandAllocator& command_allocator) const;
 		dx12::Fence create_fence() const;
 
-		void execute(const std::function<void()>& func);
+		void execute(const std::function<void(GPU12Commands&)>& func);
 		void await();
 
 		void resize(Int2 size);
@@ -135,6 +131,10 @@ namespace kl {
 		dx12::Device m_device{};
 		dx12::DXGIFactory m_dxgi_factory{};
 		dx12::SwapChain m_swap_chain{};
+
+		GPU12Queue m_queue{};
+		GPU12Commands m_commands{};
+		GPU12Fence m_fence{};
 
 		dx12::Resource m_back_buffers[GPU_BUFFER_COUNT] = {};
 		dx12::DescriptorHeap m_rtv_descriptor_heap{};

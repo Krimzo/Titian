@@ -40,8 +40,8 @@ titian::RGB titian::TracingTextureCube::sample(const Float3& direction) const
 	const auto [x, y, z] = kl::normalize(direction);
 	const auto [ax, ay, az] = kl::abs(Float3(x, y, z));
 	auto [u, v] = Float2();
-	int face_index = 0;
-
+	
+	int face_index;
 	if (ax >= ay && ax >= az) {
 		if (x > 0) { face_index = 0; u = -z / ax; v = -y / ax; }
 		else       { face_index = 1; u =  z / ax; v = -y / ax; }

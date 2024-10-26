@@ -10,13 +10,13 @@ kl::GPU12::GPU12(const HWND window, const bool debug)
 	}
 	D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&m_device)) >> verify_result;
 
-	queue = create_command_queue();
-	commands.allocator = create_command_allocator();
-	commands.list = create_command_list(commands.allocator);
-	fence = create_fence();
+	m_queue = create_command_queue();
+	m_commands.allocator = create_command_allocator();
+	m_commands.list = create_command_list(m_commands.allocator);
+	m_fence = create_fence();
 
 	CreateDXGIFactory2(debug ? DXGI_CREATE_FACTORY_DEBUG : NULL, IID_PPV_ARGS(&m_dxgi_factory)) >> verify_result;
-	m_swap_chain = create_swap_chain(window, queue.queue);
+	m_swap_chain = create_swap_chain(window, m_queue.queue);
 
 	RECT window_area{};
 	GetClientRect(window, &window_area);
@@ -55,7 +55,7 @@ UINT kl::GPU12::back_buffer_index() const
 
 kl::dx12::CommandQueue kl::GPU12::create_command_queue() const
 {
-	const D3D12_COMMAND_QUEUE_DESC descriptor{
+	constexpr D3D12_COMMAND_QUEUE_DESC descriptor{
 		.Type = D3D12_COMMAND_LIST_TYPE_DIRECT,
 		.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL,
 		.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE,
@@ -140,18 +140,18 @@ kl::dx12::Fence kl::GPU12::create_fence() const
 	return fence;
 }
 
-void kl::GPU12::execute(const std::function<void()>& func)
+void kl::GPU12::execute(const std::function<void(GPU12Commands&)>& func)
 {
-	commands.reset();
-	func();
-	commands.close();
-	queue.execute(commands.list);
+	m_commands.reset();
+	func(m_commands);
+	m_commands.close();
+	m_queue.execute(m_commands.list);
 	await();
 }
 
 void kl::GPU12::await()
 {
-	fence.signal_and_wait(queue.queue);
+	m_fence.signal_and_wait(m_queue.queue);
 }
 
 void kl::GPU12::resize(const Int2 size)
@@ -229,7 +229,7 @@ kl::dx12::Resource kl::GPU12::create_buffer(const void* data, const UINT byte_si
 {
 	dx12::Resource buffer = create_commited_resource(byte_size, D3D12_RESOURCE_STATE_COMMON);
 	const dx12::Resource upload_buffer = create_upload_buffer(data, byte_size);
-	execute([&]
+	execute([&](auto& commands)
 	{
 		commands.transition_resource(buffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
 		commands.copy(buffer, upload_buffer);
@@ -267,7 +267,7 @@ kl::dx12::RootSignature kl::GPU12::create_root_signature(const std::initializer_
 	dx12::Blob error_blob{};
 	const HRESULT result = D3D12SerializeRootSignature(&descriptor, D3D_ROOT_SIGNATURE_VERSION_1, &signature_blob, &error_blob);
 	if (FAILED(result)) {
-		if (const char* error_msg = reinterpret_cast<const char*>(error_blob->GetBufferPointer())) {
+		if (const char* error_msg = (const char*) error_blob->GetBufferPointer()) {
 			verify(false, error_msg);
 		}
 		result >> verify_result;
@@ -291,7 +291,7 @@ kl::dx12::AccelerationStructure kl::GPU12::create_acceleration_structure(const d
 		.Inputs = inputs,
 		.ScratchAccelerationStructureData = scratch->GetGPUVirtualAddress(),
 	};
-	execute([&]
+	execute([&](auto& commands)
 	{
 		commands.transition_resource(scratch, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 		commands.list->BuildRaytracingAccelerationStructure(&acceleration_descriptor, 0, nullptr);
@@ -353,8 +353,8 @@ kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline(const d
 
 	std::vector<dx12::InputLayout> input_layout{};
 	input_layout.reserve(input_layout_parts.size());
-	for (const auto& part : input_layout_parts) {
-		input_layout.emplace_back(part.first.data(), 0, part.second, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0);
+	for (const auto& [name, format] : input_layout_parts) {
+		input_layout.emplace_back(name.data(), 0, format, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0);
 	}
 
 	struct RasterPipeline
@@ -398,7 +398,7 @@ kl::dx12::StateObject kl::GPU12::create_default_raytracing_pipeline(const std::s
 			.BytecodeLength = (SIZE_T) compiled_shaders.size(),
 		},
 	};
-	const D3D12_HIT_GROUP_DESC hit_group{
+	constexpr D3D12_HIT_GROUP_DESC hit_group{
 		.HitGroupExport = L"hit_group",
 		.Type = D3D12_HIT_GROUP_TYPE_TRIANGLES,
 		.ClosestHitShaderImport = L"closest_hit_shader",
