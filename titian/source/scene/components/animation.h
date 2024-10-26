@@ -60,6 +60,8 @@ namespace titian {
 		void update(const Scene& scene, float current_time);
 		void bind_matrices(int slot) const;
 
+		inline const auto& matrices() const { return m_final_matrices; }
+
 		Ref<Animation> clone() const;
 
 	private:

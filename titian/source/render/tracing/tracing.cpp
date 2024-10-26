@@ -1,6 +1,22 @@
 #include "titian.h"
 
 
+void titian::TracingMesh::compute_aabb()
+{
+	kl::Float3 min_point{ +std::numeric_limits<float>::infinity() };
+	kl::Float3 max_point{ -std::numeric_limits<float>::infinity() };
+	for (const auto& triangle : triangles) {
+		min_point = kl::min(min_point, triangle.a.position);
+		min_point = kl::min(min_point, triangle.b.position);
+		min_point = kl::min(min_point, triangle.c.position);
+		max_point = kl::max(max_point, triangle.a.position);
+		max_point = kl::max(max_point, triangle.b.position);
+		max_point = kl::max(max_point, triangle.c.position);
+	}
+	aabb.position = (min_point + max_point) * 0.5f;
+	aabb.size = (max_point - min_point) * 0.5f;
+}
+
 void titian::TracingTextureCube::load_cube(const kl::Image& image)
 {
 	const int part_size = image.width() / 4;
@@ -58,14 +74,14 @@ titian::Optional<titian::TracingScene::TracePayload> titian::TracingScene::trace
 	float min_distance = std::numeric_limits<float>::infinity();
 	Optional<TracingScene::TracePayload> result;
 	for (const auto& entity : entities) {
-		if (!ray.intersect_aabb(entity->aabb, &intersection))
+		if (!ray.intersect_aabb(entity->mesh.aabb, &intersection))
 			continue;
 
 		const float distance = (intersection - ray.origin).length();
 		if (distance >= min_distance)
 			continue;
 
-		for (auto& triangle : entity->triangles) {
+		for (auto& triangle : entity->mesh.triangles) {
 			if (&triangle == blacklist)
 				continue;
 
@@ -292,31 +308,73 @@ titian::Ref<titian::TracingEntity> titian::Tracing::convert_entity(const Scene& 
 		return {};
 
 	Ref result = new TracingEntity();
-	result->material = convert_material(scene, *material);
-
-	kl::Float3 min_point{ +std::numeric_limits<float>::infinity() };
-	kl::Float3 max_point{ -std::numeric_limits<float>::infinity() };
-
-	const Float4x4 model_matrix = entity.model_matrix();
-	const uint64_t triangle_count = mesh->vertices.size() / 3;
-	for (uint64_t i = 0; i < triangle_count; i++) {
-		kl::Triangle triangle;
-		triangle.a = convert_vertex(model_matrix, mesh->vertices[i * 3 + 0]);
-		triangle.b = convert_vertex(model_matrix, mesh->vertices[i * 3 + 1]);
-		triangle.c = convert_vertex(model_matrix, mesh->vertices[i * 3 + 2]);
-		result->triangles.push_back(triangle);
-
-		min_point = kl::min(min_point, triangle.a.position);
-		min_point = kl::min(min_point, triangle.b.position);
-		min_point = kl::min(min_point, triangle.c.position);
-
-		max_point = kl::max(max_point, triangle.a.position);
-		max_point = kl::max(max_point, triangle.b.position);
-		max_point = kl::max(max_point, triangle.c.position);
+	if (animation->animation_type == AnimationType::SKELETAL) {
+		result->mesh = convert_skel_mesh(scene, *mesh, entity.model_matrix(), animation->matrices());
 	}
+	else {
+		result->mesh = convert_mesh(scene, *mesh, entity.model_matrix());
+	}
+	result->material = convert_material(scene, *material);
+	return result;
+}
 
-	result->aabb.position = (min_point + max_point) * 0.5f;
-	result->aabb.size = (max_point - min_point) * 0.5f;
+titian::TracingMesh titian::Tracing::convert_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& matrix)
+{
+	TracingMesh result;
+	result.triangles.resize(mesh.vertices.size() / 3);
+	for (size_t i = 0; i < result.triangles.size(); i++) {
+		auto& triangle = result.triangles[i];
+		triangle.a = convert_vertex(mesh.vertices[i * 3 + 0], matrix);
+		triangle.b = convert_vertex(mesh.vertices[i * 3 + 1], matrix);
+		triangle.c = convert_vertex(mesh.vertices[i * 3 + 2], matrix);
+	}
+	result.compute_aabb();
+	return result;
+}
+
+kl::Vertex titian::Tracing::convert_vertex(const Vertex& vertex, const Float4x4& matrix)
+{
+	kl::Vertex result;
+	result.position = (matrix * Float4(vertex.position, 1.0f)).xyz();
+	result.normal = kl::normalize((matrix * Float4(vertex.normal, 0.0f)).xyz());
+	result.uv = vertex.uv;
+	return result;
+}
+
+titian::TracingMesh titian::Tracing::convert_skel_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices)
+{
+	TracingMesh result;
+	result.triangles.resize(mesh.vertices.size() / 3);
+	for (size_t i = 0; i < result.triangles.size(); i++) {
+		auto& triangle = result.triangles[i];
+		triangle.a = convert_skel_vertex(mesh.vertices[i * 3 + 0], model_matrix, bone_matrices);
+		triangle.b = convert_skel_vertex(mesh.vertices[i * 3 + 1], model_matrix, bone_matrices);
+		triangle.c = convert_skel_vertex(mesh.vertices[i * 3 + 2], model_matrix, bone_matrices);
+	}
+	result.compute_aabb();
+	return result;
+}
+
+kl::Vertex titian::Tracing::convert_skel_vertex(const Vertex& vertex, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices)
+{
+	const Float4x4 bone_mat =
+		(vertex.bone_indices[0] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[0]] : Float4x4{}) * vertex.bone_weights[0] +
+		(vertex.bone_indices[1] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[1]] : Float4x4{}) * vertex.bone_weights[1] +
+		(vertex.bone_indices[2] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[2]] : Float4x4{}) * vertex.bone_weights[2] +
+		(vertex.bone_indices[3] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[3]] : Float4x4{}) * vertex.bone_weights[3];
+	return convert_vertex(vertex, model_matrix * bone_mat);
+}
+
+titian::TracingMaterial titian::Tracing::convert_material(const Scene& scene, const Material& material)
+{
+	TracingMaterial result;
+	result.texture_blend = material.texture_blend;
+	result.reflectivity_factor = material.reflectivity_factor;
+	result.refraction_index = material.refraction_index;
+	result.color = material.color.xyz();
+	result.color_texture = scene.helper_get_texture(material.color_texture_name);
+	result.normal_texture = scene.helper_get_texture(material.normal_texture_name);
+	result.roughness_texture = scene.helper_get_texture(material.roughness_texture_name);
 	return result;
 }
 
@@ -333,28 +391,6 @@ titian::Optional<titian::TracingTextureCube> titian::Tracing::convert_texture_cu
 	else {
 		result->load_2D(image);
 	}
-	return result;
-}
-
-titian::TracingMaterial titian::Tracing::convert_material(const Scene& scene, const Material& material)
-{
-	TracingMaterial result;
-	result.texture_blend = material.texture_blend;
-	result.reflectivity_factor = material.reflectivity_factor;
-	result.refraction_index = material.refraction_index;
-	result.color = material.color.xyz();
-	result.color_texture = scene.helper_get_texture(material.color_texture_name);
-	result.normal_texture = scene.helper_get_texture(material.normal_texture_name);
-	result.roughness_texture = scene.helper_get_texture(material.roughness_texture_name);
-	return result;
-}
-
-kl::Vertex titian::Tracing::convert_vertex(const Float4x4& model_matrix, const Vertex& vertex)
-{
-	kl::Vertex result;
-	result.position = (model_matrix * Float4(vertex.position, 1.0f)).xyz();
-	result.normal = kl::normalize((model_matrix * Float4(vertex.normal, 0.0f)).xyz());
-	result.uv = vertex.uv;
 	return result;
 }
 

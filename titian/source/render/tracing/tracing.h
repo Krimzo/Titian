@@ -4,6 +4,16 @@
 
 
 namespace titian {
+	struct TracingMesh
+	{
+		Vector<kl::Triangle> triangles;
+		kl::AABB aabb;
+
+		void compute_aabb();
+	};
+}
+
+namespace titian {
 	struct TracingTextureCube
 	{
 		kl::Image faces[6];
@@ -31,8 +41,7 @@ namespace titian {
 namespace titian {
 	struct TracingEntity
 	{
-		kl::AABB aabb;
-		Vector<kl::Triangle> triangles;
+		TracingMesh mesh;
 		TracingMaterial material;
 	};
 }
@@ -93,9 +102,15 @@ namespace titian {
 
 		static void convert_scene(const Scene& scene, Int2 resolution, TracingScene& tracing_scene);
 		static Ref<TracingEntity> convert_entity(const Scene& scene, const Entity& entity);
-		static Optional<TracingTextureCube> convert_texture_cube(const Texture* texture);
+
+		static TracingMesh convert_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& matrix);
+		static kl::Vertex convert_vertex(const Vertex& vertex, const Float4x4& matrix);
+
+		static TracingMesh convert_skel_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices);
+		static kl::Vertex convert_skel_vertex(const Vertex& vertex, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices);
+
 		static TracingMaterial convert_material(const Scene& scene, const Material& material);
-		static kl::Vertex convert_vertex(const Float4x4& model_matrix, const Vertex& vertex);
+		static Optional<TracingTextureCube> convert_texture_cube(const Texture* texture);
 
 		static void handle_input(kl::Window& window, kl::Image& target);
 	};
