@@ -788,12 +788,12 @@ void titian::InterpScript::load_engine_parts()
 	(*m_engine)["line_x"] = &kl::line_x<float>;
 	(*m_engine)["line_y"] = &kl::line_y<float>;
 
-	(*m_engine)["lerp"] = &kl::lerp<float>;
-	(*m_engine)["unlerp"] = &kl::unlerp<float>;
-	(*m_engine)["clamp"] = &kl::clamp<float>;
+	(*m_engine)["clamp"] = FUNCTION(float, kl::clamp, float, float, float);
+	(*m_engine)["lerp"] = FUNCTION(float, kl::lerp, float, float, float);
+	(*m_engine)["unlerp"] = FUNCTION(float, kl::unlerp, float, float, float);
 
-	(*m_engine)["to_quat"] = sl::overload(FUNCTION(Quaternion, kl::to_quaternion, const Float3&),
-		FUNCTION(Quaternion, kl::to_quaternion, const Float3&, const Float3&));
+	(*m_engine)["to_quat"] = sl::overload(FUNCTION(Quaternion, kl::to_quat, const Float3&),
+		FUNCTION(Quaternion, kl::to_quat, const Float3&, const Float3&));
 	(*m_engine)["to_euler"] = sl::overload(FUNCTION(Float3, kl::to_euler, const Quaternion&),
 		FUNCTION(Float3, kl::to_euler, const Float3&, const Float3&));
 
@@ -804,9 +804,6 @@ void titian::InterpScript::load_engine_parts()
 		FUNCTION(Float2, kl::abs, const Float2&),
 		FUNCTION(Float3, kl::abs, const Float3&),
 		FUNCTION(Float4, kl::abs, const Float4&),
-		FUNCTION(Float2x2, kl::abs, const Float2x2&),
-		FUNCTION(Float3x3, kl::abs, const Float3x3&),
-		FUNCTION(Float4x4, kl::abs, const Float4x4&),
 		FUNCTION(Complex, kl::abs, const Complex&),
 		FUNCTION(Quaternion, kl::abs, const Quaternion&)
 	);

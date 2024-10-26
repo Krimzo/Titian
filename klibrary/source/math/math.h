@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math/helper/helper.h"
+#include "math/basic/basic.h"
 #include "math/imaginary/complex.h"
 #include "math/imaginary/quaternion.h"
 #include "math/vector/vector2.h"
@@ -11,29 +11,65 @@
 #include "math/matrix/matrix4x4.h"
 #include "math/triangle/vertex.h"
 #include "math/triangle/triangle.h"
-#include "math/ray/aabb.h"
-#include "math/ray/sphere.h"
-#include "math/ray/plane.h"
-#include "math/ray/ray.h"
+#include "math/raytracing/aabb.h"
+#include "math/raytracing/sphere.h"
+#include "math/raytracing/plane.h"
+#include "math/raytracing/ray.h"
 
 
 namespace kl {
     template<typename T>
     constexpr Complex_T<T> abs(const Complex_T<T>& num)
     {
-        return apply<2>((T(*)(T)) abs<T>, num);
+        return {
+            abs(num.r),
+            abs(num.i),
+        };
     }
 
     template<typename T>
     constexpr Complex_T<T> min(const Complex_T<T>& num1, const Complex_T<T>& num2)
     {
-        return apply<2>((T(*)(T, T)) min<T>, num1, num2);
+        return {
+            min(num1.r, num2.r),
+            min(num1.i, num2.i),
+        };
     }
 
     template<typename T>
     constexpr Complex_T<T> max(const Complex_T<T>& num1, const Complex_T<T>& num2)
     {
-        return apply<2>((T(*)(T, T)) max<T>, num1, num2);
+        return {
+            max(num1.r, num2.r),
+            max(num1.i, num2.i),
+        };
+    }
+
+    template<typename T>
+    constexpr Complex_T<T> clamp(const Complex_T<T>& num, const Complex_T<T>& lower, const Complex_T<T>& upper)
+    {
+        return {
+            clamp(num.r, lower.r, upper.r),
+            clamp(num.i, lower.i, upper.i),
+        };
+    }
+
+    template<typename T, bool Clamp = true>
+    constexpr Complex_T<T> lerp(T value, const Complex_T<T>& lower, const Complex_T<T>& upper)
+    {
+        return {
+            lerp<T, Clamp>(value, lower.r, upper.r),
+            lerp<T, Clamp>(value, lower.i, upper.i),
+        };
+    }
+
+    template<typename T, bool Clamp = true>
+    constexpr Complex_T<T> unlerp(T value, const Complex_T<T>& lower, const Complex_T<T>& upper)
+    {
+        return {
+            unlerp<T, Clamp>(value, lower.r, upper.r),
+            unlerp<T, Clamp>(value, lower.i, upper.i),
+        };
     }
 
     template<typename T>
@@ -51,24 +87,74 @@ namespace kl {
         }
         return { num.r / sqr_sum, -num.i / sqr_sum };
     }
+}
 
+namespace kl {
     template<typename T>
     constexpr Quaternion_T<T> abs(const Quaternion_T<T>& num)
     {
-        return apply<4>((T(*)(T)) abs<T>, num);
+        return {
+            abs(num.w),
+            abs(num.x),
+            abs(num.y),
+            abs(num.z),
+        };
     }
 
     template<typename T>
     constexpr Quaternion_T<T> min(const Quaternion_T<T>& num1, const Quaternion_T<T>& num2)
     {
-        return apply<4>((T(*)(T, T)) min<T>, num1, num2);
+        return {
+			min(num1.w, num2.w),
+			min(num1.x, num2.x),
+			min(num1.y, num2.y),
+			min(num1.z, num2.z),
+		};
     }
 
     template<typename T>
     constexpr Quaternion_T<T> max(const Quaternion_T<T>& num1, const Quaternion_T<T>& num2)
     {
-        return apply<4>((T(*)(T, T)) max<T>, num1, num2);
+		return {
+			max(num1.w, num2.w),
+			max(num1.x, num2.x),
+			max(num1.y, num2.y),
+			max(num1.z, num2.z),
+		};
     }
+
+	template<typename T>
+	constexpr Quaternion_T<T> clamp(const Quaternion_T<T>& num, const Quaternion_T<T>& lower, const Quaternion_T<T>& upper)
+	{
+		return {
+			clamp(num.w, lower.w, upper.w),
+			clamp(num.x, lower.x, upper.x),
+			clamp(num.y, lower.y, upper.y),
+			clamp(num.z, lower.z, upper.z),
+		};
+	}
+
+	template<typename T, bool Clamp = true>
+	constexpr Quaternion_T<T> lerp(T value, const Quaternion_T<T>& lower, const Quaternion_T<T>& upper)
+	{
+		return {
+			lerp<T, Clamp>(value, lower.w, upper.w),
+			lerp<T, Clamp>(value, lower.x, upper.x),
+			lerp<T, Clamp>(value, lower.y, upper.y),
+			lerp<T, Clamp>(value, lower.z, upper.z),
+		};
+	}
+
+	template<typename T, bool Clamp = true>
+	constexpr Quaternion_T<T> unlerp(T value, const Quaternion_T<T>& lower, const Quaternion_T<T>& upper)
+	{
+		return {
+			unlerp<T, Clamp>(value, lower.w, upper.w),
+			unlerp<T, Clamp>(value, lower.x, upper.x),
+			unlerp<T, Clamp>(value, lower.y, upper.y),
+			unlerp<T, Clamp>(value, lower.z, upper.z),
+		};
+	}
 
     template<typename T>
     constexpr Quaternion_T<T> normalize(const Quaternion_T<T>& num)
@@ -81,24 +167,62 @@ namespace kl {
     {
         return { num.w, -num.x, -num.y, -num.z };
     }
+}
 
+namespace kl {
     template<typename T>
     constexpr Vector2<T> abs(const Vector2<T>& vec)
     {
-        return apply<2>((T(*)(T)) abs<T>, vec);
+        return {
+			abs(vec.x),
+			abs(vec.y),
+		};
     }
 
     template<typename T>
     constexpr Vector2<T> min(const Vector2<T>& vec1, const Vector2<T>& vec2)
     {
-        return apply<2>((T(*)(T, T)) min<T>, vec1, vec2);
+        return {
+			min(vec1.x, vec2.x),
+			min(vec1.y, vec2.y),
+        };
     }
 
     template<typename T>
     constexpr Vector2<T> max(const Vector2<T>& vec1, const Vector2<T>& vec2)
     {
-        return apply<2>((T(*)(T, T)) max<T>, vec1, vec2);
+		return {
+			max(vec1.x, vec2.x),
+			max(vec1.y, vec2.y),
+		};
     }
+
+	template<typename T>
+	constexpr Vector2<T> clamp(const Vector2<T>& vec, const Vector2<T>& lower, const Vector2<T>& upper)
+	{
+		return {
+			clamp(vec.x, lower.x, upper.x),
+			clamp(vec.y, lower.y, upper.y),
+		};
+	}
+
+	template<typename T, bool Clamp = true>
+	constexpr Vector2<T> lerp(T value, const Vector2<T>& lower, const Vector2<T>& upper)
+	{
+		return {
+			lerp<T, Clamp>(value, lower.x, upper.x),
+			lerp<T, Clamp>(value, lower.y, upper.y),
+		};
+	}
+
+	template<typename T, bool Clamp = true>
+	constexpr Vector2<T> unlerp(T value, const Vector2<T>& lower, const Vector2<T>& upper)
+	{
+		return {
+			unlerp<T, Clamp>(value, lower.x, upper.x),
+			unlerp<T, Clamp>(value, lower.y, upper.y),
+		};
+	}
 
     template<typename T>
     constexpr Vector2<T> normalize(const Vector2<T>& vec)
@@ -143,24 +267,68 @@ namespace kl {
         point = normalize(point);
         return vec - (point * dot(vec, point) * T(2));
     }
+}
 
+namespace kl {
     template<typename T>
     constexpr Vector3<T> abs(const Vector3<T>& vec)
     {
-        return apply<3>((T(*)(T)) abs<T>, vec);
+        return {
+			abs(vec.x),
+			abs(vec.y),
+			abs(vec.z),
+        };
     }
 
     template<typename T>
     constexpr Vector3<T> min(const Vector3<T>& vec1, const Vector3<T>& vec2)
     {
-        return apply<3>((T(*)(T, T)) min<T>, vec1, vec2);
+        return {
+			min(vec1.x, vec2.x),
+			min(vec1.y, vec2.y),
+			min(vec1.z, vec2.z),
+		};
     }
 
     template<typename T>
     constexpr Vector3<T> max(const Vector3<T>& vec1, const Vector3<T>& vec2)
     {
-        return apply<3>((T(*)(T, T)) max<T>, vec1, vec2);
+		return {
+			max(vec1.x, vec2.x),
+			max(vec1.y, vec2.y),
+			max(vec1.z, vec2.z),
+		};
     }
+
+	template<typename T>
+	constexpr Vector3<T> clamp(const Vector3<T>& vec, const Vector3<T>& lower, const Vector3<T>& upper)
+	{
+		return {
+			clamp(vec.x, lower.x, upper.x),
+			clamp(vec.y, lower.y, upper.y),
+			clamp(vec.z, lower.z, upper.z),
+		};
+	}
+
+	template<typename T, bool Clamp = true>
+	constexpr Vector3<T> lerp(T value, const Vector3<T>& lower, const Vector3<T>& upper)
+	{
+		return {
+			lerp<T, Clamp>(value, lower.x, upper.x),
+			lerp<T, Clamp>(value, lower.y, upper.y),
+			lerp<T, Clamp>(value, lower.z, upper.z),
+		};
+	}
+
+	template<typename T, bool Clamp = true>
+	constexpr Vector3<T> unlerp(T value, const Vector3<T>& lower, const Vector3<T>& upper)
+	{
+		return {
+			unlerp<T, Clamp>(value, lower.x, upper.x),
+			unlerp<T, Clamp>(value, lower.y, upper.y),
+			unlerp<T, Clamp>(value, lower.z, upper.z),
+		};
+	}
 
     template<typename T>
     constexpr Vector3<T> normalize(const Vector3<T>& vec)
@@ -216,24 +384,63 @@ namespace kl {
             first.x * second.y - first.y * second.x,
         };
     }
+}
 
+namespace kl {
     template<typename T>
     constexpr Vector4<T> abs(const Vector4<T>& vec)
     {
-        return apply<4>((T(*)(T)) abs<T>, vec);
+        return {
+			abs(vec.x),
+			abs(vec.y),
+			abs(vec.z),
+			abs(vec.w),
+		};
     }
 
     template<typename T>
     constexpr Vector4<T> min(const Vector4<T>& vec1, const Vector4<T>& vec2)
     {
-        return apply<4>((T(*)(T, T)) min<T>, vec1, vec2);
+        return {
+			min(vec1.x, vec2.x),
+			min(vec1.y, vec2.y),
+			min(vec1.z, vec2.z),
+			min(vec1.w, vec2.w),
+		};
     }
 
     template<typename T>
     constexpr Vector4<T> max(const Vector4<T>& vec1, const Vector4<T>& vec2)
     {
-        return apply<4>((T(*)(T, T)) max<T>, vec1, vec2);
+		return {
+			max(vec1.x, vec2.x),
+			max(vec1.y, vec2.y),
+			max(vec1.z, vec2.z),
+			max(vec1.w, vec2.w),
+		};
     }
+
+	template<typename T>
+	constexpr Vector4<T> clamp(const Vector4<T>& vec, const Vector4<T>& lower, const Vector4<T>& upper)
+	{
+		return {
+			clamp(vec.x, lower.x, upper.x),
+			clamp(vec.y, lower.y, upper.y),
+			clamp(vec.z, lower.z, upper.z),
+			clamp(vec.w, lower.w, upper.w),
+		};
+	}
+
+	template<typename T, bool Clamp = true>
+	constexpr Vector4<T> lerp(T value, const Vector4<T>& lower, const Vector4<T>& upper)
+	{
+		return {
+			lerp<T, Clamp>(value, lower.x, upper.x),
+			lerp<T, Clamp>(value, lower.y, upper.y),
+			lerp<T, Clamp>(value, lower.z, upper.z),
+			lerp<T, Clamp>(value, lower.w, upper.w),
+		};
+	}
 
     template<typename T>
     constexpr Vector4<T> normalize(const Vector4<T>& vec)
@@ -252,25 +459,9 @@ namespace kl {
     {
         return acos_d(dot(normalize(first), normalize(second)));
     }
+}
 
-    template<typename T>
-    constexpr Matrix2x2<T> abs(const Matrix2x2<T>& mat)
-    {
-        return apply<4>((T(*)(T)) abs<T>, mat);
-    }
-
-    template<typename T>
-    constexpr Matrix2x2<T> min(const Matrix2x2<T>& mat1, const Matrix2x2<T>& mat2)
-    {
-        return apply<4>((T(*)(T, T)) min<T>, mat1, mat2);
-    }
-
-    template<typename T>
-    constexpr Matrix2x2<T> max(const Matrix2x2<T>& mat1, const Matrix2x2<T>& mat2)
-    {
-        return apply<4>((T(*)(T, T)) max<T>, mat1, mat2);
-    }
-
+namespace kl {
     template<typename T>
     constexpr Matrix2x2<T> inverse(const Matrix2x2<T>& mat)
     {
@@ -295,25 +486,9 @@ namespace kl {
         }
         return result;
     }
+}
 
-    template<typename T>
-    constexpr Matrix3x3<T> abs(const Matrix3x3<T>& mat)
-    {
-        return apply<9>((T(*)(T)) abs<T>, mat);
-    }
-
-    template<typename T>
-    constexpr Matrix3x3<T> min(const Matrix3x3<T>& mat1, const Matrix3x3<T>& mat2)
-    {
-        return apply<9>((T(*)(T, T)) min<T>, mat1, mat2);
-    }
-
-    template<typename T>
-    constexpr Matrix3x3<T> max(const Matrix3x3<T>& mat1, const Matrix3x3<T>& mat2)
-    {
-        return apply<9>((T(*)(T, T)) max<T>, mat1, mat2);
-    }
-
+namespace kl {
     template<typename T>
     constexpr Matrix3x3<T> inverse(const Matrix3x3<T>& mat)
     {
@@ -343,25 +518,9 @@ namespace kl {
         }
         return result;
     }
+}
 
-    template<typename T>
-    constexpr Matrix4x4<T> abs(const Matrix4x4<T>& mat)
-    {
-        return apply<16>((T(*)(T)) abs<T>, mat);
-    }
-
-    template<typename T>
-    constexpr Matrix4x4<T> min(const Matrix4x4<T>& mat1, const Matrix4x4<T>& mat2)
-    {
-        return apply<16>((T(*)(T, T)) min<T>, mat1, mat2);
-    }
-
-    template<typename T>
-    constexpr Matrix4x4<T> max(const Matrix4x4<T>& mat1, const Matrix4x4<T>& mat2)
-    {
-        return apply<16>((T(*)(T, T)) max<T>, mat1, mat2);
-    }
-
+namespace kl {
     template<typename T>
     constexpr Matrix4x4<T> inverse(const Matrix4x4<T>& mat)
     {
@@ -417,7 +576,9 @@ namespace kl {
         }
         return result;
     }
+}
 
+namespace kl {
     template<typename T>
     constexpr Vector2<T> calc_ndc(const Vector2<T>& position, const Vector2<T>& frame_size)
     {
@@ -449,7 +610,7 @@ namespace kl {
     }
 
     template<typename T>
-    constexpr Quaternion_T<T> to_quaternion(const Vector3<T>& euler)
+    constexpr Quaternion_T<T> to_quat(const Vector3<T>& euler)
     {
         const T cr = cos_d(euler.x * T(0.5));
         const T sr = sin_d(euler.x * T(0.5));
@@ -483,7 +644,7 @@ namespace kl {
     }
 
     template<typename T>
-    constexpr Quaternion_T<T> to_quaternion(const Vector3<T>& original, const Vector3<T>& target)
+    constexpr Quaternion_T<T> to_quat(const Vector3<T>& original, const Vector3<T>& target)
     {
         const Vector3<T> axis = normalize(cross(original, target));
         const T angl = angle(original, target);
@@ -493,6 +654,6 @@ namespace kl {
     template<typename T>
     constexpr Vector3<T> to_euler(const Vector3<T>& original, const Vector3<T>& target)
     {
-        return to_euler(to_quaternion(original, target));
+        return to_euler(to_quat(original, target));
     }
 }

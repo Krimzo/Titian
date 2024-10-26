@@ -4,6 +4,7 @@
 #include <any>
 #include <array>
 #include <atomic>
+#include <bitset>
 #include <cstdint>
 #include <ctime>
 #include <execution>

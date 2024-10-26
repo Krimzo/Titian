@@ -179,7 +179,7 @@ namespace kl {
 
 		constexpr T length() const
 		{
-			return (T) std::sqrt(x * x + y * y + z * z);
+			return sqrt(x * x + y * y + z * z);
 		}
 
 		constexpr bool in_bounds(const Vector3<T>& lower_incl, const Vector3<T>& upper_excl) const

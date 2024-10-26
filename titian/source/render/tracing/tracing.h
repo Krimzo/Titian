@@ -87,7 +87,7 @@ namespace titian {
 
 	private:
 		static void render_scene(const kl::Window& window, const TracingScene& tracing_scene, kl::Image& target);
-		static void render_section(const TracingScene& tracing_scene, Int2 min_point, Int2 max_point, kl::Image& target);
+		static void render_section(const TracingScene& tracing_scene, Int2 top_left, Int2 size, kl::Image& target);
 		static RGB render_pixel(const TracingScene& tracing_scene, Float2 ndc);
 		static RGB render_ray(const TracingScene& tracing_scene, const kl::Ray& ray, int depth, kl::Triangle* blacklist);
 

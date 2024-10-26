@@ -130,7 +130,7 @@ void titian::Tracing::render_scene(const kl::Window& window, const TracingScene&
 			{
 				render_section(tracing_scene,
 					Int2(x, y) * square_size,
-					Int2(x + 1, y + 1) * square_size,
+					Int2(square_size),
 					target);
 				--working_count;
 			}) );
@@ -141,10 +141,12 @@ loop_end:
 	tasks.clear();
 }
 
-void titian::Tracing::render_section(const TracingScene& tracing_scene, const Int2 min_point, const Int2 max_point, kl::Image& target)
+void titian::Tracing::render_section(const TracingScene& tracing_scene, const Int2 top_left, const Int2 size, kl::Image& target)
 {
-	for (int y = kl::max(min_point.y, 0); y < kl::min(max_point.y, target.height()); y++) {
-		for (int x = kl::max(min_point.x, 0); x < kl::min(max_point.x, target.width()); x++) {
+	const Int2 incl_start = kl::max(top_left, Int2(0));
+	const Int2 excl_end = kl::min(top_left + size, target.size());
+	for (int y = incl_start.y; y < excl_end.y; y++) {
+		for (int x = incl_start.x; x < excl_end.x; x++) {
 			const Float2 ndc = {
 				float(x) / (target.width() - 1) * 2.0f - 1.0f,
 				float(target.height() - 1 - y) / (target.height() - 1) * 2.0f - 1.0f,
@@ -186,9 +188,7 @@ titian::RGB titian::Tracing::render_ray(const TracingScene& tracing_scene, const
 
 	if (material.color_texture) {
 		Float3 tex_col = material.color_texture->image.sample(interp_vertex.uv);
-		color.x = kl::lerp(material.texture_blend, color.x, tex_col.x);
-		color.y = kl::lerp(material.texture_blend, color.y, tex_col.y);
-		color.z = kl::lerp(material.texture_blend, color.z, tex_col.z);
+		color = kl::lerp(material.texture_blend, color, tex_col);
 	}
 	if (material.normal_texture) {
 		Float3 tex_norm = material.normal_texture->image.sample(interp_vertex.uv);
@@ -221,17 +221,13 @@ titian::RGB titian::Tracing::render_ray(const TracingScene& tracing_scene, const
 		const kl::Ray reflection_ray{ payload->intersect, kl::reflect(ray.direction(), ref_normal) };
 		const Float3 reflect_color = render_ray(tracing_scene, reflection_ray, depth + 1, &payload->triangle);
 		const float reflectivity = kl::min(material.reflectivity_factor, 1.0f);
-		color.x = kl::lerp(reflectivity, color.x, reflect_color.x);
-		color.y = kl::lerp(reflectivity, color.y, reflect_color.y);
-		color.z = kl::lerp(reflectivity, color.z, reflect_color.z);
+		color = kl::lerp(reflectivity, color, reflect_color);
 	}
 	else if (material.reflectivity_factor < 0.0f) {
 		const kl::Ray refraction_ray{ payload->intersect, kl::refract(ray.direction(), ref_normal, 1.0f / material.refraction_index) };
 		const Float3 refract_color = render_ray(tracing_scene, refraction_ray, depth + 1, &payload->triangle);
 		const float refractivity = kl::min(-material.reflectivity_factor, 1.0f);
-		color.x = kl::lerp(refractivity, color.x, refract_color.x);
-		color.y = kl::lerp(refractivity, color.y, refract_color.y);
-		color.z = kl::lerp(refractivity, color.z, refract_color.z);
+		color = kl::lerp(refractivity, color, refract_color);
 	}
 
 	return color;

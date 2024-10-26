@@ -99,7 +99,7 @@ namespace kl {
 
         constexpr T length() const
         {
-            return (T) std::sqrt(r * r + i * i);
+            return sqrt(r * r + i * i);
         }
     };
 }

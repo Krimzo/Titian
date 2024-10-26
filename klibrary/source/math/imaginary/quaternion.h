@@ -120,7 +120,7 @@ namespace kl {
 
         constexpr T length() const
         {
-			return (T) std::sqrt(w * w + x * x + y * y + z * z);
+			return sqrt(w * w + x * x + y * y + z * z);
         }
     };
 }

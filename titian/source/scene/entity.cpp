@@ -296,7 +296,7 @@ titian::Float3 titian::Entity::scale() const
 void titian::Entity::set_rotation(const Float3& rotation)
 {
     px::PxTransform transform = m_actor.getGlobalPose();
-    transform.q = px_cast(Float4{ kl::to_quaternion(rotation) });
+    transform.q = px_cast(Float4{ kl::to_quat(rotation) });
     m_actor.setGlobalPose(transform);
 }
 
@@ -346,7 +346,7 @@ void titian::Entity::set_collider_rotation(const Float3& rotation)
         return;
 
     px::PxTransform transform = shape->getLocalPose();
-    transform.q = px_cast(Float4{ kl::to_quaternion(rotation) });
+    transform.q = px_cast(Float4{ kl::to_quat(rotation) });
     shape->setLocalPose(transform);
 }
 

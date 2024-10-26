@@ -1,8 +1,8 @@
 #pragma once
 
-#include "math/ray/plane.h"
-#include "math/ray/sphere.h"
-#include "math/ray/aabb.h"
+#include "math/raytracing/plane.h"
+#include "math/raytracing/sphere.h"
+#include "math/raytracing/aabb.h"
 #include "math/triangle/triangle.h"
 #include "math/matrix/matrix4x4.h"
 

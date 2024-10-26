@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math/helper/helper.h"
+#include "math/basic/basic.h"
 #include "media/image/color.h"
 
 
@@ -131,7 +131,7 @@ namespace kl {
 
 		constexpr T length() const
 		{
-			return (T) std::sqrt(x * x + y * y);
+			return sqrt(x * x + y * y);
 		}
 
 		constexpr bool in_bounds(const Vector2<T>& lower_incl, const Vector2<T>& upper_excl) const
