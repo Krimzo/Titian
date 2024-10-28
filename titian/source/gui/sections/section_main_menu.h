@@ -26,6 +26,6 @@ namespace titian {
         float m_control_buttons_width = 0.0f;
         float m_gizmo_buttons_width = 0.0f;
 
-        Int2 m_trace_resolution = { 1920, 1080 };
+        Int2 m_trace_resolution = kl::SCREEN_SIZE;
 	};
 }

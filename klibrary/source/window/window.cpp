@@ -12,7 +12,7 @@ kl::Window::Window(const std::string_view& name)
     window_class.style = CS_OWNDC;
     window_class.lpfnWndProc = [](const HWND window_handle, const UINT message, const WPARAM w_param, const LPARAM l_param)
     {
-        const Window* self = reinterpret_cast<const Window*>(GetWindowLongPtrA(window_handle, GWLP_USERDATA));
+        const Window* self = (const Window*) GetWindowLongPtrA(window_handle, GWLP_USERDATA);
         return self->window_procedure(window_handle, message, w_param, l_param);
     };
     window_class.hInstance = m_instance;
@@ -26,12 +26,10 @@ kl::Window::Window(const std::string_view& name)
         size_buffer.right - size_buffer.left,
         size_buffer.bottom - size_buffer.top,
     };
-    const Int2 new_position = {
-        screen::SIZE.x / 2 - new_size.x / 2,
-        screen::SIZE.y / 2 - new_size.y / 2,
-    };
+    const Int2 new_position = SCREEN_SIZE / 2 - new_size / 2;
 
-    m_window = CreateWindowExA(NULL, name.data(), name.data(), m_window_style, new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, m_instance, nullptr);
+    m_window = CreateWindowExA(NULL, name.data(), name.data(), m_window_style,
+        new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, m_instance, nullptr);
     assert(m_window, "Failed to create window");
 
     m_device_context = GetDC(m_window);

@@ -7,8 +7,8 @@
 #include "window/hooks/mouse_hook.h"
 
 
-namespace kl::screen {
-    inline const Int2 SIZE = {
+namespace kl {
+    inline const Int2 SCREEN_SIZE = {
         GetSystemMetrics(SM_CXSCREEN),
         GetSystemMetrics(SM_CYSCREEN),
     };
