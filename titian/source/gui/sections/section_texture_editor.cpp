@@ -9,7 +9,7 @@ void titian::GUISectionTextureEditor::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    Scene& scene = Layers::get<GameLayer>().scene();
+    Scene& scene = GameLayer::get().scene();
 
     Ref<Texture> texture;
     if (scene.textures.contains(selected_texture)) {
@@ -41,10 +41,10 @@ void titian::GUISectionTextureEditor::render_gui()
         if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
             if (classify_file(file.value()) == FileType::TEXTURE) {
                 const String name = fs::path(file.value()).filename().string();
-                Texture* texture = scene.helper_new_texture(Scene::generate_unique_name(name, scene.textures));
-                texture->image.load_from_file(file.value());
-                texture->reload_as_2D();
-                texture->create_shader_view();
+                Texture& texture = scene.helper_new_texture(Scene::generate_unique_name(name, scene.textures));
+                texture.image.load_from_file(file.value());
+                texture.reload_as_2D();
+                texture.create_shader_view();
             }
         }
 
@@ -140,7 +140,7 @@ void titian::GUISectionTextureEditor::render_selected_texture(Texture& texture)
 
 void titian::GUISectionTextureEditor::show_texture_properties(Texture* texture)
 {
-	GUILayer& gui_layer = Layers::get<GUILayer>();
+	GUILayer& gui_layer = GUILayer::get();
 
     if (im::Begin("Texture Properties") && texture) {
         im::Text("Info");

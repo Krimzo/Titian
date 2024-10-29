@@ -7,7 +7,7 @@ titian::DisplayPass::DisplayPass()
 
 void titian::DisplayPass::state_package(StatePackage& package)
 {
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
+    RenderLayer& render_layer = RenderLayer::get();
     package.raster_state = render_layer.raster_states.solid;
     package.depth_state = render_layer.depth_states.disabled;
     package.shaders = render_layer.shader_states.display_pass;
@@ -15,9 +15,9 @@ void titian::DisplayPass::state_package(StatePackage& package)
 
 void titian::DisplayPass::render_self(StatePackage& package)
 {
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
-    kl::Window& window = Layers::get<AppLayer>().window;
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    RenderLayer& render_layer = RenderLayer::get();
+    kl::Window& window = AppLayer::get().window;
+    kl::GPU& gpu = AppLayer::get().gpu;
 
     const Int2 window_size = window.size();
     package.camera->resize(window_size);

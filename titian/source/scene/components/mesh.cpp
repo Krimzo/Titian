@@ -119,7 +119,7 @@ void titian::Mesh::reload()
         buffer = {};
         return;
     }
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    kl::GPU& gpu = AppLayer::get().gpu;
     buffer = gpu.create_vertex_buffer(vertices.data(), UINT(vertices.size() * sizeof(Vertex)));
 }
 

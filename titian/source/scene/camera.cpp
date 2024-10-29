@@ -176,7 +176,7 @@ void titian::Camera::resize(const Int2 new_size)
     if (new_size == resolution()) {
         return;
     }
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    kl::GPU& gpu = AppLayer::get().gpu;
 
     dx::TextureDescriptor screen_desc{};
     screen_desc.Width = new_size.x;
@@ -228,7 +228,7 @@ void titian::Camera::resize_staging(const Int2 new_size)
     if (index_staging.resolution() == new_size) {
         return;
     }
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    kl::GPU& gpu = AppLayer::get().gpu;
     index_staging.texture = gpu.create_staging_texture(index_texture.texture, new_size);
 }
 
@@ -239,7 +239,7 @@ titian::Int2 titian::Camera::resolution() const
 
 void titian::Camera::clear_targets()
 {
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    kl::GPU& gpu = AppLayer::get().gpu;
     gpu.clear_target_view(color_texture.target_view, background);
     gpu.clear_depth_view(depth_texture.depth_view, 1.0f, 0xFF);
     gpu.clear_target_view(index_texture.target_view, {});

@@ -20,10 +20,10 @@
 namespace titian {
     struct TitianGame : LayerStack
 	{
-        AppLayer app_layer;
-        GameLayer game_layer;
-        RenderLayer render_layer;
-        GUILayer gui_layer;
+        AppLayer& app_layer;
+        GameLayer& game_layer;
+        RenderLayer& render_layer;
+        GUILayer& gui_layer;
 
         TitianGame(const StringView& entry_scene);
         ~TitianGame() override;

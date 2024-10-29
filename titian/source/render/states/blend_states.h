@@ -9,6 +9,6 @@ namespace titian {
 		dx::BlendState disabled;
 		dx::BlendState enabled;
 
-		void init(kl::GPU& gpu);
+		BlendStates();
 	};
 }

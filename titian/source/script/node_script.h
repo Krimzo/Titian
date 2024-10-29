@@ -1181,64 +1181,64 @@ namespace titian {
 			addIN<String>("mesh_name");
 			addOUT<void*>("mesh")->behaviour([this]()
 			{
-				Scene& scene = Layers::get<GameLayer>().scene();
+				Scene& scene = GameLayer::get().scene();
 				return scene.helper_get_mesh(get_value<String>("mesh_name"));
 			});
 
 			addIN<String>("animation_name");
 			addOUT<void*>("animation")->behaviour([this]()
 			{
-				Scene& scene = Layers::get<GameLayer>().scene();
+				Scene& scene = GameLayer::get().scene();
 				return scene.helper_get_animation(get_value<String>("animation_name"));
 			});
 
 			addIN<String>("texture_name");
 			addOUT<void*>("texture")->behaviour([this]()
 			{
-				Scene& scene = Layers::get<GameLayer>().scene();
+				Scene& scene = GameLayer::get().scene();
 				return scene.helper_get_texture(get_value<String>("texture_name"));
 			});
 
 			addIN<String>("material_name");
 			addOUT<void*>("material")->behaviour([this]()
 			{
-				Scene& scene = Layers::get<GameLayer>().scene();
+				Scene& scene = GameLayer::get().scene();
 				return scene.helper_get_material(get_value<String>("material_name"));
 			});
 
 			addIN<String>("shader_name");
 			addOUT<void*>("shader")->behaviour([this]()
 			{
-				Scene& scene = Layers::get<GameLayer>().scene();
+				Scene& scene = GameLayer::get().scene();
 				return scene.helper_get_shader(get_value<String>("shader_name"));
 			});
 
 			addIN<String>("entity_name");
 			addOUT<void*>("entity")->behaviour([this]()
 			{
-				Scene& scene = Layers::get<GameLayer>().scene();
+				Scene& scene = GameLayer::get().scene();
 				return scene.helper_get_entity(get_value<String>("entity_name"));
 			});
 
 			addOUT<Float3>("gravity")->behaviour([this]()
 			{
-				Scene& scene = Layers::get<GameLayer>().scene();
+				Scene& scene = GameLayer::get().scene();
 				return scene.gravity();
 			});
 
 			addOUT<String>("main_camera_name")->behaviour([this]()
 			{
-				Scene& scene = Layers::get<GameLayer>().scene();
+				Scene& scene = GameLayer::get().scene();
 				return scene.main_camera_name;
 			});
 			addOUT<String>("main_ambient_light_name")->behaviour([this]()
 			{
-				Scene& scene = Layers::get<GameLayer>().scene();
+				Scene& scene = GameLayer::get().scene();
 				return scene.main_ambient_light_name;
 			});
 			addOUT<String>("main_directional_light_name")->behaviour([this]()
 			{
-				Scene& scene = Layers::get<GameLayer>().scene();
+				Scene& scene = GameLayer::get().scene();
 				return scene.main_directional_light_name;
 			});
 		}
@@ -1569,24 +1569,24 @@ namespace titian {
 
 		void call() override
 		{
-			Scene& scene = Layers::get<GameLayer>().scene();
+			Scene& scene = GameLayer::get().scene();
 			if (input_connected("mesh_name")) {
-				mesh_ptr = scene.helper_new_mesh(get_value<String>("mesh_name"));
+				mesh_ptr = &scene.helper_new_mesh(get_value<String>("mesh_name"));
 			}
 			if (input_connected("animation_name")) {
-				animation_ptr = scene.helper_new_animation(get_value<String>("animation_name"));
+				animation_ptr = &scene.helper_new_animation(get_value<String>("animation_name"));
 			}
 			if (input_connected("texture_name")) {
-				texture_ptr = scene.helper_new_texture(get_value<String>("texture_name"));
+				texture_ptr = &scene.helper_new_texture(get_value<String>("texture_name"));
 			}
 			if (input_connected("material_name")) {
-				material_ptr = scene.helper_new_material(get_value<String>("material_name"));
+				material_ptr = &scene.helper_new_material(get_value<String>("material_name"));
 			}
 			if (input_connected("shader_name")) {
-				shader_ptr = scene.helper_new_shader(get_value<String>("shader_name"));
+				shader_ptr = &scene.helper_new_shader(get_value<String>("shader_name"));
 			}
 			if (input_connected("entity_name")) {
-				entity_ptr = scene.helper_new_entity(get_value<String>("entity_name"));
+				entity_ptr = &scene.helper_new_entity(get_value<String>("entity_name"));
 			}
 			if (input_connected("gravity")) {
 				scene.set_gravity(get_value<Float3>("gravity"));
@@ -1895,7 +1895,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene().helper_iterate_meshes([&](const String& name, Mesh* ptr)
+			GameLayer::get().scene().helper_iterate_meshes([&](const String& name, Mesh* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1910,7 +1910,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene().helper_iterate_animations([&](const String& name, Animation* ptr)
+			GameLayer::get().scene().helper_iterate_animations([&](const String& name, Animation* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1925,7 +1925,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene().helper_iterate_textures([&](const String& name, Texture* ptr)
+			GameLayer::get().scene().helper_iterate_textures([&](const String& name, Texture* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1940,7 +1940,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene().helper_iterate_materials([&](const String& name, Material* ptr)
+			GameLayer::get().scene().helper_iterate_materials([&](const String& name, Material* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1955,7 +1955,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene().helper_iterate_shaders([&](const String& name, Shader* ptr)
+			GameLayer::get().scene().helper_iterate_shaders([&](const String& name, Shader* ptr)
 			{
 				func(&name, ptr);
 			});
@@ -1970,7 +1970,7 @@ namespace titian {
 
 		void iterate_collection(const Function<void(const String*, void*)>& func) override
 		{
-			Layers::get<GameLayer>().scene().helper_iterate_entities([&](const String& name, Entity* ptr)
+			GameLayer::get().scene().helper_iterate_entities([&](const String& name, Entity* ptr)
 			{
 				func(&name, ptr);
 			});

@@ -2,10 +2,7 @@
 
 
 titian::GameLayer::GameLayer()
-	: Layer("GameLayer")
-{}
-
-void titian::GameLayer::init()
+	: Layer_T("GameLayer")
 {
 	reset_scene();
 }
@@ -14,7 +11,7 @@ bool titian::GameLayer::update()
 {
 	const TimeBomb _ = bench_time_bomb();
 	if (m_game_state == GameState::RUNNING) {
-		m_scene->update_physics(Layers::get<AppLayer>().timer.delta());
+		m_scene->update_physics(AppLayer::get().timer.delta());
 		m_scene->update_scripts();
 	}
 	return true;
@@ -35,7 +32,7 @@ void titian::GameLayer::start_game()
 	if (m_game_state != GameState::STOPPED)
 		return;
 
-	AppLayer& app_layer = Layers::get<AppLayer>();
+	AppLayer& app_layer = AppLayer::get();
 
 	for (auto& [_, shader] : m_scene->shaders) {
 		shader->reload();
@@ -58,7 +55,7 @@ void titian::GameLayer::pause_game()
 {
 	if (m_game_state != GameState::RUNNING)
 		return;
-	Layers::get<AppLayer>().timer.stop();
+	AppLayer::get().timer.stop();
 	m_game_state = GameState::PAUSED;
 }
 
@@ -66,7 +63,7 @@ void titian::GameLayer::resume_game()
 {
 	if (m_game_state != GameState::PAUSED)
 		return;
-	Layers::get<AppLayer>().timer.start();
+	AppLayer::get().timer.start();
 	m_game_state = GameState::RUNNING;
 }
 
@@ -74,7 +71,7 @@ void titian::GameLayer::stop_game()
 {
 	if (m_game_state == GameState::STOPPED)
 		return;
-	Layers::get<AppLayer>().timer.reset();
+	AppLayer::get().timer.reset();
 	m_game_state = GameState::STOPPED;
 	Logger::log("Game stopped.");
 }

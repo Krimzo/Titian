@@ -10,6 +10,6 @@ namespace titian {
         dx::DepthState enabled;
         dx::DepthState only_compare;
         
-        void init(kl::GPU& gpu);
+        DepthStates();
     };
 }

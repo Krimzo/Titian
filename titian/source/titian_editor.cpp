@@ -2,18 +2,13 @@
 
 
 titian::TitianEditor::TitianEditor()
+    : app_layer(AppLayer::get())
+    , game_layer(GameLayer::get())
+    , editor_layer(EditorLayer::get())
+    , render_layer(RenderLayer::get())
+    , gui_layer(GUILayer::get())
 {
-    Layers::bind<AppLayer>(app_layer);
-    Layers::bind<GameLayer>(game_layer);
-    Layers::bind<EditorLayer>(editor_layer);
-    Layers::bind<RenderLayer>(render_layer);
-    Layers::bind<GUILayer>(gui_layer);
-
-    app_layer.init("TITIAN");
-	game_layer.init();
-	editor_layer.init();
-	render_layer.init();
-	gui_layer.init();
+    app_layer.set_name("TITIAN");
     
     render_layer.passes.emplace_back(new ShadowPass());
     render_layer.passes.emplace_back(new SkyboxPass());
@@ -39,11 +34,11 @@ titian::TitianEditor::TitianEditor()
     gui_layer.sections.emplace_back(new GUISectionEntityProperties());
     gui_layer.sections.emplace_back(new GUISectionScriptingParameters());
 
-    push_layer(&app_layer);
-    push_layer(&game_layer);
-    push_layer(&editor_layer);
-    push_layer(&render_layer);
-    push_layer(&gui_layer);
+    push_layer(app_layer);
+    push_layer(game_layer);
+    push_layer(editor_layer);
+    push_layer(render_layer);
+    push_layer(gui_layer);
 
     kl::VERIFICATION_LOGGER = Logger::log<std::string_view>;
     Logger::set_ready();

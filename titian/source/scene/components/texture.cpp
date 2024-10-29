@@ -37,7 +37,7 @@ void titian::Texture::deserialize(const Serializer& serializer)
 
 void titian::Texture::reload_as_2D()
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	texture = gpu.create_texture(image);
 }
 
@@ -56,32 +56,32 @@ bool titian::Texture::reload_as_cube()
 		image.rectangle(Int2(3, 1) * part_size, Int2(4, 2) * part_size),
 	};
 
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	texture = gpu.create_cube_texture(box_sides[0], box_sides[1], box_sides[2], box_sides[3], box_sides[4], box_sides[5]);
 	return true;
 }
 
 void titian::Texture::create_target_view(const dx::TargetViewDescriptor* descriptor)
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	target_view = gpu.create_target_view(texture, descriptor);
 }
 
 void titian::Texture::create_depth_view(const dx::DepthViewDescriptor* descriptor)
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	depth_view = gpu.create_depth_view(texture, descriptor);
 }
 
 void titian::Texture::create_shader_view(const dx::ShaderViewDescriptor* descriptor)
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	shader_view = gpu.create_shader_view(texture, descriptor);
 }
 
 void titian::Texture::create_access_view(const dx::AccessViewDescriptor* descriptor)
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	access_view = gpu.create_access_view(texture, descriptor);
 }
 
@@ -107,7 +107,7 @@ titian::Int2 titian::Texture::resolution() const
 
 void titian::Texture::copy_other(const dx::Texture& texture)
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	if (gpu.texture_size(this->texture) != gpu.texture_size(texture)) {
 		dx::TextureDescriptor desc{};
 		texture->GetDesc(&desc);

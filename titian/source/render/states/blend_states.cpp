@@ -1,8 +1,10 @@
 #include "titian.h"
 
 
-void titian::BlendStates::init(kl::GPU& gpu)
+titian::BlendStates::BlendStates()
 {
+	kl::GPU& gpu = AppLayer::get().gpu;
+
 	disabled = gpu.create_blend_state(false);
 	enabled = gpu.create_blend_state(true);
 

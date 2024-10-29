@@ -9,8 +9,8 @@ void titian::GUISectionEntityProperties::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    EditorLayer& editor_layer = Layers::get<EditorLayer>();
-	GameLayer& game_layer = Layers::get<GameLayer>();
+    EditorLayer& editor_layer = EditorLayer::get();
+	GameLayer& game_layer = GameLayer::get();
     Scene& scene = game_layer.scene();
 
     if (im::Begin("Entity properties") && !editor_layer.selected_entities.empty()) {
@@ -34,7 +34,7 @@ void titian::GUISectionEntityProperties::render_gui()
 
 void titian::GUISectionEntityProperties::display_entity_info(Scene& scene, const StringView& entity_name, Entity& entity)
 {
-    GUILayer& gui_layer = Layers::get<GUILayer>();
+    GUILayer& gui_layer = GUILayer::get();
 
     im::Text("Entity Info");
 

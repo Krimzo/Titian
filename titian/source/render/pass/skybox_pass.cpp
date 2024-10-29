@@ -7,7 +7,7 @@ titian::SkyboxPass::SkyboxPass()
 
 void titian::SkyboxPass::state_package(StatePackage& package)
 {
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
+    RenderLayer& render_layer = RenderLayer::get();
     package.raster_state = render_layer.raster_states.solid;
     package.depth_state = render_layer.depth_states.disabled;
     package.shaders = render_layer.shader_states.skybox_pass;
@@ -15,9 +15,9 @@ void titian::SkyboxPass::state_package(StatePackage& package)
 
 void titian::SkyboxPass::render_self(StatePackage& package)
 {
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = Layers::get<GameLayer>().scene();
+    RenderLayer& render_layer = RenderLayer::get();
+    kl::GPU& gpu = AppLayer::get().gpu;
+    Scene& scene = GameLayer::get().scene();
 
     Texture* skybox = scene.helper_get_texture(package.camera->skybox_texture_name);
     if (!skybox)

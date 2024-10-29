@@ -9,14 +9,14 @@ void titian::Frame::upload(const RAWImage& image)
     if (image.width() <= 0 || image.height() <= 0) {
         return;
     }
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    kl::GPU& gpu = AppLayer::get().gpu;
 	gpu.write_to_texture(m_staging_texture, image.ptr(), image.size(), sizeof(RGB), false);
 	gpu.copy_resource(texture, m_staging_texture);
 }
 
 void titian::Frame::retrieve(RAWImage& image) const
 {
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    kl::GPU& gpu = AppLayer::get().gpu;
     gpu.copy_resource(m_staging_texture, texture);
     gpu.read_from_texture(image.ptr(), m_staging_texture, image.size(), sizeof(RGB));
 }
@@ -31,7 +31,7 @@ void titian::Frame::resize(const Int2 size)
     if (size.x <= 0 || size.y <= 0 || m_size == size)
         return;
 
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    kl::GPU& gpu = AppLayer::get().gpu;
 
 	dx::TextureDescriptor desc{};
     desc.Width = (UINT) size.x;

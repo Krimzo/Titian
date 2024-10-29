@@ -5,7 +5,7 @@
 
 
 namespace titian {
-	struct AppLayer : Layer
+	struct AppLayer : Layer_T<AppLayer>
 	{
 		kl::Window window{ "Titian App" };
 		kl::GPU gpu{ window };
@@ -20,7 +20,7 @@ namespace titian {
 		AppLayer();
 		~AppLayer() override;
 
-		void init(const StringView& name);
+		void set_name(const StringView& name);
 		bool update() override;
 
 	private:

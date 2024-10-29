@@ -23,11 +23,11 @@ void titian::GUISectionMainMenu::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-	AppLayer& app_layer = Layers::get<AppLayer>();
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
-    GameLayer& game_layer = Layers::get<GameLayer>();
-    GUILayer& gui_layer = Layers::get<GUILayer>();
-    EditorLayer& editor_layer = Layers::get<EditorLayer>();
+	AppLayer& app_layer = AppLayer::get();
+    RenderLayer& render_layer = RenderLayer::get();
+    GameLayer& game_layer = GameLayer::get();
+    GUILayer& gui_layer = GUILayer::get();
+    EditorLayer& editor_layer = EditorLayer::get();
 
     Scene& scene = game_layer.scene();
 
@@ -70,10 +70,10 @@ void titian::GUISectionMainMenu::render_gui()
                     if (auto file = kl::choose_file(false, { { "Texture File", FILE_EXTENSION_JPG }, { "Texture File", FILE_EXTENSION_PNG } })) {
                         const String stem_name = fs::path(file.value()).stem().string();
 
-                        Texture* texture = scene.helper_new_texture(stem_name);
-                        texture->image.load_from_file(file.value());
-                        texture->reload_as_2D();
-                        texture->create_shader_view();
+                        Texture& texture = scene.helper_new_texture(stem_name);
+                        texture.image.load_from_file(file.value());
+                        texture.reload_as_2D();
+                        texture.create_shader_view();
                     }
                 }
                 if (im::MenuItem("Script")) {
@@ -109,8 +109,8 @@ void titian::GUISectionMainMenu::render_gui()
                     if (auto file = kl::choose_file(false, { { "Shader File", FILE_EXTENSION_HLSL } })) {
                         const String stem_name = fs::path(file.value()).stem().string();
 
-                        Shader* shader = scene.helper_new_shader(stem_name);
-                        shader->source = kl::read_file(file.value());
+                        Shader& shader = scene.helper_new_shader(stem_name);
+                        shader.source = kl::read_file(file.value());
                     }
                 }
                 if (im::BeginMenu("Scene")) {

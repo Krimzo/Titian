@@ -1,8 +1,10 @@
 #include "titian.h"
 
 
-void titian::SamplerStates::init(kl::GPU& gpu)
+titian::SamplerStates::SamplerStates()
 {
+    kl::GPU& gpu = AppLayer::get().gpu;
+
     dx::SamplerStateDescriptor shadow_sampler_descriptor{};
     shadow_sampler_descriptor.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
     shadow_sampler_descriptor.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;

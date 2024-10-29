@@ -14,9 +14,9 @@
 namespace titian {
     struct FuzeEditor : LayerStack
     {
-        AppLayer app_layer = {};
-        VideoLayer video_layer = {};
-        GUILayer gui_layer = {};
+        AppLayer& app_layer;
+        VideoLayer& video_layer;
+        GUILayer& gui_layer;
 
         FuzeEditor();
         ~FuzeEditor() override;

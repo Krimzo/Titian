@@ -2,14 +2,11 @@
 
 
 titian::FuzeEditor::FuzeEditor()
+    : app_layer(AppLayer::get())
+    , video_layer(VideoLayer::get())
+    , gui_layer(GUILayer::get())
 {
-    Layers::bind<AppLayer>(app_layer);
-    Layers::bind<VideoLayer>(video_layer);
-    Layers::bind<GUILayer>(gui_layer);
-
-    app_layer.init("FUZE");
-    video_layer.init();
-    gui_layer.init();
+    app_layer.set_name("FUZE");
 
     gui_layer.sections.emplace_back(new GUISectionFuzeMainMenu());
     gui_layer.sections.emplace_back(new GUISectionFuzeImageEffects());
@@ -18,9 +15,9 @@ titian::FuzeEditor::FuzeEditor()
     gui_layer.sections.emplace_back(new GUISectionFuzeTimeline());
     gui_layer.sections.emplace_back(new GUISectionFuzeRender());
 
-    push_layer(&app_layer);
-    push_layer(&video_layer);
-    push_layer(&gui_layer);
+    push_layer(app_layer);
+    push_layer(video_layer);
+    push_layer(gui_layer);
 }
 
 titian::FuzeEditor::~FuzeEditor()

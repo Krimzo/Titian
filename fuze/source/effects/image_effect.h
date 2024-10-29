@@ -12,18 +12,14 @@ namespace titian {
 		kl::ComputeShader compute_shader;
 		Float4x4 custom_data;
 
-		ImageEffect();
-		virtual ~ImageEffect();
+		ImageEffect(const StringView& source);
+		virtual ~ImageEffect() = default;
 
-		virtual bool needs_copy() const = 0;
-		virtual String get_source() const = 0;
-
-		virtual String get_name() const = 0;
-		virtual void display_gui() = 0;
-
-		virtual void init() final;
 		virtual void apply(const EffectPackage& package, Frame& frame) final;
 
+		virtual String name() const = 0;
+		virtual bool needs_copy() const = 0;
+		virtual void display_gui() = 0;
 		virtual Ref<ImageEffect> make_copy() const = 0;
 	};
 }

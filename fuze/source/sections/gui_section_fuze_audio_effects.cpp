@@ -11,7 +11,7 @@ void titian::GUISectionFuzeAudioEffects::render_gui()
 		{ "Volume", [] { return new AudioEffectVolume(); } },
 	};
 
-	VideoLayer& video_layer = Layers::get<VideoLayer>();
+	VideoLayer& video_layer = VideoLayer::get();
 	Media* selected_media = &video_layer.selected_media;
 
 	if (im::Begin("Audio Effects", nullptr, !video_layer.can_edit() ? ImGuiWindowFlags_NoInputs : ImGuiWindowFlags_None) && selected_media) {

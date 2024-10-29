@@ -2,22 +2,18 @@
 
 
 titian::VideoLayer::VideoLayer()
-	: Layer("VideoLayer")
-{}
-
-void titian::VideoLayer::init()
+	: Layer_T("VideoLayer")
 {
-	kl::Window& window = Layers::get<AppLayer>().window;
+	kl::Window& window = AppLayer::get().window;
 	window.set_icon("package/textures/video_editor_icon.ico");
 	for (int i = 0; i < 5; i++) {
 		tracks.emplace_back(new Track());
 	}
-	m_handler.init();
 }
 
 bool titian::VideoLayer::update()
 {
-	AppLayer& app_layer = Layers::get<AppLayer>();
+	AppLayer& app_layer = AppLayer::get();
 	kl::GPU& gpu = app_layer.gpu;
 	kl::Timer& timer = app_layer.timer;
 

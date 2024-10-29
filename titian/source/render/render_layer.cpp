@@ -2,17 +2,9 @@
 
 
 titian::RenderLayer::RenderLayer()
-	: Layer("RenderLayer")
-{}
-
-void titian::RenderLayer::init()
+	: Layer_T("RenderLayer")
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-	raster_states.init(gpu);
-	depth_states.init(gpu);
-	sampler_states.init(gpu);
-	shader_states.init(gpu);
-	blend_states.init(gpu);
+	kl::GPU& gpu = AppLayer::get().gpu;
 	screen_mesh = gpu.create_screen_mesh();
 }
 
@@ -20,9 +12,9 @@ bool titian::RenderLayer::update()
 {
 	const TimeBomb _ = bench_time_bomb();
 
-	AppLayer& app_layer = Layers::get<AppLayer>();
+	AppLayer& app_layer = AppLayer::get();
 	kl::GPU& gpu = app_layer.gpu;
-	Scene& scene = Layers::get<GameLayer>().scene();
+	Scene& scene = GameLayer::get().scene();
 
 	gpu.clear_internal();
 
@@ -71,8 +63,8 @@ bool titian::RenderLayer::update()
 
 void titian::RenderLayer::present() const
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-	Scene& scene = Layers::get<GameLayer>().scene();
+	kl::GPU& gpu = AppLayer::get().gpu;
+	Scene& scene = GameLayer::get().scene();
 
 	Camera* main_camera = scene.get_casted<Camera>(scene.main_camera_name);
 	gpu.swap_buffers(main_camera ? main_camera->v_sync : true);

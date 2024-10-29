@@ -7,7 +7,7 @@ titian::ScenePass::ScenePass()
 
 void titian::ScenePass::state_package(StatePackage& package)
 {
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
+    RenderLayer& render_layer = RenderLayer::get();
     package.raster_state = package.camera->render_wireframe ? render_layer.raster_states.wireframe : dx::RasterState{};
     package.depth_state = render_layer.depth_states.enabled;
     package.blend_state = render_layer.blend_states.enabled;
@@ -16,10 +16,10 @@ void titian::ScenePass::state_package(StatePackage& package)
 
 void titian::ScenePass::render_self(StatePackage& package)
 {
-	RenderLayer& render_layer = Layers::get<RenderLayer>();
-    kl::Timer& timer = Layers::get<AppLayer>().timer;
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = Layers::get<GameLayer>().scene();
+	RenderLayer& render_layer = RenderLayer::get();
+    kl::Timer& timer = AppLayer::get().timer;
+    kl::GPU& gpu = AppLayer::get().gpu;
+    Scene& scene = GameLayer::get().scene();
 
     struct alignas(16) CB
     {

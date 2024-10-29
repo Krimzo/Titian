@@ -7,8 +7,8 @@ static const px::PxTransform DEFAULT_TRANSFORM = {
 };
 
 titian::Entity::Entity()
-	: m_actor(*Layers::get<AppLayer>().physics.createRigidDynamic(DEFAULT_TRANSFORM))
-    , m_material(*Layers::get<AppLayer>().physics.createMaterial(0.25f, 0.25f, 0.25f))
+	: m_actor(*AppLayer::get().physics.createRigidDynamic(DEFAULT_TRANSFORM))
+    , m_material(*AppLayer::get().physics.createMaterial(0.25f, 0.25f, 0.25f))
 {
     m_actor.userData = this;
     set_dynamic(false);

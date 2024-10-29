@@ -3,7 +3,7 @@
 
 titian::Animation::Animation()
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 
 	dx::BufferDescriptor descriptor{};
 	descriptor.Usage = D3D11_USAGE_DYNAMIC;
@@ -215,7 +215,7 @@ void titian::Animation::update(const Scene& scene, const float current_time)
 
 void titian::Animation::bind_matrices(const int slot) const
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	gpu.bind_shader_view_for_vertex_shader(m_matrices_view, slot);
 }
 
@@ -250,7 +250,7 @@ void titian::Animation::upload_matrices()
 	if (m_final_matrices.empty()) {
 		return;
 	}
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	const size_t count = kl::min(m_final_matrices.size(), (size_t) MAX_BONE_COUNT);
 	gpu.write_to_buffer(m_matrices_buffer, m_final_matrices.data(), count * sizeof(Float4x4));
 }

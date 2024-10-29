@@ -11,6 +11,6 @@ namespace titian {
         dx::RasterState solid;
         dx::RasterState shadow;
 
-        void init(kl::GPU& gpu);
+        RasterStates();
     };
 }

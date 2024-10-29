@@ -7,7 +7,7 @@ titian::ShadowPass::ShadowPass()
 
 void titian::ShadowPass::state_package(StatePackage& package)
 {
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
+    RenderLayer& render_layer = RenderLayer::get();
     package.raster_state = render_layer.raster_states.shadow;
     package.depth_state = render_layer.depth_states.enabled;
     package.shaders = render_layer.shader_states.shadow_pass;
@@ -15,10 +15,10 @@ void titian::ShadowPass::state_package(StatePackage& package)
 
 void titian::ShadowPass::render_self(StatePackage& package)
 {
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
-    kl::Timer& timer = Layers::get<AppLayer>().timer;
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = Layers::get<GameLayer>().scene();
+    RenderLayer& render_layer = RenderLayer::get();
+    kl::Timer& timer = AppLayer::get().timer;
+    kl::GPU& gpu = AppLayer::get().gpu;
+    Scene& scene = GameLayer::get().scene();
 
     DirectionalLight* dir_light = scene.get_casted<DirectionalLight>(scene.main_directional_light_name);
     if (!dir_light)

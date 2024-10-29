@@ -11,8 +11,9 @@ void titian::GUISectionShaderEditor::render_gui()
 {
 	const TimeBomb _ = bench_time_bomb();
 
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-	Scene& scene = Layers::get<GameLayer>().scene();
+	kl::Window& window = AppLayer::get().window;
+	kl::GPU& gpu = AppLayer::get().gpu;
+	Scene& scene = GameLayer::get().scene();
 
 	if (im::Begin("Shader Editor", nullptr, ImGuiWindowFlags_NoScrollbar)) {
 		const float available_width = im::GetContentRegionAvail().x;
@@ -42,9 +43,9 @@ void titian::GUISectionShaderEditor::render_gui()
 		if (auto file = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
 			if (classify_file(file.value()) == FileType::SHADER) {
 				const String name = fs::path(file.value()).filename().string();
-				Shader* shader = scene.helper_new_shader(Scene::generate_unique_name(name, scene.shaders));
-				shader->source = kl::read_file(file.value());
-				shader->reload();
+				Shader& shader = scene.helper_new_shader(Scene::generate_unique_name(name, scene.shaders));
+				shader.source = kl::read_file(file.value());
+				shader.reload();
 			}
 		}
 
@@ -128,7 +129,7 @@ void titian::GUISectionShaderEditor::show_shader_properties(Shader* shader) cons
 		{ ShaderType::CAMERA, "Camera" },
 	};
 
-	GUILayer& gui_layer = Layers::get<GUILayer>();
+	GUILayer& gui_layer = GUILayer::get();
 
 	if (im::Begin("Shader Properties") && shader) {
 		im::Text("Info");
@@ -155,7 +156,7 @@ void titian::GUISectionShaderEditor::edit_shader(Shader& shader)
 		m_last_shader = &shader;
 		m_editor.load(shader.source);
 	}
-	im::PushFont(Layers::get<GUILayer>().roboto_font_large);
+	im::PushFont(GUILayer::get().roboto_font_large);
 	m_editor.edit(shader.source);
 	im::PopFont();
 }

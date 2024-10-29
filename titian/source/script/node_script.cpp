@@ -557,9 +557,9 @@ titian::NodeScript::NodeScript()
 	on_ui_node = m_editor.insertNode({ 0.0f, 250.0f }, temp_ui_node).get();
 
 	on_update_node->addOUT<float>("elapsed_time")
-		->behaviour([this]() { return Layers::get<AppLayer>().timer.elapsed(); });
+		->behaviour([this]() { return AppLayer::get().timer.elapsed(); });
 	on_update_node->addOUT<float>("delta_time")
-		->behaviour([this]() { return Layers::get<AppLayer>().timer.delta(); });
+		->behaviour([this]() { return AppLayer::get().timer.delta(); });
 
 	on_collision_node->addOUT<void*>("attacker_entity")
 		->behaviour([this]() { return *reinterpret_cast<Entity**>(on_collision_node->user_data + 0); });

@@ -1,19 +1,13 @@
 #include "fuze.h"
 
 
-titian::ImageEffect::ImageEffect()
-{}
-
-titian::ImageEffect::~ImageEffect()
-{}
-
-void titian::ImageEffect::init()
+titian::ImageEffect::ImageEffect(const StringView& source)
 {
 	for (auto& value : custom_data.data) {
 		value = 0.0f;
 	}
 
-	String source = R"(
+	String full_source = R"(
 cbuffer CS_CB : register(b0)
 {
     float4x4 custom_data;
@@ -41,10 +35,10 @@ void c_shader(const uint3 thread_id : SV_DispatchThreadID)
 	}
 }
 )";
-	kl::replace_all(source, "#custom_source", get_source());
+	kl::replace_all(full_source, "#custom_source", source);
 
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-	compute_shader = gpu.create_compute_shader(source);
+	kl::GPU& gpu = AppLayer::get().gpu;
+	compute_shader = gpu.create_compute_shader(full_source);
 
 	if constexpr (kl::IS_DEBUG) {
 		kl::assert(compute_shader, "Failed to init image effect shader");
@@ -60,7 +54,7 @@ void titian::ImageEffect::apply(const EffectPackage& package, Frame& frame)
 		temp_frame.resize(frame.size());
 	}
 
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	gpu.bind_compute_shader(compute_shader.shader);
 	gpu.bind_access_view_for_compute_shader(frame.access_view, 0);
 	gpu.bind_access_view_for_compute_shader(temp_frame.access_view, 1);

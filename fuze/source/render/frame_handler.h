@@ -10,8 +10,6 @@ namespace titian {
 
 		FrameHandler();
 
-		void init();
-
 		void prepare_frame(Int2 size);
 		void mix_frame(const Frame& frame);
 

@@ -11,7 +11,7 @@ namespace titian {
 		LayerStack() = default;
 		virtual ~LayerStack() = default;
 
-		void push_layer(Layer* layer);
+		void push_layer(Layer& layer);
 		bool process_layers();
 	};
 }

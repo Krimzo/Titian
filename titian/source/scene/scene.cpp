@@ -17,8 +17,8 @@ static px::PxFilterFlags filter_shader(
 static px::PxScene& make_px_scene(titian::Scene& parent)
 {
     using namespace titian;
-    px::PxPhysics& physics = Layers::get<AppLayer>().physics;
-    px::PxCpuDispatcher& cpu_dispatcher = Layers::get<AppLayer>().cpu_dispatcher;
+    px::PxPhysics& physics = AppLayer::get().physics;
+    px::PxCpuDispatcher& cpu_dispatcher = AppLayer::get().cpu_dispatcher;
     px::PxSceneDesc scene_descriptor = { physics.getTolerancesScale() };
     scene_descriptor.gravity.y = -9.81f;
     scene_descriptor.cpuDispatcher = &cpu_dispatcher;
@@ -247,46 +247,46 @@ void titian::Scene::remove_entity(const StringView& id)
     m_entities.erase(it);
 }
 
-titian::Mesh* titian::Scene::helper_new_mesh(const String& id)
+titian::Mesh& titian::Scene::helper_new_mesh(const String& id)
 {
     Mesh* mesh = new Mesh();
     meshes[id] = mesh;
-    return mesh;
+    return *mesh;
 }
 
-titian::Animation* titian::Scene::helper_new_animation(const String& id)
+titian::Animation& titian::Scene::helper_new_animation(const String& id)
 {
     Animation* animation = new Animation();
     animations[id] = animation;
-    return animation;
+    return *animation;
 }
 
-titian::Texture* titian::Scene::helper_new_texture(const String& id)
+titian::Texture& titian::Scene::helper_new_texture(const String& id)
 {
     Texture* texture = new Texture();
     textures[id] = texture;
-    return texture;
+    return *texture;
 }
 
-titian::Material* titian::Scene::helper_new_material(const String& id)
+titian::Material& titian::Scene::helper_new_material(const String& id)
 {
     Material* material = new Material();
     materials[id] = material;
-    return material;
+    return *material;
 }
 
-titian::Shader* titian::Scene::helper_new_shader(const String& id)
+titian::Shader& titian::Scene::helper_new_shader(const String& id)
 {
     Shader* shader = new Shader();
     shaders[id] = shader;
-    return shader;
+    return *shader;
 }
 
-titian::Entity* titian::Scene::helper_new_entity(const String& id)
+titian::Entity& titian::Scene::helper_new_entity(const String& id)
 {
-    Ref entity = new Entity();
+    Entity* entity = new Entity();
     add_entity(id, entity);
-    return &entity;
+    return *entity;
 }
 
 titian::Mesh* titian::Scene::helper_get_mesh(const StringView& id) const

@@ -2,18 +2,15 @@
 
 
 titian::EditorLayer::EditorLayer()
-    : Layer("EditorLayer")
-{}
-
-void titian::EditorLayer::init()
+    : Layer_T("EditorLayer")
 {}
 
 bool titian::EditorLayer::update()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    AppLayer& app_layer = Layers::get<AppLayer>();
-	GameLayer& game_layer = Layers::get<GameLayer>();
+    AppLayer& app_layer = AppLayer::get();
+	GameLayer& game_layer = GameLayer::get();
 
     Scene& scene = game_layer.scene();
 

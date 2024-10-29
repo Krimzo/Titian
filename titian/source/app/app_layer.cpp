@@ -2,8 +2,13 @@
 
 
 titian::AppLayer::AppLayer()
-	: Layer("AppLayer")
-{}
+	: Layer_T("AppLayer")
+{
+	window.on_resize.emplace_back([this](auto size) { handle_resize(size); });
+	window.set_icon("package/textures/editor_icon.ico");
+	window.set_dark_mode(true);
+	window.maximize();
+}
 
 titian::AppLayer::~AppLayer()
 {
@@ -12,13 +17,9 @@ titian::AppLayer::~AppLayer()
 	foundation.release();
 }
 
-void titian::AppLayer::init(const StringView& name)
+void titian::AppLayer::set_name(const StringView& name)
 {
 	window.set_title(name);
-	window.on_resize.emplace_back([this](auto size) { handle_resize(size); });
-	window.set_icon("package/textures/editor_icon.ico");
-	window.set_dark_mode(true);
-	window.maximize();
 }
 
 bool titian::AppLayer::update()

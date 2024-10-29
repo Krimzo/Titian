@@ -3,7 +3,12 @@
 
 titian::Layer::Layer(const StringView& name)
 	: BenchmarkInfo(name)
-{}
+{
+	static StringSet names;
+	if (names.contains(name))
+		panic();
+	names.emplace(name);
+}
 
 void titian::Layer::panic() const
 {

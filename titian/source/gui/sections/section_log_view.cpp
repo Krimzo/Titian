@@ -9,7 +9,7 @@ void titian::GUISectionLogView::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    GUILayer& gui_layer = Layers::get<GUILayer>();
+    GUILayer& gui_layer = GUILayer::get();
     im::PushFont(gui_layer.roboto_font_large);
 
     const uint64_t unseen_count = Logger::last_log_index - last_log_index;

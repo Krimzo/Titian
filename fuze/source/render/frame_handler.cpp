@@ -2,11 +2,8 @@
 
 
 titian::FrameHandler::FrameHandler()
-{}
-
-void titian::FrameHandler::init()
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 
 	auto load_shader = [&](dx::ComputeShader& shader, str filename)
 	{
@@ -23,7 +20,7 @@ void titian::FrameHandler::init()
 
 void titian::FrameHandler::prepare_frame(const Int2 size)
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 
 	out_frame.resize(size);
 	gpu.bind_access_view_for_compute_shader(out_frame.access_view, 0);
@@ -36,7 +33,7 @@ void titian::FrameHandler::prepare_frame(const Int2 size)
 
 void titian::FrameHandler::mix_frame(const Frame& frame)
 {
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 
 	gpu.bind_access_view_for_compute_shader(out_frame.access_view, 0);
 	gpu.bind_access_view_for_compute_shader(frame.access_view, 1);

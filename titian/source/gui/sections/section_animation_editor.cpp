@@ -15,8 +15,8 @@ void titian::GUISectionAnimationEditor::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = Layers::get<GameLayer>().scene();
+    kl::GPU& gpu = AppLayer::get().gpu;
+    Scene& scene = GameLayer::get().scene();
 
     m_timer.update();
 
@@ -146,7 +146,7 @@ void titian::GUISectionAnimationEditor::update_animation_camera(Scene& scene)
         initial_camera_info = camera_info;
     }
 
-    const int scroll = Layers::get<AppLayer>().window.mouse.scroll();
+    const int scroll = AppLayer::get().window.mouse.scroll();
     if (im::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = im::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera.sensitivity;
@@ -174,9 +174,9 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
         return;
     }
 
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = Layers::get<GameLayer>().scene();
+    RenderLayer& render_layer = RenderLayer::get();
+    kl::GPU& gpu = AppLayer::get().gpu;
+    Scene& scene = GameLayer::get().scene();
 
     if (render_texture.resolution() != viewport_size) {
         render_texture.texture = gpu.create_target_texture(viewport_size);
@@ -258,9 +258,9 @@ void titian::GUISectionAnimationEditor::render_selected_animation(Animation& ani
 
 void titian::GUISectionAnimationEditor::show_animation_properties(Animation* animation)
 {
-    GUILayer& gui_layer = Layers::get<GUILayer>();
-    kl::Window& window = Layers::get<AppLayer>().window;
-    Scene& scene = Layers::get<GameLayer>().scene();
+    GUILayer& gui_layer = GUILayer::get();
+    kl::Window& window = AppLayer::get().window;
+    Scene& scene = GameLayer::get().scene();
 
     if (im::Begin("Animation Properties") && animation) {
         if (im::IsWindowFocused()) {

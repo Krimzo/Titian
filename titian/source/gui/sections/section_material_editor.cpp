@@ -13,7 +13,7 @@ void titian::GUISectionMaterialEditor::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    Scene& scene = Layers::get<GameLayer>().scene();
+    Scene& scene = GameLayer::get().scene();
 
     Ref<Material> material;
     if (scene.materials.contains(selected_material)) {
@@ -154,7 +154,7 @@ void titian::GUISectionMaterialEditor::update_material_camera(Scene& scene)
         initial_camera_info = camera_info;
     }
 
-    const int scroll = Layers::get<AppLayer>().window.mouse.scroll();
+    const int scroll = AppLayer::get().window.mouse.scroll();
     if (im::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = im::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera.sensitivity;
@@ -178,8 +178,8 @@ void titian::GUISectionMaterialEditor::update_material_camera(Scene& scene)
 
 void titian::GUISectionMaterialEditor::render_selected_material(Material& material, const Int2 viewport_size)
 {
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = Layers::get<GameLayer>().scene();
+    kl::GPU& gpu = AppLayer::get().gpu;
+    Scene& scene = GameLayer::get().scene();
 
     if (viewport_size.x <= 0 || viewport_size.y <= 0) {
         return;
@@ -191,9 +191,9 @@ void titian::GUISectionMaterialEditor::render_selected_material(Material& materi
         return;
     }
 
-    AppLayer& app_layer = Layers::get<AppLayer>();
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
-    GameLayer& game_layer = Layers::get<GameLayer>();
+    AppLayer& app_layer = AppLayer::get();
+    RenderLayer& render_layer = RenderLayer::get();
+    GameLayer& game_layer = GameLayer::get();
 
     if (render_texture.resolution() != viewport_size) {
         render_texture.texture = gpu.create_target_texture(viewport_size);
@@ -321,14 +321,14 @@ void titian::GUISectionMaterialEditor::render_selected_material(Material& materi
 
 void titian::GUISectionMaterialEditor::show_material_properties(Material* material)
 {
-    Scene& scene = Layers::get<GameLayer>().scene();
+    Scene& scene = GameLayer::get().scene();
 
     if (im::Begin("Material Properties") && material) {
         im::Text("Info");
 
         im::Text("Name: ");
         im::SameLine();
-        gui_colored_text(selected_material, Layers::get<GUILayer>().special_color);
+        gui_colored_text(selected_material, GUILayer::get().special_color);
 
         im::ColorEdit4("Base Color", &material->color.x);
         im::DragFloat("Texture Blend", &material->texture_blend, 0.01f, 0.0f, 1.0f);

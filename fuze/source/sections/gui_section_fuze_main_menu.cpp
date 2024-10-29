@@ -7,8 +7,8 @@ titian::GUISectionFuzeMainMenu::GUISectionFuzeMainMenu()
 
 void titian::GUISectionFuzeMainMenu::render_gui()
 {
-    AppLayer& app_layer = Layers::get<AppLayer>();
-    VideoLayer& video_layer = Layers::get<VideoLayer>();
+    AppLayer& app_layer = AppLayer::get();
+    VideoLayer& video_layer = VideoLayer::get();
 
     if (m_testing_exit) {
         if (im::Begin("Exit?", nullptr, ImGuiWindowFlags_NoScrollbar)) {

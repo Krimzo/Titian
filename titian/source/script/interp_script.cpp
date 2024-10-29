@@ -748,12 +748,12 @@ void titian::InterpScript::load_engine_parts()
 		&Logger::log<const kl::Ray&>);
 	(*m_engine)["print"] = (*m_engine)["log"];
 
-	(*m_engine)["elapsed_t"] = [] { return Layers::get<AppLayer>().timer.elapsed(); };
-	(*m_engine)["delta_t"] = [] { return Layers::get<AppLayer>().timer.delta(); };
+	(*m_engine)["elapsed_t"] = [] { return AppLayer::get().timer.elapsed(); };
+	(*m_engine)["delta_t"] = [] { return AppLayer::get().timer.delta(); };
 
-	(*m_engine)["get_window"] = []() -> kl::Window& { return Layers::get<AppLayer>().window; };
-	(*m_engine)["get_keyboard"] = []() -> kl::Keyboard& { return Layers::get<AppLayer>().window.keyboard; };
-	(*m_engine)["get_mouse"] = []() -> kl::Mouse& { return Layers::get<AppLayer>().window.mouse; };
+	(*m_engine)["get_window"] = []() -> kl::Window& { return AppLayer::get().window; };
+	(*m_engine)["get_keyboard"] = []() -> kl::Keyboard& { return AppLayer::get().window.keyboard; };
+	(*m_engine)["get_mouse"] = []() -> kl::Mouse& { return AppLayer::get().window.mouse; };
 
 	(*m_engine)["Float3x3_translation"] = &Float3x3::translation;
 	(*m_engine)["Float3x3_rotation"] = &Float3x3::rotation;

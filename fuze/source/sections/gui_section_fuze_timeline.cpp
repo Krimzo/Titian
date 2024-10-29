@@ -7,8 +7,8 @@ titian::GUISectionFuzeTimeline::GUISectionFuzeTimeline()
 
 void titian::GUISectionFuzeTimeline::render_gui()
 {
-	AppLayer& app_layer = Layers::get<AppLayer>();
-	VideoLayer& video_layer = Layers::get<VideoLayer>();
+	AppLayer& app_layer = AppLayer::get();
+	VideoLayer& video_layer = VideoLayer::get();
 
 	kl::Window& window = app_layer.window;
 
@@ -54,8 +54,8 @@ void titian::GUISectionFuzeTimeline::render_gui()
 
 void titian::GUISectionFuzeTimeline::handle_input(const int scroll)
 {
-	AppLayer& app_layer = Layers::get<AppLayer>();
-	VideoLayer& video_layer = Layers::get<VideoLayer>();
+	AppLayer& app_layer = AppLayer::get();
+	VideoLayer& video_layer = VideoLayer::get();
 	
 	im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
 	if (video_layer.can_edit() && im::BeginPopupContextWindow("##TimelinePopup")) {
@@ -165,7 +165,7 @@ void titian::GUISectionFuzeTimeline::handle_input(const int scroll)
 
 void titian::GUISectionFuzeTimeline::render_header(const ImVec2 cell_padding, const float available_height, float& header_height, ImVec2& total_min, ImVec2& total_max)
 {
-	VideoLayer& video_layer = Layers::get<VideoLayer>();
+	VideoLayer& video_layer = VideoLayer::get();
 	ImDrawList& draw_list = *im::GetWindowDrawList();
 
 	header_height = available_height * 0.1f;
@@ -239,7 +239,7 @@ void titian::GUISectionFuzeTimeline::render_header(const ImVec2 cell_padding, co
 
 void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, const float row_height, const int i, const float header_height, const ImVec2& total_min, ImVec2& total_max)
 {
-	VideoLayer& video_layer = Layers::get<VideoLayer>();
+	VideoLayer& video_layer = VideoLayer::get();
 	ImDrawList& draw_list = *im::GetWindowDrawList();
 
 	Ref track = video_layer.tracks[i];
@@ -414,7 +414,7 @@ void titian::GUISectionFuzeTimeline::render_track(const ImVec2 cell_padding, con
 
 void titian::GUISectionFuzeTimeline::render_pointer(const ImVec2 total_min, const ImVec2 total_max)
 {
-	VideoLayer& video_layer = Layers::get<VideoLayer>();
+	VideoLayer& video_layer = VideoLayer::get();
 	ImDrawList& draw_list = *im::GetWindowDrawList();
 
 	const float x = total_min.x + (total_max.x - total_min.x) *

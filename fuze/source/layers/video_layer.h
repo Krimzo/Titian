@@ -5,7 +5,7 @@
 
 
 namespace titian {
-	struct VideoLayer : Layer
+	struct VideoLayer : Layer_T<VideoLayer>
 	{
 		Vector<Ref<Track>> tracks;
 		float current_time = 0.0f;
@@ -19,7 +19,6 @@ namespace titian {
 
 		VideoLayer();
 
-		void init();
 		bool update() override;
 
 		void play();

@@ -7,7 +7,7 @@ titian::GUISectionFuzeDisplay::GUISectionFuzeDisplay()
 
 void titian::GUISectionFuzeDisplay::render_gui()
 {
-	VideoLayer& video_layer = Layers::get<VideoLayer>();
+	VideoLayer& video_layer = VideoLayer::get();
 	
 	im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 

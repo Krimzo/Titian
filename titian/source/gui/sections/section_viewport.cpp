@@ -11,10 +11,10 @@ void titian::GUISectionViewport::render_gui()
 
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
 
-    AppLayer& app_layer = Layers::get<AppLayer>();
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
-	GameLayer& game_layer = Layers::get<GameLayer>();
-    EditorLayer& editor_layer = Layers::get<EditorLayer>();
+    AppLayer& app_layer = AppLayer::get();
+    RenderLayer& render_layer = RenderLayer::get();
+	GameLayer& game_layer = GameLayer::get();
+    EditorLayer& editor_layer = EditorLayer::get();
 
     kl::GPU& gpu = app_layer.gpu;
     Scene& scene = game_layer.scene();
@@ -253,8 +253,8 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_id_texture(const Int2 fir
     }
     const Int2 size = max_coords - min_coords;
 
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = Layers::get<GameLayer>().scene();
+    kl::GPU& gpu = AppLayer::get().gpu;
+    Scene& scene = GameLayer::get().scene();
 
     Camera* main_camera = scene.get_casted<Camera>(scene.main_camera_name);
     if (!main_camera)
@@ -276,8 +276,8 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_id_texture(const Int2 fir
 
 titian::Optional<titian::Float3> titian::GUISectionViewport::read_depth_texture(const Int2 coords)
 {
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = Layers::get<GameLayer>().scene();
+    kl::GPU& gpu = AppLayer::get().gpu;
+    Scene& scene = GameLayer::get().scene();
 
     Camera* main_camera = scene.get_casted<Camera>(scene.main_camera_name);
     if (!main_camera)
@@ -300,9 +300,9 @@ titian::Optional<titian::Float3> titian::GUISectionViewport::read_depth_texture(
 
 void titian::GUISectionViewport::render_gizmos(const Set<Entity*>& entities)
 {
-	EditorLayer& editor_layer = Layers::get<EditorLayer>();
-	GameLayer& game_layer = Layers::get<GameLayer>();
-	AppLayer& app_layer = Layers::get<AppLayer>();
+	EditorLayer& editor_layer = EditorLayer::get();
+	GameLayer& game_layer = GameLayer::get();
+	AppLayer& app_layer = AppLayer::get();
 
     if (editor_layer.gizmo_operation == ImGuizmo::OPERATION::NONE)
         return;

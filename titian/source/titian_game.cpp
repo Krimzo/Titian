@@ -2,16 +2,12 @@
 
 
 titian::TitianGame::TitianGame(const StringView& entry_scene)
+    : app_layer(AppLayer::get())
+    , game_layer(GameLayer::get())
+    , render_layer(RenderLayer::get())
+    , gui_layer(GUILayer::get())
 {
-    Layers::bind<AppLayer>(app_layer);
-    Layers::bind<GameLayer>(game_layer);
-    Layers::bind<RenderLayer>(render_layer);
-    Layers::bind<GUILayer>(gui_layer);
-
-	app_layer.init("Titian Game");
-	game_layer.init();
-	render_layer.init();
-	gui_layer.init();
+	app_layer.set_name("Titian Game");
 
     render_layer.passes.emplace_back(new ShadowPass());
     render_layer.passes.emplace_back(new SkyboxPass());
@@ -19,10 +15,10 @@ titian::TitianGame::TitianGame(const StringView& entry_scene)
     render_layer.passes.emplace_back(new PostPass());
     render_layer.passes.emplace_back(new DisplayPass());
 
-    push_layer(&app_layer);
-    push_layer(&game_layer);
-    push_layer(&render_layer);
-    push_layer(&gui_layer);
+    push_layer(app_layer);
+    push_layer(game_layer);
+    push_layer(render_layer);
+    push_layer(gui_layer);
 
     const Ref<Serializer> serializer = (classify_file(entry_scene) == FileType::TEXT_SCENE)
         ? (Serializer*) new TextSerializer(entry_scene, false)

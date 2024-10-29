@@ -1,8 +1,10 @@
 #include "titian.h"
 
 
-void titian::RasterStates::init(kl::GPU& gpu)
+titian::RasterStates::RasterStates()
 {
+    kl::GPU& gpu = AppLayer::get().gpu;
+
     dx::RasterStateDescriptor wireframe_raster_descriptor{};
     wireframe_raster_descriptor.FillMode = D3D11_FILL_WIREFRAME;
     wireframe_raster_descriptor.CullMode = D3D11_CULL_NONE;

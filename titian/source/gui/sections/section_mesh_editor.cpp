@@ -14,7 +14,7 @@ void titian::GUISectionMeshEditor::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    Scene& scene = Layers::get<GameLayer>().scene();
+    Scene& scene = GameLayer::get().scene();
 
     Ref<Mesh> mesh;
     if (scene.meshes.contains(selected_mesh)) {
@@ -200,7 +200,7 @@ void titian::GUISectionMeshEditor::update_mesh_camera(Scene& scene)
         initial_camera_info = camera_info;
     }
 
-    const int scroll = Layers::get<AppLayer>().window.mouse.scroll();
+    const int scroll = AppLayer::get().window.mouse.scroll();
     if (im::IsMouseDown(ImGuiMouseButton_Right)) {
         const ImVec2 drag_delta = im::GetMouseDragDelta(ImGuiMouseButton_Right);
         camera_info.x = initial_camera_info.x + drag_delta.x * camera.sensitivity;
@@ -224,7 +224,7 @@ void titian::GUISectionMeshEditor::update_mesh_camera(Scene& scene)
 
 void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, const Int2 viewport_size)
 {
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    kl::GPU& gpu = AppLayer::get().gpu;
     if (viewport_size.x <= 0 || viewport_size.y <= 0)
         return;
 
@@ -254,7 +254,7 @@ void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, const Int2 v
     const Int2 old_viewport_size = gpu.viewport_size();
     gpu.set_viewport_size(viewport_size);
 
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
+    RenderLayer& render_layer = RenderLayer::get();
     gpu.bind_raster_state(mesh.render_wireframe ? render_layer.raster_states.wireframe : render_layer.raster_states.solid);
     gpu.bind_depth_state(render_layer.depth_states.enabled);
 
@@ -285,8 +285,8 @@ void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, const Int2 v
 
 void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
 {
-    GUILayer& gui_layer = Layers::get<GUILayer>();
-    kl::Window& window = Layers::get<AppLayer>().window;
+    GUILayer& gui_layer = GUILayer::get();
+    kl::Window& window = AppLayer::get().window;
 
     if (im::Begin("Mesh Properties") && mesh) {
         im::Text("Mesh Editor");
@@ -404,7 +404,7 @@ void titian::GUISectionMeshEditor::show_mesh_properties(Mesh* mesh)
 
 void titian::GUISectionMeshEditor::render_gizmos(Mesh& mesh)
 {
-    kl::Window& window = Layers::get<AppLayer>().window;
+    kl::Window& window = AppLayer::get().window;
 
     auto& mesh_data = mesh.vertices;
     if (m_selected_vertex_index < 0 || m_selected_vertex_index >= mesh_data.size()) {

@@ -21,8 +21,8 @@ void titian::GUISectionScriptingParameters::render_gui()
 {
 	const TimeBomb _ = bench_time_bomb();
 
-	GUILayer& gui_layer = Layers::get<GUILayer>();
-	Scene& scene = Layers::get<GameLayer>().scene();
+	GUILayer& gui_layer = GUILayer::get();
+	Scene& scene = GameLayer::get().scene();
 
 	im::PushFont(gui_layer.roboto_font_small);
 

@@ -22,8 +22,8 @@ void titian::GUISectionHelper::render_gui()
 {
     const TimeBomb _ = bench_time_bomb();
 
-    GUILayer& gui_layer = Layers::get<GUILayer>();
-    Scene& scene = Layers::get<GameLayer>().scene();
+    GUILayer& gui_layer = GUILayer::get();
+    Scene& scene = GameLayer::get().scene();
 
     if (im::Begin("Helper", nullptr, ImGuiWindowFlags_NoScrollbar)) {
         const float icon_size = m_icon_size * gui_layer.dpi_scaling;
@@ -62,7 +62,7 @@ void titian::GUISectionHelper::handle_basic_entry(const StringView& name) const
     im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
     const dx::ShaderView icon = basic_entity_texture.shader_view;
-    const float icon_size = m_icon_size * Layers::get<GUILayer>().dpi_scaling;
+    const float icon_size = m_icon_size * GUILayer::get().dpi_scaling;
     const float text_height = im::CalcTextSize(name.data()).y;
 
     if (im::BeginChild(name.data(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
@@ -84,7 +84,7 @@ void titian::GUISectionHelper::handle_animation_entry(const StringView& name) co
     im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ padding, padding });
 
     const dx::ShaderView icon = animation_entity_texture.shader_view;
-    const float icon_size = m_icon_size * Layers::get<GUILayer>().dpi_scaling;
+    const float icon_size = m_icon_size * GUILayer::get().dpi_scaling;
     const float text_height = im::CalcTextSize(name.data()).y;
 
     if (im::BeginChild(name.data(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {

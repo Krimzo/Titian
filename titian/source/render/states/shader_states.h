@@ -16,6 +16,6 @@ namespace titian {
         kl::Shaders outline_pass;
         kl::Shaders display_pass;
 
-        void init(kl::GPU& gpu);
+        ShaderStates();
     };
 }

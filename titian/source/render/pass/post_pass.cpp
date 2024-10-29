@@ -7,7 +7,7 @@ titian::PostPass::PostPass()
 
 void titian::PostPass::state_package(StatePackage& package)
 {
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
+    RenderLayer& render_layer = RenderLayer::get();
     package.raster_state = render_layer.raster_states.solid;
     package.depth_state = render_layer.depth_states.disabled;
     package.blend_state = render_layer.blend_states.disabled;
@@ -16,9 +16,9 @@ void titian::PostPass::state_package(StatePackage& package)
 
 void titian::PostPass::render_self(StatePackage& package)
 {
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = Layers::get<GameLayer>().scene();
+    RenderLayer& render_layer = RenderLayer::get();
+    kl::GPU& gpu = AppLayer::get().gpu;
+    Scene& scene = GameLayer::get().scene();
 
     gpu.bind_target_depth_view(package.camera->screen_texture.target_view, {});
 

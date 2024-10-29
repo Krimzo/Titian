@@ -5,7 +5,7 @@
 
 
 namespace titian {
-    struct EditorLayer : Layer
+    struct EditorLayer : Layer_T<EditorLayer>
     {
         bool is_viewport_focused = false;
         bool is_over_viewport = false;
@@ -18,7 +18,6 @@ namespace titian {
 
         EditorLayer();
 
-        void init();
         bool update() override;
     };
 }

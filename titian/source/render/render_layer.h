@@ -12,7 +12,7 @@
 
 
 namespace titian {
-	struct RenderLayer : Layer
+	struct RenderLayer : Layer_T<RenderLayer>
 	{
 		Vector<Ref<RenderPass>> passes;
 		
@@ -26,9 +26,7 @@ namespace titian {
 
 		RenderLayer();
 
-		void init();
 		bool update() override;
-
 		void present() const;
 	};
 }

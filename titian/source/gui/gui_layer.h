@@ -5,7 +5,7 @@
 
 
 namespace titian {
-	struct GUILayer : Layer
+	struct GUILayer : Layer_T<GUILayer>
 	{
 		Vector<Ref<GUISection>> sections;
 		float dpi_scaling = 1.0f;
@@ -18,7 +18,6 @@ namespace titian {
 		
 		GUILayer();
 
-		void init();
 		bool update() override;
 
 		void reload_fonts();

@@ -11,8 +11,8 @@ void titian::GUISectionScriptEditor::render_gui()
 {
 	const TimeBomb _ = bench_time_bomb();
 
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-	Scene& scene = Layers::get<GameLayer>().scene();
+	kl::GPU& gpu = AppLayer::get().gpu;
+	Scene& scene = GameLayer::get().scene();
 
 	Ref<Script> script;
 	if (scene.scripts.contains(selected_script)) {
@@ -139,7 +139,7 @@ void titian::GUISectionScriptEditor::display_scripts(Scene& scene)
 
 void titian::GUISectionScriptEditor::show_script_properties(Script* script) const
 {
-	GUILayer& gui_layer = Layers::get<GUILayer>();
+	GUILayer& gui_layer = GUILayer::get();
 
 	if (im::Begin("Script Properties") && script) {
 		im::Text("Info");
@@ -169,7 +169,7 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript& script)
 		m_last_script = &script;
 		m_interp_editor.load(script.source);
 	}
-	im::PushFont(Layers::get<GUILayer>().roboto_font_large);
+	im::PushFont(GUILayer::get().roboto_font_large);
 	m_interp_editor.edit(script.source);
 	im::PopFont();
 }

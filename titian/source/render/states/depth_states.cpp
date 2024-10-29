@@ -1,8 +1,10 @@
 #include "titian.h"
 
 
-void titian::DepthStates::init(kl::GPU& gpu)
+titian::DepthStates::DepthStates()
 {
+    kl::GPU& gpu = AppLayer::get().gpu;
+
     disabled = gpu.create_depth_state(false);
     enabled = gpu.create_depth_state(true);
 

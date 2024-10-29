@@ -296,7 +296,7 @@ titian::Ref<titian::TracingEntity> titian::Tracing::convert_entity(const Scene& 
 	if (!animation)
 		return {};
 
-	const Mesh* mesh = animation->get_mesh(scene, Layers::get<AppLayer>().timer.elapsed());
+	const Mesh* mesh = animation->get_mesh(scene, AppLayer::get().timer.elapsed());
 	if (!mesh)
 		return {};
 

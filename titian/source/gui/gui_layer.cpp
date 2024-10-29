@@ -2,13 +2,9 @@
 
 
 titian::GUILayer::GUILayer()
-	: Layer("GUILayer")
-{}
-
-void titian::GUILayer::init()
+	: Layer_T("GUILayer")
 {
-	AppLayer& app_layer = Layers::get<AppLayer>();
-
+	AppLayer& app_layer = AppLayer::get();
 	kl::Window& window = app_layer.window;
 	kl::GPU& gpu = app_layer.gpu;
 
@@ -49,9 +45,9 @@ bool titian::GUILayer::update()
 {
 	const TimeBomb _ = bench_time_bomb();
 
-	AppLayer& app_layer = Layers::get<AppLayer>();
-	RenderLayer* render_layer = &Layers::get<RenderLayer>();
-	GameLayer* game_layer = &Layers::get<GameLayer>();
+	AppLayer& app_layer = AppLayer::get();
+	RenderLayer& render_layer = RenderLayer::get();
+	GameLayer& game_layer = GameLayer::get();
 
 	ImGui_ImplWin32_NewFrame();
 	ImGui_ImplDX11_NewFrame();
@@ -63,19 +59,14 @@ bool titian::GUILayer::update()
 	for (auto& section : sections) {
 		section->render_gui();
 	}
-	if (game_layer && game_layer->game_running()) {
-		game_layer->scene().update_ui();
+	if (game_layer.game_running()) {
+		game_layer.scene().update_ui();
 	}
 
 	im::Render();
 	ImGui_ImplDX11_RenderDrawData(im::GetDrawData());
 
-	if (render_layer) {
-		render_layer->present();
-	}
-	else {
-		app_layer.gpu.swap_buffers(true);
-	}
+	render_layer.present();
 	return true;
 }
 

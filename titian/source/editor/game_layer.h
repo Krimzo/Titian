@@ -14,11 +14,10 @@ namespace titian {
 }
 
 namespace titian {
-	struct GameLayer : Layer
+	struct GameLayer : Layer_T<GameLayer>
 	{
 		GameLayer();
 
-		void init();
 		bool update() override;
 
 		void reset_scene();

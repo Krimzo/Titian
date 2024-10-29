@@ -69,12 +69,12 @@ namespace titian {
             return dynamic_cast<T*>(helper_get_entity(id));
         }
 
-        Mesh* helper_new_mesh(const String& id);
-        Animation* helper_new_animation(const String& id);
-        Texture* helper_new_texture(const String& id);
-        Material* helper_new_material(const String& id);
-        Shader* helper_new_shader(const String& id);
-        Entity* helper_new_entity(const String& id);
+        Mesh& helper_new_mesh(const String& id);
+        Animation& helper_new_animation(const String& id);
+        Texture& helper_new_texture(const String& id);
+        Material& helper_new_material(const String& id);
+        Shader& helper_new_shader(const String& id);
+        Entity& helper_new_entity(const String& id);
 
         Mesh* helper_get_mesh(const StringView& id) const;
         Animation* helper_get_animation(const StringView& id) const;

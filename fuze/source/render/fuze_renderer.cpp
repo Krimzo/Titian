@@ -10,7 +10,6 @@ titian::FuzeRenderer::FuzeRenderer(
 	const int audio_sample_rate)
 	: m_path(filepath), m_frame_size(frame_size), m_fps(fps)
 {
-	m_handler.init();
 	m_video_writer = new kl::VideoWriter(filepath, video_type, frame_size, fps, video_bit_rate, audio_sample_rate);
 }
 
@@ -20,7 +19,6 @@ titian::FuzeRenderer::FuzeRenderer(
 	const int audio_sample_rate)
 	: m_path(filepath), m_audio_type(audio_type)
 {
-	m_handler.init();
 	m_audio_writer = new kl::Audio(audio_sample_rate);
 }
 

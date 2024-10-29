@@ -4,7 +4,7 @@
 titian::EditorPass::EditorPass()
     : RenderPass("EditorPass")
 {
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+    kl::GPU& gpu = AppLayer::get().gpu;
     const kl::Vertex frustum_vertices[8] = {
         { {  1.0f,  1.0f, -1.0f } },
         { { -1.0f,  1.0f, -1.0f } },
@@ -34,7 +34,7 @@ titian::EditorPass::EditorPass()
 
 void titian::EditorPass::state_package(StatePackage& package)
 {
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
+    RenderLayer& render_layer = RenderLayer::get();
     package.raster_state = render_layer.raster_states.wireframe;
     package.depth_state = render_layer.depth_states.enabled;
     package.shaders = render_layer.shader_states.solid_pass;
@@ -42,12 +42,11 @@ void titian::EditorPass::state_package(StatePackage& package)
 
 void titian::EditorPass::render_self(StatePackage& package)
 {
-    EditorLayer& editor_layer = Layers::get<EditorLayer>();
-    RenderLayer& render_layer = Layers::get<RenderLayer>();
-    GUILayer& gui_layer = Layers::get<GUILayer>();
+    EditorLayer& editor_layer = EditorLayer::get();
+    GUILayer& gui_layer = GUILayer::get();
 
-    kl::GPU& gpu = Layers::get<AppLayer>().gpu;
-    Scene& scene = Layers::get<GameLayer>().scene();
+    kl::GPU& gpu = AppLayer::get().gpu;
+    Scene& scene = GameLayer::get().scene();
 
     if (editor_layer.selected_entities.empty())
         return;

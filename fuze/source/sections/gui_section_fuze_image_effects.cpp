@@ -8,10 +8,10 @@ titian::GUISectionFuzeImageEffects::GUISectionFuzeImageEffects()
 void titian::GUISectionFuzeImageEffects::render_gui()
 {
 	static const Vector<Pair<String, Function<Ref<ImageEffect>()>>> image_effects = {
-		{ "Scale, Rotation, Position", [] { return new ImageEffectScaleRotPos(); } },
+		{ "Scale, Rotation, Position", [] { return new ImageEffectSclRotPos(); } },
 	};
 
-	VideoLayer& video_layer = Layers::get<VideoLayer>();
+	VideoLayer& video_layer = VideoLayer::get();
 	Media* selected_media = &video_layer.selected_media;
 
 	if (im::Begin("Image Effects", nullptr, !video_layer.can_edit() ? ImGuiWindowFlags_NoInputs : ImGuiWindowFlags_None) && selected_media) {
@@ -41,7 +41,7 @@ void titian::GUISectionFuzeImageEffects::render_gui()
 			im::Text(kl::format(counter + 1, '.').data());
 			im::SameLine();
 
-			im::Selectable(effect->get_name().data());
+			im::Selectable(effect->name().data());
 			if (im::BeginPopupContextItem(kl::format("##ImageEffectPopup", counter).data())) {
 				if (counter > 0) {
 					if (im::Button("Move Up")) {

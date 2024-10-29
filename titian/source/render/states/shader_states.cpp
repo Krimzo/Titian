@@ -1,8 +1,10 @@
 #include "titian.h"
 
 
-void titian::ShaderStates::init(kl::GPU& gpu)
+titian::ShaderStates::ShaderStates()
 {
+    kl::GPU& gpu = AppLayer::get().gpu;
+
     auto load_shaders = [&](kl::Shaders& shader, str filename, const Vector<dx::LayoutDescriptor>& layout_descriptors)
 	{
         const String source = kl::read_file(kl::format("package/shaders/", filename));

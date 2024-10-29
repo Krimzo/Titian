@@ -49,7 +49,7 @@ void titian::Shader::reload_for_material()
 		{ "KL_BoneIndices", 0, DXGI_FORMAT_R8G8B8A8_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "KL_BoneWeights", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	shaders = gpu.create_shaders(source, vertex_layout_descriptors);
 }
 
@@ -59,7 +59,7 @@ void titian::Shader::reload_for_camera()
 		shaders = {};
 		return;
 	}
-	kl::GPU& gpu = Layers::get<AppLayer>().gpu;
+	kl::GPU& gpu = AppLayer::get().gpu;
 	shaders = gpu.create_shaders(source);
 }
 

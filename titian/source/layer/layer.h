@@ -7,36 +7,32 @@
 namespace titian {
 	struct Layer : kl::NoCopy, BenchmarkInfo
 	{
-		Layer(const StringView& name);
-		virtual ~Layer() = default;
+		template<typename T>
+		friend struct Layer_T;
 
+		virtual ~Layer() = default;
 		virtual bool update() = 0;
 
 	protected:
 		void panic() const;
+
+	private:
+		Layer(const StringView& name);
 	};
 }
 
 namespace titian {
-	struct Layers
+	template<typename T>
+	struct Layer_T : Layer
 	{
-		template<typename T>
-			requires(!std::is_pointer_v<T> and !std::is_reference_v<T>)
-		static constexpr void bind(T& obj) noexcept
-		{
-			m_data[type_id<T>] = &obj;
-		}
+		inline Layer_T(const StringView& name)
+			: Layer(name)
+		{}
 
-		template<typename T>
-			requires(!std::is_pointer_v<T> and !std::is_reference_v<T>)
-		static constexpr T& get() noexcept
+		static T& get()
 		{
-			return *(T*) m_data[type_id<T>];
+			static T inst{};
+			return inst;
 		}
-
-	private:
-		static inline int m_type_id_seq = 0;
-		template<typename T> static const int type_id = m_type_id_seq++;
-		static inline void* m_data[16] = {};
 	};
 }
