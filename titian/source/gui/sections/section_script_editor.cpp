@@ -172,6 +172,11 @@ void titian::GUISectionScriptEditor::edit_interp_script(InterpScript& script)
 	im::PushFont(GUILayer::get().roboto_font_large);
 	m_interp_editor.edit(script.source);
 	im::PopFont();
+
+	kl::Window& window = AppLayer::get().window;
+	if (window.keyboard.ctrl && window.keyboard.s.pressed()) {
+		script.reload();
+	}
 }
 
 void titian::GUISectionScriptEditor::edit_node_script(NodeScript& script)

@@ -159,4 +159,9 @@ void titian::GUISectionShaderEditor::edit_shader(Shader& shader)
 	im::PushFont(GUILayer::get().roboto_font_large);
 	m_editor.edit(shader.source);
 	im::PopFont();
+
+	kl::Window& window = AppLayer::get().window;
+	if (window.keyboard.ctrl && window.keyboard.s.pressed()) {
+		shader.reload();
+	}
 }
