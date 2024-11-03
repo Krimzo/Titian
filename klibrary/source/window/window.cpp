@@ -12,28 +12,21 @@ kl::Window::Window(const std::string_view& name)
     window_class.style = CS_OWNDC;
     window_class.lpfnWndProc = [](const HWND window_handle, const UINT message, const WPARAM w_param, const LPARAM l_param)
     {
-        const Window* self = (const Window*) GetWindowLongPtrA(window_handle, GWLP_USERDATA);
+        const Window* self = reinterpret_cast<const Window*>(GetWindowLongPtrA(window_handle, GWLP_USERDATA));
         return self->window_procedure(window_handle, message, w_param, l_param);
     };
     window_class.hInstance = m_instance;
     window_class.lpszClassName = name.data();
     assert(RegisterClassExA(&window_class), "Failed to register window class");
 
-    m_window_style = WS_OVERLAPPEDWINDOW;
     RECT size_buffer = { 0, 0, 1600, 900 };
-    AdjustWindowRect(&size_buffer, m_window_style, false);
-    const Int2 new_size = {
-        size_buffer.right - size_buffer.left,
-        size_buffer.bottom - size_buffer.top,
-    };
+    AdjustWindowRect(&size_buffer, WS_OVERLAPPEDWINDOW, false);
+    const Int2 new_size = { size_buffer.right - size_buffer.left, size_buffer.bottom - size_buffer.top };
     const Int2 new_position = SCREEN_SIZE / 2 - new_size / 2;
 
-    m_window = CreateWindowExA(NULL, name.data(), name.data(), m_window_style,
-        new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, m_instance, nullptr);
+    m_window = CreateWindowExA(NULL, name.data(), name.data(), WS_OVERLAPPEDWINDOW, new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, m_instance, nullptr);
     assert(m_window, "Failed to create window");
-
     m_device_context = GetDC(m_window);
-    m_window_style = GetWindowLongA(m_window, GWL_STYLE);
 
     SetWindowLongPtrA(m_window, GWLP_USERDATA, (LONG_PTR) this);
     ShowWindow(m_window, SW_SHOW);
@@ -47,10 +40,9 @@ kl::Window::~Window()
     DeleteDC(m_device_context);
     DestroyWindow(m_window);
     UnregisterClassA(m_name.data(), m_instance);
-	m_window = nullptr;
 }
 
-kl::Window::operator HWND() const
+HWND kl::Window::ptr() const
 {
     return m_window;
 }
@@ -63,10 +55,10 @@ bool kl::Window::process()
     while (PeekMessageA(&message, m_window, 0, 0, PM_REMOVE)) {
         handle_message(message);
     }
-    return is_open();
+    return active();
 }
 
-bool kl::Window::is_open() const
+bool kl::Window::active() const
 {
     return IsWindow(m_window);
 }
@@ -76,45 +68,59 @@ void kl::Window::close() const
     PostMessageA(m_window, WM_CLOSE, NULL, NULL);
 }
 
-bool kl::Window::is_resizeable() const
+bool kl::Window::resizeable() const
 {
-    if (!m_in_fullscreen) {
-        return m_resizeable;
-    }
-    return false;
+    return style() | WS_SIZEBOX | WS_MAXIMIZEBOX;
 }
 
 void kl::Window::set_resizeable(const bool enabled)
 {
-    if (m_in_fullscreen)
+    if (fullscreened())
         return;
 
-    if (!m_resizeable && enabled) {
-        SetWindowLongA(m_window, GWL_STYLE, GetWindowLongA(m_window, GWL_STYLE) | WS_SIZEBOX | WS_MAXIMIZEBOX);
-        m_window_style = GetWindowLongA(m_window, GWL_STYLE);
+    if (enabled) {
+        add_style(WS_SIZEBOX | WS_MAXIMIZEBOX);
     }
-    else if (m_resizeable && !enabled) {
-        SetWindowLongA(m_window, GWL_STYLE, GetWindowLongA(m_window, GWL_STYLE) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX);
-        m_window_style = GetWindowLongA(m_window, GWL_STYLE);
+    else {
+		remove_style(WS_SIZEBOX | WS_MAXIMIZEBOX);
     }
-    m_resizeable = enabled;
 }
 
-int kl::Window::style() const
+bool kl::Window::fullscreened() const
+{
+    return !(style() | WS_CAPTION | WS_THICKFRAME);
+}
+
+void kl::Window::set_fullscreen(const bool enabled)
+{
+    if (enabled) {
+        remove_style(WS_CAPTION | WS_THICKFRAME);
+        maximize();
+    }
+    else {
+        add_style(WS_CAPTION | WS_THICKFRAME);
+        restore();
+    }
+}
+
+LONG kl::Window::style() const
 {
     return GetWindowLongA(m_window, GWL_STYLE);
 }
 
-void kl::Window::add_style(const int style)
+void kl::Window::add_style(const LONG style_val)
 {
-    const int current_style = GetWindowLongA(m_window, GWL_STYLE);
-    SetWindowLongA(m_window, GWL_STYLE, current_style | style);
+    SetWindowLongA(m_window, GWL_STYLE, style() | style_val);
 }
 
-void kl::Window::remove_style(const int style)
+void kl::Window::remove_style(const LONG style_val)
 {
-    const int current_style = GetWindowLongA(m_window, GWL_STYLE);
-    SetWindowLongA(m_window, GWL_STYLE, current_style & ~style);
+    SetWindowLongA(m_window, GWL_STYLE, style() & ~style_val);
+}
+
+bool kl::Window::focused() const
+{
+    return GetForegroundWindow() == m_window;
 }
 
 void kl::Window::maximize() const
@@ -132,7 +138,7 @@ void kl::Window::restore() const
     ShowWindow(m_window, SW_RESTORE);
 }
 
-bool kl::Window::is_maximized() const
+bool kl::Window::maximized() const
 {
     WINDOWPLACEMENT placement{};
     placement.length = sizeof(WINDOWPLACEMENT);
@@ -140,7 +146,7 @@ bool kl::Window::is_maximized() const
     return placement.showCmd == SW_MAXIMIZE;
 }
 
-bool kl::Window::is_minimized() const
+bool kl::Window::minimized() const
 {
     WINDOWPLACEMENT placement{};
     placement.length = sizeof(WINDOWPLACEMENT);
@@ -148,38 +154,12 @@ bool kl::Window::is_minimized() const
     return placement.showCmd == SW_MINIMIZE;
 }
 
-bool kl::Window::is_restored() const
+bool kl::Window::restored() const
 {
     WINDOWPLACEMENT placement{};
     placement.length = sizeof(WINDOWPLACEMENT);
     GetWindowPlacement(m_window, &placement);
     return placement.showCmd == SW_RESTORE;
-}
-
-bool kl::Window::is_focused() const
-{
-    return GetForegroundWindow() == m_window;
-}
-
-bool kl::Window::in_fullscreen() const
-{
-    return m_in_fullscreen;
-}
-
-void kl::Window::set_fullscreen(const bool enabled)
-{
-    if (!m_in_fullscreen) {
-        m_window_style = GetWindowLongA(m_window, GWL_STYLE);
-        m_window_ex_style = GetWindowLongA(m_window, GWL_EXSTYLE);
-    }
-    if (m_in_fullscreen = enabled) {
-        SetWindowLongA(m_window, GWL_STYLE, m_window_style & ~(WS_CAPTION | WS_THICKFRAME));
-        SetWindowLongA(m_window, GWL_EXSTYLE, m_window_ex_style & ~(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE));
-    }
-    else {
-        SetWindowLongA(m_window, GWL_STYLE, m_window_style);
-        SetWindowLongA(m_window, GWL_EXSTYLE, m_window_ex_style);
-    }
 }
 
 kl::Int2 kl::Window::position() const
@@ -191,7 +171,7 @@ kl::Int2 kl::Window::position() const
 
 void kl::Window::set_position(const Int2 position) const
 {
-    if (m_in_fullscreen)
+    if (fullscreened())
         return;
 
     RECT rect{};
@@ -229,12 +209,12 @@ kl::Int2 kl::Window::size() const
 
 void kl::Window::resize(const Int2 size) const
 {
-    if (m_in_fullscreen)
+    if (fullscreened())
         return;
 
     const Int2 pos = position();
     RECT rect{ pos.x, pos.y, pos.x + size.x, pos.y + size.y };
-    AdjustWindowRect(&rect, m_window_style, false);
+    AdjustWindowRect(&rect, style(), false);
     MoveWindow(m_window, pos.x, pos.y, 
         rect.right - rect.left, rect.bottom - rect.top, false);
 }

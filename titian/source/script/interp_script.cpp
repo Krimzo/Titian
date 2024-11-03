@@ -662,13 +662,13 @@ void titian::InterpScript::load_engine_parts()
 
 	m_engine->new_usertype<kl::Window>(
 		"Window",
-		"is_open", &kl::Window::is_open,
+		"active", &kl::Window::active,
 		"close", &kl::Window::close,
-		"resizeable", sl::property(&kl::Window::is_resizeable, &kl::Window::set_resizeable),
+		"resizeable", sl::property(&kl::Window::resizeable, &kl::Window::set_resizeable),
 		"maximize", &kl::Window::maximize,
 		"minimize", &kl::Window::minimize,
 		"restore", &kl::Window::restore,
-		"fullscreen", sl::property(&kl::Window::in_fullscreen, &kl::Window::set_fullscreen),
+		"fullscreened", sl::property(&kl::Window::fullscreened, &kl::Window::set_fullscreen),
 		"position", sl::property(&kl::Window::position, &kl::Window::set_position),
 		"size", sl::property(&kl::Window::size, &kl::Window::resize),
 		"aspect_ratio", &kl::Window::aspect_ratio,

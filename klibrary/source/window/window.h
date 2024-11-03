@@ -24,33 +24,33 @@ namespace kl {
 		std::vector<std::function<void(Int2)>> on_move;
 
         Window(const std::string_view& name);
-        virtual ~Window();
+        ~Window();
 
-        operator HWND() const;
-
+        HWND ptr() const;
         bool process();
 
-        bool is_open() const;
+        bool active() const;
         void close() const;
 
-        bool is_resizeable() const;
+        bool resizeable() const;
         void set_resizeable(bool enabled);
 
-        int style() const;
-        void add_style(int style);
-        void remove_style(int style);
+        bool fullscreened() const;
+        void set_fullscreen(bool enabled);
+
+        LONG style() const;
+        void add_style(LONG style_val);
+        void remove_style(LONG style_val);
+
+        bool focused() const;
 
         void maximize() const;
         void minimize() const;
         void restore() const;
 
-        bool is_maximized() const;
-        bool is_minimized() const;
-        bool is_restored() const;
-        bool is_focused() const;
-
-        bool in_fullscreen() const;
-        void set_fullscreen(bool enabled);
+        bool maximized() const;
+        bool minimized() const;
+        bool restored() const;
 
         Int2 position() const;
         void set_position(Int2 position) const;
@@ -82,16 +82,9 @@ namespace kl {
 
     private:
         std::string m_name;
-
         HINSTANCE m_instance = nullptr;
         HWND m_window = nullptr;
         HDC m_device_context = nullptr;
-
-        WINDOWPLACEMENT m_placement = {};
-        LONG m_window_ex_style = NULL;
-        LONG m_window_style = NULL;
-        bool m_resizeable = true;
-        bool m_in_fullscreen = false;
 
         LRESULT CALLBACK window_procedure(HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param) const;
         void handle_message(const MSG& message);

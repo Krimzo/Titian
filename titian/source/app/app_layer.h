@@ -8,7 +8,7 @@ namespace titian {
 	struct AppLayer : Layer_T<AppLayer>
 	{
 		kl::Window window{ "Titian App" };
-		kl::GPU gpu{ window };
+		kl::GPU gpu{ window.ptr() };
 		kl::Timer timer;
 
 		px::PxDefaultAllocator allocator = {};

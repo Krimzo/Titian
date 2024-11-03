@@ -15,7 +15,7 @@ namespace kl {
 
         virtual ~GPU() noexcept
         {
-            if (m_chain) set_fullscreen(false);
+            set_fullscreen(false);
         }
 
         dx::Device device() const;
@@ -35,8 +35,9 @@ namespace kl {
         dx::DepthView back_depth_view() const;
 
         void swap_buffers(bool v_sync) const;
+
+        bool fullscreened() const;
         void set_fullscreen(bool enabled) const;
-        bool in_fullscreen() const;
 
         void clear_internal_color(const Float4& color = {}) const;
         void clear_internal_depth(float depth = 1.0f, UINT8 stencil = 0xFF) const;

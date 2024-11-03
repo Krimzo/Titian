@@ -137,20 +137,24 @@ kl::dx::DepthView kl::GPU::back_depth_view() const
 void kl::GPU::swap_buffers(const bool v_sync) const
 {
     const UINT interval = v_sync ? 1 : 0;
-    const UINT flags = (v_sync || in_fullscreen()) ? NULL : DXGI_PRESENT_ALLOW_TEARING;
+    const UINT flags = (v_sync || fullscreened()) ? NULL : DXGI_PRESENT_ALLOW_TEARING;
     m_chain->Present(interval, flags) >> verify_result;
     bind_internal_views();
 }
 
-bool kl::GPU::in_fullscreen() const
+bool kl::GPU::fullscreened() const
 {
-    BOOL result = false;
+    if (!m_chain)
+        return false;
+    BOOL result = FALSE;
     m_chain->GetFullscreenState(&result, nullptr);
-    return bool(result);
+    return (bool) result;
 }
 
 void kl::GPU::set_fullscreen(const bool enabled) const
 {
+    if (!m_chain)
+        return;
     m_chain->SetFullscreenState(enabled, nullptr) >> verify_result;
 }
 
@@ -222,8 +226,12 @@ void kl::GPU::resize_to_window(const HWND window)
 {
     RECT window_client_area{};
     GetClientRect(window, &window_client_area);
-    resize_internal({ window_client_area.right, window_client_area.bottom });
-    set_viewport_size({ window_client_area.right, window_client_area.bottom });
+	const Int2 area_size = {
+        window_client_area.right - window_client_area.left,
+        window_client_area.bottom - window_client_area.top,
+    };
+    resize_internal(area_size);
+    set_viewport_size(area_size);
 }
 
 void kl::GPU::bind_internal_views() const

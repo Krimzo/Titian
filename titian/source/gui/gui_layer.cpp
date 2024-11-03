@@ -11,9 +11,9 @@ titian::GUILayer::GUILayer()
 	im::CreateContext();
 	im::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-	ImGui_ImplWin32_Init(HWND(window));
+	ImGui_ImplWin32_Init(window.ptr());
 	ImGui_ImplDX11_Init(gpu.device().get(), gpu.context().get());
-	dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(HWND(window));
+	dpi_scaling = ImGui_ImplWin32_GetDpiScaleForHwnd(window.ptr());
 
 	if (_conf_data.contains(CONF_SPECIAL_COLOR)) {
 		Ref data = _conf_data[CONF_SPECIAL_COLOR].as<js::Array>();

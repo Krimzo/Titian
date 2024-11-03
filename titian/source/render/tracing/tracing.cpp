@@ -139,7 +139,7 @@ void titian::Tracing::render_scene(const kl::Window& window, const TracingScene&
 			while (working_count >= core_count) {
 				std::this_thread::yield();
 			}
-			if (!window.is_open())
+			if (!window.active())
 				goto loop_end;
 
 			tasks.push_back( std::async(std::launch::async, [&, x, y]
