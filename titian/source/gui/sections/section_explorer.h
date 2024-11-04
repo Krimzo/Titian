@@ -25,7 +25,7 @@ namespace titian {
 
     private:
         String m_path = fs::absolute(".").string();
-        float m_icon_size = 80.0f;
+        float m_icon_size = 75.0f;
 
         void handle_file_entry(const fs::path& file);
         void handle_directory_entry(const fs::path& directory, bool is_parent_dir);

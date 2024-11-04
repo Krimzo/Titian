@@ -170,6 +170,10 @@ void titian::GUISectionExplorer::handle_file_entry(const fs::path& file)
 
     im::PopStyleVar(2);
 
+    if (ImGui::IsItemHovered()) {
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+    }
+
     if (im::BeginPopupContextItem(file.string().data(), ImGuiPopupFlags_MouseButtonRight)) {
         if (auto opt_name = gui_input_waited("##RenameFileInput", file.filename().string())) {
             const auto& name = opt_name.value();
@@ -235,6 +239,10 @@ void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, con
     im::EndChild();
 
     im::PopStyleVar(2);
+
+    if (ImGui::IsItemHovered()) {
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+    }
 
     if (!is_parent_dir && im::BeginPopupContextItem(dir.string().data(), ImGuiPopupFlags_MouseButtonRight)) {
         if (auto opt_name = gui_input_waited("##RenameDirInput", dir.filename().string())) {

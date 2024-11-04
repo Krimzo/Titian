@@ -17,7 +17,7 @@ namespace titian {
         void render_gui() override;
 
     private:
-        float m_icon_size = 65.0f;
+        float m_icon_size = 75.0f;
 
         void handle_basic_entry(const StringRef& name) const;
         void handle_animation_entry(const StringRef& name) const;

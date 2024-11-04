@@ -75,6 +75,10 @@ void titian::GUISectionHelper::handle_basic_entry(const StringRef& name) const
     im::EndChild();
 
     im::PopStyleVar(2);
+
+    if (ImGui::IsItemHovered()) {
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+    }
 }
 
 void titian::GUISectionHelper::handle_animation_entry(const StringRef& name) const
@@ -97,4 +101,8 @@ void titian::GUISectionHelper::handle_animation_entry(const StringRef& name) con
     im::EndChild();
 
     im::PopStyleVar(2);
+
+    if (ImGui::IsItemHovered()) {
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+    }
 }
