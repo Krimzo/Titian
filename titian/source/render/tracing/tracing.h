@@ -47,47 +47,52 @@ namespace titian {
 }
 
 namespace titian {
+	struct TracingCamera
+	{
+		Float3 position;
+		Float4x4 inv_mat;
+		bool wireframe = false;
+		Float4 background;
+		Opt<TracingTextureCube> skybox;
+
+		RGB sample_background(const Float3& direction) const;
+	};
+}
+
+namespace titian {
+	struct TracingAmbient
+	{
+		Float3 color;
+	};
+}
+
+namespace titian {
+	struct TracingDirectional
+	{
+		Float3 direction;
+		Float3 color;
+		float point_size;
+	};
+}
+
+namespace titian {
+	struct TracingPayload
+	{
+		const TracingEntity& entity;
+		const kl::Triangle& triangle;
+		Float3 intersect;
+	};
+}
+
+namespace titian {
 	struct TracingScene
 	{
-		struct CameraData
-		{
-			Float3 position;
-			Float4x4 inv_mat;
-			bool wireframe = false;
-			Float4 background;
-			Opt<TracingTextureCube> skybox;
+		List<TracingEntity> entities;
+		Opt<TracingCamera> camera;
+		Opt<TracingAmbient> ambient;
+		Opt<TracingDirectional> directional;
 
-			RGB sample_background(const Float3& direction) const;
-		};
-
-		struct AmbientData
-		{
-			Float3 color;
-		};
-
-		struct DirectionalData
-		{
-			Float3 direction;
-			Float3 color;
-			float point_size;
-		};
-
-		struct TracePayload
-		{
-			TracingEntity& entity;
-			kl::Triangle& triangle;
-			Float3 intersect;
-		};
-
-		Vector<Ref<TracingEntity>> entities;
-		Opt<CameraData> camera_data;
-		Opt<AmbientData> ambient_data;
-		Opt<DirectionalData> directional_data;
-
-		Float3 min_point{ +std::numeric_limits<float>::infinity() };
-		Float3 max_point{ -std::numeric_limits<float>::infinity() };
-
-		Opt<TracePayload> trace(const kl::Ray& ray, const kl::Triangle* blacklist) const;
+		Opt<TracingPayload> trace(const kl::Ray& ray, const kl::Triangle* blacklist) const;
 	};
 }
 
@@ -104,10 +109,10 @@ namespace titian {
 		static void render_section(const TracingScene& tracing_scene, Int2 top_left, Int2 size, kl::Image& target);
 		static RGB render_pixel(const TracingScene& tracing_scene, Float2 ndc);
 
-		static Float3 trace_ray(const TracingScene& tracing_scene, const kl::Ray& ray, int depth, kl::Triangle* blacklist);
+		static Float3 trace_ray(const TracingScene& tracing_scene, const kl::Ray& ray, int depth, const kl::Triangle* blacklist);
 
 		static void convert_scene(const Scene& scene, Int2 resolution, TracingScene& tracing_scene);
-		static Ref<TracingEntity> convert_entity(const Scene& scene, const Entity& entity);
+		static Opt<TracingEntity> convert_entity(const Scene& scene, const Entity& entity);
 
 		static TracingMesh convert_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& matrix);
 		static kl::Vertex convert_vertex(const Vertex& vertex, const Float4x4& matrix);

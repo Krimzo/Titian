@@ -60,7 +60,7 @@ titian::RGB titian::TracingTextureCube::sample(const Float3& direction) const
 	return faces[face_index].sample({ u, v });
 }
 
-titian::RGB titian::TracingScene::CameraData::sample_background(const Float3& direction) const
+titian::RGB titian::TracingCamera::sample_background(const Float3& direction) const
 {
 	if (skybox) {
 		return skybox->sample(direction);
@@ -68,20 +68,20 @@ titian::RGB titian::TracingScene::CameraData::sample_background(const Float3& di
 	return background;
 }
 
-titian::Opt<titian::TracingScene::TracePayload> titian::TracingScene::trace(const kl::Ray& ray, const kl::Triangle* blacklist) const
+titian::Opt<titian::TracingPayload> titian::TracingScene::trace(const kl::Ray& ray, const kl::Triangle* blacklist) const
 {
 	Float3 intersection;
 	float min_distance = std::numeric_limits<float>::infinity();
-	Opt<TracingScene::TracePayload> result;
+	Opt<TracingPayload> result;
 	for (const auto& entity : entities) {
-		if (!ray.intersect_aabb(entity->mesh.aabb, &intersection))
+		if (!ray.intersect_aabb(entity.mesh.aabb, &intersection))
 			continue;
 
 		const float distance = (intersection - ray.origin).length();
 		if (distance >= min_distance)
 			continue;
-
-		for (auto& triangle : entity->mesh.triangles) {
+		
+		for (const auto& triangle : entity.mesh.triangles) {
 			if (&triangle == blacklist)
 				continue;
 
@@ -93,7 +93,7 @@ titian::Opt<titian::TracingScene::TracePayload> titian::TracingScene::trace(cons
 				continue;
 
 			min_distance = distance;
-			result.emplace(*entity, triangle, intersection);
+			result.emplace(entity, triangle, intersection);
 		}
 	}
 	return result;
@@ -101,8 +101,12 @@ titian::Opt<titian::TracingScene::TracePayload> titian::TracingScene::trace(cons
 
 void titian::Tracing::render(const Scene& scene, const Int2 resolution)
 {
+	kl::time::delta();
+
 	TracingScene tracing_scene;
 	convert_scene(scene, resolution, tracing_scene);
+
+	Logger::log(kl::time::delta());
 
 	kl::Window window{ "Titian Raytracer" };
 	window.set_dark_mode(true);
@@ -174,13 +178,13 @@ void titian::Tracing::render_section(const TracingScene& tracing_scene, const In
 
 titian::RGB titian::Tracing::render_pixel(const TracingScene& tracing_scene, const Float2 ndc)
 {
-	if (!tracing_scene.camera_data)
+	if (!tracing_scene.camera)
 		return RGB{};
 
-	const TracingScene::CameraData& camera_data = *tracing_scene.camera_data;
-	const kl::Ray ray{ camera_data.position, camera_data.inv_mat, ndc };
-	if (camera_data.wireframe)
-		return camera_data.sample_background(ray.direction());
+	const TracingCamera& camera = *tracing_scene.camera;
+	const kl::Ray ray{ camera.position, camera.inv_mat, ndc };
+	if (camera.wireframe)
+		return camera.sample_background(ray.direction());
 
 	Float3 color;
 	for (int i = 0; i < ACCUMULATION_LIMIT; i++) {
@@ -189,21 +193,21 @@ titian::RGB titian::Tracing::render_pixel(const TracingScene& tracing_scene, con
 	return color * (1.0f / ACCUMULATION_LIMIT);
 }
 
-titian::Float3 titian::Tracing::trace_ray(const TracingScene& tracing_scene, const kl::Ray& ray, const int depth, kl::Triangle* blacklist)
+titian::Float3 titian::Tracing::trace_ray(const TracingScene& tracing_scene, const kl::Ray& ray, const int depth, const kl::Triangle* blacklist)
 {
 	if (depth > DEPTH_LIMIT)
 		return {};
 
-	Opt<TracingScene::TracePayload> payload = tracing_scene.trace(ray, blacklist);
+	Opt<TracingPayload> payload = tracing_scene.trace(ray, blacklist);
 	if (!payload) {
-		if (tracing_scene.directional_data) {
-			auto& directional = *tracing_scene.directional_data;
+		if (tracing_scene.directional) {
+			auto& directional = *tracing_scene.directional;
 			const kl::Sphere sun_sphere{ ray.origin - directional.direction, directional.point_size };
 			if (ray.intersect_sphere(sun_sphere, nullptr)) {
 				return directional.color;
 			}
 		}
-		return tracing_scene.camera_data->sample_background(ray.direction());
+		return tracing_scene.camera->sample_background(ray.direction());
 	}
 
 	auto& material = payload->entity.material;
@@ -253,23 +257,19 @@ void titian::Tracing::convert_scene(const Scene& scene, const Int2 resolution, T
 		[&](const Pair<String, Ref<Entity>>& pair)
 	{
 		const Entity& entity = *pair.second;
-		Ref<TracingEntity> tracing_entity = convert_entity(scene, entity);
+		const Opt<TracingEntity> tracing_entity = convert_entity(scene, entity);
 		if (!tracing_entity)
 			return;
 
 		lock.lock();
-		tracing_scene.entities.push_back(std::move(tracing_entity));
+		tracing_scene.entities.push_back(*tracing_entity);
 		lock.unlock();
 	});
-	for (const auto& entity : tracing_scene.entities) {
-		tracing_scene.min_point = kl::min(tracing_scene.min_point, entity->mesh.aabb.min_point());
-		tracing_scene.max_point = kl::max(tracing_scene.max_point, entity->mesh.aabb.max_point());
-	}
 	if (Camera* camera = dynamic_cast<Camera*>(scene.helper_get_entity(scene.main_camera_name))) {
 		Texture* skybox = scene.helper_get_texture(camera->skybox_texture_name);
 		const float old_ar = camera->aspect_ratio;
 		camera->update_aspect_ratio(resolution);
-		tracing_scene.camera_data.emplace(
+		tracing_scene.camera.emplace(
 			camera->position(),
 			kl::inverse(camera->camera_matrix()),
 			camera->render_wireframe,
@@ -279,12 +279,12 @@ void titian::Tracing::convert_scene(const Scene& scene, const Int2 resolution, T
 		camera->aspect_ratio = old_ar;
 	}
 	if (AmbientLight* ambient = dynamic_cast<AmbientLight*>(scene.helper_get_entity(scene.main_ambient_light_name))) {
-		tracing_scene.ambient_data.emplace(
+		tracing_scene.ambient.emplace(
 			ambient->color
 		);
 	}
 	if (DirectionalLight* directional = dynamic_cast<DirectionalLight*>(scene.helper_get_entity(scene.main_directional_light_name))) {
-		tracing_scene.directional_data.emplace(
+		tracing_scene.directional.emplace(
 			directional->direction(),
 			directional->color,
 			directional->point_size
@@ -292,31 +292,31 @@ void titian::Tracing::convert_scene(const Scene& scene, const Int2 resolution, T
 	}
 }
 
-titian::Ref<titian::TracingEntity> titian::Tracing::convert_entity(const Scene& scene, const Entity& entity)
+titian::Opt<titian::TracingEntity> titian::Tracing::convert_entity(const Scene& scene, const Entity& entity)
 {
 	const Animation* animation = scene.helper_get_animation(entity.animation_name);
 	if (!animation)
-		return {};
+		return std::nullopt;
 
 	const Mesh* mesh = animation->get_mesh(scene, AppLayer::get().timer.elapsed());
 	if (!mesh)
-		return {};
+		return std::nullopt;
 
 	if (mesh->topology != MeshTopology::TRIANGLES || mesh->render_wireframe)
-		return {};
+		return std::nullopt;
 
 	const Material* material = scene.helper_get_material(entity.material_name);
 	if (!material)
-		return {};
+		return std::nullopt;
 
-	Ref result = new TracingEntity();
+	TracingEntity result;
 	if (animation->animation_type == AnimationType::SKELETAL) {
-		result->mesh = convert_skel_mesh(scene, *mesh, entity.model_matrix(), animation->matrices());
+		result.mesh = convert_skel_mesh(scene, *mesh, entity.model_matrix(), animation->matrices());
 	}
 	else {
-		result->mesh = convert_mesh(scene, *mesh, entity.model_matrix());
+		result.mesh = convert_mesh(scene, *mesh, entity.model_matrix());
 	}
-	result->material = convert_material(scene, *material);
+	result.material = convert_material(scene, *material);
 	return result;
 }
 
