@@ -101,12 +101,8 @@ titian::Opt<titian::TracingPayload> titian::TracingScene::trace(const kl::Ray& r
 
 void titian::Tracing::render(const Scene& scene, const Int2 resolution)
 {
-	kl::time::delta();
-
 	TracingScene tracing_scene;
 	convert_scene(scene, resolution, tracing_scene);
-
-	Logger::log(kl::time::delta());
 
 	kl::Window window{ "Titian Raytracer" };
 	window.set_dark_mode(true);
