@@ -97,6 +97,14 @@ namespace titian {
 }
 
 namespace titian {
+	struct TracingTask
+	{
+		std::future<void> task;
+		Pair<Int2, Int2> section;
+	};
+}
+
+namespace titian {
 	struct Tracing
 	{
 		static inline int DEPTH_LIMIT = 5;
@@ -105,7 +113,7 @@ namespace titian {
 		static void render(const Scene& scene, Int2 resolution);
 
 	private:
-		static void render_scene(const kl::Window& window, const TracingScene& tracing_scene, kl::Image& target);
+		static void render_scene(const kl::Window& window, const TracingScene& tracing_scene, kl::Image& target, Vector<TracingTask>& tasks);
 		static void render_section(const TracingScene& tracing_scene, Int2 top_left, Int2 size, kl::Image& target);
 		static RGB render_pixel(const TracingScene& tracing_scene, Float2 ndc);
 
@@ -123,6 +131,6 @@ namespace titian {
 		static TracingMaterial convert_material(const Scene& scene, const Material& material);
 		static Opt<TracingTextureCube> convert_texture_cube(const Texture* texture);
 
-		static void handle_input(kl::Window& window, kl::Image& target);
+		static void handle_input(kl::Window& window, const kl::Image& target);
 	};
 }

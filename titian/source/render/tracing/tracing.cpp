@@ -101,6 +101,8 @@ titian::Opt<titian::TracingPayload> titian::TracingScene::trace(const kl::Ray& r
 
 void titian::Tracing::render(const Scene& scene, const Int2 resolution)
 {
+	const RGB special_color = GUILayer::get().special_color;
+
 	TracingScene tracing_scene;
 	convert_scene(scene, resolution, tracing_scene);
 
@@ -110,51 +112,53 @@ void titian::Tracing::render(const Scene& scene, const Int2 resolution)
 	window.maximize();
 
 	kl::Image target{ resolution };
+	Vector<TracingTask> tasks(kl::CPU_CORE_COUNT);
 	std::future<void> render_task = std::async(std::launch::async, render_scene,
-		std::ref(window), std::ref(tracing_scene), std::ref(target));
+		std::ref(window), std::ref(tracing_scene), std::ref(target), std::ref(tasks));
 
 	kl::Image frame;
 	while (window.process()) {
 		handle_input(window, target);
 		frame = target;
+		for (const auto& task : tasks) {
+			const auto& section = task.section;
+			frame.draw_rectangle(section.first, section.first + section.second,
+				special_color, false);
+		}
 		frame.resize_scaled(window.size());
 		window.draw_image(frame);
 	}
 }
 
-void titian::Tracing::render_scene(const kl::Window& window, const TracingScene& tracing_scene, kl::Image& target)
+void titian::Tracing::render_scene(const kl::Window& window, const TracingScene& tracing_scene, kl::Image& target, Vector<TracingTask>& tasks)
 {
-	const Int2 target_size = target.size();
-	const int core_count = kl::CPU_CORE_COUNT;
-	const int square_size = kl::clamp(kl::min(target_size.x, target_size.y) / core_count, 8, 256);
+	const int square_size = kl::clamp(kl::min(target.width(), target.height()) / (int) tasks.size(), 8, 256);
 	const Int2 square_counts = {
-		(int) ceil(target_size.x / (float) square_size),
-		(int) ceil(target_size.y / (float) square_size),
+		(int) ceil(target.width() / (float) square_size),
+		(int) ceil(target.height() / (float) square_size),
 	};
-	std::atomic_int32_t working_count = 0;
-	Vector<std::future<void>> tasks;
-	tasks.reserve((size_t) square_counts.x * square_counts.y);
-	for (int y = 0; y < square_counts.y; y++) {
-		for (int x = 0; x < square_counts.x; x++) {
-			while (working_count >= core_count) {
-				std::this_thread::yield();
+	std::atomic_int32_t id_counter = 0;
+	for (auto& task : tasks) {
+		task.task = std::async(std::launch::async, [&]
+		{
+			while (true) {
+				const int32_t id = id_counter++;
+				if (id >= (square_counts.x * square_counts.y) || !window.active()) {
+					break;
+				}
+				const Int2 sqr_pos = {
+					id % square_counts.x * square_size,
+					id / square_counts.x * square_size,
+				};
+				task.section = { sqr_pos, Int2(square_size) };
+				render_section(tracing_scene, sqr_pos, Int2(square_size), target);
 			}
-			if (!window.active())
-				goto loop_end;
-
-			tasks.push_back( std::async(std::launch::async, [&, x, y]
-			{
-				render_section(tracing_scene,
-					Int2(x, y) * square_size,
-					Int2(square_size),
-					target);
-				--working_count;
-			}) );
-			++working_count;
-		}
+			task.section = { Int2(-1), Int2(-1) };
+		});
 	}
-loop_end:
-	tasks.clear();
+	for (auto& task : tasks) {
+		task.task.wait();
+	}
 }
 
 void titian::Tracing::render_section(const TracingScene& tracing_scene, const Int2 top_left, const Int2 size, kl::Image& target)
@@ -392,7 +396,7 @@ titian::Opt<titian::TracingTextureCube> titian::Tracing::convert_texture_cube(co
 	return result;
 }
 
-void titian::Tracing::handle_input(kl::Window& window, kl::Image& target)
+void titian::Tracing::handle_input(kl::Window& window, const kl::Image& target)
 {
 	if (window.keyboard.esc) {
 		window.close();
