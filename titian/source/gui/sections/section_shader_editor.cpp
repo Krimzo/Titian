@@ -62,7 +62,7 @@ void titian::GUISectionShaderEditor::display_shaders(Scene& scene)
 {
 	const String filter = gui_input_continuous("Search###ShaderEditor");
 	for (auto& [shader_name, shader] : scene.shaders) {
-		if (!filter.empty() && shader_name.find(filter) == -1) {
+		if (!filter.empty() && !str_find(shader_name, filter)) {
 			continue;
 		}
 

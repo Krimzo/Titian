@@ -82,7 +82,7 @@ void titian::GUISectionMaterialEditor::display_materials(Scene& scene)
             if (im::BeginMenu("Texture Material")) {
                 const String filter = gui_input_continuous("Search###NewTextureMaterial");
                 for (const auto& [texture_name, _] : scene.textures) {
-                    if (!filter.empty() && texture_name.find(filter) == -1) {
+                    if (!filter.empty() && !str_find(texture_name, filter)) {
                         continue;
                     }
                     if (im::Selectable(texture_name.data(), false)) {
@@ -101,7 +101,7 @@ void titian::GUISectionMaterialEditor::display_materials(Scene& scene)
 
     const String filter = gui_input_continuous("Search###MeterialEditor");
     for (auto& [material_name, material] : scene.materials) {
-        if (!filter.empty() && material_name.find(filter) == -1) {
+        if (!filter.empty() && !str_find(material_name, filter)) {
             continue;
         }
 

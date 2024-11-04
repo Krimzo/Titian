@@ -79,6 +79,8 @@ namespace titian {
 
 	private:
 		ne::ImNodeFlow m_editor;
+
+		void new_node_popup();
 	};
 }
 

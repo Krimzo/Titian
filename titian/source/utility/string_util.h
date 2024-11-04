@@ -14,4 +14,6 @@ namespace titian {
 	String ltrim(const StringView& source, str t = " \t\n\r\f\v");
 	String rtrim(const StringView& source, str t = " \t\n\r\f\v");
 	String trim(const StringView& source, str t = " \t\n\r\f\v");
+
+	bool str_find(const StringView& haystack, const StringView& needle);
 }

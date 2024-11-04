@@ -46,7 +46,7 @@ void titian::GUISectionSceneInfo::main_camera_info(Scene& scene)
             if (!entity.is<const Camera>()) {
                 continue;
             }
-            if (!filter.empty() && entity_name.find(filter) == -1) {
+            if (!filter.empty() && !str_find(entity_name, filter)) {
                 continue;
             }
             if (im::Selectable(entity_name.data(), entity_name == bound_camera)) {
@@ -71,7 +71,7 @@ void titian::GUISectionSceneInfo::main_ambient_info(Scene& scene)
             if (!entity.is<const AmbientLight>()) {
                 continue;
             }
-            if (!filter.empty() && entity_name.find(filter) == -1) {
+            if (!filter.empty() && !str_find(entity_name, filter)) {
                 continue;
             }
             if (im::Selectable(entity_name.data(), entity_name == bound_light)) {
@@ -96,7 +96,7 @@ void titian::GUISectionSceneInfo::main_directional_info(Scene& scene)
             if (!entity.is<const DirectionalLight>()) {
                 continue;
             }
-            if (!filter.empty() && entity_name.find(filter) == -1) {
+            if (!filter.empty() && !str_find(entity_name, filter)) {
                 continue;
             }
             if (im::Selectable(entity_name.data(), entity_name == bound_light)) {

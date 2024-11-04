@@ -207,7 +207,7 @@ void titian::GUISectionEntityProperties::edit_entity_animation(Scene& scene, Ent
             bound_animation = "/";
         }
         for (const auto& [name, animation] : scene.animations) {
-            if (!filter.empty() && name.find(filter) == -1) {
+            if (!filter.empty() && !str_find(name, filter)) {
                 continue;
             }
             if (im::Selectable(name.data(), name == bound_animation)) {
@@ -230,7 +230,7 @@ void titian::GUISectionEntityProperties::edit_entity_material(Scene& scene, Enti
             bound_material = "/";
         }
         for (auto& [material, _] : scene.materials) {
-            if (!filter.empty() && material.find(filter) == -1) {
+            if (!filter.empty() && !str_find(material, filter)) {
                 continue;
             }
             if (im::Selectable(material.data(), material == bound_material)) {

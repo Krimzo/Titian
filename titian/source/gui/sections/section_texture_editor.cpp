@@ -75,7 +75,7 @@ void titian::GUISectionTextureEditor::display_textures(Scene& scene)
     }
     const String filter = gui_input_continuous("Search###TextureEditor");
     for (const auto& [texture_name, texture] : scene.textures) {
-        if (!filter.empty() && texture_name.find(filter) == -1) {
+        if (!filter.empty() && !str_find(texture_name, filter)) {
             continue;
         }
 

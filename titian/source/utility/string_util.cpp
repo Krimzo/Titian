@@ -59,3 +59,9 @@ titian::String titian::trim(const StringView& source, str t)
 {
 	return ltrim(rtrim(source, t), t);
 }
+
+bool titian::str_find(const StringView& haystack, const StringView& needle)
+{
+	static constexpr auto test = [](char l, char r) { return std::tolower(l) == std::tolower(r); };
+	return std::search(haystack.begin(), haystack.end(), needle.begin(), needle.end(), test) != haystack.end();
+}

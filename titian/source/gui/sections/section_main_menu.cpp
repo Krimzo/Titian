@@ -140,7 +140,7 @@ void titian::GUISectionMainMenu::render_gui()
                 if (im::BeginMenu("Texture")) {
                     const String filter = gui_input_continuous("Search###MenuExportTexture");
                     for (auto& [name, texture] : scene.textures) {
-                        if (!filter.empty() && name.find(filter) == -1) {
+                        if (!filter.empty() && !str_find(name, filter)) {
                             continue;
                         }
                         if (im::MenuItem(name.data())) {
@@ -167,7 +167,7 @@ void titian::GUISectionMainMenu::render_gui()
                 if (im::BeginMenu("Script")) {
                     const String filter = gui_input_continuous("Search###MenuExportScript");
                     for (auto& [name, script] : scene.scripts) {
-                        if (!filter.empty() && name.find(filter) == -1) {
+                        if (!filter.empty() && !str_find(name, filter)) {
                             continue;
                         }
                         if (im::MenuItem(name.data())) {
@@ -211,7 +211,7 @@ void titian::GUISectionMainMenu::render_gui()
                 if (im::BeginMenu("Shader")) {
                     const String filter = gui_input_continuous("Search###MenuExportShader");
                     for (auto& [name, shader] : scene.shaders) {
-                        if (!filter.empty() && name.find(filter) == -1) {
+                        if (!filter.empty() && !str_find(name, filter)) {
                             continue;
                         }
                         if (im::MenuItem(name.data())) {

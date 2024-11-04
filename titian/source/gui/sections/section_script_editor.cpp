@@ -89,7 +89,7 @@ void titian::GUISectionScriptEditor::display_scripts(Scene& scene)
 
 	const String filter = gui_input_continuous("Search###ScriptEditor");
 	for (auto& [script_name, script] : scene.scripts) {
-		if (!filter.empty() && script_name.find(filter) == -1) {
+		if (!filter.empty() && !str_find(script_name, filter)) {
 			continue;
 		}
 

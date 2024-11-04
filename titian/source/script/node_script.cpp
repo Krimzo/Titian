@@ -566,35 +566,21 @@ titian::NodeScript::NodeScript()
 	on_collision_node->addOUT<void*>("target_entity")
 		->behaviour([this]() { return *reinterpret_cast<Entity**>(on_collision_node->user_data + 8); });
 
-	m_editor.rightClickPopUpContent([&](ne::BaseNode* node)
+	m_editor.rightClickPopUpContent([this](ne::BaseNode* node)
 	{
-		if (node) {
-			if (node == on_start_node ||
-				node == on_update_node ||
-				node == on_collision_node ||
-				node == on_ui_node) {
-				return;
-			}
-			if (im::Selectable("Destroy")) {
-				node->destroy();
-				im::CloseCurrentPopup();
-			}
+		if (!node) {
+			new_node_popup();
 			return;
 		}
-		const String filter = gui_input_continuous("Name###NewNode");
-		for (const auto& [tab_name, tab] : ui_node_generators) {
-			if (!filter.empty() && tab_name.find(filter) == -1)
-				continue;
-
-			if (im::BeginMenu(tab_name.data())) {
-				for (auto& [node_name, generator] : tab) {
-					if (im::Selectable(node_name.data())) {
-						m_editor.insertNode(m_editor.screen2grid(im::GetMousePos()), generator(this));
-						im::CloseCurrentPopup();
-					}
-				}
-				im::EndMenu();
-			}
+		if (node == on_start_node ||
+			node == on_update_node ||
+			node == on_collision_node ||
+			node == on_ui_node) {
+			return;
+		}
+		if (im::Selectable("Destroy")) {
+			node->destroy();
+			im::CloseCurrentPopup();
 		}
 	});
 	m_editor.setScroll({ 150.f, 450.f });
@@ -759,4 +745,35 @@ void titian::NodeScript::call_ui(Scene& scene)
 void titian::NodeScript::update_editor()
 {
 	m_editor.update();
+}
+
+void titian::NodeScript::new_node_popup()
+{
+	const String filter = gui_input_continuous("Name###NewNode");
+	if (filter.empty()) {
+		for (const auto& [tab_name, tab] : ui_node_generators) {
+			if (im::BeginMenu(tab_name.data())) {
+				for (const auto& [node_name, generator] : tab) {
+					if (im::Selectable(node_name.data())) {
+						m_editor.insertNode(m_editor.screen2grid(im::GetMousePos()), generator(this));
+						im::CloseCurrentPopup();
+					}
+				}
+				im::EndMenu();
+			}
+		}
+	}
+	else {
+		for (const auto& [_, tab] : ui_node_generators) {
+			for (const auto& [node_name, generator] : tab) {
+				if (!str_find(node_name, filter)) {
+					continue;
+				}
+				if (im::Selectable(node_name.data())) {
+					m_editor.insertNode(m_editor.screen2grid(im::GetMousePos()), generator(this));
+					im::CloseCurrentPopup();
+				}
+			}
+		}
+	}
 }

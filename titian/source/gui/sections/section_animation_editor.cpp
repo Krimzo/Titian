@@ -75,7 +75,7 @@ void titian::GUISectionAnimationEditor::display_animations(Scene& scene)
             if (im::BeginMenu("Mesh Animation")) {
                 const String filter = gui_input_continuous("Search###NewMeshAnimation");
                 for (const auto& [mesh_name, _] : scene.meshes) {
-                    if (!filter.empty() && mesh_name.find(filter) == -1) {
+                    if (!filter.empty() && !str_find(mesh_name, filter)) {
                         continue;
                     }
                     if (im::Selectable(mesh_name.data(), false)) {
@@ -93,7 +93,7 @@ void titian::GUISectionAnimationEditor::display_animations(Scene& scene)
 
     const String filter = gui_input_continuous("Search###AnimationEditor");
     for (auto& [animation_name, animation] : scene.animations) {
-        if (!filter.empty() && animation_name.find(filter) == -1) {
+        if (!filter.empty() && !str_find(animation_name, filter)) {
             continue;
         }
 

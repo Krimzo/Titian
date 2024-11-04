@@ -139,7 +139,7 @@ void titian::GUISectionMeshEditor::display_meshes(Scene& scene)
 
     const String filter = gui_input_continuous("Search###MeshEditor");
     for (auto& [mesh_name, mesh] : scene.meshes) {
-        if (!filter.empty() && mesh_name.find(filter) == -1) {
+        if (!filter.empty() && !str_find(mesh_name, filter)) {
             continue;
         }
 

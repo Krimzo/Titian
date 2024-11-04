@@ -67,7 +67,7 @@ void titian::GUISectionSceneEntities::render_gui()
 
 		const String filter = gui_input_continuous("Search###SceneEntities");
 		for (const auto& [entity_name, entity] : scene.entities()) {
-			if (!filter.empty() && entity_name.find(filter) == -1) {
+			if (!filter.empty() && !str_find(entity_name, filter)) {
 				continue;
 			}
 
@@ -86,7 +86,7 @@ void titian::GUISectionSceneEntities::render_gui()
 					}
 					else {
 						for (int find_counter = 0; const auto& [name, _] : scene.entities()) {
-							if (!filter.empty() && name.find(filter) == -1) {
+							if (!filter.empty() && !str_find(name, filter)) {
 								continue;
 							}
 							if (name == entity_name || name == *--editor_layer.selected_entities.end()) {
