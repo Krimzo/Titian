@@ -60,11 +60,11 @@ namespace titian {
         void update_ui();
 
         void add_entity(const String& id, const Ref<Entity>& entity);
-        void remove_entity(const StringView& id);
+        void remove_entity(const StringRef& id);
         inline const auto& entities() const { return m_entities; };
 
         template<typename T>
-        T* get_casted(const StringView& id)
+        T* get_casted(const StringRef& id)
         {
             return dynamic_cast<T*>(helper_get_entity(id));
         }
@@ -76,35 +76,35 @@ namespace titian {
         Shader& helper_new_shader(const String& id);
         Entity& helper_new_entity(const String& id);
 
-        Mesh* helper_get_mesh(const StringView& id) const;
-        Animation* helper_get_animation(const StringView& id) const;
-        Texture* helper_get_texture(const StringView& id) const;
-        Material* helper_get_material(const StringView& id) const;
-        Shader* helper_get_shader(const StringView& id) const;
-        Entity* helper_get_entity(const StringView& id) const;
+        Mesh* helper_get_mesh(const StringRef& id) const;
+        Animation* helper_get_animation(const StringRef& id) const;
+        Texture* helper_get_texture(const StringRef& id) const;
+        Material* helper_get_material(const StringRef& id) const;
+        Shader* helper_get_shader(const StringRef& id) const;
+        Entity* helper_get_entity(const StringRef& id) const;
 
-        void helper_remove_mesh(const StringView& id);
-        void helper_remove_animation(const StringView& id);
-        void helper_remove_texture(const StringView& id);
-        void helper_remove_material(const StringView& id);
-        void helper_remove_shader(const StringView& id);
-        void helper_remove_entity(const StringView& id);
+        void helper_remove_mesh(const StringRef& id);
+        void helper_remove_animation(const StringRef& id);
+        void helper_remove_texture(const StringRef& id);
+        void helper_remove_material(const StringRef& id);
+        void helper_remove_shader(const StringRef& id);
+        void helper_remove_entity(const StringRef& id);
 
-        bool helper_contains_mesh(const StringView& id) const;
-        bool helper_contains_animation(const StringView& id) const;
-        bool helper_contains_texture(const StringView& id) const;
-        bool helper_contains_material(const StringView& id) const;
-        bool helper_contains_shader(const StringView& id) const;
-        bool helper_contains_entity(const StringView& id) const;
+        bool helper_contains_mesh(const StringRef& id) const;
+        bool helper_contains_animation(const StringRef& id) const;
+        bool helper_contains_texture(const StringRef& id) const;
+        bool helper_contains_material(const StringRef& id) const;
+        bool helper_contains_shader(const StringRef& id) const;
+        bool helper_contains_entity(const StringRef& id) const;
 
-        void helper_iterate_meshes(const Function<void(const String&, Mesh*)>& func);
-        void helper_iterate_animations(const Function<void(const String&, Animation*)>& func);
-        void helper_iterate_textures(const Function<void(const String&, Texture*)>& func);
-        void helper_iterate_materials(const Function<void(const String&, Material*)>& func);
-        void helper_iterate_shaders(const Function<void(const String&, Shader*)>& func);
-        void helper_iterate_entities(const Function<void(const String&, Entity*)>& func);
+        void helper_iterate_meshes(const Func<void(const String&, Mesh*)>& func);
+        void helper_iterate_animations(const Func<void(const String&, Animation*)>& func);
+        void helper_iterate_textures(const Func<void(const String&, Texture*)>& func);
+        void helper_iterate_materials(const Func<void(const String&, Material*)>& func);
+        void helper_iterate_shaders(const Func<void(const String&, Shader*)>& func);
+        void helper_iterate_entities(const Func<void(const String&, Entity*)>& func);
 
-        Optional<AssimpData> get_assimp_data(const StringView& path) const;
+        Opt<AssimpData> get_assimp_data(const StringRef& path) const;
         void load_assimp_data(const AssimpData& data);
 
         Ref<Mesh> load_assimp_mesh(const aiScene& scene, const aiMesh& mesh);
@@ -113,7 +113,7 @@ namespace titian {
 		Ref<Material> load_assimp_material(const aiScene& scene, const aiMaterial& material);
 
         template<typename T>
-        static String generate_unique_name(const StringView& name, const StringMap<T>& map)
+        static String generate_unique_name(const StringRef& name, const StringMap<T>& map)
         {
             if (!map.contains(name))
                 return String{ name };

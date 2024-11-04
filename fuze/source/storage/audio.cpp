@@ -4,7 +4,7 @@
 titian::Audio::Audio()
 {}
 
-titian::Audio::Audio(const StringView& path)
+titian::Audio::Audio(const StringRef& path)
 {
 	out_audio.load_from_file(path);
 }

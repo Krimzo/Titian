@@ -163,7 +163,7 @@ void titian::VideoLayer::retrieve_frame(RAWImage& out_image) const
 	m_handler.out_frame.retrieve(out_image);
 }
 
-void titian::VideoLayer::load_file(const StringView& path)
+void titian::VideoLayer::load_file(const StringRef& path)
 {
 	static const StringSet image_extensions = { ".bmp", ".png", ".jpg", ".jpeg" };
 	static const StringSet audio_extensions = { ".wav", ".m4a", ".mp3" };
@@ -181,7 +181,7 @@ void titian::VideoLayer::load_file(const StringView& path)
 	}
 }
 
-void titian::VideoLayer::load_image(const StringView& path)
+void titian::VideoLayer::load_image(const StringRef& path)
 {
 	if (!selected_track) {
 		if (tracks.empty()) {
@@ -200,7 +200,7 @@ void titian::VideoLayer::load_image(const StringView& path)
 	selected_track->insert_media(current_time, media);
 }
 
-void titian::VideoLayer::load_audio(const StringView& path)
+void titian::VideoLayer::load_audio(const StringRef& path)
 {
 	if (!selected_track) {
 		if (tracks.empty()) {
@@ -217,7 +217,7 @@ void titian::VideoLayer::load_audio(const StringView& path)
 	selected_track->insert_media(current_time, media);
 }
 
-void titian::VideoLayer::load_video(const StringView& path)
+void titian::VideoLayer::load_video(const StringRef& path)
 {
 	if (!selected_track) {
 		if (tracks.empty()) {
@@ -363,7 +363,7 @@ media_loop_end:
 	tracks[next_track_index]->insert_media(media_offset, new_media);
 }
 
-titian::Optional<kl::VideoType> titian::VideoLayer::classify_video_format(const StringView& path)
+titian::Opt<kl::VideoType> titian::VideoLayer::classify_video_format(const StringRef& path)
 {
 	const String extension = fs::path(path).extension().string();
 	if (extension == ".mp4") {
@@ -372,7 +372,7 @@ titian::Optional<kl::VideoType> titian::VideoLayer::classify_video_format(const 
 	return std::nullopt;
 }
 
-titian::Optional<kl::AudioType> titian::VideoLayer::classify_audio_format(const StringView& path)
+titian::Opt<kl::AudioType> titian::VideoLayer::classify_audio_format(const StringRef& path)
 {
 	const String extension = fs::path(path).extension().string();
 	if (extension == ".wav") {

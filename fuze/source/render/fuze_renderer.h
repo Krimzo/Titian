@@ -10,7 +10,7 @@ namespace titian {
 		Vector<Ref<Track>> tracks;
 
 		FuzeRenderer(
-			const StringView& filepath,
+			const StringRef& filepath,
 			const kl::VideoType& video_type,
 			Int2 frame_size,
 			int fps,
@@ -18,7 +18,7 @@ namespace titian {
 			int audio_sample_rate);
 
 		FuzeRenderer(
-			const StringView& filepath,
+			const StringRef& filepath,
 			kl::AudioType audio_type,
 			int audio_sample_rate);
 

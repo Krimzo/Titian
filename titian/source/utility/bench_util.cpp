@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-titian::TimeBomb::TimeBomb(Function<void(float)> callback)
+titian::TimeBomb::TimeBomb(Func<void(float)> callback)
 	: m_callback(std::move(callback))
 	, m_start_time(kl::time::now())
 {}
@@ -11,7 +11,7 @@ titian::TimeBomb::~TimeBomb()
 	m_callback(kl::time::elapsed(m_start_time));
 }
 
-titian::BenchmarkInfo::BenchmarkInfo(const StringView& bench_name)
+titian::BenchmarkInfo::BenchmarkInfo(const StringRef& bench_name)
 	: bench_name(bench_name)
 {}
 

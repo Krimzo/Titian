@@ -17,7 +17,7 @@ titian::AppLayer::~AppLayer()
 	foundation.release();
 }
 
-void titian::AppLayer::set_name(const StringView& name)
+void titian::AppLayer::set_name(const StringRef& name)
 {
 	window.set_title(name);
 }

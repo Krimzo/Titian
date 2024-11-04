@@ -23,7 +23,7 @@ void titian::Mesh::serialize(Serializer& serializer) const
         counter += 1;
     }
 
-    Function<void(const SkeletonNode*)> rec_helper;
+    Func<void(const SkeletonNode*)> rec_helper;
     counter = 0;
     rec_helper = [&](const SkeletonNode* node)
     {
@@ -66,7 +66,7 @@ void titian::Mesh::deserialize(const Serializer& serializer)
         counter += 1;
     }
 
-    Function<void(SkeletonNode*)> rec_helper;
+    Func<void(SkeletonNode*)> rec_helper;
     counter = 0;
     rec_helper = [&](SkeletonNode* node)
     {
@@ -136,7 +136,7 @@ titian::Ref<titian::Mesh> titian::Mesh::clone() const
     mesh->vertices = vertices;
     mesh->bone_matrices = bone_matrices;
 
-    Function<void(const SkeletonNode*, SkeletonNode*)> rec_helper;
+    Func<void(const SkeletonNode*, SkeletonNode*)> rec_helper;
     rec_helper = [&](const SkeletonNode* source, SkeletonNode* target)
     {
         if (!source || !target)

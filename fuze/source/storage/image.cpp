@@ -4,7 +4,7 @@
 titian::Image::Image()
 {}
 
-titian::Image::Image(const StringView& path)
+titian::Image::Image(const StringRef& path)
 {
 	m_image.load_from_file(path);
 }

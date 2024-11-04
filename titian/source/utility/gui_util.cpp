@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-void titian::gui_colored_text(const StringView& message, const Float4& color)
+void titian::gui_colored_text(const StringRef& message, const Float4& color)
 {
     im::TextColored(reinterpret_cast<const ImVec4&>(color), message.data());
 }
@@ -14,7 +14,7 @@ titian::Pair<ImVec2, ImVec2> titian::gui_window_rect()
     return { win_content_min, win_content_max };
 }
 
-float titian::gui_calculate_item_with(const StringView& label)
+float titian::gui_calculate_item_with(const StringRef& label)
 {
     return im::CalcTextSize(label.data()).x;
 }
@@ -35,7 +35,7 @@ titian::String titian::gui_input_continuous(const String& id)
     return buffer;
 }
 
-titian::Optional<titian::String> titian::gui_input_waited(const String& id, const StringView& to_copy)
+titian::Opt<titian::String> titian::gui_input_waited(const String& id, const StringRef& to_copy)
 {
     auto& buffer = _INPUT_WAITED_DATA[id];
     buffer = to_copy;

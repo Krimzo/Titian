@@ -39,7 +39,7 @@ void titian::InterpScript::reload()
 	try {
 		m_engine->script(source);
 	}
-	catch (Exception& e) {
+	catch (Except& e) {
 		Logger::log(e.what());
 	}
 
@@ -356,7 +356,7 @@ void titian::InterpScript::load_engine_parts()
 	m_engine->new_usertype<kl::Image>(
 		"Image",
 		sl::constructors<kl::Image(),
-			kl::Image(Int2), kl::Image(StringView)>(),
+			kl::Image(Int2), kl::Image(StringRef)>(),
 		"pixel_count", &kl::Image::pixel_count,
 		"byte_size", &kl::Image::byte_size,
 		sl::meta_function::index, sl::overload(METHOD(kl::Image, RGB&, operator[], int),
@@ -730,7 +730,7 @@ void titian::InterpScript::load_engine_parts()
 	(*m_engine)["CAMERA_ORTHOGRAPHIC"] = (int) CameraType::ORTHOGRAPHIC;
 
 	(*m_engine)["log"] = sl::overload(
-		&Logger::log<const StringView&>,
+		&Logger::log<const StringRef&>,
 		&Logger::log<bool>,
 		&Logger::log<int>,
 		&Logger::log<Int2>,

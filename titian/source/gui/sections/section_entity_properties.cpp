@@ -32,7 +32,7 @@ void titian::GUISectionEntityProperties::render_gui()
     im::End();
 }
 
-void titian::GUISectionEntityProperties::display_entity_info(Scene& scene, const StringView& entity_name, Entity& entity)
+void titian::GUISectionEntityProperties::display_entity_info(Scene& scene, const StringRef& entity_name, Entity& entity)
 {
     GUILayer& gui_layer = GUILayer::get();
 

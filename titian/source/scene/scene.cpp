@@ -47,7 +47,7 @@ void titian::Scene::serialize(Serializer& serializer) const
     serializer.write_string("main_ambient_light_name", main_ambient_light_name);
     serializer.write_string("main_directional_light_name", main_directional_light_name);
 
-    const auto write_map = [&]<typename T>(const StringView& map_name, const StringMap<Ref<T>>& data)
+    const auto write_map = [&]<typename T>(const StringRef& map_name, const StringMap<Ref<T>>& data)
     {
         serializer.push_object(map_name);
         serializer.write_int("data_size", (int32_t) data.size());
@@ -77,7 +77,7 @@ void titian::Scene::deserialize(const Serializer& serializer)
     serializer.read_string("main_ambient_light_name", main_ambient_light_name);
     serializer.read_string("main_directional_light_name", main_directional_light_name);
 
-    const auto read_map = [&]<typename T>(const StringView& map_name, StringMap<Ref<T>>& data, const Function<T*()>& provider)
+    const auto read_map = [&]<typename T>(const StringRef& map_name, StringMap<Ref<T>>& data, const Func<T*()>& provider)
     {
         serializer.load_object(map_name);
         int32_t data_size = 0;
@@ -94,19 +94,19 @@ void titian::Scene::deserialize(const Serializer& serializer)
         serializer.unload_object();
     };
 
-    Function mesh_provider = [&] { return new Mesh(); };
+    Func mesh_provider = [&] { return new Mesh(); };
     read_map("meshes", meshes, mesh_provider);
 
-    Function animation_provider = [&] { return new Animation(); };
+    Func animation_provider = [&] { return new Animation(); };
     read_map("animations", animations, animation_provider);
 
-    Function texture_provider = [&] { return new Texture(); };
+    Func texture_provider = [&] { return new Texture(); };
     read_map("textures", textures, texture_provider);
 
-    Function material_provider = [&] { return new Material(); };
+    Func material_provider = [&] { return new Material(); };
     read_map("materials", materials, material_provider);
 
-    Function shader_provider = [&] { return new Shader(); };
+    Func shader_provider = [&] { return new Shader(); };
     read_map("shaders", shaders, shader_provider);
 
     {
@@ -237,7 +237,7 @@ void titian::Scene::add_entity(const String& id, const Ref<Entity>& entity)
     entity->wake_up();
 }
 
-void titian::Scene::remove_entity(const StringView& id)
+void titian::Scene::remove_entity(const StringRef& id)
 {
     const auto it = m_entities.find(id);
     if (it == m_entities.end())
@@ -289,7 +289,7 @@ titian::Entity& titian::Scene::helper_new_entity(const String& id)
     return *entity;
 }
 
-titian::Mesh* titian::Scene::helper_get_mesh(const StringView& id) const
+titian::Mesh* titian::Scene::helper_get_mesh(const StringRef& id) const
 {
     const auto it = meshes.find(id);
     if (it != meshes.end()) {
@@ -298,7 +298,7 @@ titian::Mesh* titian::Scene::helper_get_mesh(const StringView& id) const
     return nullptr;
 }
 
-titian::Animation* titian::Scene::helper_get_animation(const StringView& id) const
+titian::Animation* titian::Scene::helper_get_animation(const StringRef& id) const
 {
     const auto it = animations.find(id);
     if (it != animations.end()) {
@@ -307,7 +307,7 @@ titian::Animation* titian::Scene::helper_get_animation(const StringView& id) con
     return nullptr;
 }
 
-titian::Texture* titian::Scene::helper_get_texture(const StringView& id) const
+titian::Texture* titian::Scene::helper_get_texture(const StringRef& id) const
 {
     const auto it = textures.find(id);
     if (it != textures.end()) {
@@ -316,7 +316,7 @@ titian::Texture* titian::Scene::helper_get_texture(const StringView& id) const
     return nullptr;
 }
 
-titian::Material* titian::Scene::helper_get_material(const StringView& id) const
+titian::Material* titian::Scene::helper_get_material(const StringRef& id) const
 {
     const auto it = materials.find(id);
     if (it != materials.end()) {
@@ -325,7 +325,7 @@ titian::Material* titian::Scene::helper_get_material(const StringView& id) const
     return nullptr;
 }
 
-titian::Shader* titian::Scene::helper_get_shader(const StringView& id) const
+titian::Shader* titian::Scene::helper_get_shader(const StringRef& id) const
 {
     const auto it = shaders.find(id);
     if (it != shaders.end()) {
@@ -334,7 +334,7 @@ titian::Shader* titian::Scene::helper_get_shader(const StringView& id) const
     return nullptr;
 }
 
-titian::Entity* titian::Scene::helper_get_entity(const StringView& id) const
+titian::Entity* titian::Scene::helper_get_entity(const StringRef& id) const
 {
     const auto it = m_entities.find(id);
     if (it != m_entities.end()) {
@@ -343,7 +343,7 @@ titian::Entity* titian::Scene::helper_get_entity(const StringView& id) const
     return nullptr;
 }
 
-void titian::Scene::helper_remove_mesh(const StringView& id)
+void titian::Scene::helper_remove_mesh(const StringRef& id)
 {
     const auto it = meshes.find(id);
     if (it != meshes.end()) {
@@ -351,7 +351,7 @@ void titian::Scene::helper_remove_mesh(const StringView& id)
     }
 }
 
-void titian::Scene::helper_remove_animation(const StringView& id)
+void titian::Scene::helper_remove_animation(const StringRef& id)
 {
     const auto it = animations.find(id);
     if (it != animations.end()) {
@@ -359,7 +359,7 @@ void titian::Scene::helper_remove_animation(const StringView& id)
     }
 }
 
-void titian::Scene::helper_remove_texture(const StringView& id)
+void titian::Scene::helper_remove_texture(const StringRef& id)
 {
     const auto it = textures.find(id);
     if (it != textures.end()) {
@@ -367,7 +367,7 @@ void titian::Scene::helper_remove_texture(const StringView& id)
     }
 }
 
-void titian::Scene::helper_remove_material(const StringView& id)
+void titian::Scene::helper_remove_material(const StringRef& id)
 {
     const auto it = materials.find(id);
     if (it != materials.end()) {
@@ -375,7 +375,7 @@ void titian::Scene::helper_remove_material(const StringView& id)
     }
 }
 
-void titian::Scene::helper_remove_shader(const StringView& id)
+void titian::Scene::helper_remove_shader(const StringRef& id)
 {
     const auto it = shaders.find(id);
     if (it != shaders.end()) {
@@ -383,72 +383,72 @@ void titian::Scene::helper_remove_shader(const StringView& id)
     }
 }
 
-void titian::Scene::helper_remove_entity(const StringView& id)
+void titian::Scene::helper_remove_entity(const StringRef& id)
 {
     remove_entity(id);
 }
 
-bool titian::Scene::helper_contains_mesh(const StringView& id) const
+bool titian::Scene::helper_contains_mesh(const StringRef& id) const
 {
     return meshes.contains(id);
 }
 
-bool titian::Scene::helper_contains_animation(const StringView& id) const
+bool titian::Scene::helper_contains_animation(const StringRef& id) const
 {
     return animations.contains(id);
 }
 
-bool titian::Scene::helper_contains_texture(const StringView& id) const
+bool titian::Scene::helper_contains_texture(const StringRef& id) const
 {
     return textures.contains(id);
 }
 
-bool titian::Scene::helper_contains_material(const StringView& id) const
+bool titian::Scene::helper_contains_material(const StringRef& id) const
 {
     return materials.contains(id);
 }
 
-bool titian::Scene::helper_contains_shader(const StringView& id) const
+bool titian::Scene::helper_contains_shader(const StringRef& id) const
 {
     return shaders.contains(id);
 }
 
-bool titian::Scene::helper_contains_entity(const StringView& id) const
+bool titian::Scene::helper_contains_entity(const StringRef& id) const
 {
     return m_entities.contains(id);
 }
 
-void titian::Scene::helper_iterate_meshes(const Function<void(const String&, Mesh*)>& func)
+void titian::Scene::helper_iterate_meshes(const Func<void(const String&, Mesh*)>& func)
 {
     std::ranges::for_each(meshes, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
-void titian::Scene::helper_iterate_animations(const Function<void(const String&, Animation*)>& func)
+void titian::Scene::helper_iterate_animations(const Func<void(const String&, Animation*)>& func)
 {
     std::ranges::for_each(animations, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
-void titian::Scene::helper_iterate_textures(const Function<void(const String&, Texture*)>& func)
+void titian::Scene::helper_iterate_textures(const Func<void(const String&, Texture*)>& func)
 {
     std::ranges::for_each(textures, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
-void titian::Scene::helper_iterate_materials(const Function<void(const String&, Material*)>& func)
+void titian::Scene::helper_iterate_materials(const Func<void(const String&, Material*)>& func)
 {
     std::ranges::for_each(materials, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
-void titian::Scene::helper_iterate_shaders(const Function<void(const String&, Shader*)>& func)
+void titian::Scene::helper_iterate_shaders(const Func<void(const String&, Shader*)>& func)
 {
     std::ranges::for_each(shaders, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
-void titian::Scene::helper_iterate_entities(const Function<void(const String&, Entity*)>& func)
+void titian::Scene::helper_iterate_entities(const Func<void(const String&, Entity*)>& func)
 {
     std::ranges::for_each(m_entities, [&](auto& entry) { func(entry.first, &entry.second); });
 }
 
-titian::Optional<titian::AssimpData> titian::Scene::get_assimp_data(const StringView& path) const
+titian::Opt<titian::AssimpData> titian::Scene::get_assimp_data(const StringRef& path) const
 {
     Ref importer = new as::Importer();
     const aiScene* scene = importer->ReadFile(path,
@@ -562,7 +562,7 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh(const aiScene& scene, 
             }
         }
 
-        Function<Ref<SkeletonNode>(const aiNode*)> recur_helper;
+        Func<Ref<SkeletonNode>(const aiNode*)> recur_helper;
         recur_helper = [&](const aiNode* node)
         {
             Ref<SkeletonNode> skeleton_node = new SkeletonNode();
@@ -632,7 +632,7 @@ titian::Ref<titian::Animation> titian::Scene::load_assimp_animation(const aiScen
 		}
 	}
 
-    Function<Ref<AnimationNode>(const aiNode*)> recur_helper;
+    Func<Ref<AnimationNode>(const aiNode*)> recur_helper;
     recur_helper = [&](const aiNode* node)
     {
         Ref<AnimationNode> animation_node = new AnimationNode();

@@ -14,7 +14,7 @@ namespace titian {
         void render_gui() override;
 
     private:
-        Optional<Int2> m_rect_selection_first;
+        Opt<Int2> m_rect_selection_first;
         Float3 m_last_scaling{ 1.0f };
         bool m_was_using = false;
 
@@ -22,7 +22,7 @@ namespace titian {
         Float2 window_to_ndc(Int2 coords) const;
 
         Set<uint32_t> read_id_texture(Int2 first_coords, Int2 second_coords);
-        Optional<Float3> read_depth_texture(Int2 coords);
+        Opt<Float3> read_depth_texture(Int2 coords);
 
         void render_gizmos(const Set<Entity*>& entities);
 	};

@@ -155,7 +155,8 @@ void titian::GUISectionExplorer::handle_file_entry(const fs::path& file)
     const float icon_size = m_icon_size * GUILayer::get().dpi_scaling;
     const float text_height = im::CalcTextSize(path.data()).y;
 
-    if (im::BeginChild(path.data(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
+    const ImVec2 child_size = { icon_size + padding * 2, icon_size + text_height + padding * 4.0f };
+    if (im::BeginChild(path.data(), child_size, ImGuiChildFlags_Borders, ImGuiWindowFlags_NoScrollbar)) {
         const ImVec2 cursor_pos = im::GetCursorPos();
         if (im::ImageButton(path.data(), icon.get(), { icon_size, icon_size })) {
             ShellExecuteA(nullptr, nullptr, path.data(), nullptr, nullptr, 5);
@@ -211,10 +212,11 @@ void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, con
     const float icon_size = m_icon_size * GUILayer::get().dpi_scaling;
     const float text_height = im::CalcTextSize(path.data()).y;
 
-    if (im::BeginChild(path.data(), { icon_size + padding * 2, icon_size + text_height + padding * 4.0f }, true, ImGuiWindowFlags_NoScrollbar)) {
+    const ImVec2 child_size = { icon_size + padding * 2, icon_size + text_height + padding * 4.0f };
+    if (im::BeginChild(path.data(), child_size, ImGuiChildFlags_Borders, ImGuiWindowFlags_NoScrollbar)) {
         const ImVec2 cursor_pos = im::GetCursorPos();
         if (im::ImageButton(path.data(), icon.get(), { icon_size, icon_size })) {
-            this->m_path = path;
+            m_path = path;
         }
 
         if (auto dragged_path = gui_get_drag_drop<String>(DRAG_FILE_ID)) {
@@ -260,7 +262,7 @@ void titian::GUISectionExplorer::handle_directory_entry(const fs::path& dir, con
     }
 }
 
-void titian::GUISectionExplorer::handle_item_transfer(const StringView& item, const StringView& destination)
+void titian::GUISectionExplorer::handle_item_transfer(const StringRef& item, const StringRef& destination)
 {
 	const auto item_absolute = fs::absolute(item);
 	const auto destination_absolute = fs::absolute(destination);

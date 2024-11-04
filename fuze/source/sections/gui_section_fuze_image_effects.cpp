@@ -7,7 +7,7 @@ titian::GUISectionFuzeImageEffects::GUISectionFuzeImageEffects()
 
 void titian::GUISectionFuzeImageEffects::render_gui()
 {
-	static const Vector<Pair<String, Function<Ref<ImageEffect>()>>> image_effects = {
+	static const Vector<Pair<String, Func<Ref<ImageEffect>()>>> image_effects = {
 		{ "Scale, Rotation, Position", [] { return new ImageEffectSclRotPos(); } },
 	};
 

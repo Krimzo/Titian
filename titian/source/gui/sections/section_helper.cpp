@@ -55,7 +55,7 @@ void titian::GUISectionHelper::render_gui()
     im::End();
 }
 
-void titian::GUISectionHelper::handle_basic_entry(const StringView& name) const
+void titian::GUISectionHelper::handle_basic_entry(const StringRef& name) const
 {
     constexpr float padding = 5.0f;
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });
@@ -77,7 +77,7 @@ void titian::GUISectionHelper::handle_basic_entry(const StringView& name) const
     im::PopStyleVar(2);
 }
 
-void titian::GUISectionHelper::handle_animation_entry(const StringView& name) const
+void titian::GUISectionHelper::handle_animation_entry(const StringRef& name) const
 {
     constexpr float padding = 5.0f;
     im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f, 0.0f });

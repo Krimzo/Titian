@@ -68,11 +68,11 @@ titian::RGB titian::TracingScene::CameraData::sample_background(const Float3& di
 	return background;
 }
 
-titian::Optional<titian::TracingScene::TracePayload> titian::TracingScene::trace(const kl::Ray& ray, const kl::Triangle* blacklist) const
+titian::Opt<titian::TracingScene::TracePayload> titian::TracingScene::trace(const kl::Ray& ray, const kl::Triangle* blacklist) const
 {
 	Float3 intersection;
 	float min_distance = std::numeric_limits<float>::infinity();
-	Optional<TracingScene::TracePayload> result;
+	Opt<TracingScene::TracePayload> result;
 	for (const auto& entity : entities) {
 		if (!ray.intersect_aabb(entity->mesh.aabb, &intersection))
 			continue;
@@ -190,7 +190,7 @@ titian::RGB titian::Tracing::render_ray(const TracingScene& tracing_scene, const
 	if (depth > MAX_DEPTH)
 		return tracing_scene.camera_data->sample_background(ray.direction());
 
-	Optional<TracingScene::TracePayload> payload = tracing_scene.trace(ray, blacklist);
+	Opt<TracingScene::TracePayload> payload = tracing_scene.trace(ray, blacklist);
 	if (!payload)
 		return tracing_scene.camera_data->sample_background(ray.direction());
 
@@ -378,12 +378,12 @@ titian::TracingMaterial titian::Tracing::convert_material(const Scene& scene, co
 	return result;
 }
 
-titian::Optional<titian::TracingTextureCube> titian::Tracing::convert_texture_cube(const Texture* texture)
+titian::Opt<titian::TracingTextureCube> titian::Tracing::convert_texture_cube(const Texture* texture)
 {
 	if (!texture)
 		return std::nullopt;
 
-	Optional<TracingTextureCube> result = TracingTextureCube{};
+	Opt<TracingTextureCube> result = TracingTextureCube{};
 	const kl::Image& image = texture->image;
 	if (texture->is_cube() && image.width() % 4 == 0 && image.height() % 3 == 0) {
 		result->load_cube(image);

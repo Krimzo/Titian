@@ -23,7 +23,7 @@ int titian::packager_entry(int argc, str* argv, bool pack)
 	return result ? 0 : 1;
 }
 
-titian::StringSet titian::list_files(const StringView& input)
+titian::StringSet titian::list_files(const StringRef& input)
 {
 	if (!fs::is_directory(input)) {
 		return { String{ input } };
@@ -38,7 +38,7 @@ titian::StringSet titian::list_files(const StringView& input)
 	return found_files;
 }
 
-bool titian::create_package(const StringView& input, const StringView& output_file)
+bool titian::create_package(const StringRef& input, const StringRef& output_file)
 {
 	if (!fs::exists(input)) {
 		Logger::log("Create package error. ", input, " doesn't exists.");
@@ -65,7 +65,7 @@ bool titian::create_package(const StringView& input, const StringView& output_fi
 	return true;
 }
 
-bool titian::open_package(const StringView& input_file, const StringView& output_dir)
+bool titian::open_package(const StringRef& input_file, const StringRef& output_dir)
 {
 	const BinarySerializer serializer{ input_file, false };
 	if (!serializer) {

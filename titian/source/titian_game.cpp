@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-titian::TitianGame::TitianGame(const StringView& entry_scene)
+titian::TitianGame::TitianGame(const StringRef& entry_scene)
     : app_layer(AppLayer::get())
     , game_layer(GameLayer::get())
     , render_layer(RenderLayer::get())

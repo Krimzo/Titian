@@ -55,7 +55,7 @@ void titian::GUISectionScriptingParameters::render_gui()
 	im::PopFont();
 }
 
-void titian::GUISectionScriptingParameters::display_interp_parameter_editor(const int script_id, const StringView& name, InterpScript::Parameter& parameter)
+void titian::GUISectionScriptingParameters::display_interp_parameter_editor(const int script_id, const StringRef& name, InterpScript::Parameter& parameter)
 {
 	const String identifier = kl::format(name, "##", script_id);
 	if (parameter.is<bool>()) {
@@ -129,7 +129,7 @@ void titian::GUISectionScriptingParameters::display_interp_parameter_editor(cons
 	}
 }
 
-void titian::GUISectionScriptingParameters::display_node_parameter_editor(const int script_id, const StringView& name, const std::type_info& type, void* ptr)
+void titian::GUISectionScriptingParameters::display_node_parameter_editor(const int script_id, const StringRef& name, const std::type_info& type, void* ptr)
 {
 	if (!ptr) {
 		return;

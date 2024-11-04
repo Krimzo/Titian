@@ -12,11 +12,11 @@ void titian::GUISectionBenchInfo::render_gui()
 
     kl::Timer& timer = editor.app_layer.timer;
 
-    static constexpr auto display_float = [](const StringView& name, float value)
+    static constexpr auto display_float = [](const StringRef& name, float value)
     {
         im::DragFloat(name.data(), &value, 0.0f);
     };
-    static constexpr auto display_int = [](const StringView& name, int value)
+    static constexpr auto display_int = [](const StringRef& name, int value)
     {
         im::DragInt(name.data(), &value, 0.0f);
     };

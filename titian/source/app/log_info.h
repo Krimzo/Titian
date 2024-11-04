@@ -10,7 +10,7 @@ namespace titian {
         String message;
 
         LogInfo();
-        LogInfo(const StringView& message);
+        LogInfo(const StringRef& message);
 
         template<typename... Args>
         LogInfo(const Args&... objects)

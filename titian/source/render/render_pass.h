@@ -18,7 +18,7 @@ namespace titian {
 namespace titian {
 	struct RenderPass : kl::NoCopy, BenchmarkInfo
 	{
-		RenderPass(const StringView& name);
+		RenderPass(const StringRef& name);
 		virtual ~RenderPass() = default;
 
 		void process(Camera* camera);

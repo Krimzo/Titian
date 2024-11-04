@@ -38,10 +38,10 @@ namespace titian {
 	using YUV = kl::YUV;
 
 	using String = std::string;
-	using StringView = std::string_view;
+	using StringRef = std::string_view;
 	using StringStream = std::stringstream;
 
-	using Exception = std::exception;
+	using Except = std::exception;
 	using Error = std::error_code;
 
 	using Any = std::any;
@@ -50,10 +50,10 @@ namespace titian {
 	using Ref = kl::Ref<T>;
 
 	template<typename T>
-	using Optional = std::optional<T>;
+	using Opt = std::optional<T>;
 
 	template<typename T>
-	using Function = std::function<T>;
+	using Func = std::function<T>;
 
 	template<typename F, typename S>
 	using Pair = std::pair<F, S>;

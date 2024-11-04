@@ -28,7 +28,7 @@ namespace titian {
             ImVec2 mouse_offset = {};
         };
 
-        Optional<MovingMediaInfo> m_moving_media;
+        Opt<MovingMediaInfo> m_moving_media;
 
         bool m_editing_track = false;
         bool m_editing_media = false;

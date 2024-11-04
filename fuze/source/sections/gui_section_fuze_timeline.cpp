@@ -205,7 +205,7 @@ void titian::GUISectionFuzeTimeline::render_header(const ImVec2 cell_padding, co
 
 		float height;
 		ImColor color;
-		Optional<String> text;
+		Opt<String> text;
 		if (video_layer.timeline_minutes && i % 60 == 0) {
 			height = 1.0f;
 			color = { 210, 130, 130 };

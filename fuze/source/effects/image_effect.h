@@ -12,7 +12,7 @@ namespace titian {
 		kl::ComputeShader compute_shader;
 		Float4x4 custom_data;
 
-		ImageEffect(const StringView& source);
+		ImageEffect(const StringRef& source);
 		virtual ~ImageEffect() = default;
 
 		virtual void apply(const EffectPackage& package, Frame& frame) final;

@@ -7,7 +7,7 @@ titian::GUISectionFuzeAudioEffects::GUISectionFuzeAudioEffects()
 
 void titian::GUISectionFuzeAudioEffects::render_gui()
 {
-	static const Vector<Pair<String, Function<Ref<AudioEffect>()>>> audio_effects = {
+	static const Vector<Pair<String, Func<Ref<AudioEffect>()>>> audio_effects = {
 		{ "Volume", [] { return new AudioEffectVolume(); } },
 	};
 

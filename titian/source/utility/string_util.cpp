@@ -41,26 +41,26 @@ titian::String titian::format_path(const fs::path& path)
 	return "[" + fs::absolute(path).string() + "]";
 }
 
-titian::String titian::ltrim(const StringView& source, str t)
+titian::String titian::ltrim(const StringRef& source, str t)
 {
 	String data{ source };
 	data.erase(0, data.find_first_not_of(t));
 	return data;
 }
 
-titian::String titian::rtrim(const StringView& source, str t)
+titian::String titian::rtrim(const StringRef& source, str t)
 {
 	String data{ source };
 	data.erase(data.find_last_not_of(t) + 1);
 	return data;
 }
 
-titian::String titian::trim(const StringView& source, str t)
+titian::String titian::trim(const StringRef& source, str t)
 {
 	return ltrim(rtrim(source, t), t);
 }
 
-bool titian::str_find(const StringView& haystack, const StringView& needle)
+bool titian::str_find(const StringRef& haystack, const StringRef& needle)
 {
 	static constexpr auto test = [](char l, char r) { return std::tolower(l) == std::tolower(r); };
 	return std::search(haystack.begin(), haystack.end(), needle.begin(), needle.end(), test) != haystack.end();

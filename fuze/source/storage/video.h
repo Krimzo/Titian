@@ -12,7 +12,7 @@ namespace titian {
 		Int2 cache_scale;
 		RAWImage out_frame;
 
-		Video(const StringView& path);
+		Video(const StringRef& path);
 		~Video();
 
 		float duration() const;

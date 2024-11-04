@@ -55,7 +55,7 @@ namespace titian {
 			Float4x4 inv_mat;
 			bool wireframe = false;
 			Float4 background;
-			Optional<TracingTextureCube> skybox;
+			Opt<TracingTextureCube> skybox;
 
 			RGB sample_background(const Float3& direction) const;
 		};
@@ -79,11 +79,11 @@ namespace titian {
 		};
 
 		Vector<Ref<TracingEntity>> entities;
-		Optional<CameraData> camera_data;
-		Optional<AmbientData> ambient_data;
-		Optional<DirectionalData> directional_data;
+		Opt<CameraData> camera_data;
+		Opt<AmbientData> ambient_data;
+		Opt<DirectionalData> directional_data;
 
-		Optional<TracePayload> trace(const kl::Ray& ray, const kl::Triangle* blacklist) const;
+		Opt<TracePayload> trace(const kl::Ray& ray, const kl::Triangle* blacklist) const;
 	};
 }
 
@@ -110,7 +110,7 @@ namespace titian {
 		static kl::Vertex convert_skel_vertex(const Vertex& vertex, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices);
 
 		static TracingMaterial convert_material(const Scene& scene, const Material& material);
-		static Optional<TracingTextureCube> convert_texture_cube(const Texture* texture);
+		static Opt<TracingTextureCube> convert_texture_cube(const Texture* texture);
 
 		static void handle_input(kl::Window& window, kl::Image& target);
 	};

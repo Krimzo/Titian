@@ -11,9 +11,9 @@ namespace titian {
 	String format_byte_size(uint64_t byte_size);
 	String format_path(const fs::path& path);
 
-	String ltrim(const StringView& source, str t = " \t\n\r\f\v");
-	String rtrim(const StringView& source, str t = " \t\n\r\f\v");
-	String trim(const StringView& source, str t = " \t\n\r\f\v");
+	String ltrim(const StringRef& source, str t = " \t\n\r\f\v");
+	String rtrim(const StringRef& source, str t = " \t\n\r\f\v");
+	String trim(const StringRef& source, str t = " \t\n\r\f\v");
 
-	bool str_find(const StringView& haystack, const StringView& needle);
+	bool str_find(const StringRef& haystack, const StringRef& needle);
 }

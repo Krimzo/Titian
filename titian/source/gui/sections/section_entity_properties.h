@@ -16,7 +16,7 @@ namespace titian {
         void render_gui() override;
 
     private:
-        void display_entity_info(Scene& scene, const StringView& entity_name, Entity& entity);
+        void display_entity_info(Scene& scene, const StringRef& entity_name, Entity& entity);
         void display_camera_special_info(Scene& scene, Camera& camera);
         void display_ambient_light_special_info(Scene& scene, AmbientLight& light);
         void display_directional_light_special_info(Scene& scene, DirectionalLight& light);

@@ -7,7 +7,7 @@
 namespace titian {
 	struct GUISection : kl::NoCopy, BenchmarkInfo
 	{
-		GUISection(const StringView& name);
+		GUISection(const StringRef& name);
 		virtual ~GUISection() = default;
 
 		virtual void render_gui() = 0;

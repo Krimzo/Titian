@@ -20,7 +20,7 @@ namespace titian {
 		AppLayer();
 		~AppLayer() override;
 
-		void set_name(const StringView& name);
+		void set_name(const StringRef& name);
 		bool update() override;
 
 	private:

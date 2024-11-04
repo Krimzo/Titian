@@ -1,7 +1,7 @@
 #include "fuze.h"
 
 
-titian::ImageEffect::ImageEffect(const StringView& source)
+titian::ImageEffect::ImageEffect(const StringRef& source)
 {
 	for (auto& value : custom_data.data) {
 		value = 0.0f;

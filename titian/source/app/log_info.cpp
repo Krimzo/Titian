@@ -4,6 +4,6 @@
 titian::LogInfo::LogInfo()
 {}
 
-titian::LogInfo::LogInfo(const StringView& message)
+titian::LogInfo::LogInfo(const StringRef& message)
     : message(message)
 {}

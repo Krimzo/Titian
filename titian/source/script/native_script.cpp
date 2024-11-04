@@ -1,9 +1,6 @@
 #include "titian.h"
 
 
-titian::NativeScript::NativeScript()
-{}
-
 void titian::NativeScript::serialize(Serializer& serializer) const
 {
 	Script::serialize(serializer);
@@ -22,17 +19,17 @@ void titian::NativeScript::deserialize(const Serializer& serializer)
 	data.resize(data_size);
 	serializer.read_byte_array("data", data.data(), data_size);
 
-	this->reload();
+	reload();
 }
 
 bool titian::NativeScript::is_valid() const
 {
-	return m_memory_module && m_start_function && m_update_function;
+	return (bool) m_memory_module;
 }
 
 void titian::NativeScript::reload()
 {
-	this->unload();
+	unload();
 
 	m_memory_module = MemoryLoadLibrary(data.data(), data.size());
 	m_start_function = read_function<void, Scene&>("on_start");
@@ -71,10 +68,14 @@ void titian::NativeScript::call_ui(Scene& scene)
 
 void titian::NativeScript::unload()
 {
-	m_start_function = nullptr;
+	m_ui_function = nullptr;
+	m_collision_function = nullptr;
 	m_update_function = nullptr;
-	if (m_memory_module) {
-		MemoryFreeLibrary(m_memory_module);
-		m_memory_module = nullptr;
-	}
+	m_start_function = nullptr;
+
+	if (!m_memory_module)
+		return;
+	
+	MemoryFreeLibrary(m_memory_module);
+	m_memory_module = nullptr;
 }

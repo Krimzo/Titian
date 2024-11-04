@@ -19,7 +19,7 @@ namespace titian {
     private:
         float m_icon_size = 65.0f;
 
-        void handle_basic_entry(const StringView& name) const;
-        void handle_animation_entry(const StringView& name) const;
+        void handle_basic_entry(const StringRef& name) const;
+        void handle_animation_entry(const StringRef& name) const;
     };
 }

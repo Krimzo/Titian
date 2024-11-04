@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-titian::Layer::Layer(const StringView& name)
+titian::Layer::Layer(const StringRef& name)
 	: BenchmarkInfo(name)
 {
 	static StringSet names;
@@ -12,5 +12,5 @@ titian::Layer::Layer(const StringView& name)
 
 void titian::Layer::panic() const
 {
-	kl::assert(false, "Layer 0x", std::hex, (size_t) this, " panicked");
+	kl::assert(false, "Layer 0x", std::hex, size_t(this), " panicked");
 }

@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-titian::TextSerializer::TextSerializer(const StringView& path, const bool write)
+titian::TextSerializer::TextSerializer(const StringRef& path, const bool write)
 	: m_path(path), m_writing(write)
 {
 	if (write) {
@@ -42,7 +42,7 @@ titian::TextSerializer::operator bool() const
 	return m_is_valid;
 }
 
-void titian::TextSerializer::push_object(const StringView& name)
+void titian::TextSerializer::push_object(const StringRef& name)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	const auto& [_, val] = *current().emplace(name, new js::Object()).first;
@@ -55,7 +55,7 @@ void titian::TextSerializer::pop_object()
 		m_stack.pop_back();
 }
 
-void titian::TextSerializer::load_object(const StringView& name) const
+void titian::TextSerializer::load_object(const StringRef& name) const
 {
 	const auto& [_, val] = *current().find(name);
 	m_stack.push_back(val.as<js::Object>());
@@ -67,13 +67,13 @@ void titian::TextSerializer::unload_object() const
 		m_stack.pop_back();
 }
 
-void titian::TextSerializer::write_bool(const StringView& name, const bool value)
+void titian::TextSerializer::write_bool(const StringRef& name, const bool value)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	current().emplace(name, js::make_bool(value));
 }
 
-void titian::TextSerializer::read_bool(const StringView& name, bool& value) const
+void titian::TextSerializer::read_bool(const StringRef& name, bool& value) const
 {
 	auto it = current().find(name);
 	if (it != current().end()) {
@@ -81,13 +81,13 @@ void titian::TextSerializer::read_bool(const StringView& name, bool& value) cons
 	}
 }
 
-void titian::TextSerializer::write_int(const StringView& name, const int32_t value)
+void titian::TextSerializer::write_int(const StringRef& name, const int32_t value)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	current().emplace(name, js::make_number(value));
 }
 
-void titian::TextSerializer::read_int(const StringView& name, int32_t& value) const
+void titian::TextSerializer::read_int(const StringRef& name, int32_t& value) const
 {
 	auto it = current().find(name);
 	if (it != current().end()) {
@@ -95,13 +95,13 @@ void titian::TextSerializer::read_int(const StringView& name, int32_t& value) co
 	}
 }
 
-void titian::TextSerializer::write_float(const StringView& name, const float value)
+void titian::TextSerializer::write_float(const StringRef& name, const float value)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	current().emplace(name, js::make_number(value));
 }
 
-void titian::TextSerializer::read_float(const StringView& name, float& value) const
+void titian::TextSerializer::read_float(const StringRef& name, float& value) const
 {
 	auto it = current().find(name);
 	if (it != current().end()) {
@@ -109,7 +109,7 @@ void titian::TextSerializer::read_float(const StringView& name, float& value) co
 	}
 }
 
-void titian::TextSerializer::write_byte_array(const StringView& name, const void* data, const int32_t count)
+void titian::TextSerializer::write_byte_array(const StringRef& name, const void* data, const int32_t count)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	const byte* ptr = (const byte*) data;
@@ -120,7 +120,7 @@ void titian::TextSerializer::write_byte_array(const StringView& name, const void
 	current().emplace(name, std::move(result));
 }
 
-void titian::TextSerializer::read_byte_array(const StringView& name, void* data, const int32_t count) const
+void titian::TextSerializer::read_byte_array(const StringRef& name, void* data, const int32_t count) const
 {
 	auto it = current().find(name);
 	if (it == current().end())
@@ -135,7 +135,7 @@ void titian::TextSerializer::read_byte_array(const StringView& name, void* data,
 	}
 }
 
-void titian::TextSerializer::write_int_array(const StringView& name, const int32_t* data, int32_t count)
+void titian::TextSerializer::write_int_array(const StringRef& name, const int32_t* data, int32_t count)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	Ref result = new js::Array();
@@ -145,7 +145,7 @@ void titian::TextSerializer::write_int_array(const StringView& name, const int32
 	current().emplace(name, std::move(result));
 }
 
-void titian::TextSerializer::read_int_array(const StringView& name, int32_t* data, int32_t count) const
+void titian::TextSerializer::read_int_array(const StringRef& name, int32_t* data, int32_t count) const
 {
 	auto it = current().find(name);
 	if (it == current().end())
@@ -159,7 +159,7 @@ void titian::TextSerializer::read_int_array(const StringView& name, int32_t* dat
 	}
 }
 
-void titian::TextSerializer::write_float_array(const StringView& name, const float* data, int32_t count)
+void titian::TextSerializer::write_float_array(const StringRef& name, const float* data, int32_t count)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	Ref result = new js::Array();
@@ -169,7 +169,7 @@ void titian::TextSerializer::write_float_array(const StringView& name, const flo
 	current().emplace(name, std::move(result));
 }
 
-void titian::TextSerializer::read_float_array(const StringView& name, float* data, int32_t count) const
+void titian::TextSerializer::read_float_array(const StringRef& name, float* data, int32_t count) const
 {
 	auto it = current().find(name);
 	if (it == current().end())
@@ -183,13 +183,13 @@ void titian::TextSerializer::read_float_array(const StringView& name, float* dat
 	}
 }
 
-void titian::TextSerializer::write_string(const StringView& name, const StringView& value)
+void titian::TextSerializer::write_string(const StringRef& name, const StringRef& value)
 {
 	kl::assert(!current().contains(name), "TextSerialzer object already contains key ", name);
 	current().emplace(name, js::make_string(value));
 }
 
-void titian::TextSerializer::read_string(const StringView& name, String& value) const
+void titian::TextSerializer::read_string(const StringRef& name, String& value) const
 {
 	auto it = current().find(name);
 	if (it != current().end()) {

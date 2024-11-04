@@ -32,7 +32,7 @@ namespace titian {
 		bool game_paused() const;
 
 	private:
-		Optional<Scene> m_scene;
+		Opt<Scene> m_scene;
 		GameState m_game_state = GameState::STOPPED;
 	};
 }

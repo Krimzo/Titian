@@ -17,7 +17,7 @@ namespace titian {
 		void panic() const;
 
 	private:
-		Layer(const StringView& name);
+		Layer(const StringRef& name);
 	};
 }
 
@@ -25,7 +25,7 @@ namespace titian {
 	template<typename T>
 	struct Layer_T : Layer
 	{
-		inline Layer_T(const StringView& name)
+		inline Layer_T(const StringRef& name)
 			: Layer(name)
 		{}
 

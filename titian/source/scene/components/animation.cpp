@@ -69,7 +69,7 @@ void titian::Animation::serialize(Serializer& serializer) const
 		counter += 1;
 	}
 
-	Function<void(const AnimationNode&)> rec_helper;
+	Func<void(const AnimationNode&)> rec_helper;
 	counter = 0;
 	rec_helper = [&](const AnimationNode& node)
 	{
@@ -148,7 +148,7 @@ void titian::Animation::deserialize(const Serializer& serializer)
 		counter += 1;
 	}
 
-	Function<void(AnimationNode&)> rec_helper;
+	Func<void(AnimationNode&)> rec_helper;
 	counter = 0;
 	rec_helper = [&](AnimationNode& node)
 	{
@@ -228,7 +228,7 @@ titian::Ref<titian::Animation> titian::Animation::clone() const
 	animation->meshes = meshes;
 	animation->channels = channels;
 
-	Function<void(const AnimationNode*, AnimationNode*)> rec_helper;
+	Func<void(const AnimationNode*, AnimationNode*)> rec_helper;
 	rec_helper = [&](const AnimationNode* source, AnimationNode* target)
 	{
 		if (!source || !target)

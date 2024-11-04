@@ -275,7 +275,7 @@ void titian::GUISectionMainMenu::render_gui()
             im::EndMenu();
         }
 
-        static Optional<AssimpData> opt_assimp_data;
+        static Opt<AssimpData> opt_assimp_data;
         if (im::BeginMenu("Tools")) {
             im::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2.0f, 2.0f));
             if (im::MenuItem("Quick Setup")) {

@@ -24,12 +24,12 @@ namespace titian {
 
 namespace titian {
 	template<typename T>
-	static constexpr Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>> serial_generator_helper()
+	static constexpr Pair<String, Func<std::shared_ptr<Node>(NodeScript*)>> serial_generator_helper()
 	{
 		return { typeid(T).name(), [=](NodeScript* script) { return std::shared_ptr<T>(new T(script, {})); } };
 	}
 
-	static const Vector<Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>>> serial_node_generators
+	static const Vector<Pair<String, Func<std::shared_ptr<Node>(NodeScript*)>>> serial_node_generators
 	{
 		serial_generator_helper<Node>(),
 		serial_generator_helper<FlowNode>(),
@@ -246,12 +246,12 @@ namespace titian {
 
 namespace titian {
 	template<typename T, typename... Args>
-	static constexpr Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>> ui_generator_helper(str name)
+	static constexpr Pair<String, Func<std::shared_ptr<Node>(NodeScript*)>> ui_generator_helper(str name)
 	{
 		return { name, [=](NodeScript* script) { return std::shared_ptr<T>(new T(script, name)); } };
 	}
 
-	static const Vector<Pair<String, Vector<Pair<String, Function<std::shared_ptr<Node>(NodeScript*)>>>>> ui_node_generators = {
+	static const Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>(NodeScript*)>>>>> ui_node_generators = {
 		{ "Pointer",
 		{
 		ui_generator_helper<VariableNode<void*>>("Variable Pointer"),

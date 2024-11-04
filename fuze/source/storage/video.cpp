@@ -1,7 +1,7 @@
 #include "fuze.h"
 
 
-titian::Video::Video(const StringView& path)
+titian::Video::Video(const StringRef& path)
 	: m_path(path)
 {
 	kl::VideoReader temp_reader(path, {}, false);

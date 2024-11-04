@@ -6,14 +6,16 @@
 
 
 namespace titian {
+	template<typename Return, typename... Args>
+	using NativeFunc = Return(__stdcall*)(Args...);
+}
+
+namespace titian {
 	struct NativeScript : Script
 	{
-		template<typename Return, typename... Args>
-		using Function = Return(__stdcall*)(Args...);
-
 		String data;
 
-		NativeScript();
+		NativeScript() = default;
 
 		void serialize(Serializer& serializer) const override;
 		void deserialize(const Serializer& serializer) override;
@@ -28,21 +30,20 @@ namespace titian {
 
 	private:
 		void* m_memory_module = nullptr;
-		Function<void, Scene&> m_start_function = nullptr;
-		Function<void, Scene&> m_update_function = nullptr;
-		Function<void, Scene&, Entity&, Entity&> m_collision_function = nullptr;
-		Function<void, Scene&> m_ui_function = nullptr;
+		NativeFunc<void, Scene&> m_start_function = nullptr;
+		NativeFunc<void, Scene&> m_update_function = nullptr;
+		NativeFunc<void, Scene&, Entity&, Entity&> m_collision_function = nullptr;
+		NativeFunc<void, Scene&> m_ui_function = nullptr;
 
 		void unload();
 
 		template<typename Return, typename... Args>
-		Function<Return, Args...> read_function(const StringView& function_name)
+		NativeFunc<Return, Args...> read_function(const StringRef& function_name)
 		{
-			if (m_memory_module) {
-				auto function_address = MemoryGetProcAddress(m_memory_module, function_name.data());
-				return reinterpret_cast<Function<Return, Args...>>(function_address);
-			}
-			return nullptr;
+			if (!m_memory_module)
+				return nullptr;
+			auto function_address = MemoryGetProcAddress(m_memory_module, function_name.data());
+			return reinterpret_cast<NativeFunc<Return, Args...>>(function_address);
 		}
 	};
 }

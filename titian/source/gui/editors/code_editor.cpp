@@ -5,7 +5,7 @@ titian::CodeEditor::CodeEditor()
 	: m_text_editor()
 {}
 
-void titian::CodeEditor::load(const StringView& source)
+void titian::CodeEditor::load(const StringRef& source)
 {
 	m_text_editor.SetText(source);
 }

@@ -274,7 +274,7 @@ titian::Set<uint32_t> titian::GUISectionViewport::read_id_texture(const Int2 fir
     return results;
 }
 
-titian::Optional<titian::Float3> titian::GUISectionViewport::read_depth_texture(const Int2 coords)
+titian::Opt<titian::Float3> titian::GUISectionViewport::read_depth_texture(const Int2 coords)
 {
     kl::GPU& gpu = AppLayer::get().gpu;
     Scene& scene = GameLayer::get().scene();
