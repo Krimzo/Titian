@@ -317,6 +317,8 @@ void titian::GUISectionMainMenu::render_gui()
                 }
             }
             if (im::BeginMenu("Raytracing", !game_layer.game_running())) {
+                im::SliderInt("Depth Limit", &Tracing::DEPTH_LIMIT, 1, 10);
+                im::SliderInt("Accumulation Limit", &Tracing::ACCUMULATION_LIMIT, 1, 100);
                 im::DragInt2("Resolution", &m_trace_resolution.x, 1.0f, 1, 8192);
                 if (im::MenuItem("Render")) {
                     Tracing::render(scene, m_trace_resolution);

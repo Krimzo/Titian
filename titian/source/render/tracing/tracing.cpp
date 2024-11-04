@@ -182,71 +182,68 @@ titian::RGB titian::Tracing::render_pixel(const TracingScene& tracing_scene, con
 	if (camera_data.wireframe)
 		return camera_data.sample_background(ray.direction());
 
-	return render_ray(tracing_scene, ray, 0, nullptr);
+	Float3 color;
+	for (int i = 0; i < ACCUMULATION_LIMIT; i++) {
+		color += trace_ray(tracing_scene, ray, 0, nullptr);
+	}
+	return color * (1.0f / ACCUMULATION_LIMIT);
 }
 
-titian::RGB titian::Tracing::render_ray(const TracingScene& tracing_scene, const kl::Ray& ray, const int depth, kl::Triangle* blacklist)
+titian::Float3 titian::Tracing::trace_ray(const TracingScene& tracing_scene, const kl::Ray& ray, const int depth, kl::Triangle* blacklist)
 {
-	if (depth > MAX_DEPTH)
-		return tracing_scene.camera_data->sample_background(ray.direction());
+	if (depth > DEPTH_LIMIT)
+		return {};
 
 	Opt<TracingScene::TracePayload> payload = tracing_scene.trace(ray, blacklist);
-	if (!payload)
+	if (!payload) {
+		if (tracing_scene.directional_data) {
+			auto& directional = *tracing_scene.directional_data;
+			const kl::Sphere sun_sphere{ ray.origin - directional.direction, directional.point_size };
+			if (ray.intersect_sphere(sun_sphere, nullptr)) {
+				return directional.color;
+			}
+		}
 		return tracing_scene.camera_data->sample_background(ray.direction());
+	}
 
 	auto& material = payload->entity.material;
-
 	const Float3 interp_weights = payload->triangle.weights(payload->intersect);
 	const kl::Vertex interp_vertex = payload->triangle.interpolate_self(interp_weights);
 
-	Float3 color = material.color;
 	Float3 normal = interp_vertex.normal;
-
-	if (material.color_texture) {
-		Float3 tex_col = material.color_texture->image.sample(interp_vertex.uv);
-		color = kl::lerp(material.texture_blend, color, tex_col);
-	}
 	if (material.normal_texture) {
 		Float3 tex_norm = material.normal_texture->image.sample(interp_vertex.uv);
 		tex_norm = kl::normalize(tex_norm * 2.0f - Float3(1.0f));
 		normal = kl::normalize(interp_vertex.normal - tex_norm);
 	}
+	if (kl::dot(-ray.direction(), normal) < 0.0f) {
+		normal = -normal;
+	}
 
 	Float3 light;
-	if (tracing_scene.ambient_data) {
-		auto& ambient = *tracing_scene.ambient_data;
-		float ambient_factor = kl::max(kl::dot(interp_vertex.normal, normal), 0.0f);
-		light = ambient.color * ambient_factor;
+	if (material.reflectivity_factor >= 0.0f) {
+		const Float3 random_dir = kl::normalize(kl::random::gen_float3(-1.0f, 1.0f));
+		const float random_infl = 1.0f - kl::clamp(material.reflectivity_factor, 0.0f, 1.0f);
+		const Float3 random_norm = kl::normalize(normal + random_dir * random_infl);
+		const Float3 reflect_dir = kl::reflect(ray.direction(), random_norm);
+		const kl::Ray reflection_ray{ payload->intersect, reflect_dir };
+		light += trace_ray(tracing_scene, reflection_ray, depth + 1, &payload->triangle);
 	}
-	if (tracing_scene.directional_data) {
-		auto& directional = *tracing_scene.directional_data;
-		const kl::Ray shadow_ray{ payload->intersect, -directional.direction };
-		if (!tracing_scene.trace(shadow_ray, &payload->triangle)) {
-			float diffuse_factor = kl::max(kl::dot(-directional.direction, normal), 0.0f);
-			light = kl::max(light, directional.color * diffuse_factor);
-		}
-	}
-	color *= light;
-
-	Float3 ref_normal = interp_vertex.normal;
-	if (kl::dot(-ray.direction(), ref_normal) < 0.0f) {
-		ref_normal = -ref_normal;
+	else {
+		const Float3 random_dir = kl::normalize(kl::random::gen_float3(-1.0f, 1.0f));
+		const float random_infl = 1.0f - kl::clamp(-material.reflectivity_factor, 0.0f, 1.0f);
+		const Float3 random_norm = kl::normalize(normal + random_dir * random_infl);
+		const Float3 refract_dir = kl::refract(ray.direction(), random_norm, 1.0f / material.refraction_index );
+		const kl::Ray refraction_ray{ payload->intersect, refract_dir };
+		light += trace_ray(tracing_scene, refraction_ray, depth + 1, &payload->triangle);
 	}
 
-	if (material.reflectivity_factor > 0.0f) {
-		const kl::Ray reflection_ray{ payload->intersect, kl::reflect(ray.direction(), ref_normal) };
-		const Float3 reflect_color = render_ray(tracing_scene, reflection_ray, depth + 1, &payload->triangle);
-		const float reflectivity = kl::min(material.reflectivity_factor, 1.0f);
-		color = kl::lerp(reflectivity, color, reflect_color);
+	Float3 color = material.color;
+	if (material.color_texture) {
+		Float3 tex_col = material.color_texture->image.sample(interp_vertex.uv);
+		color = kl::lerp(material.texture_blend, color, tex_col);
 	}
-	else if (material.reflectivity_factor < 0.0f) {
-		const kl::Ray refraction_ray{ payload->intersect, kl::refract(ray.direction(), ref_normal, 1.0f / material.refraction_index) };
-		const Float3 refract_color = render_ray(tracing_scene, refraction_ray, depth + 1, &payload->triangle);
-		const float refractivity = kl::min(-material.reflectivity_factor, 1.0f);
-		color = kl::lerp(refractivity, color, refract_color);
-	}
-
-	return color;
+	return color * light;
 }
 
 void titian::Tracing::convert_scene(const Scene& scene, const Int2 resolution, TracingScene& tracing_scene)
@@ -264,6 +261,10 @@ void titian::Tracing::convert_scene(const Scene& scene, const Int2 resolution, T
 		tracing_scene.entities.push_back(std::move(tracing_entity));
 		lock.unlock();
 	});
+	for (const auto& entity : tracing_scene.entities) {
+		tracing_scene.min_point = kl::min(tracing_scene.min_point, entity->mesh.aabb.min_point());
+		tracing_scene.max_point = kl::max(tracing_scene.max_point, entity->mesh.aabb.max_point());
+	}
 	if (Camera* camera = dynamic_cast<Camera*>(scene.helper_get_entity(scene.main_camera_name))) {
 		Texture* skybox = scene.helper_get_texture(camera->skybox_texture_name);
 		const float old_ar = camera->aspect_ratio;
@@ -285,7 +286,8 @@ void titian::Tracing::convert_scene(const Scene& scene, const Int2 resolution, T
 	if (DirectionalLight* directional = dynamic_cast<DirectionalLight*>(scene.helper_get_entity(scene.main_directional_light_name))) {
 		tracing_scene.directional_data.emplace(
 			directional->direction(),
-			directional->color
+			directional->color,
+			directional->point_size
 		);
 	}
 }

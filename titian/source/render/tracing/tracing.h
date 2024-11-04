@@ -69,6 +69,7 @@ namespace titian {
 		{
 			Float3 direction;
 			Float3 color;
+			float point_size;
 		};
 
 		struct TracePayload
@@ -83,6 +84,9 @@ namespace titian {
 		Opt<AmbientData> ambient_data;
 		Opt<DirectionalData> directional_data;
 
+		Float3 min_point{ +std::numeric_limits<float>::infinity() };
+		Float3 max_point{ -std::numeric_limits<float>::infinity() };
+
 		Opt<TracePayload> trace(const kl::Ray& ray, const kl::Triangle* blacklist) const;
 	};
 }
@@ -90,7 +94,8 @@ namespace titian {
 namespace titian {
 	struct Tracing
 	{
-		static constexpr int MAX_DEPTH = 4;
+		static inline int DEPTH_LIMIT = 5;
+		static inline int ACCUMULATION_LIMIT = 10;
 
 		static void render(const Scene& scene, Int2 resolution);
 
@@ -98,7 +103,8 @@ namespace titian {
 		static void render_scene(const kl::Window& window, const TracingScene& tracing_scene, kl::Image& target);
 		static void render_section(const TracingScene& tracing_scene, Int2 top_left, Int2 size, kl::Image& target);
 		static RGB render_pixel(const TracingScene& tracing_scene, Float2 ndc);
-		static RGB render_ray(const TracingScene& tracing_scene, const kl::Ray& ray, int depth, kl::Triangle* blacklist);
+
+		static Float3 trace_ray(const TracingScene& tracing_scene, const kl::Ray& ray, int depth, kl::Triangle* blacklist);
 
 		static void convert_scene(const Scene& scene, Int2 resolution, TracingScene& tracing_scene);
 		static Ref<TracingEntity> convert_entity(const Scene& scene, const Entity& entity);
