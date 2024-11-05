@@ -28,7 +28,7 @@ SIZE_T kl::CompiledShader::error_size() const
 
 kl::CompiledShader kl::ShaderCompiler::compile(const std::string_view& name, const std::string_view& version, const std::string_view& source) const
 {
-    static constexpr UINT flags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_WARNINGS_ARE_ERRORS | D3DCOMPILE_OPTIMIZATION_LEVEL3;
+    static constexpr UINT flags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_OPTIMIZATION_LEVEL3;
     CompiledShader compiled_shader{};
     D3DCompile(source.data(), source.size(), nullptr, nullptr, nullptr, name.data(), version.data(),
         flags, NULL, &compiled_shader.data, &compiled_shader.error);

@@ -134,6 +134,15 @@
     <None Include="package\shaders\skybox_pass.hlsl" />
     <None Include="package\shaders\solid_lit_pass.hlsl" />
     <None Include="package\shaders\solid_pass.hlsl" />
+    <None Include="package\shaders\tracing\tracing_compute.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="package\shaders\tracing\tracing_display.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="package\shaders\tracing\tracing_copy.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <ClCompile Include="source\app\app_layer.cpp" />
     <ClCompile Include="source\app\logger.cpp" />
     <ClCompile Include="source\app\log_info.cpp" />

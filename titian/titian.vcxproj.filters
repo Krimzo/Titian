@@ -453,5 +453,14 @@
     <None Include="package\shaders\skybox_pass.hlsl" />
     <None Include="package\shaders\solid_lit_pass.hlsl" />
     <None Include="package\shaders\solid_pass.hlsl" />
+    <None Include="package\shaders\tracing\tracing_display.hlsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="package\shaders\tracing\tracing_copy.hlsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="package\shaders\tracing\tracing_compute.hlsl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
