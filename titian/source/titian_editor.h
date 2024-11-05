@@ -33,7 +33,8 @@
 #include "gui/sections/section_entity_properties.h"
 #include "gui/sections/section_bench_info.h"
 
-#include "render/tracing/tracing.h"
+#include "render/tracing/cpu_tracer.h"
+#include "render/tracing/gpu_tracer.h"
 
 
 namespace titian {

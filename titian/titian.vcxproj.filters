@@ -222,6 +222,12 @@
     <ClCompile Include="source\render\tracing\tracing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\render\tracing\cpu_tracer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\render\tracing\gpu_tracer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\app\app_layer.h">
@@ -431,5 +437,21 @@
     <ClInclude Include="source\render\tracing\tracing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\render\tracing\cpu_tracer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\render\tracing\gpu_tracer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="package\shaders\scene_pass.hlsl" />
+    <None Include="package\shaders\display_pass.hlsl" />
+    <None Include="package\shaders\outline_pass.hlsl" />
+    <None Include="package\shaders\post_pass.hlsl" />
+    <None Include="package\shaders\shadow_pass.hlsl" />
+    <None Include="package\shaders\skybox_pass.hlsl" />
+    <None Include="package\shaders\solid_lit_pass.hlsl" />
+    <None Include="package\shaders\solid_pass.hlsl" />
   </ItemGroup>
 </Project>

@@ -317,11 +317,14 @@ void titian::GUISectionMainMenu::render_gui()
                 }
             }
             if (im::BeginMenu("Raytracing", !game_layer.game_running())) {
+                im::Checkbox("GPU Tracer", &Tracing::GPU_TRACER);
                 im::SliderInt("Depth Limit", &Tracing::DEPTH_LIMIT, 1, 10);
-                im::SliderInt("Accumulation Limit", &Tracing::ACCUMULATION_LIMIT, 1, 250);
-                im::DragInt2("Resolution", &m_trace_resolution.x, 1.0f, 1, 8192);
+                if (!Tracing::GPU_TRACER) {
+                    im::SliderInt("Accumulation Limit", &Tracing::ACCUMULATION_LIMIT, 1, 250);
+                }
+                im::DragInt2("Resolution", &Tracing::RESOLUTION.x, 1.0f, 1, 8192);
                 if (im::MenuItem("Render")) {
-                    Tracing::render(scene, m_trace_resolution);
+                    Tracing::render(scene);
                 }
                 im::EndMenu();
             }

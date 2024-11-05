@@ -137,6 +137,8 @@
     <ClCompile Include="source\app\app_layer.cpp" />
     <ClCompile Include="source\app\logger.cpp" />
     <ClCompile Include="source\app\log_info.cpp" />
+    <ClCompile Include="source\render\tracing\cpu_tracer.cpp" />
+    <ClCompile Include="source\render\tracing\gpu_tracer.cpp" />
     <ClCompile Include="source\render\tracing\tracing.cpp" />
     <ClCompile Include="source\scene\components\animation.cpp" />
     <ClCompile Include="source\scene\components\material.cpp" />
@@ -211,6 +213,8 @@
     <ClInclude Include="source\app\app_layer.h" />
     <ClInclude Include="source\app\logger.h" />
     <ClInclude Include="source\app\log_info.h" />
+    <ClInclude Include="source\render\tracing\cpu_tracer.h" />
+    <ClInclude Include="source\render\tracing\gpu_tracer.h" />
     <ClInclude Include="source\render\tracing\tracing.h" />
     <ClInclude Include="source\scene\components\animation.h" />
     <ClInclude Include="source\scene\components\material.h" />

@@ -68,6 +68,48 @@ titian::RGB titian::TracingCamera::sample_background(const Float3& direction) co
 	return background;
 }
 
+titian::TracingScene::TracingScene(const Scene& scene, const Int2 resolution)
+{
+	std::mutex lock;
+	std::for_each(std::execution::par, scene.entities().begin(), scene.entities().end(),
+		[&](const Pair<String, Ref<Entity>>& pair)
+	{
+		const Entity& entity = *pair.second;
+		const Opt<TracingEntity> tracing_entity = convert_entity(scene, entity);
+		if (!tracing_entity)
+			return;
+
+		lock.lock();
+		this->entities.push_back(*tracing_entity);
+		lock.unlock();
+	});
+	if (Camera* camera = dynamic_cast<Camera*>(scene.helper_get_entity(scene.main_camera_name))) {
+		Texture* skybox = scene.helper_get_texture(camera->skybox_texture_name);
+		const float old_ar = camera->aspect_ratio;
+		camera->update_aspect_ratio(resolution);
+		this->camera.emplace(
+			camera->position(),
+			kl::inverse(camera->camera_matrix()),
+			camera->render_wireframe,
+			camera->background,
+			convert_texture_cube(skybox)
+		);
+		camera->aspect_ratio = old_ar;
+	}
+	if (AmbientLight* ambient = dynamic_cast<AmbientLight*>(scene.helper_get_entity(scene.main_ambient_light_name))) {
+		this->ambient.emplace(
+			ambient->color
+		);
+	}
+	if (DirectionalLight* directional = dynamic_cast<DirectionalLight*>(scene.helper_get_entity(scene.main_directional_light_name))) {
+		this->directional.emplace(
+			directional->direction(),
+			directional->color,
+			directional->point_size
+		);
+	}
+}
+
 titian::Opt<titian::TracingPayload> titian::TracingScene::trace(const kl::Ray& ray, const kl::Triangle* blacklist) const
 {
 	Float3 intersection;
@@ -99,200 +141,7 @@ titian::Opt<titian::TracingPayload> titian::TracingScene::trace(const kl::Ray& r
 	return result;
 }
 
-void titian::Tracing::render(const Scene& scene, const Int2 resolution)
-{
-	const RGB special_color = GUILayer::get().special_color;
-
-	TracingScene tracing_scene;
-	convert_scene(scene, resolution, tracing_scene);
-
-	kl::Window window{ "Titian Raytracer" };
-	window.set_dark_mode(true);
-	window.set_icon("package/textures/editor_icon.ico");
-	window.maximize();
-
-	kl::Image target{ resolution };
-	Vector<TracingTask> tasks(kl::CPU_CORE_COUNT);
-	std::future<void> render_task = std::async(std::launch::async, render_scene,
-		std::ref(window), std::ref(tracing_scene), std::ref(target), std::ref(tasks));
-
-	kl::Image frame;
-	while (window.process()) {
-		handle_input(window, target);
-		frame = target;
-		for (const auto& task : tasks) {
-			const auto& section = task.section;
-			frame.draw_rectangle(section.first, section.first + section.second,
-				special_color, false);
-		}
-		frame.resize_scaled(window.size());
-		window.draw_image(frame);
-	}
-}
-
-void titian::Tracing::render_scene(const kl::Window& window, const TracingScene& tracing_scene, kl::Image& target, Vector<TracingTask>& tasks)
-{
-	const int square_size = kl::clamp(kl::min(target.width(), target.height()) / (int) tasks.size(), 8, 256);
-	const Int2 square_counts = {
-		(int) ceil(target.width() / (float) square_size),
-		(int) ceil(target.height() / (float) square_size),
-	};
-	std::atomic_int32_t id_counter = 0;
-	for (auto& task : tasks) {
-		task.task = std::async(std::launch::async, [&]
-		{
-			while (true) {
-				const int32_t id = id_counter++;
-				if (id >= (square_counts.x * square_counts.y) || !window.active()) {
-					break;
-				}
-				const Int2 sqr_pos = {
-					id % square_counts.x * square_size,
-					id / square_counts.x * square_size,
-				};
-				task.section = { sqr_pos, Int2(square_size) };
-				render_section(tracing_scene, sqr_pos, Int2(square_size), target);
-			}
-			task.section = { Int2(-1), Int2(-1) };
-		});
-	}
-	for (auto& task : tasks) {
-		task.task.wait();
-	}
-}
-
-void titian::Tracing::render_section(const TracingScene& tracing_scene, const Int2 top_left, const Int2 size, kl::Image& target)
-{
-	const Int2 incl_start = kl::max(top_left, Int2(0));
-	const Int2 excl_end = kl::min(top_left + size, target.size());
-	for (int y = incl_start.y; y < excl_end.y; y++) {
-		for (int x = incl_start.x; x < excl_end.x; x++) {
-			const Float2 ndc = {
-				float(x) / (target.width() - 1) * 2.0f - 1.0f,
-				float(target.height() - 1 - y) / (target.height() - 1) * 2.0f - 1.0f,
-			};
-			target[{ x, y }] = render_pixel(tracing_scene, ndc);
-		}
-	}
-}
-
-titian::RGB titian::Tracing::render_pixel(const TracingScene& tracing_scene, const Float2 ndc)
-{
-	if (!tracing_scene.camera)
-		return RGB{};
-
-	const TracingCamera& camera = *tracing_scene.camera;
-	const kl::Ray ray{ camera.position, camera.inv_mat, ndc };
-	if (camera.wireframe)
-		return camera.sample_background(ray.direction());
-
-	Float3 color;
-	for (int i = 0; i < ACCUMULATION_LIMIT; i++) {
-		color += trace_ray(tracing_scene, ray, 0, nullptr);
-	}
-	return color * (1.0f / ACCUMULATION_LIMIT);
-}
-
-titian::Float3 titian::Tracing::trace_ray(const TracingScene& tracing_scene, const kl::Ray& ray, const int depth, const kl::Triangle* blacklist)
-{
-	if (depth > DEPTH_LIMIT)
-		return {};
-
-	Opt<TracingPayload> payload = tracing_scene.trace(ray, blacklist);
-	if (!payload) {
-		if (tracing_scene.directional) {
-			auto& directional = *tracing_scene.directional;
-			const kl::Sphere sun_sphere{ ray.origin - directional.direction, directional.point_size };
-			if (ray.intersect_sphere(sun_sphere, nullptr)) {
-				return directional.color;
-			}
-		}
-		return tracing_scene.camera->sample_background(ray.direction());
-	}
-
-	auto& material = payload->entity.material;
-	const Float3 interp_weights = payload->triangle.weights(payload->intersect);
-	const kl::Vertex interp_vertex = payload->triangle.interpolate_self(interp_weights);
-
-	Float3 normal = interp_vertex.normal;
-	if (material.normal_texture) {
-		Float3 tex_norm = material.normal_texture->image.sample(interp_vertex.uv);
-		tex_norm = kl::normalize(tex_norm * 2.0f - Float3(1.0f));
-		normal = kl::normalize(interp_vertex.normal - tex_norm);
-	}
-	if (kl::dot(-ray.direction(), normal) < 0.0f) {
-		normal = -normal;
-	}
-
-	Float3 light;
-	if (material.reflectivity_factor >= 0.0f) {
-		const Float3 random_dir = kl::normalize(kl::random::gen_float3(-1.0f, 1.0f));
-		const float random_infl = 1.0f - kl::clamp(material.reflectivity_factor, 0.0f, 1.0f);
-		const Float3 random_norm = kl::normalize(normal + random_dir * random_infl);
-		const Float3 reflect_dir = kl::reflect(ray.direction(), random_norm);
-		const kl::Ray reflection_ray{ payload->intersect, reflect_dir };
-		light += trace_ray(tracing_scene, reflection_ray, depth + 1, &payload->triangle);
-	}
-	else {
-		const Float3 random_dir = kl::normalize(kl::random::gen_float3(-1.0f, 1.0f));
-		const float random_infl = 1.0f - kl::clamp(-material.reflectivity_factor, 0.0f, 1.0f);
-		const Float3 random_norm = kl::normalize(normal + random_dir * random_infl);
-		const Float3 refract_dir = kl::refract(ray.direction(), random_norm, 1.0f / material.refraction_index );
-		const kl::Ray refraction_ray{ payload->intersect, refract_dir };
-		light += trace_ray(tracing_scene, refraction_ray, depth + 1, &payload->triangle);
-	}
-
-	Float3 color = material.color;
-	if (material.color_texture) {
-		Float3 tex_col = material.color_texture->image.sample(interp_vertex.uv);
-		color = kl::lerp(material.texture_blend, color, tex_col);
-	}
-	return color * light;
-}
-
-void titian::Tracing::convert_scene(const Scene& scene, const Int2 resolution, TracingScene& tracing_scene)
-{
-	std::mutex lock;
-	std::for_each(std::execution::par, scene.entities().begin(), scene.entities().end(),
-		[&](const Pair<String, Ref<Entity>>& pair)
-	{
-		const Entity& entity = *pair.second;
-		const Opt<TracingEntity> tracing_entity = convert_entity(scene, entity);
-		if (!tracing_entity)
-			return;
-
-		lock.lock();
-		tracing_scene.entities.push_back(*tracing_entity);
-		lock.unlock();
-	});
-	if (Camera* camera = dynamic_cast<Camera*>(scene.helper_get_entity(scene.main_camera_name))) {
-		Texture* skybox = scene.helper_get_texture(camera->skybox_texture_name);
-		const float old_ar = camera->aspect_ratio;
-		camera->update_aspect_ratio(resolution);
-		tracing_scene.camera.emplace(
-			camera->position(),
-			kl::inverse(camera->camera_matrix()),
-			camera->render_wireframe,
-			camera->background,
-			convert_texture_cube(skybox)
-		);
-		camera->aspect_ratio = old_ar;
-	}
-	if (AmbientLight* ambient = dynamic_cast<AmbientLight*>(scene.helper_get_entity(scene.main_ambient_light_name))) {
-		tracing_scene.ambient.emplace(
-			ambient->color
-		);
-	}
-	if (DirectionalLight* directional = dynamic_cast<DirectionalLight*>(scene.helper_get_entity(scene.main_directional_light_name))) {
-		tracing_scene.directional.emplace(
-			directional->direction(),
-			directional->color,
-			directional->point_size
-		);
-	}
-}
-
-titian::Opt<titian::TracingEntity> titian::Tracing::convert_entity(const Scene& scene, const Entity& entity)
+titian::Opt<titian::TracingEntity> titian::TracingScene::convert_entity(const Scene& scene, const Entity& entity)
 {
 	const Animation* animation = scene.helper_get_animation(entity.animation_name);
 	if (!animation)
@@ -320,7 +169,7 @@ titian::Opt<titian::TracingEntity> titian::Tracing::convert_entity(const Scene& 
 	return result;
 }
 
-titian::TracingMesh titian::Tracing::convert_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& matrix)
+titian::TracingMesh titian::TracingScene::convert_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& matrix)
 {
 	TracingMesh result;
 	result.triangles.resize(mesh.vertices.size() / 3);
@@ -334,7 +183,7 @@ titian::TracingMesh titian::Tracing::convert_mesh(const Scene& scene, const Mesh
 	return result;
 }
 
-kl::Vertex titian::Tracing::convert_vertex(const Vertex& vertex, const Float4x4& matrix)
+kl::Vertex titian::TracingScene::convert_vertex(const Vertex& vertex, const Float4x4& matrix)
 {
 	kl::Vertex result;
 	result.position = (matrix * Float4(vertex.position, 1.0f)).xyz();
@@ -343,7 +192,7 @@ kl::Vertex titian::Tracing::convert_vertex(const Vertex& vertex, const Float4x4&
 	return result;
 }
 
-titian::TracingMesh titian::Tracing::convert_skel_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices)
+titian::TracingMesh titian::TracingScene::convert_skel_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices)
 {
 	TracingMesh result;
 	result.triangles.resize(mesh.vertices.size() / 3);
@@ -357,7 +206,7 @@ titian::TracingMesh titian::Tracing::convert_skel_mesh(const Scene& scene, const
 	return result;
 }
 
-kl::Vertex titian::Tracing::convert_skel_vertex(const Vertex& vertex, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices)
+kl::Vertex titian::TracingScene::convert_skel_vertex(const Vertex& vertex, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices)
 {
 	const Float4x4 bone_mat =
 		(vertex.bone_indices[0] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[0]] : Float4x4{}) * vertex.bone_weights[0] +
@@ -367,7 +216,7 @@ kl::Vertex titian::Tracing::convert_skel_vertex(const Vertex& vertex, const Floa
 	return convert_vertex(vertex, model_matrix * bone_mat);
 }
 
-titian::TracingMaterial titian::Tracing::convert_material(const Scene& scene, const Material& material)
+titian::TracingMaterial titian::TracingScene::convert_material(const Scene& scene, const Material& material)
 {
 	TracingMaterial result;
 	result.texture_blend = material.texture_blend;
@@ -380,7 +229,7 @@ titian::TracingMaterial titian::Tracing::convert_material(const Scene& scene, co
 	return result;
 }
 
-titian::Opt<titian::TracingTextureCube> titian::Tracing::convert_texture_cube(const Texture* texture)
+titian::Opt<titian::TracingTextureCube> titian::TracingScene::convert_texture_cube(const Texture* texture)
 {
 	if (!texture)
 		return std::nullopt;
@@ -396,17 +245,19 @@ titian::Opt<titian::TracingTextureCube> titian::Tracing::convert_texture_cube(co
 	return result;
 }
 
-void titian::Tracing::handle_input(kl::Window& window, const kl::Image& target)
+void titian::Tracing::render(const Scene& scene)
 {
-	if (window.keyboard.esc) {
-		window.close();
+	const TracingScene tracing_scene{ scene, RESOLUTION };
+
+	kl::Window window{ "Titian Raytracer" };
+	window.set_dark_mode(true);
+	window.set_icon("package/textures/editor_icon.ico");
+	window.maximize();
+
+	if (GPU_TRACER) {
+		GPUTracer{ window, tracing_scene, RESOLUTION }.render();
 	}
-	if (window.keyboard.ctrl && window.keyboard.s.pressed()) {
-		if (auto path = kl::choose_file(true, { { "Images", ".png" } })) {
-			if (!path->ends_with(".png")) {
-				path->append(".png");
-			}
-			target.save_to_file(path.value(), kl::ImageType::PNG);
-		}
+	else {
+		CPUTracer{ window, tracing_scene, RESOLUTION }.render();
 	}
 }

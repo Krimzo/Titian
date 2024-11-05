@@ -92,45 +92,29 @@ namespace titian {
 		Opt<TracingAmbient> ambient;
 		Opt<TracingDirectional> directional;
 
-		Opt<TracingPayload> trace(const kl::Ray& ray, const kl::Triangle* blacklist) const;
-	};
-}
+		TracingScene(const Scene& scene, Int2 resolution);
 
-namespace titian {
-	struct TracingTask
-	{
-		std::future<void> task;
-		Pair<Int2, Int2> section;
+		Opt<TracingPayload> trace(const kl::Ray& ray, const kl::Triangle* blacklist) const;
+
+	private:
+		Opt<TracingEntity> convert_entity(const Scene& scene, const Entity& entity);
+		TracingMesh convert_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& matrix);
+		kl::Vertex convert_vertex(const Vertex& vertex, const Float4x4& matrix);
+		TracingMesh convert_skel_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices);
+		kl::Vertex convert_skel_vertex(const Vertex& vertex, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices);
+		TracingMaterial convert_material(const Scene& scene, const Material& material);
+		Opt<TracingTextureCube> convert_texture_cube(const Texture* texture);
 	};
 }
 
 namespace titian {
 	struct Tracing
 	{
+		static inline bool GPU_TRACER = false;
 		static inline int DEPTH_LIMIT = 5;
 		static inline int ACCUMULATION_LIMIT = 10;
+		static inline Int2 RESOLUTION = kl::SCREEN_SIZE;
 
-		static void render(const Scene& scene, Int2 resolution);
-
-	private:
-		static void render_scene(const kl::Window& window, const TracingScene& tracing_scene, kl::Image& target, Vector<TracingTask>& tasks);
-		static void render_section(const TracingScene& tracing_scene, Int2 top_left, Int2 size, kl::Image& target);
-		static RGB render_pixel(const TracingScene& tracing_scene, Float2 ndc);
-
-		static Float3 trace_ray(const TracingScene& tracing_scene, const kl::Ray& ray, int depth, const kl::Triangle* blacklist);
-
-		static void convert_scene(const Scene& scene, Int2 resolution, TracingScene& tracing_scene);
-		static Opt<TracingEntity> convert_entity(const Scene& scene, const Entity& entity);
-
-		static TracingMesh convert_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& matrix);
-		static kl::Vertex convert_vertex(const Vertex& vertex, const Float4x4& matrix);
-
-		static TracingMesh convert_skel_mesh(const Scene& scene, const Mesh& mesh, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices);
-		static kl::Vertex convert_skel_vertex(const Vertex& vertex, const Float4x4& model_matrix, const Vector<Float4x4>& bone_matrices);
-
-		static TracingMaterial convert_material(const Scene& scene, const Material& material);
-		static Opt<TracingTextureCube> convert_texture_cube(const Texture* texture);
-
-		static void handle_input(kl::Window& window, const kl::Image& target);
+		static void render(const Scene& scene);
 	};
 }
