@@ -24,17 +24,6 @@ struct AABB
 	}
 };
 
-struct Sphere
-{
-	float3 position;
-	float radius;
-	
-	bool contains(float3 pnt)
-	{
-		return length(pnt - position) <= radius;
-	}
-};
-
 struct Vertex
 {
 	float3 position;
@@ -113,35 +102,6 @@ struct Ray
 			{
 				intersection = origin + direction * t_min_max;
 				result = true;
-			}
-		}
-		return result;
-	}
-	
-	bool intersect_sphere(Sphere sphere, inout float3 intersection)
-	{
-		bool result = false;
-		if (sphere.contains(origin))
-		{
-			intersection = origin;
-			result = true;
-		}
-		else
-		{
-			float3 center_ray = sphere.position - origin;
-			float cd_dot = dot(center_ray, direction);
-			if (cd_dot >= 0.0f)
-			{
-				float cc_dot = dot(center_ray, center_ray) - cd_dot * cd_dot;
-				float rr = sphere.radius * sphere.radius;
-				if (cc_dot <= rr)
-				{
-					float thc = sqrt(rr - cc_dot);
-					float dis0 = cd_dot - thc;
-					float dis1 = cd_dot + thc;
-					intersection = origin + direction * (dis0 < 0.0f ? dis1 : dis0);
-					result = true;
-				}
 			}
 		}
 		return result;
@@ -228,15 +188,28 @@ float rand_float(float2 ndc)
 	return frac(sin(dot(ndc, float2(12.9898f, 78.233f))) * 43758.5453f);
 }
 
-float3 rand_float3(float2 seed)
+float3 align_to_normal(float3 sample, float3 normal)
+{
+    float3 tangent = abs(normal.x) > 0.1f ? float3(0.0f, 1.0f, 0.0f) : float3(1.0f, 0.0f, 0.0f);
+    tangent = normalize(cross(normal, tangent));
+    float3 bitangent = cross(normal, tangent);
+    return sample.x * tangent + sample.y * bitangent + sample.z * normal;
+}
+
+float3 rand_float3(float3 normal, float2 seed)
 {
 	seed += float2(TIME, TIME * 1.37f);
-	float z = rand_float(seed) * 2.0f - 1.0f;
-	float theta = rand_float(seed + float2(1.0f, 0.0f)) * 2.0f * 3.14159265f;
-	float r = sqrt(1.0f - z * z);
-	float x = r * cos(theta);
-	float y = r * sin(theta);
-	return float3(x, y, z);
+	
+    float u = rand_float(seed);
+    float v = rand_float(seed + float2(321.0f, 32.0f));
+    float theta = 2.0f * radians(180.0f) * u;
+    float r = sqrt(1.0f - v);
+    float x = r * cos(theta);
+    float y = r * sin(theta);
+    float z = sqrt(v);
+
+    float3 sample = { x, y, z };
+    return align_to_normal(sample, normal);
 }
 
 float2 compute_ndc(uint2 resolution, float2 id)
@@ -305,9 +278,13 @@ bool scene_trace(Ray ray, int blacklist, inout Payload pyld)
 
 float3 trace_ray(Ray ray, float2 seed)
 {
-	float3 result = 1.0f;
 	Payload pyld;
-	for (int i = 0; i <= DEPTH_LIMIT; ++i)
+	pyld.entity = -1;
+	pyld.triangl = -1;
+    pyld.intersect = 0.0f;
+	
+	float3 result = 1.0f;
+    for (int i = 0; i <= DEPTH_LIMIT; ++i)
 	{
 		if (i == DEPTH_LIMIT)
 		{
@@ -319,16 +296,10 @@ float3 trace_ray(Ray ray, float2 seed)
 			float3 light = sample_background(ray.direction);
 			if (DIRECTIONAL_BOUND)
 			{
-				Sphere sun_sphere;
-				sun_sphere.position = ray.origin - DIRECTIONAL_DIRECTION;
-				sun_sphere.radius = DIRECTIONAL_POINT_SIZE;
-				float3 _ignored = 0.0f;
-				if (ray.intersect_sphere(sun_sphere, _ignored))
-				{
-					light = DIRECTIONAL_COLOR;
-				}
+                float diffuse = saturate(dot(-DIRECTIONAL_DIRECTION, ray.direction));
+                light += DIRECTIONAL_COLOR * DIRECTIONAL_POINT_SIZE * diffuse;
 			}
-			result *= light;
+            result *= saturate(light);
 			break;
 		}
 		else
@@ -344,27 +315,27 @@ float3 trace_ray(Ray ray, float2 seed)
 			{
 				normal = -normal;
 			}
-
+			
 			if (material.reflectivity_factor >= 0.0f)
-			{
-				float3 random_dir = normalize(rand_float3(seed + float2(321.0f, 32.0f) * i));
-				float random_infl = 1.0f - clamp(material.reflectivity_factor, 0.0f, 1.0f);
-				float3 random_norm = normalize(normal + random_dir * random_infl);
-				float3 reflect_dir = reflect(ray.direction, random_norm);
-				ray.origin = pyld.intersect;
-				ray.direction = reflect_dir;
-			}
+            {
+                float3 random_dir = normalize(rand_float3(normal, seed + float2(321.0f, 32.0f) * i));
+                float random_infl = 1.0f - clamp(material.reflectivity_factor, 0.0f, 1.0f);
+                float3 random_norm = normalize(normal + random_dir * random_infl);
+                float3 reflect_dir = reflect(ray.direction, random_norm);
+                ray.origin = pyld.intersect;
+                ray.direction = reflect_dir;
+            }
 			else
 			{
-				float3 random_dir = normalize(rand_float3(seed - float2(321.0f, 32.0f) * i));
+                float3 random_dir = normalize(rand_float3(normal, seed - float2(321.0f, 32.0f) * i));
 				float random_infl = 1.0f - clamp(-material.reflectivity_factor, 0.0f, 1.0f);
 				float3 random_norm = normalize(normal + random_dir * random_infl);
 				float3 refract_dir = refract(ray.direction, random_norm, 1.0f / material.refraction_index);
 				ray.origin = pyld.intersect;
 				ray.direction = refract_dir;
 			}
-			result *= material.color;
-		}
+            result *= material.color;
+        }
 	}
 	return result;
 }

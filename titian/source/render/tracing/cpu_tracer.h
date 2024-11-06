@@ -33,5 +33,8 @@ namespace titian {
 		RGB render_pixel(Float2 ndc);
 
 		Float3 trace_ray(const kl::Ray& ray, int depth, const kl::Triangle* blacklist);
+
+		Float3 align_to_normal(const Float3& sample, const Float3& normal);
+		Float3 rand_float3(const Float3& normal);
 	};
 }

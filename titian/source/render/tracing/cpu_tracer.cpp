@@ -115,14 +115,12 @@ titian::Float3 titian::CPUTracer::trace_ray(const kl::Ray& ray, const int depth,
 
 	Opt<TracingPayload> payload = scene.trace(ray, blacklist);
 	if (!payload) {
+		Float3 light = scene.camera->sample_background(ray.direction());
 		if (scene.directional) {
-			auto& directional = *scene.directional;
-			const kl::Sphere sun_sphere{ ray.origin - directional.direction, directional.point_size };
-			if (ray.intersect_sphere(sun_sphere, nullptr)) {
-				return directional.color;
-			}
+			float diffuse = kl::clamp(kl::dot(-scene.directional->direction, ray.direction()), 0.0f, 1.0f);
+			light += scene.directional->color * scene.directional->point_size * diffuse;
 		}
-		return scene.camera->sample_background(ray.direction());
+		return kl::clamp( light, (Float3) 0.0f, (Float3) 1.0f );
 	}
 
 	const auto& material = payload->entity.material;
@@ -141,7 +139,7 @@ titian::Float3 titian::CPUTracer::trace_ray(const kl::Ray& ray, const int depth,
 
 	Float3 light;
 	if (material.reflectivity_factor >= 0.0f) {
-		const Float3 random_dir = kl::normalize(kl::random::gen_float3(-1.0f, 1.0f));
+		const Float3 random_dir = kl::normalize(rand_float3(normal));
 		const float random_infl = 1.0f - kl::clamp(material.reflectivity_factor, 0.0f, 1.0f);
 		const Float3 random_norm = kl::normalize(normal + random_dir * random_infl);
 		const Float3 reflect_dir = kl::reflect(ray.direction(), random_norm);
@@ -149,7 +147,7 @@ titian::Float3 titian::CPUTracer::trace_ray(const kl::Ray& ray, const int depth,
 		light += trace_ray(reflection_ray, depth + 1, &payload->triangle);
 	}
 	else {
-		const Float3 random_dir = kl::normalize(kl::random::gen_float3(-1.0f, 1.0f));
+		const Float3 random_dir = kl::normalize(rand_float3(normal));
 		const float random_infl = 1.0f - kl::clamp(-material.reflectivity_factor, 0.0f, 1.0f);
 		const Float3 random_norm = kl::normalize(normal + random_dir * random_infl);
 		const Float3 refract_dir = kl::refract(ray.direction(), random_norm, 1.0f / material.refraction_index);
@@ -163,4 +161,25 @@ titian::Float3 titian::CPUTracer::trace_ray(const kl::Ray& ray, const int depth,
 		color = kl::lerp(material.texture_blend, color, tex_col);
 	}
 	return color * light;
+}
+
+titian::Float3 titian::CPUTracer::align_to_normal(const Float3& sample, const Float3& normal)
+{
+	Float3 tangent = abs(normal.x) > 0.1f ? Float3(0.0f, 1.0f, 0.0f) : Float3(1.0f, 0.0f, 0.0f);
+	tangent = kl::normalize(kl::cross(normal, tangent));
+	Float3 bitangent = kl::cross(normal, tangent);
+	return tangent * sample.x + bitangent * sample.y + normal * sample.z;
+}
+
+titian::Float3 titian::CPUTracer::rand_float3(const Float3& normal)
+{
+	float u = kl::random::gen_float(0.0f, 1.0f);
+	float v = kl::random::gen_float(0.0f, 1.0f);
+	float theta = 2.0f * kl::pi() * u;
+	float r = sqrt(1.0f - v);
+	float x = r * cos(theta);
+	float y = r * sin(theta);
+	float z = sqrt(v);
+	Float3 sample = { x, y, z };
+	return align_to_normal(sample, normal);
 }
