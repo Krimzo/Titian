@@ -20,13 +20,13 @@ titian::RasterStates::RasterStates()
     shadow_raster_descriptor.DepthClipEnable = false;
     shadow_raster_descriptor.SlopeScaledDepthBias = 3.0f;
 
-    wireframe = gpu.create_raster_state(&wireframe_raster_descriptor);
-    solid = gpu.create_raster_state(false, false);
-    solid_cull = gpu.create_raster_state(false, true, true);
-    shadow = gpu.create_raster_state(&shadow_raster_descriptor);
+    wireframe = gpu.create_raster_state( &wireframe_raster_descriptor );
+    solid = gpu.create_raster_state( false, false );
+    solid_cull = gpu.create_raster_state( false, true, true );
+    shadow = gpu.create_raster_state( &shadow_raster_descriptor );
 
-    kl::assert(wireframe, "Failed to init WIREFRAME raster state.");
-    kl::assert(solid, "Failed to init SOLID raster state.");
-    kl::assert(solid_cull, "Failed to init SOLID_CULL raster state.");
-    kl::assert(shadow, "Failed to init SHADOW raster state.");
+    kl::assert( wireframe, "Failed to init WIREFRAME raster state." );
+    kl::assert( solid, "Failed to init SOLID raster state." );
+    kl::assert( solid_cull, "Failed to init SOLID_CULL raster state." );
+    kl::assert( shadow, "Failed to init SHADOW raster state." );
 }

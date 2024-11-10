@@ -3,92 +3,94 @@
 #include "math/math.h"
 
 
-namespace kl {
-    struct Address : sockaddr_in
-    {
-        Address();
-        
-        std::string address() const;
-        int set_address(const std::string_view& address);
+namespace kl
+{
+struct Address : sockaddr_in
+{
+    Address();
 
-        int port() const;
-        void set_port(int port);
-    };
+    std::string address() const;
+    int set_address( std::string_view const& address );
+
+    int port() const;
+    void set_port( int port );
+};
 }
 
-namespace kl {
-    struct Socket : NoCopy
+namespace kl
+{
+struct Socket : NoCopy
+{
+    using ID = uint64_t;
+    static std::string SELF;
+
+    Socket( bool udp );
+    ~Socket();
+
+    ID id() const;
+    operator bool() const;
+
+    std::string address() const;
+    int set_address( std::string_view const& address );
+
+    int port() const;
+    void set_port( int port );
+
+    int bind();
+    int listen( int queue_size );
+    void accept( Socket& socket );
+    int connect();
+
+    int send( void const* data, int byte_size ) const;
+    int receive( void const* buff, int byte_size ) const;
+
+    template <typename T>
+    bool send( T const& obj ) const
     {
-        using ID = uint64_t;
-        static const std::string SELF;
+        return send( &obj, sizeof( T ) ) == sizeof( T );
+    }
 
-        Socket(bool udp);
-        ~Socket();
+    template <typename T>
+    bool receive( T const* obj ) const
+    {
+        return receive( obj, sizeof( T ) ) == sizeof( T );
+    }
 
-        ID id() const;
-        operator bool() const;
+    template <typename T>
+    T receive() const
+    {
+        T t{};
+        receive( &t );
+        return t;
+    }
 
-        std::string address() const;
-        int set_address(const std::string_view& address);
+    int send_to( void const* data, int byte_size, Address const& address ) const;
+    int receive_from( void const* buff, int byte_size, Address const* address ) const;
 
-        int port() const;
-        void set_port(int port);
+    template <typename T>
+    bool send_to( T const& obj, Address const& address ) const
+    {
+        return send_to( &obj, sizeof( T ), address ) == sizeof( T );
+    }
 
-        int bind();
-        int listen(int queue_size);
-        void accept(Socket* socket);
-        int connect();
+    template <typename T>
+    bool receive_from( T const* obj, Address const* address ) const
+    {
+        return receive_from( obj, sizeof( T ), address ) == sizeof( T );
+    }
 
-        int send(const void* data, int byte_size) const;
-        int receive(void* buff, int byte_size) const;
+    template <typename T>
+    T receive_from( Address const* address ) const
+    {
+        T t{};
+        receive_from( &t, address );
+        return t;
+    }
 
-        template <typename T>
-        bool send(const T& obj) const
-        {
-            return send(&obj, sizeof(T)) == sizeof(T);
-        }
+    int exhaust( std::vector<byte>& output, int buffer_size = 16384 ) const;
 
-        template <typename T>
-        bool receive(T* obj) const
-        {
-            return receive(obj, sizeof(T)) == sizeof(T);
-        }
-
-        template <typename T>
-        T receive() const
-        {
-            T t{};
-            receive(&t);
-            return t;
-        }
-
-        int send_to(const void* data, int byte_size, const Address& address) const;
-        int receive_from(void* buff, int byte_size, Address* address) const;
-
-        template <typename T>
-        bool send_to(const T& obj, const Address& address) const
-        {
-            return send_to(&obj, sizeof(T), address) == sizeof(T);
-        }
-
-        template <typename T>
-        bool receive_from(T* obj, Address* address) const
-        {
-            return receive_from(obj, sizeof(T), address) == sizeof(T);
-        }
-
-        template <typename T>
-        T receive_from(Address* address) const
-        {
-            T t{};
-            receive_from(&t, address);
-            return t;
-        }
-
-        int exhaust(std::vector<byte>* output, int buffer_size = 16384) const;
-
-    private:
-        Address m_address = {};
-        ID m_socket = {};
-    };
+private:
+    Address m_address = {};
+    ID m_socket = {};
+};
 }

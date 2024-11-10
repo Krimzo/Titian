@@ -3,22 +3,24 @@
 #include "apis/apis.h"
 
 
-namespace kl {
-    struct Hash
-    {
-        uint8_t buffer[32] = {};
+namespace kl
+{
+struct Hash
+{
+    uint8_t buffer[32] = {};
 
-        Hash();
-        Hash(const std::string_view& hash);
+    Hash();
+    Hash( std::string_view const& hash );
 
-        uint8_t& operator[](size_t index);
-        const uint8_t& operator[](size_t index) const;
+    uint8_t& operator[]( size_t index );
+    uint8_t const& operator[]( size_t index ) const;
 
-        bool operator==(const Hash& other) const;
-        bool operator!=(const Hash& other) const;
-    };
+    bool operator==( Hash const& other ) const;
+    bool operator!=( Hash const& other ) const;
+};
 }
 
-namespace kl {
-    std::ostream& operator<<(std::ostream& stream, const Hash& hash);
+namespace kl
+{
+std::ostream& operator<<( std::ostream& stream, Hash const& hash );
 }

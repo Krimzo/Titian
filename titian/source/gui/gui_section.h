@@ -4,12 +4,13 @@
 #include "utility/bench_util.h"
 
 
-namespace titian {
-	struct GUISection : kl::NoCopy, BenchmarkInfo
-	{
-		GUISection(const StringRef& name);
-		virtual ~GUISection() = default;
+namespace titian
+{
+struct GUISection : kl::NoCopy, BenchmarkInfo
+{
+    GUISection( StringRef const& name );
+    virtual ~GUISection() = default;
 
-		virtual void render_gui() = 0;
-	};
+    virtual void render_gui() = 0;
+};
 }

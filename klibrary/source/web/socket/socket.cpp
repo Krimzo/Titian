@@ -1,11 +1,11 @@
 #include "klibrary.h"
 
 
-static const int _socket_init = []
+static int _socket_init = []
 {
     WSADATA wsa_data{};
-    const int result = ::WSAStartup(MAKEWORD(2, 2), &wsa_data);
-    kl::assert(result == 0, "Failed to initialize WSA");
+    int result = ::WSAStartup( MAKEWORD( 2, 2 ), &wsa_data );
+    kl::assert( result == 0, "Failed to initialize WSA" );
     return result;
 }();
 
@@ -18,38 +18,38 @@ kl::Address::Address()
 std::string kl::Address::address() const
 {
     char buffer[INET_ADDRSTRLEN + 1] = {};
-    return ::inet_ntop(AF_INET, &sin_addr, buffer, INET_ADDRSTRLEN);
+    return ::inet_ntop( AF_INET, &sin_addr, buffer, INET_ADDRSTRLEN );
 }
 
-int kl::Address::set_address(const std::string_view& address)
+int kl::Address::set_address( std::string_view const& address )
 {
-    return ::inet_pton(AF_INET, address.data(), &sin_addr);
+    return ::inet_pton( AF_INET, address.data(), &sin_addr );
 }
 
 int kl::Address::port() const
 {
-    return (int) ::ntohs(sin_port);
+    return (int) ::ntohs( sin_port );
 }
 
-void kl::Address::set_port(int port)
+void kl::Address::set_port( int port )
 {
-    sin_port = ::htons((u_short) port);
+    sin_port = ::htons( (u_short) port );
 }
 
-const std::string kl::Socket::SELF = "127.0.0.1";
+std::string kl::Socket::SELF = "127.0.0.1";
 
-kl::Socket::Socket(const bool udp)
+kl::Socket::Socket( bool udp )
 {
-    m_socket = ::socket(AF_INET,
+    m_socket = ::socket( AF_INET,
         udp ? SOCK_DGRAM : SOCK_STREAM,
-        udp ? IPPROTO_UDP : IPPROTO_TCP);
+        udp ? IPPROTO_UDP : IPPROTO_TCP );
     m_address.sin_addr.s_addr = INADDR_ANY;
-    verify(m_socket != INVALID_SOCKET, "Failed to create socket");
+    verify( m_socket != INVALID_SOCKET, "Failed to create socket" );
 }
 
 kl::Socket::~Socket()
 {
-    ::closesocket(m_socket);
+    ::closesocket( m_socket );
 }
 
 kl::Socket::ID kl::Socket::id() const
@@ -67,9 +67,9 @@ std::string kl::Socket::address() const
     return m_address.address();
 }
 
-int kl::Socket::set_address(const std::string_view& address)
+int kl::Socket::set_address( std::string_view const& address )
 {
-    return m_address.set_address(address);
+    return m_address.set_address( address );
 }
 
 int kl::Socket::port() const
@@ -77,59 +77,60 @@ int kl::Socket::port() const
     return m_address.port();
 }
 
-void kl::Socket::set_port(const int port)
+void kl::Socket::set_port( int port )
 {
-    m_address.set_port(port);
+    m_address.set_port( port );
 }
 
 int kl::Socket::bind()
 {
-    return ::bind(m_socket, (sockaddr*) &m_address, sizeof(Address));
+    return ::bind( m_socket, (sockaddr*) &m_address, sizeof( Address ) );
 }
 
-int kl::Socket::listen(const int queue_size)
+int kl::Socket::listen( int queue_size )
 {
-    return ::listen(m_socket, queue_size);
+    return ::listen( m_socket, queue_size );
 }
 
-void kl::Socket::accept(Socket* socket)
+void kl::Socket::accept( Socket& socket )
 {
-    int address_length = sizeof(Address);
-    socket->m_socket = ::accept(m_socket, (sockaddr*) &m_address, &address_length);
+    int address_length = sizeof( Address );
+    socket.m_socket = ::accept( m_socket, (sockaddr*) &m_address, &address_length );
 }
 
 int kl::Socket::connect()
 {
-    return ::connect(m_socket, (sockaddr*) &m_address, sizeof(Address));
+    return ::connect( m_socket, (sockaddr*) &m_address, sizeof( Address ) );
 }
 
-int kl::Socket::send(const void* data, const int byte_size) const
+int kl::Socket::send( void const* data, int byte_size ) const
 {
-    return ::send(m_socket, (const char*) data, byte_size, NULL);
+    return ::send( m_socket, (char*) data, byte_size, NULL );
 }
 
-int kl::Socket::receive(void* buff, const int byte_size) const
+int kl::Socket::receive( void const* buff, int byte_size ) const
 {
-    return ::recv(m_socket, (char*) buff, byte_size, NULL);
+    return ::recv( m_socket, (char*) buff, byte_size, NULL );
 }
 
-int kl::Socket::send_to(const void* data, int byte_size, const Address& address) const
+int kl::Socket::send_to( void const* data, int byte_size, Address const& address ) const
 {
-    return ::sendto(m_socket, (const char*) data, byte_size, NULL, (const sockaddr*) &address, sizeof(Address));
+    return ::sendto( m_socket, (char*) data, byte_size, NULL, (sockaddr*) &address, sizeof( Address ) );
 }
 
-int kl::Socket::receive_from(void* buff, int byte_size, Address* address) const
+int kl::Socket::receive_from( void const* buff, int byte_size, Address const* address ) const
 {
-    int address_length = sizeof(Address);
-    return ::recvfrom(m_socket, (char*) buff, byte_size, NULL, (sockaddr*) address, &address_length);
+    int address_length = sizeof( Address );
+    return ::recvfrom( m_socket, (char*) buff, byte_size, NULL, (sockaddr*) address, &address_length );
 }
 
-int kl::Socket::exhaust(std::vector<byte>* output, const int buffer_size) const
+int kl::Socket::exhaust( std::vector<byte>& output, int buffer_size ) const
 {
-    std::vector<byte> receiver_buffer(buffer_size);
+    std::vector<byte> receiver_buffer( buffer_size );
     int total_received = 0;
-    for (int received; (received = receive(receiver_buffer.data(), buffer_size)) > 0;) {
-        output->insert(output->end(), receiver_buffer.begin(), receiver_buffer.begin() + received);
+    for ( int received; (received = receive( receiver_buffer.data(), buffer_size )) > 0;)
+    {
+        output.insert( output.end(), receiver_buffer.begin(), receiver_buffer.begin() + received );
         total_received += received;
     }
     return total_received;

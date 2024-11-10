@@ -5,13 +5,14 @@
 #include "app/logger.h"
 
 
-namespace titian {
-	struct GUISectionLogView : GUISection
-	{
-        uint64_t last_log_index = 0;
+namespace titian
+{
+struct GUISectionLogView : GUISection
+{
+    uint64_t last_log_index = 0;
 
-		GUISectionLogView();
+    GUISectionLogView();
 
-		void render_gui() override;
-	};
+    void render_gui() override;
+};
 }

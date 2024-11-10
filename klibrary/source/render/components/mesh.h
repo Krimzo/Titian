@@ -3,17 +3,18 @@
 #include "graphics/graphics.h"
 
 
-namespace kl {
-    struct Mesh
-    {
-        std::vector<Vertex> vertices;
-        dx::Buffer buffer;
+namespace kl
+{
+struct Mesh
+{
+    std::vector<Vertex> vertices;
+    dx::Buffer buffer;
 
-        Mesh(kl::GPU& gpu);
+    Mesh( kl::GPU const& gpu );
 
-        void reload();
+    void reload();
 
-    private:
-        GPU& m_gpu;
-    };
+private:
+    GPU const& m_gpu;
+};
 }

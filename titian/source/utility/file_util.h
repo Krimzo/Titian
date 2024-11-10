@@ -4,19 +4,21 @@
 #include "utility/string_util.h"
 
 
-namespace titian {
-    enum struct FileType : int32_t
-    {
-        DEFAULT = 0,
-        MESH,
-        TEXTURE,
-        SCRIPT,
-        SHADER,
-        BINARY_SCENE,
-        TEXT_SCENE,
-    };
+namespace titian
+{
+enum struct FileType : int32_t
+{
+    DEFAULT = 0,
+    MESH,
+    TEXTURE,
+    SCRIPT,
+    SHADER,
+    BINARY_SCENE,
+    TEXT_SCENE,
+};
 }
 
-namespace titian {
-    FileType classify_file(const fs::path& file);
+namespace titian
+{
+FileType classify_file( fs::path const& file );
 }

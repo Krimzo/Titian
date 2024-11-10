@@ -3,18 +3,19 @@
 #include "standard.h"
 
 
-namespace titian {
-	struct LogInfo
-    {
-        String date = kl::format(kl::Date());
-        String message;
+namespace titian
+{
+struct LogInfo
+{
+    String date = kl::format( kl::Date() );
+    String message;
 
-        LogInfo();
-        LogInfo(const StringRef& message);
+    LogInfo();
+    LogInfo( StringRef const& message );
 
-        template<typename... Args>
-        LogInfo(const Args&... objects)
-            : message(kl::format(objects...))
-        {}
-	};
+    template<typename... Args>
+    LogInfo( Args&... objects )
+        : message( kl::format( objects... ) )
+    {}
+};
 }

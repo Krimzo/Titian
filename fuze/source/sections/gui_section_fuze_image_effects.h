@@ -7,11 +7,12 @@
 #include "effects/audio_effects.h"
 
 
-namespace titian {
-    struct GUISectionFuzeImageEffects : GUISection
-    {
-        GUISectionFuzeImageEffects();
+namespace titian
+{
+struct GUISectionFuzeImageEffects : GUISection
+{
+    GUISectionFuzeImageEffects();
 
-        void render_gui() override;
-    };
+    void render_gui() override;
+};
 }

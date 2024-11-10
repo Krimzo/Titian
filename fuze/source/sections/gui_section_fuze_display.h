@@ -4,11 +4,12 @@
 #include "gui/gui_layer.h"
 
 
-namespace titian {
-    struct GUISectionFuzeDisplay : GUISection
-    {
-        GUISectionFuzeDisplay();
+namespace titian
+{
+struct GUISectionFuzeDisplay : GUISection
+{
+    GUISectionFuzeDisplay();
 
-        void render_gui() override;
-    };
+    void render_gui() override;
+};
 }

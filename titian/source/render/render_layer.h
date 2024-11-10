@@ -11,22 +11,23 @@
 #include "render/states/blend_states.h"
 
 
-namespace titian {
-	struct RenderLayer : Layer_T<RenderLayer>
-	{
-		Vector<Ref<RenderPass>> passes;
-		
-		RasterStates raster_states;
-		DepthStates depth_states;
-		SamplerStates sampler_states;
-		ShaderStates shader_states;
-		BlendStates blend_states;
+namespace titian
+{
+struct RenderLayer : Layer_T<RenderLayer>
+{
+    Vector<Ref<RenderPass>> passes;
 
-		dx::Buffer screen_mesh;
+    RasterStates raster_states;
+    DepthStates depth_states;
+    SamplerStates sampler_states;
+    ShaderStates shader_states;
+    BlendStates blend_states;
 
-		RenderLayer();
+    dx::Buffer screen_mesh;
 
-		bool update() override;
-		void present() const;
-	};
+    RenderLayer();
+
+    bool update() override;
+    void present() const;
+};
 }

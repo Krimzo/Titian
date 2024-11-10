@@ -3,22 +3,24 @@
 #include "titian.h"
 
 
-namespace titian {
-	using RAWAudio = kl::Audio;
-	using RAWAudioType = kl::AudioType;
+namespace titian
+{
+using RAWAudio = kl::Audio;
+using RAWAudioType = kl::AudioType;
 }
 
-namespace titian {
-	struct Audio : kl::NoCopy
-	{
-		RAWAudio out_audio;
+namespace titian
+{
+struct Audio : kl::NoCopy
+{
+    RAWAudio out_audio;
 
-		Audio();
-		Audio(const StringRef& path);
+    Audio();
+    Audio( StringRef const& path );
 
-		float duration() const;
-		float sample(float time) const;
+    float duration() const;
+    float sample( float time ) const;
 
-		Ref<Audio> make_copy() const;
-	};
+    Ref<Audio> make_copy() const;
+};
 }

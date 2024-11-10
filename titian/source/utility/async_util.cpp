@@ -3,5 +3,5 @@
 
 void titian::WorkQueue::finalize()
 {
-	m_queue.clear();
+    m_queue.clear();
 }

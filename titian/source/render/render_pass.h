@@ -4,31 +4,33 @@
 #include "scene/camera.h"
 
 
-namespace titian {
-	struct StatePackage
-	{
-		dx::RasterState raster_state;
-		dx::DepthState depth_state;
-		dx::BlendState blend_state;
-		kl::Shaders shaders;
-		Camera* camera = nullptr;
-	};
+namespace titian
+{
+struct StatePackage
+{
+    dx::RasterState raster_state;
+    dx::DepthState depth_state;
+    dx::BlendState blend_state;
+    kl::Shaders shaders;
+    Camera* camera = nullptr;
+};
 }
 
-namespace titian {
-	struct RenderPass : kl::NoCopy, BenchmarkInfo
-	{
-		RenderPass(const StringRef& name);
-		virtual ~RenderPass() = default;
+namespace titian
+{
+struct RenderPass : kl::NoCopy, BenchmarkInfo
+{
+    RenderPass( StringRef const& name );
+    virtual ~RenderPass() = default;
 
-		void process(Camera* camera);
+    void process( Camera* camera );
 
-	protected:
-		virtual void state_package(StatePackage& package) = 0;
-		virtual void render_self(StatePackage& package) = 0;
+protected:
+    virtual void state_package( StatePackage& package ) = 0;
+    virtual void render_self( StatePackage& package ) = 0;
 
-	private:
-		void bind_states(const StatePackage& package);
-		void unbind_states();
-	};
+private:
+    void bind_states( StatePackage& package );
+    void unbind_states();
+};
 }

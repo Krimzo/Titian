@@ -3,6 +3,3 @@
 
 titian::AudioEffect::AudioEffect()
 {}
-
-titian::AudioEffect::~AudioEffect()
-{}

@@ -4,26 +4,27 @@
 titian::AudioEffectVolume::AudioEffectVolume()
 {}
 
-titian::String titian::AudioEffectVolume::get_name() const
+void titian::AudioEffectVolume::apply( EffectPackage const& package, Audio& audio )
 {
-	return "Volume";
+    kl::async_for( 0, (int) audio.out_audio.size(), [&]( int i )
+    {
+        audio.out_audio[i] *= volume;
+    } );
 }
 
-void titian::AudioEffectVolume::display_gui()
+titian::String titian::AudioEffectVolume::name() const
 {
-	im::DragFloat("Volume", &volume, 0.01f);
-}
-
-void titian::AudioEffectVolume::apply(const EffectPackage& package, Audio& audio)
-{
-	kl::async_for(0, (int) audio.out_audio.size(), [&](const int i)
-	{
-		audio.out_audio[i] *= volume;
-	});
+    return "Volume";
 }
 
 titian::Ref<titian::AudioEffect> titian::AudioEffectVolume::make_copy() const
 {
-	Ref effect = new AudioEffectVolume();
-	return effect;
+    Ref effect = new AudioEffectVolume();
+    effect->volume = this->volume;
+    return effect;
+}
+
+void titian::AudioEffectVolume::display_gui()
+{
+    im::DragFloat( "Volume", &volume, 0.01f );
 }

@@ -4,14 +4,15 @@
 #include "gui/gui_layer.h"
 
 
-namespace titian {
-    struct GUISectionFuzeMainMenu : GUISection
-    {
-        GUISectionFuzeMainMenu();
+namespace titian
+{
+struct GUISectionFuzeMainMenu : GUISection
+{
+    GUISectionFuzeMainMenu();
 
-        void render_gui() override;
+    void render_gui() override;
 
-    private:
-        bool m_testing_exit = false;
-    };
+private:
+    bool m_testing_exit = false;
+};
 }

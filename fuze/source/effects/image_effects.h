@@ -3,20 +3,21 @@
 #include "effects/image_effect.h"
 
 
-namespace titian {
-	struct ImageEffectSclRotPos : ImageEffect
-	{
-		ImageEffectSclRotPos();
+namespace titian
+{
+struct ImageEffectSclRotPos : ImageEffect
+{
+    ImageEffectSclRotPos();
 
-		String name() const override;
-		bool needs_copy() const override;
-		void display_gui() override;
-		Ref<ImageEffect> make_copy() const override;
+    String name() const override;
+    bool needs_copy() const override;
+    Ref<ImageEffect> make_copy() const override;
+    void display_gui() override;
 
-		String get_source() const;
+    String get_source() const;
 
-		Float2& scale();
-		float& rotation();
-		Float2& position();
-	};
+    Float2& scale();
+    float& rotation();
+    Float2& position();
+};
 }

@@ -10,126 +10,129 @@
 #include "scene/entity.h"
 
 
-namespace titian {
-    struct AssimpData
-    {
-        Ref<as::Importer> importer;
-        Vector<String> meshes;
-        Vector<String> animations;
-        Vector<String> textures;
-        Vector<String> materials;
-    };
+namespace titian
+{
+struct AssimpData
+{
+    Ref<as::Importer> importer;
+    Vector<String> meshes;
+    Vector<String> animations;
+    Vector<String> textures;
+    Vector<String> materials;
+};
 }
 
-namespace titian {
-    struct Scene : kl::NoCopy, Serializable, px::PxSimulationEventCallback
+namespace titian
+{
+struct Scene : kl::NoCopy, Serializable, px::PxSimulationEventCallback
+{
+    StringMap<Ref<Mesh>> meshes;
+    StringMap<Ref<Animation>> animations;
+    StringMap<Ref<Texture>> textures;
+    StringMap<Ref<Material>> materials;
+    StringMap<Ref<Shader>> shaders;
+    StringMap<Ref<Script>> scripts;
+
+    DefaultMeshes default_meshes;
+    DefaultAnimations default_animations;
+    DefaultMaterials default_materials;
+
+    String main_camera_name = "/";
+    String main_ambient_light_name = "/";
+    String main_directional_light_name = "/";
+
+    Scene();
+    ~Scene() override;
+
+    void serialize( Serializer& serializer ) const override;
+    void deserialize( Serializer const& serializer ) override;
+
+    void onConstraintBreak( px::PxConstraintInfo* constraints, px::PxU32 count ) override;
+    void onWake( px::PxActor** actors, px::PxU32 count ) override;
+    void onSleep( px::PxActor** actors, px::PxU32 count ) override;
+    void onContact( px::PxContactPairHeader const& pairHeader, px::PxContactPair const* pairs, px::PxU32 nbPairs ) override;
+    void onTrigger( px::PxTriggerPair* pairs, px::PxU32 count ) override;
+    void onAdvance( px::PxRigidBody const* const* bodyBuffer, px::PxTransform const* poseBuffer, px::PxU32 count ) override;
+
+    void set_gravity( Float3 const& gravity );
+    Float3 gravity() const;
+
+    void update_physics( float delta_t );
+    void update_scripts();
+    void update_ui();
+
+    void add_entity( String const& id, Ref<Entity> const& entity );
+    void remove_entity( StringRef const& id );
+    inline auto& entities() const { return m_entities; };
+
+    template<typename T>
+    T* get_casted( StringRef const& id )
     {
-        StringMap<Ref<Mesh>> meshes;
-        StringMap<Ref<Animation>> animations;
-        StringMap<Ref<Texture>> textures;
-        StringMap<Ref<Material>> materials;
-        StringMap<Ref<Shader>> shaders;
-        StringMap<Ref<Script>> scripts;
+        return dynamic_cast<T*>(helper_get_entity( id ));
+    }
 
-        DefaultMeshes default_meshes;
-        DefaultAnimations default_animations;
-        DefaultMaterials default_materials;
+    Mesh& helper_new_mesh( String const& id );
+    Animation& helper_new_animation( String const& id );
+    Texture& helper_new_texture( String const& id );
+    Material& helper_new_material( String const& id );
+    Shader& helper_new_shader( String const& id );
+    Entity& helper_new_entity( String const& id );
 
-        String main_camera_name = "/";
-        String main_ambient_light_name = "/";
-        String main_directional_light_name = "/";
+    Mesh* helper_get_mesh( StringRef const& id ) const;
+    Animation* helper_get_animation( StringRef const& id ) const;
+    Texture* helper_get_texture( StringRef const& id ) const;
+    Material* helper_get_material( StringRef const& id ) const;
+    Shader* helper_get_shader( StringRef const& id ) const;
+    Entity* helper_get_entity( StringRef const& id ) const;
 
-        Scene();
-        ~Scene() override;
+    void helper_remove_mesh( StringRef const& id );
+    void helper_remove_animation( StringRef const& id );
+    void helper_remove_texture( StringRef const& id );
+    void helper_remove_material( StringRef const& id );
+    void helper_remove_shader( StringRef const& id );
+    void helper_remove_entity( StringRef const& id );
 
-        void serialize(Serializer& serializer) const override;
-        void deserialize(const Serializer& serializer) override;
-        
-        void onConstraintBreak(px::PxConstraintInfo* constraints, px::PxU32 count) override;
-        void onWake(px::PxActor** actors, px::PxU32 count) override;
-        void onSleep(px::PxActor** actors, px::PxU32 count) override;
-        void onContact(const px::PxContactPairHeader& pairHeader, const px::PxContactPair* pairs, px::PxU32 nbPairs) override;
-        void onTrigger(px::PxTriggerPair* pairs, px::PxU32 count) override;
-        void onAdvance(const px::PxRigidBody* const* bodyBuffer, const px::PxTransform* poseBuffer, const px::PxU32 count) override;
+    bool helper_contains_mesh( StringRef const& id ) const;
+    bool helper_contains_animation( StringRef const& id ) const;
+    bool helper_contains_texture( StringRef const& id ) const;
+    bool helper_contains_material( StringRef const& id ) const;
+    bool helper_contains_shader( StringRef const& id ) const;
+    bool helper_contains_entity( StringRef const& id ) const;
 
-        void set_gravity(const Float3& gravity);
-        Float3 gravity() const;
+    void helper_iterate_meshes( Func<void( String const&, Mesh* )> const& func );
+    void helper_iterate_animations( Func<void( String const&, Animation* )> const& func );
+    void helper_iterate_textures( Func<void( String const&, Texture* )> const& func );
+    void helper_iterate_materials( Func<void( String const&, Material* )> const& func );
+    void helper_iterate_shaders( Func<void( String const&, Shader* )> const& func );
+    void helper_iterate_entities( Func<void( String const&, Entity* )> const& func );
 
-        void update_physics(float delta_t);
-        void update_scripts();
-        void update_ui();
+    Opt<AssimpData> get_assimp_data( StringRef const& path ) const;
+    void load_assimp_data( AssimpData const& data );
 
-        void add_entity(const String& id, const Ref<Entity>& entity);
-        void remove_entity(const StringRef& id);
-        inline const auto& entities() const { return m_entities; };
+    Ref<Mesh> load_assimp_mesh( aiScene const& scene, aiMesh const& mesh );
+    Ref<Animation> load_assimp_animation( aiScene const& scene, aiAnimation const& animation );
+    Ref<Texture> load_assimp_texture( aiScene const& scene, aiTexture const& texture );
+    Ref<Material> load_assimp_material( aiScene const& scene, aiMaterial const& material );
 
-        template<typename T>
-        T* get_casted(const StringRef& id)
+    template<typename T>
+    static String generate_unique_name( StringRef const& name, StringMap<T> const& map )
+    {
+        if ( !map.contains( name ) )
+            return String{ name };
+
+        int i = 0;
+        String result;
+        do
         {
-            return dynamic_cast<T*>(helper_get_entity(id));
+            i += 1;
+            result = kl::format( name, i );
         }
+        while ( map.contains( result ) );
+        return result;
+    }
 
-        Mesh& helper_new_mesh(const String& id);
-        Animation& helper_new_animation(const String& id);
-        Texture& helper_new_texture(const String& id);
-        Material& helper_new_material(const String& id);
-        Shader& helper_new_shader(const String& id);
-        Entity& helper_new_entity(const String& id);
-
-        Mesh* helper_get_mesh(const StringRef& id) const;
-        Animation* helper_get_animation(const StringRef& id) const;
-        Texture* helper_get_texture(const StringRef& id) const;
-        Material* helper_get_material(const StringRef& id) const;
-        Shader* helper_get_shader(const StringRef& id) const;
-        Entity* helper_get_entity(const StringRef& id) const;
-
-        void helper_remove_mesh(const StringRef& id);
-        void helper_remove_animation(const StringRef& id);
-        void helper_remove_texture(const StringRef& id);
-        void helper_remove_material(const StringRef& id);
-        void helper_remove_shader(const StringRef& id);
-        void helper_remove_entity(const StringRef& id);
-
-        bool helper_contains_mesh(const StringRef& id) const;
-        bool helper_contains_animation(const StringRef& id) const;
-        bool helper_contains_texture(const StringRef& id) const;
-        bool helper_contains_material(const StringRef& id) const;
-        bool helper_contains_shader(const StringRef& id) const;
-        bool helper_contains_entity(const StringRef& id) const;
-
-        void helper_iterate_meshes(const Func<void(const String&, Mesh*)>& func);
-        void helper_iterate_animations(const Func<void(const String&, Animation*)>& func);
-        void helper_iterate_textures(const Func<void(const String&, Texture*)>& func);
-        void helper_iterate_materials(const Func<void(const String&, Material*)>& func);
-        void helper_iterate_shaders(const Func<void(const String&, Shader*)>& func);
-        void helper_iterate_entities(const Func<void(const String&, Entity*)>& func);
-
-        Opt<AssimpData> get_assimp_data(const StringRef& path) const;
-        void load_assimp_data(const AssimpData& data);
-
-        Ref<Mesh> load_assimp_mesh(const aiScene& scene, const aiMesh& mesh);
-		Ref<Animation> load_assimp_animation(const aiScene& scene, const aiAnimation& animation);
-		Ref<Texture> load_assimp_texture(const aiScene& scene, const aiTexture& texture);
-		Ref<Material> load_assimp_material(const aiScene& scene, const aiMaterial& material);
-
-        template<typename T>
-        static String generate_unique_name(const StringRef& name, const StringMap<T>& map)
-        {
-            if (!map.contains(name))
-                return String{ name };
-
-            int i = 0;
-            String result;
-            do {
-                i += 1;
-                result = kl::format(name, i);
-            }
-			while (map.contains(result));
-			return result;
-        }
-
-    private:
-        px::PxScene& m_scene;
-        StringMap<Ref<Entity>> m_entities;
-    };
+private:
+    px::PxScene& m_scene;
+    StringMap<Ref<Entity>> m_entities;
+};
 }

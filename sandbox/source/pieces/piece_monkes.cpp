@@ -1,8 +1,8 @@
 #include "sandbox.h"
 
 
-titian::SandboxPieceMonkes::SandboxPieceMonkes(TitianEditor& editor, const int size)
-    : SandboxPiece(editor)
+titian::SandboxPieceMonkes::SandboxPieceMonkes( TitianEditor& editor, int size )
+    : SandboxPiece( editor )
 {
     this->size = size;
 }
@@ -12,18 +12,20 @@ void titian::SandboxPieceMonkes::setup_self()
     kl::GPU& gpu = editor.app_layer.gpu;
     Scene& scene = editor.game_layer.scene();
 
-    const int entity_count = size * size;
-    const int half_size = size / 2;
+    int entity_count = size * size;
+    int half_size = size / 2;
 
     Ref<Mesh> monke_mesh;
-    if (auto opt_data = scene.get_assimp_data("package/meshes/monke.obj")) {
-        const aiScene& ai_scene = *opt_data.value().importer->GetScene();
-        for (uint32_t i = 0; i < ai_scene.mNumMeshes; i++) {
-            monke_mesh = scene.load_assimp_mesh(ai_scene, *ai_scene.mMeshes[i]);
+    if ( auto opt_data = scene.get_assimp_data( "package/meshes/monke.obj" ) )
+    {
+        aiScene const& ai_scene = *opt_data.value().importer->GetScene();
+        for ( uint32_t i = 0; i < ai_scene.mNumMeshes; i++ )
+        {
+            monke_mesh = scene.load_assimp_mesh( ai_scene, *ai_scene.mMeshes[i] );
             break;
         }
     }
-    if (!monke_mesh)
+    if ( !monke_mesh )
         return;
 
     Ref monke_animation = new Animation();
@@ -32,15 +34,16 @@ void titian::SandboxPieceMonkes::setup_self()
     scene.meshes["monke"] = monke_mesh;
     scene.animations["monke"] = monke_animation;
 
-    for (int i = 0; i < entity_count; i++) {
-        const int x = i % size;
-        const int y = i / size;
+    for ( int i = 0; i < entity_count; i++ )
+    {
+        int x = i % size;
+        int y = i / size;
 
-        const String mesh_name = "monke";
-        const String animation_name = "monke";
-        const String counter_id = kl::format(std::setw(3), std::setfill('0'), i);
-        const String material_name = kl::format("monke_mat_", counter_id);
-        const String entity_name = kl::format("Monke", counter_id);
+        String mesh_name = "monke";
+        String animation_name = "monke";
+        String counter_id = kl::format( std::setw( 3 ), std::setfill( '0' ), i );
+        String material_name = kl::format( "monke_mat_", counter_id );
+        String entity_name = kl::format( "Monke", counter_id );
 
         Ref material = new Material();
         material->color = kl::colors::CYAN;
@@ -49,15 +52,15 @@ void titian::SandboxPieceMonkes::setup_self()
         scene.materials[material_name] = material;
 
         Ref monke = new Entity();
-        monke->set_scale(Float3{ 0.5f });
-        monke->set_position({
+        monke->set_scale( Float3{ 0.5f } );
+        monke->set_position( {
             (float) (x - half_size) + x_offset,
             (float) (y - half_size),
             5.0f,
-        });
+            } );
 
         monke->animation_name = animation_name;
         monke->material_name = material_name;
-        scene.add_entity(entity_name, monke);
+        scene.add_entity( entity_name, monke );
     }
 }

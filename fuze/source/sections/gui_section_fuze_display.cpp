@@ -2,21 +2,22 @@
 
 
 titian::GUISectionFuzeDisplay::GUISectionFuzeDisplay()
-	: GUISection("GUISectionFuzeDisplay")
+    : GUISection( "GUISectionFuzeDisplay" )
 {}
 
 void titian::GUISectionFuzeDisplay::render_gui()
 {
-	VideoLayer& video_layer = VideoLayer::get();
-	
-	im::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2());
+    VideoLayer& video_layer = VideoLayer::get();
 
-	if (im::Begin("Display", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
-        const ImVec2 content_region = im::GetContentRegionAvail();
-		video_layer.store_frame({ (int) content_region.x, (int) content_region.y });
-        im::Image(video_layer.get_shader_view().get(), content_region);
-	}
-	im::End();
+    im::PushStyleVar( ImGuiStyleVar_WindowPadding, ImVec2() );
 
-	im::PopStyleVar();
+    if ( im::Begin( "Display", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse ) )
+    {
+        ImVec2 content_region = im::GetContentRegionAvail();
+        video_layer.store_frame( { (int) content_region.x, (int) content_region.y } );
+        im::Image( video_layer.get_shader_view().get(), content_region );
+    }
+    im::End();
+
+    im::PopStyleVar();
 }

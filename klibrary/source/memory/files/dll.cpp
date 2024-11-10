@@ -4,9 +4,9 @@
 kl::DLL::DLL()
 {}
 
-kl::DLL::DLL(const std::string_view& path)
+kl::DLL::DLL( std::string_view const& path )
 {
-    load(path);
+    load( path );
 }
 
 kl::DLL::~DLL()
@@ -19,23 +19,23 @@ kl::DLL::operator bool() const
     return (bool) m_module;
 }
 
-void kl::DLL::load(const std::string_view& path)
+void kl::DLL::load( std::string_view const& path )
 {
     unload();
     m_path = path;
-    m_module = LoadLibraryA(path.data());
+    m_module = LoadLibraryA( path.data() );
 }
 
 void kl::DLL::reload()
 {
     unload();
-    m_module = LoadLibraryA(m_path.data());
+    m_module = LoadLibraryA( m_path.data() );
 }
 
 void kl::DLL::unload()
 {
-    if (m_module) {
-        FreeLibrary(m_module);
-        m_module = nullptr;
-    }
+    if ( !m_module )
+        return;
+    FreeLibrary( m_module );
+    m_module = nullptr;
 }

@@ -7,16 +7,17 @@
 #include "scene/camera.h"
 
 
-namespace titian {
-	struct GUISectionSceneInfo : GUISection
-	{
-		GUISectionSceneInfo();
+namespace titian
+{
+struct GUISectionSceneInfo : GUISection
+{
+    GUISectionSceneInfo();
 
-		void render_gui() override;
+    void render_gui() override;
 
-    private:
-        void main_camera_info(Scene& scene);
-        void main_ambient_info(Scene& scene);
-        void main_directional_info(Scene& scene);
-	};
+private:
+    void main_camera_info( Scene& scene );
+    void main_ambient_info( Scene& scene );
+    void main_directional_info( Scene& scene );
+};
 }

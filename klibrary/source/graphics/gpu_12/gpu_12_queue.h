@@ -3,14 +3,15 @@
 #include "apis/apis.h"
 
 
-namespace kl {
-	struct GPU12Queue
-	{
-		dx12::CommandQueue queue{};
+namespace kl
+{
+struct GPU12Queue
+{
+    dx12::CommandQueue queue{};
 
-		GPU12Queue();
-		GPU12Queue(const dx12::CommandQueue& queue);
+    GPU12Queue();
+    GPU12Queue( dx12::CommandQueue const& queue );
 
-		void execute(const dx12::CommandList& list) const;
-	};
+    void execute( dx12::CommandList const& list ) const;
+};
 }

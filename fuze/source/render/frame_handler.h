@@ -3,18 +3,19 @@
 #include "storage/frame.h"
 
 
-namespace titian {
-	struct FrameHandler
-	{
-		Frame out_frame;
+namespace titian
+{
+struct FrameHandler
+{
+    Frame out_frame;
 
-		FrameHandler();
+    FrameHandler();
 
-		void prepare_frame(Int2 size);
-		void mix_frame(const Frame& frame);
+    void prepare_frame( Int2 size );
+    void mix_frame( Frame const& frame );
 
-	private:
-		dx::ComputeShader m_clear_shader;
-		dx::ComputeShader m_mix_shader;
-	};
+private:
+    dx::ComputeShader m_clear_shader;
+    dx::ComputeShader m_mix_shader;
+};
 }

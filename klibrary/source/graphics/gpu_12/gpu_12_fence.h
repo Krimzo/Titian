@@ -3,15 +3,16 @@
 #include "apis/apis.h"
 
 
-namespace kl {
-	struct GPU12Fence
-	{
-		dx12::Fence fence{};
-		uint64_t counter{};
+namespace kl
+{
+struct GPU12Fence
+{
+    dx12::Fence fence{};
+    uint64_t counter{};
 
-		GPU12Fence();
-		GPU12Fence(const dx12::Fence& fence);
+    GPU12Fence();
+    GPU12Fence( dx12::Fence const& fence );
 
-		void signal_and_wait(const dx12::CommandQueue& queue);
-	};
+    void signal_and_wait( dx12::CommandQueue const& queue );
+};
 }

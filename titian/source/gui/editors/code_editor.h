@@ -3,18 +3,19 @@
 #include "standard.h"
 
 
-namespace titian {
-	struct CodeEditor
-	{
-		CodeEditor();
+namespace titian
+{
+struct CodeEditor
+{
+    CodeEditor();
 
-		void load(const StringRef& source);
-		void edit(String& source);
+    void load( StringRef const& source );
+    void edit( String& source );
 
-		void load_lua_standard();
-		void load_hlsl_standard();
+    void load_lua_standard();
+    void load_hlsl_standard();
 
-	private:
-		TextEditor m_text_editor;
-	};
+private:
+    TextEditor m_text_editor;
+};
 }

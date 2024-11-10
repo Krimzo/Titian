@@ -8,11 +8,10 @@ kl::Timer::Timer()
 
 void kl::Timer::update()
 {
-    const uint64_t now = time::now();
-    m_delta = time::elapsed(m_last, now);
-    if (m_active) {
+    uint64_t now = time::now();
+    m_delta = time::elapsed( m_last, now );
+    if ( m_active )
         m_elapsed += m_delta;
-    }
     m_last = now;
 }
 
@@ -52,5 +51,5 @@ float kl::Timer::delta() const
 
 float kl::Timer::elapsed() const
 {
-	return m_elapsed;
+    return m_elapsed;
 }

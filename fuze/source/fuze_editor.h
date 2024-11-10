@@ -11,14 +11,15 @@
 #include "sections/gui_section_fuze_render.h"
 
 
-namespace titian {
-    struct FuzeEditor : LayerStack
-    {
-        AppLayer& app_layer;
-        VideoLayer& video_layer;
-        GUILayer& gui_layer;
+namespace titian
+{
+struct FuzeEditor : LayerStack
+{
+    AppLayer& app_layer;
+    VideoLayer& video_layer;
+    GUILayer& gui_layer;
 
-        FuzeEditor();
-        ~FuzeEditor() override;
-    };
+    FuzeEditor();
+    ~FuzeEditor() override;
+};
 }

@@ -7,30 +7,31 @@
 #include "scene/components/texture.h"
 
 
-namespace titian {
-    struct GUISectionExplorer : GUISection
-	{
-        Texture default_file_texture;
-        Texture mesh_file_texture;
-        Texture texture_file_texture;
-        Texture script_file_texture;
-        Texture shader_file_texture;
-        Texture scene_file_texture;
-        Texture default_dir_texture;
-        Texture parent_dir_texture;
+namespace titian
+{
+struct GUISectionExplorer : GUISection
+{
+    Texture default_file_texture;
+    Texture mesh_file_texture;
+    Texture texture_file_texture;
+    Texture script_file_texture;
+    Texture shader_file_texture;
+    Texture scene_file_texture;
+    Texture default_dir_texture;
+    Texture parent_dir_texture;
 
-        GUISectionExplorer();
+    GUISectionExplorer();
 
-        void render_gui() override;
+    void render_gui() override;
 
-    private:
-        String m_path = fs::absolute(".").string();
-        float m_icon_size = 75.0f;
+private:
+    String m_path = fs::absolute( "." ).string();
+    float m_icon_size = 75.0f;
 
-        void handle_file_entry(const fs::path& file);
-        void handle_directory_entry(const fs::path& directory, bool is_parent_dir);
+    void handle_file_entry( fs::path const& file );
+    void handle_directory_entry( fs::path const& directory, bool is_parent_dir );
 
-        void handle_item_transfer(const StringRef& item, const StringRef& destination);
-        dx::ShaderView file_icon(FileType type);
-    };
+    void handle_item_transfer( StringRef const& item, StringRef const& destination );
+    dx::ShaderView file_icon( FileType type );
+};
 }

@@ -6,17 +6,18 @@
 #include "render/light/directional_light.h"
 
 
-namespace kl {
-    struct Scene
-    {
-        std::vector<Ref<Entity>> entities;
+namespace kl
+{
+struct Scene
+{
+    std::vector<Ref<Entity>> entities;
 
-        Ref<Camera> main_camera = nullptr;
-        Ref<AmbientLight> main_ambient_light = nullptr;
-        Ref<DirectionalLight> main_directional_light = nullptr;
+    Ref<Camera> main_camera = nullptr;
+    Ref<AmbientLight> main_ambient_light = nullptr;
+    Ref<DirectionalLight> main_directional_light = nullptr;
 
-        Float3 gravity = { 0.0f, -9.81f, 0.0f };
+    Float3 gravity = { 0.0f, -9.81f, 0.0f };
 
-        void update_physics(float delta_t);
-    };
+    void update_physics( float delta_t );
+};
 }

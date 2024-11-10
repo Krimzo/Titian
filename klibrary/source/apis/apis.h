@@ -12,11 +12,12 @@
 #undef INFINITY
 #undef RGB
 
-namespace kl {
-    inline constexpr bool IS_DEBUG =
+namespace kl
+{
+inline constexpr bool IS_DEBUG =
 #ifdef _DEBUG
-        true;
+true;
 #else
-        false;
+false;
 #endif
 }

@@ -6,25 +6,27 @@
 #include "memory/files/dll.h"
 
 
-namespace kl {
-    template<typename T>
-    T* allocate(uint64_t count)
-    {
-        return (T*) ::calloc(count, sizeof(T));
-    }
+namespace kl
+{
+template<typename T>
+T* allocate( uint64_t count )
+{
+    return (T*) ::calloc( count, sizeof( T ) );
+}
 
-    template<typename T>
-    void deallocate(T*& ptr)
+template<typename T>
+void deallocate( T const*& ptr )
+{
+    if ( ptr )
     {
-        if (ptr) {
-            ::free((void*) ptr);
-            ptr = nullptr;
-        }
+        ::free( (void*) ptr );
+        ptr = nullptr;
     }
+}
 
-    template<typename T>
-    void copy(void* dst, const void* src, uint64_t count)
-    {
-        ::memcpy(dst, src, count * sizeof(T));
-    }
+template<typename T>
+void copy( void* dst, void const* src, uint64_t count )
+{
+    ::memcpy( dst, src, count * sizeof( T ) );
+}
 }

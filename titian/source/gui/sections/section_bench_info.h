@@ -4,17 +4,19 @@
 #include "editor/game_layer.h"
 
 
-namespace titian {
-    struct TitianEditor;
+namespace titian
+{
+struct TitianEditor;
 }
 
-namespace titian {
-    struct GUISectionBenchInfo : GUISection
-    {
-        TitianEditor& editor;
+namespace titian
+{
+struct GUISectionBenchInfo : GUISection
+{
+    TitianEditor const& editor;
 
-        GUISectionBenchInfo(TitianEditor& editor);
+    GUISectionBenchInfo( TitianEditor const& editor );
 
-        void render_gui() override;
-    };
+    void render_gui() override;
+};
 }

@@ -6,20 +6,21 @@
 #include "serial/serial.h"
 
 
-namespace titian {
-    struct GUISectionHelper : GUISection
-    {
-        Texture basic_entity_texture;
-        Texture animation_entity_texture;
+namespace titian
+{
+struct GUISectionHelper : GUISection
+{
+    Texture basic_entity_texture;
+    Texture animation_entity_texture;
 
-        GUISectionHelper();
+    GUISectionHelper();
 
-        void render_gui() override;
+    void render_gui() override;
 
-    private:
-        float m_icon_size = 75.0f;
+private:
+    float m_icon_size = 75.0f;
 
-        void handle_basic_entry(const StringRef& name) const;
-        void handle_animation_entry(const StringRef& name) const;
-    };
+    void handle_basic_entry( StringRef const& name ) const;
+    void handle_animation_entry( StringRef const& name ) const;
+};
 }

@@ -4,10 +4,11 @@
 #include "serial/text_serializer.h"
 
 
-namespace titian {
-	int packager_entry(int argc, str* argv, bool pack);
+namespace titian
+{
+int packager_entry( int argc, str* argv, bool pack );
 
-	StringSet list_files(const StringRef& input);
-	bool create_package(const StringRef& input, const StringRef& output_file);
-	bool open_package(const StringRef& input_file, const StringRef& output_dir);
+StringSet list_files( StringRef const& input );
+bool create_package( StringRef const& input, StringRef const& output_file );
+bool open_package( StringRef const& input_file, StringRef const& output_dir );
 }

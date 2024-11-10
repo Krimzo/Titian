@@ -4,11 +4,12 @@
 #include "gui/gui_layer.h"
 
 
-namespace titian {
-    struct GUISectionFuzeAudioEffects : GUISection
-    {
-        GUISectionFuzeAudioEffects();
+namespace titian
+{
+struct GUISectionFuzeAudioEffects : GUISection
+{
+    GUISectionFuzeAudioEffects();
 
-        void render_gui() override;
-    };
+    void render_gui() override;
+};
 }

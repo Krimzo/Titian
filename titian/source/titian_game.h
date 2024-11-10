@@ -17,15 +17,16 @@
 #include "gui/ui/ui_funcs.h"
 
 
-namespace titian {
-    struct TitianGame : LayerStack
-	{
-        AppLayer& app_layer;
-        GameLayer& game_layer;
-        RenderLayer& render_layer;
-        GUILayer& gui_layer;
+namespace titian
+{
+struct TitianGame : LayerStack
+{
+    AppLayer& app_layer;
+    GameLayer& game_layer;
+    RenderLayer& render_layer;
+    GUILayer& gui_layer;
 
-        TitianGame(const StringRef& entry_scene);
-        ~TitianGame() override;
-	};
+    TitianGame( StringRef const& entry_scene );
+    ~TitianGame() override;
+};
 }

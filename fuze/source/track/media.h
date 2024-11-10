@@ -4,48 +4,50 @@
 #include "effects/audio_effect.h"
 
 
-namespace titian {
-	enum struct MediaType : int32_t
-	{
-		IMAGE = 0,
-		AUDIO = 1,
-		VIDEO = 2,
-	};
+namespace titian
+{
+enum struct MediaType : int32_t
+{
+    IMAGE = 0,
+    AUDIO = 1,
+    VIDEO = 2,
+};
 }
 
-namespace titian {
-	struct Media : kl::NoCopy
-	{
-		String name;
-		MediaType type = MediaType::IMAGE;
-		float duration = 0.0f;
+namespace titian
+{
+struct Media : kl::NoCopy
+{
+    String name;
+    MediaType type = MediaType::IMAGE;
+    float duration = 0.0f;
 
-		Ref<Image> image;
-		Ref<Audio> audio;
-		Ref<Video> video;
+    Ref<Image> image;
+    Ref<Audio> audio;
+    Ref<Video> video;
 
-		Vector<Ref<ImageEffect>> image_effects;
-		Vector<Ref<AudioEffect>> audio_effects;
+    Vector<Ref<ImageEffect>> image_effects;
+    Vector<Ref<AudioEffect>> audio_effects;
 
-		Frame out_frame;
-		Audio out_audio;
+    Frame out_frame;
+    Audio out_audio;
 
-		Media();
+    Media();
 
-		bool has_image() const;
-		bool has_audio() const;
-		bool has_video() const;
+    bool has_image() const;
+    bool has_audio() const;
+    bool has_video() const;
 
-		void store_frame(const EffectPackage& package, bool wait);
-		void store_audio(const EffectPackage& package);
+    void store_frame( EffectPackage const& package, bool wait );
+    void store_audio( EffectPackage const& package );
 
-		Ref<Media> make_copy() const;
+    Ref<Media> make_copy() const;
 
-	private:
-		void store_raw_frame(float time, bool wait);
-		void store_raw_audio();
+private:
+    void store_raw_frame( float time, bool wait );
+    void store_raw_audio();
 
-		void apply_image_effects(const EffectPackage& package);
-		void apply_audio_effects(const EffectPackage& package);
-	};
+    void apply_image_effects( EffectPackage const& package );
+    void apply_audio_effects( EffectPackage const& package );
+};
 }

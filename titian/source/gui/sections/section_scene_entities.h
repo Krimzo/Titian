@@ -7,11 +7,12 @@
 #include "scene/camera.h"
 
 
-namespace titian {
-	struct GUISectionSceneEntities : GUISection
-	{
-		GUISectionSceneEntities();
+namespace titian
+{
+struct GUISectionSceneEntities : GUISection
+{
+    GUISectionSceneEntities();
 
-		void render_gui() override;
-	};
+    void render_gui() override;
+};
 }

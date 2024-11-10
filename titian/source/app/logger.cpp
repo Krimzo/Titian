@@ -7,5 +7,5 @@ uint64_t titian::Logger::last_log_index = 0;
 
 void titian::Logger::set_ready()
 {
-	m_is_ready = true;
+    m_is_ready = true;
 }

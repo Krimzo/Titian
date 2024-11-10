@@ -37,16 +37,17 @@
 #include "render/tracing/gpu_tracer.h"
 
 
-namespace titian {
-    struct TitianEditor : LayerStack
-    {
-        AppLayer& app_layer;
-        GameLayer& game_layer;
-        EditorLayer& editor_layer;
-        RenderLayer& render_layer;
-        GUILayer& gui_layer;
+namespace titian
+{
+struct TitianEditor : LayerStack
+{
+    AppLayer& app_layer;
+    GameLayer& game_layer;
+    EditorLayer& editor_layer;
+    RenderLayer& render_layer;
+    GUILayer& gui_layer;
 
-        TitianEditor();
-        ~TitianEditor() override;
-    };
+    TitianEditor();
+    ~TitianEditor() override;
+};
 }

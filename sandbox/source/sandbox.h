@@ -9,6 +9,7 @@
 #include "pieces/piece_physics_test.h"
 
 
-namespace titian {
-	int sandbox_entry(int argc, str* argv);
+namespace titian
+{
+int sandbox_entry( int argc, str* argv );
 }

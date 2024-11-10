@@ -1,9 +1,10 @@
 #include "klibrary.h"
 
 
-void kl::Scene::update_physics(const float delta_t)
+void kl::Scene::update_physics( float delta_t )
 {
-    for (auto& entity : entities) {
+    for ( auto& entity : entities )
+    {
         entity->velocity += gravity * delta_t;
         entity->velocity += entity->acceleration * delta_t;
         entity->position += entity->velocity * delta_t;

@@ -4,172 +4,176 @@
 #include "media/image/color.h"
 
 
-namespace kl {
-    template<typename T>
-    struct Complex_T;
+namespace kl
+{
+template<typename T>
+struct Complex_T;
 }
 
-namespace kl {
-    template<typename T>
-    struct Vector2
+namespace kl
+{
+template<typename T>
+struct Vector2
+{
+    T x = {};
+    T y = {};
+
+    constexpr Vector2()
+    {}
+
+    explicit constexpr Vector2( T value )
+        : x( value ), y( value )
+    {}
+
+    constexpr Vector2( T x, T y )
+        : x( x ), y( y )
+    {}
+
+    constexpr T& operator[]( int index )
     {
-        T x = {};
-        T y = {};
+        return (&x)[index];
+    }
 
-        constexpr Vector2()
-        {}
+    constexpr T const& operator[]( int index ) const
+    {
+        return (&x)[index];
+    }
 
-        explicit constexpr Vector2(T value)
-			: x(value), y(value)
-        {}
+    template<typename O>
+    constexpr operator Vector2<O>() const
+    {
+        return { O( x ), O( y ) };
+    }
 
-        constexpr Vector2(T x, T y)
-			: x(x), y(y)
-        {}
+    constexpr operator Complex_T<T>() const
+    {
+        return { x, y };
+    }
 
-		constexpr T& operator[](int index)
-		{
-			return (&x)[index];
-		}
+    constexpr bool operator==( Vector2<T> const& other ) const
+    {
+        return x == other.x && y == other.y;
+    }
 
-		constexpr const T& operator[](int index) const
-		{
-			return (&x)[index];
-		}
-        
-        template<typename O>
-        constexpr operator Vector2<O>() const
-		{
-			return { O(x), O(y) };
-		}
+    constexpr bool operator!=( Vector2<T> const& other ) const
+    {
+        return !(*this == other);
+    }
 
-        constexpr operator Complex_T<T>() const
-		{
-			return { x, y };
-		}
+    constexpr Vector2<T> operator+( Vector2<T> const& other ) const
+    {
+        return { x + other.x, y + other.y };
+    }
 
-        constexpr bool operator==(const Vector2<T>& other) const
-		{
-			return x == other.x && y == other.y;
-		}
+    constexpr void operator+=( Vector2<T> const& other )
+    {
+        x += other.x;
+        y += other.y;
+    }
 
-        constexpr bool operator!=(const Vector2<T>& other) const
-		{
-			return !(*this == other);
-		}
+    constexpr Vector2<T> operator-( Vector2<T> const& other ) const
+    {
+        return { x - other.x, y - other.y };
+    }
 
-		constexpr Vector2<T> operator+(const Vector2<T>& other) const
-		{
-			return { x + other.x, y + other.y };
-		}
+    constexpr void operator-=( Vector2<T> const& other )
+    {
+        x -= other.x;
+        y -= other.y;
+    }
 
-		constexpr void operator+=(const Vector2<T>& other)
-		{
-			x += other.x;
-			y += other.y;
-		}
+    constexpr Vector2<T> operator*( T value ) const
+    {
+        return { x * value, y * value };
+    }
 
-		constexpr Vector2<T> operator-(const Vector2<T>& other) const
-		{
-			return { x - other.x, y - other.y };
-		}
+    constexpr void operator*=( T value )
+    {
+        x *= value;
+        y *= value;
+    }
 
-		constexpr void operator-=(const Vector2<T>& other)
-		{
-			x -= other.x;
-			y -= other.y;
-		}
+    constexpr Vector2<T> operator*( Vector2<T> const& other ) const
+    {
+        return { x * other.x, y * other.y };
+    }
 
-		constexpr Vector2<T> operator*(T value) const
-		{
-			return { x * value, y * value };
-		}
+    constexpr void operator*=( Vector2<T> const& other )
+    {
+        x *= other.x;
+        y *= other.y;
+    }
 
-		constexpr void operator*=(T value)
-		{
-			x *= value;
-			y *= value;
-		}
+    constexpr Vector2<T> operator/( T value ) const
+    {
+        return { x / value, y / value };
+    }
 
-		constexpr Vector2<T> operator*(const Vector2<T>& other) const
-		{
-			return { x * other.x, y * other.y };
-		}
+    constexpr void operator/=( T value )
+    {
+        x /= value;
+        y /= value;
+    }
 
-		constexpr void operator*=(const Vector2<T>& other)
-		{
-			x *= other.x;
-			y *= other.y;
-		}
+    constexpr Vector2<T> operator/( Vector2<T> const& other ) const
+    {
+        return { x / other.x, y / other.y };
+    }
 
-		constexpr Vector2<T> operator/(T value) const
-		{
-			return { x / value, y / value };
-		}
+    constexpr void operator/=( Vector2<T> const& other )
+    {
+        x /= other.x;
+        y /= other.y;
+    }
 
-		constexpr void operator/=(T value)
-		{
-			x /= value;
-			y /= value;
-		}
+    constexpr Vector2<T> operator-() const
+    {
+        return { -x, -y };
+    }
 
-		constexpr Vector2<T> operator/(const Vector2<T>& other) const
-		{
-			return { x / other.x, y / other.y };
-		}
+    constexpr T length() const
+    {
+        return sqrt( x * x + y * y );
+    }
 
-		constexpr void operator/=(const Vector2<T>& other)
-		{
-			x /= other.x;
-			y /= other.y;
-		}
+    constexpr bool in_bounds( Vector2<T> const& lower_incl, Vector2<T> const& upper_excl ) const
+    {
+        return x >= lower_incl.x && x < upper_excl.x
+            && y >= lower_incl.y && y < upper_excl.y;
+    }
 
-		constexpr Vector2<T> operator-() const
-		{
-			return { -x, -y };
-		}
+    constexpr bool in_bounds( Vector2<T> const& upper_excl ) const
+    {
+        return in_bounds( {}, upper_excl );
+    }
 
-		constexpr T length() const
-		{
-			return sqrt(x * x + y * y);
-		}
+    constexpr T to_index( T width ) const
+    {
+        return x + y * width;
+    }
 
-		constexpr bool in_bounds(const Vector2<T>& lower_incl, const Vector2<T>& upper_excl) const
-		{
-			return x >= lower_incl.x && x < upper_excl.x
-				&& y >= lower_incl.y && y < upper_excl.y;
-		}
-
-		constexpr bool in_bounds(const Vector2<T>& upper_excl) const
-		{
-			return in_bounds({}, upper_excl);
-		}
-
-		constexpr T to_index(T width) const
-		{
-			return x + y * width;
-		}
-
-		static constexpr Vector2<T> from_index(T index, T width)
-		{
-			return { index % width, index / width };
-		}
-    };
+    static constexpr Vector2<T> from_index( T index, T width )
+    {
+        return { index % width, index / width };
+    }
+};
 }
 
-namespace kl {
-	using Int2 = Vector2<int32_t>;
-	using UInt2 = Vector2<uint32_t>;
-	using Float2 = Vector2<float>;
-	using Double2 = Vector2<double>;
+namespace kl
+{
+using Int2 = Vector2<int32_t>;
+using UInt2 = Vector2<uint32_t>;
+using Float2 = Vector2<float>;
+using Double2 = Vector2<double>;
 }
 
-namespace kl {
-	template<typename T>
-    std::ostream& operator<<(std::ostream& stream, const Vector2<T>& vec)
-	{
-		stream << std::setprecision(2);
-		stream << "(" << vec.x << ", " << vec.y << ")";
-		return stream;
-	}
+namespace kl
+{
+template<typename T>
+std::ostream& operator<<( std::ostream& stream, Vector2<T> const& vec )
+{
+    stream << std::setprecision( 2 );
+    stream << "(" << vec.x << ", " << vec.y << ")";
+    return stream;
+}
 }

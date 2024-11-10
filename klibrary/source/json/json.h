@@ -8,51 +8,50 @@
 #include "json/container/array.h"
 
 
-namespace kl::json {
-    struct ContainerSerializable
+namespace kl::json
+{
+struct ContainerSerializable
+{
+    virtual ~ContainerSerializable() = default;
+    virtual Ref<Container> to_container() = 0;
+    virtual void from_container( Container const& container ) = 0;
+};
+
+struct ObjectSerializable : ContainerSerializable
+{
+    virtual void to_object( Object& object ) = 0;
+    virtual void from_object( Object const& object ) = 0;
+
+    Ref<Container> to_container() final
     {
-        virtual ~ContainerSerializable() = default;
-        virtual Ref<Container> to_container() const = 0;
-        virtual void from_container(const Container& container) = 0;
-    };
+        Ref container = new Object();
+        this->to_object( *container );
+        return container;
+    }
 
-    struct ObjectSerializable : ContainerSerializable
+    void from_container( Container const& container ) final
     {
-        virtual void to_object(Object& object) const = 0;
-        virtual void from_object(const Object& object) = 0;
+        if ( Object const* object = dynamic_cast<Object const*>(&container) )
+            this->from_object( *object );
+    }
+};
 
-        Ref<Container> to_container() const final
-        {
-            Ref container = new Object();
-            this->to_object(*container);
-            return container;
-        }
+struct ArraySerializable : ContainerSerializable
+{
+    virtual void to_array( Array& array ) = 0;
+    virtual void from_array( Array const& array ) = 0;
 
-        void from_container(const Container& container) final
-        {
-            if (const Object* object = dynamic_cast<const Object*>(&container)) {
-                this->from_object(*object);
-            }
-        }
-    };
-
-    struct ArraySerializable : ContainerSerializable
+    Ref<Container> to_container() final
     {
-        virtual void to_array(Array& array) const = 0;
-        virtual void from_array(const Array& array) = 0;
+        Ref container = new Array();
+        this->to_array( *container );
+        return container;
+    }
 
-        Ref<Container> to_container() const final
-        {
-            Ref container = new Array();
-            this->to_array(*container);
-            return container;
-        }
-
-        void from_container(const Container& container) final
-        {
-            if (const Array* array = dynamic_cast<const Array*>(&container)) {
-                this->from_array(*array);
-            }
-        }
-    };
+    void from_container( Container const& container ) final
+    {
+        if ( Array const* array = dynamic_cast<Array const*>(&container) )
+            this->from_array( *array );
+    }
+};
 }

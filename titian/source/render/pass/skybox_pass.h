@@ -4,12 +4,13 @@
 #include "render/render_layer.h"
 
 
-namespace titian {
-    struct SkyboxPass : RenderPass
-    {
-        SkyboxPass();
+namespace titian
+{
+struct SkyboxPass : RenderPass
+{
+    SkyboxPass();
 
-        void state_package(StatePackage& package) override;
-        void render_self(StatePackage& package) override;
-    };
+    void state_package( StatePackage& package ) override;
+    void render_self( StatePackage& package ) override;
+};
 }

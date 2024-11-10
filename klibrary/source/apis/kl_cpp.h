@@ -33,24 +33,26 @@
 #include <vector>
 
 
-namespace kl {
-	struct NoCopy
-	{
-	protected:
-		NoCopy() = default;
-	private:
-		NoCopy(const NoCopy&) = delete;
-		void operator=(const NoCopy&) = delete;
-	};
+namespace kl
+{
+struct NoCopy
+{
+protected:
+    NoCopy() = default;
+private:
+    NoCopy( NoCopy& ) = delete;
+    void operator=( NoCopy& ) = delete;
+};
 }
 
-namespace kl {
-	struct NoMove
-	{
-	protected:
-		NoMove() = default;
-	private:
-		NoMove(NoMove&&) = delete;
-		void operator=(NoMove&&) = delete;
-	};
+namespace kl
+{
+struct NoMove
+{
+protected:
+    NoMove() = default;
+private:
+    NoMove( NoMove&& ) = delete;
+    void operator=( NoMove&& ) = delete;
+};
 }

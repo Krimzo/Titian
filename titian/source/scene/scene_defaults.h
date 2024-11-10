@@ -6,33 +6,36 @@
 #include "utility/async_util.h"
 
 
-namespace titian {
-    struct DefaultMeshes
-    {
-        Mesh cube;
-        Mesh sphere;
-        Mesh capsule;
+namespace titian
+{
+struct DefaultMeshes
+{
+    Mesh cube;
+    Mesh sphere;
+    Mesh capsule;
 
-        DefaultMeshes();
-    };
+    DefaultMeshes();
+};
 }
 
-namespace titian {
-    struct DefaultAnimations
-    {
-        Animation cube;
-        Animation sphere;
-        Animation capsule;
+namespace titian
+{
+struct DefaultAnimations
+{
+    Animation cube;
+    Animation sphere;
+    Animation capsule;
 
-        DefaultAnimations();
-    };
+    DefaultAnimations();
+};
 }
 
-namespace titian {
-    struct DefaultMaterials
-    {
-        Material white;
+namespace titian
+{
+struct DefaultMaterials
+{
+    Material white;
 
-        DefaultMaterials();
-    };
+    DefaultMaterials();
+};
 }

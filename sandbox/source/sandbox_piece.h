@@ -3,14 +3,15 @@
 #include "titian_editor.h"
 
 
-namespace titian {
-	struct SandboxPiece
-	{
-		TitianEditor& editor;
+namespace titian
+{
+struct SandboxPiece
+{
+    TitianEditor& editor;
 
-		SandboxPiece(TitianEditor& editor);
-		virtual ~SandboxPiece() = default;
+    SandboxPiece( TitianEditor& editor );
+    virtual ~SandboxPiece() = default;
 
-		virtual void setup_self() = 0;
-	};
+    virtual void setup_self() = 0;
+};
 }
