@@ -48,29 +48,21 @@ void titian::ShadowPass::render_self( StatePackage& package )
         RenderInfo info{};
         info.animation = scene.helper_get_animation( entity->animation_name );
         if ( !info.animation )
-        {
             return;
-        }
 
         info.mesh = info.animation->get_mesh( scene, timer.elapsed() );
         Material* material = scene.helper_get_material( entity->material_name );
         if ( !info.mesh || !material || material->is_transparent() )
-        {
             return;
-        }
 
         info.cb.WVP = entity->model_matrix();
         if ( info.animation->animation_type == AnimationType::SKELETAL )
-        {
             info.cb.IS_SKELETAL = 1.0f;
-        }
         to_render.push_back( info );
     };
 
     for ( auto& [_, entity] : scene.entities() )
-    {
         schedule_entity_helper( &entity );
-    }
 
     gpu.set_viewport_size( Int2{ dir_light->resolution() } );
 
@@ -93,10 +85,9 @@ void titian::ShadowPass::render_self( StatePackage& package )
                 wireframe_bound = should_wireframe;
                 gpu.bind_raster_state( wireframe_bound ? render_layer.raster_states.wireframe : render_layer.raster_states.shadow );
             }
+
             if ( info.animation->animation_type == AnimationType::SKELETAL )
-            {
                 info.animation->bind_matrices( 0 );
-            }
 
             CB cb = info.cb;
             cb.WVP = VP * cb.WVP;
