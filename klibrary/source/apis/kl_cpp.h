@@ -40,8 +40,8 @@ struct NoCopy
 protected:
     NoCopy() = default;
 private:
-    NoCopy( NoCopy& ) = delete;
-    void operator=( NoCopy& ) = delete;
+    NoCopy( NoCopy const& ) = delete;
+    void operator=( NoCopy const& ) = delete;
 };
 }
 
