@@ -43,6 +43,7 @@ static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_n
 
     serial_generator_helper<LiteralNode<bool>>(),
     serial_generator_helper<VariableNode<bool>>(),
+    serial_generator_helper<RandomNode<bool>>(),
     serial_generator_helper<CastNode<bool, int32_t>>(),
     serial_generator_helper<CastNode<bool, float>>(),
     serial_generator_helper<CastNode<bool, String>>(),
@@ -50,6 +51,7 @@ static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_n
 
     serial_generator_helper<LiteralNode<int32_t>>(),
     serial_generator_helper<VariableNode<int32_t>>(),
+    serial_generator_helper<RandomNode<int32_t>>(),
     serial_generator_helper<CastNode<int32_t, bool>>(),
     serial_generator_helper<CastNode<int32_t, float>>(),
     serial_generator_helper<CastNode<int32_t, String>>(),
@@ -66,6 +68,7 @@ static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_n
 
     serial_generator_helper<LiteralNode<Int2>>(),
     serial_generator_helper<VariableNode<Int2>>(),
+    serial_generator_helper<RandomNode<Int2>>(),
     serial_generator_helper<ConstructNode<Int2>>(),
     serial_generator_helper<DeconstructNode<Int2>>(),
     serial_generator_helper<CastNode<Int2, Float2>>(),
@@ -81,6 +84,7 @@ static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_n
 
     serial_generator_helper<LiteralNode<float>>(),
     serial_generator_helper<VariableNode<float>>(),
+    serial_generator_helper<RandomNode<float>>(),
     serial_generator_helper<CastNode<float, bool>>(),
     serial_generator_helper<CastNode<float, int32_t>>(),
     serial_generator_helper<CastNode<float, String>>(),
@@ -97,6 +101,7 @@ static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_n
 
     serial_generator_helper<LiteralNode<Float2>>(),
     serial_generator_helper<VariableNode<Float2>>(),
+    serial_generator_helper<RandomNode<Float2>>(),
     serial_generator_helper<ConstructNode<Float2>>(),
     serial_generator_helper<DeconstructNode<Float2>>(),
     serial_generator_helper<CastNode<Float2, Int2>>(),
@@ -113,6 +118,7 @@ static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_n
 
     serial_generator_helper<LiteralNode<Float3>>(),
     serial_generator_helper<VariableNode<Float3>>(),
+    serial_generator_helper<RandomNode<Float3>>(),
     serial_generator_helper<ConstructNode<Float3>>(),
     serial_generator_helper<DeconstructNode<Float3>>(),
     serial_generator_helper<CastNode<Float3, Quaternion>>(),
@@ -129,6 +135,7 @@ static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_n
 
     serial_generator_helper<LiteralNode<Float4>>(),
     serial_generator_helper<VariableNode<Float4>>(),
+    serial_generator_helper<RandomNode<Float4>>(),
     serial_generator_helper<ConstructNode<Float4>>(),
     serial_generator_helper<DeconstructNode<Float4>>(),
     serial_generator_helper<CastNode<Float4, Quaternion>>(),
@@ -145,6 +152,7 @@ static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_n
 
     serial_generator_helper<LiteralNode<Complex>>(),
     serial_generator_helper<VariableNode<Complex>>(),
+    serial_generator_helper<RandomNode<Complex>>(),
     serial_generator_helper<ConstructNode<Complex>>(),
     serial_generator_helper<DeconstructNode<Complex>>(),
     serial_generator_helper<CastNode<Complex, Float2>>(),
@@ -159,6 +167,7 @@ static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_n
 
     serial_generator_helper<LiteralNode<Quaternion>>(),
     serial_generator_helper<VariableNode<Quaternion>>(),
+    serial_generator_helper<RandomNode<Quaternion>>(),
     serial_generator_helper<ConstructNode<Quaternion>>(),
     serial_generator_helper<DeconstructNode<Quaternion>>(),
     serial_generator_helper<CastNode<Quaternion, Float3>>(),
@@ -174,6 +183,7 @@ static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_n
 
     serial_generator_helper<LiteralNode<RGB>>(),
     serial_generator_helper<VariableNode<RGB>>(),
+    serial_generator_helper<RandomNode<RGB>>(),
     serial_generator_helper<ConstructNode<RGB>>(),
     serial_generator_helper<DeconstructNode<RGB>>(),
     serial_generator_helper<CastNode<RGB, Float3>>(),
@@ -182,6 +192,7 @@ static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_n
 
     serial_generator_helper<LiteralNode<String>>(),
     serial_generator_helper<VariableNode<String>>(),
+    serial_generator_helper<RandomNode<String>>(),
     serial_generator_helper<CastNode<String, bool>>(),
     serial_generator_helper<CastNode<String, int32_t>>(),
     serial_generator_helper<CastNode<String, float>>(),
@@ -268,6 +279,7 @@ static Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>( NodeS
     {
         ui_generator_helper<LiteralNode<bool>>( "Literal Bool" ),
         ui_generator_helper<VariableNode<bool>>( "Variable Bool" ),
+        ui_generator_helper<RandomNode<bool>>( "Random Bool" ),
         ui_generator_helper<CastNode<bool, int32_t>>( "Bool -> Int" ),
         ui_generator_helper<CastNode<bool, float>>( "Bool -> Float" ),
         ui_generator_helper<CastNode<bool, String>>( "Bool -> String" ),
@@ -279,6 +291,7 @@ static Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>( NodeS
     {
         ui_generator_helper<LiteralNode<int32_t>>( "Literal Int" ),
         ui_generator_helper<VariableNode<int32_t>>( "Variable Int" ),
+        ui_generator_helper<RandomNode<int32_t>>( "Random Int" ),
         ui_generator_helper<CastNode<int32_t, bool>>( "Int -> Bool" ),
         ui_generator_helper<CastNode<int32_t, float>>( "Int -> Float" ),
         ui_generator_helper<CastNode<int32_t, String>>( "Int -> String" ),
@@ -299,6 +312,7 @@ static Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>( NodeS
     {
         ui_generator_helper<LiteralNode<Int2>>( "Literal Int2" ),
         ui_generator_helper<VariableNode<Int2>>( "Variable Int2" ),
+        ui_generator_helper<RandomNode<Int2>>( "Random Int2" ),
         ui_generator_helper<ConstructNode<Int2>>( "Construct Int2" ),
         ui_generator_helper<DeconstructNode<Int2>>( "Deconstruct Int2" ),
         ui_generator_helper<CastNode<Int2, Float2>>( "Int2 -> Float2" ),
@@ -318,6 +332,7 @@ static Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>( NodeS
     {
         ui_generator_helper<LiteralNode<float>>( "Literal Float" ),
         ui_generator_helper<VariableNode<float>>( "Variable Float" ),
+        ui_generator_helper<RandomNode<float>>( "Random Float" ),
         ui_generator_helper<CastNode<float, bool>>( "Float -> Bool" ),
         ui_generator_helper<CastNode<float, int32_t>>( "Float -> Int" ),
         ui_generator_helper<CastNode<float, String>>( "Float -> String" ),
@@ -338,6 +353,7 @@ static Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>( NodeS
     {
         ui_generator_helper<LiteralNode<Float2>>( "Literal Float2" ),
         ui_generator_helper<VariableNode<Float2>>( "Variable Float2" ),
+        ui_generator_helper<RandomNode<Float2>>( "Random Float2" ),
         ui_generator_helper<ConstructNode<Float2>>( "Construct Float2" ),
         ui_generator_helper<DeconstructNode<Float2>>( "Deconstruct Float2" ),
         ui_generator_helper<CastNode<Float2, Int2>>( "Float2 -> Int2" ),
@@ -358,6 +374,7 @@ static Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>( NodeS
     {
         ui_generator_helper<LiteralNode<Float3>>( "Literal Float3" ),
         ui_generator_helper<VariableNode<Float3>>( "Variable Float3" ),
+        ui_generator_helper<RandomNode<Float3>>( "Random Float3" ),
         ui_generator_helper<ConstructNode<Float3>>( "Construct Float3" ),
         ui_generator_helper<DeconstructNode<Float3>>( "Deconstruct Float3" ),
         ui_generator_helper<CastNode<Float3, Quaternion>>( "Float3 -> Quaternion" ),
@@ -378,6 +395,7 @@ static Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>( NodeS
     {
         ui_generator_helper<LiteralNode<Float4>>( "Literal Float4" ),
         ui_generator_helper<VariableNode<Float4>>( "Variable Float4" ),
+        ui_generator_helper<RandomNode<Float4>>( "Random Float4" ),
         ui_generator_helper<ConstructNode<Float4>>( "Construct Float4" ),
         ui_generator_helper<DeconstructNode<Float4>>( "Deconstruct Float4" ),
         ui_generator_helper<CastNode<Float4, Quaternion>>( "Float4 -> Quaternion" ),
@@ -398,6 +416,7 @@ static Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>( NodeS
     {
         ui_generator_helper<LiteralNode<Complex>>( "Literal Complex" ),
         ui_generator_helper<VariableNode<Complex>>( "Variable Complex" ),
+        ui_generator_helper<RandomNode<Complex>>( "Random Complex" ),
         ui_generator_helper<ConstructNode<Complex>>( "Construct Complex" ),
         ui_generator_helper<DeconstructNode<Complex>>( "Deconstruct Complex" ),
         ui_generator_helper<CastNode<Complex, Float2>>( "Complex -> Float2" ),
@@ -416,6 +435,7 @@ static Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>( NodeS
     {
         ui_generator_helper<LiteralNode<Quaternion>>( "Literal Quaternion" ),
         ui_generator_helper<VariableNode<Quaternion>>( "Variable Quaternion" ),
+        ui_generator_helper<RandomNode<Quaternion>>( "Random Quaternion" ),
         ui_generator_helper<ConstructNode<Quaternion>>( "Construct Quaternion" ),
         ui_generator_helper<DeconstructNode<Quaternion>>( "Deconstruct Quaternion" ),
         ui_generator_helper<CastNode<Quaternion, Float3>>( "Quaternion -> Float3" ),
@@ -435,6 +455,7 @@ static Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>( NodeS
     {
         ui_generator_helper<LiteralNode<RGB>>( "Literal Color" ),
         ui_generator_helper<VariableNode<RGB>>( "Variable Color" ),
+        ui_generator_helper<RandomNode<RGB>>( "Random Color" ),
         ui_generator_helper<ConstructNode<RGB>>( "Construct Color" ),
         ui_generator_helper<DeconstructNode<RGB>>( "Deconstruct Color" ),
         ui_generator_helper<CastNode<RGB, Float3>>( "Color -> Float3" ),
@@ -447,6 +468,7 @@ static Vector<Pair<String, Vector<Pair<String, Func<std::shared_ptr<Node>( NodeS
     {
         ui_generator_helper<LiteralNode<String>>( "Literal String" ),
         ui_generator_helper<VariableNode<String>>( "Variable String" ),
+        ui_generator_helper<RandomNode<String>>( "Random String" ),
         ui_generator_helper<CastNode<String, bool>>( "String -> Bool" ),
         ui_generator_helper<CastNode<String, int32_t>>( "String -> Int" ),
         ui_generator_helper<CastNode<String, float>>( "String -> Float" ),

@@ -481,7 +481,7 @@ struct VariableNode : FlowNode, kl::NoCopy, kl::NoMove
             old_info.store<T>( T{} );
         }
         storage().erase( name );
-        name = !new_name.empty() ? new_name : kl::random::gen_string( 10 );
+        name = new_name.empty() ? kl::random::gen_string( 10 ) : new_name;
         for ( int i = 1; storage().contains( name ); i++ )
             name = kl::format( new_name, '_', i );
         var_ptr = &storage()[name];
@@ -492,6 +492,194 @@ private:
     StringMap<VarInfo>& storage() const
     {
         return parent->var_storage;
+    }
+};
+}
+
+namespace titian
+{
+template<typename T>
+struct RandomNode : Node
+{
+    RandomNode( NodeScript* parent, StringRef const& title )
+        : Node( parent, title, ne::NodeStyle::sea() )
+    {
+        if constexpr ( std::is_same_v<T, bool> )
+        {
+            addOUT<T>( "out" )->behaviour( [this]()
+            {
+                return kl::random::gen_bool();
+            } );
+        }
+        else if constexpr ( std::is_same_v<T, int32_t> )
+        {
+            addIN<int32_t>( "start_incl" );
+            addIN<int32_t>( "end_excl" );
+            addOUT<T>( "out" )->behaviour( [this]()
+            {
+                int32_t start_incl = 0;
+                if ( input_connected( "start_incl" ) )
+                    start_incl = get_value<int32_t>( "start_incl" );
+
+                int32_t end_excl = 10;
+                if ( input_connected( "end_excl" ) )
+                    end_excl = get_value<int32_t>( "end_excl" );
+
+                return kl::random::gen_int( start_incl, end_excl );
+            } );
+        }
+        else if constexpr ( std::is_same_v<T, Int2> )
+        {
+            addIN<int32_t>( "start_incl" );
+            addIN<int32_t>( "end_excl" );
+            addOUT<T>( "out" )->behaviour( [this]()
+            {
+                int32_t start_incl = 0;
+                if ( input_connected( "start_incl" ) )
+                    start_incl = get_value<int32_t>( "start_incl" );
+
+                int32_t end_excl = 10;
+                if ( input_connected( "end_excl" ) )
+                    end_excl = get_value<int32_t>( "end_excl" );
+
+                return kl::random::gen_int2( start_incl, end_excl );
+            } );
+        }
+        else if constexpr ( std::is_same_v<T, float> )
+        {
+            addIN<float>( "start_incl" );
+            addIN<float>( "end_incl" );
+            addOUT<T>( "out" )->behaviour( [this]()
+            {
+                float start_incl = 0.0f;
+                if ( input_connected( "start_incl" ) )
+                    start_incl = get_value<float>( "start_incl" );
+
+                float end_incl = 1.0f;
+                if ( input_connected( "end_incl" ) )
+                    end_incl = get_value<float>( "end_incl" );
+
+                return kl::random::gen_float( start_incl, end_incl );
+            } );
+        }
+        else if constexpr ( std::is_same_v<T, Float2> )
+        {
+            addIN<float>( "start_incl" );
+            addIN<float>( "end_incl" );
+            addOUT<T>( "out" )->behaviour( [this]()
+            {
+                float start_incl = 0.0f;
+                if ( input_connected( "start_incl" ) )
+                    start_incl = get_value<float>( "start_incl" );
+
+                float end_incl = 1.0f;
+                if ( input_connected( "end_incl" ) )
+                    end_incl = get_value<float>( "end_incl" );
+
+                return kl::random::gen_float2( start_incl, end_incl );
+            } );
+        }
+        else if constexpr ( std::is_same_v<T, Float3> )
+        {
+            addIN<float>( "start_incl" );
+            addIN<float>( "end_incl" );
+            addOUT<T>( "out" )->behaviour( [this]()
+            {
+                float start_incl = 0.0f;
+                if ( input_connected( "start_incl" ) )
+                    start_incl = get_value<float>( "start_incl" );
+
+                float end_incl = 1.0f;
+                if ( input_connected( "end_incl" ) )
+                    end_incl = get_value<float>( "end_incl" );
+
+                return kl::random::gen_float3( start_incl, end_incl );
+            } );
+        }
+        else if constexpr ( std::is_same_v<T, Float4> )
+        {
+            addIN<float>( "start_incl" );
+            addIN<float>( "end_incl" );
+            addOUT<T>( "out" )->behaviour( [this]()
+            {
+                float start_incl = 0.0f;
+                if ( input_connected( "start_incl" ) )
+                    start_incl = get_value<float>( "start_incl" );
+
+                float end_incl = 1.0f;
+                if ( input_connected( "end_incl" ) )
+                    end_incl = get_value<float>( "end_incl" );
+
+                return kl::random::gen_float4( start_incl, end_incl );
+            } );
+        }
+        else if constexpr ( std::is_same_v<T, Complex> )
+        {
+            addIN<float>( "start_incl" );
+            addIN<float>( "end_incl" );
+            addOUT<T>( "out" )->behaviour( [this]()
+            {
+                float start_incl = 0.0f;
+                if ( input_connected( "start_incl" ) )
+                    start_incl = get_value<float>( "start_incl" );
+
+                float end_incl = 1.0f;
+                if ( input_connected( "end_incl" ) )
+                    end_incl = get_value<float>( "end_incl" );
+
+                return kl::random::gen_float2( start_incl, end_incl );
+            } );
+        }
+        else if constexpr ( std::is_same_v<T, Quaternion> )
+        {
+            addIN<float>( "start_incl" );
+            addIN<float>( "end_incl" );
+            addOUT<T>( "out" )->behaviour( [this]()
+            {
+                float start_incl = 0.0f;
+                if ( input_connected( "start_incl" ) )
+                    start_incl = get_value<float>( "start_incl" );
+
+                float end_incl = 1.0f;
+                if ( input_connected( "end_incl" ) )
+                    end_incl = get_value<float>( "end_incl" );
+
+                return kl::random::gen_float4( start_incl, end_incl );
+            } );
+        }
+        else if constexpr ( std::is_same_v<T, RGB> )
+        {
+            addIN<bool>( "gray" );
+            addOUT<T>( "out" )->behaviour( [this]()
+            {
+                bool gray = false;
+                if ( input_connected( "gray" ) )
+                    gray = get_value<bool>( "gray" );
+
+                return kl::random::gen_rgb( gray );
+            } );
+        }
+        else if constexpr ( std::is_same_v<T, String> )
+        {
+            addIN<int32_t>( "length" );
+            addIN<bool>( "upper" );
+            addOUT<T>( "out" )->behaviour( [this]()
+            {
+                int32_t length = 0;
+                if ( input_connected( "length" ) )
+                    length = kl::max( get_value<int32_t>( "length" ), 0 );
+
+                bool upper = false;
+                if ( input_connected( "upper" ) )
+                    upper = get_value<bool>( "upper" );
+
+                return kl::random::gen_string( length, upper );
+            } );
+        }
+        else
+        {
+            static_assert(false, "Unknown random node type");
+        }
     }
 };
 }
@@ -1095,7 +1283,7 @@ struct ForNode : FlowNode
         auto& to = get_value<int32_t>( "to_excl" );
         for ( int32_t i = from; i < to; i++ )
         {
-            *reinterpret_cast<int32_t*>(user_data) = i;
+            *reinterpret_cast<int32_t*>( user_data ) = i;
             call_next( "call" );
         }
         call_next();
