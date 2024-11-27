@@ -98,4 +98,5 @@ void titian::ShadowPass::render_self( StatePackage& package )
     }
 
     gpu.unbind_shader_view_for_vertex_shader( 0 );
+    gpu.unbind_target_depth_views();
 }

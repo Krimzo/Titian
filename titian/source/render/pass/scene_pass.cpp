@@ -65,14 +65,12 @@ void titian::ScenePass::render_self( StatePackage& package )
 
     if ( DirectionalLight* directional_light = scene.get_casted<DirectionalLight>( scene.main_directional_light_name ) )
     {
-        ID3D11ShaderResourceView* dir_light_views[DirectionalLight::CASCADE_COUNT] = {};
         for ( int i = 0; i < DirectionalLight::CASCADE_COUNT; i++ )
         {
-            dir_light_views[i] = directional_light->shader_view( i ).get();
+            static constexpr int BIND_OFFSET = 2;
+            gpu.bind_shader_view_for_pixel_shader( directional_light->shader_view( i ), BIND_OFFSET + i );
             cb.LIGHT_VPs[i] = directional_light->light_matrix( package.camera, i );
         }
-
-        gpu.context()->PSSetShaderResources( 1, DirectionalLight::CASCADE_COUNT, dir_light_views );
 
         cb.SUN_DIRECTION = directional_light->direction();
         cb.SUN_COLOR = directional_light->color;
@@ -94,13 +92,14 @@ void titian::ScenePass::render_self( StatePackage& package )
     gpu.bind_sampler_state_for_pixel_shader( render_layer.sampler_states.linear, 0 );
     gpu.bind_sampler_state_for_pixel_shader( render_layer.sampler_states.shadow, 1 );
     gpu.bind_sampler_state_for_pixel_shader( render_layer.sampler_states.linear, 2 );
+
     if ( Texture* skybox = scene.helper_get_texture( package.camera->skybox_texture_name ) )
     {
-        gpu.bind_shader_view_for_pixel_shader( skybox->shader_view, 0 );
+        gpu.bind_shader_view_for_pixel_shader( skybox->shader_view, 1 );
     }
     else
     {
-        gpu.unbind_shader_view_for_pixel_shader( 0 );
+        gpu.unbind_shader_view_for_pixel_shader( 1 );
     }
 
     struct RenderInfo
@@ -176,30 +175,32 @@ void titian::ScenePass::render_self( StatePackage& package )
 
         if ( info.color_texture )
         {
-            gpu.bind_shader_view_for_pixel_shader( info.color_texture->shader_view, 5 );
+            gpu.bind_shader_view_for_pixel_shader( info.color_texture->shader_view, 6 );
         }
         else
         {
-            gpu.unbind_shader_view_for_pixel_shader( 5 );
+            gpu.unbind_shader_view_for_pixel_shader( 6 );
         }
 
         if ( info.normal_texture )
         {
-            gpu.bind_shader_view_for_pixel_shader( info.normal_texture->shader_view, 6 );
+            gpu.bind_shader_view_for_pixel_shader( info.normal_texture->shader_view, 7 );
             cb.HAS_NORMAL_TEXTURE = 1.0f;
         }
         else
         {
+            gpu.unbind_shader_view_for_pixel_shader( 7 );
             cb.HAS_NORMAL_TEXTURE = 0.0f;
         }
 
         if ( info.roughness_texture )
         {
-            gpu.bind_shader_view_for_pixel_shader( info.roughness_texture->shader_view, 7 );
+            gpu.bind_shader_view_for_pixel_shader( info.roughness_texture->shader_view, 8 );
             cb.HAS_ROUGHNESS_TEXTURE = 1.0f;
         }
         else
         {
+            gpu.unbind_shader_view_for_pixel_shader( 8 );
             cb.HAS_ROUGHNESS_TEXTURE = 0.0f;
         }
 
@@ -253,6 +254,8 @@ void titian::ScenePass::render_self( StatePackage& package )
             render_entity_helper( info );
     }
 
-    for ( int i = 0; i < 8; i++ )
+    gpu.unbind_shader_view_for_vertex_shader( 0 );
+    for ( int i = 1; i <= 8; i++ )
         gpu.unbind_shader_view_for_pixel_shader( i );
+    gpu.unbind_target_depth_views();
 }

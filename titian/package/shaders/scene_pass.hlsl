@@ -46,14 +46,14 @@ float HAS_ROUGHNESS_TEXTURE;
 float IS_SKELETAL;
 
 StructuredBuffer<float4x4> BONES_BUFFER : register(t0);
-TextureCube SKYBOX_TEXTURE : register(t0);
-Texture2D SHADOW_TEXTURE0 : register(t1);
-Texture2D SHADOW_TEXTURE1 : register(t2);
-Texture2D SHADOW_TEXTURE2 : register(t3);
-Texture2D SHADOW_TEXTURE3 : register(t4);
-Texture2D COLOR_TEXTURE : register(t5);
-Texture2D NORMAL_TEXTURE : register(t6);
-Texture2D ROUGHNESS_TEXTURE : register(t7);
+TextureCube SKYBOX_TEXTURE : register(t1);
+Texture2D SHADOW_TEXTURE0 : register(t2);
+Texture2D SHADOW_TEXTURE1 : register(t3);
+Texture2D SHADOW_TEXTURE2 : register(t4);
+Texture2D SHADOW_TEXTURE3 : register(t5);
+Texture2D COLOR_TEXTURE : register(t6);
+Texture2D NORMAL_TEXTURE : register(t7);
+Texture2D ROUGHNESS_TEXTURE : register(t8);
 
 SamplerState SKYBOX_SAMPLER : register(s0);
 SamplerState SHADOW_SAMPLER : register(s1);
@@ -79,7 +79,9 @@ float get_reflectivity(float2 texture_coords)
 {
     if (!HAS_ROUGHNESS_TEXTURE)
         return clamp(REFLECTIVITY_FACTOR, -1.0f, 1.0f);
-    return 1.0f - ROUGHNESS_TEXTURE.Sample(MATERIAL_SAMPLER, texture_coords).r;
+    
+    float roughness = ROUGHNESS_TEXTURE.Sample(MATERIAL_SAMPLER, texture_coords).r;
+    return 1.0f - roughness;
 }
 
 float get_pcf_shadow(Texture2D shadow_texture, float3 light_coords, int half_kernel_size)
@@ -126,7 +128,7 @@ float get_shadow(VS_OUT data, int half_kernel_size)
     return pcf_value;
 }
 
-VS_OUT v_shader(float3 position : KL_Position, float3 normal : KL_Normal, float2 uv : KL_UV, int4 bone_indices : KL_BoneIndices, float4 bone_weights : KL_BoneWeights)
+VS_OUT v_shader(float3 position : KL_Position, float3 normal : KL_Normal, float2 uv : KL_UV, uint4 bone_indices : KL_BoneIndices, float4 bone_weights : KL_BoneWeights)
 {
     if (IS_SKELETAL)
     {

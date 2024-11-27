@@ -30,4 +30,5 @@ void titian::DisplayPass::render_self( StatePackage& package )
     bench_add_draw_call();
 
     gpu.unbind_shader_view_for_pixel_shader( 0 );
+    gpu.unbind_target_depth_views();
 }

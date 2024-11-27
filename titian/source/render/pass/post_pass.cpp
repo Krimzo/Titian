@@ -51,8 +51,7 @@ void titian::PostPass::render_self( StatePackage& package )
         bench_add_draw_call();
     }
 
-    for ( int i = 0; i < 3; i++ )
+    for ( int i = 0; i <= 2; i++ )
         gpu.unbind_shader_view_for_pixel_shader( i );
-
     gpu.unbind_target_depth_views();
 }

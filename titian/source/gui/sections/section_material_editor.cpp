@@ -272,39 +272,50 @@ void titian::GUISectionMaterialEditor::render_selected_material( Material& mater
 
     cb.ELAPSED_TIME = app_layer.timer.elapsed();
     cb.DELTA_TIME = app_layer.timer.delta();
+    cb.RECEIVES_SHADOWS = false;
 
     Texture* skybox_texture = scene.helper_get_texture( scene_camera->skybox_texture_name );
     if ( skybox_texture )
     {
-        gpu.bind_shader_view_for_pixel_shader( skybox_texture->shader_view, 0 );
+        gpu.bind_shader_view_for_pixel_shader( skybox_texture->shader_view, 1 );
     }
     else
     {
-        gpu.unbind_shader_view_for_pixel_shader( 0 );
+        gpu.unbind_shader_view_for_pixel_shader( 1 );
     }
 
     Texture* color_texture = scene.helper_get_texture( material.color_texture_name );
     if ( color_texture )
     {
-        gpu.bind_shader_view_for_pixel_shader( color_texture->shader_view, 5 );
+        gpu.bind_shader_view_for_pixel_shader( color_texture->shader_view, 6 );
     }
     else
     {
-        gpu.unbind_shader_view_for_pixel_shader( 5 );
+        gpu.unbind_shader_view_for_pixel_shader( 6 );
     }
 
     Texture* normal_texture = scene.helper_get_texture( material.normal_texture_name );
     if ( normal_texture )
     {
-        gpu.bind_shader_view_for_pixel_shader( normal_texture->shader_view, 6 );
+        gpu.bind_shader_view_for_pixel_shader( normal_texture->shader_view, 7 );
         cb.HAS_NORMAL_TEXTURE = 1.0f;
+    }
+    else
+    {
+        gpu.unbind_shader_view_for_pixel_shader( 7 );
+        cb.HAS_NORMAL_TEXTURE = 0.0f;
     }
 
     Texture* roughness_texture = scene.helper_get_texture( material.roughness_texture_name );
     if ( roughness_texture )
     {
-        gpu.bind_shader_view_for_pixel_shader( roughness_texture->shader_view, 7 );
+        gpu.bind_shader_view_for_pixel_shader( roughness_texture->shader_view, 8 );
         cb.HAS_ROUGHNESS_TEXTURE = 1.0f;
+    }
+    else
+    {
+        gpu.unbind_shader_view_for_pixel_shader( 8 );
+        cb.HAS_ROUGHNESS_TEXTURE = 0.0f;
     }
 
     cb.V = camera.view_matrix();

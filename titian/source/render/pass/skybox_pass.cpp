@@ -37,4 +37,6 @@ void titian::SkyboxPass::render_self( StatePackage& package )
 
     gpu.draw( scene.default_meshes.cube.buffer, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof( Vertex ) );
     bench_add_draw_call();
+
+    gpu.unbind_target_depth_views();
 }
