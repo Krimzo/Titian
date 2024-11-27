@@ -34,5 +34,6 @@ float4 p_shader(VS_OUT data) : SV_Target0
 {
     float3 normal = normalize(data.normal);
     float diffuse = saturate(dot(normal, -SUN_DIRECTION));
-    return OBJECT_COLOR * diffuse;
+    float3 color = OBJECT_COLOR.xyz * diffuse;
+    return float4(color, OBJECT_COLOR.w);
 }

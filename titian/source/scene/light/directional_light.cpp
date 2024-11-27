@@ -3,7 +3,8 @@
 
 titian::DirectionalLight::DirectionalLight()
 {
-    set_resolution( 2500 );
+    kl::copy<float>( cascade_splits, Defaults::CASCADES, std::size( Defaults::CASCADES ) );
+    set_resolution( Defaults::RESOLUTION );
 }
 
 void titian::DirectionalLight::serialize( Serializer& serializer ) const

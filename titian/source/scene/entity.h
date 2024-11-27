@@ -65,7 +65,7 @@ struct Entity : kl::NoCopy, Serializable
     Float3 collider_offset() const;
 
     void set_collider_geometry( px::PxGeometry const& geometry );
-    px::PxGeometryHolder collider_geometry() const;
+    px::PxGeometry const* collider_geometry() const;
 
     void set_box_collider( Float3 const& scale );
     void set_sphere_collider( float radius );

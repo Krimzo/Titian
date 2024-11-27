@@ -10,9 +10,15 @@ struct DirectionalLight : Entity
 {
     static constexpr int CASCADE_COUNT = 4;
 
+    struct Defaults
+    {
+        static constexpr int RESOLUTION = 2560;
+        static constexpr float CASCADES[CASCADE_COUNT + 1] = { 0.0f, 0.015f, 0.05f, 0.15f, 0.5f };
+    };
+
     Float3 color{ 1.0f };
     float point_size = 0.2f;
-    float cascade_splits[CASCADE_COUNT + 1] = { 0.0f, 0.075f, 0.2f, 0.5f, 1.0f };
+    float cascade_splits[std::size( Defaults::CASCADES )] = {};
 
     DirectionalLight();
 

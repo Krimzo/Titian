@@ -10,7 +10,6 @@ void titian::SandboxPiecePrepare::setup_self()
     Scene& scene = editor.game_layer.scene();
 
     Ref camera = new Camera();
-    camera->far_plane = 75.0f;
     camera->set_position( { 0.0f, 1.0f, -4.0f } );
     camera->skybox_texture_name = "sky";
     scene.main_camera_name = "default_camera";

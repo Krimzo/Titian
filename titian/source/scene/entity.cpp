@@ -1,7 +1,7 @@
 #include "titian.h"
 
 
-static px::PxTransform DEFAULT_TRANSFORM = {
+static const px::PxTransform DEFAULT_TRANSFORM = {
     px::PxVec3{ px::PxZero },
     px::PxQuat{ px::PxIdentity },
 };
@@ -394,11 +394,11 @@ void titian::Entity::set_collider_geometry( px::PxGeometry const& geometry )
         shape->setLocalPose( old_transform );
 }
 
-px::PxGeometryHolder titian::Entity::collider_geometry() const
+px::PxGeometry const* titian::Entity::collider_geometry() const
 {
     if ( auto shape = collider_shape() )
-        return shape->getGeometry();
-    return {};
+        return &shape->getGeometry().any();
+    return nullptr;
 }
 
 void titian::Entity::set_box_collider( Float3 const& scale )
@@ -458,7 +458,8 @@ titian::Ref<titian::Entity> titian::Entity::clone() const
     entity->set_angular( angular() );
     entity->set_collider_rotation( collider_rotation() );
     entity->set_collider_offset( collider_offset() );
-    entity->set_collider_geometry( collider_geometry().any() );
+    if ( auto geometry = collider_geometry() )
+        entity->set_collider_geometry( *geometry );
     return entity;
 }
 

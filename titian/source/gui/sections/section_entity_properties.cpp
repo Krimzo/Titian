@@ -323,38 +323,40 @@ void titian::GUISectionEntityProperties::edit_entity_collider( Scene& scene, Ent
     if ( im::DragFloat( "Dynamic Friction", &dynamic_friction, 0.1f, 0.0f, 1e9f ) )
         entity.set_dynamic_friction( dynamic_friction );
 
-    auto geometry = entity.collider_geometry();
-    switch ( geometry.getType() )
+    if ( auto geometry = entity.collider_geometry() )
     {
-    case px::PxGeometryType::Enum::eBOX:
-    {
-        px::PxBoxGeometry box_geometry = geometry.box();
-        box_geometry.halfExtents *= 2.0f;
-        if ( im::DragFloat3( "Box Size", &box_geometry.halfExtents.x, 0.1f, 0.0f, 1e9f ) )
+        switch ( geometry->getType() )
         {
-            box_geometry.halfExtents *= 0.5f;
-            entity.set_collider_geometry( box_geometry );
+        case px::PxGeometryType::Enum::eBOX:
+        {
+            px::PxBoxGeometry box_geometry = *static_cast<px::PxBoxGeometry const*>(geometry);
+            box_geometry.halfExtents *= 2.0f;
+            if ( im::DragFloat3( "Box Size", &box_geometry.halfExtents.x, 0.1f, 0.0f, 1e9f ) )
+            {
+                box_geometry.halfExtents *= 0.5f;
+                entity.set_collider_geometry( box_geometry );
+            }
+            break;
         }
-        break;
-    }
-    case px::PxGeometryType::Enum::eSPHERE:
-    {
-        px::PxSphereGeometry sphere_geometry = geometry.sphere();
-        if ( im::DragFloat( "Sphere Radius", &sphere_geometry.radius, 0.1f, 0.0f, 1e9f ) )
-            entity.set_collider_geometry( sphere_geometry );
-        break;
-    }
-    case px::PxGeometryType::Enum::eCAPSULE:
-    {
-        px::PxCapsuleGeometry capsule_geometry = geometry.capsule();
-        if ( im::DragFloat( "Capsule Radius", &capsule_geometry.radius, 0.5f, 0.0f, 1e9f ) )
-            entity.set_collider_geometry( capsule_geometry );
+        case px::PxGeometryType::Enum::eSPHERE:
+        {
+            px::PxSphereGeometry sphere_geometry = *static_cast<px::PxSphereGeometry const*>(geometry);
+            if ( im::DragFloat( "Sphere Radius", &sphere_geometry.radius, 0.1f, 0.0f, 1e9f ) )
+                entity.set_collider_geometry( sphere_geometry );
+            break;
+        }
+        case px::PxGeometryType::Enum::eCAPSULE:
+        {
+            px::PxCapsuleGeometry capsule_geometry = *static_cast<px::PxCapsuleGeometry const*>(geometry);
+            if ( im::DragFloat( "Capsule Radius", &capsule_geometry.radius, 0.5f, 0.0f, 1e9f ) )
+                entity.set_collider_geometry( capsule_geometry );
 
-        if ( im::DragFloat( "Capsule Height", &capsule_geometry.halfHeight, 0.5f, 0.0f, 1e9f ) )
-            entity.set_collider_geometry( capsule_geometry );
+            if ( im::DragFloat( "Capsule Height", &capsule_geometry.halfHeight, 0.5f, 0.0f, 1e9f ) )
+                entity.set_collider_geometry( capsule_geometry );
 
-        break;
-    }
+            break;
+        }
+        }
     }
 
     Float3 collider_rotation = entity.collider_rotation();

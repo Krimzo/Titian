@@ -174,7 +174,7 @@ PS_OUT p_shader(VS_OUT data)
     float3 specular = pow(specular_factor, 1.0f / SUN_POINT_SIZE) * saturate(pixel_reflectivity);
 
     float shadow = get_shadow(data, 1);
-    float3 light = saturate(ambient + (diffuse + specular) * (1.0f - shadow));
+    float3 light = ambient + (diffuse + specular) * (1.0f - shadow);
 
     float4 texture_color = COLOR_TEXTURE.Sample(MATERIAL_SAMPLER, data.uv);
     float4 color = lerp(MATERIAL_COLOR, texture_color, TEXTURE_BLEND) * float4(light, 1.0f);
