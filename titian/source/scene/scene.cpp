@@ -242,6 +242,10 @@ void titian::Scene::update_ui()
 
 void titian::Scene::add_entity( String const& id, Ref<Entity> const& entity )
 {
+    remove_entity( id );
+    if ( !entity )
+        return;
+
     m_entities[id] = entity;
     m_scene.addActor( entity->actor() );
     entity->wake_up();
