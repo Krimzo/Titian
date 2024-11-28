@@ -21,7 +21,7 @@ RWTexture2D<float4> TARGET : register(u1);
 
 int2 convert_coords(float2 coords)
 {
-	return int2(int(coords.x), int(coords.y));
+	return (int2) coords;
 }
 
 #custom_source
@@ -29,9 +29,8 @@ int2 convert_coords(float2 coords)
 [numthreads(32, 32, 1)]
 void c_shader(uint3 thread_id : SV_DispatchThreadID)
 {
-	if (thread_id.x < uint(frame_size.x) & const& thread_id.y < uint(frame_size.y)) {
+	if (thread_id.x < uint(frame_size.x) && thread_id.y < uint(frame_size.y))
 		func(thread_id.xy);
-	}
 }
 )";
     kl::replace_all( full_source, "#custom_source", source );

@@ -13,27 +13,27 @@ void titian::GUISectionFuzeRender::render_gui()
     {
         im::DragInt2( "Video Resolution", &video_resolution.x, 1.0f, 0, 1'000'000'000 );
         im::DragInt( "Video FPS", &video_fps, 1.0f, 0, 1'000'000'000 );
-        im::DragInt( "Video Bitrate", &video_bitrate, 1.0f, 0, 1'000'000'000 );
-        im::DragInt( "Audio Rate", &audio_rate, 1.0f, 0, 1'000'000'000 );
+        im::DragInt( "Video Rate [b/s]", &video_bitrate, 1.0f, 0, 1'000'000'000 );
+        im::DragInt( "Audio Rate [Hz]", &audio_rate, 1.0f, 0, 1'000'000'000 );
 
         im::Separator();
 
         if ( !video_layer.rendering() )
         {
-            if ( im::Button( "Start", { -1.0f, 0.0f } ) )
+            if ( im::Button( "Export", { -1.0f, 0.0f } ) )
                 video_layer.start_rendering( video_resolution, video_fps, video_bitrate, audio_rate );
         }
         else
         {
-            if ( im::Button( "Stop", { -1.0f, 0.0f } ) )
+            if ( im::Button( "Cancel", { -1.0f, 0.0f } ) )
                 video_layer.stop_rendering();
         }
 
         if ( video_layer.rendering() )
         {
-            float progress = video_layer.render_progress();
+            int progress = int( video_layer.render_progress() * 100 );
             im::SetNextItemWidth( -1.0f );
-            im::SliderFloat( "##Progress", &progress, 0.0f, 1.0f, "%.3f", ImGuiSliderFlags_NoInput );
+            im::SliderInt( "##Progress", &progress, 0, 100, "%d", ImGuiSliderFlags_NoInput );
         }
     }
     im::End();
