@@ -233,7 +233,7 @@ void titian::GUISectionMaterialEditor::render_selected_material( Material& mater
     Int2 old_viewport_size = gpu.viewport_size();
     gpu.set_viewport_size( viewport_size );
 
-    gpu.bind_raster_state( render_layer.raster_states.solid );
+    gpu.bind_raster_state( render_layer.raster_states.solid_cull );
     gpu.bind_depth_state( material.is_transparent() ? render_layer.depth_states.only_compare : render_layer.depth_states.enabled );
     gpu.bind_blend_state( render_layer.blend_states.enabled );
 
