@@ -105,20 +105,20 @@ int kl::Socket::connect()
 
 int kl::Socket::send( void const* data, int byte_size ) const
 {
-    return ::send( m_socket, (char*) data, byte_size, NULL );
+    return ::send( m_socket, (char const*) data, byte_size, NULL );
 }
 
-int kl::Socket::receive( void const* buff, int byte_size ) const
+int kl::Socket::receive( void* buff, int byte_size ) const
 {
     return ::recv( m_socket, (char*) buff, byte_size, NULL );
 }
 
 int kl::Socket::send_to( void const* data, int byte_size, Address const& address ) const
 {
-    return ::sendto( m_socket, (char*) data, byte_size, NULL, (sockaddr*) &address, sizeof( Address ) );
+    return ::sendto( m_socket, (char const*) data, byte_size, NULL, (sockaddr const*) &address, sizeof( Address ) );
 }
 
-int kl::Socket::receive_from( void const* buff, int byte_size, Address const* address ) const
+int kl::Socket::receive_from( void* buff, int byte_size, Address* address ) const
 {
     int address_length = sizeof( Address );
     return ::recvfrom( m_socket, (char*) buff, byte_size, NULL, (sockaddr*) address, &address_length );

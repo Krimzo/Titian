@@ -61,7 +61,7 @@ constexpr std::string format_matrix( T const* data )
 namespace kl
 {
 template <bool NewLine = true, typename... Args>
-void write( std::ostream& stream, Args const&... args )
+void write( std::ostream& stream, Args&&... args )
 {
     std::osyncstream synced_stream( stream );
     (synced_stream << ... << args);
@@ -70,13 +70,13 @@ void write( std::ostream& stream, Args const&... args )
 }
 
 template <bool NewLine = true, typename... Args>
-void print( Args const&... args )
+void print( Args&&... args )
 {
     write<NewLine>( std::cout, args... );
 }
 
 template <typename... Args>
-std::string format( Args const&... args )
+std::string format( Args&&... args )
 {
     std::stringstream stream;
     write<false>( stream, args... );
@@ -84,7 +84,7 @@ std::string format( Args const&... args )
 }
 
 template <bool NewLine = true, typename... Args>
-void wwrite( std::wostream& w_stream, Args const&... args )
+void wwrite( std::wostream& w_stream, Args&&... args )
 {
     std::wosyncstream w_synced_stream( w_stream );
     (w_synced_stream << ... << args);
@@ -93,13 +93,13 @@ void wwrite( std::wostream& w_stream, Args const&... args )
 }
 
 template <bool NewLine = true, typename... Args>
-void wprint( Args const&... args )
+void wprint( Args&&... args )
 {
     wwrite<NewLine>( std::wcout, args... );
 }
 
 template <typename... Args>
-std::wstring wformat( Args const&... args )
+std::wstring wformat( Args&&... args )
 {
     std::wstringstream w_stream;
     wwrite<false>( w_stream, args... );

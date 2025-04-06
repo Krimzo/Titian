@@ -42,7 +42,7 @@ struct Socket : NoCopy
     int connect();
 
     int send( void const* data, int byte_size ) const;
-    int receive( void const* buff, int byte_size ) const;
+    int receive( void* buff, int byte_size ) const;
 
     template <typename T>
     bool send( T const& obj ) const
@@ -51,7 +51,7 @@ struct Socket : NoCopy
     }
 
     template <typename T>
-    bool receive( T const* obj ) const
+    bool receive( T* obj ) const
     {
         return receive( obj, sizeof( T ) ) == sizeof( T );
     }
@@ -65,7 +65,7 @@ struct Socket : NoCopy
     }
 
     int send_to( void const* data, int byte_size, Address const& address ) const;
-    int receive_from( void const* buff, int byte_size, Address const* address ) const;
+    int receive_from( void* buff, int byte_size, Address* address ) const;
 
     template <typename T>
     bool send_to( T const& obj, Address const& address ) const
@@ -74,13 +74,13 @@ struct Socket : NoCopy
     }
 
     template <typename T>
-    bool receive_from( T const* obj, Address const* address ) const
+    bool receive_from( T* obj, Address* address ) const
     {
         return receive_from( obj, sizeof( T ), address ) == sizeof( T );
     }
 
     template <typename T>
-    T receive_from( Address const* address ) const
+    T receive_from( Address* address ) const
     {
         T t{};
         receive_from( &t, address );

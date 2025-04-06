@@ -40,7 +40,7 @@ inline std::function<void( std::string_view const& )> VERIFICATION_LOGGER = []( 
 };
 
 template<typename... Args>
-constexpr bool verify( bool value, Args const&... args )
+constexpr bool verify( bool value, Args&&... args )
 {
     if ( !value )
         VERIFICATION_LOGGER( format( args... ) );
@@ -48,7 +48,7 @@ constexpr bool verify( bool value, Args const&... args )
 }
 
 template<typename... Args>
-constexpr void assert( bool value, Args const&... args )
+constexpr void assert( bool value, Args&&... args )
 {
     if ( !value )
     {

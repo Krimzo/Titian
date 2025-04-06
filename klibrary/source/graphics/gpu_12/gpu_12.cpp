@@ -399,9 +399,9 @@ kl::dx12::StateObject kl::GPU12::create_default_raytracing_pipeline( std::string
     },
     };
     constexpr D3D12_HIT_GROUP_DESC hit_group{
-        .HitGroupExport = L"hit_group",
+        .HitGroupExport = L"rt_hit_group",
         .Type = D3D12_HIT_GROUP_TYPE_TRIANGLES,
-        .ClosestHitShaderImport = L"closest_hit_shader",
+        .ClosestHitShaderImport = L"rt_h_shader",
     };
     D3D12_RAYTRACING_SHADER_CONFIG shader_config{
         .MaxPayloadSizeInBytes = max_payload_size,
