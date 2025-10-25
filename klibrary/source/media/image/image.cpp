@@ -1,16 +1,13 @@
 #include "klibrary.h"
 
 
-static int _image_init = []
-{
-    ULONG_PTR token = NULL;
-    Gdiplus::GdiplusStartupInput startup_input = {};
-    kl::assert( !GdiplusStartup( &token, &startup_input, nullptr ), "Failed to init GDIPlus" );
-    return 0;
-}();
-
-kl::Image::Image()
-{}
+const int kl::ImageInit::_init = []() -> int
+    {
+        ULONG_PTR token = NULL;
+        Gdiplus::GdiplusStartupInput startup_input = {};
+        kl::assert( GdiplusStartup( &token, &startup_input, nullptr ) == Gdiplus::Status::Ok, "Failed to init GDIPlus" );
+        return {};
+    }( );
 
 kl::Image::Image( Int2 size )
     : m_size( size )
@@ -19,6 +16,11 @@ kl::Image::Image( Int2 size )
 }
 
 kl::Image::Image( std::string_view const& filepath )
+{
+    load_from_file( filepath );
+}
+
+kl::Image::Image( std::wstring_view const& filepath )
 {
     load_from_file( filepath );
 }
@@ -76,7 +78,7 @@ kl::RGB kl::Image::sample( Float2 uv ) const
     };
     if ( in_bounds( coords ) )
     {
-        return (*this)[coords];
+        return ( *this )[coords];
     }
     return {};
 }
@@ -117,7 +119,7 @@ void kl::Image::resize( Int2 new_size )
     for ( Int2 position; position.y < min_y; position.y++ )
     {
         for ( position.x = 0; position.x < min_x; position.x++ )
-            result[position] = (*this)[position];
+            result[position] = ( *this )[position];
     }
     *this = result;
 }
@@ -136,7 +138,7 @@ void kl::Image::resize_scaled( Int2 new_size )
         {
             Int2 read_position = { int( position.x * ratio_x ), int( position.y * ratio_y ) };
             if ( in_bounds( read_position ) )
-                result[position] = (*this)[read_position];
+                result[position] = ( *this )[read_position];
         }
     }
     *this = result;
@@ -154,7 +156,7 @@ kl::Image kl::Image::flip_horizontal() const
     for ( int y = 0; y < m_size.y; y++ )
     {
         for ( int x = 0; x < m_size.x; x++ )
-            result[{ x, y }] = (*this)[{ (m_size.x - 1 - x), y }];
+            result[{ x, y }] = ( *this )[{ ( m_size.x - 1 - x ), y }];
     }
     return result;
 }
@@ -165,7 +167,7 @@ kl::Image kl::Image::flip_vertical() const
     for ( int x = 0; x < m_size.x; x++ )
     {
         for ( int y = 0; y < m_size.y; y++ )
-            result[{ x, y }] = (*this)[{ x, (m_size.y - 1 - y) }];
+            result[{ x, y }] = ( *this )[{ x, ( m_size.y - 1 - y ) }];
     }
     return result;
 }
@@ -187,7 +189,7 @@ kl::Image kl::Image::rectangle( Int2 top_left, Int2 bottom_right ) const
         {
             Int2 read_position = top_left + position;
             if ( in_bounds( read_position ) )
-                result[position] = (*this)[read_position];
+                result[position] = ( *this )[read_position];
         }
     }
     return result;
@@ -203,7 +205,7 @@ std::string kl::Image::as_ascii( Int2 frame_size ) const
         {
             Int2 read_position = { position.x * increment.x, position.y * increment.y };
             if ( in_bounds( read_position ) )
-                frame << (*this)[read_position].ascii();
+                frame << ( *this )[read_position].ascii();
         }
     }
     return frame.str();
@@ -212,12 +214,12 @@ std::string kl::Image::as_ascii( Int2 frame_size ) const
 void kl::Image::draw_line( Int2 from, Int2 to, RGB color )
 {
     int length = max( abs( to.x - from.x ), abs( to.y - from.y ) );
-    Float2 increment = { (to.x - from.x) / (float) length, (to.y - from.y) / (float) length };
+    Float2 increment = { ( to.x - from.x ) / (float) length, ( to.y - from.y ) / (float) length };
     Float2 draw_point = from;
     for ( int i = 0; i <= length; i++ )
     {
         if ( in_bounds( draw_point ) )
-            (*this)[draw_point] = color;
+            ( *this )[draw_point] = color;
 
         draw_point += increment;
     }
@@ -250,7 +252,7 @@ void kl::Image::draw_triangle( Int2 position_a, Int2 position_b, Int2 position_c
         Float2 flt_pos_b = position_b;
         Float2 flt_pos_c = position_b;
         draw_line(
-            { (int) line_x( (y < position_b.y) ? flt_pos_a : flt_pos_c, flt_pos_b, (float) y ), y },
+            { (int) line_x( ( y < position_b.y ) ? flt_pos_a : flt_pos_c, flt_pos_b, (float) y ), y },
             { (int) line_x( flt_pos_a, flt_pos_c, (float) y ), y },
             color
         );
@@ -282,12 +284,12 @@ void kl::Image::draw_circle( Int2 center, float radius, RGB color, bool fill )
     Float2 f_center = center;
     if ( fill )
     {
-        int start = (int) (f_center.y - radius);
-        int end = (int) (f_center.y + radius);
+        int start = (int) ( f_center.y - radius );
+        int end = (int) ( f_center.y + radius );
 
         for ( int y = start; y <= end; y++ )
         {
-            int x = int( f_center.x + sqrt( radius * radius - (y - f_center.y) * (y - f_center.y) ) );
+            int x = int( f_center.x + sqrt( radius * radius - ( y - f_center.y ) * ( y - f_center.y ) ) );
             draw_line( { 2 * center.x - x, y }, { x, y }, color );
         }
         return;
@@ -295,28 +297,28 @@ void kl::Image::draw_circle( Int2 center, float radius, RGB color, bool fill )
     int end = int( 2 * radius );
     for ( int i = 0; i < end; i++ )
     {
-        int x1 = (int) (f_center.x - radius + i);
-        int y1 = (int) (f_center.y + sqrt( radius * radius - (x1 - f_center.x) * (x1 - f_center.x) ));
+        int x1 = (int) ( f_center.x - radius + i );
+        int y1 = (int) ( f_center.y + sqrt( radius * radius - ( x1 - f_center.x ) * ( x1 - f_center.x ) ) );
 
         if ( Int2 write_position = { x1, y1 }; in_bounds( write_position ) )
         {
-            (*this)[write_position] = color;
+            ( *this )[write_position] = color;
         }
         if ( Int2 write_position = { x1, 2 * center.y - y1 }; in_bounds( write_position ) )
         {
-            (*this)[write_position] = color;
+            ( *this )[write_position] = color;
         }
 
-        int y2 = (int) (f_center.y - radius + i);
-        int x2 = (int) (f_center.x + sqrt( radius * radius - (y2 - f_center.y) * (y2 - f_center.y) ));
+        int y2 = (int) ( f_center.y - radius + i );
+        int x2 = (int) ( f_center.x + sqrt( radius * radius - ( y2 - f_center.y ) * ( y2 - f_center.y ) ) );
 
         if ( Int2 write_position = { x2, y2 }; in_bounds( write_position ) )
         {
-            (*this)[write_position] = color;
+            ( *this )[write_position] = color;
         }
         if ( Int2 write_position = { 2 * center.x - x2, y2 }; in_bounds( write_position ) )
         {
-            (*this)[write_position] = color;
+            ( *this )[write_position] = color;
         }
     }
 }
@@ -335,8 +337,8 @@ void kl::Image::draw_image( Int2 top_left, Image const& image, bool mix_alpha )
             Int2 write_position = { top_left.x + position.x, top_left.y + position.y };
             if ( in_bounds( write_position ) )
             {
-                RGB result_pixel = mix_alpha ? (*this)[write_position].mix( image[position] ) : image[position];
-                (*this)[write_position] = result_pixel;
+                RGB result_pixel = mix_alpha ? ( *this )[write_position].mix( image[position] ) : image[position];
+                ( *this )[write_position] = result_pixel;
             }
         }
     }
@@ -344,7 +346,7 @@ void kl::Image::draw_image( Int2 top_left, Image const& image, bool mix_alpha )
 
 bool kl::Image::load_from_memory( void const* data, uint64_t byte_size )
 {
-    ComRef<IStream> stream{ SHCreateMemStream( reinterpret_cast<BYTE const*>(data), UINT( byte_size ) ) };
+    ComRef<IStream> stream{ SHCreateMemStream( reinterpret_cast<BYTE const*>( data ), UINT( byte_size ) ) };
     Gdiplus::Bitmap loaded_bitmap( stream.get() );
     if ( !verify( !loaded_bitmap.GetLastStatus(), "Failed to decode image" ) )
         return false;
@@ -366,8 +368,12 @@ bool kl::Image::load_from_buffer( std::string_view const& buffer )
 
 bool kl::Image::load_from_file( std::string_view const& filepath )
 {
-    std::string file_data = read_file( filepath );
-    return load_from_buffer( file_data );
+    return load_from_buffer( read_file_string( filepath ) );
+}
+
+bool kl::Image::load_from_file( std::wstring_view const& filepath )
+{
+    return load_from_buffer( read_file_string( filepath ) );
 }
 
 bool kl::Image::save_to_buffer( std::string& buffer, ImageType type ) const
@@ -426,29 +432,17 @@ bool kl::Image::save_to_buffer( std::string& buffer, ImageType type ) const
 
 bool kl::Image::save_to_file( std::string_view const& filepath, ImageType type ) const
 {
-    if ( type == ImageType::TXT )
-    {
-        std::ofstream file( filepath.data() );
-        if ( !file )
-        {
-            return false;
-        }
-
-        for ( int y = 0; y < m_size.y; y++ )
-        {
-            for ( int x = 0; x < m_size.x; x++ )
-            {
-                RGB pixel = m_pixels[(size_t) y * m_size.x + x];
-                write( file, x, " ", y, " => ", (int) pixel.r, " ", (int) pixel.g, " ", (int) pixel.b );
-            }
-        }
-        file.close();
-        return true;
-    }
-
     std::string buffer;
     if ( save_to_buffer( buffer, type ) )
-        return write_file( filepath, buffer );
+        return write_file_string( filepath, buffer );
+    return false;
+}
+
+bool kl::Image::save_to_file( std::wstring_view const& filepath, ImageType type ) const
+{
+    std::string buffer;
+    if ( save_to_buffer( buffer, type ) )
+        return write_file_string( filepath, buffer );
     return false;
 }
 

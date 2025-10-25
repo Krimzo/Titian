@@ -42,7 +42,8 @@ struct ShaderHolder : private CBuffer
 
     ShaderHolder( GPU const* gpu = nullptr )
         : CBuffer( gpu )
-    {}
+    {
+    }
 
     operator bool() const
     {
@@ -76,7 +77,7 @@ struct ShaderHolder : private CBuffer
         }
         else
         {
-            static_assert(false, "Unsupported shader type");
+            static_assert( false, "Unsupported shader type" );
         }
     }
 };

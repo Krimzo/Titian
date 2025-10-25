@@ -150,4 +150,8 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="package\shaders\video_clear_shader.hlsl" />
+    <None Include="package\shaders\video_mix_shader.hlsl" />
+  </ItemGroup>
 </Project>

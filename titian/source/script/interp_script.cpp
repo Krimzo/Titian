@@ -45,10 +45,10 @@ void titian::InterpScript::reload()
         Logger::log( e.what() );
     }
 
-    *m_start_function = (*m_engine)["on_start"];
-    *m_update_function = (*m_engine)["on_update"];
-    *m_collision_function = (*m_engine)["on_collision"];
-    *m_ui_function = (*m_engine)["on_ui"];
+    *m_start_function = ( *m_engine )["on_start"];
+    *m_update_function = ( *m_engine )["on_update"];
+    *m_collision_function = ( *m_engine )["on_collision"];
+    *m_ui_function = ( *m_engine )["on_ui"];
 }
 
 void titian::InterpScript::call_start( Scene& scene )
@@ -346,8 +346,8 @@ void titian::InterpScript::load_engine_parts()
         "draw_rectangle", &kl::Image::draw_rectangle,
         "draw_circle", sl::overload( METHOD( kl::Image, void, draw_circle, Int2, float, RGB, bool ), METHOD( kl::Image, void, draw_circle, Int2, Int2, RGB, bool ) ),
         "draw_image", &kl::Image::draw_image,
-        "load_from_file", &kl::Image::load_from_file,
-        "save_to_file", &kl::Image::save_to_file
+        "load_from_file", METHOD( kl::Image, bool, load_from_file, StringRef const& ),
+        "save_to_file", CONST_METHOD( kl::Image, bool, save_to_file, StringRef const&, kl::ImageType )
     );
 
     m_engine->new_usertype<Mesh>(
@@ -644,59 +644,59 @@ void titian::InterpScript::load_engine_parts()
         "set_icon", &kl::Window::set_icon
     );
 
-    (*m_engine)["new_bool_vector"] = []() { return Vector<bool>{}; };
-    (*m_engine)["new_int_vector"] = []() { return Vector<int>{}; };
-    (*m_engine)["new_int2_vector"] = []() { return Vector<Int2>{}; };
-    (*m_engine)["new_float_vector"] = []() { return Vector<float>{}; };
-    (*m_engine)["new_float2_vector"] = []() { return Vector<Float2>{}; };
-    (*m_engine)["new_float3_vector"] = []() { return Vector<Float3>{}; };
-    (*m_engine)["new_float4_vector"] = []() { return Vector<Float4>{}; };
-    (*m_engine)["new_complex_vector"] = []() { return Vector<Complex>{}; };
-    (*m_engine)["new_quat_vector"] = []() { return Vector<Quaternion>{}; };
-    (*m_engine)["new_vertex_vector"] = []() { return Vector<kl::Vertex>{}; };
-    (*m_engine)["new_triangle_vector"] = []() { return Vector<kl::Triangle>{}; };
-    (*m_engine)["new_plane_vector"] = []() { return Vector<kl::Plane>{}; };
-    (*m_engine)["new_sphere_vector"] = []() { return Vector<kl::Sphere>{}; };
-    (*m_engine)["new_aabb_vector"] = []() { return Vector<kl::AABB>{}; };
-    (*m_engine)["new_ray_vector"] = []() { return Vector<kl::Ray>{}; };
-    (*m_engine)["new_color_vector"] = []() { return Vector<RGB>{}; };
-    (*m_engine)["new_string_vector"] = []() { return Vector<String>{}; };
+    ( *m_engine )["new_bool_vector"] = []() { return Vector<bool>{}; };
+    ( *m_engine )["new_int_vector"] = []() { return Vector<int>{}; };
+    ( *m_engine )["new_int2_vector"] = []() { return Vector<Int2>{}; };
+    ( *m_engine )["new_float_vector"] = []() { return Vector<float>{}; };
+    ( *m_engine )["new_float2_vector"] = []() { return Vector<Float2>{}; };
+    ( *m_engine )["new_float3_vector"] = []() { return Vector<Float3>{}; };
+    ( *m_engine )["new_float4_vector"] = []() { return Vector<Float4>{}; };
+    ( *m_engine )["new_complex_vector"] = []() { return Vector<Complex>{}; };
+    ( *m_engine )["new_quat_vector"] = []() { return Vector<Quaternion>{}; };
+    ( *m_engine )["new_vertex_vector"] = []() { return Vector<kl::Vertex>{}; };
+    ( *m_engine )["new_triangle_vector"] = []() { return Vector<kl::Triangle>{}; };
+    ( *m_engine )["new_plane_vector"] = []() { return Vector<kl::Plane>{}; };
+    ( *m_engine )["new_sphere_vector"] = []() { return Vector<kl::Sphere>{}; };
+    ( *m_engine )["new_aabb_vector"] = []() { return Vector<kl::AABB>{}; };
+    ( *m_engine )["new_ray_vector"] = []() { return Vector<kl::Ray>{}; };
+    ( *m_engine )["new_color_vector"] = []() { return Vector<RGB>{}; };
+    ( *m_engine )["new_string_vector"] = []() { return Vector<String>{}; };
 
-    (*m_engine)["PI"] = kl::pi();
-    (*m_engine)["TO_RADIANS"] = kl::to_radians();
-    (*m_engine)["TO_DEGREES"] = kl::to_degrees();
-    (*m_engine)["TO_FLOAT_RGB"] = kl::to_float_rgb();
-    (*m_engine)["TO_BYTE_RGB"] = kl::to_byte_rgb();
+    ( *m_engine )["PI"] = kl::pi();
+    ( *m_engine )["TO_RADIANS"] = kl::to_radians();
+    ( *m_engine )["TO_DEGREES"] = kl::to_degrees();
+    ( *m_engine )["TO_FLOAT_RGB"] = kl::to_float_rgb();
+    ( *m_engine )["TO_BYTE_RGB"] = kl::to_byte_rgb();
 
-    (*m_engine)["BLACK"] = kl::colors::BLACK;
-    (*m_engine)["WHITE"] = kl::colors::WHITE;
-    (*m_engine)["GRAY"] = kl::colors::GRAY;
-    (*m_engine)["RED"] = kl::colors::RED;
-    (*m_engine)["GREEN"] = kl::colors::GREEN;
-    (*m_engine)["BLUE"] = kl::colors::BLUE;
-    (*m_engine)["CYAN"] = kl::colors::CYAN;
-    (*m_engine)["PURPLE"] = kl::colors::PURPLE;
-    (*m_engine)["YELLOW"] = kl::colors::YELLOW;
-    (*m_engine)["ORANGE"] = kl::colors::ORANGE;
-    (*m_engine)["MAGENTA"] = kl::colors::MAGENTA;
-    (*m_engine)["CRIMSON"] = kl::colors::CRIMSON;
-    (*m_engine)["WHEAT"] = kl::colors::WHEAT;
-    (*m_engine)["SKY"] = kl::colors::SKY;
+    ( *m_engine )["BLACK"] = kl::colors::BLACK;
+    ( *m_engine )["WHITE"] = kl::colors::WHITE;
+    ( *m_engine )["GRAY"] = kl::colors::GRAY;
+    ( *m_engine )["RED"] = kl::colors::RED;
+    ( *m_engine )["GREEN"] = kl::colors::GREEN;
+    ( *m_engine )["BLUE"] = kl::colors::BLUE;
+    ( *m_engine )["CYAN"] = kl::colors::CYAN;
+    ( *m_engine )["PURPLE"] = kl::colors::PURPLE;
+    ( *m_engine )["YELLOW"] = kl::colors::YELLOW;
+    ( *m_engine )["ORANGE"] = kl::colors::ORANGE;
+    ( *m_engine )["MAGENTA"] = kl::colors::MAGENTA;
+    ( *m_engine )["CRIMSON"] = kl::colors::CRIMSON;
+    ( *m_engine )["WHEAT"] = kl::colors::WHEAT;
+    ( *m_engine )["SKY"] = kl::colors::SKY;
 
-    (*m_engine)["TOPOLOGY_POINTS"] = (int) D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
-    (*m_engine)["TOPOLOGY_LINES"] = (int) D3D_PRIMITIVE_TOPOLOGY_LINELIST;
-    (*m_engine)["TOPOLOGY_TRIANGLES"] = (int) D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    ( *m_engine )["TOPOLOGY_POINTS"] = (int) D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+    ( *m_engine )["TOPOLOGY_LINES"] = (int) D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+    ( *m_engine )["TOPOLOGY_TRIANGLES"] = (int) D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-    (*m_engine)["ANIMATION_SEQUENTIAL"] = (int) AnimationType::SEQUENTIAL;
-    (*m_engine)["ANIMATION_SKELETAL"] = (int) AnimationType::SKELETAL;
+    ( *m_engine )["ANIMATION_SEQUENTIAL"] = (int) AnimationType::SEQUENTIAL;
+    ( *m_engine )["ANIMATION_SKELETAL"] = (int) AnimationType::SKELETAL;
 
-    (*m_engine)["SHADER_MATERIAL"] = (int) ShaderType::MATERIAL;
-    (*m_engine)["SHADER_CAMERA"] = (int) ShaderType::CAMERA;
+    ( *m_engine )["SHADER_MATERIAL"] = (int) ShaderType::MATERIAL;
+    ( *m_engine )["SHADER_CAMERA"] = (int) ShaderType::CAMERA;
 
-    (*m_engine)["CAMERA_PERSPECTIVE"] = (int) CameraType::PERSPECTIVE;
-    (*m_engine)["CAMERA_ORTHOGRAPHIC"] = (int) CameraType::ORTHOGRAPHIC;
+    ( *m_engine )["CAMERA_PERSPECTIVE"] = (int) CameraType::PERSPECTIVE;
+    ( *m_engine )["CAMERA_ORTHOGRAPHIC"] = (int) CameraType::ORTHOGRAPHIC;
 
-    (*m_engine)["log"] = sl::overload(
+    ( *m_engine )["log"] = sl::overload(
         &Logger::log<StringRef const&>,
         &Logger::log<bool const&>,
         &Logger::log<int const&>,
@@ -713,63 +713,65 @@ void titian::InterpScript::load_engine_parts()
         &Logger::log<kl::Sphere const&>,
         &Logger::log<kl::AABB const&>,
         &Logger::log<kl::Ray const&> );
-    (*m_engine)["print"] = (*m_engine)["log"];
+    ( *m_engine )["print"] = ( *m_engine )["log"];
 
-    (*m_engine)["elapsed_t"] = [] { return AppLayer::get().timer.elapsed(); };
-    (*m_engine)["delta_t"] = [] { return AppLayer::get().timer.delta(); };
+    ( *m_engine )["elapsed_t"] = [] { return AppLayer::get().timer.elapsed(); };
+    ( *m_engine )["delta_t"] = [] { return AppLayer::get().timer.delta(); };
 
-    (*m_engine)["get_window"] = []() -> kl::Window& { return AppLayer::get().window; };
-    (*m_engine)["get_keyboard"] = []() -> kl::Keyboard& { return AppLayer::get().window.keyboard; };
-    (*m_engine)["get_mouse"] = []() -> kl::Mouse& { return AppLayer::get().window.mouse; };
+    ( *m_engine )["get_window"] = []() -> kl::Window& { return AppLayer::get().window; };
+    ( *m_engine )["get_keyboard"] = []() -> kl::Keyboard& { return AppLayer::get().window.keyboard; };
+    ( *m_engine )["get_mouse"] = []() -> kl::Mouse& { return AppLayer::get().window.mouse; };
 
-    (*m_engine)["Float3x3_translation"] = &Float3x3::translation;
-    (*m_engine)["Float3x3_rotation"] = &Float3x3::rotation;
-    (*m_engine)["Float3x3_scaling"] = &Float3x3::scaling;
+    ( *m_engine )["Float3x3_translation"] = &Float3x3::translation;
+    ( *m_engine )["Float3x3_rotation"] = &Float3x3::rotation;
+    ( *m_engine )["Float3x3_scaling"] = &Float3x3::scaling;
 
-    (*m_engine)["Float4x4_translation"] = &Float4x4::translation;
-    (*m_engine)["Float4x4_rotation"] = &Float4x4::rotation;
-    (*m_engine)["Float4x4_scaling"] = &Float4x4::scaling;
-    (*m_engine)["Float4x4_look_at"] = &Float4x4::look_at;
-    (*m_engine)["Float4x4_perspective"] = &Float4x4::perspective;
-    (*m_engine)["Float4x4_orthographic"] = &Float4x4::orthographic;
+    ( *m_engine )["Float4x4_translation"] = &Float4x4::translation;
+    ( *m_engine )["Float4x4_rotation"] = &Float4x4::rotation;
+    ( *m_engine )["Float4x4_scaling"] = &Float4x4::scaling;
+    ( *m_engine )["Float4x4_look_at"] = &Float4x4::look_at;
+    ( *m_engine )["Float4x4_perspective"] = &Float4x4::perspective;
+    ( *m_engine )["Float4x4_orthographic"] = &Float4x4::orthographic;
 
-    (*m_engine)["sin"] = &kl::sin<float>;
-    (*m_engine)["cos"] = &kl::cos<float>;
-    (*m_engine)["tan"] = &kl::tan<float>;
+    ( *m_engine )["sin"] = &kl::sin<float>;
+    ( *m_engine )["cos"] = &kl::cos<float>;
+    ( *m_engine )["tan"] = &kl::tan<float>;
 
-    (*m_engine)["asin"] = &kl::asin<float>;
-    (*m_engine)["acos"] = &kl::acos<float>;
-    (*m_engine)["atan"] = &kl::atan<float>;
+    ( *m_engine )["asin"] = &kl::asin<float>;
+    ( *m_engine )["acos"] = &kl::acos<float>;
+    ( *m_engine )["atan"] = &kl::atan<float>;
 
-    (*m_engine)["sin_d"] = &kl::sin_d<float>;
-    (*m_engine)["cos_d"] = &kl::cos_d<float>;
-    (*m_engine)["tan_d"] = &kl::tan_d<float>;
+    ( *m_engine )["sin_d"] = &kl::sin_d<float>;
+    ( *m_engine )["cos_d"] = &kl::cos_d<float>;
+    ( *m_engine )["tan_d"] = &kl::tan_d<float>;
 
-    (*m_engine)["asin_d"] = &kl::asin_d<float>;
-    (*m_engine)["acos_d"] = &kl::acos_d<float>;
-    (*m_engine)["atan_d"] = &kl::atan_d<float>;
+    ( *m_engine )["asin_d"] = &kl::asin_d<float>;
+    ( *m_engine )["acos_d"] = &kl::acos_d<float>;
+    ( *m_engine )["atan_d"] = &kl::atan_d<float>;
 
-    (*m_engine)["calc_ndc"] = &kl::calc_ndc<float>;
-    (*m_engine)["calc_ndc_ar"] = &kl::calc_ndc_ar<float>;
+    ( *m_engine )["to_ndc"] = &kl::to_ndc<float>;
+    ( *m_engine )["from_ndc"] = &kl::from_ndc<float>;
+    ( *m_engine )["to_ndc_ar"] = &kl::to_ndc_ar<float>;
+    ( *m_engine )["from_ndc_ar"] = &kl::from_ndc_ar<float>;
 
-    (*m_engine)["line_x"] = &kl::line_x<float>;
-    (*m_engine)["line_y"] = &kl::line_y<float>;
+    ( *m_engine )["line_x"] = &kl::line_x<float>;
+    ( *m_engine )["line_y"] = &kl::line_y<float>;
 
-    (*m_engine)["clamp"] = FUNCTION( float, kl::clamp, float, float, float );
-    (*m_engine)["lerp"] = FUNCTION( float, kl::lerp, float, float, float );
-    (*m_engine)["unlerp"] = FUNCTION( float, kl::unlerp, float, float, float );
+    ( *m_engine )["clamp"] = FUNCTION( float, kl::clamp, float, float, float );
+    ( *m_engine )["lerp"] = FUNCTION( float, kl::lerp, float, float, float );
+    ( *m_engine )["unlerp"] = FUNCTION( float, kl::unlerp, float, float, float );
 
-    (*m_engine)["to_quat"] = sl::overload(
+    ( *m_engine )["to_quat"] = sl::overload(
         FUNCTION( Quaternion, kl::to_quat, Float3 const& ),
         FUNCTION( Quaternion, kl::to_quat, Float3 const&, Float3 const& )
     );
 
-    (*m_engine)["to_euler"] = sl::overload(
+    ( *m_engine )["to_euler"] = sl::overload(
         FUNCTION( Float3, kl::to_euler, Quaternion const& ),
         FUNCTION( Float3, kl::to_euler, Float3 const&, Float3 const& )
     );
 
-    (*m_engine)["abs"] = sl::overload(
+    ( *m_engine )["abs"] = sl::overload(
         FUNCTION( int, kl::abs, int ),
         FUNCTION( Int2, kl::abs, Int2 const& ),
         FUNCTION( float, kl::abs, float ),
@@ -780,7 +782,7 @@ void titian::InterpScript::load_engine_parts()
         FUNCTION( Quaternion, kl::abs, Quaternion const& )
     );
 
-    (*m_engine)["normalize"] = sl::overload(
+    ( *m_engine )["normalize"] = sl::overload(
         FUNCTION( Float2, kl::normalize, Float2 const& ),
         FUNCTION( Float3, kl::normalize, Float3 const& ),
         FUNCTION( Float4, kl::normalize, Float4 const& ),
@@ -788,7 +790,7 @@ void titian::InterpScript::load_engine_parts()
         FUNCTION( Quaternion, kl::normalize, Quaternion const& )
     );
 
-    (*m_engine)["inverse"] = sl::overload(
+    ( *m_engine )["inverse"] = sl::overload(
         FUNCTION( Float2x2, kl::inverse, Float2x2 const& ),
         FUNCTION( Float3x3, kl::inverse, Float3x3 const& ),
         FUNCTION( Float4x4, kl::inverse, Float4x4 const& ),
@@ -796,162 +798,149 @@ void titian::InterpScript::load_engine_parts()
         FUNCTION( Quaternion, kl::inverse, Quaternion const& )
     );
 
-    (*m_engine)["transpose"] = sl::overload(
+    ( *m_engine )["transpose"] = sl::overload(
         FUNCTION( Float2x2, kl::transpose, Float2x2 const& ),
         FUNCTION( Float3x3, kl::transpose, Float3x3 const& ),
         FUNCTION( Float4x4, kl::transpose, Float4x4 const& )
     );
 
-    (*m_engine)["dot"] = sl::overload(
+    ( *m_engine )["dot"] = sl::overload(
         FUNCTION( float, kl::dot, Float2 const&, Float2 const& ),
         FUNCTION( float, kl::dot, Float3 const&, Float3 const& ),
         FUNCTION( float, kl::dot, Float4 const&, Float4 const& )
     );
-    (*m_engine)["cross"] = &kl::cross<float>;
+    ( *m_engine )["cross"] = &kl::cross<float>;
 
-    (*m_engine)["angle"] = sl::overload(
+    ( *m_engine )["angle"] = sl::overload(
         FUNCTION( float, kl::angle, Float2, Float2, bool ),
         FUNCTION( float, kl::angle, Float3 const&, Float3 const& ),
         FUNCTION( float, kl::angle, Float4 const&, Float4 const& )
     );
 
-    (*m_engine)["rotate"] = sl::overload(
+    ( *m_engine )["rotate"] = sl::overload(
         FUNCTION( Float2, kl::rotate, Float2 const&, float ),
         FUNCTION( Float3, kl::rotate, Float3 const&, Float3 const&, float )
     );
 
-    (*m_engine)["reflect"] = sl::overload(
+    ( *m_engine )["reflect"] = sl::overload(
         FUNCTION( Float2, kl::reflect, Float2 const&, Float2 ),
         FUNCTION( Float3, kl::reflect, Float3 const&, Float3 )
     );
 
-    (*m_engine)["refract"] = &kl::refract<float>;
+    ( *m_engine )["refract"] = &kl::refract<float>;
 
-    (*m_engine)["gen_random_bool"] = &kl::random::gen_bool;
-    (*m_engine)["gen_random_int"] = FUNCTION( int, kl::random::gen_int, int, int );
-    (*m_engine)["gen_random_float"] = FUNCTION( float, kl::random::gen_float, float, float );
-    (*m_engine)["gen_random_float2"] = FUNCTION( Float2, kl::random::gen_float2, float, float );
-    (*m_engine)["gen_random_float3"] = FUNCTION( Float3, kl::random::gen_float3, float, float );
-    (*m_engine)["gen_random_float4"] = FUNCTION( Float4, kl::random::gen_float4, float, float );
-    (*m_engine)["gen_random_color"] = &kl::random::gen_rgb;
-    (*m_engine)["gen_random_char"] = &kl::random::gen_char;
-    (*m_engine)["gen_random_string"] = &kl::random::gen_string;
+    ( *m_engine )["gen_random_bool"] = &kl::random::gen_bool;
+    ( *m_engine )["gen_random_int"] = FUNCTION( int, kl::random::gen_int, int, int );
+    ( *m_engine )["gen_random_float"] = FUNCTION( float, kl::random::gen_float, float, float );
+    ( *m_engine )["gen_random_float2"] = FUNCTION( Float2, kl::random::gen_float2, float, float );
+    ( *m_engine )["gen_random_float3"] = FUNCTION( Float3, kl::random::gen_float3, float, float );
+    ( *m_engine )["gen_random_float4"] = FUNCTION( Float4, kl::random::gen_float4, float, float );
+    ( *m_engine )["gen_random_color"] = &kl::random::gen_rgb;
+    ( *m_engine )["gen_random_char"] = &kl::random::gen_char;
+    ( *m_engine )["gen_random_string"] = &kl::random::gen_string;
 
-    (*m_engine)["read_file"] = &kl::read_file;
+    ( *m_engine )["read_file_string"] = FUNCTION( String, kl::read_file_string, StringRef const&, kl::ByteRange const& );
 
-    (*m_engine)["ui_separator"] = &ui_separator;
-    (*m_engine)["ui_same_line"] = &ui_same_line;
-    (*m_engine)["ui_set_next_width"] = &ui_set_next_width;
-    (*m_engine)["ui_cursor_pos"] = &ui_cursor_pos;
-    (*m_engine)["ui_set_cursor_pos"] = &ui_set_cursor_pos;
-    (*m_engine)["ui_window"] = &ui_window;
-    (*m_engine)["ui_button"] = &ui_button;
-    (*m_engine)["ui_bool"] = &ui_bool;
-    (*m_engine)["ui_int"] = &ui_int;
-    (*m_engine)["ui_int2"] = &ui_int2;
-    (*m_engine)["ui_float"] = &ui_float;
-    (*m_engine)["ui_float2"] = &ui_float2;
-    (*m_engine)["ui_float3"] = &ui_float3;
-    (*m_engine)["ui_float4"] = &ui_float4;
-    (*m_engine)["ui_color"] = &ui_color;
-    (*m_engine)["ui_string"] = &ui_string;
-    (*m_engine)["ui_text"] = &ui_text;
-    (*m_engine)["ui_colored_text"] = &ui_colored_text;
+    ( *m_engine )["ui_separator"] = &ui_separator;
+    ( *m_engine )["ui_same_line"] = &ui_same_line;
+    ( *m_engine )["ui_set_next_width"] = &ui_set_next_width;
+    ( *m_engine )["ui_cursor_pos"] = &ui_cursor_pos;
+    ( *m_engine )["ui_set_cursor_pos"] = &ui_set_cursor_pos;
+    ( *m_engine )["ui_window"] = &ui_window;
+    ( *m_engine )["ui_button"] = &ui_button;
+    ( *m_engine )["ui_bool"] = &ui_bool;
+    ( *m_engine )["ui_int"] = &ui_int;
+    ( *m_engine )["ui_int2"] = &ui_int2;
+    ( *m_engine )["ui_float"] = &ui_float;
+    ( *m_engine )["ui_float2"] = &ui_float2;
+    ( *m_engine )["ui_float3"] = &ui_float3;
+    ( *m_engine )["ui_float4"] = &ui_float4;
+    ( *m_engine )["ui_color"] = &ui_color;
+    ( *m_engine )["ui_string"] = &ui_string;
+    ( *m_engine )["ui_text"] = &ui_text;
+    ( *m_engine )["ui_colored_text"] = &ui_colored_text;
 
-    (*m_engine)["toint2"] = sl::overload(
+    ( *m_engine )["toint2"] = sl::overload(
         []( Float2 const& value ) -> Int2 { return value; }
     );
-    (*m_engine)["tofloat2"] = sl::overload(
+    ( *m_engine )["tofloat2"] = sl::overload(
         []( Int2 const& value ) -> Float2 { return value; },
         []( Complex const& value ) -> Float2 { return value; }
     );
-    (*m_engine)["tofloat3"] = sl::overload(
+    ( *m_engine )["tofloat3"] = sl::overload(
         []( RGB const& value ) -> Float3 { return value; },
         []( YUV const& value ) -> Float3 { return value; },
         []( Quaternion const& value ) -> Float3 { return value; }
     );
-    (*m_engine)["tofloat4"] = sl::overload(
+    ( *m_engine )["tofloat4"] = sl::overload(
         []( RGB const& value ) -> Float4 { return value; },
         []( Quaternion const& value ) -> Float4 { return value; }
     );
-    (*m_engine)["tocomplex"] = sl::overload(
+    ( *m_engine )["tocomplex"] = sl::overload(
         []( Float2 const& value ) -> Complex { return value; }
     );
-    (*m_engine)["toquaternion"] = sl::overload(
+    ( *m_engine )["toquaternion"] = sl::overload(
         []( Float3 const& value ) -> Quaternion { return value; },
         []( Float4 const& value ) -> Quaternion { return value; }
     );
-    (*m_engine)["torgb"] = sl::overload(
+    ( *m_engine )["torgb"] = sl::overload(
         []( YUV const& value ) -> RGB { return value; },
         []( Float3 const& value ) -> RGB { return value; },
         []( Float4 const& value ) -> RGB { return value; }
     );
-    (*m_engine)["toyuv"] = sl::overload(
+    ( *m_engine )["toyuv"] = sl::overload(
         []( RGB const& value ) -> YUV { return value; },
         []( Float3 const& value ) -> YUV { return value; }
     );
 }
 
 static int load_names = [&]
-{
-    using namespace titian;
-
-    LUA_KEYWORDS = {
-        "and",
-        "break",
-        "do",
-        "else",
-        "elseif",
-        "end",
-        "false",
-        "for",
-        "function",
-        "goto",
-        "if",
-        "in",
-        "local",
-        "nil",
-        "not",
-        "or",
-        "repeat",
-        "return",
-        "then",
-        "true",
-        "until",
-        "while",
-    };
-
-    InterpScript temp{};
-    for ( auto& [key, value] : temp.get_engine().globals() )
     {
-        if ( !key.is<String>() )
-            continue;
+        using namespace titian;
 
-        String name = key.as<String>();
-        auto type = value.get_type();
-        if ( type == sl::type::function )
+        LUA_KEYWORDS = {
+            "and",
+            "break",
+            "do",
+            "else",
+            "elseif",
+            "end",
+            "false",
+            "for",
+            "function",
+            "goto",
+            "if",
+            "in",
+            "local",
+            "nil",
+            "not",
+            "or",
+            "repeat",
+            "return",
+            "then",
+            "true",
+            "until",
+            "while",
+        };
+
+        InterpScript temp{};
+        for ( auto& [key, value] : temp.get_engine().globals() )
         {
-            LUA_FUNCTIONS.insert( name );
+            if ( !key.is<String>() )
+                continue;
+
+            String name = key.as<String>();
+            auto type = value.get_type();
+            if ( type == sl::type::function )
+            {
+                LUA_FUNCTIONS.insert( name );
+            }
+            else
+            {
+                LUA_TYPES.insert( name );
+            }
         }
-        else
-        {
-            LUA_TYPES.insert( name );
-        }
-    }
-    for ( auto& [key, value] : temp.get_engine().registry() )
-    {
-        if ( !key.is<std::string>() )
-            continue;
-
-        std::string name = key.as<std::string>();
-        if ( name.starts_with( '_' ) )
-            continue;
-
-        if ( !value.is<sl::table>() )
-            continue;
-        sol::table tbl = value;
-
-        for ( auto& [key, value] : tbl )
+        for ( auto& [key, value] : temp.get_engine().registry() )
         {
             if ( !key.is<std::string>() )
                 continue;
@@ -960,21 +949,34 @@ static int load_names = [&]
             if ( name.starts_with( '_' ) )
                 continue;
 
-            LUA_MEMBERS.insert( name );
+            if ( !value.is<sl::table>() )
+                continue;
+            sol::table tbl = value;
+
+            for ( auto& [key, value] : tbl )
+            {
+                if ( !key.is<std::string>() )
+                    continue;
+
+                std::string name = key.as<std::string>();
+                if ( name.starts_with( '_' ) )
+                    continue;
+
+                LUA_MEMBERS.insert( name );
+            }
         }
-    }
 
-    constexpr auto name_eraser = []( String const& name ) -> bool
-    {
-        return name.end() != std::find_if_not( name.begin(), name.end(), []( char c )
-        {
-            return std::isalnum( c ) || c == '_';
-        } );
-    };
-    std::erase_if( LUA_TYPES, name_eraser );
-    std::erase_if( LUA_MEMBERS, name_eraser );
-    std::erase_if( LUA_FUNCTIONS, name_eraser );
-    std::erase_if( LUA_KEYWORDS, name_eraser );
+        constexpr auto name_eraser = []( String const& name ) -> bool
+            {
+                return name.end() != std::find_if_not( name.begin(), name.end(), []( char c )
+                    {
+                        return std::isalnum( c ) || c == '_';
+                    } );
+            };
+        std::erase_if( LUA_TYPES, name_eraser );
+        std::erase_if( LUA_MEMBERS, name_eraser );
+        std::erase_if( LUA_FUNCTIONS, name_eraser );
+        std::erase_if( LUA_KEYWORDS, name_eraser );
 
-    return 0;
-}();
+        return 0;
+    }( );

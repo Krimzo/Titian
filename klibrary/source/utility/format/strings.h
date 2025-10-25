@@ -13,11 +13,11 @@ struct string_hash : std::hash<std::string_view>
 
 namespace kl
 {
-std::string convert_string( std::wstring_view const& data );
 std::wstring convert_string( std::string_view const& data );
+std::string convert_string( std::wstring_view const& data );
 
-std::vector<std::string> split_string( std::string_view const& data, char delimiter );
-std::vector<std::wstring> split_string( std::wstring_view const& data, wchar_t delimiter );
+std::vector<std::string> split_string( std::string_view const& data, std::string_view const& delimiter );
+std::vector<std::wstring> split_string( std::wstring_view const& data, std::wstring_view const& delimiter );
 
 void replace_all( std::string& str, std::string_view const& from, std::string_view const& to );
 void replace_all( std::wstring& str, std::wstring_view const& from, std::wstring_view const& to );
@@ -46,13 +46,13 @@ constexpr std::string format_matrix( T const* data )
     std::stringstream stream;
     for ( int y = 0; y < H; y++ )
     {
-        stream << ((y == 0) ? (char) 218 : (y == (H - 1) ? (char) 192 : (char) 179));
-        for ( int x = 0; x < (W - 1); x++ )
+        stream << ( ( y == 0 ) ? (char) 218 : ( y == ( H - 1 ) ? (char) 192 : (char) 179 ) );
+        for ( int x = 0; x < ( W - 1 ); x++ )
             stream << std::setw( max_lengths[x] ) << output_data[y * W + x] << " ";
 
-        stream << std::setw( max_lengths[W - 1] ) << output_data[y * W + (W - 1)];
-        stream << (y == 0 ? (char) 191 : (y == (H - 1) ? (char) 217 : (char) 179));
-        stream << (y != (H - 1) ? "\n" : "");
+        stream << std::setw( max_lengths[W - 1] ) << output_data[y * W + ( W - 1 )];
+        stream << ( y == 0 ? (char) 191 : ( y == ( H - 1 ) ? (char) 217 : (char) 179 ) );
+        stream << ( y != ( H - 1 ) ? "\n" : "" );
     }
     return stream.str();
 }
@@ -64,7 +64,7 @@ template <bool NewLine = true, typename... Args>
 void write( std::ostream& stream, Args&&... args )
 {
     std::osyncstream synced_stream( stream );
-    (synced_stream << ... << args);
+    ( synced_stream << ... << args );
     if constexpr ( NewLine )
         synced_stream << '\n';
 }
@@ -84,10 +84,10 @@ std::string format( Args&&... args )
 }
 
 template <bool NewLine = true, typename... Args>
-void wwrite( std::wostream& w_stream, Args&&... args )
+void write( std::wostream& w_stream, Args&&... args )
 {
     std::wosyncstream w_synced_stream( w_stream );
-    (w_synced_stream << ... << args);
+    ( w_synced_stream << ... << args );
     if constexpr ( NewLine )
         w_synced_stream << L'\n';
 }
@@ -95,14 +95,14 @@ void wwrite( std::wostream& w_stream, Args&&... args )
 template <bool NewLine = true, typename... Args>
 void wprint( Args&&... args )
 {
-    wwrite<NewLine>( std::wcout, args... );
+    write<NewLine>( std::wcout, args... );
 }
 
 template <typename... Args>
 std::wstring wformat( Args&&... args )
 {
     std::wstringstream w_stream;
-    wwrite<false>( w_stream, args... );
+    write<false>( w_stream, args... );
     return w_stream.str();
 }
 }

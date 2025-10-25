@@ -10,7 +10,7 @@ namespace kl
 struct DLL : NoCopy
 {
     template<typename Return, typename... Args>
-    using Function = Return( __stdcall* )(Args...);
+    using Function = Return( __stdcall* )( Args... );
 
     DLL();
     DLL( std::string_view const& path );
@@ -30,7 +30,7 @@ struct DLL : NoCopy
             return nullptr;
         }
         auto function_address = GetProcAddress( m_module, function_name.data() );
-        return (Function<Return, Args...>) function_address;
+        return ( Function<Return, Args...> ) function_address;
     }
 
 private:

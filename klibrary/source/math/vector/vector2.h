@@ -19,24 +19,27 @@ struct Vector2
     T y = {};
 
     constexpr Vector2()
-    {}
+    {
+    }
 
     explicit constexpr Vector2( T value )
         : x( value ), y( value )
-    {}
+    {
+    }
 
     constexpr Vector2( T x, T y )
         : x( x ), y( y )
-    {}
+    {
+    }
 
     constexpr T& operator[]( int index )
     {
-        return (&x)[index];
+        return ( &x )[index];
     }
 
     constexpr T const& operator[]( int index ) const
     {
-        return (&x)[index];
+        return ( &x )[index];
     }
 
     template<typename O>
@@ -57,7 +60,7 @@ struct Vector2
 
     constexpr bool operator!=( Vector2<T> const& other ) const
     {
-        return !(*this == other);
+        return !( *this == other );
     }
 
     constexpr Vector2<T> operator+( Vector2<T> const& other ) const

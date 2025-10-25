@@ -88,6 +88,12 @@
     <ClInclude Include="source\utility\hash\hash_t.h" />
     <ClInclude Include="source\utility\hash\sha256.h" />
     <ClInclude Include="source\utility\utility.h" />
+    <ClInclude Include="source\web\html\html.h" />
+    <ClInclude Include="source\web\http\http_app.h" />
+    <ClInclude Include="source\web\http\http_query.h" />
+    <ClInclude Include="source\web\http\http_request.h" />
+    <ClInclude Include="source\web\http\http_response.h" />
+    <ClInclude Include="source\web\http\http_server.h" />
     <ClInclude Include="source\web\socket\socket.h" />
     <ClInclude Include="source\web\web.h" />
     <ClInclude Include="source\window\hooks\keyboard_hook.h" />
@@ -139,6 +145,12 @@
     <ClCompile Include="source\utility\format\strings.cpp" />
     <ClCompile Include="source\utility\hash\hash_t.cpp" />
     <ClCompile Include="source\utility\hash\sha256.cpp" />
+    <ClCompile Include="source\web\html\html.cpp" />
+    <ClCompile Include="source\web\http\http_app.cpp" />
+    <ClCompile Include="source\web\http\http_query.cpp" />
+    <ClCompile Include="source\web\http\http_request.cpp" />
+    <ClCompile Include="source\web\http\http_response.cpp" />
+    <ClCompile Include="source\web\http\http_server.cpp" />
     <ClCompile Include="source\web\socket\socket.cpp" />
     <ClCompile Include="source\web\web.cpp" />
     <ClCompile Include="source\window\hooks\keyboard_hook.cpp" />
@@ -159,13 +171,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

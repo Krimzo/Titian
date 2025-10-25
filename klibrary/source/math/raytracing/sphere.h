@@ -12,15 +12,17 @@ struct Sphere_T
     T radius = {};
 
     constexpr Sphere_T()
-    {}
+    {
+    }
 
     constexpr Sphere_T( Vector3<T> const& position, T radius )
         : position( position ), radius( radius )
-    {}
+    {
+    }
 
     constexpr bool contains( Vector3<T> const& point ) const
     {
-        return (point - position).length() <= radius;
+        return ( point - position ).length() <= radius;
     }
 };
 }

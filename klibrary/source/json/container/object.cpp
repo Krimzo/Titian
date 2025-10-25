@@ -2,7 +2,8 @@
 
 
 kl::json::Object::Object()
-{}
+{
+}
 
 kl::json::Object::Object( std::string_view const& data )
 {
@@ -37,7 +38,7 @@ bool kl::json::Object::compile( std::vector<Token>::const_iterator first, std::v
                     container = new Literal();
                 }
                 if ( container->compile( it, last ) )
-                    (*this)[key.value()] = std::move( container );
+                    ( *this )[key.value()] = std::move( container );
                 key.reset();
             }
             else if ( it->type == TokenType::LIT_STRING )
@@ -68,7 +69,7 @@ std::string kl::json::Object::decompile( int depth ) const
     if ( depth >= 0 )
     {
         std::string map_depth( depth * 2, ' ' );
-        std::string content_depth( (depth + 1) * 2, ' ' );
+        std::string content_depth( ( depth + 1 ) * 2, ' ' );
         stream << Standard::object_start << '\n';
         for ( auto& [key, value] : *this )
         {

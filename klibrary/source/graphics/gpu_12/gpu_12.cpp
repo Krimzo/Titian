@@ -75,7 +75,7 @@ kl::dx12::SwapChain kl::GPU12::create_swap_chain( HWND window, dx12::CommandQueu
     DXGI_SWAP_CHAIN_DESC1 descriptor{
         .Width = UINT( window_client_area.right - window_client_area.left ),
         .Height = UINT( window_client_area.bottom - window_client_area.top ),
-        .Format = DXGI_FORMAT_R8G8B8A8_UNORM,
+        .Format = DXGI_FORMAT_B8G8R8A8_UNORM,
         .Stereo = false,
         .SampleDesc = {
             .Count = 1,
@@ -231,11 +231,11 @@ kl::dx12::Resource kl::GPU12::create_buffer( void const* data, UINT byte_size, D
     dx12::Resource buffer = create_commited_resource( byte_size, D3D12_RESOURCE_STATE_COMMON );
     dx12::Resource upload_buffer = create_upload_buffer( data, byte_size );
     execute( [&]( auto& commands )
-    {
-        commands.transition_resource( buffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST );
-        commands.copy( buffer, upload_buffer );
-        commands.transition_resource( buffer, D3D12_RESOURCE_STATE_COPY_DEST, final_state );
-    } );
+        {
+            commands.transition_resource( buffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST );
+            commands.copy( buffer, upload_buffer );
+            commands.transition_resource( buffer, D3D12_RESOURCE_STATE_COPY_DEST, final_state );
+        } );
     return buffer;
 }
 
@@ -293,10 +293,10 @@ kl::dx12::AccelerationStructure kl::GPU12::create_acceleration_structure( dx12::
         .ScratchAccelerationStructureData = scratch->GetGPUVirtualAddress(),
     };
     execute( [&]( auto& commands )
-    {
-        commands.transition_resource( scratch, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS );
-        commands.list->BuildRaytracingAccelerationStructure( &acceleration_descriptor, 0, nullptr );
-    } );
+        {
+            commands.transition_resource( scratch, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS );
+            commands.list->BuildRaytracingAccelerationStructure( &acceleration_descriptor, 0, nullptr );
+        } );
     return acceleration_structure;
 }
 
@@ -383,7 +383,7 @@ kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline( dx12::
             .BytecodeLength = pixel_shader.data_size(),
     },
     .render_target_formats = D3D12_RT_FORMAT_ARRAY{
-            .RTFormats = DXGI_FORMAT_R8G8B8A8_UNORM,
+            .RTFormats = DXGI_FORMAT_B8G8R8A8_UNORM,
             .NumRenderTargets = 1,
     },
     };

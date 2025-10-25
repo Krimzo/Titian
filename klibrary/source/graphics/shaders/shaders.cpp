@@ -3,7 +3,8 @@
 
 kl::CBuffer::CBuffer( GPU const* gpu )
     : gpu( gpu )
-{}
+{
+}
 
 void kl::CBuffer::upload( void const* data, UINT byte_size )
 {
@@ -27,7 +28,8 @@ void kl::CBuffer::bind( ShaderType type, int index ) const
 
 kl::Shaders::Shaders( GPU const* gpu )
     : CBuffer( gpu )
-{}
+{
+}
 
 kl::Shaders::operator bool() const
 {

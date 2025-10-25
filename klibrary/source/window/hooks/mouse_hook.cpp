@@ -24,7 +24,7 @@ void kl::MouseHook::process()
 
 LRESULT CALLBACK kl::MouseHook::LowLevelMouseProc( _In_ int nCode, _In_ WPARAM wParam, _In_ LPARAM lParam )
 {
-    auto mouse_struct = reinterpret_cast<MSLLHOOKSTRUCT*>(lParam);
+    auto mouse_struct = reinterpret_cast<MSLLHOOKSTRUCT*>( lParam );
     if ( nCode == HC_ACTION )
     {
         switch ( wParam )

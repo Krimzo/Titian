@@ -12,10 +12,7 @@ kl::Date::Date()
     hour = date_now.tm_hour;
     minute = date_now.tm_min;
     second = date_now.tm_sec;
-
-    namespace ch = std::chrono;
-    auto time_since_epoch = ch::system_clock::now().time_since_epoch();
-    milisecond = int( ch::duration_cast<ch::milliseconds>(time_since_epoch).count() % 1000 );
+    milisecond = int( ch::duration_cast<ch::milliseconds>( ch::system_clock::now().time_since_epoch() ).count() % 1000 );
 }
 
 std::ostream& kl::operator<<( std::ostream& stream, Date const& obj )

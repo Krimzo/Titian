@@ -5,6 +5,11 @@
 
 namespace kl
 {
+inline constexpr std::string_view SELF_ADDRESS = "127.0.0.1";
+}
+
+namespace kl
+{
 struct Address : sockaddr_in
 {
     Address();
@@ -19,30 +24,29 @@ struct Address : sockaddr_in
 
 namespace kl
 {
-struct Socket : NoCopy
+struct TCPSocket : NoCopy
 {
-    using ID = uint64_t;
-    static std::string SELF;
+    Address address;
+    SOCKET socket = INVALID_SOCKET;
 
-    Socket( bool udp );
-    ~Socket();
+    TCPSocket();
+    ~TCPSocket() noexcept;
 
-    ID id() const;
     operator bool() const;
+    void open();
+    void close();
 
-    std::string address() const;
-    int set_address( std::string_view const& address );
+    int server_bind();
+    int server_listen( int queue_size );
+    void server_accept( TCPSocket& out_client );
+    int client_connect();
 
-    int port() const;
-    void set_port( int port );
-
-    int bind();
-    int listen( int queue_size );
-    void accept( Socket& socket );
-    int connect();
+    void set_blocking( bool enabled );
+    int available() const;
 
     int send( void const* data, int byte_size ) const;
     int receive( void* buff, int byte_size ) const;
+    int64_t receive_all( std::vector<byte>& output, int buffer_size = 16384 ) const;
 
     template <typename T>
     bool send( T const& obj ) const
@@ -51,46 +55,73 @@ struct Socket : NoCopy
     }
 
     template <typename T>
-    bool receive( T* obj ) const
+    bool receive( T& out_obj ) const
     {
-        return receive( obj, sizeof( T ) ) == sizeof( T );
+        return receive( &out_obj, sizeof( T ) ) == sizeof( T );
     }
 
     template <typename T>
-    T receive() const
+    std::optional<T> receive() const
     {
-        T t{};
-        receive( &t );
-        return t;
+        T obj{};
+        if ( receive<T>( obj ) )
+            return obj;
+        else
+            return std::nullopt;
     }
+};
+}
 
-    int send_to( void const* data, int byte_size, Address const& address ) const;
-    int receive_from( void* buff, int byte_size, Address* address ) const;
+namespace kl
+{
+struct UDPSocket : NoCopy
+{
+    Address address;
+    SOCKET socket = INVALID_SOCKET;
+
+    UDPSocket();
+    ~UDPSocket() noexcept;
+
+    operator bool() const;
+    void open();
+    void close();
+
+    int server_bind();
+
+    void set_blocking( bool enabled );
+    int available() const;
+
+    int send( void const* data, int byte_size, Address const& address ) const;
+    int receive( void* buff, int byte_size, Address& out_address ) const;
 
     template <typename T>
-    bool send_to( T const& obj, Address const& address ) const
+    bool send( T const& obj, Address const& address ) const
     {
-        return send_to( &obj, sizeof( T ), address ) == sizeof( T );
+        return send( &obj, sizeof( T ), address ) == sizeof( T );
     }
 
     template <typename T>
-    bool receive_from( T* obj, Address* address ) const
+    bool receive( T& out_obj, Address& out_address ) const
     {
-        return receive_from( obj, sizeof( T ), address ) == sizeof( T );
+        return receive( &out_obj, sizeof( T ), out_address ) == sizeof( T );
     }
 
     template <typename T>
-    T receive_from( Address* address ) const
+    std::optional<T> receive( Address& out_address ) const
     {
-        T t{};
-        receive_from( &t, address );
-        return t;
+        T obj{};
+        if ( receive<T>( obj, out_address ) )
+            return obj;
+        else
+            return std::nullopt;
     }
+};
+}
 
-    int exhaust( std::vector<byte>& output, int buffer_size = 16384 ) const;
-
-private:
-    Address m_address = {};
-    ID m_socket = {};
+namespace kl
+{
+struct SocketInit
+{
+    static const int _init;
 };
 }

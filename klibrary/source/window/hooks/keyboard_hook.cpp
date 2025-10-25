@@ -24,7 +24,7 @@ void kl::KeyboardHook::process()
 
 LRESULT CALLBACK kl::KeyboardHook::LowLevelKeyboardProc( _In_ int nCode, _In_ WPARAM wParam, _In_ LPARAM lParam )
 {
-    auto keyboard_struct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
+    auto keyboard_struct = reinterpret_cast<KBDLLHOOKSTRUCT*>( lParam );
     if ( nCode == HC_ACTION )
     {
         switch ( wParam )

@@ -13,11 +13,13 @@ struct Triangle_T
     Vertex_T<T> c;
 
     constexpr Triangle_T()
-    {}
+    {
+    }
 
     constexpr Triangle_T( Vertex_T<T> const& a, Vertex_T<T> const& b, Vertex_T<T> const& c )
         : a( a ), b( b ), c( c )
-    {}
+    {
+    }
 
     constexpr Vector3<T> normal() const
     {
@@ -26,13 +28,13 @@ struct Triangle_T
 
     constexpr Vector4<T> constants() const
     {
-        T calc_const = (b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y);
+        T calc_const = ( b.y - c.y ) * ( a.x - c.x ) + ( c.x - b.x ) * ( a.y - c.y );
         T rec_constant = T( 1 ) / calc_const;
         return {
-            (b.y - c.y) * rec_constant,
-            (c.x - b.x) * rec_constant,
-            (c.y - a.y) * rec_constant,
-            (a.x - c.x) * rec_constant,
+            ( b.y - c.y ) * rec_constant,
+            ( c.x - b.x ) * rec_constant,
+            ( c.y - a.y ) * rec_constant,
+            ( a.x - c.x ) * rec_constant,
         };
     }
 
@@ -57,9 +59,9 @@ struct Triangle_T
         T d20 = dot( v2, v0 );
         T d21 = dot( v2, v1 );
 
-        T inverse_denom = T( 1 ) / (d00 * d11 - d01 * d01);
-        T w1 = (d11 * d20 - d01 * d21) * inverse_denom;
-        T w2 = (d00 * d21 - d01 * d20) * inverse_denom;
+        T inverse_denom = T( 1 ) / ( d00 * d11 - d01 * d01 );
+        T w1 = ( d11 * d20 - d01 * d21 ) * inverse_denom;
+        T w2 = ( d00 * d21 - d01 * d20 ) * inverse_denom;
         return { w1, w2, T( 1 ) - w1 - w2 };
     }
 

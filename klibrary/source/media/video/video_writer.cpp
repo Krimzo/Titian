@@ -1,24 +1,20 @@
 #include "klibrary.h"
 
 
-static int _media_init = []
+kl::VideoWriter::VideoWriter( std::string_view const& filepath, VideoType const& video_type, Int2 frame_size, int fps, float video_mb_rate, int audio_sample_rate )
+    : VideoWriter( convert_string( filepath ), video_type, frame_size, fps, video_mb_rate, audio_sample_rate )
 {
-    constexpr DWORD init_args = COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY;
-    CoInitializeEx( nullptr, init_args ) >> kl::verify_result;
-    MFStartup( MF_VERSION ) >> kl::verify_result;
-    return 0;
-}();
+}
 
-kl::VideoWriter::VideoWriter( std::string_view const& filepath, VideoType const& video_type, Int2 frame_size, int fps, int video_bit_rate, int audio_sample_rate )
+kl::VideoWriter::VideoWriter( std::wstring_view const& filepath, VideoType const& video_type, Int2 frame_size, int fps, float video_mb_rate, int audio_sample_rate )
     : m_width( frame_size.x )
     , m_height( frame_size.y )
     , m_fps( fps )
-    , m_bit_rate( video_bit_rate )
+    , m_mb_rate( video_mb_rate )
     , m_sample_rate( audio_sample_rate )
     , m_frame_duration( 10'000'000 / m_fps )
 {
-    std::wstring converted_path = convert_string( filepath );
-    MFCreateSinkWriterFromURL( converted_path.data(), nullptr, nullptr, &m_writer ) >> verify_result;
+    MFCreateSinkWriterFromURL( filepath.data(), nullptr, nullptr, &m_writer ) >> verify_result;
 
     ComRef<IMFMediaType> video_out_type;
     MFCreateMediaType( &video_out_type ) >> verify_result;
@@ -28,7 +24,7 @@ kl::VideoWriter::VideoWriter( std::string_view const& filepath, VideoType const&
     if ( video_type.profile() > 0 )
         video_out_type->SetUINT32( MF_MT_MPEG2_PROFILE, video_type.profile() ) >> verify_result;
 
-    video_out_type->SetUINT32( MF_MT_AVG_BITRATE, m_bit_rate ) >> verify_result;
+    video_out_type->SetUINT32( MF_MT_AVG_BITRATE, UINT32( video_mb_rate * 1e6 ) ) >> verify_result;
     video_out_type->SetUINT32( MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive ) >> verify_result;
     MFSetAttributeSize( video_out_type.get(), MF_MT_FRAME_SIZE, m_width, m_height ) >> verify_result;
     MFSetAttributeRatio( video_out_type.get(), MF_MT_FRAME_RATE, m_fps, 1 ) >> verify_result;
@@ -82,14 +78,14 @@ int kl::VideoWriter::fps() const
     return (int) m_fps;
 }
 
-int kl::VideoWriter::video_bit_rate() const
+float kl::VideoWriter::video_mb_rate() const
 {
-    return (int) m_bit_rate;
+    return m_mb_rate;
 }
 
 int kl::VideoWriter::frame_count() const
 {
-    return (int) (m_video_time / m_frame_duration);
+    return (int) ( m_video_time / m_frame_duration );
 }
 
 bool kl::VideoWriter::add_frame( Image const& frame )
@@ -113,7 +109,7 @@ bool kl::VideoWriter::add_frame( Image const& frame )
     RGB const* in_buffer = frame.ptr();
     media_buffer->Lock( (BYTE**) &out_buffer, nullptr, nullptr ) >> verify_result;
     for ( uint32_t y = 0; y < m_height; y++ )
-        copy<byte>( out_buffer + (m_height - 1 - y) * m_width, in_buffer + y * m_width, frame_byte_width );
+        copy<byte>( out_buffer + ( m_height - 1 - y ) * m_width, in_buffer + y * m_width, frame_byte_width );
 
     media_buffer->Unlock() >> verify_result;
 
@@ -134,8 +130,7 @@ uint64_t kl::VideoWriter::video_duration_100ns() const
 
 float kl::VideoWriter::video_duration_seconds() const
 {
-    static constexpr float diver = 1.0f / 1e7f;
-    return video_duration_100ns() * diver;
+    return float( video_duration_100ns() / 1e7 );
 }
 
 int kl::VideoWriter::audio_sample_rate() const
@@ -180,8 +175,7 @@ uint64_t kl::VideoWriter::audio_duration_100ns() const
 
 float kl::VideoWriter::audio_duration_seconds() const
 {
-    static constexpr float diver = 1.0f / 1e7f;
-    return audio_duration_100ns() * diver;
+    return float( audio_duration_100ns() / 1e7 );
 }
 
 void kl::VideoWriter::finalize() const

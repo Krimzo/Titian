@@ -21,5 +21,5 @@ inline constexpr str EXE_VIDEO = "video";
 
 namespace titian
 {
-inline js::Object _conf_data{ kl::read_file( _CONF_FILE ) };
+inline js::Object _conf_data{ kl::read_file_string( _CONF_FILE ) };
 }

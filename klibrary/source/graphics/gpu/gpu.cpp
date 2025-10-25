@@ -18,7 +18,7 @@ kl::GPU::GPU( HWND window, bool debug, bool video_support )
         GetClientRect( window, &client_area );
         DXGI_SWAP_CHAIN_DESC chain_descriptor{};
         chain_descriptor.BufferCount = GPU_BUFFER_COUNT;
-        chain_descriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        chain_descriptor.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
         chain_descriptor.BufferDesc.Width = client_area.right - client_area.left;
         chain_descriptor.BufferDesc.Height = client_area.bottom - client_area.top;
         chain_descriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -137,7 +137,7 @@ kl::dx::DepthView kl::GPU::back_depth_view() const
 void kl::GPU::swap_buffers( bool v_sync ) const
 {
     UINT interval = v_sync ? 1 : 0;
-    UINT flags = (v_sync || fullscreened()) ? NULL : DXGI_PRESENT_ALLOW_TEARING;
+    UINT flags = ( v_sync || fullscreened() ) ? NULL : DXGI_PRESENT_ALLOW_TEARING;
     m_chain->Present( interval, flags ) >> verify_result;
     bind_internal_views();
 }
@@ -165,7 +165,7 @@ void kl::GPU::clear_internal_color( Float4 const& color ) const
 
 void kl::GPU::clear_internal_depth( float depth, UINT8 stencil ) const
 {
-    static constexpr UINT clear_type = (D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL);
+    static constexpr UINT clear_type = ( D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL );
     m_context->ClearDepthStencilView( back_depth_view().get(), clear_type, depth, stencil );
 }
 

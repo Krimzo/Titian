@@ -11,7 +11,7 @@ namespace kl
 template<typename T>
 T* allocate( uint64_t count )
 {
-    return (T*) ::calloc( count, sizeof( T ) );
+    return ( T* ) ::calloc( count, sizeof( T ) );
 }
 
 template<typename T>

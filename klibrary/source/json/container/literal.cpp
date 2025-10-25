@@ -2,7 +2,8 @@
 
 
 kl::json::Literal::Literal()
-{}
+{
+}
 
 kl::json::Literal::Literal( std::string_view const& data )
 {

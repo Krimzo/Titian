@@ -2,7 +2,8 @@
 
 
 kl::DLL::DLL()
-{}
+{
+}
 
 kl::DLL::DLL( std::string_view const& path )
 {

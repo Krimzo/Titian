@@ -13,7 +13,7 @@ kl::dx::RasterState kl::DeviceHolder::create_raster_state( bool wireframe, bool 
 {
     dx::RasterStateDescriptor descriptor{};
     descriptor.FillMode = wireframe ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
-    descriptor.CullMode = cull ? (cull_back ? D3D11_CULL_BACK : D3D11_CULL_FRONT) : D3D11_CULL_NONE;
+    descriptor.CullMode = cull ? ( cull_back ? D3D11_CULL_BACK : D3D11_CULL_FRONT ) : D3D11_CULL_NONE;
     descriptor.MultisampleEnable = true;
     descriptor.AntialiasedLineEnable = true;
     descriptor.DepthClipEnable = true;
@@ -175,7 +175,7 @@ kl::dx::Buffer kl::DeviceHolder::create_structured_buffer( void const* data, UIN
 {
     dx::BufferDescriptor descriptor{};
     descriptor.Usage = D3D11_USAGE_DEFAULT;
-    descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE | (has_unordered_access ? D3D11_BIND_UNORDERED_ACCESS : NULL);
+    descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE | ( has_unordered_access ? D3D11_BIND_UNORDERED_ACCESS : NULL );
     descriptor.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
     descriptor.CPUAccessFlags = cpu_read ? D3D11_CPU_ACCESS_READ : NULL;
     descriptor.StructureByteStride = element_size;
@@ -216,7 +216,7 @@ std::vector<kl::Triangle> kl::DeviceHolder::generate_plane_mesh( float size, int
     assert( complexity >= 2, "Plane complexity must be at least 2" );
     std::vector<Triangle> triangles;
     triangles.reserve( size_t( complexity - 1 ) * size_t( complexity - 1 ) * 2 );
-    float incr = size / (complexity - 1);
+    float incr = size / ( complexity - 1 );
     for ( int x = 0; x < complexity - 1; x++ )
     {
         for ( int z = 0; z < complexity - 1; z++ )
@@ -226,14 +226,14 @@ std::vector<kl::Triangle> kl::DeviceHolder::generate_plane_mesh( float size, int
             Float3 rb = lb + Float3{ incr, 0.0f, 0.0f };
             Float3 rt = lb + Float3{ incr, 0.0f, incr };
             triangles.emplace_back(
-                Vertex{ lb, { 0.0f, 1.0f, 0.0f }, { float( x + 0 ) / (complexity - 1), 1.0f - float( z + 0 ) / (complexity - 1) } },
-                Vertex{ lt, { 0.0f, 1.0f, 0.0f }, { float( x + 0 ) / (complexity - 1), 1.0f - float( z + 1 ) / (complexity - 1) } },
-                Vertex{ rt, { 0.0f, 1.0f, 0.0f }, { float( x + 1 ) / (complexity - 1), 1.0f - float( z + 1 ) / (complexity - 1) } }
+                Vertex{ lb, { 0.0f, 1.0f, 0.0f }, { float( x + 0 ) / ( complexity - 1 ), 1.0f - float( z + 0 ) / ( complexity - 1 ) } },
+                Vertex{ lt, { 0.0f, 1.0f, 0.0f }, { float( x + 0 ) / ( complexity - 1 ), 1.0f - float( z + 1 ) / ( complexity - 1 ) } },
+                Vertex{ rt, { 0.0f, 1.0f, 0.0f }, { float( x + 1 ) / ( complexity - 1 ), 1.0f - float( z + 1 ) / ( complexity - 1 ) } }
             );
             triangles.emplace_back(
-                Vertex{ lb, { 0.0f, 1.0f, 0.0f }, { float( x + 0 ) / (complexity - 1), 1.0f - float( z + 0 ) / (complexity - 1) } },
-                Vertex{ rt, { 0.0f, 1.0f, 0.0f }, { float( x + 1 ) / (complexity - 1), 1.0f - float( z + 1 ) / (complexity - 1) } },
-                Vertex{ rb, { 0.0f, 1.0f, 0.0f }, { float( x + 1 ) / (complexity - 1), 1.0f - float( z + 0 ) / (complexity - 1) } }
+                Vertex{ lb, { 0.0f, 1.0f, 0.0f }, { float( x + 0 ) / ( complexity - 1 ), 1.0f - float( z + 0 ) / ( complexity - 1 ) } },
+                Vertex{ rt, { 0.0f, 1.0f, 0.0f }, { float( x + 1 ) / ( complexity - 1 ), 1.0f - float( z + 1 ) / ( complexity - 1 ) } },
+                Vertex{ rb, { 0.0f, 1.0f, 0.0f }, { float( x + 1 ) / ( complexity - 1 ), 1.0f - float( z + 0 ) / ( complexity - 1 ) } }
             );
         }
     }
@@ -255,37 +255,37 @@ std::vector<kl::Triangle> kl::DeviceHolder::generate_cube_mesh( float size )
     },
     };
     static constexpr auto mul_vr = []( Vertex const& vertex, Float3 const& other ) -> Vertex
-    {
-        Vertex result;
-        result.position = vertex.position * other;
-        result.normal = vertex.normal;
-        result.uv = vertex.uv;
-        return result;
-    };
+        {
+            Vertex result;
+            result.position = vertex.position * other;
+            result.normal = vertex.normal;
+            result.uv = vertex.uv;
+            return result;
+        };
     static constexpr auto rotate_vr = []( Vertex const& vertex, Float3 const& axis, float angle ) -> Vertex
-    {
-        Vertex result;
-        result.position = rotate( vertex.position, axis, angle );
-        result.normal = rotate( vertex.normal, axis, angle );
-        result.uv = vertex.uv;
-        return result;
-    };
+        {
+            Vertex result;
+            result.position = rotate( vertex.position, axis, angle );
+            result.normal = rotate( vertex.normal, axis, angle );
+            result.uv = vertex.uv;
+            return result;
+        };
     static constexpr auto mul_tr = []( Triangle const& triangle, Float3 const& other ) -> Triangle
-    {
-        Triangle result;
-        result.a = mul_vr( triangle.a, other );
-        result.b = mul_vr( triangle.b, other );
-        result.c = mul_vr( triangle.c, other );
-        return result;
-    };
+        {
+            Triangle result;
+            result.a = mul_vr( triangle.a, other );
+            result.b = mul_vr( triangle.b, other );
+            result.c = mul_vr( triangle.c, other );
+            return result;
+        };
     static constexpr auto rotate_tr = []( Triangle const& triangle, Float3 const& axis, float angle ) -> Triangle
-    {
-        Triangle result;
-        result.a = rotate_vr( triangle.a, axis, angle );
-        result.b = rotate_vr( triangle.b, axis, angle );
-        result.c = rotate_vr( triangle.c, axis, angle );
-        return result;
-    };
+        {
+            Triangle result;
+            result.a = rotate_vr( triangle.a, axis, angle );
+            result.b = rotate_vr( triangle.b, axis, angle );
+            result.c = rotate_vr( triangle.c, axis, angle );
+            return result;
+        };
 
     std::vector<Triangle> triangles;
     for ( auto& triangle : face )
@@ -317,25 +317,25 @@ std::vector<kl::Triangle> kl::DeviceHolder::generate_sphere_mesh( float radius, 
         { 6, 1, 10 }, { 9, 0, 11 }, { 9, 11, 2 }, { 9, 2, 5 }, { 7, 2, 11 },
     };
     static constexpr auto subdivide_single = []( Triangle const& triangle, std::vector<Triangle>& triangles )
-    {
-        auto& a = triangle.a;
-        auto& b = triangle.b;
-        auto& c = triangle.c;
-        Float3 ab = normalize( (triangle.a.position + triangle.b.position) * 0.5f );
-        Float3 bc = normalize( (triangle.b.position + triangle.c.position) * 0.5f );
-        Float3 ca = normalize( (triangle.c.position + triangle.a.position) * 0.5f );
-        triangles.emplace_back( a, ab, ca );
-        triangles.emplace_back( ab, b, bc );
-        triangles.emplace_back( ca, bc, c );
-        triangles.emplace_back( ab, bc, ca );
-    };
+        {
+            auto& a = triangle.a;
+            auto& b = triangle.b;
+            auto& c = triangle.c;
+            Float3 ab = normalize( ( triangle.a.position + triangle.b.position ) * 0.5f );
+            Float3 bc = normalize( ( triangle.b.position + triangle.c.position ) * 0.5f );
+            Float3 ca = normalize( ( triangle.c.position + triangle.a.position ) * 0.5f );
+            triangles.emplace_back( a, ab, ca );
+            triangles.emplace_back( ab, b, bc );
+            triangles.emplace_back( ca, bc, c );
+            triangles.emplace_back( ab, bc, ca );
+        };
     static constexpr auto subdivide_multiple = []( std::vector<Triangle> const& triangles ) -> std::vector<Triangle>
-    {
-        std::vector<Triangle> result;
-        for ( auto& triangle : triangles )
-            subdivide_single( triangle, result );
-        return result;
-    };
+        {
+            std::vector<Triangle> result;
+            for ( auto& triangle : triangles )
+                subdivide_single( triangle, result );
+            return result;
+        };
 
     std::vector<Triangle> triangles;
     for ( auto& index : indices )
@@ -344,125 +344,125 @@ std::vector<kl::Triangle> kl::DeviceHolder::generate_sphere_mesh( float radius, 
         triangles = subdivide_multiple( triangles );
 
     std::for_each( std::execution::par, triangles.begin(), triangles.end(), [radius, smooth]( Triangle& triangle )
-    {
-        Float3 a_norm = normalize( triangle.a.position );
-        Float3 b_norm = normalize( triangle.b.position );
-        Float3 c_norm = normalize( triangle.c.position );
-        if ( smooth )
         {
-            triangle.a.normal = a_norm;
-            triangle.b.normal = b_norm;
-            triangle.c.normal = c_norm;
-        }
-        else
-        {
-            Float3 normal = triangle.normal();
-            triangle.a.normal = normal;
-            triangle.b.normal = normal;
-            triangle.c.normal = normal;
-        }
-        triangle.a.position = a_norm * radius;
-        triangle.b.position = b_norm * radius;
-        triangle.c.position = c_norm * radius;
-    } );
+            Float3 a_norm = normalize( triangle.a.position );
+            Float3 b_norm = normalize( triangle.b.position );
+            Float3 c_norm = normalize( triangle.c.position );
+            if ( smooth )
+            {
+                triangle.a.normal = a_norm;
+                triangle.b.normal = b_norm;
+                triangle.c.normal = c_norm;
+            }
+            else
+            {
+                Float3 normal = triangle.normal();
+                triangle.a.normal = normal;
+                triangle.b.normal = normal;
+                triangle.c.normal = normal;
+            }
+            triangle.a.position = a_norm * radius;
+            triangle.b.position = b_norm * radius;
+            triangle.c.position = c_norm * radius;
+        } );
     return triangles;
 }
 
 std::vector<kl::Triangle> kl::DeviceHolder::generate_capsule_mesh( float radius, float height, int sectors, int rings )
 {
     auto gen_hem = [&]
-    {
-        std::vector<Triangle> triangles;
-        float half_height = height * 0.5f;
-        Float3 top_center = Float3{ 0.0f, half_height, 0.0f };
-        for ( int i = 0; i < sectors; i++ )
         {
-            float first_phi = (float( i ) / sectors) * 2.0f * pi();
-            float first_x = cos( first_phi ) * radius;
-            float first_z = sin( first_phi ) * radius;
-            float second_phi = (float( i + 1 ) / sectors) * 2.0f * pi();
-            float second_x = cos( second_phi ) * radius;
-            float second_z = sin( second_phi ) * radius;
-            Float3 first = Float3{ first_x, half_height, first_z };
-            Float3 second = Float3{ second_x, half_height, second_z };
-            Float3 first_dir = Float3{ 0.0f, half_height + radius, 0.0f } - first;
-            Float3 second_dir = Float3{ 0.0f, half_height + radius, 0.0f } - second;
-            float first_len = first_dir.length();
-            float second_len = second_dir.length();
-            first_dir /= first_len;
-            second_dir /= second_len;
-            first_len /= rings;
-            second_len /= rings;
-            for ( int j = 0; j < rings; j++ )
+            std::vector<Triangle> triangles;
+            float half_height = height * 0.5f;
+            Float3 top_center = Float3{ 0.0f, half_height, 0.0f };
+            for ( int i = 0; i < sectors; i++ )
             {
-                Float3 left_first = normalize( first + first_dir * first_len * float( j ) - top_center ) * radius + top_center;
-                Float3 left_second = normalize( first + first_dir * first_len * float( j + 1 ) - top_center ) * radius + top_center;
-                Float3 right_first = normalize( second + second_dir * second_len * float( j ) - top_center ) * radius + top_center;
-                Float3 right_second = normalize( second + second_dir * second_len * float( j + 1 ) - top_center ) * radius + top_center;
-                triangles.emplace_back( left_first, left_second, right_second );
-                triangles.emplace_back( left_first, right_second, right_first );
+                float first_phi = ( float( i ) / sectors ) * 2.0f * pi();
+                float first_x = cos( first_phi ) * radius;
+                float first_z = sin( first_phi ) * radius;
+                float second_phi = ( float( i + 1 ) / sectors ) * 2.0f * pi();
+                float second_x = cos( second_phi ) * radius;
+                float second_z = sin( second_phi ) * radius;
+                Float3 first = Float3{ first_x, half_height, first_z };
+                Float3 second = Float3{ second_x, half_height, second_z };
+                Float3 first_dir = Float3{ 0.0f, half_height + radius, 0.0f } - first;
+                Float3 second_dir = Float3{ 0.0f, half_height + radius, 0.0f } - second;
+                float first_len = first_dir.length();
+                float second_len = second_dir.length();
+                first_dir /= first_len;
+                second_dir /= second_len;
+                first_len /= rings;
+                second_len /= rings;
+                for ( int j = 0; j < rings; j++ )
+                {
+                    Float3 left_first = normalize( first + first_dir * first_len * float( j ) - top_center ) * radius + top_center;
+                    Float3 left_second = normalize( first + first_dir * first_len * float( j + 1 ) - top_center ) * radius + top_center;
+                    Float3 right_first = normalize( second + second_dir * second_len * float( j ) - top_center ) * radius + top_center;
+                    Float3 right_second = normalize( second + second_dir * second_len * float( j + 1 ) - top_center ) * radius + top_center;
+                    triangles.emplace_back( left_first, left_second, right_second );
+                    triangles.emplace_back( left_first, right_second, right_first );
+                }
             }
-        }
-        return triangles;
-    };
+            return triangles;
+        };
     auto gen_cyl = [&]
-    {
-        std::vector<Triangle> triangles;
-        float half_height = height * 0.5f;
-        for ( int i = 0; i < sectors; i++ )
         {
-            float first_phi = (float( i ) / sectors) * 2.0f * pi();
-            float first_x = cos( first_phi ) * radius;
-            float first_z = sin( first_phi ) * radius;
-            float second_phi = (float( i + 1 ) / sectors) * 2.0f * pi();
-            float second_x = cos( second_phi ) * radius;
-            float second_z = sin( second_phi ) * radius;
-            triangles.emplace_back(
-                Float3{ first_x, -half_height, first_z },
-                Float3{ first_x, half_height, first_z },
-                Float3{ second_x, half_height, second_z }
-            );
-            triangles.emplace_back(
-                Float3{ first_x, -half_height, first_z },
-                Float3{ second_x, half_height, second_z },
-                Float3{ second_x, -half_height, second_z }
-            );
-        }
-        return triangles;
-    };
+            std::vector<Triangle> triangles;
+            float half_height = height * 0.5f;
+            for ( int i = 0; i < sectors; i++ )
+            {
+                float first_phi = ( float( i ) / sectors ) * 2.0f * pi();
+                float first_x = cos( first_phi ) * radius;
+                float first_z = sin( first_phi ) * radius;
+                float second_phi = ( float( i + 1 ) / sectors ) * 2.0f * pi();
+                float second_x = cos( second_phi ) * radius;
+                float second_z = sin( second_phi ) * radius;
+                triangles.emplace_back(
+                    Float3{ first_x, -half_height, first_z },
+                    Float3{ first_x, half_height, first_z },
+                    Float3{ second_x, half_height, second_z }
+                );
+                triangles.emplace_back(
+                    Float3{ first_x, -half_height, first_z },
+                    Float3{ second_x, half_height, second_z },
+                    Float3{ second_x, -half_height, second_z }
+                );
+            }
+            return triangles;
+        };
 
     auto top_hem = gen_hem();
     std::for_each( std::execution::par, top_hem.begin(), top_hem.end(), []( Triangle& triangle )
-    {
-        std::swap( triangle.a, triangle.c );
-    } );
+        {
+            std::swap( triangle.a, triangle.c );
+        } );
     auto cylinder = gen_cyl();
     std::for_each( std::execution::par, cylinder.begin(), cylinder.end(), []( Triangle& triangle )
-    {
-        std::swap( triangle.a, triangle.c );
-    } );
+        {
+            std::swap( triangle.a, triangle.c );
+        } );
     auto bottom_hem = gen_hem();
     std::for_each( std::execution::par, bottom_hem.begin(), bottom_hem.end(), []( Triangle& triangle )
-    {
-        triangle.a.position.y *= -1.0f;
-        triangle.b.position.y *= -1.0f;
-        triangle.c.position.y *= -1.0f;
-    } );
+        {
+            triangle.a.position.y *= -1.0f;
+            triangle.b.position.y *= -1.0f;
+            triangle.c.position.y *= -1.0f;
+        } );
 
     std::vector<Triangle> triangles;
     triangles.insert( triangles.end(), top_hem.begin(), top_hem.end() );
     triangles.insert( triangles.end(), cylinder.begin(), cylinder.end() );
     triangles.insert( triangles.end(), bottom_hem.begin(), bottom_hem.end() );
     std::for_each( std::execution::par, triangles.begin(), triangles.end(), []( Triangle& triangle )
-    {
-        std::swap( triangle.a.x, triangle.a.y );
-        std::swap( triangle.b.x, triangle.b.y );
-        std::swap( triangle.c.x, triangle.c.y );
-        Float3 normal = triangle.normal();
-        triangle.a.normal = normal;
-        triangle.b.normal = normal;
-        triangle.c.normal = normal;
-    } );
+        {
+            std::swap( triangle.a.x, triangle.a.y );
+            std::swap( triangle.b.x, triangle.b.y );
+            std::swap( triangle.c.x, triangle.c.y );
+            Float3 normal = triangle.normal();
+            triangle.a.normal = normal;
+            triangle.b.normal = normal;
+            triangle.c.normal = normal;
+        } );
     return triangles;
 }
 
@@ -510,8 +510,8 @@ kl::dx::Texture kl::DeviceHolder::create_texture( Image const& image, bool has_u
     descriptor.SampleDesc.Count = 1;
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_SHADER_RESOURCE |
-        (has_unordered_access ? D3D11_BIND_UNORDERED_ACCESS : NULL) |
-        (is_target ? D3D11_BIND_RENDER_TARGET : NULL);
+        ( has_unordered_access ? D3D11_BIND_UNORDERED_ACCESS : NULL ) |
+        ( is_target ? D3D11_BIND_RENDER_TARGET : NULL );
     dx::SubresourceDescriptor data{};
     data.pSysMem = image.ptr();
     data.SysMemPitch = image.width() * sizeof( RGB );
@@ -554,8 +554,8 @@ kl::dx::Texture kl::DeviceHolder::create_staging_texture( dx::Texture const& tex
     dx::TextureDescriptor descriptor{};
     texture->GetDesc( &descriptor );
     dx::TextureDescriptor staging_descriptor{};
-    staging_descriptor.Width = (size.x > 0) ? size.x : descriptor.Width;
-    staging_descriptor.Height = (size.y > 0) ? size.y : descriptor.Height;
+    staging_descriptor.Width = ( size.x > 0 ) ? size.x : descriptor.Width;
+    staging_descriptor.Height = ( size.y > 0 ) ? size.y : descriptor.Height;
     staging_descriptor.MipLevels = 1;
     staging_descriptor.ArraySize = 1;
     staging_descriptor.Format = descriptor.Format;
@@ -570,7 +570,7 @@ kl::dx::Texture kl::DeviceHolder::create_target_texture( Int2 size ) const
     dx::TextureDescriptor descriptor{};
     descriptor.Usage = D3D11_USAGE_DEFAULT;
     descriptor.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    descriptor.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    descriptor.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
     descriptor.Width = (UINT) size.x;
     descriptor.Height = (UINT) size.y;
     descriptor.ArraySize = 1;

@@ -16,7 +16,8 @@ struct Matrix4x4
     };
 
     constexpr Matrix4x4()
-    {}
+    {
+    }
 
     constexpr T& operator[]( int index )
     {
@@ -71,7 +72,7 @@ struct Matrix4x4
 
     constexpr bool operator!=( Matrix4x4<T> const& other ) const
     {
-        return !(*this == other);
+        return !( *this == other );
     }
 
     constexpr Matrix4x4<T> operator+( Matrix4x4<T> const& other ) const
@@ -125,7 +126,7 @@ struct Matrix4x4
             {
                 result( x, y ) = T( 0 );
                 for ( int i = 0; i < 4; i++ )
-                    result( x, y ) += (*this)(i, y) * other( x, i );
+                    result( x, y ) += ( *this )( i, y ) * other( x, i );
             }
         }
         return result;
@@ -142,25 +143,25 @@ struct Matrix4x4
         for ( int y = 0; y < 4; y++ )
         {
             for ( int i = 0; i < 4; i++ )
-                result[y] += (*this)(i, y) * vec[i];
+                result[y] += ( *this )( i, y ) * vec[i];
         }
         return result;
     }
 
     constexpr T determinant() const
     {
-        T A2323 = (*this)(2, 2) * (*this)(3, 3) - (*this)(3, 2) * (*this)(2, 3);
-        T A1323 = (*this)(1, 2) * (*this)(3, 3) - (*this)(3, 2) * (*this)(1, 3);
-        T A1223 = (*this)(1, 2) * (*this)(2, 3) - (*this)(2, 2) * (*this)(1, 3);
-        T A0323 = (*this)(0, 2) * (*this)(3, 3) - (*this)(3, 2) * (*this)(0, 3);
-        T A0223 = (*this)(0, 2) * (*this)(2, 3) - (*this)(2, 2) * (*this)(0, 3);
-        T A0123 = (*this)(0, 2) * (*this)(1, 3) - (*this)(1, 2) * (*this)(0, 3);
+        T A2323 = ( *this )( 2, 2 ) * ( *this )( 3, 3 ) - ( *this )( 3, 2 ) * ( *this )( 2, 3 );
+        T A1323 = ( *this )( 1, 2 ) * ( *this )( 3, 3 ) - ( *this )( 3, 2 ) * ( *this )( 1, 3 );
+        T A1223 = ( *this )( 1, 2 ) * ( *this )( 2, 3 ) - ( *this )( 2, 2 ) * ( *this )( 1, 3 );
+        T A0323 = ( *this )( 0, 2 ) * ( *this )( 3, 3 ) - ( *this )( 3, 2 ) * ( *this )( 0, 3 );
+        T A0223 = ( *this )( 0, 2 ) * ( *this )( 2, 3 ) - ( *this )( 2, 2 ) * ( *this )( 0, 3 );
+        T A0123 = ( *this )( 0, 2 ) * ( *this )( 1, 3 ) - ( *this )( 1, 2 ) * ( *this )( 0, 3 );
 
         T result =
-            (*this)(0, 0) * ((*this)(1, 1) * A2323 - (*this)(2, 1) * A1323 + (*this)(3, 1) * A1223) -
-            (*this)(1, 0) * ((*this)(0, 1) * A2323 - (*this)(2, 1) * A0323 + (*this)(3, 1) * A0223) +
-            (*this)(2, 0) * ((*this)(0, 1) * A1323 - (*this)(1, 1) * A0323 + (*this)(3, 1) * A0123) -
-            (*this)(3, 0) * ((*this)(0, 1) * A1223 - (*this)(1, 1) * A0223 + (*this)(2, 1) * A0123);
+            ( *this )( 0, 0 ) * ( ( *this )( 1, 1 ) * A2323 - ( *this )( 2, 1 ) * A1323 + ( *this )( 3, 1 ) * A1223 ) -
+            ( *this )( 1, 0 ) * ( ( *this )( 0, 1 ) * A2323 - ( *this )( 2, 1 ) * A0323 + ( *this )( 3, 1 ) * A0223 ) +
+            ( *this )( 2, 0 ) * ( ( *this )( 0, 1 ) * A1323 - ( *this )( 1, 1 ) * A0323 + ( *this )( 3, 1 ) * A0123 ) -
+            ( *this )( 3, 0 ) * ( ( *this )( 0, 1 ) * A1223 - ( *this )( 1, 1 ) * A0223 + ( *this )( 2, 1 ) * A0123 );
         return T( 1 ) / result;
     }
 
@@ -243,8 +244,8 @@ struct Matrix4x4
         Matrix4x4<T> result;
         result[0] = tan_half / aspect_ratio;
         result[5] = tan_half;
-        result[10] = (-far_plane - near_plane) / (near_plane - far_plane);
-        result[11] = (T( 2 ) * near_plane * far_plane) / (near_plane - far_plane);
+        result[10] = ( -far_plane - near_plane ) / ( near_plane - far_plane );
+        result[11] = ( T( 2 ) * near_plane * far_plane ) / ( near_plane - far_plane );
         result[14] = T( 1 );
         result[15] = T( 0 );
         return result;
@@ -253,12 +254,12 @@ struct Matrix4x4
     static constexpr Matrix4x4<T> orthographic( T left, T right, T bottom, T top, T near_plane, T far_plane )
     {
         Matrix4x4<T> result;
-        result[0] = T( 2 ) / (right - left);
-        result[5] = T( 2 ) / (top - bottom);
-        result[10] = T( 2 ) / (far_plane - near_plane);
-        result[3] = -(right + left) / (right - left);
-        result[7] = -(top + bottom) / (top - bottom);
-        result[11] = -(far_plane + near_plane) / (far_plane - near_plane);
+        result[0] = T( 2 ) / ( right - left );
+        result[5] = T( 2 ) / ( top - bottom );
+        result[10] = T( 2 ) / ( far_plane - near_plane );
+        result[3] = -( right + left ) / ( right - left );
+        result[7] = -( top + bottom ) / ( top - bottom );
+        result[11] = -( far_plane + near_plane ) / ( far_plane - near_plane );
         return result;
     }
 };

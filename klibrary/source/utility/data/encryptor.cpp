@@ -23,7 +23,7 @@ void kl::Encryptor::run_pass( void* data, uint64_t byte_size ) const
     for ( auto& key : keys )
     {
         for ( uint64_t i = 0; i < byte_size; i++ )
-            reinterpret_cast<byte*>(data)[i] ^= key[i % key.size()];
+            reinterpret_cast<byte*>( data )[i] ^= key[i % key.size()];
     }
 }
 
@@ -42,7 +42,7 @@ std::ostream& kl::operator<<( std::ostream& stream, Encryptor const& encryptor )
     for ( uint64_t i = 0; i < encryptor.keys.size(); i++ )
     {
         stream << "keys[" << i << "] = { ";
-        for ( uint64_t k = 0; k < (encryptor.keys[i].size() - 1); k++ )
+        for ( uint64_t k = 0; k < ( encryptor.keys[i].size() - 1 ); k++ )
             stream << int( encryptor.keys[i][k] ) << ", ";
         stream << int( encryptor.keys[i].back() ) << " }" << '\n';
     }

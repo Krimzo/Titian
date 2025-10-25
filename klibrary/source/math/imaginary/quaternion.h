@@ -14,30 +14,33 @@ struct Quaternion_T
     T z = {};
 
     constexpr Quaternion_T()
-    {}
+    {
+    }
 
     constexpr Quaternion_T( T x, T y, T z )
         : x( x ), y( y ), z( z )
-    {}
+    {
+    }
 
     constexpr Quaternion_T( T w, T x, T y, T z )
         : w( w ), x( x ), y( y ), z( z )
-    {}
+    {
+    }
 
     explicit constexpr Quaternion_T( Vector3<T> const& axis, T angle )
         : w( (T) cos_d( angle * 0.5 ) )
     {
-        reinterpret_cast<Vector3<T>&>(x) = normalize( axis ) * (T) sin_d( angle * 0.5 );
+        reinterpret_cast<Vector3<T>&>( x ) = normalize( axis ) * (T) sin_d( angle * 0.5 );
     }
 
     constexpr T& operator[]( int index )
     {
-        return (&w)[index];
+        return ( &w )[index];
     }
 
     constexpr T const& operator[]( int index ) const
     {
-        return (&w)[index];
+        return ( &w )[index];
     }
 
     constexpr operator Vector3<T>() const
@@ -57,7 +60,7 @@ struct Quaternion_T
 
     constexpr bool operator!=( Quaternion_T<T> const& other ) const
     {
-        return !(*this == other);
+        return !( *this == other );
     }
 
     constexpr Quaternion_T<T> operator+( Quaternion_T<T> const& other ) const

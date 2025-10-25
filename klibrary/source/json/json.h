@@ -31,7 +31,7 @@ struct ObjectSerializable : ContainerSerializable
 
     void from_container( Container const& container ) final
     {
-        if ( Object const* object = dynamic_cast<Object const*>(&container) )
+        if ( Object const* object = dynamic_cast<Object const*>( &container ) )
             this->from_object( *object );
     }
 };
@@ -50,7 +50,7 @@ struct ArraySerializable : ContainerSerializable
 
     void from_container( Container const& container ) final
     {
-        if ( Array const* array = dynamic_cast<Array const*>(&container) )
+        if ( Array const* array = dynamic_cast<Array const*>( &container ) )
             this->from_array( *array );
     }
 };

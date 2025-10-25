@@ -3,7 +3,8 @@
 
 kl::Texture::Texture( GPU const& gpu )
     : m_gpu( gpu )
-{}
+{
+}
 
 void kl::Texture::reload( bool has_unordered_access, bool is_target )
 {

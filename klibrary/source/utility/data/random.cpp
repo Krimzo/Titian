@@ -1,21 +1,21 @@
 #include "klibrary.h"
 
 
-static thread_local std::mt19937 _random_init = []
-{
-    std::random_device device{};
-    std::srand( device() );
-    return std::mt19937{ device() };
-}();
+thread_local std::mt19937 kl::RandomInit::_init = []() -> std::mt19937
+    {
+        std::random_device device{};
+        std::srand( device() );
+        return std::mt19937{ device() };
+    }( );
 
 bool kl::random::gen_bool()
 {
-    return bool( _random_init() % 2 );
+    return bool( RandomInit::_init() % 2 );
 }
 
 byte kl::random::gen_byte()
 {
-    return byte( _random_init() % 256 );
+    return byte( RandomInit::_init() % 256 );
 }
 
 kl::RGB kl::random::gen_rgb( bool gray )
@@ -30,7 +30,7 @@ kl::RGB kl::random::gen_rgb( bool gray )
 
 int kl::random::gen_int( int start_inclusive, int end_exclusive )
 {
-    return start_inclusive + (_random_init() % (end_exclusive - start_inclusive));
+    return start_inclusive + ( RandomInit::_init() % ( end_exclusive - start_inclusive ) );
 }
 
 int kl::random::gen_int( int end_exclusive )
@@ -60,7 +60,7 @@ float kl::random::gen_float( float end_inclusive )
 
 float kl::random::gen_float()
 {
-    return float( _random_init() ) / std::numeric_limits<uint32_t>::max();
+    return float( RandomInit::_init() ) / std::numeric_limits<uint32_t>::max();
 }
 
 kl::Float2 kl::random::gen_float2( float start_inclusive, float end_inclusive )

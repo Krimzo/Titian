@@ -12,7 +12,7 @@ titian::TextSerializer::TextSerializer( StringRef const& path, bool write )
     }
     else
     {
-        current() = { kl::read_file( path ) };
+        current() = { kl::read_file_string( path ) };
 
         String version;
         if ( current().contains( "serial_version" ) )
@@ -37,7 +37,7 @@ titian::TextSerializer::~TextSerializer()
         return;
 
     if ( m_writing )
-        kl::write_file( m_path, current().decompile() );
+        kl::write_file_string( m_path, current().decompile() );
 
     Logger::log( "Closed TEXT ", m_writing ? "serialization" : "deserialization", " file [", m_path, "]" );
 }

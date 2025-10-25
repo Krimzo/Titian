@@ -3,7 +3,8 @@
 
 kl::Mesh::Mesh( kl::GPU const& gpu )
     : m_gpu( gpu )
-{}
+{
+}
 
 void kl::Mesh::reload()
 {

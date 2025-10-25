@@ -2,7 +2,8 @@
 
 
 kl::Hash::Hash()
-{}
+{
+}
 
 kl::Hash::Hash( std::string_view const& hash )
 {
@@ -42,7 +43,7 @@ bool kl::Hash::operator==( Hash const& other ) const
 
 bool kl::Hash::operator!=( Hash const& other ) const
 {
-    return !(*this == other);
+    return !( *this == other );
 }
 
 std::ostream& kl::operator<<( std::ostream& stream, Hash const& hash )

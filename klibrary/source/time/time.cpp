@@ -4,21 +4,21 @@
 uint64_t kl::time::cpu_frequency()
 {
     uint64_t result{};
-    QueryPerformanceFrequency( reinterpret_cast<LARGE_INTEGER*>(&result) );
+    QueryPerformanceFrequency( reinterpret_cast<LARGE_INTEGER*>( &result ) );
     return result;
 }
 
 uint64_t kl::time::now()
 {
     uint64_t result{};
-    QueryPerformanceCounter( reinterpret_cast<LARGE_INTEGER*>(&result) );
+    QueryPerformanceCounter( reinterpret_cast<LARGE_INTEGER*>( &result ) );
     return result;
 }
 
 float kl::time::elapsed( uint64_t start, uint64_t end )
 {
-    static float rec_frequency = (1.0f / cpu_frequency());
-    return (end - start) * rec_frequency;
+    static float rec_frequency = ( 1.0f / cpu_frequency() );
+    return ( end - start ) * rec_frequency;
 }
 
 float kl::time::elapsed( uint64_t from )

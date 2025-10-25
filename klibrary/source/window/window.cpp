@@ -11,10 +11,10 @@ kl::Window::Window( std::string_view const& name )
     window_class.cbSize = sizeof( WNDCLASSEXA );
     window_class.style = CS_OWNDC;
     window_class.lpfnWndProc = []( HWND window_handle, UINT message, WPARAM w_param, LPARAM l_param )
-    {
-        Window const* self = reinterpret_cast<Window*>(GetWindowLongPtrA( window_handle, GWLP_USERDATA ));
-        return self->window_procedure( window_handle, message, w_param, l_param );
-    };
+        {
+            Window const* self = reinterpret_cast<Window*>( GetWindowLongPtrA( window_handle, GWLP_USERDATA ) );
+            return self->window_procedure( window_handle, message, w_param, l_param );
+        };
     window_class.hInstance = m_instance;
     window_class.lpszClassName = name.data();
     assert( RegisterClassExA( &window_class ), "Failed to register window class" );
@@ -91,7 +91,7 @@ void kl::Window::set_resizeable( bool enabled )
 
 bool kl::Window::fullscreened() const
 {
-    return !(style() | WS_CAPTION | WS_THICKFRAME);
+    return !( style() | WS_CAPTION | WS_THICKFRAME );
 }
 
 void kl::Window::set_fullscreen( bool enabled )
@@ -242,12 +242,12 @@ float kl::Window::dpi() const
 
 float kl::Window::pixels_to_dips( float value ) const
 {
-    return (value * 96.0f) / dpi();
+    return ( value * 96.0f ) / dpi();
 }
 
 float kl::Window::dips_to_pixels( float value ) const
 {
-    return value * dpi() * (1.0f / 96.0f);
+    return value * dpi() * ( 1.0f / 96.0f );
 }
 
 void kl::Window::set_title( std::string_view const& data ) const
@@ -346,7 +346,7 @@ void kl::Window::handle_message( MSG const& message )
     {
 #ifdef KL_USING_IMGUI
     case WM_CHAR:
-        if ( reinterpret_cast<short const&>(message.lParam) > 1 )
+        if ( reinterpret_cast<short const&>( message.lParam ) > 1 )
         {
             imgui::GetIO().AddInputCharacter( (int) message.wParam );
         }

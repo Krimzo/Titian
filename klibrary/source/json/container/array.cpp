@@ -2,7 +2,8 @@
 
 
 kl::json::Array::Array()
-{}
+{
+}
 
 kl::json::Array::Array( std::string_view const& data )
 {
@@ -58,8 +59,8 @@ std::string kl::json::Array::decompile( int depth ) const
     stream << Standard::array_start;
     for ( size_t i = 0; i < size(); i++ )
     {
-        stream << (*this)[i]->decompile( -1 );
-        if ( (i + 1) != size() )
+        stream << ( *this )[i]->decompile( -1 );
+        if ( ( i + 1 ) != size() )
             stream << Standard::splitter << ' ';
     }
     stream << Standard::array_end;

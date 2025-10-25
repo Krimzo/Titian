@@ -25,7 +25,8 @@ struct VideoType
 private:
     VideoType( GUID type, int profile )
         : m_type( type ), m_profile( profile )
-    {}
+    {
+    }
 
     GUID m_type = {};
     int m_profile = 0;
@@ -36,11 +37,12 @@ namespace kl
 {
 struct VideoWriter : NoCopy
 {
-    VideoWriter( std::string_view const& filepath, VideoType const& video_type, Int2 frame_size, int fps, int video_bit_rate, int audio_sample_rate );
+    VideoWriter( std::string_view const& filepath, VideoType const& video_type, Int2 frame_size, int fps, float video_mb_rate, int audio_sample_rate );
+    VideoWriter( std::wstring_view const& filepath, VideoType const& video_type, Int2 frame_size, int fps, float video_mb_rate, int audio_sample_rate );
 
     Int2 frame_size() const;
     int fps() const;
-    int video_bit_rate() const;
+    float video_mb_rate() const;
     int frame_count() const;
     bool add_frame( Image const& frame );
     uint64_t video_duration_100ns() const;
@@ -57,7 +59,7 @@ private:
     uint32_t m_width;
     uint32_t m_height;
     uint32_t m_fps;
-    uint32_t m_bit_rate;
+    float m_mb_rate;
     uint32_t m_sample_rate;
     uint64_t m_frame_duration;
 

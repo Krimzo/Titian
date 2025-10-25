@@ -12,11 +12,13 @@ struct AABB_T
     Vector3<T> size;
 
     constexpr AABB_T()
-    {}
+    {
+    }
 
     constexpr AABB_T( Vector3<T> const& position, Vector3<T> const& size )
         : position( position ), size( size )
-    {}
+    {
+    }
 
     constexpr Vector3<T> min_point() const
     {
@@ -33,9 +35,9 @@ struct AABB_T
         Vector3<T> minp = min_point();
         Vector3<T> maxp = max_point();
         return
-            (point.x >= minp.x && point.x <= maxp.x) &&
-            (point.y >= minp.y && point.y <= maxp.y) &&
-            (point.z >= minp.z && point.z <= maxp.z);
+            ( point.x >= minp.x && point.x <= maxp.x ) &&
+            ( point.y >= minp.y && point.y <= maxp.y ) &&
+            ( point.z >= minp.z && point.z <= maxp.z );
     }
 };
 }

@@ -62,7 +62,7 @@ bool titian::create_package( StringRef const& input, StringRef const& output_fil
     serializer.write_int( "files_size", (int32_t) files.size() );
     for ( auto& file : files )
     {
-        String file_data = kl::read_file( file );
+        String file_data = kl::read_file_string( file );
         serializer.write_string( "file", file );
         serializer.write_int( "file_data_size", (int32_t) file_data.size() );
         serializer.write_byte_array( "file_data", file_data.data(), (int32_t) file_data.size() );
@@ -104,7 +104,7 @@ bool titian::open_package( StringRef const& input_file, StringRef const& output_
             if ( fs::create_directories( parent_dir ) )
                 Logger::log( "Created parent directory ", parent_dir.string() );
 
-            kl::write_file( file, file_data );
+            kl::write_file_string( file, file_data );
             Logger::log( "Loaded file ", file, " from package ", input_file );
         }
     }

@@ -11,7 +11,8 @@ struct Ref
     friend struct Ref;
 
     Ref()
-    {}
+    {
+    }
 
     Ref( T* instance )
         : m_instance( instance )
@@ -69,7 +70,7 @@ struct Ref
     }
 
     template<typename B>
-        requires (not std::is_same_v<B, T> and std::is_base_of_v<B, T>)
+        requires ( not std::is_same_v<B, T> and std::is_base_of_v<B, T> )
     operator Ref<B, C>()
     {
         Ref<B, C> result;
@@ -80,10 +81,10 @@ struct Ref
     }
 
     template<typename D>
-        requires (not std::is_same_v<D, T>)
+        requires ( not std::is_same_v<D, T> )
     Ref<D, C> as() const
     {
-        D* derived = dynamic_cast<D*>(m_instance);
+        D* derived = dynamic_cast<D*>( m_instance );
         if ( !derived )
             return {};
 
@@ -103,7 +104,7 @@ struct Ref
 
     bool operator!=( Ref const& other ) const
     {
-        return !(*this == other);
+        return !( *this == other );
     }
 
     T* operator&() const
@@ -137,7 +138,7 @@ struct Ref
     template<typename D>
     bool is() const
     {
-        return (bool) dynamic_cast<D*>(m_instance);
+        return ( bool ) dynamic_cast<D*>( m_instance );
     }
 
 private:
@@ -147,14 +148,14 @@ private:
     void increase_count() const
     {
         if ( m_count )
-            ++(*m_count);
+            ++( *m_count );
     }
 
     template<typename N = uint32_t>
     N decrease_count() const
     {
         if ( m_count )
-            return N( --(*m_count) );
+            return N( --( *m_count ) );
         return N( -1 );
     }
 

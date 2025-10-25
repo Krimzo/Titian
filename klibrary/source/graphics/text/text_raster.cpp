@@ -4,9 +4,9 @@
 kl::TextRaster::TextRaster()
 {
     D2D1_FACTORY_OPTIONS options{};
-    options.debugLevel = D2D1_DEBUG_LEVEL( kl::IS_DEBUG ? (D2D1_DEBUG_LEVEL_WARNING | D2D1_DEBUG_LEVEL_ERROR) : D2D1_DEBUG_LEVEL_NONE );
-    D2D1CreateFactory( D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory), &options, (void**) &m_d2d1_factory ) >> verify_result;
-    DWriteCreateFactory( DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**) &m_write_factory ) >> verify_result;
+    options.debugLevel = D2D1_DEBUG_LEVEL( kl::IS_DEBUG ? ( D2D1_DEBUG_LEVEL_WARNING | D2D1_DEBUG_LEVEL_ERROR ) : D2D1_DEBUG_LEVEL_NONE );
+    D2D1CreateFactory( D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof( ID2D1Factory ), &options, (void**) &m_d2d1_factory ) >> verify_result;
+    DWriteCreateFactory( DWRITE_FACTORY_TYPE_SHARED, __uuidof( IDWriteFactory ), (IUnknown**) &m_write_factory ) >> verify_result;
 }
 
 kl::TextFormat kl::TextRaster::create_text_format(
@@ -35,10 +35,13 @@ void kl::TextRaster::draw_text( UINT target_index ) const
     target->BeginDraw();
     for ( auto& text : text_data )
     {
-        layout_rect.left = text.position.x;
-        layout_rect.right = layout_rect.left + (text.rect_size.x > 0.0f ? text.rect_size.x : target_size.width);
-        layout_rect.top = text.position.y;
-        layout_rect.bottom = layout_rect.top + (text.rect_size.y > 0.0f ? text.rect_size.y : target_size.height);
+        const Float2 position_screen = from_ndc( text.position, { target_size.width, target_size.height } );
+        const Float2 rect_size_screen = from_ndc( text.rect_size, { target_size.width, target_size.height } );
+
+        layout_rect.left = position_screen.x;
+        layout_rect.top = position_screen.y;
+        layout_rect.right = layout_rect.left + ( rect_size_screen.x >= 1.f ? rect_size_screen.x : target_size.width );
+        layout_rect.bottom = layout_rect.top + ( rect_size_screen.y >= 1.f ? rect_size_screen.y : target_size.height );
 
         target->CreateSolidColorBrush(
             D2D1_COLOR_F{

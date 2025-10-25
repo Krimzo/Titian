@@ -5,12 +5,12 @@ titian::GUISectionMainMenu::GUISectionMainMenu()
     : GUISection( "GUISectionMainMenu" )
 {
     auto create_texture = [&]( Texture& texture, str filename )
-    {
-        texture.image.load_from_file( filename );
-        texture.reload_as_2D();
-        texture.create_shader_view( nullptr );
-        kl::assert( texture.shader_view, "Failed to init texture: ", filename );
-    };
+        {
+            texture.image.load_from_file( filename );
+            texture.reload_as_2D();
+            texture.create_shader_view( nullptr );
+            kl::assert( texture.shader_view, "Failed to init texture: ", filename );
+        };
 
     WorkQueue queue;
     queue.add_task( [&] { create_texture( m_start_button_texture, "package/textures/start_button.png" ); } );
@@ -96,7 +96,7 @@ void titian::GUISectionMainMenu::render_gui()
                         if ( type_index == 0 )
                         {
                             Ref script = new NativeScript();
-                            script->data = kl::read_file( file.value() );
+                            script->data = kl::read_file_string( file.value() );
                             script->reload();
                             scene.scripts[stem_name] = script;
                         }
@@ -115,7 +115,7 @@ void titian::GUISectionMainMenu::render_gui()
                         else if ( type_index == 2 )
                         {
                             Ref script = new InterpScript();
-                            script->source = kl::read_file( file.value() );
+                            script->source = kl::read_file_string( file.value() );
                             script->reload();
                             scene.scripts[stem_name] = script;
                         }
@@ -128,7 +128,7 @@ void titian::GUISectionMainMenu::render_gui()
                         String stem_name = fs::path( file.value() ).stem().string();
 
                         Shader& shader = scene.helper_new_shader( stem_name );
-                        shader.source = kl::read_file( file.value() );
+                        shader.source = kl::read_file_string( file.value() );
                     }
                 }
                 if ( im::BeginMenu( "Scene" ) )
@@ -227,7 +227,7 @@ void titian::GUISectionMainMenu::render_gui()
                                     if ( extension.empty() )
                                         file.value() += FILE_EXTENSION_LUA;
 
-                                    kl::write_file( file.value(), interp_script->source );
+                                    kl::write_file_string( file.value(), interp_script->source );
                                 }
                                 else if ( NodeScript* node_script = &script.as<NodeScript>() )
                                 {
@@ -242,7 +242,7 @@ void titian::GUISectionMainMenu::render_gui()
                                     if ( extension.empty() )
                                         file.value() += FILE_EXTENSION_DLL;
 
-                                    kl::write_file( file.value(), native_script->data );
+                                    kl::write_file_string( file.value(), native_script->data );
                                 }
                             }
                         }
@@ -265,7 +265,7 @@ void titian::GUISectionMainMenu::render_gui()
                                 if ( extension.empty() )
                                     file.value() += FILE_EXTENSION_HLSL;
 
-                                kl::write_file( file.value(), shader->source );
+                                kl::write_file_string( file.value(), shader->source );
                             }
                         }
                     }
@@ -461,7 +461,7 @@ void titian::GUISectionMainMenu::render_gui()
                     alternate_wrap->push_back( js::make_number( alternate_color.b ) );
                     _conf_data[CONF_ALTERNATE_COLOR] = std::move( alternate_wrap );
 
-                    kl::write_file( _CONF_FILE, _conf_data.decompile() );
+                    kl::write_file_string( _CONF_FILE, _conf_data.decompile() );
                 }
                 im::EndMenu();
             }
@@ -485,7 +485,7 @@ void titian::GUISectionMainMenu::render_gui()
         im::PushStyleColor( ImGuiCol_Button, (ImVec4) ImColor( 30, 30, 30 ) );
         im::PushStyleColor( ImGuiCol_Border, ImVec4( 0.0f, 0.0f, 0.0f, 0.0f ) );
 
-        im::SetCursorPosX( (menu_size.x - m_control_buttons_width) * 0.5f );
+        im::SetCursorPosX( ( menu_size.x - m_control_buttons_width ) * 0.5f );
         m_control_buttons_width = 0.0f;
 
         constexpr float button_image_size = 16.0f;

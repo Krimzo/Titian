@@ -12,7 +12,8 @@ struct GPU : DeviceHolder, ContextHolder, ShaderCompiler, TextRaster
 {
     inline GPU( HWND window )
         : GPU( window, IS_DEBUG, false )
-    {}
+    {
+    }
 
     virtual ~GPU() noexcept
     {
@@ -74,6 +75,7 @@ struct VideoGPU : GPU
 {
     inline VideoGPU()
         : GPU( nullptr, IS_DEBUG, true )
-    {}
+    {
+    }
 };
 }

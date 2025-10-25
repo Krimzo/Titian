@@ -1,13 +1,12 @@
 #include "klibrary.h"
 
 
-static int _socket_init = []
-{
-    WSADATA wsa_data{};
-    int result = ::WSAStartup( MAKEWORD( 2, 2 ), &wsa_data );
-    kl::assert( result == 0, "Failed to initialize WSA" );
-    return result;
-}();
+const int kl::SocketInit::_init = []() -> int
+    {
+        WSADATA wsa_data{};
+        kl::assert( ::WSAStartup( MAKEWORD( 2, 2 ), &wsa_data ) == 0, "Failed to initialize WSA" );
+        return {};
+    }( );
 
 kl::Address::Address()
     : sockaddr_in()
@@ -28,7 +27,7 @@ int kl::Address::set_address( std::string_view const& address )
 
 int kl::Address::port() const
 {
-    return (int) ::ntohs( sin_port );
+    return ( int ) ::ntohs( sin_port );
 }
 
 void kl::Address::set_port( int port )
@@ -36,102 +35,148 @@ void kl::Address::set_port( int port )
     sin_port = ::htons( (u_short) port );
 }
 
-std::string kl::Socket::SELF = "127.0.0.1";
-
-kl::Socket::Socket( bool udp )
+kl::TCPSocket::TCPSocket()
 {
-    m_socket = ::socket( AF_INET,
-        udp ? SOCK_DGRAM : SOCK_STREAM,
-        udp ? IPPROTO_UDP : IPPROTO_TCP );
-    m_address.sin_addr.s_addr = INADDR_ANY;
-    verify( m_socket != INVALID_SOCKET, "Failed to create socket" );
+    open();
 }
 
-kl::Socket::~Socket()
+kl::TCPSocket::~TCPSocket() noexcept
 {
-    ::closesocket( m_socket );
+    close();
 }
 
-kl::Socket::ID kl::Socket::id() const
+kl::TCPSocket::operator bool() const
 {
-    return m_socket;
+    return socket != INVALID_SOCKET;
 }
 
-kl::Socket::operator bool() const
+void kl::TCPSocket::open()
 {
-    return m_socket != INVALID_SOCKET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    socket = ::socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 }
 
-std::string kl::Socket::address() const
+void kl::TCPSocket::close()
 {
-    return m_address.address();
+    ::closesocket( socket );
+    socket = INVALID_SOCKET;
 }
 
-int kl::Socket::set_address( std::string_view const& address )
+int kl::TCPSocket::server_bind()
 {
-    return m_address.set_address( address );
+    return ::bind( socket, (sockaddr*) &address, sizeof( Address ) );
 }
 
-int kl::Socket::port() const
+int kl::TCPSocket::server_listen( int queue_size )
 {
-    return m_address.port();
+    return ::listen( socket, queue_size );
 }
 
-void kl::Socket::set_port( int port )
+void kl::TCPSocket::server_accept( TCPSocket& out_client )
 {
-    m_address.set_port( port );
+    int _ = sizeof( Address );
+    out_client.socket = ::accept( socket, (sockaddr*) &address, &_ );
 }
 
-int kl::Socket::bind()
+int kl::TCPSocket::client_connect()
 {
-    return ::bind( m_socket, (sockaddr*) &m_address, sizeof( Address ) );
+    return ::connect( socket, (sockaddr*) &address, sizeof( Address ) );
 }
 
-int kl::Socket::listen( int queue_size )
+void kl::TCPSocket::set_blocking( bool enabled )
 {
-    return ::listen( m_socket, queue_size );
+    u_long mode = enabled ? 0 : 1;
+    ::ioctlsocket( socket, FIONBIO, &mode );
 }
 
-void kl::Socket::accept( Socket& socket )
+int kl::TCPSocket::available() const
 {
-    int address_length = sizeof( Address );
-    socket.m_socket = ::accept( m_socket, (sockaddr*) &m_address, &address_length );
+    u_long available = 0;
+    ::ioctlsocket( socket, FIONREAD, &available );
+    return (int) available;
 }
 
-int kl::Socket::connect()
+int kl::TCPSocket::send( void const* data, int byte_size ) const
 {
-    return ::connect( m_socket, (sockaddr*) &m_address, sizeof( Address ) );
+    return ::send( socket, (char const*) data, byte_size, NULL );
 }
 
-int kl::Socket::send( void const* data, int byte_size ) const
+int kl::TCPSocket::receive( void* buff, int byte_size ) const
 {
-    return ::send( m_socket, (char const*) data, byte_size, NULL );
+    return ::recv( socket, (char*) buff, byte_size, NULL );
 }
 
-int kl::Socket::receive( void* buff, int byte_size ) const
+int64_t kl::TCPSocket::receive_all( std::vector<byte>& output, int buffer_size ) const
 {
-    return ::recv( m_socket, (char*) buff, byte_size, NULL );
-}
-
-int kl::Socket::send_to( void const* data, int byte_size, Address const& address ) const
-{
-    return ::sendto( m_socket, (char const*) data, byte_size, NULL, (sockaddr const*) &address, sizeof( Address ) );
-}
-
-int kl::Socket::receive_from( void* buff, int byte_size, Address* address ) const
-{
-    int address_length = sizeof( Address );
-    return ::recvfrom( m_socket, (char*) buff, byte_size, NULL, (sockaddr*) address, &address_length );
-}
-
-int kl::Socket::exhaust( std::vector<byte>& output, int buffer_size ) const
-{
+    int64_t total_received = 0;
     std::vector<byte> receiver_buffer( buffer_size );
-    int total_received = 0;
-    for ( int received; (received = receive( receiver_buffer.data(), buffer_size )) > 0;)
+    while ( true )
     {
+        const int received = receive( receiver_buffer.data(), buffer_size );
+        if ( received < 0 )
+            return received;
+        if ( received == 0 )
+            break;
         output.insert( output.end(), receiver_buffer.begin(), receiver_buffer.begin() + received );
         total_received += received;
+        if ( available() <= 0 )
+            break;
     }
     return total_received;
+}
+
+kl::UDPSocket::UDPSocket()
+{
+    open();
+}
+
+kl::UDPSocket::~UDPSocket()
+{
+    close();
+}
+
+kl::UDPSocket::operator bool() const
+{
+    return socket != INVALID_SOCKET;
+}
+
+void kl::UDPSocket::open()
+{
+    address.sin_addr.s_addr = INADDR_ANY;
+    socket = ::socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
+}
+
+void kl::UDPSocket::close()
+{
+    ::closesocket( socket );
+    socket = INVALID_SOCKET;
+}
+
+int kl::UDPSocket::server_bind()
+{
+    return ::bind( socket, (sockaddr*) &address, sizeof( Address ) );
+}
+
+void kl::UDPSocket::set_blocking( bool enabled )
+{
+    u_long mode = enabled ? 0 : 1;
+    ::ioctlsocket( socket, FIONBIO, &mode );
+}
+
+int kl::UDPSocket::available() const
+{
+    u_long available = 0;
+    ::ioctlsocket( socket, FIONREAD, &available );
+    return (int) available;
+}
+
+int kl::UDPSocket::send( void const* data, int byte_size, Address const& address ) const
+{
+    return ::sendto( socket, (char const*) data, byte_size, NULL, (sockaddr const*) &address, sizeof( Address ) );
+}
+
+int kl::UDPSocket::receive( void* buff, int byte_size, Address& address ) const
+{
+    int address_length = sizeof( Address );
+    return ::recvfrom( socket, (char*) buff, byte_size, NULL, (sockaddr*) &address, &address_length );
 }

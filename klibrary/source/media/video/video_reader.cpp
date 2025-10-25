@@ -3,6 +3,14 @@
 
 using kl::ComRef;
 
+const int kl::VideoInit::_init = []() -> int
+    {
+        constexpr DWORD init_args = COINIT_MULTITHREADED | COINIT_SPEED_OVER_MEMORY;
+        CoInitializeEx( nullptr, init_args ) >> kl::verify_result;
+        MFStartup( MF_VERSION ) >> kl::verify_result;
+        return {};
+    }( );
+
 static void configure_reader( ComRef<IMFSourceReader> const& reader, kl::Int2 size )
 {
     ComRef<IMFMediaType> media_type;
@@ -72,6 +80,11 @@ static float video_fps( ComRef<IMFSourceReader> const& reader )
 }
 
 kl::VideoReader::VideoReader( std::string_view const& filepath, Int2 output_size, bool use_gpu )
+    : VideoReader( convert_string( filepath ), output_size, use_gpu )
+{
+}
+
+kl::VideoReader::VideoReader( std::wstring_view const& filepath, Int2 output_size, bool use_gpu )
 {
     ComRef<IMFAttributes> attributes;
     MFCreateAttributes( &attributes, 0 ) >> verify_result;
@@ -93,8 +106,7 @@ kl::VideoReader::VideoReader( std::string_view const& filepath, Int2 output_size
         attributes->SetUnknown( MF_SOURCE_READER_D3D_MANAGER, manager.get() ) >> verify_result;
     }
 
-    std::wstring converted_path = convert_string( filepath );
-    MFCreateSourceReaderFromURL( converted_path.data(), attributes.get(), &m_reader ) >> verify_result;
+    MFCreateSourceReaderFromURL( filepath.data(), attributes.get(), &m_reader ) >> verify_result;
     configure_reader( m_reader, output_size );
 
     m_byte_size = video_byte_size( m_reader );
@@ -119,8 +131,7 @@ int64_t kl::VideoReader::duration_100ns() const
 
 float kl::VideoReader::duration_seconds() const
 {
-    static constexpr float diver = 1.0f / 1e7f;
-    return m_duration * diver;
+    return float( m_duration / 1e7 );
 }
 
 kl::Int2 kl::VideoReader::frame_size() const
@@ -168,11 +179,11 @@ bool kl::VideoReader::read_frame( Image& out, int* out_index ) const
     RGB* frame_target = out.ptr();
 
     kl::async_for( 0, out.width() * out.height(), [&]( int i )
-    {
-        frame_target[i].r = frame_source[i].r;
-        frame_target[i].g = frame_source[i].g;
-        frame_target[i].b = frame_source[i].b;
-    } );
+        {
+            frame_target[i].r = frame_source[i].r;
+            frame_target[i].g = frame_source[i].g;
+            frame_target[i].b = frame_source[i].b;
+        } );
 
     if ( out_index )
         *out_index = int( time_stamp * 1e-7 * m_fps );

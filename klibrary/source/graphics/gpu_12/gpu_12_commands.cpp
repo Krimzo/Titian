@@ -2,15 +2,18 @@
 
 
 kl::GPU12Commands::GPU12Commands()
-{}
+{
+}
 
 kl::GPU12Commands::GPU12Commands( dx12::CommandAllocator const& allocator )
     : allocator( allocator )
-{}
+{
+}
 
 kl::GPU12Commands::GPU12Commands( dx12::CommandAllocator const& allocator, dx12::CommandList const& list )
     : allocator( allocator ), list( list )
-{}
+{
+}
 
 void kl::GPU12Commands::reset() const
 {

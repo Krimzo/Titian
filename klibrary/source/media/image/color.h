@@ -20,7 +20,7 @@ struct RGB
     byte r = 0;
     byte a = 255;
 
-    RGB();
+    RGB() = default;
     RGB( byte r, byte g, byte b, byte a = 255 );
 
     operator YUV() const;
@@ -47,7 +47,7 @@ struct YUV
     float u = 0.0f;
     float v = 0.0f;
 
-    YUV();
+    YUV() = default;
     YUV( float y, float u, float v );
 
     operator RGB() const;
@@ -63,7 +63,9 @@ struct YUV
 namespace kl
 {
 std::ostream& operator<<( std::ostream& stream, RGB col );
+std::wostream& operator<<( std::wostream& stream, RGB col );
 std::ostream& operator<<( std::ostream& stream, YUV const& col );
+std::wostream& operator<<( std::wostream& stream, YUV const& col );
 }
 
 namespace kl::colors

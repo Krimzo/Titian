@@ -19,32 +19,37 @@ struct Vector3
     T z = {};
 
     constexpr Vector3()
-    {}
+    {
+    }
 
     explicit constexpr Vector3( T value )
         : x( value ), y( value ), z( value )
-    {}
+    {
+    }
 
     constexpr Vector3( T x, T y, T z )
         : x( x ), y( y ), z( z )
-    {}
+    {
+    }
 
     constexpr Vector3( Vector2<T> const& vec, T z )
         : x( vec.x ), y( vec.y ), z( z )
-    {}
+    {
+    }
 
     constexpr Vector3( T x, Vector2<T> const& vec )
         : x( x ), y( vec.x ), z( vec.y )
-    {}
+    {
+    }
 
     constexpr T& operator[]( int index )
     {
-        return (&x)[index];
+        return ( &x )[index];
     }
 
     constexpr T const& operator[]( int index ) const
     {
-        return (&x)[index];
+        return ( &x )[index];
     }
 
     template<typename O>
@@ -74,22 +79,22 @@ struct Vector3
 
     constexpr Vector2<T>& xy()
     {
-        return reinterpret_cast<Vector2<T>&>(x);
+        return reinterpret_cast<Vector2<T>&>( x );
     }
 
     constexpr Vector2<T> const& xy() const
     {
-        return reinterpret_cast<Vector2<T> const&>(x);
+        return reinterpret_cast<Vector2<T> const&>( x );
     }
 
     constexpr Vector2<T>& yz()
     {
-        return reinterpret_cast<Vector2<T>&>(y);
+        return reinterpret_cast<Vector2<T>&>( y );
     }
 
     constexpr Vector2<T> const& yz() const
     {
-        return reinterpret_cast<Vector2<T> const&>(y);
+        return reinterpret_cast<Vector2<T> const&>( y );
     }
 
     constexpr bool operator==( Vector3<T> const& other ) const
@@ -99,7 +104,7 @@ struct Vector3
 
     constexpr bool operator!=( Vector3<T> const& other ) const
     {
-        return !(*this == other);
+        return !( *this == other );
     }
 
     constexpr Vector3<T> operator+( Vector3<T> const& other ) const

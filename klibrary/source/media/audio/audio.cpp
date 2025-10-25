@@ -1,21 +1,24 @@
 #include "klibrary.h"
 
 
-kl::Audio::Audio()
-{}
-
 kl::Audio::Audio( int sample_rate )
     : sample_rate( sample_rate )
-{}
+{
+}
 
 kl::Audio::Audio( std::string_view const& path )
 {
     load_from_file( path );
 }
 
+kl::Audio::Audio( std::wstring_view const& path )
+{
+    load_from_file( path );
+}
+
 uint64_t kl::Audio::duration_100ns() const
 {
-    return (size() * 10'000'000) / sample_rate;
+    return ( size() * 10'000'000 ) / sample_rate;
 }
 
 float kl::Audio::duration_seconds() const
@@ -25,7 +28,7 @@ float kl::Audio::duration_seconds() const
 
 void kl::Audio::set_duration( float duration )
 {
-    this->resize( (size_t) (duration * sample_rate) );
+    this->resize( (size_t) ( duration * sample_rate ) );
 }
 
 void kl::Audio::increase_volume( float amount )
@@ -54,7 +57,7 @@ int kl::Audio::time_to_index( float at_time ) const
 float kl::Audio::sample_at_index( int index ) const
 {
     if ( index >= 0 && index < (int) size() )
-        return (*this)[index];
+        return ( *this )[index];
     return 0.0f;
 }
 
@@ -73,7 +76,7 @@ bool kl::Audio::load_from_memory( void const* data, uint64_t byte_size )
 {
     HRESULT hr = 0;
 
-    ComRef<IStream> stream{ SHCreateMemStream( reinterpret_cast<BYTE const*>(data), UINT( byte_size ) ) };
+    ComRef<IStream> stream{ SHCreateMemStream( reinterpret_cast<BYTE const*>( data ), UINT( byte_size ) ) };
     if ( !stream )
         return false;
 
@@ -132,7 +135,7 @@ bool kl::Audio::load_from_memory( void const* data, uint64_t byte_size )
         DWORD sample_byte_size = 0;
         media_buffer->Lock( &sample_data, nullptr, &sample_byte_size ) >> verify_result;
         int old_size = (int) this->size();
-        this->resize( old_size + (sample_byte_size / sizeof( float )) );
+        this->resize( old_size + ( sample_byte_size / sizeof( float ) ) );
         copy<byte>( this->data() + old_size, sample_data, sample_byte_size );
     }
     return true;
@@ -145,8 +148,12 @@ bool kl::Audio::load_from_buffer( std::string_view const& buffer )
 
 bool kl::Audio::load_from_file( std::string_view const& filepath )
 {
-    std::string data = read_file( filepath );
-    return load_from_buffer( data );
+    return load_from_buffer( read_file_string( filepath ) );
+}
+
+bool kl::Audio::load_from_file( std::wstring_view const& filepath )
+{
+    return load_from_buffer( read_file_string( filepath ) );
 }
 
 bool kl::Audio::save_to_buffer( std::string& buffer, AudioType type ) const
@@ -214,8 +221,8 @@ bool kl::Audio::save_to_buffer( std::string& buffer, AudioType type ) const
         copy<byte>( out_buffer, data() + i, sample_byte_size );
         media_buffer->Unlock() >> verify_result;
 
-        media_sample->SetSampleDuration( (sample_size * 10'000'000LL) / sample_rate ) >> verify_result;
-        media_sample->SetSampleTime( (i * 10'000'000LL) / sample_rate ) >> verify_result;
+        media_sample->SetSampleDuration( ( sample_size * 10'000'000LL ) / sample_rate ) >> verify_result;
+        media_sample->SetSampleTime( ( i * 10'000'000LL ) / sample_rate ) >> verify_result;
         writer->WriteSample( 0, media_sample.get() ) >> verify_result;
         i += sample_size;
     }
@@ -234,8 +241,14 @@ bool kl::Audio::save_to_file( std::string_view const& filepath, AudioType type )
 {
     std::string buffer;
     if ( save_to_buffer( buffer, type ) )
-    {
-        return write_file( filepath, buffer );
-    }
+        return write_file_string( filepath, buffer );
+    return false;
+}
+
+bool kl::Audio::save_to_file( std::wstring_view const& filepath, AudioType type ) const
+{
+    std::string buffer;
+    if ( save_to_buffer( buffer, type ) )
+        return write_file_string( filepath, buffer );
     return false;
 }

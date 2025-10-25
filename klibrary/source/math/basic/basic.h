@@ -42,21 +42,21 @@ template<typename T>
     requires std::is_arithmetic_v<T>
 constexpr T abs( T object ) noexcept
 {
-    return (object < T( 0 )) ? -object : object;
+    return ( object < T( 0 ) ) ? -object : object;
 }
 
 template<typename T>
     requires std::is_arithmetic_v<T>
 constexpr T min( T first, T second ) noexcept
 {
-    return (first <= second) ? first : second;
+    return ( first <= second ) ? first : second;
 }
 
 template<typename T>
     requires std::is_arithmetic_v<T>
 constexpr T max( T first, T second ) noexcept
 {
-    return (first >= second) ? first : second;
+    return ( first >= second ) ? first : second;
 }
 
 template<typename T>
@@ -72,7 +72,7 @@ template<typename T, bool Clamp = true>
     requires std::is_floating_point_v<T>
 constexpr T lerp( T value, T lower, T upper ) noexcept
 {
-    value = lower + (upper - lower) * value;
+    value = lower + ( upper - lower ) * value;
     if constexpr ( Clamp )
         value = clamp( value, lower, upper );
     return value;
@@ -82,7 +82,7 @@ template<typename T, bool Clamp = true>
     requires std::is_floating_point_v<T>
 constexpr T unlerp( T value, T lower, T upper ) noexcept
 {
-    value = (value - lower) / (upper - lower);
+    value = ( value - lower ) / ( upper - lower );
     if constexpr ( Clamp )
         value = clamp( value, T( 0 ), T( 1 ) );
     return value;

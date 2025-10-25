@@ -6,11 +6,11 @@ titian::FrameHandler::FrameHandler()
     kl::GPU& gpu = AppLayer::get().gpu;
 
     auto load_shader = [&]( dx::ComputeShader& shader, str filename )
-    {
-        String source = kl::read_file( kl::format( "package/shaders/", filename ) );
-        shader = gpu.create_compute_shader( source ).shader;
-        kl::assert( shader, "Failed to init [", filename, "] shaders" );
-    };
+        {
+            String source = kl::read_file_string( kl::format( "package/shaders/", filename ) );
+            shader = gpu.create_compute_shader( source ).shader;
+            kl::assert( shader, "Failed to init [", filename, "] shaders" );
+        };
 
     WorkQueue queue;
     queue.add_task( [&] { load_shader( m_clear_shader, "video_clear_shader.hlsl" ); } );
@@ -25,7 +25,7 @@ void titian::FrameHandler::prepare_frame( Int2 size )
     out_frame.resize( size );
     gpu.bind_access_view_for_compute_shader( out_frame.access_view, 0 );
 
-    Int2 dispatch_size = (out_frame.size() / 32) + Int2( 1 );
+    Int2 dispatch_size = ( out_frame.size() / 32 ) + Int2( 1 );
     gpu.execute_compute_shader( m_clear_shader, dispatch_size.x, dispatch_size.y, 1 );
 
     gpu.unbind_access_view_for_compute_shader( 0 );

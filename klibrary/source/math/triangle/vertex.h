@@ -13,15 +13,18 @@ struct Vertex_T
     Vector2<T> uv;
 
     constexpr Vertex_T()
-    {}
+    {
+    }
 
     constexpr Vertex_T( Vector3<T> const& position )
         : position( position )
-    {}
+    {
+    }
 
     constexpr Vertex_T( Vector3<T> const& position, Vector3<T> const& normal, Vector2<T> const& uv )
         : position( position ), normal( normal ), uv( uv )
-    {}
+    {
+    }
 };
 }
 

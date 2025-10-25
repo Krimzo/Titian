@@ -8,7 +8,7 @@ namespace kl
 template<typename T>
 constexpr void const* _addr( T const& obj )
 {
-    return &reinterpret_cast<byte const&>(obj);
+    return &reinterpret_cast<byte const&>( obj );
 }
 }
 
@@ -18,11 +18,13 @@ template<typename T>
 struct ComRef
 {
     ComRef()
-    {}
+    {
+    }
 
     explicit ComRef( T* instance )
         : m_instance( instance )
-    {}
+    {
+    }
 
     ~ComRef() noexcept
     {
@@ -70,7 +72,7 @@ struct ComRef
     }
 
     template<typename B>
-        requires (not std::is_same_v<B, T> and std::is_base_of_v<B, T>)
+        requires ( not std::is_same_v<B, T> and std::is_base_of_v<B, T> )
     operator ComRef<B>() const
     {
         increase_count();
@@ -78,10 +80,10 @@ struct ComRef
     }
 
     template<typename D>
-        requires (not std::is_same_v<D, T>)
+        requires ( not std::is_same_v<D, T> )
     HRESULT as( ComRef<D> const& out ) const
     {
-        return m_instance->QueryInterface( __uuidof(D), (void**) &out );
+        return m_instance->QueryInterface( __uuidof( D ), (void**) &out );
     }
 
     T** operator&()

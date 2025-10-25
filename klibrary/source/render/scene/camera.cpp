@@ -38,37 +38,37 @@ kl::Float3 kl::Camera::up() const
 
 void kl::Camera::move_forward( float delta_time )
 {
-    position += m_forward * (speed * delta_time);
+    position += m_forward * ( speed * delta_time );
 }
 
 void kl::Camera::move_back( float delta_time )
 {
-    position -= m_forward * (speed * delta_time);
+    position -= m_forward * ( speed * delta_time );
 }
 
 void kl::Camera::move_right( float delta_time )
 {
-    position += right() * (speed * delta_time);
+    position += right() * ( speed * delta_time );
 }
 
 void kl::Camera::move_left( float delta_time )
 {
-    position -= right() * (speed * delta_time);
+    position -= right() * ( speed * delta_time );
 }
 
 void kl::Camera::move_up( float delta_time )
 {
-    position += m_up * (speed * delta_time);
+    position += m_up * ( speed * delta_time );
 }
 
 void kl::Camera::move_down( float delta_time )
 {
-    position -= m_up * (speed * delta_time);
+    position -= m_up * ( speed * delta_time );
 }
 
 void kl::Camera::rotate( Float2 mouse_pos, Float2 frame_center, float vertical_angle_limit )
 {
-    Float2 rotation = (mouse_pos - frame_center) * sensitivity;
+    Float2 rotation = ( mouse_pos - frame_center ) * sensitivity;
     Float3 forward_vert = kl::rotate( m_forward, right(), rotation.y );
     if ( abs( angle( forward_vert, m_up ) - 90.0f ) <= vertical_angle_limit )
         set_forward( forward_vert );

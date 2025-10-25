@@ -26,9 +26,9 @@ titian::GPUTracer::GPUTracer( kl::Window& window, TracingScene const& scene, Int
     kl::verify( m_target_copy_access_view, "Failed to create tracing target copy access view" );
     kl::verify( m_target_copy_shader_view, "Failed to create tracing target copy shader view" );
 
-    m_compute_shader = m_gpu.create_compute_shader( kl::read_file( "package/shaders/tracing/tracing_compute.hlsl" ) );
-    m_copy_shader = m_gpu.create_compute_shader( kl::read_file( "package/shaders/tracing/tracing_copy.hlsl" ) );
-    m_display_shaders = m_gpu.create_shaders( kl::read_file( "package/shaders/tracing/tracing_display.hlsl" ) );
+    m_compute_shader = m_gpu.create_compute_shader( kl::read_file_string( "package/shaders/tracing/tracing_compute.hlsl" ) );
+    m_copy_shader = m_gpu.create_compute_shader( kl::read_file_string( "package/shaders/tracing/tracing_copy.hlsl" ) );
+    m_display_shaders = m_gpu.create_shaders( kl::read_file_string( "package/shaders/tracing/tracing_display.hlsl" ) );
     kl::verify( m_compute_shader, "Failed to create tracing compute shader" );
     kl::verify( m_copy_shader, "Failed to create tracing copy shader" );
     kl::verify( m_display_shaders, "Failed to create tracing display shaders" );
@@ -134,12 +134,12 @@ void titian::GPUTracer::save_screenshot( StringRef const& path )
     m_gpu.read_from_texture( samples_buffer.data(), staging_texture, resolution, sizeof( Float4 ) );
     kl::Image image;
     image.resize( resolution );
-    float rec_iter = (1.0f / m_iterations);
+    float rec_iter = ( 1.0f / m_iterations );
     kl::async_for( 0, image.pixel_count(), [&]( int i )
-    {
-        Float3 result = samples_buffer[i].xyz() * rec_iter;
-        image[i] = Float4{ result, 1.0f };
-    } );
+        {
+            Float3 result = samples_buffer[i].xyz() * rec_iter;
+            image[i] = Float4{ result, 1.0f };
+        } );
     image.save_to_file( path, kl::ImageType::PNG );
 }
 
@@ -154,7 +154,7 @@ void titian::GPUTracer::compute_pass()
     m_gpu.bind_shader_view_for_compute_shader( m_skybox_shader_view, 2 );
     m_gpu.bind_sampler_state_for_compute_shader( m_linear_sampler, 0 );
 
-    struct alignas(16) CB
+    struct alignas( 16 ) CB
     {
         Float4x4 CAMERA_INV_MAT;
         Float4 CAMERA_BACKGROUND;
@@ -211,7 +211,7 @@ void titian::GPUTracer::copy_pass()
     m_gpu.bind_access_view_for_compute_shader( m_target_access_view, 0 );
     m_gpu.bind_access_view_for_compute_shader( m_target_copy_access_view, 1 );
 
-    struct alignas(16) CB
+    struct alignas( 16 ) CB
     {
         float REC_ITERATIONS;
     };

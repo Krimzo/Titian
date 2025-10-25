@@ -46,7 +46,7 @@ static void transform_context( SHA256Context& context, uint8_t const* data )
 
     uint32_t padded[64] = {};
     for ( uint8_t i = 0; i < 16; i++ )
-        padded[i] = (data[i * 4] << 24) | (data[i * 4 + 1] << 16) | (data[i * 4 + 2] << 8) | (data[i * 4 + 3]);
+        padded[i] = ( data[i * 4] << 24 ) | ( data[i * 4 + 1] << 16 ) | ( data[i * 4 + 2] << 8 ) | ( data[i * 4 + 3] );
     for ( uint8_t i = 16; i < 64; i++ )
         padded[i] = SIG1( padded[i - 2] ) + padded[i - 7] + SIG0( padded[i - 15] ) + padded[i - 16];
 
@@ -116,9 +116,9 @@ static kl::Hash finalize_context( SHA256Context& context )
         memset( context.data, 0, 56 );
     }
 
-    if ( context.bit_length[0] > ( 0xffffffff - (context.data_length * 8) ) )
+    if ( context.bit_length[0] > ( 0xffffffff - ( context.data_length * 8 ) ) )
         context.bit_length[1] += 1;
-    context.bit_length[0] += (context.data_length * 8);
+    context.bit_length[0] += ( context.data_length * 8 );
 
     context.data[63] = context.bit_length[0];
     context.data[62] = context.bit_length[0] >> 8;
@@ -134,7 +134,7 @@ static kl::Hash finalize_context( SHA256Context& context )
     for ( uint32_t i = 0; i < 4; i++ )
     {
         for ( uint32_t j = 0; j < 8; j++ )
-            result[i + ((size_t) j * 4)] = (context.state[j] >> (24 - (i * 8))) & 0x000000ff;
+            result[i + ( (size_t) j * 4 )] = ( context.state[j] >> ( 24 - ( i * 8 ) ) ) & 0x000000ff;
     }
     return result;
 }
@@ -142,7 +142,7 @@ static kl::Hash finalize_context( SHA256Context& context )
 kl::Hash kl::hash( void const* data, uint64_t data_size )
 {
     SHA256Context context{};
-    update_context( context, reinterpret_cast<uint8_t const*>(data), data_size );
+    update_context( context, reinterpret_cast<uint8_t const*>( data ), data_size );
     return finalize_context( context );
 }
 

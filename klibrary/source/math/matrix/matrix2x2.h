@@ -14,7 +14,8 @@ struct Matrix2x2
     };
 
     constexpr Matrix2x2()
-    {}
+    {
+    }
 
     constexpr T& operator[]( int index )
     {
@@ -71,7 +72,7 @@ struct Matrix2x2
 
     constexpr bool operator!=( Matrix2x2<T> const& other ) const
     {
-        return !(*this == other);
+        return !( *this == other );
     }
 
     constexpr Matrix2x2<T> operator+( Matrix2x2<T> const& other ) const
@@ -138,7 +139,7 @@ struct Matrix2x2
                 result( x, y ) = T( 0 );
                 for ( int i = 0; i < 2; i++ )
                 {
-                    result( x, y ) += (*this)(i, y) * other( x, i );
+                    result( x, y ) += ( *this )( i, y ) * other( x, i );
                 }
             }
         }
@@ -157,7 +158,7 @@ struct Matrix2x2
         {
             for ( int i = 0; i < 2; i++ )
             {
-                result[y] += (*this)(i, y) * vec[i];
+                result[y] += ( *this )( i, y ) * vec[i];
             }
         }
         return result;

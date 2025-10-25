@@ -166,8 +166,8 @@ void kl::ContextHolder::read_from_texture( void* cpu_buffer, dx::Texture const& 
     Int2 min_size = min( texture_size( gpu_buffer ), cpu_size );
     for ( int y = 0; y < min_size.y; y++ )
     {
-        BYTE* out_addr = out_ptr + (y * cpu_size.x * element_size);
-        BYTE const* in_addr = in_ptr + (y * mapped_subresource.RowPitch);
+        BYTE* out_addr = out_ptr + ( y * cpu_size.x * element_size );
+        BYTE const* in_addr = in_ptr + ( y * mapped_subresource.RowPitch );
         copy<byte>( out_addr, in_addr, min_size.x * uint64_t( element_size ) );
     }
     m_context->Unmap( gpu_buffer.get(), 0 );
@@ -182,8 +182,8 @@ void kl::ContextHolder::write_to_texture( dx::Texture const& gpu_buffer, void co
     Int2 min_size = min( texture_size( gpu_buffer ), cpu_size );
     for ( int y = 0; y < min_size.y; y++ )
     {
-        BYTE* out_addr = out_ptr + (y * mapped_subresource.RowPitch);
-        BYTE const* in_addr = in_ptr + (y * cpu_size.x * element_size);
+        BYTE* out_addr = out_ptr + ( y * mapped_subresource.RowPitch );
+        BYTE const* in_addr = in_ptr + ( y * cpu_size.x * element_size );
         copy<byte>( out_addr, in_addr, min_size.x * uint64_t( element_size ) );
     }
     m_context->Unmap( gpu_buffer.get(), 0 );

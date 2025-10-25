@@ -76,7 +76,7 @@ constexpr Complex_T<T> unlerp( T value, Complex_T<T> const& lower, Complex_T<T> 
 template<typename T>
 constexpr Complex_T<T> normalize( Complex_T<T> const& num )
 {
-    return num * (T( 1 ) / num.length());
+    return num * ( T( 1 ) / num.length() );
 }
 
 template<typename T>
@@ -160,7 +160,7 @@ constexpr Quaternion_T<T> unlerp( T value, Quaternion_T<T> const& lower, Quatern
 template<typename T>
 constexpr Quaternion_T<T> normalize( Quaternion_T<T> const& num )
 {
-    return num * (T( 1 ) / num.length());
+    return num * ( T( 1 ) / num.length() );
 }
 
 template<typename T>
@@ -229,7 +229,7 @@ constexpr Vector2<T> unlerp( T value, Vector2<T> const& lower, Vector2<T> const&
 template<typename T>
 constexpr Vector2<T> normalize( Vector2<T> const& vec )
 {
-    return vec * (T( 1 ) / vec.length());
+    return vec * ( T( 1 ) / vec.length() );
 }
 
 template<typename T>
@@ -269,7 +269,7 @@ template<typename T>
 constexpr Vector2<T> reflect( Vector2<T> const& vec, Vector2<T> point )
 {
     point = normalize( point );
-    return vec - (point * dot( vec, point ) * T( 2 ));
+    return vec - ( point * dot( vec, point ) * T( 2 ) );
 }
 }
 
@@ -338,7 +338,7 @@ constexpr Vector3<T> unlerp( T value, Vector3<T> const& lower, Vector3<T> const&
 template<typename T>
 constexpr Vector3<T> normalize( Vector3<T> const& vec )
 {
-    return vec * (T( 1 ) / vec.length());
+    return vec * ( T( 1 ) / vec.length() );
 }
 
 template<typename T>
@@ -365,7 +365,7 @@ template<typename T>
 constexpr Vector3<T> reflect( Vector3<T> const& vec, Vector3<T> normal )
 {
     normal = normalize( normal );
-    return vec - (normal * dot( vec, normal ) * T( 2 ));
+    return vec - ( normal * dot( vec, normal ) * T( 2 ) );
 }
 
 template<typename T>
@@ -373,12 +373,12 @@ constexpr Vector3<T> refract( Vector3<T> const& vec, Vector3<T> normal, T eta )
 {
     normal = normalize( normal );
     float cos_i = -dot( vec, normal );
-    float sin_t2 = eta * eta * (1.0f - cos_i * cos_i);
+    float sin_t2 = eta * eta * ( 1.0f - cos_i * cos_i );
     if ( sin_t2 > 1.0f )
         return {};
 
     float cos_t = sqrt( 1.0f - sin_t2 );
-    return vec * eta + normal * (eta * cos_i - cos_t);
+    return vec * eta + normal * ( eta * cos_i - cos_t );
 }
 
 template<typename T>
@@ -452,7 +452,7 @@ constexpr Vector4<T> lerp( T value, Vector4<T> const& lower, Vector4<T> const& u
 template<typename T>
 constexpr Vector4<T> normalize( Vector4<T> const& vec )
 {
-    return vec * (T( 1 ) / vec.length());
+    return vec * ( T( 1 ) / vec.length() );
 }
 
 template<typename T>
@@ -504,15 +504,15 @@ constexpr Matrix3x3<T> inverse( Matrix3x3<T> const& mat )
     T determinant = mat.determinant();
 
     Matrix3x3<T> result;
-    result( 0, 0 ) = (mat( 1, 1 ) * mat( 2, 2 ) - mat( 2, 1 ) * mat( 1, 2 )) * determinant;
-    result( 0, 1 ) = (mat( 0, 2 ) * mat( 2, 1 ) - mat( 0, 1 ) * mat( 2, 2 )) * determinant;
-    result( 0, 2 ) = (mat( 0, 1 ) * mat( 1, 2 ) - mat( 0, 2 ) * mat( 1, 1 )) * determinant;
-    result( 1, 0 ) = (mat( 1, 2 ) * mat( 2, 0 ) - mat( 1, 0 ) * mat( 2, 2 )) * determinant;
-    result( 1, 1 ) = (mat( 0, 0 ) * mat( 2, 2 ) - mat( 0, 2 ) * mat( 2, 0 )) * determinant;
-    result( 1, 2 ) = (mat( 1, 0 ) * mat( 0, 2 ) - mat( 0, 0 ) * mat( 1, 2 )) * determinant;
-    result( 2, 0 ) = (mat( 1, 0 ) * mat( 2, 1 ) - mat( 2, 0 ) * mat( 1, 1 )) * determinant;
-    result( 2, 1 ) = (mat( 2, 0 ) * mat( 0, 1 ) - mat( 0, 0 ) * mat( 2, 1 )) * determinant;
-    result( 2, 2 ) = (mat( 0, 0 ) * mat( 1, 1 ) - mat( 1, 0 ) * mat( 0, 1 )) * determinant;
+    result( 0, 0 ) = ( mat( 1, 1 ) * mat( 2, 2 ) - mat( 2, 1 ) * mat( 1, 2 ) ) * determinant;
+    result( 0, 1 ) = ( mat( 0, 2 ) * mat( 2, 1 ) - mat( 0, 1 ) * mat( 2, 2 ) ) * determinant;
+    result( 0, 2 ) = ( mat( 0, 1 ) * mat( 1, 2 ) - mat( 0, 2 ) * mat( 1, 1 ) ) * determinant;
+    result( 1, 0 ) = ( mat( 1, 2 ) * mat( 2, 0 ) - mat( 1, 0 ) * mat( 2, 2 ) ) * determinant;
+    result( 1, 1 ) = ( mat( 0, 0 ) * mat( 2, 2 ) - mat( 0, 2 ) * mat( 2, 0 ) ) * determinant;
+    result( 1, 2 ) = ( mat( 1, 0 ) * mat( 0, 2 ) - mat( 0, 0 ) * mat( 1, 2 ) ) * determinant;
+    result( 2, 0 ) = ( mat( 1, 0 ) * mat( 2, 1 ) - mat( 2, 0 ) * mat( 1, 1 ) ) * determinant;
+    result( 2, 1 ) = ( mat( 2, 0 ) * mat( 0, 1 ) - mat( 0, 0 ) * mat( 2, 1 ) ) * determinant;
+    result( 2, 2 ) = ( mat( 0, 0 ) * mat( 1, 1 ) - mat( 1, 0 ) * mat( 0, 1 ) ) * determinant;
     return result;
 }
 
@@ -556,22 +556,22 @@ constexpr Matrix4x4<T> inverse( Matrix4x4<T> const& mat )
     T a_0112 = mat( 0, 1 ) * mat( 1, 2 ) - mat( 1, 1 ) * mat( 0, 2 );
 
     Matrix4x4<T> result;
-    result( 0, 0 ) = +(mat( 1, 1 ) * a_2323 - mat( 2, 1 ) * a_1323 + mat( 3, 1 ) * a_1223) * determinant;
-    result( 1, 0 ) = -(mat( 1, 0 ) * a_2323 - mat( 2, 0 ) * a_1323 + mat( 3, 0 ) * a_1223) * determinant;
-    result( 2, 0 ) = +(mat( 1, 0 ) * a_2313 - mat( 2, 0 ) * a_1313 + mat( 3, 0 ) * a_1213) * determinant;
-    result( 3, 0 ) = -(mat( 1, 0 ) * a_2312 - mat( 2, 0 ) * a_1312 + mat( 3, 0 ) * a_1212) * determinant;
-    result( 0, 1 ) = -(mat( 0, 1 ) * a_2323 - mat( 2, 1 ) * a_0323 + mat( 3, 1 ) * a_0223) * determinant;
-    result( 1, 1 ) = +(mat( 0, 0 ) * a_2323 - mat( 2, 0 ) * a_0323 + mat( 3, 0 ) * a_0223) * determinant;
-    result( 2, 1 ) = -(mat( 0, 0 ) * a_2313 - mat( 2, 0 ) * a_0313 + mat( 3, 0 ) * a_0213) * determinant;
-    result( 3, 1 ) = +(mat( 0, 0 ) * a_2312 - mat( 2, 0 ) * a_0312 + mat( 3, 0 ) * a_0212) * determinant;
-    result( 0, 2 ) = +(mat( 0, 1 ) * a_1323 - mat( 1, 1 ) * a_0323 + mat( 3, 1 ) * a_0123) * determinant;
-    result( 1, 2 ) = -(mat( 0, 0 ) * a_1323 - mat( 1, 0 ) * a_0323 + mat( 3, 0 ) * a_0123) * determinant;
-    result( 2, 2 ) = +(mat( 0, 0 ) * a_1313 - mat( 1, 0 ) * a_0313 + mat( 3, 0 ) * a_0113) * determinant;
-    result( 3, 2 ) = -(mat( 0, 0 ) * a_1312 - mat( 1, 0 ) * a_0312 + mat( 3, 0 ) * a_0112) * determinant;
-    result( 0, 3 ) = -(mat( 0, 1 ) * a_1223 - mat( 1, 1 ) * a_0223 + mat( 2, 1 ) * a_0123) * determinant;
-    result( 1, 3 ) = +(mat( 0, 0 ) * a_1223 - mat( 1, 0 ) * a_0223 + mat( 2, 0 ) * a_0123) * determinant;
-    result( 2, 3 ) = -(mat( 0, 0 ) * a_1213 - mat( 1, 0 ) * a_0213 + mat( 2, 0 ) * a_0113) * determinant;
-    result( 3, 3 ) = +(mat( 0, 0 ) * a_1212 - mat( 1, 0 ) * a_0212 + mat( 2, 0 ) * a_0112) * determinant;
+    result( 0, 0 ) = +( mat( 1, 1 ) * a_2323 - mat( 2, 1 ) * a_1323 + mat( 3, 1 ) * a_1223 ) * determinant;
+    result( 1, 0 ) = -( mat( 1, 0 ) * a_2323 - mat( 2, 0 ) * a_1323 + mat( 3, 0 ) * a_1223 ) * determinant;
+    result( 2, 0 ) = +( mat( 1, 0 ) * a_2313 - mat( 2, 0 ) * a_1313 + mat( 3, 0 ) * a_1213 ) * determinant;
+    result( 3, 0 ) = -( mat( 1, 0 ) * a_2312 - mat( 2, 0 ) * a_1312 + mat( 3, 0 ) * a_1212 ) * determinant;
+    result( 0, 1 ) = -( mat( 0, 1 ) * a_2323 - mat( 2, 1 ) * a_0323 + mat( 3, 1 ) * a_0223 ) * determinant;
+    result( 1, 1 ) = +( mat( 0, 0 ) * a_2323 - mat( 2, 0 ) * a_0323 + mat( 3, 0 ) * a_0223 ) * determinant;
+    result( 2, 1 ) = -( mat( 0, 0 ) * a_2313 - mat( 2, 0 ) * a_0313 + mat( 3, 0 ) * a_0213 ) * determinant;
+    result( 3, 1 ) = +( mat( 0, 0 ) * a_2312 - mat( 2, 0 ) * a_0312 + mat( 3, 0 ) * a_0212 ) * determinant;
+    result( 0, 2 ) = +( mat( 0, 1 ) * a_1323 - mat( 1, 1 ) * a_0323 + mat( 3, 1 ) * a_0123 ) * determinant;
+    result( 1, 2 ) = -( mat( 0, 0 ) * a_1323 - mat( 1, 0 ) * a_0323 + mat( 3, 0 ) * a_0123 ) * determinant;
+    result( 2, 2 ) = +( mat( 0, 0 ) * a_1313 - mat( 1, 0 ) * a_0313 + mat( 3, 0 ) * a_0113 ) * determinant;
+    result( 3, 2 ) = -( mat( 0, 0 ) * a_1312 - mat( 1, 0 ) * a_0312 + mat( 3, 0 ) * a_0112 ) * determinant;
+    result( 0, 3 ) = -( mat( 0, 1 ) * a_1223 - mat( 1, 1 ) * a_0223 + mat( 2, 1 ) * a_0123 ) * determinant;
+    result( 1, 3 ) = +( mat( 0, 0 ) * a_1223 - mat( 1, 0 ) * a_0223 + mat( 2, 0 ) * a_0123 ) * determinant;
+    result( 2, 3 ) = -( mat( 0, 0 ) * a_1213 - mat( 1, 0 ) * a_0213 + mat( 2, 0 ) * a_0113 ) * determinant;
+    result( 3, 3 ) = +( mat( 0, 0 ) * a_1212 - mat( 1, 0 ) * a_0212 + mat( 2, 0 ) * a_0112 ) * determinant;
     return result;
 }
 
@@ -591,33 +591,51 @@ constexpr Matrix4x4<T> transpose( Matrix4x4<T> const& mat )
 namespace kl
 {
 template<typename T>
-constexpr Vector2<T> calc_ndc( Vector2<T> const& position, Vector2<T> const& frame_size )
+constexpr Vector2<T> to_ndc( Vector2<T> const& position, Vector2<T> const& size )
 {
-    Vector2<T> result = {
-        position.x / frame_size.x,
-        (frame_size.y - position.y) / frame_size.y,
+    const Vector2<T> result = {
+        position.x / size.x,
+        ( size.y - position.y ) / size.y,
     };
     return result * T( 2 ) - Vector2<T>( T( 1 ) );
 }
 
 template<typename T>
-constexpr Vector2<T> calc_ndc_ar( Vector2<T> const& position, Vector2<T> const& size )
+constexpr Vector2<T> from_ndc( Vector2<T> const& position, Vector2<T> const& size )
 {
-    Vector2<T> result = calc_ndc( position, size );
+    const Vector2<T> result = ( position + Vector2<T>( T( 1 ) ) ) / T( 2 );
+    return {
+        result.x * size.x,
+        size.y - result.y * size.y,
+    };
+}
+
+template<typename T>
+constexpr Vector2<T> to_ndc_ar( Vector2<T> const& position, Vector2<T> const& size )
+{
+    Vector2<T> result = to_ndc( position, size );
     result.x *= size.x / size.y;
     return result;
 }
 
 template<typename T>
+constexpr Vector2<T> from_ndc_ar( Vector2<T> const& position, Vector2<T> const& size )
+{
+    Vector2<T> result = position;
+    result.x *= size.y / size.x;
+    return from_ndc( result, size );
+}
+
+template<typename T>
 constexpr T line_x( Vector2<T> const& a, Vector2<T> const& b, T y )
 {
-    return T( ((y - a.y) * (b.x - a.x)) / (b.y - a.y) + a.x );
+    return T( ( ( y - a.y ) * ( b.x - a.x ) ) / ( b.y - a.y ) + a.x );
 }
 
 template<typename T>
 constexpr T line_y( Vector2<T> const& a, Vector2<T> const& b, T x )
 {
-    return T( ((b.y - a.y) * (x - a.x)) / (b.x - a.x) + a.y );
+    return T( ( ( b.y - a.y ) * ( x - a.x ) ) / ( b.x - a.x ) + a.y );
 }
 
 template<typename T>
@@ -640,11 +658,11 @@ constexpr Quaternion_T<T> to_quat( Vector3<T> const& euler )
 template<typename T>
 constexpr Vector3<T> to_euler( Quaternion_T<T> const& quat )
 {
-    T       sin_p = T( +2 ) * (quat.w * quat.y - quat.z * quat.x) + T( 0 );
-    T sin_r_cos_p = T( +2 ) * (quat.w * quat.x + quat.y * quat.z) + T( 0 );
-    T cos_r_cos_p = T( -2 ) * (quat.x * quat.x + quat.y * quat.y) + T( 1 );
-    T sin_y_cos_p = T( +2 ) * (quat.w * quat.z + quat.x * quat.y) + T( 0 );
-    T cos_y_cos_p = T( -2 ) * (quat.y * quat.y + quat.z * quat.z) + T( 1 );
+    T       sin_p = T( +2 ) * ( quat.w * quat.y - quat.z * quat.x ) + T( 0 );
+    T sin_r_cos_p = T( +2 ) * ( quat.w * quat.x + quat.y * quat.z ) + T( 0 );
+    T cos_r_cos_p = T( -2 ) * ( quat.x * quat.x + quat.y * quat.y ) + T( 1 );
+    T sin_y_cos_p = T( +2 ) * ( quat.w * quat.z + quat.x * quat.y ) + T( 0 );
+    T cos_y_cos_p = T( -2 ) * ( quat.y * quat.y + quat.z * quat.z ) + T( 1 );
 
     Vector3<T> result = {
         std::atan2( sin_r_cos_p, cos_r_cos_p ),

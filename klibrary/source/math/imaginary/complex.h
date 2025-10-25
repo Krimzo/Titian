@@ -12,24 +12,27 @@ struct Complex_T
     T i = {};
 
     constexpr Complex_T()
-    {}
+    {
+    }
 
     constexpr Complex_T( T r, T i )
         : r( r ), i( i )
-    {}
+    {
+    }
 
     explicit constexpr Complex_T( T angle )
         : r( cos_d( angle ) ), i( sin_d( angle ) )
-    {}
+    {
+    }
 
     constexpr T const& operator[]( int index )
     {
-        return (&r)[index];
+        return ( &r )[index];
     }
 
     constexpr T const& operator[]( int index ) const
     {
-        return (&r)[index];
+        return ( &r )[index];
     }
 
     constexpr operator Vector2<T>() const
@@ -44,7 +47,7 @@ struct Complex_T
 
     constexpr bool operator!=( Complex_T<T> const& other ) const
     {
-        return !(*this == other);
+        return !( *this == other );
     }
 
     constexpr Complex_T<T> operator+( Complex_T<T> const& other ) const

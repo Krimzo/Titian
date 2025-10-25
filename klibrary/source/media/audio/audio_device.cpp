@@ -3,7 +3,8 @@
 
 kl::AudioDevice::AudioDevice( UINT id )
     : id( id )
-{}
+{
+}
 
 bool kl::AudioDevice::record_audio( Audio& audio, std::function<bool()> const& should_record ) const
 {
@@ -20,7 +21,7 @@ bool kl::AudioDevice::record_audio( Audio& audio, std::function<bool()> const& s
         return false;
 
     WAVEHDR wave_in_hdr{};
-    wave_in_hdr.lpData = reinterpret_cast<char*>(audio.data());
+    wave_in_hdr.lpData = reinterpret_cast<char*>( audio.data() );
     wave_in_hdr.dwBufferLength = (DWORD) audio.size() * sizeof( float );
     if ( waveInPrepareHeader( wave_in, &wave_in_hdr, sizeof( WAVEHDR ) ) )
     {
@@ -63,7 +64,7 @@ bool kl::AudioDevice::play_audio( Audio const& audio, std::function<bool()> cons
         return false;
 
     WAVEHDR wave_in_hdr{};
-    wave_in_hdr.lpData = reinterpret_cast<char*>(const_cast<float*>(audio.data()));
+    wave_in_hdr.lpData = reinterpret_cast<char*>( const_cast<float*>( audio.data() ) );
     wave_in_hdr.dwBufferLength = (DWORD) audio.size() * sizeof( float );
     if ( waveOutPrepareHeader( wave_out, &wave_in_hdr, sizeof( WAVEHDR ) ) )
     {

@@ -52,7 +52,7 @@ void titian::GUISectionShaderEditor::render_gui()
             {
                 String name = fs::path( file.value() ).filename().string();
                 Shader& shader = scene.helper_new_shader( Scene::generate_unique_name( name, scene.shaders ) );
-                shader.source = kl::read_file( file.value() );
+                shader.source = kl::read_file_string( file.value() );
                 shader.reload();
             }
         }

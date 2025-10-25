@@ -10,7 +10,6 @@ enum struct ImageType : int32_t
     BMP = 0,
     PNG,
     JPG,
-    TXT,
 };
 }
 
@@ -18,9 +17,10 @@ namespace kl
 {
 struct Image
 {
-    Image();
+    Image() = default;
     Image( Int2 size );
     Image( std::string_view const& filepath );
+    Image( std::wstring_view const& filepath );
 
     RGB* ptr();
     RGB const* ptr() const;
@@ -65,9 +65,11 @@ struct Image
     bool load_from_memory( void const* data, uint64_t byte_size );
     bool load_from_buffer( std::string_view const& buffer );
     bool load_from_file( std::string_view const& filepath );
+    bool load_from_file( std::wstring_view const& filepath );
 
     bool save_to_buffer( std::string& buffer, ImageType type ) const;
     bool save_to_file( std::string_view const& filepath, ImageType type ) const;
+    bool save_to_file( std::wstring_view const& filepath, ImageType type ) const;
 
 private:
     std::vector<RGB> m_pixels;
@@ -78,4 +80,12 @@ private:
 namespace kl
 {
 Image take_screenshot();
+}
+
+namespace kl
+{
+struct ImageInit
+{
+    static const int _init;
+};
 }

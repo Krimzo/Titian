@@ -21,7 +21,8 @@ Int2 size();
 void set_size( Int2 size );
 
 void set_title( std::string_view const& text );
-void set_font( Int2 size, std::string_view const& font_name = "Consolas" );
+void set_title( std::wstring_view const& text );
+void set_font( Int2 size, std::wstring_view const& font_name = L"Consolas" );
 
 char read();
 void wait( char to_wait_for, bool echo = false );
@@ -34,10 +35,10 @@ void progress_bar( std::string_view const& message, int output_y, float percenta
 namespace kl
 {
 inline std::function<void( std::string_view const& )> VERIFICATION_LOGGER = []( std::string_view const& message )
-{
-    console::set_enabled( true );
-    print( colors::ORANGE, "Failed to verify: ", message, colors::CONSOLE );
-};
+    {
+        console::set_enabled( true );
+        print( colors::ORANGE, "Failed to verify: ", message, colors::CONSOLE );
+    };
 
 template<typename... Args>
 constexpr bool verify( bool value, Args&&... args )
@@ -57,4 +58,12 @@ constexpr void assert( bool value, Args&&... args )
         exit( EXIT_FAILURE );
     }
 }
+}
+
+namespace kl
+{
+struct ConsoleInit
+{
+    static const HANDLE _init;
+};
 }

@@ -42,3 +42,11 @@ Float4x4 gen_float4x4();
 char gen_char( bool upper = false );
 std::string gen_string( int length, bool upper = false );
 }
+
+namespace kl
+{
+struct RandomInit
+{
+    static thread_local std::mt19937 _init;
+};
+}

@@ -6,6 +6,7 @@
 #include <atomic>
 #include <bitset>
 #include <cstdint>
+#include <cstdlib>
 #include <ctime>
 #include <execution>
 #include <filesystem>
@@ -32,6 +33,12 @@
 #include <variant>
 #include <vector>
 
+
+namespace kl
+{
+namespace fs = std::filesystem;
+namespace ch = std::chrono;
+}
 
 namespace kl
 {

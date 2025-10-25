@@ -24,7 +24,7 @@ kl::Float2 kl::Mouse::norm_position() const
     };
     return {
         2.0f * m_position.x / frame_size.x - 1.0f,
-        2.0f * (frame_size.y - m_position.y) / frame_size.y - 1.0f,
+        2.0f * ( frame_size.y - m_position.y ) / frame_size.y - 1.0f,
     };
 }
 

@@ -15,7 +15,8 @@ struct Ray_T
     union { Vector3<T> origin; struct { T x, y, z; }; };
 
     constexpr Ray_T()
-    {}
+    {
+    }
 
     constexpr Ray_T( Vector3<T> const& origin, Vector3<T> const& direction )
         : origin( origin )
@@ -80,7 +81,7 @@ struct Ray_T
         T dis0 = cd_dot - thc;
         T dis1 = cd_dot + thc;
         if ( out_intersection )
-            *out_intersection = origin + m_direction * (dis0 < T( 0 ) ? dis1 : dis0);
+            *out_intersection = origin + m_direction * ( dis0 < T( 0 ) ? dis1 : dis0 );
 
         return true;
     }
@@ -96,8 +97,8 @@ struct Ray_T
         }
 
         Vector3<T> inv_ray{ T( 1 ) / m_direction.x, T( 1 ) / m_direction.y, T( 1 ) / m_direction.z };
-        Vector3<T> t1 = (aabb.min_point() - origin) * inv_ray;
-        Vector3<T> t2 = (aabb.max_point() - origin) * inv_ray;
+        Vector3<T> t1 = ( aabb.min_point() - origin ) * inv_ray;
+        Vector3<T> t2 = ( aabb.max_point() - origin ) * inv_ray;
         Vector3<T> t_min{ min( t1.x, t2.x ), min( t1.y, t2.y ), min( t1.z, t2.z ) };
         Vector3<T> t_max{ max( t1.x, t2.x ), max( t1.y, t2.y ), max( t1.z, t2.z ) };
         T t_min_max = std::max( { t_min.x, t_min.y, t_min.z } );
@@ -125,7 +126,7 @@ struct Ray_T
 
         Vector3<T> q = cross( s, edge1 );
         T v = dot( m_direction, q ) * f;
-        if ( v < T( 0 ) || (u + v) > T( 1 ) )
+        if ( v < T( 0 ) || ( u + v ) > T( 1 ) )
             return false;
 
         T t = dot( edge2, q ) * f;

@@ -15,7 +15,8 @@ struct Matrix3x3
     };
 
     constexpr Matrix3x3()
-    {}
+    {
+    }
 
     constexpr T& operator[]( int index )
     {
@@ -68,7 +69,7 @@ struct Matrix3x3
 
     constexpr bool operator!=( Matrix3x3<T> const& other ) const
     {
-        return !(*this == other);
+        return !( *this == other );
     }
 
     constexpr Matrix3x3<T> operator+( Matrix3x3<T> const& other ) const
@@ -122,7 +123,7 @@ struct Matrix3x3
             {
                 result( x, y ) = T( 0 );
                 for ( int i = 0; i < 3; i++ )
-                    result( x, y ) += (*this)(i, y) * other( x, i );
+                    result( x, y ) += ( *this )( i, y ) * other( x, i );
             }
         }
         return result;
@@ -139,7 +140,7 @@ struct Matrix3x3
         for ( int y = 0; y < 3; y++ )
         {
             for ( int i = 0; i < 3; i++ )
-                result[y] += (*this)(i, y) * vec[i];
+                result[y] += ( *this )( i, y ) * vec[i];
         }
         return result;
     }
@@ -147,9 +148,9 @@ struct Matrix3x3
     constexpr T determinant() const
     {
         T result =
-            (*this)(0, 0) * ((*this)(1, 1) * (*this)(2, 2) - (*this)(2, 1) * (*this)(1, 2)) -
-            (*this)(0, 1) * ((*this)(1, 0) * (*this)(2, 2) - (*this)(1, 2) * (*this)(2, 0)) +
-            (*this)(0, 2) * ((*this)(1, 0) * (*this)(2, 1) - (*this)(1, 1) * (*this)(2, 0));
+            ( *this )( 0, 0 ) * ( ( *this )( 1, 1 ) * ( *this )( 2, 2 ) - ( *this )( 2, 1 ) * ( *this )( 1, 2 ) ) -
+            ( *this )( 0, 1 ) * ( ( *this )( 1, 0 ) * ( *this )( 2, 2 ) - ( *this )( 1, 2 ) * ( *this )( 2, 0 ) ) +
+            ( *this )( 0, 2 ) * ( ( *this )( 1, 0 ) * ( *this )( 2, 1 ) - ( *this )( 1, 1 ) * ( *this )( 2, 0 ) );
         return T( 1 ) / result;
     }
 

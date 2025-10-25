@@ -53,14 +53,14 @@ void titian::GUISectionScriptEditor::render_gui()
             if ( extension == FILE_EXTENSION_LUA )
             {
                 Ref script = new InterpScript();
-                script->source = kl::read_file( path.string() );
+                script->source = kl::read_file_string( path.string() );
                 script->reload();
                 scene.scripts[Scene::generate_unique_name( path.filename().string(), scene.scripts )] = script;
             }
             else if ( extension == FILE_EXTENSION_DLL )
             {
                 Ref script = new NativeScript();
-                script->data = kl::read_file( path.string() );
+                script->data = kl::read_file_string( path.string() );
                 script->reload();
                 scene.scripts[Scene::generate_unique_name( path.filename().string(), scene.scripts )] = script;
             }
@@ -162,15 +162,15 @@ void titian::GUISectionScriptEditor::show_script_properties( Script* script ) co
 
         im::Text( "Type: " );
         im::SameLine();
-        if ( dynamic_cast<NativeScript*>(script) )
+        if ( dynamic_cast<NativeScript*>( script ) )
         {
             im::Text( "NATIVE" );
         }
-        else if ( dynamic_cast<InterpScript*>(script) )
+        else if ( dynamic_cast<InterpScript*>( script ) )
         {
             im::Text( "INTERP" );
         }
-        else if ( dynamic_cast<NodeScript*>(script) )
+        else if ( dynamic_cast<NodeScript*>( script ) )
         {
             im::Text( "NODE" );
         }

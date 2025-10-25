@@ -11,7 +11,8 @@ struct Plane_T
     union { Vector3<T> position; struct { T x, y, z; }; };
 
     constexpr Plane_T()
-    {}
+    {
+    }
 
     constexpr Plane_T( Vector3<T> const& position, Vector3<T> const& normal )
         : position( position )

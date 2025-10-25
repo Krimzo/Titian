@@ -9,7 +9,7 @@
 namespace kl::dx12
 {
 template<D3D12_PIPELINE_STATE_SUBOBJECT_TYPE Type, typename Value>
-struct alignas(void*) SubobjectPair
+struct alignas( void* ) SubobjectPair
 {
     D3D12_PIPELINE_STATE_SUBOBJECT_TYPE type = Type;
     Value value;
