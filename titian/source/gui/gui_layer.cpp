@@ -21,9 +21,9 @@ titian::GUILayer::GUILayer()
         if ( data && data->size() >= 3 )
         {
             special_color = RGB{
-                (byte) (*data)[0]->get_int().value_or( 0 ),
-                (byte) (*data)[1]->get_int().value_or( 0 ),
-                (byte) (*data)[2]->get_int().value_or( 0 ),
+                (byte) ( *data )[0]->get_int().value_or( 0 ),
+                (byte) ( *data )[1]->get_int().value_or( 0 ),
+                (byte) ( *data )[2]->get_int().value_or( 0 ),
             };
         }
     }
@@ -33,9 +33,9 @@ titian::GUILayer::GUILayer()
         if ( data && data->size() >= 3 )
         {
             alternate_color = RGB{
-                (byte) (*data)[0]->get_int().value_or( 0 ),
-                (byte) (*data)[1]->get_int().value_or( 0 ),
-                (byte) (*data)[2]->get_int().value_or( 0 ),
+                (byte) ( *data )[0]->get_int().value_or( 0 ),
+                (byte) ( *data )[1]->get_int().value_or( 0 ),
+                (byte) ( *data )[2]->get_int().value_or( 0 ),
             };
         }
     }
@@ -77,8 +77,8 @@ void titian::GUILayer::reload_fonts()
 {
     ImFontAtlas* atlas = im::GetIO().Fonts;
 
-    roboto_font_small = atlas->AddFontFromFileTTF( "package/fonts/Roboto.ttf", 16 * dpi_scaling );
-    roboto_font_large = atlas->AddFontFromFileTTF( "package/fonts/Roboto.ttf", 20 * dpi_scaling );
+    roboto_font_small = atlas->AddFontFromFileTTF( "package/fonts/Roboto.ttf", 18 * dpi_scaling );
+    roboto_font_large = atlas->AddFontFromFileTTF( "package/fonts/Roboto.ttf", 22 * dpi_scaling );
 
     kl::assert( roboto_font_small, "Failed to load ROBOTO_SMALL font" );
     kl::assert( roboto_font_large, "Failed to load ROBOTO_LARGE font" );
