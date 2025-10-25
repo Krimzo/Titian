@@ -6,11 +6,11 @@ titian::FuzeRenderer::FuzeRenderer(
     kl::VideoType const& video_type,
     Int2 frame_size,
     int fps,
-    int video_bit_rate,
+    float video_mb_rate,
     int audio_sample_rate )
     : m_path( filepath ), m_frame_size( frame_size ), m_fps( fps )
 {
-    m_video_writer = new kl::VideoWriter( filepath, video_type, frame_size, fps, video_bit_rate, audio_sample_rate );
+    m_video_writer = new kl::VideoWriter( filepath, video_type, frame_size, fps, video_mb_rate, audio_sample_rate );
 }
 
 titian::FuzeRenderer::FuzeRenderer(
@@ -69,10 +69,10 @@ void titian::FuzeRenderer::load_audio()
             package.media_end = offset + media->duration;
             media->store_audio( package );
             kl::async_for( 0, (int) audio.size(), [&]( int i )
-            {
-                float time = audio.index_to_time( i ) - offset;
-                audio[i] += media->out_audio.sample( time );
-            } );
+                {
+                    float time = audio.index_to_time( i ) - offset;
+                    audio[i] += media->out_audio.sample( time );
+                } );
         }
     }
 

@@ -29,7 +29,7 @@ struct VideoLayer : Layer_T<VideoLayer>
     void start_rendering(
         Int2 frame_size,
         int fps,
-        int video_bit_rate,
+        float video_mb_rate,
         int audio_sample_rate );
     void stop_rendering();
     bool rendering() const;

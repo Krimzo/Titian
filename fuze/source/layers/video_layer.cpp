@@ -62,7 +62,7 @@ bool titian::VideoLayer::playing() const
 void titian::VideoLayer::start_rendering(
     Int2 frame_size,
     int fps,
-    int video_bit_rate,
+    float video_mb_rate,
     int audio_sample_rate )
 {
     if ( m_renderer || m_playing )
@@ -72,7 +72,7 @@ void titian::VideoLayer::start_rendering(
     {
         if ( auto format = classify_video_format( file.value() ) )
         {
-            m_renderer = new FuzeRenderer( file.value(), format.value(), frame_size, fps, video_bit_rate, audio_sample_rate );
+            m_renderer = new FuzeRenderer( file.value(), format.value(), frame_size, fps, video_mb_rate, audio_sample_rate );
         }
         else if ( auto type = classify_audio_format( file.value() ) )
         {
@@ -408,18 +408,18 @@ void titian::VideoLayer::play_audio()
 
     m_audio_worker = {};
     m_audio_worker = std::async( std::launch::async, [&]
-    {
-        m_audio_device.play_audio( m_audio, [this] { return this->m_playing; } );
-    } );
+        {
+            m_audio_device.play_audio( m_audio, [this] { return this->m_playing; } );
+        } );
 }
 
 void titian::VideoLayer::prepare_audio()
 {
     m_audio.set_duration( end_time() );
     kl::async_for( 0, (int) m_audio.size(), [&]( int i )
-    {
-        m_audio[i] = 0.0f;
-    } );
+        {
+            m_audio[i] = 0.0f;
+        } );
 
     EffectPackage package;
     package.current_time = current_time;
@@ -431,10 +431,10 @@ void titian::VideoLayer::prepare_audio()
             package.media_end = offset + media->duration;
             media->store_audio( package );
             kl::async_for( 0, (int) m_audio.size(), [&]( int i )
-            {
-                float time = m_audio.index_to_time( i ) - offset;
-                m_audio[i] += media->out_audio.sample( time );
-            } );
+                {
+                    float time = m_audio.index_to_time( i ) - offset;
+                    m_audio[i] += media->out_audio.sample( time );
+                } );
         }
     }
 }
