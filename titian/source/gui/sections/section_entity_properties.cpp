@@ -3,7 +3,8 @@
 
 titian::GUISectionEntityProperties::GUISectionEntityProperties()
     : GUISection( "GUISectionEntityProperties" )
-{}
+{
+}
 
 void titian::GUISectionEntityProperties::render_gui()
 {
@@ -15,7 +16,7 @@ void titian::GUISectionEntityProperties::render_gui()
 
     if ( im::Begin( "Entity properties" ) && !editor_layer.selected_entities.empty() )
     {
-        String entity_name = *(--editor_layer.selected_entities.end());
+        String entity_name = *( --editor_layer.selected_entities.end() );
         Ref<Entity> entity;
         if ( scene.entities().contains( entity_name ) )
             entity = scene.entities().at( entity_name );
@@ -44,17 +45,17 @@ void titian::GUISectionEntityProperties::display_entity_info( Scene& scene, Stri
     im::SameLine();
     gui_colored_text( entity_name, gui_layer.special_color );
 
-    if ( Camera* camera = dynamic_cast<Camera*>(&entity) )
+    if ( Camera* camera = dynamic_cast<Camera*>( &entity ) )
     {
         im::Separator();
         display_camera_special_info( scene, *camera );
     }
-    else if ( AmbientLight* light = dynamic_cast<AmbientLight*>(&entity) )
+    else if ( AmbientLight* light = dynamic_cast<AmbientLight*>( &entity ) )
     {
         im::Separator();
         display_ambient_light_special_info( scene, *light );
     }
-    else if ( DirectionalLight* light = dynamic_cast<DirectionalLight*>(&entity) )
+    else if ( DirectionalLight* light = dynamic_cast<DirectionalLight*>( &entity ) )
     {
         im::Separator();
         display_directional_light_special_info( scene, *light );
@@ -169,9 +170,12 @@ void titian::GUISectionEntityProperties::display_directional_light_special_info(
     im::ColorEdit3( "Color", &light.color.x );
     im::DragFloat( "Point Size", &light.point_size, 0.01f, 0.0f, 1.0f );
 
-    for ( int i = 0; i < DirectionalLight::CASCADE_COUNT; i++ )
-        im::DragFloat2( kl::format( "Cascade ", i ).data(), light.cascade_splits + i, 0.01f, 0.0f, 1.0f );
-    std::sort( light.cascade_splits, light.cascade_splits + std::size( light.cascade_splits ) );
+    for ( int i = 0; i < (int) std::size( light.cascade_splits ); i++ )
+    {
+        const float min_val = ( i > 0 ) ? light.cascade_splits[i - 1] : 0.0f;
+        const float max_val = ( i < (int) std::size( light.cascade_splits ) - 1 ) ? light.cascade_splits[i + 1] : 1.0f;
+        im::DragFloat( kl::format( "Cascade ", i ).data(), light.cascade_splits + i, 1e-4f, min_val, max_val );
+    }
 
     int resolution = light.resolution();
     if ( im::DragInt( "Resolution", &resolution, 1.0f, 10, 8192 ) )
@@ -329,7 +333,7 @@ void titian::GUISectionEntityProperties::edit_entity_collider( Scene& scene, Ent
         {
         case px::PxGeometryType::Enum::eBOX:
         {
-            px::PxBoxGeometry box_geometry = *static_cast<px::PxBoxGeometry const*>(geometry);
+            px::PxBoxGeometry box_geometry = *static_cast<px::PxBoxGeometry const*>( geometry );
             box_geometry.halfExtents *= 2.0f;
             if ( im::DragFloat3( "Box Size", &box_geometry.halfExtents.x, 0.1f, 0.0f, 1e9f ) )
             {
@@ -340,14 +344,14 @@ void titian::GUISectionEntityProperties::edit_entity_collider( Scene& scene, Ent
         }
         case px::PxGeometryType::Enum::eSPHERE:
         {
-            px::PxSphereGeometry sphere_geometry = *static_cast<px::PxSphereGeometry const*>(geometry);
+            px::PxSphereGeometry sphere_geometry = *static_cast<px::PxSphereGeometry const*>( geometry );
             if ( im::DragFloat( "Sphere Radius", &sphere_geometry.radius, 0.1f, 0.0f, 1e9f ) )
                 entity.set_collider_geometry( sphere_geometry );
             break;
         }
         case px::PxGeometryType::Enum::eCAPSULE:
         {
-            px::PxCapsuleGeometry capsule_geometry = *static_cast<px::PxCapsuleGeometry const*>(geometry);
+            px::PxCapsuleGeometry capsule_geometry = *static_cast<px::PxCapsuleGeometry const*>( geometry );
             if ( im::DragFloat( "Capsule Radius", &capsule_geometry.radius, 0.5f, 0.0f, 1e9f ) )
                 entity.set_collider_geometry( capsule_geometry );
 
