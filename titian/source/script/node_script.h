@@ -6,17 +6,17 @@
 
 
 template<typename T, typename = void> struct has_less_operator : std::false_type {};
-template<typename T> struct has_less_operator<T, std::void_t<decltype(std::declval<T>() < std::declval<T>())>> : std::true_type
+template<typename T> struct has_less_operator<T, std::void_t<decltype( std::declval<T>() < std::declval<T>() )>> : std::true_type
 {
 };
 
 template<typename T, typename = void> struct has_equals_operator : std::false_type {};
-template<typename T> struct has_equals_operator<T, std::void_t<decltype(std::declval<T>() == std::declval<T>())>> : std::true_type
+template<typename T> struct has_equals_operator<T, std::void_t<decltype( std::declval<T>() == std::declval<T>() )>> : std::true_type
 {
 };
 
 template<typename T, typename = void> struct has_greater_operator : std::false_type {};
-template<typename T> struct has_greater_operator<T, std::void_t<decltype(std::declval<T>() > std::declval<T>())>> : std::true_type
+template<typename T> struct has_greater_operator<T, std::void_t<decltype( std::declval<T>() > std::declval<T>() )>> : std::true_type
 {
 };
 
@@ -108,7 +108,7 @@ struct Node : ne::BaseNode, Serializable
 
     void serialize( Serializer& serializer ) const override
     {
-        serializer.write_string( "node_type", typeid(*this).name() );
+        serializer.write_string( "node_type", typeid( *this ).name() );
 
         serializer.write_byte_array( "user_data", user_data, sizeof( user_data ) );
         serializer.write_string( "title", getName() );
@@ -145,7 +145,7 @@ struct Node : ne::BaseNode, Serializable
     T const& get_value( str uid )
     {
         ne::Pin* ptr = this->inPin( uid );
-        ne::InPin<T>* in_ptr = reinterpret_cast<ne::InPin<T>*>(ptr);
+        ne::InPin<T>* in_ptr = reinterpret_cast<ne::InPin<T>*>( ptr );
         return in_ptr->val();
     }
 
@@ -218,7 +218,7 @@ protected:
         if ( !link )
             return;
 
-        auto next_node = dynamic_cast<FlowNode*>(link->right()->getParent());
+        auto next_node = dynamic_cast<FlowNode*>( link->right()->getParent() );
         if ( !next_node )
             return;
 
@@ -278,7 +278,7 @@ struct LiteralNode : Node
         }
         else if constexpr ( std::is_same_v<T, Quaternion> )
         {
-            serializer.write_float_array( "value", &value.w, 4 );
+            serializer.write_float_array( "value", &value.r, 4 );
         }
         else if constexpr ( std::is_same_v<T, RGB> )
         {
@@ -290,7 +290,7 @@ struct LiteralNode : Node
         }
         else
         {
-            static_assert(false, "Unknown serialize literal node type");
+            static_assert( false, "Unknown serialize literal node type" );
         }
     }
 
@@ -332,7 +332,7 @@ struct LiteralNode : Node
         }
         else if constexpr ( std::is_same_v<T, Quaternion> )
         {
-            serializer.read_float_array( "value", &value.w, 4 );
+            serializer.read_float_array( "value", &value.r, 4 );
         }
         else if constexpr ( std::is_same_v<T, RGB> )
         {
@@ -344,7 +344,7 @@ struct LiteralNode : Node
         }
         else
         {
-            static_assert(false, "Unknown deserialize literal node type");
+            static_assert( false, "Unknown deserialize literal node type" );
         }
     }
 
@@ -385,7 +385,7 @@ struct LiteralNode : Node
         }
         else if constexpr ( std::is_same_v<T, Quaternion> )
         {
-            im::InputFloat4( "##value", &value.w );
+            im::InputFloat4( "##value", &value.r );
         }
         else if constexpr ( std::is_same_v<T, RGB> )
         {
@@ -399,7 +399,7 @@ struct LiteralNode : Node
         }
         else
         {
-            static_assert(false, "Unknown draw literal node type");
+            static_assert( false, "Unknown draw literal node type" );
         }
     }
 };
@@ -421,13 +421,13 @@ struct VariableNode : FlowNode, kl::NoCopy, kl::NoMove
         rename( "variable" );
         addIN<T>( "write" );
         addOUT<String>( "name" )->behaviour( [this]()
-        {
-            return name;
-        } );
+            {
+                return name;
+            } );
         addOUT<T>( "read" )->behaviour( [this]()
-        {
-            return var_ptr->get<T>();
-        } );
+            {
+                return var_ptr->get<T>();
+            } );
     }
 
     ~VariableNode() override
@@ -507,178 +507,178 @@ struct RandomNode : Node
         if constexpr ( std::is_same_v<T, bool> )
         {
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                return kl::random::gen_bool();
-            } );
+                {
+                    return kl::random::gen_bool();
+                } );
         }
         else if constexpr ( std::is_same_v<T, int32_t> )
         {
             addIN<int32_t>( "start_incl" );
             addIN<int32_t>( "end_excl" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                int32_t start_incl = 0;
-                if ( input_connected( "start_incl" ) )
-                    start_incl = get_value<int32_t>( "start_incl" );
+                {
+                    int32_t start_incl = 0;
+                    if ( input_connected( "start_incl" ) )
+                        start_incl = get_value<int32_t>( "start_incl" );
 
-                int32_t end_excl = 10;
-                if ( input_connected( "end_excl" ) )
-                    end_excl = get_value<int32_t>( "end_excl" );
+                    int32_t end_excl = 10;
+                    if ( input_connected( "end_excl" ) )
+                        end_excl = get_value<int32_t>( "end_excl" );
 
-                return kl::random::gen_int( start_incl, end_excl );
-            } );
+                    return kl::random::gen_int( start_incl, end_excl );
+                } );
         }
         else if constexpr ( std::is_same_v<T, Int2> )
         {
             addIN<int32_t>( "start_incl" );
             addIN<int32_t>( "end_excl" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                int32_t start_incl = 0;
-                if ( input_connected( "start_incl" ) )
-                    start_incl = get_value<int32_t>( "start_incl" );
+                {
+                    int32_t start_incl = 0;
+                    if ( input_connected( "start_incl" ) )
+                        start_incl = get_value<int32_t>( "start_incl" );
 
-                int32_t end_excl = 10;
-                if ( input_connected( "end_excl" ) )
-                    end_excl = get_value<int32_t>( "end_excl" );
+                    int32_t end_excl = 10;
+                    if ( input_connected( "end_excl" ) )
+                        end_excl = get_value<int32_t>( "end_excl" );
 
-                return kl::random::gen_int2( start_incl, end_excl );
-            } );
+                    return kl::random::gen_int2( start_incl, end_excl );
+                } );
         }
         else if constexpr ( std::is_same_v<T, float> )
         {
             addIN<float>( "start_incl" );
             addIN<float>( "end_incl" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                float start_incl = 0.0f;
-                if ( input_connected( "start_incl" ) )
-                    start_incl = get_value<float>( "start_incl" );
+                {
+                    float start_incl = 0.0f;
+                    if ( input_connected( "start_incl" ) )
+                        start_incl = get_value<float>( "start_incl" );
 
-                float end_incl = 1.0f;
-                if ( input_connected( "end_incl" ) )
-                    end_incl = get_value<float>( "end_incl" );
+                    float end_incl = 1.0f;
+                    if ( input_connected( "end_incl" ) )
+                        end_incl = get_value<float>( "end_incl" );
 
-                return kl::random::gen_float( start_incl, end_incl );
-            } );
+                    return kl::random::gen_float( start_incl, end_incl );
+                } );
         }
         else if constexpr ( std::is_same_v<T, Float2> )
         {
             addIN<float>( "start_incl" );
             addIN<float>( "end_incl" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                float start_incl = 0.0f;
-                if ( input_connected( "start_incl" ) )
-                    start_incl = get_value<float>( "start_incl" );
+                {
+                    float start_incl = 0.0f;
+                    if ( input_connected( "start_incl" ) )
+                        start_incl = get_value<float>( "start_incl" );
 
-                float end_incl = 1.0f;
-                if ( input_connected( "end_incl" ) )
-                    end_incl = get_value<float>( "end_incl" );
+                    float end_incl = 1.0f;
+                    if ( input_connected( "end_incl" ) )
+                        end_incl = get_value<float>( "end_incl" );
 
-                return kl::random::gen_float2( start_incl, end_incl );
-            } );
+                    return kl::random::gen_float2( start_incl, end_incl );
+                } );
         }
         else if constexpr ( std::is_same_v<T, Float3> )
         {
             addIN<float>( "start_incl" );
             addIN<float>( "end_incl" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                float start_incl = 0.0f;
-                if ( input_connected( "start_incl" ) )
-                    start_incl = get_value<float>( "start_incl" );
+                {
+                    float start_incl = 0.0f;
+                    if ( input_connected( "start_incl" ) )
+                        start_incl = get_value<float>( "start_incl" );
 
-                float end_incl = 1.0f;
-                if ( input_connected( "end_incl" ) )
-                    end_incl = get_value<float>( "end_incl" );
+                    float end_incl = 1.0f;
+                    if ( input_connected( "end_incl" ) )
+                        end_incl = get_value<float>( "end_incl" );
 
-                return kl::random::gen_float3( start_incl, end_incl );
-            } );
+                    return kl::random::gen_float3( start_incl, end_incl );
+                } );
         }
         else if constexpr ( std::is_same_v<T, Float4> )
         {
             addIN<float>( "start_incl" );
             addIN<float>( "end_incl" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                float start_incl = 0.0f;
-                if ( input_connected( "start_incl" ) )
-                    start_incl = get_value<float>( "start_incl" );
+                {
+                    float start_incl = 0.0f;
+                    if ( input_connected( "start_incl" ) )
+                        start_incl = get_value<float>( "start_incl" );
 
-                float end_incl = 1.0f;
-                if ( input_connected( "end_incl" ) )
-                    end_incl = get_value<float>( "end_incl" );
+                    float end_incl = 1.0f;
+                    if ( input_connected( "end_incl" ) )
+                        end_incl = get_value<float>( "end_incl" );
 
-                return kl::random::gen_float4( start_incl, end_incl );
-            } );
+                    return kl::random::gen_float4( start_incl, end_incl );
+                } );
         }
         else if constexpr ( std::is_same_v<T, Complex> )
         {
             addIN<float>( "start_incl" );
             addIN<float>( "end_incl" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                float start_incl = 0.0f;
-                if ( input_connected( "start_incl" ) )
-                    start_incl = get_value<float>( "start_incl" );
+                {
+                    float start_incl = 0.0f;
+                    if ( input_connected( "start_incl" ) )
+                        start_incl = get_value<float>( "start_incl" );
 
-                float end_incl = 1.0f;
-                if ( input_connected( "end_incl" ) )
-                    end_incl = get_value<float>( "end_incl" );
+                    float end_incl = 1.0f;
+                    if ( input_connected( "end_incl" ) )
+                        end_incl = get_value<float>( "end_incl" );
 
-                return kl::random::gen_float2( start_incl, end_incl );
-            } );
+                    return kl::random::gen_float2( start_incl, end_incl );
+                } );
         }
         else if constexpr ( std::is_same_v<T, Quaternion> )
         {
             addIN<float>( "start_incl" );
             addIN<float>( "end_incl" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                float start_incl = 0.0f;
-                if ( input_connected( "start_incl" ) )
-                    start_incl = get_value<float>( "start_incl" );
+                {
+                    float start_incl = 0.0f;
+                    if ( input_connected( "start_incl" ) )
+                        start_incl = get_value<float>( "start_incl" );
 
-                float end_incl = 1.0f;
-                if ( input_connected( "end_incl" ) )
-                    end_incl = get_value<float>( "end_incl" );
+                    float end_incl = 1.0f;
+                    if ( input_connected( "end_incl" ) )
+                        end_incl = get_value<float>( "end_incl" );
 
-                return kl::random::gen_float4( start_incl, end_incl );
-            } );
+                    return kl::random::gen_float4( start_incl, end_incl );
+                } );
         }
         else if constexpr ( std::is_same_v<T, RGB> )
         {
             addIN<bool>( "gray" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                bool gray = false;
-                if ( input_connected( "gray" ) )
-                    gray = get_value<bool>( "gray" );
+                {
+                    bool gray = false;
+                    if ( input_connected( "gray" ) )
+                        gray = get_value<bool>( "gray" );
 
-                return kl::random::gen_rgb( gray );
-            } );
+                    return kl::random::gen_rgb( gray );
+                } );
         }
         else if constexpr ( std::is_same_v<T, String> )
         {
             addIN<int32_t>( "length" );
             addIN<bool>( "upper" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                int32_t length = 0;
-                if ( input_connected( "length" ) )
-                    length = kl::max( get_value<int32_t>( "length" ), 0 );
+                {
+                    int32_t length = 0;
+                    if ( input_connected( "length" ) )
+                        length = kl::max( get_value<int32_t>( "length" ), 0 );
 
-                bool upper = false;
-                if ( input_connected( "upper" ) )
-                    upper = get_value<bool>( "upper" );
+                    bool upper = false;
+                    if ( input_connected( "upper" ) )
+                        upper = get_value<bool>( "upper" );
 
-                return kl::random::gen_string( length, upper );
-            } );
+                    return kl::random::gen_string( length, upper );
+                } );
         }
         else
         {
-            static_assert(false, "Unknown random node type");
+            static_assert( false, "Unknown random node type" );
         }
     }
 };
@@ -697,18 +697,18 @@ struct ConstructNode : Node
             addIN<int32_t>( "x" );
             addIN<int32_t>( "y" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                return T{ get_value<int32_t>( "x" ), get_value<int32_t>( "y" ) };
-            } );
+                {
+                    return T{ get_value<int32_t>( "x" ), get_value<int32_t>( "y" ) };
+                } );
         }
         else if constexpr ( std::is_same_v<T, Float2> )
         {
             addIN<float>( "x" );
             addIN<float>( "y" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                return T{ get_value<float>( "x" ), get_value<float>( "y" ) };
-            } );
+                {
+                    return T{ get_value<float>( "x" ), get_value<float>( "y" ) };
+                } );
         }
         else if constexpr ( std::is_same_v<T, Float3> )
         {
@@ -716,9 +716,9 @@ struct ConstructNode : Node
             addIN<float>( "y" );
             addIN<float>( "z" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                return T{ get_value<float>( "x" ), get_value<float>( "y" ), get_value<float>( "z" ) };
-            } );
+                {
+                    return T{ get_value<float>( "x" ), get_value<float>( "y" ), get_value<float>( "z" ) };
+                } );
         }
         else if constexpr ( std::is_same_v<T, Float4> )
         {
@@ -727,18 +727,18 @@ struct ConstructNode : Node
             addIN<float>( "z" );
             addIN<float>( "w" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                return T{ get_value<float>( "x" ), get_value<float>( "y" ), get_value<float>( "z" ), get_value<float>( "w" ) };
-            } );
+                {
+                    return T{ get_value<float>( "x" ), get_value<float>( "y" ), get_value<float>( "z" ), get_value<float>( "w" ) };
+                } );
         }
         else if constexpr ( std::is_same_v<T, Complex> )
         {
             addIN<float>( "r" );
             addIN<float>( "i" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                return T{ get_value<float>( "r" ), get_value<float>( "i" ) };
-            } );
+                {
+                    return T{ get_value<float>( "r" ), get_value<float>( "i" ) };
+                } );
         }
         else if constexpr ( std::is_same_v<T, Quaternion> )
         {
@@ -747,9 +747,9 @@ struct ConstructNode : Node
             addIN<float>( "y" );
             addIN<float>( "z" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                return T{ get_value<float>( "w" ), get_value<float>( "x" ), get_value<float>( "y" ), get_value<float>( "z" ) };
-            } );
+                {
+                    return T{ get_value<float>( "w" ), get_value<float>( "x" ), get_value<float>( "y" ), get_value<float>( "z" ) };
+                } );
         }
         else if constexpr ( std::is_same_v<T, RGB> )
         {
@@ -758,18 +758,18 @@ struct ConstructNode : Node
             addIN<int32_t>( "b" );
             addIN<int32_t>( "a" );
             addOUT<T>( "out" )->behaviour( [this]()
-            {
-                return T{
-                    (byte) get_value<int32_t>( "r" ),
-                    (byte) get_value<int32_t>( "g" ),
-                    (byte) get_value<int32_t>( "b" ),
-                    (byte) get_value<int32_t>( "a" ),
-                };
-            } );
+                {
+                    return T{
+                        (byte) get_value<int32_t>( "r" ),
+                        (byte) get_value<int32_t>( "g" ),
+                        (byte) get_value<int32_t>( "b" ),
+                        (byte) get_value<int32_t>( "a" ),
+                    };
+                } );
         }
         else
         {
-            static_assert(false, "Unknown construct node type");
+            static_assert( false, "Unknown construct node type" );
         }
     }
 };
@@ -784,117 +784,117 @@ struct DeconstructNode : Node
         {
             addIN<T>( "in" );
             addOUT<int32_t>( "x" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).x;
-            } );
+                {
+                    return get_value<T>( "in" ).x;
+                } );
             addOUT<int32_t>( "y" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).y;
-            } );
+                {
+                    return get_value<T>( "in" ).y;
+                } );
         }
         else if constexpr ( std::is_same_v<T, Float2> )
         {
             addIN<T>( "in" );
             addOUT<float>( "x" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).x;
-            } );
+                {
+                    return get_value<T>( "in" ).x;
+                } );
             addOUT<float>( "y" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).y;
-            } );
+                {
+                    return get_value<T>( "in" ).y;
+                } );
         }
         else if constexpr ( std::is_same_v<T, Float3> )
         {
             addIN<T>( "in" );
             addOUT<float>( "x" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).x;
-            } );
+                {
+                    return get_value<T>( "in" ).x;
+                } );
             addOUT<float>( "y" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).y;
-            } );
+                {
+                    return get_value<T>( "in" ).y;
+                } );
             addOUT<float>( "z" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).z;
-            } );
+                {
+                    return get_value<T>( "in" ).z;
+                } );
         }
         else if constexpr ( std::is_same_v<T, Float4> )
         {
             addIN<T>( "in" );
             addOUT<float>( "x" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).x;
-            } );
+                {
+                    return get_value<T>( "in" ).x;
+                } );
             addOUT<float>( "y" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).y;
-            } );
+                {
+                    return get_value<T>( "in" ).y;
+                } );
             addOUT<float>( "z" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).z;
-            } );
+                {
+                    return get_value<T>( "in" ).z;
+                } );
             addOUT<float>( "w" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).w;
-            } );
+                {
+                    return get_value<T>( "in" ).w;
+                } );
         }
         else if constexpr ( std::is_same_v<T, Complex> )
         {
             addIN<T>( "in" );
             addOUT<float>( "r" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).r;
-            } );
+                {
+                    return get_value<T>( "in" ).r;
+                } );
             addOUT<float>( "i" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).i;
-            } );
+                {
+                    return get_value<T>( "in" ).i;
+                } );
         }
         else if constexpr ( std::is_same_v<T, Quaternion> )
         {
             addIN<T>( "in" );
-            addOUT<float>( "w" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).w;
-            } );
-            addOUT<float>( "x" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).x;
-            } );
-            addOUT<float>( "y" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).y;
-            } );
-            addOUT<float>( "z" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).z;
-            } );
+            addOUT<float>( "r" )->behaviour( [this]()
+                {
+                    return get_value<T>( "in" ).r;
+                } );
+            addOUT<float>( "i" )->behaviour( [this]()
+                {
+                    return get_value<T>( "in" ).i;
+                } );
+            addOUT<float>( "j" )->behaviour( [this]()
+                {
+                    return get_value<T>( "in" ).j;
+                } );
+            addOUT<float>( "k" )->behaviour( [this]()
+                {
+                    return get_value<T>( "in" ).k;
+                } );
         }
         else if constexpr ( std::is_same_v<T, RGB> )
         {
             addIN<T>( "in" );
             addOUT<int32_t>( "r" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).r;
-            } );
+                {
+                    return get_value<T>( "in" ).r;
+                } );
             addOUT<int32_t>( "g" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).g;
-            } );
+                {
+                    return get_value<T>( "in" ).g;
+                } );
             addOUT<int32_t>( "b" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).b;
-            } );
+                {
+                    return get_value<T>( "in" ).b;
+                } );
             addOUT<int32_t>( "a" )->behaviour( [this]()
-            {
-                return get_value<T>( "in" ).a;
-            } );
+                {
+                    return get_value<T>( "in" ).a;
+                } );
         }
         else
         {
-            static_assert(false, "Unknown deconstruct node type");
+            static_assert( false, "Unknown deconstruct node type" );
         }
     }
 };
@@ -910,36 +910,36 @@ struct CastNode : Node
     {
         addIN<From>( "from" );
         addOUT<To>( "to" )->behaviour( [this]
-        {
-            auto& from = get_value<From>( "from" );
-            if constexpr ( std::is_same_v<From, String> )
             {
-                if constexpr ( std::is_same_v<To, bool> )
+                auto& from = get_value<From>( "from" );
+                if constexpr ( std::is_same_v<From, String> )
                 {
-                    return from == "true";
+                    if constexpr ( std::is_same_v<To, bool> )
+                    {
+                        return from == "true";
+                    }
+                    else if constexpr ( std::is_same_v<To, int32_t> )
+                    {
+                        return (int32_t) kl::parse_int( from ).value_or( 0 );
+                    }
+                    else if constexpr ( std::is_same_v<To, float> )
+                    {
+                        return (float) kl::parse_float( from ).value_or( 0.0 );
+                    }
+                    else
+                    {
+                        static_assert( false, "Unkown cast node from String to T" );
+                    }
                 }
-                else if constexpr ( std::is_same_v<To, int32_t> )
+                else if constexpr ( std::is_same_v<To, String> )
                 {
-                    return (int32_t) kl::parse_int( from ).value_or( 0 );
-                }
-                else if constexpr ( std::is_same_v<To, float> )
-                {
-                    return (float) kl::parse_float( from ).value_or( 0.0 );
+                    return kl::format( std::boolalpha, std::fixed, from );
                 }
                 else
                 {
-                    static_assert(false, "Unkown cast node from String to T");
+                    return To( from );
                 }
-            }
-            else if constexpr ( std::is_same_v<To, String> )
-            {
-                return kl::format( std::boolalpha, std::fixed, from );
-            }
-            else
-            {
-                return To( from );
-            }
-        } );
+            } );
     }
 };
 }
@@ -961,7 +961,7 @@ struct IsTypeNode : FlowNode
     void call() override
     {
         From* ptr = (From*) get_value<void*>( "ptr" );
-        if ( dynamic_cast<To*>(ptr) )
+        if ( dynamic_cast<To*>( ptr ) )
         {
             call_next( "is" );
         }
@@ -987,23 +987,23 @@ struct CompareNode : Node
         if constexpr ( has_less_operator<T>::value )
         {
             addOUT<bool>( "less" )->behaviour( [this]
-            {
-                return get_value<T>( "left" ) < get_value<T>( "right" );
-            } );
+                {
+                    return get_value<T>( "left" ) < get_value<T>( "right" );
+                } );
         }
         if constexpr ( has_equals_operator<T>::value )
         {
             addOUT<bool>( "equal" )->behaviour( [this]
-            {
-                return get_value<T>( "left" ) == get_value<T>( "right" );
-            } );
+                {
+                    return get_value<T>( "left" ) == get_value<T>( "right" );
+                } );
         }
         if constexpr ( has_greater_operator<T>::value )
         {
             addOUT<bool>( "greater" )->behaviour( [this]
-            {
-                return get_value<T>( "left" ) > get_value<T>( "right" );
-            } );
+                {
+                    return get_value<T>( "left" ) > get_value<T>( "right" );
+                } );
         }
     }
 };
@@ -1017,11 +1017,11 @@ struct ContainsNode : Node
         addIN<T>( "left" );
         addIN<T>( "right" );
         addOUT<bool>( "contains" )->behaviour( [this]
-        {
-            auto& left = get_value<T>( "left" );
-            auto& right = get_value<T>( "right" );
-            return left.find( right ) != -1;
-        } );
+            {
+                auto& left = get_value<T>( "left" );
+                auto& right = get_value<T>( "right" );
+                return left.find( right ) != -1;
+            } );
     }
 };
 }
@@ -1035,9 +1035,9 @@ struct LogicNotNode : Node
     {
         addIN<bool>( "in" );
         addOUT<bool>( "out" )->behaviour( [this]
-        {
-            return !get_value<bool>( "in" );
-        } );
+            {
+                return !get_value<bool>( "in" );
+            } );
     }
 };
 
@@ -1049,9 +1049,9 @@ struct LogicAndNode : Node
         addIN<bool>( "left" );
         addIN<bool>( "right" );
         addOUT<bool>( "out" )->behaviour( [this]
-        {
-            return get_value<bool>( "left" ) && get_value<bool>( "right" );
-        } );
+            {
+                return get_value<bool>( "left" ) && get_value<bool>( "right" );
+            } );
     }
 };
 
@@ -1063,9 +1063,9 @@ struct LogicOrNode : Node
         addIN<bool>( "left" );
         addIN<bool>( "right" );
         addOUT<bool>( "out" )->behaviour( [this]
-        {
-            return get_value<bool>( "left" ) || get_value<bool>( "right" );
-        } );
+            {
+                return get_value<bool>( "left" ) || get_value<bool>( "right" );
+            } );
     }
 };
 }
@@ -1091,7 +1091,8 @@ struct OperatorPlusNode : OperatorNode<T>
 {
     OperatorPlusNode( NodeScript* parent, StringRef const& title )
         : OperatorNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
@@ -1104,7 +1105,8 @@ struct OperatorMinusNode : OperatorNode<T>
 {
     OperatorMinusNode( NodeScript* parent, StringRef const& title )
         : OperatorNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
@@ -1117,7 +1119,8 @@ struct OperatorTimesNode : OperatorNode<T>
 {
     OperatorTimesNode( NodeScript* parent, StringRef const& title )
         : OperatorNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
@@ -1130,7 +1133,8 @@ struct OperatorDivideNode : OperatorNode<T>
 {
     OperatorDivideNode( NodeScript* parent, StringRef const& title )
         : OperatorNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
@@ -1143,7 +1147,8 @@ struct OperatorPowerNode : OperatorNode<T>
 {
     OperatorPowerNode( NodeScript* parent, StringRef const& title )
         : OperatorNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
@@ -1158,7 +1163,8 @@ struct OperatorModuloNode : OperatorNode<T>
 {
     OperatorModuloNode( NodeScript* parent, StringRef const& title )
         : OperatorNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
@@ -1174,7 +1180,7 @@ struct OperatorModuloNode : OperatorNode<T>
         }
         else
         {
-            static_assert(false, "Unsupported helper mod type");
+            static_assert( false, "Unsupported helper mod type" );
         }
     }
 };
@@ -1184,7 +1190,8 @@ struct OperatorMinNode : OperatorNode<T>
 {
     OperatorMinNode( NodeScript* parent, StringRef const& title )
         : OperatorNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
@@ -1199,7 +1206,8 @@ struct OperatorMaxNode : OperatorNode<T>
 {
     OperatorMaxNode( NodeScript* parent, StringRef const& title )
         : OperatorNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
@@ -1272,9 +1280,9 @@ struct ForNode : FlowNode
         addIN<int32_t>( "to_excl" );
         addOUT<FlowNode*>( "call" )->behaviour( [this] { return this; } );
         addOUT<int32_t>( "i" )->behaviour( [this]()
-        {
-            return *reinterpret_cast<int32_t*>(user_data);
-        } );
+            {
+                return *reinterpret_cast<int32_t*>( user_data );
+            } );
     }
 
     void call() override
@@ -1297,7 +1305,8 @@ struct FunctionNode : FlowNode
 {
     FunctionNode( NodeScript* parent, StringRef const& title )
         : FlowNode( parent, title, true, true, ne::NodeStyle::crimson() )
-    {}
+    {
+    }
 };
 
 struct PrintNode : FunctionNode
@@ -1337,7 +1346,8 @@ struct AbsNode : MathNode<T>
 {
     AbsNode( NodeScript* parent, StringRef const& title )
         : MathNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
@@ -1351,7 +1361,8 @@ struct SqrtNode : MathNode<T>
 {
     SqrtNode( NodeScript* parent, StringRef const& title )
         : MathNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
@@ -1365,7 +1376,8 @@ struct LogNode : MathNode<T>
 {
     LogNode( NodeScript* parent, StringRef const& title )
         : MathNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
@@ -1401,18 +1413,19 @@ struct SinNode : TrigNode<T>
 {
     SinNode( NodeScript* parent, StringRef const& title )
         : TrigNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
         T in = this->get_value<T>( "in" );
         if ( this->is_inverse() )
         {
-            return (this->is_degrees() ? kl::asin_d<T> : kl::asin<T>)(in);
+            return ( this->is_degrees() ? kl::asin_d<T> : kl::asin<T> )( in );
         }
         else
         {
-            return (this->is_degrees() ? kl::sin_d<T> : kl::sin<T>)(in);
+            return ( this->is_degrees() ? kl::sin_d<T> : kl::sin<T> )( in );
         }
     }
 };
@@ -1422,18 +1435,19 @@ struct CosNode : TrigNode<T>
 {
     CosNode( NodeScript* parent, StringRef const& title )
         : TrigNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
         T in = this->get_value<T>( "in" );
         if ( this->is_inverse() )
         {
-            return (this->is_degrees() ? kl::acos_d<T> : kl::acos<T>)(in);
+            return ( this->is_degrees() ? kl::acos_d<T> : kl::acos<T> )( in );
         }
         else
         {
-            return (this->is_degrees() ? kl::cos_d<T> : kl::cos<T>)(in);
+            return ( this->is_degrees() ? kl::cos_d<T> : kl::cos<T> )( in );
         }
     }
 };
@@ -1443,18 +1457,19 @@ struct TanNode : TrigNode<T>
 {
     TanNode( NodeScript* parent, StringRef const& title )
         : TrigNode<T>( parent, title )
-    {}
+    {
+    }
 
     T compute() override
     {
         T in = this->get_value<T>( "in" );
         if ( this->is_inverse() )
         {
-            return (this->is_degrees() ? kl::atan_d<T> : kl::atan<T>)(in);
+            return ( this->is_degrees() ? kl::atan_d<T> : kl::atan<T> )( in );
         }
         else
         {
-            return (this->is_degrees() ? kl::tan_d<T> : kl::tan<T>)(in);
+            return ( this->is_degrees() ? kl::tan_d<T> : kl::tan<T> )( in );
         }
     }
 };
@@ -1469,67 +1484,67 @@ struct GetSceneNode : Node
     {
         addIN<String>( "mesh_name" );
         addOUT<void*>( "mesh" )->behaviour( [this]()
-        {
-            Scene& scene = GameLayer::get().scene();
-            return scene.helper_get_mesh( get_value<String>( "mesh_name" ) );
-        } );
+            {
+                Scene& scene = GameLayer::get().scene();
+                return scene.helper_get_mesh( get_value<String>( "mesh_name" ) );
+            } );
 
         addIN<String>( "animation_name" );
         addOUT<void*>( "animation" )->behaviour( [this]()
-        {
-            Scene& scene = GameLayer::get().scene();
-            return scene.helper_get_animation( get_value<String>( "animation_name" ) );
-        } );
+            {
+                Scene& scene = GameLayer::get().scene();
+                return scene.helper_get_animation( get_value<String>( "animation_name" ) );
+            } );
 
         addIN<String>( "texture_name" );
         addOUT<void*>( "texture" )->behaviour( [this]()
-        {
-            Scene& scene = GameLayer::get().scene();
-            return scene.helper_get_texture( get_value<String>( "texture_name" ) );
-        } );
+            {
+                Scene& scene = GameLayer::get().scene();
+                return scene.helper_get_texture( get_value<String>( "texture_name" ) );
+            } );
 
         addIN<String>( "material_name" );
         addOUT<void*>( "material" )->behaviour( [this]()
-        {
-            Scene& scene = GameLayer::get().scene();
-            return scene.helper_get_material( get_value<String>( "material_name" ) );
-        } );
+            {
+                Scene& scene = GameLayer::get().scene();
+                return scene.helper_get_material( get_value<String>( "material_name" ) );
+            } );
 
         addIN<String>( "shader_name" );
         addOUT<void*>( "shader" )->behaviour( [this]()
-        {
-            Scene& scene = GameLayer::get().scene();
-            return scene.helper_get_shader( get_value<String>( "shader_name" ) );
-        } );
+            {
+                Scene& scene = GameLayer::get().scene();
+                return scene.helper_get_shader( get_value<String>( "shader_name" ) );
+            } );
 
         addIN<String>( "entity_name" );
         addOUT<void*>( "entity" )->behaviour( [this]()
-        {
-            Scene& scene = GameLayer::get().scene();
-            return scene.helper_get_entity( get_value<String>( "entity_name" ) );
-        } );
+            {
+                Scene& scene = GameLayer::get().scene();
+                return scene.helper_get_entity( get_value<String>( "entity_name" ) );
+            } );
 
         addOUT<Float3>( "gravity" )->behaviour( [this]()
-        {
-            Scene& scene = GameLayer::get().scene();
-            return scene.gravity();
-        } );
+            {
+                Scene& scene = GameLayer::get().scene();
+                return scene.gravity();
+            } );
 
         addOUT<String>( "main_camera_name" )->behaviour( [this]()
-        {
-            Scene& scene = GameLayer::get().scene();
-            return scene.main_camera_name;
-        } );
+            {
+                Scene& scene = GameLayer::get().scene();
+                return scene.main_camera_name;
+            } );
         addOUT<String>( "main_ambient_light_name" )->behaviour( [this]()
-        {
-            Scene& scene = GameLayer::get().scene();
-            return scene.main_ambient_light_name;
-        } );
+            {
+                Scene& scene = GameLayer::get().scene();
+                return scene.main_ambient_light_name;
+            } );
         addOUT<String>( "main_directional_light_name" )->behaviour( [this]()
-        {
-            Scene& scene = GameLayer::get().scene();
-            return scene.main_directional_light_name;
-        } );
+            {
+                Scene& scene = GameLayer::get().scene();
+                return scene.main_directional_light_name;
+            } );
     }
 };
 
@@ -1540,21 +1555,21 @@ struct GetMeshNode : Node
     {
         addIN<void*>( "ptr" );
         addOUT<int32_t>( "topology" )->behaviour( [this]()
-        {
-            if ( Mesh* ptr = get_casted_value<void*, Mesh*>( "ptr" ) )
             {
-                return (int32_t) ptr->topology;
-            }
-            return int32_t{};
-        } );
+                if ( Mesh* ptr = get_casted_value<void*, Mesh*>( "ptr" ) )
+                {
+                    return (int32_t) ptr->topology;
+                }
+                return int32_t{};
+            } );
         addOUT<bool>( "wireframe" )->behaviour( [this]()
-        {
-            if ( Mesh* ptr = get_casted_value<void*, Mesh*>( "ptr" ) )
             {
-                return ptr->render_wireframe;
-            }
-            return bool{};
-        } );
+                if ( Mesh* ptr = get_casted_value<void*, Mesh*>( "ptr" ) )
+                {
+                    return ptr->render_wireframe;
+                }
+                return bool{};
+            } );
     }
 };
 
@@ -1565,29 +1580,29 @@ struct GetAnimationNode : Node
     {
         addIN<void*>( "ptr" );
         addOUT<int32_t>( "animation_type" )->behaviour( [this]()
-        {
-            if ( Animation* ptr = get_casted_value<void*, Animation*>( "ptr" ) )
             {
-                return (int32_t) ptr->animation_type;
-            }
-            return int32_t{};
-        } );
+                if ( Animation* ptr = get_casted_value<void*, Animation*>( "ptr" ) )
+                {
+                    return (int32_t) ptr->animation_type;
+                }
+                return int32_t{};
+            } );
         addOUT<float>( "ticks per second" )->behaviour( [this]()
-        {
-            if ( Animation* ptr = get_casted_value<void*, Animation*>( "ptr" ) )
             {
-                return ptr->ticks_per_second;
-            }
-            return float{};
-        } );
+                if ( Animation* ptr = get_casted_value<void*, Animation*>( "ptr" ) )
+                {
+                    return ptr->ticks_per_second;
+                }
+                return float{};
+            } );
         addOUT<float>( "duration ticks" )->behaviour( [this]()
-        {
-            if ( Animation* ptr = get_casted_value<void*, Animation*>( "ptr" ) )
             {
-                return ptr->duration_in_ticks;
-            }
-            return float{};
-        } );
+                if ( Animation* ptr = get_casted_value<void*, Animation*>( "ptr" ) )
+                {
+                    return ptr->duration_in_ticks;
+                }
+                return float{};
+            } );
     }
 };
 
@@ -1598,21 +1613,21 @@ struct GetTextureNode : Node
     {
         addIN<void*>( "ptr" );
         addOUT<Int2>( "resolution" )->behaviour( [this]()
-        {
-            if ( Texture* ptr = get_casted_value<void*, Texture*>( "ptr" ) )
             {
-                return ptr->resolution();
-            }
-            return Int2{};
-        } );
+                if ( Texture* ptr = get_casted_value<void*, Texture*>( "ptr" ) )
+                {
+                    return ptr->resolution();
+                }
+                return Int2{};
+            } );
         addOUT<bool>( "is_cube" )->behaviour( [this]()
-        {
-            if ( Texture* ptr = get_casted_value<void*, Texture*>( "ptr" ) )
             {
-                return ptr->is_cube();
-            }
-            return false;
-        } );
+                if ( Texture* ptr = get_casted_value<void*, Texture*>( "ptr" ) )
+                {
+                    return ptr->is_cube();
+                }
+                return false;
+            } );
     }
 };
 
@@ -1623,69 +1638,69 @@ struct GetMaterialNode : Node
     {
         addIN<void*>( "ptr" );
         addOUT<float>( "texture_blend" )->behaviour( [this]()
-        {
-            if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
             {
-                return ptr->texture_blend;
-            }
-            return float{};
-        } );
+                if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
+                {
+                    return ptr->texture_blend;
+                }
+                return float{};
+            } );
         addOUT<float>( "reflectivity_factor" )->behaviour( [this]()
-        {
-            if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
             {
-                return ptr->reflectivity_factor;
-            }
-            return float{};
-        } );
+                if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
+                {
+                    return ptr->reflectivity_factor;
+                }
+                return float{};
+            } );
         addOUT<float>( "refraction_index" )->behaviour( [this]()
-        {
-            if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
             {
-                return ptr->refraction_index;
-            }
-            return float{};
-        } );
+                if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
+                {
+                    return ptr->refraction_index;
+                }
+                return float{};
+            } );
         addOUT<Float4>( "color" )->behaviour( [this]()
-        {
-            if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
             {
-                return ptr->color;
-            }
-            return Float4{};
-        } );
+                if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
+                {
+                    return ptr->color;
+                }
+                return Float4{};
+            } );
         addOUT<String>( "color_texture_name" )->behaviour( [this]()
-        {
-            if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
             {
-                return ptr->color_texture_name;
-            }
-            return String{};
-        } );
+                if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
+                {
+                    return ptr->color_texture_name;
+                }
+                return String{};
+            } );
         addOUT<String>( "normal_texture_name" )->behaviour( [this]()
-        {
-            if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
             {
-                return ptr->normal_texture_name;
-            }
-            return String{};
-        } );
+                if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
+                {
+                    return ptr->normal_texture_name;
+                }
+                return String{};
+            } );
         addOUT<String>( "roughness_texture_name" )->behaviour( [this]()
-        {
-            if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
             {
-                return ptr->roughness_texture_name;
-            }
-            return String{};
-        } );
+                if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
+                {
+                    return ptr->roughness_texture_name;
+                }
+                return String{};
+            } );
         addOUT<String>( "shader_name" )->behaviour( [this]()
-        {
-            if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
             {
-                return ptr->shader_name;
-            }
-            return String{};
-        } );
+                if ( Material* ptr = get_casted_value<void*, Material*>( "ptr" ) )
+                {
+                    return ptr->shader_name;
+                }
+                return String{};
+            } );
     }
 };
 
@@ -1696,13 +1711,13 @@ struct GetShaderNode : Node
     {
         addIN<void*>( "ptr" );
         addOUT<int32_t>( "shader_type" )->behaviour( [this]()
-        {
-            if ( Shader* ptr = get_casted_value<void*, Shader*>( "ptr" ) )
             {
-                return (int32_t) ptr->shader_type;
-            }
-            return int32_t{};
-        } );
+                if ( Shader* ptr = get_casted_value<void*, Shader*>( "ptr" ) )
+                {
+                    return (int32_t) ptr->shader_type;
+                }
+                return int32_t{};
+            } );
     }
 };
 
@@ -1713,141 +1728,141 @@ struct GetEntityNode : Node
     {
         addIN<void*>( "ptr" );
         addOUT<bool>( "shadows" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->shadows;
-            }
-            return bool{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->shadows;
+                }
+                return bool{};
+            } );
         addOUT<String>( "animation_name" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->animation_name;
-            }
-            return String{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->animation_name;
+                }
+                return String{};
+            } );
         addOUT<String>( "material_name" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->material_name;
-            }
-            return String{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->material_name;
+                }
+                return String{};
+            } );
         addOUT<bool>( "dynamic" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->dynamic();
-            }
-            return bool{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->dynamic();
+                }
+                return bool{};
+            } );
         addOUT<bool>( "gravity" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->gravity();
-            }
-            return bool{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->gravity();
+                }
+                return bool{};
+            } );
         addOUT<float>( "mass" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->mass();
-            }
-            return float{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->mass();
+                }
+                return float{};
+            } );
         addOUT<float>( "angular_damping" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->angular_damping();
-            }
-            return float{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->angular_damping();
+                }
+                return float{};
+            } );
         addOUT<float>( "static_friction" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->static_friction();
-            }
-            return float{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->static_friction();
+                }
+                return float{};
+            } );
         addOUT<float>( "dynamic_friction" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->dynamic_friction();
-            }
-            return float{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->dynamic_friction();
+                }
+                return float{};
+            } );
         addOUT<float>( "restitution" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->restitution();
-            }
-            return float{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->restitution();
+                }
+                return float{};
+            } );
         addOUT<Float3>( "scale" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->scale();
-            }
-            return Float3{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->scale();
+                }
+                return Float3{};
+            } );
         addOUT<Float3>( "rotation" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->rotation();
-            }
-            return Float3{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->rotation();
+                }
+                return Float3{};
+            } );
         addOUT<Float3>( "position" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->position();
-            }
-            return Float3{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->position();
+                }
+                return Float3{};
+            } );
         addOUT<Float3>( "velocity" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->velocity();
-            }
-            return Float3{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->velocity();
+                }
+                return Float3{};
+            } );
         addOUT<Float3>( "angular" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->angular();
-            }
-            return Float3{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->angular();
+                }
+                return Float3{};
+            } );
         addOUT<Float3>( "collider_rotation" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->collider_rotation();
-            }
-            return Float3{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->collider_rotation();
+                }
+                return Float3{};
+            } );
         addOUT<Float3>( "collider_offset" )->behaviour( [this]()
-        {
-            if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
             {
-                return ptr->collider_offset();
-            }
-            return Float3{};
-        } );
+                if ( Entity* ptr = get_casted_value<void*, Entity*>( "ptr" ) )
+                {
+                    return ptr->collider_offset();
+                }
+                return Float3{};
+            } );
     }
 };
 }
@@ -2237,23 +2252,23 @@ struct IteratorNode : FunctionNode
     {
         addOUT<FlowNode*>( "call" )->behaviour( [this] { return this; } );
         addOUT<String>( "name" )->behaviour( [this]()
-        {
-            return **reinterpret_cast<String const**>(user_data + 0);
-        } );
+            {
+                return **reinterpret_cast<String const**>( user_data + 0 );
+            } );
         addOUT<void*>( "ptr" )->behaviour( [this]()
-        {
-            return *reinterpret_cast<void**>(user_data + 8);
-        } );
+            {
+                return *reinterpret_cast<void**>( user_data + 8 );
+            } );
     }
 
     void call() final
     {
         iterate_collection( [this]( String const* name, void* ptr )
-        {
-            *reinterpret_cast<String const**>(user_data + 0) = name;
-            *reinterpret_cast<void**>(user_data + 8) = ptr;
-            call_next( "call" );
-        } );
+            {
+                *reinterpret_cast<String const**>( user_data + 0 ) = name;
+                *reinterpret_cast<void**>( user_data + 8 ) = ptr;
+                call_next( "call" );
+            } );
         call_next();
     }
 
@@ -2265,14 +2280,15 @@ struct IterateMeshesNode : IteratorNode<Mesh>
 {
     IterateMeshesNode( NodeScript* parent, StringRef const& title )
         : IteratorNode<Mesh>( parent, title )
-    {}
+    {
+    }
 
     void iterate_collection( Func<void( String const*, void* )> const& func ) override
     {
         GameLayer::get().scene().helper_iterate_meshes( [&]( String const& name, Mesh* ptr )
-        {
-            func( &name, ptr );
-        } );
+            {
+                func( &name, ptr );
+            } );
     }
 };
 
@@ -2280,14 +2296,15 @@ struct IterateAnimationsNode : IteratorNode<Animation>
 {
     IterateAnimationsNode( NodeScript* parent, StringRef const& title )
         : IteratorNode<Animation>( parent, title )
-    {}
+    {
+    }
 
     void iterate_collection( Func<void( String const*, void* )> const& func ) override
     {
         GameLayer::get().scene().helper_iterate_animations( [&]( String const& name, Animation* ptr )
-        {
-            func( &name, ptr );
-        } );
+            {
+                func( &name, ptr );
+            } );
     }
 };
 
@@ -2295,14 +2312,15 @@ struct IterateTexturesNode : IteratorNode<Texture>
 {
     IterateTexturesNode( NodeScript* parent, StringRef const& title )
         : IteratorNode<Texture>( parent, title )
-    {}
+    {
+    }
 
     void iterate_collection( Func<void( String const*, void* )> const& func ) override
     {
         GameLayer::get().scene().helper_iterate_textures( [&]( String const& name, Texture* ptr )
-        {
-            func( &name, ptr );
-        } );
+            {
+                func( &name, ptr );
+            } );
     }
 };
 
@@ -2310,14 +2328,15 @@ struct IterateMaterialsNode : IteratorNode<Material>
 {
     IterateMaterialsNode( NodeScript* parent, StringRef const& title )
         : IteratorNode<Material>( parent, title )
-    {}
+    {
+    }
 
     void iterate_collection( Func<void( String const*, void* )> const& func ) override
     {
         GameLayer::get().scene().helper_iterate_materials( [&]( String const& name, Material* ptr )
-        {
-            func( &name, ptr );
-        } );
+            {
+                func( &name, ptr );
+            } );
     }
 };
 
@@ -2325,14 +2344,15 @@ struct IterateShadersNode : IteratorNode<Shader>
 {
     IterateShadersNode( NodeScript* parent, StringRef const& title )
         : IteratorNode<Shader>( parent, title )
-    {}
+    {
+    }
 
     void iterate_collection( Func<void( String const*, void* )> const& func ) override
     {
         GameLayer::get().scene().helper_iterate_shaders( [&]( String const& name, Shader* ptr )
-        {
-            func( &name, ptr );
-        } );
+            {
+                func( &name, ptr );
+            } );
     }
 };
 
@@ -2340,14 +2360,15 @@ struct IterateEntitiesNode : IteratorNode<Entity>
 {
     IterateEntitiesNode( NodeScript* parent, StringRef const& title )
         : IteratorNode<Entity>( parent, title )
-    {}
+    {
+    }
 
     void iterate_collection( Func<void( String const*, void* )> const& func ) override
     {
         GameLayer::get().scene().helper_iterate_entities( [&]( String const& name, Entity* ptr )
-        {
-            func( &name, ptr );
-        } );
+            {
+                func( &name, ptr );
+            } );
     }
 };
 }
@@ -2358,7 +2379,8 @@ struct UISeparatorNode : FlowNode
 {
     UISeparatorNode( NodeScript* parent, StringRef const& title )
         : FlowNode( parent, title, true, true, ne::NodeStyle::sunset() )
-    {}
+    {
+    }
 
     void call() override
     {
@@ -2371,7 +2393,8 @@ struct UISameLineNode : FlowNode
 {
     UISameLineNode( NodeScript* parent, StringRef const& title )
         : FlowNode( parent, title, true, true, ne::NodeStyle::sunset() )
-    {}
+    {
+    }
 
     void call() override
     {
@@ -2403,9 +2426,9 @@ struct UICursorPositonNode : FlowNode
     {
         addIN<Float2>( "position" );
         addOUT<Float2>( "position" )->behaviour( [this]()
-        {
-            return ui_cursor_pos();
-        } );
+            {
+                return ui_cursor_pos();
+            } );
     }
 
     void call() override
@@ -2432,9 +2455,9 @@ struct UIWindowNode : FlowNode
     {
         String name = get_value<String>( "name" );
         ui_window( name, [this]()
-        {
-            call_next( "call" );
-        } );
+            {
+                call_next( "call" );
+            } );
         call_next();
     }
 };
@@ -2452,9 +2475,9 @@ struct UIButtonNode : FlowNode
     {
         String name = get_value<String>( "name" );
         ui_button( name, [this]()
-        {
-            call_next( "call" );
-        } );
+            {
+                call_next( "call" );
+            } );
         call_next();
     }
 };
@@ -2471,18 +2494,18 @@ struct UIValueNode : FlowNode
         addIN<T>( "value" );
         addOUT<FlowNode*>( "on_change" )->behaviour( [this]() { return this; } );
         addOUT<T>( "value" )->behaviour( [this]()
-        {
-            return value;
-        } );
+            {
+                return value;
+            } );
     }
 
     void call() override
     {
         auto on_set = [this]( T new_val )
-        {
-            this->value = new_val;
-            call_next( "on_change" );
-        };
+            {
+                this->value = new_val;
+                call_next( "on_change" );
+            };
         if ( input_connected( "value" ) )
         {
             value = get_value<T>( "value" );
@@ -2526,7 +2549,7 @@ struct UIValueNode : FlowNode
         }
         else
         {
-            static_assert(false, "Not supported UIValueNode type");
+            static_assert( false, "Not supported UIValueNode type" );
         }
         call_next();
     }

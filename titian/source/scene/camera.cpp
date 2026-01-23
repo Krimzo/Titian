@@ -106,37 +106,37 @@ titian::Float3 titian::Camera::up() const
 
 void titian::Camera::move_forward( float delta_time )
 {
-    set_position( position() + m_forward * (speed * delta_time) );
+    set_position( position() + m_forward * ( speed * delta_time ) );
 }
 
 void titian::Camera::move_back( float delta_time )
 {
-    set_position( position() - m_forward * (speed * delta_time) );
+    set_position( position() - m_forward * ( speed * delta_time ) );
 }
 
 void titian::Camera::move_right( float delta_time )
 {
-    set_position( position() + right() * (speed * delta_time) );
+    set_position( position() + right() * ( speed * delta_time ) );
 }
 
 void titian::Camera::move_left( float delta_time )
 {
-    set_position( position() - right() * (speed * delta_time) );
+    set_position( position() - right() * ( speed * delta_time ) );
 }
 
 void titian::Camera::move_up( float delta_time )
 {
-    set_position( position() + m_up * (speed * delta_time) );
+    set_position( position() + m_up * ( speed * delta_time ) );
 }
 
 void titian::Camera::move_down( float delta_time )
 {
-    set_position( position() - m_up * (speed * delta_time) );
+    set_position( position() - m_up * ( speed * delta_time ) );
 }
 
 void titian::Camera::rotate( Float2 mouse_pos, Float2 frame_center, float vertical_angle_limit )
 {
-    Float2 rotation = (mouse_pos - frame_center) * sensitivity;
+    Float2 rotation = ( mouse_pos - frame_center ) * sensitivity;
     Float3 forward_vert = kl::rotate( m_forward, right(), rotation.y );
     if ( kl::abs( angle( forward_vert, m_up ) - 90.0f ) <= vertical_angle_limit )
     {
@@ -147,17 +147,15 @@ void titian::Camera::rotate( Float2 mouse_pos, Float2 frame_center, float vertic
 
 titian::Float4x4 titian::Camera::view_matrix() const
 {
-    Float3 position = this->position();
-    return Float4x4::look_at( position, position + m_forward, m_up );
+    return Float4x4::look_to( position(), m_forward, m_up );
 }
 
 titian::Float4x4 titian::Camera::projection_matrix() const
 {
     if ( camera_type == CameraType::ORTHOGRAPHIC )
-    {
-        return Float4x4::orthographic( -width * 0.5f, width * 0.5f, -height * 0.5f, height * 0.5f, near_plane, far_plane );
-    }
-    return Float4x4::perspective( field_of_view, aspect_ratio, near_plane, far_plane );
+        return Float4x4::orthographic( width, height, near_plane, far_plane );
+    else
+        return Float4x4::perspective( field_of_view, aspect_ratio, near_plane, far_plane );
 }
 
 titian::Float4x4 titian::Camera::camera_matrix() const

@@ -95,10 +95,10 @@ template<typename T>
 constexpr Quaternion_T<T> abs( Quaternion_T<T> const& num )
 {
     return {
-        abs( num.w ),
-        abs( num.x ),
-        abs( num.y ),
-        abs( num.z ),
+        abs( num.r ),
+        abs( num.i ),
+        abs( num.j ),
+        abs( num.k ),
     };
 }
 
@@ -106,10 +106,10 @@ template<typename T>
 constexpr Quaternion_T<T> min( Quaternion_T<T> const& num1, Quaternion_T<T> const& num2 )
 {
     return {
-        min( num1.w, num2.w ),
-        min( num1.x, num2.x ),
-        min( num1.y, num2.y ),
-        min( num1.z, num2.z ),
+        min( num1.r, num2.r ),
+        min( num1.i, num2.i ),
+        min( num1.j, num2.j ),
+        min( num1.k, num2.k ),
     };
 }
 
@@ -117,10 +117,10 @@ template<typename T>
 constexpr Quaternion_T<T> max( Quaternion_T<T> const& num1, Quaternion_T<T> const& num2 )
 {
     return {
-        max( num1.w, num2.w ),
-        max( num1.x, num2.x ),
-        max( num1.y, num2.y ),
-        max( num1.z, num2.z ),
+        max( num1.r, num2.r ),
+        max( num1.i, num2.i ),
+        max( num1.j, num2.j ),
+        max( num1.k, num2.k ),
     };
 }
 
@@ -128,10 +128,10 @@ template<typename T>
 constexpr Quaternion_T<T> clamp( Quaternion_T<T> const& num, Quaternion_T<T> const& lower, Quaternion_T<T> const& upper )
 {
     return {
-        clamp( num.w, lower.w, upper.w ),
-        clamp( num.x, lower.x, upper.x ),
-        clamp( num.y, lower.y, upper.y ),
-        clamp( num.z, lower.z, upper.z ),
+        clamp( num.r, lower.r, upper.r ),
+        clamp( num.i, lower.i, upper.i ),
+        clamp( num.j, lower.j, upper.j ),
+        clamp( num.k, lower.k, upper.k ),
     };
 }
 
@@ -139,10 +139,10 @@ template<typename T, bool Clamp = true>
 constexpr Quaternion_T<T> lerp( T value, Quaternion_T<T> const& lower, Quaternion_T<T> const& upper )
 {
     return {
-        lerp<T, Clamp>( value, lower.w, upper.w ),
-        lerp<T, Clamp>( value, lower.x, upper.x ),
-        lerp<T, Clamp>( value, lower.y, upper.y ),
-        lerp<T, Clamp>( value, lower.z, upper.z ),
+        lerp<T, Clamp>( value, lower.r, upper.r ),
+        lerp<T, Clamp>( value, lower.i, upper.i ),
+        lerp<T, Clamp>( value, lower.j, upper.j ),
+        lerp<T, Clamp>( value, lower.k, upper.k ),
     };
 }
 
@@ -150,10 +150,10 @@ template<typename T, bool Clamp = true>
 constexpr Quaternion_T<T> unlerp( T value, Quaternion_T<T> const& lower, Quaternion_T<T> const& upper )
 {
     return {
-        unlerp<T, Clamp>( value, lower.w, upper.w ),
-        unlerp<T, Clamp>( value, lower.x, upper.x ),
-        unlerp<T, Clamp>( value, lower.y, upper.y ),
-        unlerp<T, Clamp>( value, lower.z, upper.z ),
+        unlerp<T, Clamp>( value, lower.r, upper.r ),
+        unlerp<T, Clamp>( value, lower.i, upper.i ),
+        unlerp<T, Clamp>( value, lower.j, upper.j ),
+        unlerp<T, Clamp>( value, lower.k, upper.k ),
     };
 }
 
@@ -166,7 +166,7 @@ constexpr Quaternion_T<T> normalize( Quaternion_T<T> const& num )
 template<typename T>
 constexpr Quaternion_T<T> inverse( Quaternion_T<T> const& num )
 {
-    return { num.w, -num.x, -num.y, -num.z };
+    return { num.r, -num.i, -num.j, -num.k };
 }
 }
 
@@ -658,11 +658,11 @@ constexpr Quaternion_T<T> to_quat( Vector3<T> const& euler )
 template<typename T>
 constexpr Vector3<T> to_euler( Quaternion_T<T> const& quat )
 {
-    T       sin_p = T( +2 ) * ( quat.w * quat.y - quat.z * quat.x ) + T( 0 );
-    T sin_r_cos_p = T( +2 ) * ( quat.w * quat.x + quat.y * quat.z ) + T( 0 );
-    T cos_r_cos_p = T( -2 ) * ( quat.x * quat.x + quat.y * quat.y ) + T( 1 );
-    T sin_y_cos_p = T( +2 ) * ( quat.w * quat.z + quat.x * quat.y ) + T( 0 );
-    T cos_y_cos_p = T( -2 ) * ( quat.y * quat.y + quat.z * quat.z ) + T( 1 );
+    T       sin_p = T( +2 ) * ( quat.r * quat.j - quat.k * quat.i ) + T( 0 );
+    T sin_r_cos_p = T( +2 ) * ( quat.r * quat.i + quat.j * quat.k ) + T( 0 );
+    T cos_r_cos_p = T( -2 ) * ( quat.i * quat.i + quat.j * quat.j ) + T( 1 );
+    T sin_y_cos_p = T( +2 ) * ( quat.r * quat.k + quat.i * quat.j ) + T( 0 );
+    T cos_y_cos_p = T( -2 ) * ( quat.j * quat.j + quat.k * quat.k ) + T( 1 );
 
     Vector3<T> result = {
         std::atan2( sin_r_cos_p, cos_r_cos_p ),

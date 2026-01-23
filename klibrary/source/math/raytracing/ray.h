@@ -92,23 +92,19 @@ struct Ray_T
         {
             if ( out_intersection )
                 *out_intersection = origin;
-
             return true;
         }
-
-        Vector3<T> inv_ray{ T( 1 ) / m_direction.x, T( 1 ) / m_direction.y, T( 1 ) / m_direction.z };
-        Vector3<T> t1 = ( aabb.min_point() - origin ) * inv_ray;
-        Vector3<T> t2 = ( aabb.max_point() - origin ) * inv_ray;
-        Vector3<T> t_min{ min( t1.x, t2.x ), min( t1.y, t2.y ), min( t1.z, t2.z ) };
-        Vector3<T> t_max{ max( t1.x, t2.x ), max( t1.y, t2.y ), max( t1.z, t2.z ) };
-        T t_min_max = std::max( { t_min.x, t_min.y, t_min.z } );
-        T t_max_min = std::min( { t_max.x, t_max.y, t_max.z } );
+        const Vector3<T> inv_ray = Vector3<T>{ T( 1 ) } / m_direction;
+        const Vector3<T> t1 = ( aabb.min_point() - origin ) * inv_ray;
+        const Vector3<T> t2 = ( aabb.max_point() - origin ) * inv_ray;
+        const Vector3<T> t_min = min( t1, t2 );
+        const Vector3<T> t_max = max( t1, t2 );
+        const T t_min_max = std::max( { t_min.x, t_min.y, t_min.z } );
+        const T t_max_min = std::min( { t_max.x, t_max.y, t_max.z } );
         if ( t_max_min < T( 0 ) || t_min_max > t_max_min )
             return false;
-
         if ( out_intersection )
             *out_intersection = origin + m_direction * t_min_max;
-
         return true;
     }
 

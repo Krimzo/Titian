@@ -26,13 +26,13 @@ struct GPU : DeviceHolder, ContextHolder, ShaderCompiler, TextRaster
 
     UINT back_index() const;
 
-    dx::Texture target_buffer( UINT index ) const;
-    dx::Texture depth_buffer( UINT index ) const;
+    dx::Texture target_texture( UINT index ) const;
+    dx::Texture depth_texture( UINT index ) const;
     dx::TargetView target_view( UINT index ) const;
     dx::DepthView depth_view( UINT index ) const;
 
-    dx::Texture back_target_buffer() const;
-    dx::Texture back_depth_buffer() const;
+    dx::Texture back_target_texture() const;
+    dx::Texture back_depth_texture() const;
     dx::TargetView back_target_view() const;
     dx::DepthView back_depth_view() const;
 
@@ -43,7 +43,7 @@ struct GPU : DeviceHolder, ContextHolder, ShaderCompiler, TextRaster
 
     void clear_internal_color( Float4 const& color = {} ) const;
     void clear_internal_depth( float depth = 1.0f, UINT8 stencil = 0xFF ) const;
-    void clear_internal( Float4 const& color = {} ) const;
+    void clear_internal( Float4 const& color = {}, float depth = 1.0f, UINT8 stencil = 0xFF ) const;
 
     void resize_internal( Int2 size, DXGI_FORMAT depth_format = DXGI_FORMAT_D32_FLOAT );
     void resize_to_window( HWND window );
@@ -56,7 +56,8 @@ struct GPU : DeviceHolder, ContextHolder, ShaderCompiler, TextRaster
     ComputeShader create_compute_shader( std::string_view const& shader_source ) const;
     Shaders create_shaders( std::string_view const& shader_sources, std::vector<dx::LayoutDescriptor> const& descriptors = {} ) const;
 
-    void draw_text() const;
+    void draw_text_batch() const;
+    void draw_text_direct( Text const& text ) const;
 
 protected:
     GPU( HWND window, bool debug, bool video_support );

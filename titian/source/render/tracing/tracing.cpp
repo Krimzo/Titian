@@ -14,8 +14,8 @@ void titian::TracingMesh::compute_aabb()
         max_point = kl::max( max_point, triangle.b.position );
         max_point = kl::max( max_point, triangle.c.position );
     }
-    aabb.position = (min_point + max_point) * 0.5f;
-    aabb.size = (max_point - min_point) * 0.5f;
+    aabb.center = ( min_point + max_point ) * 0.5f;
+    aabb.half_size = ( max_point - min_point ) * 0.5f;
 }
 
 void titian::TracingTextureCube::load_cube( kl::Image const& image )
@@ -77,17 +77,17 @@ titian::TracingScene::TracingScene( Scene& scene, Int2 resolution )
     std::mutex lock;
     std::for_each( std::execution::par, scene.entities().begin(), scene.entities().end(),
         [&]( Pair<String, Ref<Entity>> const& pair )
-    {
-        Entity const& entity = *pair.second;
-        Opt<TracingEntity> tracing_entity = convert_entity( scene, entity );
-        if ( !tracing_entity )
-            return;
+        {
+            Entity const& entity = *pair.second;
+            Opt<TracingEntity> tracing_entity = convert_entity( scene, entity );
+            if ( !tracing_entity )
+                return;
 
-        lock.lock();
-        this->entities.push_back( *tracing_entity );
-        lock.unlock();
-    } );
-    if ( Camera* camera = dynamic_cast<Camera*>(scene.helper_get_entity( scene.main_camera_name )) )
+            lock.lock();
+            this->entities.push_back( *tracing_entity );
+            lock.unlock();
+        } );
+    if ( Camera* camera = dynamic_cast<Camera*>( scene.helper_get_entity( scene.main_camera_name ) ) )
     {
         Texture* skybox = scene.helper_get_texture( camera->skybox_texture_name );
         float old_ar = camera->aspect_ratio;
@@ -101,13 +101,13 @@ titian::TracingScene::TracingScene( Scene& scene, Int2 resolution )
         );
         camera->aspect_ratio = old_ar;
     }
-    if ( AmbientLight* ambient = dynamic_cast<AmbientLight*>(scene.helper_get_entity( scene.main_ambient_light_name )) )
+    if ( AmbientLight* ambient = dynamic_cast<AmbientLight*>( scene.helper_get_entity( scene.main_ambient_light_name ) ) )
     {
         this->ambient.emplace(
             ambient->color
         );
     }
-    if ( DirectionalLight* directional = dynamic_cast<DirectionalLight*>(scene.helper_get_entity( scene.main_directional_light_name )) )
+    if ( DirectionalLight* directional = dynamic_cast<DirectionalLight*>( scene.helper_get_entity( scene.main_directional_light_name ) ) )
     {
         this->directional.emplace(
             directional->direction(),
@@ -127,7 +127,7 @@ titian::Opt<titian::TracingPayload> titian::TracingScene::trace( kl::Ray const& 
         if ( !ray.intersect_aabb( entity.mesh.aabb, &intersection ) )
             continue;
 
-        float distance = (intersection - ray.origin).length();
+        float distance = ( intersection - ray.origin ).length();
         if ( distance >= min_distance )
             continue;
 
@@ -139,7 +139,7 @@ titian::Opt<titian::TracingPayload> titian::TracingScene::trace( kl::Ray const& 
             if ( !ray.intersect_triangle( triangle, &intersection ) )
                 continue;
 
-            float distance = (intersection - ray.origin).length();
+            float distance = ( intersection - ray.origin ).length();
             if ( distance >= min_distance )
                 continue;
 
@@ -198,8 +198,8 @@ titian::TracingMesh titian::TracingScene::convert_mesh( Scene const& scene, Mesh
 kl::Vertex titian::TracingScene::convert_vertex( Vertex const& vertex, Float4x4 const& matrix )
 {
     kl::Vertex result;
-    result.position = (matrix * Float4( vertex.position, 1.0f )).xyz();
-    result.normal = kl::normalize( (matrix * Float4( vertex.normal, 0.0f )).xyz() );
+    result.position = ( matrix * Float4( vertex.position, 1.0f ) ).xyz();
+    result.normal = kl::normalize( ( matrix * Float4( vertex.normal, 0.0f ) ).xyz() );
     result.uv = vertex.uv;
     return result;
 }
@@ -222,10 +222,10 @@ titian::TracingMesh titian::TracingScene::convert_skel_mesh( Scene const& scene,
 kl::Vertex titian::TracingScene::convert_skel_vertex( Vertex const& vertex, Float4x4 const& model_matrix, Vector<Float4x4> const& bone_matrices )
 {
     Float4x4 bone_mat =
-        (vertex.bone_indices[0] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[0]] : Float4x4{}) * vertex.bone_weights[0] +
-        (vertex.bone_indices[1] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[1]] : Float4x4{}) * vertex.bone_weights[1] +
-        (vertex.bone_indices[2] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[2]] : Float4x4{}) * vertex.bone_weights[2] +
-        (vertex.bone_indices[3] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[3]] : Float4x4{}) * vertex.bone_weights[3];
+        ( vertex.bone_indices[0] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[0]] : Float4x4{} ) * vertex.bone_weights[0] +
+        ( vertex.bone_indices[1] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[1]] : Float4x4{} ) * vertex.bone_weights[1] +
+        ( vertex.bone_indices[2] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[2]] : Float4x4{} ) * vertex.bone_weights[2] +
+        ( vertex.bone_indices[3] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[3]] : Float4x4{} ) * vertex.bone_weights[3];
     return convert_vertex( vertex, model_matrix * bone_mat );
 }
 

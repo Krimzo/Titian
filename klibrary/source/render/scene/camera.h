@@ -12,7 +12,7 @@ struct Camera
     Float3 position;
 
     float aspect_ratio = 1.7778f;
-    float field_of_view = 75.0f;
+    float field_of_view = 90.0f;
 
     float near_plane = 0.01f;
     float far_plane = 500.0f;

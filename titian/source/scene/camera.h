@@ -22,7 +22,7 @@ struct Camera : Entity
     bool v_sync = false;
     bool render_wireframe = false;
 
-    float field_of_view = 75.0f;
+    float field_of_view = 110.0f;
     float aspect_ratio = 1.7778f;
     float width = 16.0f;
     float height = 9.0f;

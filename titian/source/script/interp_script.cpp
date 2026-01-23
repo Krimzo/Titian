@@ -239,10 +239,10 @@ void titian::InterpScript::load_engine_parts()
     m_engine->new_usertype<Quaternion>(
         "Quaternion",
         sl::constructors<Quaternion(), Quaternion( float, float, float ), Quaternion( float, float, float, float ), Quaternion( Float3, float )>(),
-        "w", &Quaternion::w,
-        "x", &Quaternion::x,
-        "y", &Quaternion::y,
-        "z", &Quaternion::z,
+        "r", &Quaternion::r,
+        "i", &Quaternion::i,
+        "j", &Quaternion::j,
+        "k", &Quaternion::k,
         "length", &Quaternion::length,
         sl::meta_function::equal_to, &Quaternion::operator==,
         sl::meta_function::unary_minus, CONST_METHOD( Quaternion, Quaternion, operator- ),
@@ -285,8 +285,8 @@ void titian::InterpScript::load_engine_parts()
     m_engine->new_usertype<kl::AABB>(
         "AABB",
         sl::constructors<kl::AABB(), kl::AABB( Float3, Float3 )>(),
-        "position", &kl::AABB::position,
-        "size", &kl::AABB::size
+        "center", &kl::AABB::center,
+        "half_size", &kl::AABB::half_size
     );
 
     m_engine->new_usertype<kl::Ray>(

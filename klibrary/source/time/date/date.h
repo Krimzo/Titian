@@ -15,7 +15,10 @@ struct Date
     int second = 0;
     int milisecond = 0;
 
-    Date();
+    Date( bool local_time = true );
+
+    float year_perc() const;
+    float day_perc() const;
 };
 }
 

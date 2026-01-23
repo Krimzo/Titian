@@ -17,6 +17,8 @@ struct Text
     kl::Float2 position;
     kl::Float2 rect_size;
     std::wstring data;
+    bool hor_center = false;
+    bool ver_center = false;
 };
 }
 
@@ -24,7 +26,7 @@ namespace kl
 {
 struct TextRaster : NoCopy
 {
-    std::vector<Text> text_data;
+    std::vector<Text> text_batch;
 
     TextRaster();
 
@@ -36,7 +38,8 @@ struct TextRaster : NoCopy
         std::wstring_view const& locale = L"en-us"
     ) const;
 
-    void draw_text( UINT target_index ) const;
+    void draw_text_batch( UINT target_index ) const;
+    void draw_text_direct( UINT target_index, Text const& text ) const;
 
 protected:
     ComRef<ID2D1Factory> m_d2d1_factory;

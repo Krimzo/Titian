@@ -235,6 +235,13 @@ kl::Int2 kl::Window::frame_center() const
     return size() / 2;
 }
 
+kl::Float2 kl::Window::mouse_ndc_ar() const
+{
+    Float2 result = mouse.norm_position();
+    result.x *= aspect_ratio();
+    return result;
+}
+
 float kl::Window::dpi() const
 {
     return (float) GetDpiForWindow( m_window );

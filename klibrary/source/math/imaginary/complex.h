@@ -119,8 +119,18 @@ namespace kl
 template<typename T>
 std::ostream& operator<<( std::ostream& stream, Complex_T<T> const& complex )
 {
+    const auto load_part = [&]( T const& part ) -> std::ostream&
+        {
+            if ( part < T( 0 ) )
+                stream << " - " << ( -part );
+            else
+                stream << " + " << part;
+            return stream;
+        };
+
     stream << std::setprecision( 2 );
-    stream << "(" << complex.r << " + " << complex.i << "i)";
+    stream << "(" << complex.r;
+    load_part( complex.i ) << "i)";
     return stream;
 }
 }

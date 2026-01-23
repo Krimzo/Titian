@@ -5,11 +5,11 @@ titian::EditorPass::EditorPass()
     : RenderPass( "EditorPass" )
 {
     kl::GPU const& gpu = AppLayer::get().gpu;
-    kl::Vertex frustum_vertices[8] = {
-        { { 1.0f, 1.0f, -1.0f } },
-        { { -1.0f, 1.0f, -1.0f } },
-        { { 1.0f, -1.0f, -1.0f } },
-        { { -1.0f, -1.0f, -1.0f } },
+    constexpr kl::Vertex frustum_vertices[8] = {
+        { { 1.0f, 1.0f, 0.0f } },
+        { { -1.0f, 1.0f, 0.0f } },
+        { { 1.0f, -1.0f, 0.0f } },
+        { { -1.0f, -1.0f, 0.0f } },
         { { 1.0f, 1.0f, 1.0f } },
         { { -1.0f, 1.0f, 1.0f } },
         { { 1.0f, -1.0f, 1.0f } },
@@ -59,7 +59,7 @@ void titian::EditorPass::render_self( StatePackage& package )
         if ( !entity )
             continue;
 
-        struct alignas(16) CB
+        struct alignas( 16 ) CB
         {
             Float4x4 WVP;
             Float4 SOLID_COLOR;
@@ -94,7 +94,7 @@ void titian::EditorPass::render_self( StatePackage& package )
             }
         }
 
-        if ( Camera* camera = dynamic_cast<Camera*>(entity) )
+        if ( Camera* camera = dynamic_cast<Camera*>( entity ) )
         {
             CB cb{};
             cb.WVP = package.camera->camera_matrix() * kl::inverse( camera->camera_matrix() );
