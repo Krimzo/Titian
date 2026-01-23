@@ -91,22 +91,22 @@ kl::Float4x4 kl::DirectionalLight::matrix( Float4x4 const& inv_cam_mat ) const
     float min_z = std::numeric_limits<float>::infinity();
     for ( auto& corner : frustum_corners )
     {
-        min_xy.x = kl::min( min_xy.x, corner.x );
-        min_xy.y = kl::min( min_xy.y, corner.y );
-        max_xy.x = kl::max( max_xy.x, corner.x );
-        max_xy.y = kl::max( max_xy.y, corner.y );
-        min_z = kl::min( min_z, corner.z );
+        min_xy.x = min( min_xy.x, corner.x );
+        min_xy.y = min( min_xy.y, corner.y );
+        max_xy.x = max( max_xy.x, corner.x );
+        max_xy.y = max( max_xy.y, corner.y );
+        min_z = min( min_z, corner.z );
     }
-    Float3 light_position = {
+    Float3 light_position{
         ( min_xy.x + max_xy.x ) * 0.5f,
         ( min_xy.y + max_xy.y ) * 0.5f,
-        min_z
+        min_z,
     };
 
     const Float4x4 temp_light_view_matrix_inverse = inverse( temp_light_view_matrix );
-    light_position = ( temp_light_view_matrix_inverse * Float4( light_position, 1.0f ) ).xyz();
     for ( auto& corner : frustum_corners )
         corner = temp_light_view_matrix_inverse * corner;
+    light_position = ( temp_light_view_matrix_inverse * Float4( light_position, 1.0f ) ).xyz();
 
     const Float4x4 light_view_matrix = Float4x4::look_to( light_position, m_direction, { 0, 1, 0 } );
     for ( auto& corner : frustum_corners )
@@ -116,17 +116,16 @@ kl::Float4x4 kl::DirectionalLight::matrix( Float4x4 const& inv_cam_mat ) const
     min_z = std::numeric_limits<float>::infinity();
     for ( auto& corner : frustum_corners )
     {
-        max_xyz.x = kl::max( max_xyz.x, kl::abs( corner.x ) );
-        max_xyz.y = kl::max( max_xyz.y, kl::abs( corner.y ) );
-        max_xyz.z = kl::max( max_xyz.z, corner.z );
-        min_z = kl::min( min_z, corner.z );
+        max_xyz.x = max( max_xyz.x, abs( corner.x ) );
+        max_xyz.y = max( max_xyz.y, abs( corner.y ) );
+        max_xyz.z = max( max_xyz.z, corner.z );
+        min_z = min( min_z, corner.z );
     }
 
     const Float4x4 light_projection_matrix = Float4x4::orthographic(
         max_xyz.x * 2.0f,
         max_xyz.y * 2.0f,
-        min_z, max_xyz.z
-    );
+        min_z, max_xyz.z );
     return light_projection_matrix * light_view_matrix;
 }
 
