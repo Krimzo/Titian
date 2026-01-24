@@ -23,7 +23,9 @@ struct Mouse
 
     void set_position( Int2 position );
     Int2 position() const;
-    Float2 norm_position() const;
+
+    Float2 ndc_pos() const;
+    Float2 ndc_pos_ar() const;
 
     int scroll() const;
 

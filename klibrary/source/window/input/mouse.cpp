@@ -14,18 +14,26 @@ kl::Int2 kl::Mouse::position() const
     return m_position;
 }
 
-kl::Float2 kl::Mouse::norm_position() const
+kl::Float2 kl::Mouse::ndc_pos() const
 {
     RECT client_area{};
     GetClientRect( m_window, &client_area );
-    Int2 frame_size{
+    const Int2 frame_size{
         client_area.right - client_area.left,
         client_area.bottom - client_area.top,
     };
-    return {
-        2.0f * m_position.x / frame_size.x - 1.0f,
-        2.0f * ( frame_size.y - m_position.y ) / frame_size.y - 1.0f,
+    return to_ndc<float>( m_position, frame_size );
+}
+
+kl::Float2 kl::Mouse::ndc_pos_ar() const
+{
+    RECT client_area{};
+    GetClientRect( m_window, &client_area );
+    const Int2 frame_size{
+        client_area.right - client_area.left,
+        client_area.bottom - client_area.top,
     };
+    return to_ndc_ar<float>( m_position, frame_size );
 }
 
 int kl::Mouse::scroll() const

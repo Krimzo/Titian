@@ -593,21 +593,13 @@ namespace kl
 template<typename T>
 constexpr Vector2<T> to_ndc( Vector2<T> const& position, Vector2<T> const& size )
 {
-    const Vector2<T> result = {
-        position.x / size.x,
-        ( size.y - position.y ) / size.y,
-    };
-    return result * T( 2 ) - Vector2<T>( T( 1 ) );
+    return ( position / size * T( 2 ) - Vector2<T>( T( 1 ) ) ) * Vector2<T>( T( 1 ), T( -1 ) );
 }
 
 template<typename T>
 constexpr Vector2<T> from_ndc( Vector2<T> const& position, Vector2<T> const& size )
 {
-    const Vector2<T> result = ( position + Vector2<T>( T( 1 ) ) ) / T( 2 );
-    return {
-        result.x * size.x,
-        size.y - result.y * size.y,
-    };
+    return ( Vector2<T>{ position.x, -position.y } + Vector2<T>( T( 1 ) ) ) / T( 2 ) * size;
 }
 
 template<typename T>
@@ -621,9 +613,9 @@ constexpr Vector2<T> to_ndc_ar( Vector2<T> const& position, Vector2<T> const& si
 template<typename T>
 constexpr Vector2<T> from_ndc_ar( Vector2<T> const& position, Vector2<T> const& size )
 {
-    Vector2<T> result = position;
-    result.x *= size.y / size.x;
-    return from_ndc( result, size );
+    Vector2<T> fixed_pos = position;
+    fixed_pos.x *= size.y / size.x;
+    return from_ndc( fixed_pos, size );
 }
 
 template<typename T>

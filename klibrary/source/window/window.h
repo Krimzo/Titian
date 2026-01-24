@@ -68,7 +68,6 @@ struct Window : NoCopy
 
     float aspect_ratio() const;
     Int2 frame_center() const;
-    Float2 mouse_ndc_ar() const;
 
     float dpi() const;
     float pixels_to_dips( float value ) const;

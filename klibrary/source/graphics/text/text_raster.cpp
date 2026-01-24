@@ -29,9 +29,9 @@ kl::TextFormat kl::TextRaster::create_text_format(
 
 void kl::TextRaster::draw_text_batch( UINT target_index ) const
 {
-    auto& target = m_d2d1_targets[target_index];
+    auto const& target = m_d2d1_targets[target_index];
+    const Float2 target_size = (Float2 const&) target->GetSize();
     ComRef<ID2D1SolidColorBrush> brush;
-    D2D1_SIZE_F target_size = target->GetSize();
     D2D1_RECT_F layout_rect{};
 
     target->BeginDraw();
@@ -40,13 +40,13 @@ void kl::TextRaster::draw_text_batch( UINT target_index ) const
         if ( !text.format )
             continue;
 
-        const Float2 position_screen = from_ndc( text.position, { target_size.width, target_size.height } );
-        const Float2 rect_size_screen = from_ndc( text.rect_size, { target_size.width, target_size.height } );
+        const Float2 position_screen = from_ndc( text.position, target_size );
+        const Float2 rect_size_screen = target_size * text.rect_size * 0.5f;
 
         layout_rect.left = position_screen.x;
         layout_rect.top = position_screen.y;
-        layout_rect.right = layout_rect.left + ( rect_size_screen.x >= 1.f ? rect_size_screen.x : ( target_size.width - layout_rect.left ) );
-        layout_rect.bottom = layout_rect.top + ( rect_size_screen.y >= 1.f ? rect_size_screen.y : ( target_size.height - layout_rect.top ) );
+        layout_rect.right = layout_rect.left + ( rect_size_screen.x >= 1.f ? rect_size_screen.x : ( target_size.x - layout_rect.left ) );
+        layout_rect.bottom = layout_rect.top + ( rect_size_screen.y >= 1.f ? rect_size_screen.y : ( target_size.y - layout_rect.top ) );
 
         text.format->SetTextAlignment( text.hor_center ? DWRITE_TEXT_ALIGNMENT_CENTER : DWRITE_TEXT_ALIGNMENT_LEADING );
         text.format->SetParagraphAlignment( text.ver_center ? DWRITE_PARAGRAPH_ALIGNMENT_CENTER : DWRITE_PARAGRAPH_ALIGNMENT_NEAR );
@@ -75,17 +75,17 @@ void kl::TextRaster::draw_text_direct( UINT target_index, Text const& text ) con
     if ( !text.format )
         return;
 
-    auto& target = m_d2d1_targets[target_index];
-    D2D1_SIZE_F target_size = target->GetSize();
+    auto const& target = m_d2d1_targets[target_index];
+    const Float2 target_size = (Float2 const&) target->GetSize();
 
-    const Float2 position_screen = from_ndc( text.position, { target_size.width, target_size.height } );
-    const Float2 rect_size_screen = from_ndc( text.rect_size, { target_size.width, target_size.height } );
+    const Float2 position_screen = from_ndc( text.position, target_size );
+    const Float2 rect_size_screen = target_size * text.rect_size * 0.5f;
 
     D2D1_RECT_F layout_rect{};
     layout_rect.left = position_screen.x;
     layout_rect.top = position_screen.y;
-    layout_rect.right = layout_rect.left + ( rect_size_screen.x >= 1.f ? rect_size_screen.x : ( target_size.width - layout_rect.left ) );
-    layout_rect.bottom = layout_rect.top + ( rect_size_screen.y >= 1.f ? rect_size_screen.y : ( target_size.height - layout_rect.top ) );
+    layout_rect.right = layout_rect.left + ( rect_size_screen.x >= 1.f ? rect_size_screen.x : ( target_size.x - layout_rect.left ) );
+    layout_rect.bottom = layout_rect.top + ( rect_size_screen.y >= 1.f ? rect_size_screen.y : ( target_size.y - layout_rect.top ) );
 
     text.format->SetTextAlignment( text.hor_center ? DWRITE_TEXT_ALIGNMENT_CENTER : DWRITE_TEXT_ALIGNMENT_LEADING );
     text.format->SetParagraphAlignment( text.ver_center ? DWRITE_PARAGRAPH_ALIGNMENT_CENTER : DWRITE_PARAGRAPH_ALIGNMENT_NEAR );

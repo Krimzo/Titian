@@ -622,7 +622,8 @@ void titian::InterpScript::load_engine_parts()
         "middle", &kl::Mouse::middle,
         "right", &kl::Mouse::right,
         "position", sl::property( &kl::Mouse::position, &kl::Mouse::set_position ),
-        "norm_position", &kl::Mouse::norm_position,
+        "ndc_pos", &kl::Mouse::ndc_pos,
+        "ndc_pos_ar", &kl::Mouse::ndc_pos_ar,
         "scroll", &kl::Mouse::scroll,
         "hidden", sl::property( &kl::Mouse::is_hidden, &kl::Mouse::set_hidden )
     );
