@@ -27,7 +27,7 @@ struct Camera : Entity
     float width = 16.0f;
     float height = 9.0f;
     float near_plane = 0.01f;
-    float far_plane = 500.0f;
+    float far_plane = 100.0f;
     float sensitivity = 0.1f;
     float speed = 2.0f;
 

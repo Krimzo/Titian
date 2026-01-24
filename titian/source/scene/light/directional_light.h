@@ -13,12 +13,12 @@ struct DirectionalLight : Entity
     struct Defaults
     {
         static constexpr int RESOLUTION = 2560;
-        static constexpr float CASCADES[CASCADE_COUNT + 1] = { 0.0f, 0.015f, 0.05f, 0.15f, 0.5f };
+        static constexpr float CASCADE_ENDS[CASCADE_COUNT] = { 0.075f, 0.2f, 0.5f, 1.0f };
     };
 
     Float3 color{ 1.0f };
     float point_size = 0.2f;
-    float cascade_splits[std::size( Defaults::CASCADES )] = {};
+    float cascade_ends[std::size( Defaults::CASCADE_ENDS )] = {};
 
     DirectionalLight();
 
@@ -34,7 +34,8 @@ struct DirectionalLight : Entity
     dx::DepthView depth_view( int cascade_index ) const;
     dx::ShaderView shader_view( int cascade_index ) const;
 
-    Float4x4 light_matrix( Camera* camera, int cascade_index ) const;
+    Float4x4 light_matrix( Float4x4 const& inv_cam_mat ) const;
+    Float4x4 light_matrix_cascade( Camera& camera, int cascade_index ) const;
 
 private:
     int m_resolution = 0;

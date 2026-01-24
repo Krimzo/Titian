@@ -170,11 +170,11 @@ void titian::GUISectionEntityProperties::display_directional_light_special_info(
     im::ColorEdit3( "Color", &light.color.x );
     im::DragFloat( "Point Size", &light.point_size, 0.01f, 0.0f, 1.0f );
 
-    for ( int i = 0; i < (int) std::size( light.cascade_splits ); i++ )
+    for ( int i = 0; i < (int) std::size( light.cascade_ends ); i++ )
     {
-        const float min_val = ( i > 0 ) ? light.cascade_splits[i - 1] : 0.0f;
-        const float max_val = ( i < (int) std::size( light.cascade_splits ) - 1 ) ? light.cascade_splits[i + 1] : 1.0f;
-        im::DragFloat( kl::format( "Cascade ", i ).data(), light.cascade_splits + i, 1e-4f, min_val, max_val );
+        const float min_val = ( i > 0 ) ? light.cascade_ends[i - 1] : 0.0f;
+        const float max_val = ( i < (int) std::size( light.cascade_ends ) - 1 ) ? light.cascade_ends[i + 1] : 1.0f;
+        im::DragFloat( kl::format( "Cascade End ", i ).data(), light.cascade_ends + i, 1e-4f, min_val, max_val );
     }
 
     int resolution = light.resolution();

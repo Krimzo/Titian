@@ -3,7 +3,7 @@
 
 titian::DirectionalLight::DirectionalLight()
 {
-    kl::copy<float>( cascade_splits, Defaults::CASCADES, std::size( Defaults::CASCADES ) );
+    kl::copy<float>( cascade_ends, Defaults::CASCADE_ENDS, std::size( Defaults::CASCADE_ENDS ) );
     set_resolution( Defaults::RESOLUTION );
 }
 
@@ -13,7 +13,7 @@ void titian::DirectionalLight::serialize( Serializer& serializer ) const
 
     serializer.write_float_array( "color", &color.x, 3 );
     serializer.write_float( "point_size", point_size );
-    serializer.write_float_array( "cascade_splits", cascade_splits, (int) std::size( cascade_splits ) );
+    serializer.write_float_array( "cascade_ends", cascade_ends, (int) std::size( cascade_ends ) );
 
     serializer.write_int( "resolution", m_resolution );
     serializer.write_float_array( "direction", &m_direction.x, 3 );
@@ -25,7 +25,7 @@ void titian::DirectionalLight::deserialize( Serializer const& serializer )
 
     serializer.read_float_array( "color", &color.x, 3 );
     serializer.read_float( "point_size", point_size );
-    serializer.read_float_array( "cascade_splits", cascade_splits, (int) std::size( cascade_splits ) );
+    serializer.read_float_array( "cascade_ends", cascade_ends, (int) std::size( cascade_ends ) );
 
     serializer.read_int( "resolution", m_resolution );
     serializer.read_float_array( "direction", &m_direction.x, 3 );
@@ -90,15 +90,8 @@ dx::ShaderView titian::DirectionalLight::shader_view( int cascade_index ) const
     return m_cascades[cascade_index].shader_view;
 }
 
-titian::Float4x4 titian::DirectionalLight::light_matrix( Camera* camera, int cascade_index ) const
+titian::Float4x4 titian::DirectionalLight::light_matrix( Float4x4 const& inv_cam_mat ) const
 {
-    const Float2 old_camera_planes = { camera->near_plane, camera->far_plane };
-    camera->near_plane = kl::lerp( cascade_splits[cascade_index + 0], old_camera_planes.x, old_camera_planes.y );
-    camera->far_plane = kl::lerp( cascade_splits[cascade_index + 1], old_camera_planes.x, old_camera_planes.y );
-    const Float4x4 inverse_camera_matrix = kl::inverse( camera->camera_matrix() );
-    camera->near_plane = old_camera_planes.x;
-    camera->far_plane = old_camera_planes.y;
-
     Float4 frustum_corners[8] = {
         { -1, -1, 0, 1 },
         { 1, -1, 0, 1 },
@@ -111,7 +104,7 @@ titian::Float4x4 titian::DirectionalLight::light_matrix( Camera* camera, int cas
     };
     for ( auto& corner : frustum_corners )
     {
-        corner = inverse_camera_matrix * corner;
+        corner = inv_cam_mat * corner;
         corner *= 1.0f / corner.w;
     }
 
@@ -161,4 +154,15 @@ titian::Float4x4 titian::DirectionalLight::light_matrix( Camera* camera, int cas
         min_z, max_xyz.z
     );
     return light_projection_matrix * light_view_matrix;
+}
+
+titian::Float4x4 titian::DirectionalLight::light_matrix_cascade( Camera& camera, int cascade_index ) const
+{
+    const Float2 old_camera_planes = { camera.near_plane, camera.far_plane };
+    camera.near_plane = kl::lerp( cascade_index > 0 ? cascade_ends[cascade_index - 1] : 0.0f, old_camera_planes.x, old_camera_planes.y );
+    camera.far_plane = kl::lerp( cascade_ends[cascade_index], old_camera_planes.x, old_camera_planes.y );
+    const Float4x4 inv_cam_mat = kl::inverse( camera.camera_matrix() );
+    camera.near_plane = old_camera_planes.x;
+    camera.far_plane = old_camera_planes.y;
+    return light_matrix( inv_cam_mat );
 }

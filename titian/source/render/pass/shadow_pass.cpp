@@ -3,7 +3,8 @@
 
 titian::ShadowPass::ShadowPass()
     : RenderPass( "ShadowPass" )
-{}
+{
+}
 
 void titian::ShadowPass::state_package( StatePackage& package )
 {
@@ -24,7 +25,7 @@ void titian::ShadowPass::render_self( StatePackage& package )
     if ( !dir_light )
         return;
 
-    struct alignas(16) CB
+    struct alignas( 16 ) CB
     {
         Float4x4 WVP;
         float IS_SKELETAL;
@@ -41,25 +42,25 @@ void titian::ShadowPass::render_self( StatePackage& package )
     to_render.reserve( scene.entities().size() );
 
     auto schedule_entity_helper = [&]( Entity* entity )
-    {
-        if ( !entity->shadows )
-            return;
+        {
+            if ( !entity->shadows )
+                return;
 
-        RenderInfo info{};
-        info.animation = scene.helper_get_animation( entity->animation_name );
-        if ( !info.animation )
-            return;
+            RenderInfo info{};
+            info.animation = scene.helper_get_animation( entity->animation_name );
+            if ( !info.animation )
+                return;
 
-        info.mesh = info.animation->get_mesh( scene, timer.elapsed() );
-        Material* material = scene.helper_get_material( entity->material_name );
-        if ( !info.mesh || !material || material->is_transparent() )
-            return;
+            info.mesh = info.animation->get_mesh( scene, timer.elapsed() );
+            Material* material = scene.helper_get_material( entity->material_name );
+            if ( !info.mesh || !material || material->is_transparent() )
+                return;
 
-        info.cb.WVP = entity->model_matrix();
-        if ( info.animation->animation_type == AnimationType::SKELETAL )
-            info.cb.IS_SKELETAL = 1.0f;
-        to_render.push_back( info );
-    };
+            info.cb.WVP = entity->model_matrix();
+            if ( info.animation->animation_type == AnimationType::SKELETAL )
+                info.cb.IS_SKELETAL = 1.0f;
+            to_render.push_back( info );
+        };
 
     for ( auto& [_, entity] : scene.entities() )
         schedule_entity_helper( &entity );
@@ -71,7 +72,7 @@ void titian::ShadowPass::render_self( StatePackage& package )
 
     for ( int i = 0; i < DirectionalLight::CASCADE_COUNT; i++ )
     {
-        Float4x4 VP = dir_light->light_matrix( package.camera, i );
+        Float4x4 VP = dir_light->light_matrix_cascade( *package.camera, i );
         dx::DepthView shadow_map = dir_light->depth_view( i );
 
         gpu.bind_target_depth_views( {}, shadow_map );

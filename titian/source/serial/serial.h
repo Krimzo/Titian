@@ -6,7 +6,7 @@
 namespace titian
 {
 String format_serial_version( int32_t version );
-inline constexpr int32_t SERIAL_VERSION_INT = 0x23'11'2024;
+inline constexpr int32_t SERIAL_VERSION_INT = 0x24'01'2026;
 inline String SERIAL_VERSION_STR = format_serial_version( SERIAL_VERSION_INT );
 }
 

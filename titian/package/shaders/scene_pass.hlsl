@@ -6,7 +6,7 @@ struct VS_OUT
     float3 world : VS_World;
     float3 normal : VS_Normal;
     float2 uv : VS_UV;
-    float4 light_coords[SHADOW_CASCADE_COUNT] : VS_Light;
+    float4 light_ndc_coords[SHADOW_CASCADE_COUNT] : VS_Light;
 };
 
 struct PS_OUT
@@ -84,8 +84,12 @@ float get_reflectivity(float2 texture_coords)
     return 1.0f - roughness;
 }
 
-float get_pcf_shadow(Texture2D shadow_texture, float3 light_coords, int half_kernel_size)
+float get_pcf_shadow(Texture2D shadow_texture, float3 light_ndc_coords, int half_kernel_size)
 {
+    const float3 light_uvw_coords = clamp(float3(
+        light_ndc_coords.x * 0.5f + 0.5f,
+        light_ndc_coords.y * -0.5f + 0.5f,
+        light_ndc_coords.z), 0.0f, 1.0f);
     float shadow_factor = 0.0f;
     [unroll]
     for (int y = -half_kernel_size; y <= half_kernel_size; y++)
@@ -93,10 +97,9 @@ float get_pcf_shadow(Texture2D shadow_texture, float3 light_coords, int half_ker
         [unroll]
         for (int x = -half_kernel_size; x <= half_kernel_size; x++)
         {
-            float2 kernel_coords = float2(x, y) + 0.25f;
-            float2 altered_coords = light_coords.xy + kernel_coords * SHADOW_TEXTURE_TEXEL_SIZE;
+            float2 altered_coords = light_uvw_coords.xy + SHADOW_TEXTURE_TEXEL_SIZE * float2(x, y);
             float shadow_depth = shadow_texture.Sample(SHADOW_SAMPLER, altered_coords).r;
-            shadow_factor += (light_coords.z < shadow_depth) ? 0.0f : 1.0f;
+            shadow_factor += (light_uvw_coords.z > shadow_depth) ? 1.0f : 0.0f;
         }
     }
     return shadow_factor / ((half_kernel_size * 2 + 1) * (half_kernel_size * 2 + 1));
@@ -107,23 +110,24 @@ float get_shadow(VS_OUT data, int half_kernel_size)
     if (!RECEIVES_SHADOWS)
         return 0.0f;
     
-    float pcf_value;
-    float camera_z = abs(mul(float4(data.world, 1.0f), V).z);
-    if (camera_z < SHADOW_CASCADES.x)
+    const float camera_z = mul(float4(data.world, 1.0f), V).z;
+    
+    float pcf_value = 0.0f;
+    if (camera_z < SHADOW_CASCADES[0])
     {
-        pcf_value = get_pcf_shadow(SHADOW_TEXTURE0, data.light_coords[0].xyz, half_kernel_size);
+        pcf_value = get_pcf_shadow(SHADOW_TEXTURE0, data.light_ndc_coords[0].xyz, half_kernel_size);
     }
-    else if (camera_z < SHADOW_CASCADES.y)
+    else if (camera_z < SHADOW_CASCADES[1])
     {
-        pcf_value = get_pcf_shadow(SHADOW_TEXTURE1, data.light_coords[1].xyz, half_kernel_size);
+        pcf_value = get_pcf_shadow(SHADOW_TEXTURE1, data.light_ndc_coords[1].xyz, half_kernel_size);
     }
-    else if (camera_z < SHADOW_CASCADES.z)
+    else if (camera_z < SHADOW_CASCADES[2])
     {
-        pcf_value = get_pcf_shadow(SHADOW_TEXTURE2, data.light_coords[2].xyz, half_kernel_size);
+        pcf_value = get_pcf_shadow(SHADOW_TEXTURE2, data.light_ndc_coords[2].xyz, half_kernel_size);
     }
-    else
+    else if (camera_z < SHADOW_CASCADES[3])
     {
-        pcf_value = get_pcf_shadow(SHADOW_TEXTURE3, data.light_coords[3].xyz, half_kernel_size);
+        pcf_value = get_pcf_shadow(SHADOW_TEXTURE3, data.light_ndc_coords[3].xyz, half_kernel_size);
     }
     return pcf_value;
 }
@@ -146,11 +150,11 @@ VS_OUT v_shader(float3 position : KL_Position, float3 normal : KL_Normal, float2
     data.normal = mul(float4(normal, 0.0f), W).xyz;
     data.uv = uv;
 
+    [unroll]
     for (int i = 0; i < SHADOW_CASCADE_COUNT; i++)
     {
-        data.light_coords[i] = mul(float4(position, 1.0f), mul(W, LIGHT_VPs[i]));
-        data.light_coords[i].xy *= float2(0.5f, -0.5f);
-        data.light_coords[i].xy += 0.5f;
+        data.light_ndc_coords[i] = mul(float4(position, 1.0f), mul(W, LIGHT_VPs[i]));
+        data.light_ndc_coords[i] /= data.light_ndc_coords[i].w;
     }
     return data;
 }

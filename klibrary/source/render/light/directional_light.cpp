@@ -129,10 +129,10 @@ kl::Float4x4 kl::DirectionalLight::matrix( Float4x4 const& inv_cam_mat ) const
     return light_projection_matrix * light_view_matrix;
 }
 
-kl::Float4x4 kl::DirectionalLight::matrix( Camera camera, UINT cascade_index ) const
+kl::Float4x4 kl::DirectionalLight::matrix_cascade( Camera camera, UINT cascade_index ) const
 {
-    Float2 camera_planes = { camera.near_plane, camera.far_plane };
-    camera.near_plane = lerp( cascades[cascade_index + 0], camera_planes.x, camera_planes.y );
-    camera.far_plane = lerp( cascades[cascade_index + 1], camera_planes.x, camera_planes.y );
+    const Float2 camera_planes = { camera.near_plane, camera.far_plane };
+    camera.near_plane = lerp( cascade_index > 0 ? cascade_ends[cascade_index - 1] : 0.0f, camera_planes.x, camera_planes.y );
+    camera.far_plane = lerp( cascade_ends[cascade_index], camera_planes.x, camera_planes.y );
     return matrix( inverse( camera.matrix() ) );
 }

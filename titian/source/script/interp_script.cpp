@@ -478,7 +478,7 @@ void titian::InterpScript::load_engine_parts()
         "DirectionalLight",
         "color", &DirectionalLight::color,
         "point_size", &DirectionalLight::point_size,
-        "cascade_splits", &DirectionalLight::cascade_splits,
+        "cascade_ends", &DirectionalLight::cascade_ends,
         "resolution", sl::property( &DirectionalLight::resolution, &DirectionalLight::set_resolution ),
         "direction", sl::property( &DirectionalLight::direction, &DirectionalLight::set_direction ),
         "light_matrix", &DirectionalLight::light_matrix
