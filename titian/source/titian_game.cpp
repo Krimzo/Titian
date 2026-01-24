@@ -20,9 +20,9 @@ titian::TitianGame::TitianGame( StringRef const& entry_scene )
     push_layer( render_layer );
     push_layer( gui_layer );
 
-    Ref<Serializer> serializer = (classify_file( entry_scene ) == FileType::TEXT_SCENE)
-        ? (Serializer*) new TextSerializer( entry_scene, false )
-        : (Serializer*) new BinarySerializer( entry_scene, false );
+    Ref<Serializer> serializer = ( classify_file( entry_scene ) == FileType::TEXT_SCENE )
+        ? ( Serializer* ) new TextSerializer( entry_scene, false )
+        : ( Serializer* ) new BinarySerializer( entry_scene, false );
 
     if ( *serializer )
     {

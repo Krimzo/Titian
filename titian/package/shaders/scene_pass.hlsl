@@ -86,10 +86,12 @@ float get_reflectivity(float2 texture_coords)
 
 float get_pcf_shadow(Texture2D shadow_texture, float3 light_ndc_coords, int half_kernel_size)
 {
-    const float3 light_uvw_coords = clamp(float3(
+    const float3 light_uvw_coords =
+    {
         light_ndc_coords.x * 0.5f + 0.5f,
         light_ndc_coords.y * -0.5f + 0.5f,
-        light_ndc_coords.z), 0.0f, 1.0f);
+        light_ndc_coords.z,
+    };
     float shadow_factor = 0.0f;
     [unroll]
     for (int y = -half_kernel_size; y <= half_kernel_size; y++)
