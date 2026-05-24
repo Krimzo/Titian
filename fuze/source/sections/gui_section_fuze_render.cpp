@@ -3,8 +3,7 @@
 
 titian::GUISectionFuzeRender::GUISectionFuzeRender()
     : GUISection( "GUISectionFuzeRender" )
-{
-}
+{}
 
 void titian::GUISectionFuzeRender::render_gui()
 {
@@ -14,7 +13,7 @@ void titian::GUISectionFuzeRender::render_gui()
     {
         im::DragInt2( "Video Resolution", &video_resolution.x, 1.0f, 0, 1'000'000'000 );
         im::DragInt( "Video FPS", &video_fps, 1.0f, 0, 1'000'000'000 );
-        im::DragFloat( "Video Rate [mb/s]", &video_rate, 0.01f, 0, 1'000'000'000 );
+        im::DragFloat( "Video Rate [Mbps]", &video_rate, 0.01f, 0, 1'000'000'000 );
         im::DragInt( "Audio Rate [Hz]", &audio_rate, 1.0f, 0, 1'000'000'000 );
 
         im::Separator();

@@ -1,6 +1,18 @@
 #include "klibrary.h"
 
 
+void kl::AudioSample::set_mono( float value )
+{
+    left = value;
+    right = value;
+}
+
+void kl::AudioSample::adjust_volume( float amount )
+{
+    left *= amount;
+    right *= amount;
+}
+
 kl::Audio::Audio( int sample_rate )
     : sample_rate( sample_rate )
 {
@@ -18,7 +30,7 @@ kl::Audio::Audio( std::wstring_view const& path )
 
 uint64_t kl::Audio::duration_100ns() const
 {
-    return ( size() * 10'000'000 ) / sample_rate;
+    return size() * 10'000'000 / sample_rate;
 }
 
 float kl::Audio::duration_seconds() const
@@ -28,20 +40,13 @@ float kl::Audio::duration_seconds() const
 
 void kl::Audio::set_duration( float duration )
 {
-    this->resize( (size_t) ( duration * sample_rate ) );
+    resize( size_t( sample_rate * duration ) );
 }
 
-void kl::Audio::increase_volume( float amount )
+void kl::Audio::adjust_volume( float amount )
 {
     for ( auto& sample : *this )
-        sample *= amount;
-}
-
-void kl::Audio::decrease_volume( float amount )
-{
-    float inv_amount = 1.0f / amount;
-    for ( auto& sample : *this )
-        sample *= inv_amount;
+        sample.adjust_volume( amount );
 }
 
 float kl::Audio::index_to_time( int at_index ) const
@@ -54,22 +59,26 @@ int kl::Audio::time_to_index( float at_time ) const
     return int( at_time * sample_rate );
 }
 
-float kl::Audio::sample_at_index( int index ) const
+kl::AudioSample kl::Audio::sample_at_index( int index ) const
 {
     if ( index >= 0 && index < (int) size() )
         return ( *this )[index];
-    return 0.0f;
+    else
+        return {};
 }
 
-float kl::Audio::sample_at_time( float time ) const
+kl::AudioSample kl::Audio::sample_at_time( float time ) const
 {
-    int first_index = time_to_index( time );
-    int second_index = first_index + 1;
-    float first_time = index_to_time( first_index );
-    float second_time = index_to_time( second_index );
-    float first_sample = sample_at_index( first_index );
-    float second_sample = sample_at_index( second_index );
-    return lerp( unlerp( time, first_time, second_time ), first_sample, second_sample );
+    const int first_index = time_to_index( time );
+    const int second_index = first_index + 1;
+    const float first_time = index_to_time( first_index );
+    const float second_time = index_to_time( second_index );
+    const AudioSample first_sample = sample_at_index( first_index );
+    const AudioSample second_sample = sample_at_index( second_index );
+    return AudioSample{
+        .left = lerp( unlerp( time, first_time, second_time ), first_sample.left, second_sample.left ),
+        .right = lerp( unlerp( time, first_time, second_time ), first_sample.right, second_sample.right ),
+    };
 }
 
 bool kl::Audio::load_from_memory( void const* data, uint64_t byte_size )
@@ -95,26 +104,26 @@ bool kl::Audio::load_from_memory( void const* data, uint64_t byte_size )
     if ( FAILED( hr ) )
         return false;
 
-    media_type->GetUINT32( MF_MT_AUDIO_SAMPLES_PER_SECOND, (uint32_t*) &sample_rate );
+    media_type->GetUINT32( MF_MT_AUDIO_SAMPLES_PER_SECOND, (UINT32*) &sample_rate );
 
     ComRef<IMFMediaType> new_media_type;
     hr = MFCreateMediaType( &new_media_type );
     if ( FAILED( hr ) )
         return false;
 
-    new_media_type->SetGUID( MF_MT_MAJOR_TYPE, MFMediaType_Audio );
-    new_media_type->SetGUID( MF_MT_SUBTYPE, MFAudioFormat_Float );
-    new_media_type->SetUINT32( MF_MT_AUDIO_NUM_CHANNELS, 1 );
-    new_media_type->SetUINT32( MF_MT_AUDIO_BITS_PER_SAMPLE, 32 );
-    new_media_type->SetUINT32( MF_MT_AUDIO_BLOCK_ALIGNMENT, 4 );
-    new_media_type->SetUINT32( MF_MT_AUDIO_SAMPLES_PER_SECOND, sample_rate );
-    new_media_type->SetUINT32( MF_MT_AUDIO_AVG_BYTES_PER_SECOND, sample_rate * sizeof( float ) );
+    new_media_type->SetGUID( MF_MT_MAJOR_TYPE, MFMediaType_Audio ) >> verify_result;
+    new_media_type->SetGUID( MF_MT_SUBTYPE, MFAudioFormat_Float ) >> verify_result;
+    new_media_type->SetUINT32( MF_MT_AUDIO_NUM_CHANNELS, sizeof( AudioSample ) / sizeof( float ) ) >> verify_result;
+    new_media_type->SetUINT32( MF_MT_AUDIO_SAMPLES_PER_SECOND, sample_rate ) >> verify_result;
+    new_media_type->SetUINT32( MF_MT_AUDIO_BITS_PER_SAMPLE, sizeof( float ) * 8 ) >> verify_result;
+    new_media_type->SetUINT32( MF_MT_AUDIO_BLOCK_ALIGNMENT, sizeof( AudioSample ) ) >> verify_result;
+    new_media_type->SetUINT32( MF_MT_AUDIO_AVG_BYTES_PER_SECOND, sample_rate * sizeof( AudioSample ) ) >> verify_result;
 
     hr = reader->SetCurrentMediaType( MF_SOURCE_READER_FIRST_AUDIO_STREAM, nullptr, new_media_type.get() );
     if ( FAILED( hr ) )
         return false;
 
-    this->clear();
+    clear();
     while ( true )
     {
         DWORD flags = NULL;
@@ -123,19 +132,18 @@ bool kl::Audio::load_from_memory( void const* data, uint64_t byte_size )
         if ( FAILED( reader->ReadSample( MF_SOURCE_READER_FIRST_AUDIO_STREAM, NULL, nullptr, &flags, &time_stamp, &sample ) ) || !sample )
             break;
 
+        resize( time_stamp * sample_rate / 10'000'000LL );
+
         ComRef<IMFMediaBuffer> media_buffer;
         if ( FAILED( sample->ConvertToContiguousBuffer( &media_buffer ) ) || !media_buffer )
             break;
 
-        int64_t sample_index = int64_t( time_stamp * 1e-7 * sample_rate );
-        if ( sample_index >= (int64_t) this->size() )
-            this->resize( sample_index );
-
         BYTE* sample_data = nullptr;
         DWORD sample_byte_size = 0;
         media_buffer->Lock( &sample_data, nullptr, &sample_byte_size ) >> verify_result;
-        int old_size = (int) this->size();
-        this->resize( old_size + ( sample_byte_size / sizeof( float ) ) );
+
+        const int old_size = (int) size();
+        resize( old_size + ( sample_byte_size / sizeof( AudioSample ) ) );
         copy<byte>( this->data() + old_size, sample_data, sample_byte_size );
     }
     return true;
@@ -170,13 +178,9 @@ bool kl::Audio::save_to_buffer( std::string& buffer, AudioType type ) const
         return false;
 
     ComRef<IMFMediaSink> sink;
-    if ( type == AudioType::WAV )
+    if ( type == AudioType::MP3 )
     {
-        assert( false, "WAV saving is not supported yet" );
-    }
-    else if ( type == AudioType::MP3 )
-    {
-        MFCreateMP3MediaSink( byte_stream.get(), &sink );
+        MFCreateMP3MediaSink( byte_stream.get(), &sink ) >> verify_result;
     }
     else
     {
@@ -193,20 +197,20 @@ bool kl::Audio::save_to_buffer( std::string& buffer, AudioType type ) const
     if ( FAILED( hr ) )
         return false;
 
-    input_type->SetGUID( MF_MT_MAJOR_TYPE, MFMediaType_Audio );
-    input_type->SetGUID( MF_MT_SUBTYPE, MFAudioFormat_Float );
-    input_type->SetUINT32( MF_MT_AUDIO_NUM_CHANNELS, 1 );
-    input_type->SetUINT32( MF_MT_AUDIO_BITS_PER_SAMPLE, 32 );
-    input_type->SetUINT32( MF_MT_AUDIO_BLOCK_ALIGNMENT, 4 );
-    input_type->SetUINT32( MF_MT_AUDIO_SAMPLES_PER_SECOND, sample_rate );
-    input_type->SetUINT32( MF_MT_AUDIO_AVG_BYTES_PER_SECOND, sample_rate * sizeof( float ) );
+    input_type->SetGUID( MF_MT_MAJOR_TYPE, MFMediaType_Audio ) >> verify_result;
+    input_type->SetGUID( MF_MT_SUBTYPE, MFAudioFormat_Float ) >> verify_result;
+    input_type->SetUINT32( MF_MT_AUDIO_NUM_CHANNELS, sizeof( AudioSample ) / sizeof( float ) ) >> verify_result;
+    input_type->SetUINT32( MF_MT_AUDIO_SAMPLES_PER_SECOND, sample_rate ) >> verify_result;
+    input_type->SetUINT32( MF_MT_AUDIO_BITS_PER_SAMPLE, sizeof( float ) * 8 ) >> verify_result;
+    input_type->SetUINT32( MF_MT_AUDIO_BLOCK_ALIGNMENT, sizeof( AudioSample ) ) >> verify_result;
+    input_type->SetUINT32( MF_MT_AUDIO_AVG_BYTES_PER_SECOND, sample_rate * sizeof( AudioSample ) ) >> verify_result;
     writer->SetInputMediaType( 0, input_type.get(), nullptr ) >> verify_result;
 
     writer->BeginWriting() >> verify_result;
     for ( int i = 0; i < (int) size();)
     {
-        int sample_size = min( sample_rate, (int) size() - i );
-        int sample_byte_size = sample_size * sizeof( float );
+        const int sample_count = min( sample_rate, (int) size() - i );
+        const int sample_byte_size = sample_count * sizeof( AudioSample );
 
         ComRef<IMFMediaBuffer> media_buffer;
         MFCreateMemoryBuffer( sample_byte_size, &media_buffer ) >> verify_result;
@@ -221,10 +225,10 @@ bool kl::Audio::save_to_buffer( std::string& buffer, AudioType type ) const
         copy<byte>( out_buffer, data() + i, sample_byte_size );
         media_buffer->Unlock() >> verify_result;
 
-        media_sample->SetSampleDuration( ( sample_size * 10'000'000LL ) / sample_rate ) >> verify_result;
+        media_sample->SetSampleDuration( ( sample_count * 10'000'000LL ) / sample_rate ) >> verify_result;
         media_sample->SetSampleTime( ( i * 10'000'000LL ) / sample_rate ) >> verify_result;
         writer->WriteSample( 0, media_sample.get() ) >> verify_result;
-        i += sample_size;
+        i += sample_count;
     }
     writer->Finalize() >> verify_result;
 

@@ -17,6 +17,7 @@ kl::Window::Window( std::string_view const& name )
         };
     window_class.hInstance = m_instance;
     window_class.lpszClassName = name.data();
+    window_class.hCursor = LoadCursor( NULL, IDC_ARROW );
     assert( RegisterClassExA( &window_class ), "Failed to register window class" );
 
     RECT size_buffer = { 0, 0, 1600, 900 };
@@ -328,6 +329,13 @@ LRESULT CALLBACK kl::Window::window_procedure( HWND window_handle, UINT message,
             callback( position );
     }
     break;
+
+#ifdef KL_USING_IMGUI
+    case WM_SETCURSOR:
+        if ( ImGui_ImplWin32_WndProcHandler( window_handle, message, w_param, l_param ) )
+            return TRUE;
+        break;
+#endif
     }
     return DefWindowProcA( window_handle, message, w_param, l_param );
 }
@@ -337,9 +345,7 @@ void kl::Window::handle_message( MSG const& message )
 #ifdef KL_USING_IMGUI
     TranslateMessage( &message );
     if ( ImGui_ImplWin32_WndProcHandler( message.hwnd, message.message, message.wParam, message.lParam ) )
-    {
         return;
-    }
 #endif
 
     switch ( message.message )
@@ -347,9 +353,7 @@ void kl::Window::handle_message( MSG const& message )
 #ifdef KL_USING_IMGUI
     case WM_CHAR:
         if ( reinterpret_cast<short const&>( message.lParam ) > 1 )
-        {
             imgui::GetIO().AddInputCharacter( (int) message.wParam );
-        }
         break;
 #endif
 

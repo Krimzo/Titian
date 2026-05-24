@@ -70,8 +70,10 @@ void titian::FuzeRenderer::load_audio()
             media->store_audio( package );
             kl::async_for( 0, (int) audio.size(), [&]( int i )
                 {
-                    float time = audio.index_to_time( i ) - offset;
-                    audio[i] += media->out_audio.sample( time );
+                    const float time = audio.index_to_time( i ) - offset;
+                    const auto sample = media->out_audio.sample( time );
+                    audio[i].left += sample.left;
+                    audio[i].right += sample.right;
                 } );
         }
     }

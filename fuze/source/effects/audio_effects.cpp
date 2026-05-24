@@ -7,9 +7,9 @@ titian::AudioEffectVolume::AudioEffectVolume()
 void titian::AudioEffectVolume::apply( EffectPackage const& package, Audio& audio )
 {
     kl::async_for( 0, (int) audio.out_audio.size(), [&]( int i )
-    {
-        audio.out_audio[i] *= volume;
-    } );
+        {
+            audio.out_audio[i].adjust_volume( volume );
+        } );
 }
 
 titian::String titian::AudioEffectVolume::name() const

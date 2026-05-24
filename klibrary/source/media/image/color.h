@@ -70,19 +70,19 @@ std::wostream& operator<<( std::wostream& stream, YUV const& col );
 
 namespace kl::colors
 {
-inline RGB CONSOLE = { 205, 205, 205 };
-inline RGB   BLACK = { 0, 0, 0 };
-inline RGB   WHITE = { 255, 255, 255 };
-inline RGB    GRAY = { 50, 50, 50 };
-inline RGB     RED = { 255, 0, 0 };
-inline RGB   GREEN = { 0, 255, 0 };
-inline RGB    BLUE = { 0, 0, 255 };
-inline RGB    CYAN = { 30, 180, 170 };
-inline RGB  PURPLE = { 220, 0, 220 };
-inline RGB  YELLOW = { 220, 220, 0 };
-inline RGB  ORANGE = { 255, 140, 0 };
-inline RGB MAGENTA = { 155, 0, 155 };
-inline RGB CRIMSON = { 100, 0, 0 };
-inline RGB   WHEAT = { 245, 220, 180 };
-inline RGB     SKY = { 190, 245, 255 };
+inline const RGB CONSOLE = { 205, 205, 205 };
+inline const RGB   BLACK = { 0, 0, 0 };
+inline const RGB   WHITE = { 255, 255, 255 };
+inline const RGB    GRAY = { 50, 50, 50 };
+inline const RGB     RED = { 255, 0, 0 };
+inline const RGB   GREEN = { 0, 255, 0 };
+inline const RGB    BLUE = { 0, 0, 255 };
+inline const RGB    CYAN = { 30, 180, 170 };
+inline const RGB  PURPLE = { 220, 0, 220 };
+inline const RGB  YELLOW = { 220, 220, 0 };
+inline const RGB  ORANGE = { 255, 140, 0 };
+inline const RGB MAGENTA = { 155, 0, 155 };
+inline const RGB CRIMSON = { 100, 0, 0 };
+inline const RGB   WHEAT = { 245, 220, 180 };
+inline const RGB     SKY = { 190, 245, 255 };
 }

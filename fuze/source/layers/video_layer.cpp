@@ -389,8 +389,6 @@ titian::Opt<kl::VideoType> titian::VideoLayer::classify_video_format( StringRef 
 titian::Opt<kl::AudioType> titian::VideoLayer::classify_audio_format( StringRef const& path )
 {
     String extension = fs::path( path ).extension().string();
-    if ( extension == ".wav" )
-        return kl::AudioType::WAV;
     if ( extension == ".mp3" )
         return kl::AudioType::MP3;
     return std::nullopt;
@@ -418,7 +416,7 @@ void titian::VideoLayer::prepare_audio()
     m_audio.set_duration( end_time() );
     kl::async_for( 0, (int) m_audio.size(), [&]( int i )
         {
-            m_audio[i] = 0.0f;
+            m_audio[i] = {};
         } );
 
     EffectPackage package;
@@ -432,8 +430,10 @@ void titian::VideoLayer::prepare_audio()
             media->store_audio( package );
             kl::async_for( 0, (int) m_audio.size(), [&]( int i )
                 {
-                    float time = m_audio.index_to_time( i ) - offset;
-                    m_audio[i] += media->out_audio.sample( time );
+                    const float time = m_audio.index_to_time( i ) - offset;
+                    const auto sample = media->out_audio.sample( time );
+                    m_audio[i].left += sample.left;
+                    m_audio[i].right += sample.right;
                 } );
         }
     }

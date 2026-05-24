@@ -81,8 +81,7 @@ static float video_fps( ComRef<IMFSourceReader> const& reader )
 
 kl::VideoReader::VideoReader( std::string_view const& filepath, Int2 output_size, bool use_gpu )
     : VideoReader( convert_string( filepath ), output_size, use_gpu )
-{
-}
+{}
 
 kl::VideoReader::VideoReader( std::wstring_view const& filepath, Int2 output_size, bool use_gpu )
 {
@@ -158,7 +157,7 @@ bool kl::VideoReader::seek( float time ) const
     return SUCCEEDED( m_reader->SetCurrentPosition( GUID_NULL, time_var ) );
 }
 
-bool kl::VideoReader::read_frame( Image& out, int* out_index ) const
+bool kl::VideoReader::read_frame( Image& out, int* out_index, float* out_time ) const
 {
     DWORD flags = NULL;
     LONGLONG time_stamp = 0;
@@ -187,6 +186,8 @@ bool kl::VideoReader::read_frame( Image& out, int* out_index ) const
 
     if ( out_index )
         *out_index = int( time_stamp * 1e-7 * m_fps );
+    if ( out_time )
+        *out_time = float( time_stamp * 1e-7 );
 
     return true;
 }

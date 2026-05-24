@@ -22,7 +22,7 @@ struct VideoReader : NoCopy
     float fps() const;
 
     bool seek( float time ) const;
-    bool read_frame( Image& out, int* out_index = nullptr ) const;
+    bool read_frame( Image& out, int* out_index = nullptr, float* out_time = nullptr ) const;
 
 private:
     uint64_t m_byte_size = 0;

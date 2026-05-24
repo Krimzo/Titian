@@ -14,7 +14,7 @@ float titian::Audio::duration() const
     return out_audio.duration_seconds();
 }
 
-float titian::Audio::sample( float time ) const
+kl::AudioSample titian::Audio::sample( float time ) const
 {
     return out_audio.sample_at_time( time );
 }

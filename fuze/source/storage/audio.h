@@ -19,7 +19,7 @@ struct Audio : kl::NoCopy
     Audio( StringRef const& path );
 
     float duration() const;
-    float sample( float time ) const;
+    kl::AudioSample sample( float time ) const;
 
     Ref<Audio> make_copy() const;
 };
