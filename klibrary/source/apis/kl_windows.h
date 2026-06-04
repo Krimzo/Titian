@@ -18,6 +18,7 @@
 #include <wininet.h>
 #include <dwmapi.h>
 #include <conio.h>
+#include <shlobj.h>
 
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "mf.lib")
@@ -50,8 +51,7 @@
 namespace kl
 {
 struct VerifyResult
-{
-};
+{};
 
 struct ResultGrabber
 {
@@ -60,8 +60,7 @@ struct ResultGrabber
 
     ResultGrabber( HRESULT result, std::source_location location = std::source_location::current() ) noexcept
         : result( result ), location( location )
-    {
-    }
+    {}
 };
 
 inline std::string get_error_description( HRESULT h_result )

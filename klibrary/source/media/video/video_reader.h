@@ -21,6 +21,8 @@ struct VideoReader : NoCopy
     int frame_count() const;
     float fps() const;
 
+    int audio_rate() const;
+
     bool seek( float time ) const;
     bool read_frame( Image& out, int* out_index = nullptr, float* out_time = nullptr ) const;
 

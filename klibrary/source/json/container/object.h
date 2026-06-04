@@ -8,6 +8,7 @@ namespace kl::json
 struct Object : ObjectStorage, Container
 {
     Object();
+    Object( std::initializer_list<ObjectStorage::value_type> const& items );
     Object( std::string_view const& data );
 
     bool compile( std::vector<Token>::const_iterator first, std::vector<Token>::const_iterator last ) override;

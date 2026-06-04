@@ -2,8 +2,11 @@
 
 
 kl::json::Array::Array()
-{
-}
+{}
+
+kl::json::Array::Array( std::initializer_list<ArrayStorage::value_type> const& items )
+    : ArrayStorage( items )
+{}
 
 kl::json::Array::Array( std::string_view const& data )
 {

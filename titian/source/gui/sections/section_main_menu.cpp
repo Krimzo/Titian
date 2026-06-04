@@ -449,16 +449,16 @@ void titian::GUISectionMainMenu::render_gui()
 
                     RGB special_color = gui_layer.special_color;
                     Ref special_wrap = new js::Array();
-                    special_wrap->push_back( js::make_number( special_color.r ) );
-                    special_wrap->push_back( js::make_number( special_color.g ) );
-                    special_wrap->push_back( js::make_number( special_color.b ) );
+                    special_wrap->push_back( js::number( special_color.r ) );
+                    special_wrap->push_back( js::number( special_color.g ) );
+                    special_wrap->push_back( js::number( special_color.b ) );
                     _conf_data[CONF_SPECIAL_COLOR] = std::move( special_wrap );
 
                     RGB alternate_color = gui_layer.alternate_color;
                     Ref alternate_wrap = new js::Array();
-                    alternate_wrap->push_back( js::make_number( alternate_color.r ) );
-                    alternate_wrap->push_back( js::make_number( alternate_color.g ) );
-                    alternate_wrap->push_back( js::make_number( alternate_color.b ) );
+                    alternate_wrap->push_back( js::number( alternate_color.r ) );
+                    alternate_wrap->push_back( js::number( alternate_color.g ) );
+                    alternate_wrap->push_back( js::number( alternate_color.b ) );
                     _conf_data[CONF_ALTERNATE_COLOR] = std::move( alternate_wrap );
 
                     kl::write_file_string( _CONF_FILE, _conf_data.decompile() );

@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <ctime>
+#include <cwctype>
 #include <execution>
 #include <filesystem>
 #include <format>

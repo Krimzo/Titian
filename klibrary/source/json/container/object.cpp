@@ -2,8 +2,11 @@
 
 
 kl::json::Object::Object()
-{
-}
+{}
+
+kl::json::Object::Object( std::initializer_list<ObjectStorage::value_type> const& items )
+    : ObjectStorage( items )
+{}
 
 kl::json::Object::Object( std::string_view const& data )
 {

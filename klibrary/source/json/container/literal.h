@@ -46,28 +46,28 @@ private:
 
 namespace kl::json
 {
-inline Ref<Literal> make_null()
+inline Ref<Literal> null()
 {
     Ref result = new Literal();
     result->put_null();
     return result;
 }
 
-inline Ref<Literal> make_bool( bool value )
+inline Ref<Literal> boolean( bool value ) // since bool is a keyboard
 {
     Ref result = new Literal();
     result->put_bool( value );
     return result;
 }
 
-inline Ref<Literal> make_number( double value )
+inline Ref<Literal> number( double value )
 {
     Ref result = new Literal();
     result->put_number( value );
     return result;
 }
 
-inline Ref<Literal> make_string( std::string_view const& value )
+inline Ref<Literal> string( std::string_view const& value )
 {
     Ref result = new Literal();
     result->put_string( value );

@@ -93,5 +93,8 @@ bool write_file_string( std::wstring_view const& filepath, std::string_view cons
 std::optional<std::string> choose_file( bool save, std::vector<std::pair<std::string_view, std::string_view>> const& filters = { { "All Files", ".*" } }, int* out_index = nullptr );
 std::optional<std::wstring> wchoose_file( bool save, std::vector<std::pair<std::wstring_view, std::wstring_view>> const& filters = { { L"All Files", L".*" } }, int* out_index = nullptr );
 
+std::optional<std::string> choose_dir( std::string_view const& title = "Choose Directory" );
+std::optional<std::wstring> wchoose_dir( std::wstring_view const& title = L"Choose Directory" );
+
 std::vector<Vertex> parse_obj_file( fs::path const& filepath, bool flip_z = true );
 }

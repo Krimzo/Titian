@@ -17,6 +17,26 @@ std::string kl::convert_string( std::wstring_view const& source )
     return result;
 }
 
+void kl::lower_string( std::string& data )
+{
+    std::transform( data.begin(), data.end(), data.begin(), []( char c ) { return std::tolower( c ); } );
+}
+
+void kl::lower_string( std::wstring& data )
+{
+    std::transform( data.begin(), data.end(), data.begin(), []( wchar_t c ) { return std::towlower( c ); } );
+}
+
+void kl::upper_string( std::string& data )
+{
+    std::transform( data.begin(), data.end(), data.begin(), []( char c ) { return std::toupper( c ); } );
+}
+
+void kl::upper_string( std::wstring& data )
+{
+    std::transform( data.begin(), data.end(), data.begin(), []( wchar_t c ) { return std::towupper( c ); } );
+}
+
 std::vector<std::string> kl::split_string( std::string_view const& data, std::string_view const& delimiter )
 {
     std::vector<std::string> parts;

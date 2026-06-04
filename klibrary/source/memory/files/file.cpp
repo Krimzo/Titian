@@ -244,6 +244,39 @@ std::optional<std::wstring> kl::wchoose_file( bool save, std::vector<std::pair<s
     return result;
 }
 
+std::optional<std::string> kl::choose_dir( std::string_view const& title )
+{
+    if ( auto opt_dir = wchoose_dir() )
+        return convert_string( *opt_dir );
+    else
+        return std::nullopt;
+}
+
+std::optional<std::wstring> kl::wchoose_dir( std::wstring_view const& title )
+{
+    ComRef<IFileOpenDialog> file_open_dialog;
+    if ( FAILED( CoCreateInstance( CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS( &file_open_dialog ) ) ) )
+        return std::nullopt;
+
+    DWORD opts{};
+    file_open_dialog->GetOptions( &opts );
+    file_open_dialog->SetOptions( opts | FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM );
+    if ( FAILED( file_open_dialog->Show( GetConsoleWindow() ) ) )
+        return std::nullopt;
+
+    ComRef<IShellItem> shell_item;
+    if ( FAILED( file_open_dialog->GetResult( &shell_item ) ) )
+        return std::nullopt;
+
+    PWSTR result_buffer = nullptr;
+    if ( FAILED( shell_item->GetDisplayName( SIGDN_FILESYSPATH, &result_buffer ) ) )
+        return std::nullopt;
+
+    std::wstring result = result_buffer;
+    CoTaskMemFree( result_buffer );
+    return result;
+}
+
 std::vector<kl::Vertex> kl::parse_obj_file( fs::path const& filepath, bool flip_z )
 {
     std::ifstream file{ filepath };

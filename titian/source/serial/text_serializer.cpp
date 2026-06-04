@@ -6,7 +6,7 @@ titian::TextSerializer::TextSerializer( StringRef const& path, bool write )
 {
     if ( write )
     {
-        current()["serial_version"] = js::make_string( SERIAL_VERSION_STR );
+        current()["serial_version"] = js::string( SERIAL_VERSION_STR );
         m_is_valid = true;
         Logger::log( "Opened TEXT serialization file [", path, "] (", SERIAL_VERSION_STR, ")" );
     }
@@ -75,7 +75,7 @@ void titian::TextSerializer::unload_object() const
 void titian::TextSerializer::write_bool( StringRef const& name, bool value )
 {
     kl::assert( !current().contains( name ), "TextSerialzer object already contains key ", name );
-    current().emplace( name, js::make_bool( value ) );
+    current().emplace( name, js::boolean( value ) );
 }
 
 void titian::TextSerializer::read_bool( StringRef const& name, bool& value ) const
@@ -88,7 +88,7 @@ void titian::TextSerializer::read_bool( StringRef const& name, bool& value ) con
 void titian::TextSerializer::write_int( StringRef const& name, int32_t value )
 {
     kl::assert( !current().contains( name ), "TextSerialzer object already contains key ", name );
-    current().emplace( name, js::make_number( value ) );
+    current().emplace( name, js::number( value ) );
 }
 
 void titian::TextSerializer::read_int( StringRef const& name, int32_t& value ) const
@@ -101,7 +101,7 @@ void titian::TextSerializer::read_int( StringRef const& name, int32_t& value ) c
 void titian::TextSerializer::write_float( StringRef const& name, float value )
 {
     kl::assert( !current().contains( name ), "TextSerialzer object already contains key ", name );
-    current().emplace( name, js::make_number( value ) );
+    current().emplace( name, js::number( value ) );
 }
 
 void titian::TextSerializer::read_float( StringRef const& name, float& value ) const
@@ -117,7 +117,7 @@ void titian::TextSerializer::write_byte_array( StringRef const& name, void const
     byte* ptr = (byte*) data;
     Ref result = new js::Array();
     for ( int32_t i = 0; i < count; i++ )
-        result->push_back( js::make_number( ptr[i] ) );
+        result->push_back( js::number( ptr[i] ) );
     current().emplace( name, std::move( result ) );
 }
 
@@ -141,7 +141,7 @@ void titian::TextSerializer::write_int_array( StringRef const& name, int32_t con
     kl::assert( !current().contains( name ), "TextSerialzer object already contains key ", name );
     Ref result = new js::Array();
     for ( int32_t i = 0; i < count; i++ )
-        result->push_back( js::make_number( data[i] ) );
+        result->push_back( js::number( data[i] ) );
     current().emplace( name, std::move( result ) );
 }
 
@@ -164,7 +164,7 @@ void titian::TextSerializer::write_float_array( StringRef const& name, float con
     kl::assert( !current().contains( name ), "TextSerialzer object already contains key ", name );
     Ref result = new js::Array();
     for ( int32_t i = 0; i < count; i++ )
-        result->push_back( js::make_number( data[i] ) );
+        result->push_back( js::number( data[i] ) );
     current().emplace( name, std::move( result ) );
 }
 
@@ -185,7 +185,7 @@ void titian::TextSerializer::read_float_array( StringRef const& name, float* dat
 void titian::TextSerializer::write_string( StringRef const& name, StringRef const& value )
 {
     kl::assert( !current().contains( name ), "TextSerialzer object already contains key ", name );
-    current().emplace( name, js::make_string( value ) );
+    current().emplace( name, js::string( value ) );
 }
 
 void titian::TextSerializer::read_string( StringRef const& name, String& value ) const

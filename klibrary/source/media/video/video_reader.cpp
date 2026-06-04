@@ -148,6 +148,17 @@ float kl::VideoReader::fps() const
     return m_fps;
 }
 
+int kl::VideoReader::audio_rate() const
+{
+    ComRef<IMFMediaType> media_type;
+    const HRESULT hr = m_reader->GetCurrentMediaType( MF_SOURCE_READER_FIRST_AUDIO_STREAM, &media_type );
+    if ( FAILED( hr ) )
+        return -1;
+    UINT32 result = 0;
+    media_type->GetUINT32( MF_MT_AUDIO_SAMPLES_PER_SECOND, &result );
+    return (int) result;
+}
+
 bool kl::VideoReader::seek( float time ) const
 {
     PROPVARIANT time_var;

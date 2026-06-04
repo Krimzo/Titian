@@ -61,6 +61,14 @@ std::string kl::HttpResponse::compile() const
 
 std::optional<std::string> kl::probe_content_type( fs::path const& path )
 {
+    static constexpr std::pair<std::string_view, std::string_view> additional_types[] = {
+        { ".mts", "video/mts" },
+    };
+    std::string extension = path.extension().string();
+    lower_string( extension );
+    for ( auto& type : additional_types )
+        if ( type.first == extension )
+            return std::string{ type.second };
     LPWSTR mime_out = nullptr;
     if ( FAILED( FindMimeFromData( NULL, path.filename().generic_wstring().data(), NULL, 0, NULL, FMFD_URLASFILENAME, &mime_out, 0x0 ) ) )
         return std::nullopt;
