@@ -179,11 +179,8 @@ void kl::Window::set_position( Int2 position ) const
 {
     if ( fullscreened() )
         return;
-
-    RECT rect{};
-    GetWindowRect( m_window, &rect );
-    MoveWindow( m_window, position.x, position.y,
-        rect.right - rect.left, rect.bottom - rect.top, false );
+    SetWindowPos( m_window, nullptr, position.x, position.y,
+        0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE );
 }
 
 int kl::Window::width() const
@@ -217,12 +214,11 @@ void kl::Window::resize( Int2 size ) const
 {
     if ( fullscreened() )
         return;
-
-    Int2 pos = position();
+    const Int2 pos = position();
     RECT rect{ pos.x, pos.y, pos.x + size.x, pos.y + size.y };
     AdjustWindowRect( &rect, style(), false );
-    MoveWindow( m_window, pos.x, pos.y,
-        rect.right - rect.left, rect.bottom - rect.top, false );
+    SetWindowPos( m_window, nullptr, 0, 0,
+        rect.right - rect.left, rect.bottom - rect.top, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE );
 }
 
 float kl::Window::aspect_ratio() const
@@ -313,7 +309,7 @@ LRESULT CALLBACK kl::Window::window_procedure( HWND window_handle, UINT message,
     {
     case WM_SIZE:
     {
-        Int2 size = { LOWORD( l_param ), HIWORD( l_param ) };
+        const Int2 size = { LOWORD( l_param ), HIWORD( l_param ) };
         if ( size.x > 0 && size.y > 0 )
         {
             for ( auto& callback : on_resize )
@@ -324,7 +320,7 @@ LRESULT CALLBACK kl::Window::window_procedure( HWND window_handle, UINT message,
 
     case WM_MOVE:
     {
-        Int2 position = { LOWORD( l_param ), HIWORD( l_param ) };
+        const Int2 position = { LOWORD( l_param ), HIWORD( l_param ) };
         for ( auto& callback : on_move )
             callback( position );
     }

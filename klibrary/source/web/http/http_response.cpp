@@ -63,6 +63,7 @@ std::optional<std::string> kl::probe_content_type( fs::path const& path )
 {
     static constexpr std::pair<std::string_view, std::string_view> additional_types[] = {
         { ".mts", "video/mts" },
+        { ".avif", "image/avif" },
     };
     std::string extension = path.extension().string();
     lower_string( extension );

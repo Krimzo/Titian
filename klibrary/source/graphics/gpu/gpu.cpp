@@ -9,67 +9,66 @@ kl::GPU::GPU( HWND window, bool debug, bool video_support )
     if ( video_support )
         creation_flags |= D3D11_CREATE_DEVICE_VIDEO_SUPPORT;
     constexpr D3D_FEATURE_LEVEL feature_levels[2] = { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0 };
-    ComRef<IDXGISwapChain> temp_chain;
+
     ComRef<ID3D11Device> temp_device;
     ComRef<ID3D11DeviceContext> temp_context;
-    if ( window )
-    {
-        RECT client_area{};
-        GetClientRect( window, &client_area );
-        DXGI_SWAP_CHAIN_DESC chain_descriptor{};
-        chain_descriptor.BufferCount = GPU_BUFFER_COUNT;
-        chain_descriptor.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-        chain_descriptor.BufferDesc.Width = client_area.right - client_area.left;
-        chain_descriptor.BufferDesc.Height = client_area.bottom - client_area.top;
-        chain_descriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-        chain_descriptor.OutputWindow = window;
-        chain_descriptor.SampleDesc.Count = 1;
-        chain_descriptor.Windowed = true;
-        chain_descriptor.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-        chain_descriptor.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
-        D3D11CreateDeviceAndSwapChain(
-            nullptr,
-            D3D_DRIVER_TYPE_HARDWARE,
-            nullptr,
-            creation_flags,
-            feature_levels,
-            (UINT) std::size( feature_levels ),
-            D3D11_SDK_VERSION,
-            &chain_descriptor,
-            &temp_chain,
-            &temp_device,
-            nullptr,
-            &temp_context
-        ) >> verify_result;
-        temp_chain.as( m_chain ) >> verify_result;
-        temp_device.as( m_device ) >> verify_result;
-        temp_context.as( m_context ) >> verify_result;
-        assert( m_device, "Failed to create device" );
-        assert( m_context, "Failed to create device context" );
-        assert( m_chain, "Failed to create swapchain" );
-        bind_raster_state( create_raster_state( false, false ) );
-        set_viewport_min_max( { 0.0f, 1.0f } );
-        resize_to_window( window );
-    }
-    else
-    {
-        D3D11CreateDevice(
-            nullptr,
-            D3D_DRIVER_TYPE_HARDWARE,
-            nullptr,
-            creation_flags,
-            feature_levels,
-            (UINT) std::size( feature_levels ),
-            D3D11_SDK_VERSION,
-            &temp_device,
-            nullptr,
-            &temp_context
-        ) >> verify_result;
-        temp_device.as( m_device ) >> verify_result;
-        temp_context.as( m_context ) >> verify_result;
-        assert( m_device, "Failed to create device" );
-        assert( m_context, "Failed to create device context" );
-    }
+    D3D11CreateDevice(
+        nullptr,
+        D3D_DRIVER_TYPE_HARDWARE,
+        nullptr,
+        creation_flags,
+        feature_levels,
+        (UINT) std::size( feature_levels ),
+        D3D11_SDK_VERSION,
+        &temp_device,
+        nullptr,
+        &temp_context
+    ) >> verify_result;
+    temp_device.as( m_device ) >> verify_result;
+    temp_context.as( m_context ) >> verify_result;
+    assert( m_device, "Failed to create device" );
+    assert( m_context, "Failed to create device context" );
+
+    if ( !window )
+        return;
+
+    ComRef<IDXGIDevice> dxgi_device;
+    m_device.as( dxgi_device ) >> verify_result;
+
+    ComRef<IDXGIAdapter> adapter;
+    dxgi_device->GetAdapter( &adapter ) >> verify_result;
+
+    ComRef<IDXGIFactory2> factory;
+    adapter->GetParent( IID_PPV_ARGS( &factory ) ) >> verify_result;
+
+    RECT client_area{};
+    GetClientRect( window, &client_area );
+    DXGI_SWAP_CHAIN_DESC1 chain_descriptor{};
+    chain_descriptor.BufferCount = GPU_BUFFER_COUNT;
+    chain_descriptor.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    chain_descriptor.Width = client_area.right - client_area.left;
+    chain_descriptor.Height = client_area.bottom - client_area.top;
+    chain_descriptor.Scaling = DXGI_SCALING_NONE;
+    chain_descriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    chain_descriptor.SampleDesc.Count = 1;
+    chain_descriptor.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+    chain_descriptor.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
+
+    ComRef<IDXGISwapChain1> temp_chain;
+    factory->CreateSwapChainForHwnd(
+        m_device.get(),
+        window,
+        &chain_descriptor,
+        nullptr,
+        nullptr,
+        &temp_chain
+    ) >> verify_result;
+    temp_chain.as( m_chain ) >> verify_result;
+    assert( m_chain, "Failed to create swapchain" );
+
+    bind_raster_state( create_raster_state( false, false ) );
+    set_viewport_min_max( { 0.0f, 1.0f } );
+    resize_to_window( window );
 }
 
 kl::dx::Device kl::GPU::device() const
@@ -188,17 +187,19 @@ void kl::GPU::resize_internal( Int2 size, DXGI_FORMAT depth_format )
 
     for ( int i = 0; i < GPU_BUFFER_COUNT; i++ )
     {
-        dx::Texture texture = back_target_texture();
-        m_target_views[i] = create_target_view( texture, nullptr );
+        const UINT back_index = this->back_index();
+
+        const dx::Texture texture = target_texture( back_index );
+        m_target_views[back_index] = create_target_view( texture, nullptr );
 
         ComRef<IDXGISurface> surface{};
         texture->QueryInterface( IID_PPV_ARGS( &surface ) ) >> verify_result;
 
-        D2D1_RENDER_TARGET_PROPERTIES target_properties = D2D1::RenderTargetProperties(
+        const D2D1_RENDER_TARGET_PROPERTIES target_properties = D2D1::RenderTargetProperties(
             D2D1_RENDER_TARGET_TYPE_DEFAULT,
             D2D1::PixelFormat( DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED )
         );
-        m_d2d1_factory->CreateDxgiSurfaceRenderTarget( surface.get(), target_properties, &m_d2d1_targets[i] ) >> verify_result;
+        m_d2d1_factory->CreateDxgiSurfaceRenderTarget( surface.get(), target_properties, &m_d2d1_targets[back_index] ) >> verify_result;
 
         m_chain->Present( 0, NULL ) >> verify_result;
     }
