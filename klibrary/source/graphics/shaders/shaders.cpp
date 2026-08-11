@@ -3,13 +3,12 @@
 
 kl::CBuffer::CBuffer( GPU const* gpu )
     : gpu( gpu )
-{
-}
+{}
 
 void kl::CBuffer::upload( void const* data, UINT byte_size )
 {
-    assert( byte_size % 16 == 0, "CBuffers must have 16 byte alignment" );
-    UINT buffer_size = cbuffer ? gpu->buffer_size( cbuffer ) : 0;
+    assert( ( byte_size % 16 == 0 ) && "CBuffers must have 16 byte alignment" );
+    const UINT buffer_size = cbuffer ? gpu->buffer_size( cbuffer ) : 0;
     if ( byte_size != buffer_size )
         cbuffer = gpu->create_const_buffer( byte_size );
     gpu->write_to_buffer( cbuffer, data, byte_size, true );
@@ -28,8 +27,7 @@ void kl::CBuffer::bind( ShaderType type, int index ) const
 
 kl::Shaders::Shaders( GPU const* gpu )
     : CBuffer( gpu )
-{
-}
+{}
 
 kl::Shaders::operator bool() const
 {

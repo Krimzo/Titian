@@ -40,7 +40,7 @@ titian::TitianEditor::TitianEditor()
     push_layer( render_layer );
     push_layer( gui_layer );
 
-    kl::VERIFICATION_LOGGER = Logger::log<std::string_view>;
+    TITIAN_VERIFY_LOGGER = Logger::log<std::string_view>;
     Logger::set_ready();
     app_layer.timer.reset();
 }

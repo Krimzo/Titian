@@ -14,7 +14,7 @@ titian::DepthStates::DepthStates()
     descriptor.DepthFunc = D3D11_COMPARISON_LESS;
     only_compare = gpu.create_depth_state( &descriptor );
 
-    kl::assert( disabled, "Failed to inti DISABLED depth state." );
-    kl::assert( enabled, "Failed to init ENABLED depth state." );
-    kl::assert( only_compare, "Failed to init ONLY_COMPARE depth state." );
+    ti_assert( disabled, "Failed to inti DISABLED depth state." );
+    ti_assert( enabled, "Failed to init ENABLED depth state." );
+    ti_assert( only_compare, "Failed to init ONLY_COMPARE depth state." );
 }

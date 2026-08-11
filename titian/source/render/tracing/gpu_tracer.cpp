@@ -16,27 +16,27 @@ titian::GPUTracer::GPUTracer( kl::Window& window, TracingScene const& scene, Int
 
     m_target = m_gpu.create_texture( &tex_desc, nullptr );
     m_target_access_view = m_gpu.create_access_view( m_target, nullptr );
-    kl::verify( m_target, "Failed to create tracing target texture" );
-    kl::verify( m_target_access_view, "Failed to create tracing target access view" );
+    ti_verify( m_target, "Failed to create tracing target texture" );
+    ti_verify( m_target_access_view, "Failed to create tracing target access view" );
 
     m_target_copy = m_gpu.create_texture( &tex_desc, nullptr );
     m_target_copy_access_view = m_gpu.create_access_view( m_target_copy, nullptr );
     m_target_copy_shader_view = m_gpu.create_shader_view( m_target_copy, nullptr );
-    kl::verify( m_target, "Failed to create tracing target copy texture" );
-    kl::verify( m_target_copy_access_view, "Failed to create tracing target copy access view" );
-    kl::verify( m_target_copy_shader_view, "Failed to create tracing target copy shader view" );
+    ti_verify( m_target, "Failed to create tracing target copy texture" );
+    ti_verify( m_target_copy_access_view, "Failed to create tracing target copy access view" );
+    ti_verify( m_target_copy_shader_view, "Failed to create tracing target copy shader view" );
 
     m_compute_shader = m_gpu.create_compute_shader( kl::read_file_string( "package/shaders/tracing/tracing_compute.hlsl" ) );
     m_copy_shader = m_gpu.create_compute_shader( kl::read_file_string( "package/shaders/tracing/tracing_copy.hlsl" ) );
     m_display_shaders = m_gpu.create_shaders( kl::read_file_string( "package/shaders/tracing/tracing_display.hlsl" ) );
-    kl::verify( m_compute_shader, "Failed to create tracing compute shader" );
-    kl::verify( m_copy_shader, "Failed to create tracing copy shader" );
-    kl::verify( m_display_shaders, "Failed to create tracing display shaders" );
+    ti_verify( m_compute_shader, "Failed to create tracing compute shader" );
+    ti_verify( m_copy_shader, "Failed to create tracing copy shader" );
+    ti_verify( m_display_shaders, "Failed to create tracing display shaders" );
 
     m_screen_mesh = m_gpu.create_screen_mesh();
     m_linear_sampler = m_gpu.create_sampler_state( true, false );
-    kl::verify( m_screen_mesh, "Failed to create tracing screen mesh" );
-    kl::verify( m_linear_sampler, "Failed to create tracing linear sampler" );
+    ti_verify( m_screen_mesh, "Failed to create tracing screen mesh" );
+    ti_verify( m_linear_sampler, "Failed to create tracing linear sampler" );
 
     create_scene_buffers();
 }

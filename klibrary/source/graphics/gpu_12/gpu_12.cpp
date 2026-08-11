@@ -72,7 +72,7 @@ kl::dx12::SwapChain kl::GPU12::create_swap_chain( HWND window, dx12::CommandQueu
     RECT window_client_area{};
     GetClientRect( window, &window_client_area );
 
-    DXGI_SWAP_CHAIN_DESC1 descriptor{
+    const DXGI_SWAP_CHAIN_DESC1 descriptor{
         .Width = UINT( window_client_area.right - window_client_area.left ),
         .Height = UINT( window_client_area.bottom - window_client_area.top ),
         .Format = DXGI_FORMAT_B8G8R8A8_UNORM,
@@ -107,7 +107,7 @@ kl::dx12::DescriptorHeap kl::GPU12::create_descriptor_heap( D3D12_DESCRIPTOR_HEA
 
 kl::dx12::DescriptorHeap kl::GPU12::create_descriptor_heap( D3D12_DESCRIPTOR_HEAP_TYPE type, UINT count, D3D12_DESCRIPTOR_HEAP_FLAGS flags ) const
 {
-    D3D12_DESCRIPTOR_HEAP_DESC descriptor{
+    const D3D12_DESCRIPTOR_HEAP_DESC descriptor{
         .Type = type,
         .NumDescriptors = count,
         .Flags = flags,
@@ -189,14 +189,14 @@ kl::dx12::DescriptorHandle kl::GPU12::get_render_target( UINT index ) const
 
 void kl::GPU12::swap_buffers( bool v_sync ) const
 {
-    UINT interval = v_sync ? 1 : 0;
-    UINT flags = v_sync ? NULL : DXGI_PRESENT_ALLOW_TEARING;
+    const UINT interval = v_sync ? 1 : 0;
+    const UINT flags = v_sync ? NULL : DXGI_PRESENT_ALLOW_TEARING;
     m_swap_chain->Present( interval, flags ) >> verify_result;
 }
 
 kl::dx12::Resource kl::GPU12::create_commited_resource( D3D12_RESOURCE_DESC const* descriptor, D3D12_RESOURCE_STATES resource_state, D3D12_HEAP_TYPE heap_type ) const
 {
-    D3D12_HEAP_PROPERTIES heap_props{ .Type = heap_type };
+    const D3D12_HEAP_PROPERTIES heap_props{ .Type = heap_type };
     dx12::Resource resource{};
     m_device->CreateCommittedResource( &heap_props, D3D12_HEAP_FLAG_NONE, descriptor, resource_state, nullptr, IID_PPV_ARGS( &resource ) ) >> verify_result;
     return resource;
@@ -204,7 +204,7 @@ kl::dx12::Resource kl::GPU12::create_commited_resource( D3D12_RESOURCE_DESC cons
 
 kl::dx12::Resource kl::GPU12::create_commited_resource( UINT64 byte_size, D3D12_RESOURCE_STATES resource_state, D3D12_HEAP_TYPE heap_type, D3D12_RESOURCE_FLAGS flags ) const
 {
-    D3D12_RESOURCE_DESC resource_desc{
+    const D3D12_RESOURCE_DESC resource_desc{
         .Dimension = D3D12_RESOURCE_DIMENSION_BUFFER,
         .Alignment = 0,
         .Width = byte_size,
@@ -228,8 +228,8 @@ kl::dx12::Resource kl::GPU12::create_upload_buffer( void const* data, UINT byte_
 
 kl::dx12::Resource kl::GPU12::create_buffer( void const* data, UINT byte_size, D3D12_RESOURCE_STATES final_state )
 {
-    dx12::Resource buffer = create_commited_resource( byte_size, D3D12_RESOURCE_STATE_COMMON );
-    dx12::Resource upload_buffer = create_upload_buffer( data, byte_size );
+    const dx12::Resource buffer = create_commited_resource( byte_size, D3D12_RESOURCE_STATE_COMMON );
+    const dx12::Resource upload_buffer = create_upload_buffer( data, byte_size );
     execute( [&]( auto& commands )
         {
             commands.transition_resource( buffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST );
@@ -257,7 +257,7 @@ void kl::GPU12::copy( void* destination, dx12::Resource const& source, UINT byte
 
 kl::dx12::RootSignature kl::GPU12::create_root_signature( std::initializer_list<D3D12_ROOT_PARAMETER> const& parameters, std::initializer_list<D3D12_STATIC_SAMPLER_DESC> const& samplers, D3D12_ROOT_SIGNATURE_FLAGS flags ) const
 {
-    D3D12_ROOT_SIGNATURE_DESC descriptor{
+    const D3D12_ROOT_SIGNATURE_DESC descriptor{
         .NumParameters = (UINT) parameters.size(),
         .pParameters = parameters.begin(),
         .NumStaticSamplers = (UINT) samplers.size(),
@@ -266,13 +266,7 @@ kl::dx12::RootSignature kl::GPU12::create_root_signature( std::initializer_list<
     };
     dx12::Blob signature_blob{};
     dx12::Blob error_blob{};
-    HRESULT result = D3D12SerializeRootSignature( &descriptor, D3D_ROOT_SIGNATURE_VERSION_1, &signature_blob, &error_blob );
-    if ( FAILED( result ) )
-    {
-        if ( char const* error_msg = (char*) error_blob->GetBufferPointer() )
-            verify( false, error_msg );
-        result >> verify_result;
-    }
+    D3D12SerializeRootSignature( &descriptor, D3D_ROOT_SIGNATURE_VERSION_1, &signature_blob, &error_blob ) >> verify_result;
     dx12::RootSignature root_signature{};
     m_device->CreateRootSignature( NULL, signature_blob->GetBufferPointer(), signature_blob->GetBufferSize(), IID_PPV_ARGS( &root_signature ) ) >> verify_result;
     return root_signature;
@@ -285,9 +279,9 @@ kl::dx12::AccelerationStructure kl::GPU12::create_acceleration_structure( dx12::
     if ( update_scratch_size )
         *update_scratch_size = prebuild_info.UpdateScratchDataSizeInBytes;
 
-    dx12::Resource scratch = create_commited_resource( prebuild_info.ScratchDataSizeInBytes, D3D12_RESOURCE_STATE_COMMON, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS );
-    dx12::Resource acceleration_structure = create_commited_resource( prebuild_info.ResultDataMaxSizeInBytes, D3D12_RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS );
-    D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC acceleration_descriptor{
+    const dx12::Resource scratch = create_commited_resource( prebuild_info.ScratchDataSizeInBytes, D3D12_RESOURCE_STATE_COMMON, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS );
+    const dx12::Resource acceleration_structure = create_commited_resource( prebuild_info.ResultDataMaxSizeInBytes, D3D12_RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS );
+    const D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC acceleration_descriptor{
         .DestAccelerationStructureData = acceleration_structure->GetGPUVirtualAddress(),
         .Inputs = inputs,
         .ScratchAccelerationStructureData = scratch->GetGPUVirtualAddress(),
@@ -302,7 +296,7 @@ kl::dx12::AccelerationStructure kl::GPU12::create_acceleration_structure( dx12::
 
 kl::dx12::AccelerationStructure kl::GPU12::create_blas( D3D12_RAYTRACING_GEOMETRY_DESC const* geometry_descriptor, UINT64* update_scratch_size )
 {
-    D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs{
+    const D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs{
         .Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL,
         .Flags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE,
         .NumDescs = 1,
@@ -314,8 +308,8 @@ kl::dx12::AccelerationStructure kl::GPU12::create_blas( D3D12_RAYTRACING_GEOMETR
 
 kl::dx12::AccelerationStructure kl::GPU12::create_triangle_blas( dx12::Resource const& vertex_buffer, UINT vertex_stride )
 {
-    UINT vertex_count = UINT( vertex_buffer->GetDesc().Width / vertex_stride );
-    D3D12_RAYTRACING_GEOMETRY_DESC geometry_descriptor{
+    const UINT vertex_count = UINT( vertex_buffer->GetDesc().Width / vertex_stride );
+    const D3D12_RAYTRACING_GEOMETRY_DESC geometry_descriptor{
         .Type = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES,
         .Flags = D3D12_RAYTRACING_GEOMETRY_FLAG_OPAQUE,
         .Triangles{
@@ -336,8 +330,8 @@ kl::dx12::AccelerationStructure kl::GPU12::create_triangle_blas( dx12::Resource 
 
 kl::dx12::AccelerationStructure kl::GPU12::create_tlas( dx12::Resource const& instances, UINT64* update_scratch_size )
 {
-    UINT instance_count = UINT( instances->GetDesc().Width / sizeof( D3D12_RAYTRACING_INSTANCE_DESC ) );
-    D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs{
+    const UINT instance_count = UINT( instances->GetDesc().Width / sizeof( D3D12_RAYTRACING_INSTANCE_DESC ) );
+    const D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS inputs{
         .Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL,
         .Flags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_ALLOW_UPDATE,
         .NumDescs = instance_count,
@@ -347,10 +341,10 @@ kl::dx12::AccelerationStructure kl::GPU12::create_tlas( dx12::Resource const& in
     return create_acceleration_structure( inputs, update_scratch_size );
 }
 
-kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline( dx12::RootSignature const& root_signature, std::string_view const& shader_source, std::vector<std::pair<std::string, DXGI_FORMAT>> const& input_layout_parts, D3D12_PRIMITIVE_TOPOLOGY_TYPE primitive_topology ) const
+kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline( dx12::RootSignature const& root_signature, std::string_view const& shader_source, std::vector<std::pair<std::string, DXGI_FORMAT>> const& input_layout_parts, D3D12_PRIMITIVE_TOPOLOGY_TYPE primitive_topology, std::string* out_vs_error, std::string* out_ps_error ) const
 {
-    CompiledShader vertex_shader = compile_vertex_shader( shader_source );
-    CompiledShader pixel_shader = compile_pixel_shader( shader_source );
+    const CompiledShader vertex_shader = compile_vertex_shader( shader_source, out_vs_error );
+    const CompiledShader pixel_shader = compile_pixel_shader( shader_source, out_ps_error );
 
     std::vector<dx12::InputLayout> input_layout{};
     input_layout.reserve( input_layout_parts.size() );
@@ -367,7 +361,7 @@ kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline( dx12::
         dx12::SubobjectPair<D3D12_PIPELINE_STATE_SUBOBJECT_TYPE_RENDER_TARGET_FORMATS, D3D12_RT_FORMAT_ARRAY> render_target_formats;
     };
 
-    RasterPipeline pipeline{
+    const RasterPipeline pipeline{
         .root_signature = root_signature.get(),
         .input_layout = D3D12_INPUT_LAYOUT_DESC{
             .pInputElementDescs = input_layout.data(),
@@ -392,7 +386,7 @@ kl::dx12::PipelineState kl::GPU12::create_default_rasterization_pipeline( dx12::
 
 kl::dx12::StateObject kl::GPU12::create_default_raytracing_pipeline( std::string_view const& compiled_shaders, dx12::RootSignature const& root_signature, UINT max_recursion_depth, UINT max_attribute_size, UINT max_payload_size ) const
 {
-    D3D12_DXIL_LIBRARY_DESC dxil_lib{
+    const D3D12_DXIL_LIBRARY_DESC dxil_lib{
         .DXILLibrary{
             .pShaderBytecode = (void*) compiled_shaders.data(),
             .BytecodeLength = (SIZE_T) compiled_shaders.size(),
@@ -403,25 +397,25 @@ kl::dx12::StateObject kl::GPU12::create_default_raytracing_pipeline( std::string
         .Type = D3D12_HIT_GROUP_TYPE_TRIANGLES,
         .ClosestHitShaderImport = L"rt_h_shader",
     };
-    D3D12_RAYTRACING_SHADER_CONFIG shader_config{
+    const D3D12_RAYTRACING_SHADER_CONFIG shader_config{
         .MaxPayloadSizeInBytes = max_payload_size,
         .MaxAttributeSizeInBytes = max_attribute_size,
     };
-    D3D12_GLOBAL_ROOT_SIGNATURE global_signature{
+    const D3D12_GLOBAL_ROOT_SIGNATURE global_signature{
         root_signature.get(),
     };
-    D3D12_RAYTRACING_PIPELINE_CONFIG pipeline_config{
+    const D3D12_RAYTRACING_PIPELINE_CONFIG pipeline_config{
         .MaxTraceRecursionDepth = max_recursion_depth,
     };
 
-    D3D12_STATE_SUBOBJECT subobjects[5] = {
+    const D3D12_STATE_SUBOBJECT subobjects[5] = {
         { .Type = D3D12_STATE_SUBOBJECT_TYPE_DXIL_LIBRARY, .pDesc = &dxil_lib },
         { .Type = D3D12_STATE_SUBOBJECT_TYPE_HIT_GROUP, .pDesc = &hit_group },
         { .Type = D3D12_STATE_SUBOBJECT_TYPE_RAYTRACING_SHADER_CONFIG, .pDesc = &shader_config },
         { .Type = D3D12_STATE_SUBOBJECT_TYPE_GLOBAL_ROOT_SIGNATURE, .pDesc = &global_signature },
         { .Type = D3D12_STATE_SUBOBJECT_TYPE_RAYTRACING_PIPELINE_CONFIG, .pDesc = &pipeline_config },
     };
-    D3D12_STATE_OBJECT_DESC object_descriptor{
+    const D3D12_STATE_OBJECT_DESC object_descriptor{
         .Type = D3D12_STATE_OBJECT_TYPE_RAYTRACING_PIPELINE,
         .NumSubobjects = (UINT) std::size( subobjects ),
         .pSubobjects = subobjects,

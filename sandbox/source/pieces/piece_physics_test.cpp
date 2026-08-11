@@ -47,13 +47,13 @@ void titian::SandboxPiecePhysicsTest::setup_objects( Scene& scene )
     Ref color_texture = new Texture();
     Ref normal_texture = new Texture();
 
-    auto create_texture = [&]( Texture& texture, str filename )
-    {
-        texture.image.load_from_file( filename );
-        texture.reload_as_2D();
-        texture.create_shader_view( nullptr );
-        kl::assert( texture.shader_view, "Failed to init texture: ", filename );
-    };
+    const auto create_texture = [&]( Texture& texture, str filename )
+        {
+            texture.image.load_from_file( filename );
+            texture.reload_as_2D();
+            texture.create_shader_view( nullptr );
+            ti_assert( texture.shader_view, "Failed to init texture: ", filename );
+        };
 
     WorkQueue queue;
     queue.add_task( [&] { create_texture( *color_texture, "package/textures/dogo.png" ); } );
@@ -90,7 +90,7 @@ void titian::SandboxPiecePhysicsTest::setup_objects( Scene& scene )
             box->set_gravity( true );
             box->set_mass( 2.5f );
             box->set_rotation( kl::random::gen_float3( 360.0f ) );
-            box->set_position( { (half_size - x) * 2.25f, 15.0f + (z - size / 2) * 1.5f, -25.0f + (half_size - z) * 2.25f } );
+            box->set_position( { ( half_size - x ) * 2.25f, 15.0f + ( z - size / 2 ) * 1.5f, -25.0f + ( half_size - z ) * 2.25f } );
             box->set_box_collider( Float3{ 1.0f } );
 
             scene.add_entity( entity_name, box );

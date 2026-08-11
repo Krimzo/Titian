@@ -4,8 +4,9 @@
 const int kl::ImageInit::_init = []() -> int
     {
         ULONG_PTR token = NULL;
-        Gdiplus::GdiplusStartupInput startup_input = {};
-        kl::assert( GdiplusStartup( &token, &startup_input, nullptr ) == Gdiplus::Status::Ok, "Failed to init GDIPlus" );
+        Gdiplus::GdiplusStartupInput startup_input{};
+        const Gdiplus::Status startup_status = GdiplusStartup( &token, &startup_input, nullptr );
+        assert( ( startup_status == Gdiplus::Status::Ok ) && "Failed to init GDIPlus" );
         return {};
     }( );
 
@@ -348,12 +349,12 @@ bool kl::Image::load_from_memory( void const* data, uint64_t byte_size )
 {
     ComRef<IStream> stream{ SHCreateMemStream( reinterpret_cast<BYTE const*>( data ), UINT( byte_size ) ) };
     Gdiplus::Bitmap loaded_bitmap( stream.get() );
-    if ( !verify( !loaded_bitmap.GetLastStatus(), "Failed to decode image" ) )
+    if ( loaded_bitmap.GetLastStatus() )
         return false;
 
     Gdiplus::BitmapData bitmap_data{};
     loaded_bitmap.LockBits( nullptr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bitmap_data );
-    if ( !verify( bitmap_data.Scan0, "Failed to load image data" ) )
+    if ( !bitmap_data.Scan0 )
         return false;
 
     resize( { int( bitmap_data.Width ), int( bitmap_data.Height ) } );
@@ -407,12 +408,12 @@ bool kl::Image::save_to_buffer( std::string& buffer, ImageType type ) const
     }
 
     Gdiplus::Bitmap bitmap( m_size.x, m_size.y, PixelFormat32bppARGB );
-    if ( !verify( !bitmap.GetLastStatus(), "Failed to create bitmap" ) )
+    if ( bitmap.GetLastStatus() )
         return false;
 
     Gdiplus::BitmapData bitmap_data{};
     bitmap.LockBits( nullptr, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bitmap_data );
-    if ( !verify( bitmap_data.Scan0, "Failed to lock bitmap bits" ) )
+    if ( !bitmap_data.Scan0 )
         return false;
 
     copy<RGB>( bitmap_data.Scan0, m_pixels.data(), m_pixels.size() );

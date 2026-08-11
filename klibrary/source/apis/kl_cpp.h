@@ -5,6 +5,7 @@
 #include <array>
 #include <atomic>
 #include <bitset>
+#include <cassert>
 #include <cstdint>
 #include <cstdlib>
 #include <ctime>

@@ -3,10 +3,10 @@
 
 kl::RGB::operator kl::YUV() const
 {
-    float R = r * to_float_rgb();
-    float G = g * to_float_rgb();
-    float B = b * to_float_rgb();
-    float y = R * 0.299f + G * 0.587f + B * 0.114f;
+    const float R = r * to_float_rgb();
+    const float G = g * to_float_rgb();
+    const float B = b * to_float_rgb();
+    const float y = R * 0.299f + G * 0.587f + B * 0.114f;
     float u = R * -0.14713f + G * -0.28886f + B * 0.436f;
     float v = R * 0.615f + G * -0.51499f + B * -0.10001f;
     u = ( u + 0.436f ) * ( 1.0f / 0.872f );
@@ -72,12 +72,12 @@ char kl::RGB::ascii() const
 
 kl::YUV::operator kl::RGB() const
 {
-    float Y = y;
-    float U = u * 0.872f - 0.436f;
-    float V = v * 1.23f - 0.615f;
-    float r = Y + 1.13983f * V;
-    float g = Y - 0.39465f * U - 0.58060f * V;
-    float b = Y + 2.03211f * U;
+    const float Y = y;
+    const float U = u * 0.872f - 0.436f;
+    const float V = v * 1.23f - 0.615f;
+    const float r = Y + 1.13983f * V;
+    const float g = Y - 0.39465f * U - 0.58060f * V;
+    const float b = Y + 2.03211f * U;
     return {
         (byte) clamp( r * 255.0f, 0.0f, 255.0f ),
         (byte) clamp( g * 255.0f, 0.0f, 255.0f ),

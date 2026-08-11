@@ -12,8 +12,7 @@ struct GPU : DeviceHolder, ContextHolder, ShaderCompiler, TextRaster
 {
     inline GPU( HWND window )
         : GPU( window, IS_DEBUG, false )
-    {
-    }
+    {}
 
     virtual ~GPU() noexcept
     {
@@ -50,11 +49,11 @@ struct GPU : DeviceHolder, ContextHolder, ShaderCompiler, TextRaster
 
     void bind_internal_views() const;
 
-    VertexShader create_vertex_shader( std::string_view const& shader_source ) const;
-    PixelShader create_pixel_shader( std::string_view const& shader_source ) const;
-    GeometryShader create_geometry_shader( std::string_view const& shader_source ) const;
-    ComputeShader create_compute_shader( std::string_view const& shader_source ) const;
-    Shaders create_shaders( std::string_view const& shader_sources, std::vector<dx::LayoutDescriptor> const& descriptors = {} ) const;
+    VertexShader create_vertex_shader( std::string_view const& shader_source, std::string* out_error = nullptr ) const;
+    PixelShader create_pixel_shader( std::string_view const& shader_source, std::string* out_error = nullptr ) const;
+    GeometryShader create_geometry_shader( std::string_view const& shader_source, std::string* out_error = nullptr ) const;
+    ComputeShader create_compute_shader( std::string_view const& shader_source, std::string* out_error = nullptr ) const;
+    Shaders create_shaders( std::string_view const& shader_sources, std::initializer_list<dx::LayoutDescriptor> const& descriptors = {}, std::string* out_vs_error = nullptr, std::string* out_ps_error = nullptr ) const;
 
     void draw_text_batch() const;
     void draw_text_direct( Text const& text ) const;
@@ -76,7 +75,6 @@ struct VideoGPU : GPU
 {
     inline VideoGPU()
         : GPU( nullptr, IS_DEBUG, true )
-    {
-    }
+    {}
 };
 }

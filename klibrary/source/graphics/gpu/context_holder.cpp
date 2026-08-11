@@ -163,7 +163,7 @@ void kl::ContextHolder::read_from_texture( void* cpu_buffer, dx::Texture const& 
     m_context->Map( gpu_buffer.get(), 0, D3D11_MAP_READ, NULL, &mapped_subresource ) >> verify_result;
     BYTE* out_ptr = (BYTE*) cpu_buffer;
     BYTE const* in_ptr = (BYTE*) mapped_subresource.pData;
-    Int2 min_size = min( texture_size( gpu_buffer ), cpu_size );
+    const Int2 min_size = min( texture_size( gpu_buffer ), cpu_size );
     for ( int y = 0; y < min_size.y; y++ )
     {
         BYTE* out_addr = out_ptr + ( y * cpu_size.x * element_size );
@@ -179,7 +179,7 @@ void kl::ContextHolder::write_to_texture( dx::Texture const& gpu_buffer, void co
     m_context->Map( gpu_buffer.get(), 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, NULL, &mapped_subresource ) >> verify_result;
     BYTE* out_ptr = (BYTE*) mapped_subresource.pData;
     BYTE const* in_ptr = (BYTE*) cpu_buffer;
-    Int2 min_size = min( texture_size( gpu_buffer ), cpu_size );
+    const Int2 min_size = min( texture_size( gpu_buffer ), cpu_size );
     for ( int y = 0; y < min_size.y; y++ )
     {
         BYTE* out_addr = out_ptr + ( y * mapped_subresource.RowPitch );

@@ -4,23 +4,23 @@
 namespace titian
 {
 static int _pin_init = []
-{
-    using namespace ne;
-    register_pin_style<FlowNode*>( 255, 255, 255, 3 );
-    register_pin_style<void*>( 190, 85, 200, 4 );
-    register_pin_style<bool>( 190, 90, 90, 4 );
-    register_pin_style<int32_t>( 75, 155, 215, 4 );
-    register_pin_style<Int2>( 75, 135, 215, 5 );
-    register_pin_style<float>( 75, 200, 175, 4 );
-    register_pin_style<Float2>( 75, 200, 155, 5 );
-    register_pin_style<Float3>( 75, 200, 135, 6 );
-    register_pin_style<Float4>( 75, 200, 115, 7 );
-    register_pin_style<Complex>( 115, 70, 190, 4 );
-    register_pin_style<Quaternion>( 100, 75, 205, 5 );
-    register_pin_style<RGB>( 185, 175, 70, 4 );
-    register_pin_style<String>( 215, 155, 135, 4 );
-    return 0;
-}();
+    {
+        using namespace ne;
+        register_pin_style<FlowNode*>( 255, 255, 255, 3 );
+        register_pin_style<void*>( 190, 85, 200, 4 );
+        register_pin_style<bool>( 190, 90, 90, 4 );
+        register_pin_style<int32_t>( 75, 155, 215, 4 );
+        register_pin_style<Int2>( 75, 135, 215, 5 );
+        register_pin_style<float>( 75, 200, 175, 4 );
+        register_pin_style<Float2>( 75, 200, 155, 5 );
+        register_pin_style<Float3>( 75, 200, 135, 6 );
+        register_pin_style<Float4>( 75, 200, 115, 7 );
+        register_pin_style<Complex>( 115, 70, 190, 4 );
+        register_pin_style<Quaternion>( 100, 75, 205, 5 );
+        register_pin_style<RGB>( 185, 175, 70, 4 );
+        register_pin_style<String>( 215, 155, 135, 4 );
+        return 0;
+    }( );
 }
 
 namespace titian
@@ -28,7 +28,7 @@ namespace titian
 template<typename T>
 static constexpr Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>> serial_generator_helper()
 {
-    return { typeid(T).name(), [=]( NodeScript* script ) { return std::shared_ptr<T>( new T( script, {} ) ); } };
+    return { typeid( T ).name(), [=]( NodeScript* script ) { return std::shared_ptr<T>( new T( script, {} ) ); } };
 }
 
 static Vector<Pair<String, Func<std::shared_ptr<Node>( NodeScript* )>>> serial_node_generators
@@ -587,30 +587,30 @@ titian::NodeScript::NodeScript()
         ->behaviour( [this]() { return AppLayer::get().timer.delta(); } );
 
     on_collision_node->addOUT<void*>( "attacker_entity" )
-        ->behaviour( [this]() { return *reinterpret_cast<Entity**>(on_collision_node->user_data + 0); } );
+        ->behaviour( [this]() { return *reinterpret_cast<Entity**>( on_collision_node->user_data + 0 ); } );
     on_collision_node->addOUT<void*>( "target_entity" )
-        ->behaviour( [this]() { return *reinterpret_cast<Entity**>(on_collision_node->user_data + 8); } );
+        ->behaviour( [this]() { return *reinterpret_cast<Entity**>( on_collision_node->user_data + 8 ); } );
 
     m_editor.rightClickPopUpContent( [this]( ne::BaseNode* node )
-    {
-        if ( !node )
         {
-            new_node_popup();
-            return;
-        }
-        if ( node == on_start_node ||
-            node == on_update_node ||
-            node == on_collision_node ||
-            node == on_ui_node )
-        {
-            return;
-        }
-        if ( im::Selectable( "Destroy" ) )
-        {
-            node->destroy();
-            im::CloseCurrentPopup();
-        }
-    } );
+            if ( !node )
+            {
+                new_node_popup();
+                return;
+            }
+            if ( node == on_start_node ||
+                node == on_update_node ||
+                node == on_collision_node ||
+                node == on_ui_node )
+            {
+                return;
+            }
+            if ( im::Selectable( "Destroy" ) )
+            {
+                node->destroy();
+                im::CloseCurrentPopup();
+            }
+        } );
     m_editor.setScroll( { 150.f, 450.f } );
 }
 
@@ -627,9 +627,9 @@ void titian::NodeScript::serialize( Serializer& serializer ) const
     int counter = 0;
     for ( auto& [uid, node] : nodes )
     {
-        auto node_ptr = dynamic_cast<Node*>(node.get());
+        auto node_ptr = dynamic_cast<Node*>( node.get() );
         if ( !node_ptr )
-            kl::assert( false, "Each node type needs to be derived from Node!" );
+            ti_assert( false, "Each node type needs to be derived from Node!" );
 
         if ( node_ptr == on_start_node ||
             node_ptr == on_update_node ||
@@ -703,7 +703,7 @@ void titian::NodeScript::deserialize( Serializer const& serializer )
                 break;
             }
         }
-        kl::assert( (bool) node, "Unknown node type: ", node_type );
+        ti_assert( (bool) node, "Unknown node type: ", node_type );
 
         node->deserialize( serializer );
         node->setUID( uid );
@@ -765,8 +765,8 @@ void titian::NodeScript::call_update( Scene& scene )
 
 void titian::NodeScript::call_collision( Scene& scene, Entity& attacker, Entity& target )
 {
-    *reinterpret_cast<Entity**>(on_collision_node->user_data + 0) = &attacker;
-    *reinterpret_cast<Entity**>(on_collision_node->user_data + 8) = &target;
+    *reinterpret_cast<Entity**>( on_collision_node->user_data + 0 ) = &attacker;
+    *reinterpret_cast<Entity**>( on_collision_node->user_data + 8 ) = &target;
     on_collision_node->call();
 }
 

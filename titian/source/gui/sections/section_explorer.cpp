@@ -5,12 +5,12 @@ titian::GUISectionExplorer::GUISectionExplorer()
     : GUISection( "GUISectionExplorer" )
 {
     auto create_texture = [&]( Texture& texture, str filename )
-    {
-        texture.image.load_from_file( filename );
-        texture.reload_as_2D();
-        texture.create_shader_view();
-        kl::assert( texture.shader_view, "Failed to init texture: ", filename );
-    };
+        {
+            texture.image.load_from_file( filename );
+            texture.reload_as_2D();
+            texture.create_shader_view();
+            ti_assert( texture.shader_view, "Failed to init texture: ", filename );
+        };
 
     WorkQueue queue;
     queue.add_task( [&] { create_texture( default_file_texture, "package/textures/default_file.png" ); } );
@@ -33,7 +33,7 @@ void titian::GUISectionExplorer::render_gui()
     try
     {
         for ( auto& entry : fs::directory_iterator( m_path ) )
-            (entry.is_directory() ? directories : files).push_back( entry );
+            ( entry.is_directory() ? directories : files ).push_back( entry );
     }
     catch ( ... )
     {
@@ -122,7 +122,7 @@ void titian::GUISectionExplorer::render_gui()
         float icon_size = m_icon_size * gui_layer.dpi_scaling;
         float window_width = im::GetWindowWidth() - im::GetStyle().WindowPadding.x * 2.0f;
         float icon_width = icon_size + im::GetStyle().CellPadding.x * 2.0f;
-        int column_count = kl::max( (int) (window_width / icon_width), 1 );
+        int column_count = kl::max( (int) ( window_width / icon_width ), 1 );
 
         im::Text( m_path.data() );
         im::Separator();

@@ -4,13 +4,13 @@
 titian::GUISectionHelper::GUISectionHelper()
     : GUISection( "GUISectionHelper" )
 {
-    auto create_texture = [&]( Texture& texture, str filename )
-    {
-        texture.image.load_from_file( filename );
-        texture.reload_as_2D();
-        texture.create_shader_view();
-        kl::assert( texture.shader_view, "Failed to init texture: ", filename );
-    };
+    const auto create_texture = [&]( Texture& texture, str filename )
+        {
+            texture.image.load_from_file( filename );
+            texture.reload_as_2D();
+            texture.create_shader_view();
+            ti_assert( texture.shader_view, "Failed to init texture: ", filename );
+        };
 
     WorkQueue queue;
     queue.add_task( [&] { create_texture( basic_entity_texture, "package/textures/scene_file.png" ); } );
@@ -20,17 +20,17 @@ titian::GUISectionHelper::GUISectionHelper()
 
 void titian::GUISectionHelper::render_gui()
 {
-    TimeBomb _ = bench_time_bomb();
+    const TimeBomb _ = bench_time_bomb();
 
     GUILayer const& gui_layer = GUILayer::get();
     Scene const& scene = GameLayer::get().scene();
 
     if ( im::Begin( "Helper", nullptr, ImGuiWindowFlags_NoScrollbar ) )
     {
-        float icon_size = m_icon_size * gui_layer.dpi_scaling;
-        float window_width = im::GetWindowWidth() - im::GetStyle().WindowPadding.x * 2.0f;
-        float icon_width = icon_size + im::GetStyle().CellPadding.x * 2.0f;
-        int column_count = kl::max( (int) (window_width / icon_width), 1 );
+        const float icon_size = m_icon_size * gui_layer.dpi_scaling;
+        const float window_width = im::GetWindowWidth() - im::GetStyle().WindowPadding.x * 2.0f;
+        const float icon_width = icon_size + im::GetStyle().CellPadding.x * 2.0f;
+        const int column_count = kl::max( (int) ( window_width / icon_width ), 1 );
 
         im::PushStyleVar( ImGuiStyleVar_CellPadding, ImVec2{ 0.0f, 4.0f } );
 

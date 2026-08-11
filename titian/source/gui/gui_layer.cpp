@@ -80,8 +80,8 @@ void titian::GUILayer::reload_fonts()
     roboto_font_small = atlas->AddFontFromFileTTF( "package/fonts/Roboto.ttf", 18 * dpi_scaling );
     roboto_font_large = atlas->AddFontFromFileTTF( "package/fonts/Roboto.ttf", 22 * dpi_scaling );
 
-    kl::assert( roboto_font_small, "Failed to load ROBOTO_SMALL font" );
-    kl::assert( roboto_font_large, "Failed to load ROBOTO_LARGE font" );
+    ti_assert( roboto_font_small, "Failed to load ROBOTO_SMALL font" );
+    ti_assert( roboto_font_large, "Failed to load ROBOTO_LARGE font" );
 
     atlas->Build();
 }

@@ -118,7 +118,9 @@ struct GPU12 : NoCopy, ShaderCompiler
         { "KL_Normal", DXGI_FORMAT_R32G32B32_FLOAT },
         { "KL_UV", DXGI_FORMAT_R32G32_FLOAT },
         },
-        D3D12_PRIMITIVE_TOPOLOGY_TYPE primitive_topology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE
+        D3D12_PRIMITIVE_TOPOLOGY_TYPE primitive_topology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
+        std::string* out_vs_error = nullptr,
+        std::string* out_ps_error = nullptr
         ) const;
 
     dx12::StateObject create_default_raytracing_pipeline(

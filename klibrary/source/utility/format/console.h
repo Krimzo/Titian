@@ -34,34 +34,6 @@ void progress_bar( std::string_view const& message, int output_y, float percenta
 
 namespace kl
 {
-inline std::function<void( std::string_view const& )> VERIFICATION_LOGGER = []( std::string_view const& message )
-    {
-        console::set_enabled( true );
-        print( colors::ORANGE, "Failed to verify: ", message, colors::CONSOLE );
-    };
-
-template<typename... Args>
-constexpr bool verify( bool value, Args&&... args )
-{
-    if ( !value )
-        VERIFICATION_LOGGER( format( args... ) );
-    return value;
-}
-
-template<typename... Args>
-constexpr void assert( bool value, Args&&... args )
-{
-    if ( !value )
-    {
-        std::string message = format( args... );
-        MessageBoxA( nullptr, message.data(), "Assertion failed!", MB_ICONERROR | MB_OK );
-        exit( EXIT_FAILURE );
-    }
-}
-}
-
-namespace kl
-{
 struct ConsoleInit
 {
     static const HANDLE _init;

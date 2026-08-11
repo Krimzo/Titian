@@ -4,7 +4,7 @@
 kl::MouseHook::MouseHook()
 {
     m_hook = SetWindowsHookExA( WH_MOUSE_LL, LowLevelMouseProc, NULL, 0 );
-    assert( m_hook, "Failed to set mouse hook" );
+    assert( m_hook && "Failed to set mouse hook" );
     m_self = this;
 }
 

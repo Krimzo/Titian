@@ -9,7 +9,7 @@ titian::FrameHandler::FrameHandler()
         {
             String source = kl::read_file_string( kl::format( "package/shaders/", filename ) );
             shader = gpu.create_compute_shader( source ).shader;
-            kl::assert( shader, "Failed to init [", filename, "] shaders" );
+            ti_assert( shader, "Failed to init [", filename, "] shaders" );
         };
 
     WorkQueue queue;

@@ -9,7 +9,7 @@ titian::GUISectionMainMenu::GUISectionMainMenu()
             texture.image.load_from_file( filename );
             texture.reload_as_2D();
             texture.create_shader_view( nullptr );
-            kl::assert( texture.shader_view, "Failed to init texture: ", filename );
+            ti_assert( texture.shader_view, "Failed to init texture: ", filename );
         };
 
     WorkQueue queue;

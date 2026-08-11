@@ -25,8 +25,8 @@ titian::RasterStates::RasterStates()
     solid_cull = gpu.create_raster_state( false, true, true );
     shadow = gpu.create_raster_state( &shadow_raster_descriptor );
 
-    kl::assert( wireframe, "Failed to init WIREFRAME raster state." );
-    kl::assert( solid, "Failed to init SOLID raster state." );
-    kl::assert( solid_cull, "Failed to init SOLID_CULL raster state." );
-    kl::assert( shadow, "Failed to init SHADOW raster state." );
+    ti_assert( wireframe, "Failed to init WIREFRAME raster state." );
+    ti_assert( solid, "Failed to init SOLID raster state." );
+    ti_assert( solid_cull, "Failed to init SOLID_CULL raster state." );
+    ti_assert( shadow, "Failed to init SHADOW raster state." );
 }

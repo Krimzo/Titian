@@ -13,10 +13,10 @@ titian::Animation::Animation()
     descriptor.StructureByteStride = sizeof( Float4x4 );
     descriptor.ByteWidth = descriptor.StructureByteStride * MAX_BONE_COUNT;
     m_matrices_buffer = gpu.create_buffer( &descriptor, nullptr );
-    kl::assert( m_matrices_buffer, "Failed to create animation matrices buffer" );
+    ti_assert( m_matrices_buffer, "Failed to create animation matrices buffer" );
 
     m_matrices_view = gpu.create_shader_view( m_matrices_buffer, nullptr );
-    kl::assert( m_matrices_view, "Failed to create animation matrices shader view" );
+    ti_assert( m_matrices_view, "Failed to create animation matrices shader view" );
 }
 
 void titian::Animation::serialize( Serializer& serializer ) const
@@ -77,14 +77,14 @@ void titian::Animation::serialize( Serializer& serializer ) const
     Func<void( AnimationNode& )> rec_helper;
     counter = 0;
     rec_helper = [&]( AnimationNode const& node )
-    {
-        serializer.push_object( kl::format( "__node_", counter++ ) );
-        serializer.write_int( "channel_index", node.channel_index );
-        serializer.write_int( "children_size", (int32_t) node.children.size() );
-        for ( auto& child : node.children )
-            rec_helper( *child );
-        serializer.pop_object();
-    };
+        {
+            serializer.push_object( kl::format( "__node_", counter++ ) );
+            serializer.write_int( "channel_index", node.channel_index );
+            serializer.write_int( "children_size", (int32_t) node.children.size() );
+            for ( auto& child : node.children )
+                rec_helper( *child );
+            serializer.pop_object();
+        };
 
     serializer.write_bool( "has_data", (bool) animation_root );
     if ( animation_root )
@@ -159,19 +159,19 @@ void titian::Animation::deserialize( Serializer const& serializer )
     Func<void( AnimationNode& )> rec_helper;
     counter = 0;
     rec_helper = [&]( AnimationNode& node )
-    {
-        serializer.load_object( kl::format( "__node_", counter++ ) );
-        serializer.read_int( "channel_index", node.channel_index );
-        int32_t children_size = 0;
-        serializer.read_int( "children_size", children_size );
-        node.children.resize( children_size );
-        for ( auto& child : node.children )
         {
-            child = new AnimationNode();
-            rec_helper( *child );
-        }
-        serializer.unload_object();
-    };
+            serializer.load_object( kl::format( "__node_", counter++ ) );
+            serializer.read_int( "channel_index", node.channel_index );
+            int32_t children_size = 0;
+            serializer.read_int( "children_size", children_size );
+            node.children.resize( children_size );
+            for ( auto& child : node.children )
+            {
+                child = new AnimationNode();
+                rec_helper( *child );
+            }
+            serializer.unload_object();
+        };
 
     bool has_data = false;
     serializer.read_bool( "has_data", has_data );
@@ -208,7 +208,7 @@ void titian::Animation::update( Scene const& scene, float current_time )
     if ( !mesh || !mesh->skeleton_root )
         return;
 
-    float tps = (ticks_per_second > 0) ? ticks_per_second : 30.0f;
+    float tps = ( ticks_per_second > 0 ) ? ticks_per_second : 30.0f;
     float time_in_ticks = current_time * tps;
     float animation_time_in_ticks = fmod( time_in_ticks, duration_in_ticks );
     m_global_inverse_transform = kl::inverse( mesh->skeleton_root->transformation );
@@ -235,18 +235,18 @@ titian::Ref<titian::Animation> titian::Animation::clone() const
 
     Func<void( AnimationNode*, AnimationNode* )> rec_helper;
     rec_helper = [&]( AnimationNode* source, AnimationNode* target )
-    {
-        if ( !source || !target )
-            return;
-
-        target->channel_index = source->channel_index;
-        target->children.resize( source->children.size() );
-        for ( int i = 0; i < source->children.size(); i++ )
         {
-            target->children[i] = new AnimationNode();
-            rec_helper( &source->children[i], &target->children[i] );
-        }
-    };
+            if ( !source || !target )
+                return;
+
+            target->channel_index = source->channel_index;
+            target->children.resize( source->children.size() );
+            for ( int i = 0; i < source->children.size(); i++ )
+            {
+                target->children[i] = new AnimationNode();
+                rec_helper( &source->children[i], &target->children[i] );
+            }
+        };
     rec_helper( &animation_root, &animation->animation_root );
 
     return animation;
@@ -310,8 +310,8 @@ aiVector3f titian::Animation::interpolate_translation( float time_ticks, int cha
     }
     size_t next_key_index = key_index + 1;
 
-    float t = (time_ticks - keys[key_index].first) / (keys[next_key_index].first - keys[key_index].first);
-    return keys[key_index].second * (1.0f - t) + keys[next_key_index].second * t;
+    float t = ( time_ticks - keys[key_index].first ) / ( keys[next_key_index].first - keys[key_index].first );
+    return keys[key_index].second * ( 1.0f - t ) + keys[next_key_index].second * t;
 }
 
 aiQuaternion titian::Animation::interpolate_rotation( float time_ticks, int channel_index ) const
@@ -333,7 +333,7 @@ aiQuaternion titian::Animation::interpolate_rotation( float time_ticks, int chan
     }
     size_t next_key_index = key_index + 1;
 
-    float t = (time_ticks - keys[key_index].first) / (keys[next_key_index].first - keys[key_index].first);
+    float t = ( time_ticks - keys[key_index].first ) / ( keys[next_key_index].first - keys[key_index].first );
     aiQuaternion result;
     aiQuaternion::Interpolate( result, keys[key_index].second, keys[next_key_index].second, t );
     return result.Normalize();
@@ -358,8 +358,8 @@ aiVector3f titian::Animation::interpolate_scaling( float time_ticks, int channel
     }
     size_t next_key_index = key_index + 1;
 
-    float t = (time_ticks - keys[key_index].first) / (keys[next_key_index].first - keys[key_index].first);
-    return keys[key_index].second * (1.0f - t) + keys[next_key_index].second * t;
+    float t = ( time_ticks - keys[key_index].first ) / ( keys[next_key_index].first - keys[key_index].first );
+    return keys[key_index].second * ( 1.0f - t ) + keys[next_key_index].second * t;
 }
 
 titian::Float4x4 titian::Animation::make_animation_matrix( aiVector3f const& translation, aiQuaternion const& rotation, aiVector3f const& scaling ) const

@@ -1,15 +1,15 @@
 #include "klibrary.h"
 
 
-std::string kl::download_website( std::string_view const& url, int buffer_size )
+std::optional<std::string> kl::download_website( std::string_view const& url, int buffer_size )
 {
     Internet connection = InternetOpenA( "Browser", INTERNET_OPEN_TYPE_PRECONFIG, nullptr, nullptr, 0 );
-    if ( !verify( connection, "Failed to open a browser" ) )
-        return {};
+    if ( !connection )
+        return std::nullopt;
 
     Internet address = InternetOpenUrlA( connection, url.data(), nullptr, 0, INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_KEEP_CONNECTION, 0 );
-    if ( !verify( address, "Failed to open url \"", url, "\"" ) )
-        return {};
+    if ( !address )
+        return std::nullopt;
 
     std::string data;
     std::vector<byte> buffer( buffer_size );

@@ -4,7 +4,7 @@
 kl::KeyboardHook::KeyboardHook()
 {
     m_hook = SetWindowsHookExA( WH_KEYBOARD_LL, LowLevelKeyboardProc, NULL, 0 );
-    assert( m_hook, "Failed to set keyboard hook" );
+    assert( m_hook && "Failed to set keyboard hook" );
     m_self = this;
 }
 

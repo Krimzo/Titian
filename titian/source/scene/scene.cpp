@@ -47,7 +47,7 @@ void titian::Scene::serialize( Serializer& serializer ) const
     serializer.write_string( "main_ambient_light_name", main_ambient_light_name );
     serializer.write_string( "main_directional_light_name", main_directional_light_name );
 
-    auto write_map = [&]<typename T>(StringRef const& map_name, StringMap<Ref<T>> const& data)
+    auto write_map = [&]<typename T>( StringRef const& map_name, StringMap<Ref<T>> const& data )
     {
         serializer.push_object( map_name );
         serializer.write_int( "data_size", (int32_t) data.size() );
@@ -78,7 +78,7 @@ void titian::Scene::deserialize( Serializer const& serializer )
     serializer.read_string( "main_ambient_light_name", main_ambient_light_name );
     serializer.read_string( "main_directional_light_name", main_directional_light_name );
 
-    auto read_map = [&]<typename T>(StringRef const& map_name, StringMap<Ref<T>>&data, Func<T * ()> const& provider)
+    auto read_map = [&]<typename T>( StringRef const& map_name, StringMap<Ref<T>>&data, Func<T * ( )> const& provider )
     {
         serializer.load_object( map_name );
         int32_t data_size = 0;
@@ -123,21 +123,21 @@ void titian::Scene::deserialize( Serializer const& serializer )
             String script_type;
             serializer.read_string( "script_type", script_type );
             Ref<Script> script;
-            if ( typeid(InterpScript).name() == script_type )
+            if ( typeid( InterpScript ).name() == script_type )
             {
                 script = new InterpScript();
             }
-            else if ( typeid(NodeScript).name() == script_type )
+            else if ( typeid( NodeScript ).name() == script_type )
             {
                 script = new NodeScript();
             }
-            else if ( typeid(NativeScript).name() == script_type )
+            else if ( typeid( NativeScript ).name() == script_type )
             {
                 script = new NativeScript();
             }
             else
             {
-                kl::assert( false, "Unknown script type: ", script_type );
+                ti_assert( false, "Unknown script type: ", script_type );
             }
             script->deserialize( serializer );
             serializer.unload_object();
@@ -158,25 +158,25 @@ void titian::Scene::deserialize( Serializer const& serializer )
             String entity_type;
             serializer.read_string( "entity_type", entity_type );
             Ref<Entity> entity;
-            if ( typeid(Entity).name() == entity_type )
+            if ( typeid( Entity ).name() == entity_type )
             {
                 entity = new Entity();
             }
-            else if ( typeid(Camera).name() == entity_type )
+            else if ( typeid( Camera ).name() == entity_type )
             {
                 entity = new Camera();
             }
-            else if ( typeid(AmbientLight).name() == entity_type )
+            else if ( typeid( AmbientLight ).name() == entity_type )
             {
                 entity = new AmbientLight();
             }
-            else if ( typeid(DirectionalLight).name() == entity_type )
+            else if ( typeid( DirectionalLight ).name() == entity_type )
             {
                 entity = new DirectionalLight();
             }
             else
             {
-                kl::assert( false, "Unknown entity type: ", entity_type );
+                ti_assert( false, "Unknown entity type: ", entity_type );
             }
             entity->deserialize( serializer );
             serializer.unload_object();
@@ -597,26 +597,26 @@ titian::Ref<titian::Mesh> titian::Scene::load_assimp_mesh( aiScene const& scene,
 
         Func<Ref<SkeletonNode>( aiNode* )> recur_helper;
         recur_helper = [&]( aiNode* node )
-        {
-            Ref<SkeletonNode> skeleton_node = new SkeletonNode();
-            skeleton_node->bone_index = -1;
-            for ( uint32_t i = 0; i < mesh.mNumBones; i++ )
             {
-                if ( mesh.mBones[i]->mName == node->mName )
+                Ref<SkeletonNode> skeleton_node = new SkeletonNode();
+                skeleton_node->bone_index = -1;
+                for ( uint32_t i = 0; i < mesh.mNumBones; i++ )
                 {
-                    skeleton_node->bone_index = i;
-                    break;
+                    if ( mesh.mBones[i]->mName == node->mName )
+                    {
+                        skeleton_node->bone_index = i;
+                        break;
+                    }
                 }
-            }
-            for ( int i = 0; i < 4; i++ )
-                kl::copy<float>( &skeleton_node->transformation( 0, i ), node->mTransformation[i], 4 );
+                for ( int i = 0; i < 4; i++ )
+                    kl::copy<float>( &skeleton_node->transformation( 0, i ), node->mTransformation[i], 4 );
 
-            skeleton_node->children.resize( node->mNumChildren );
-            for ( uint32_t i = 0; i < node->mNumChildren; i++ )
-                skeleton_node->children[i] = recur_helper( node->mChildren[i] );
+                skeleton_node->children.resize( node->mNumChildren );
+                for ( uint32_t i = 0; i < node->mNumChildren; i++ )
+                    skeleton_node->children[i] = recur_helper( node->mChildren[i] );
 
-            return skeleton_node;
-        };
+                return skeleton_node;
+            };
         mesh_object->skeleton_root = recur_helper( scene.mRootNode );
     }
 
@@ -675,24 +675,24 @@ titian::Ref<titian::Animation> titian::Scene::load_assimp_animation( aiScene con
 
     Func<Ref<AnimationNode>( aiNode* )> recur_helper;
     recur_helper = [&]( aiNode* node )
-    {
-        Ref<AnimationNode> animation_node = new AnimationNode();
-        animation_node->channel_index = -1;
-        for ( uint32_t i = 0; i < animation.mNumChannels; i++ )
         {
-            if ( animation.mChannels[i]->mNodeName == node->mName )
+            Ref<AnimationNode> animation_node = new AnimationNode();
+            animation_node->channel_index = -1;
+            for ( uint32_t i = 0; i < animation.mNumChannels; i++ )
             {
-                animation_node->channel_index = i;
-                break;
+                if ( animation.mChannels[i]->mNodeName == node->mName )
+                {
+                    animation_node->channel_index = i;
+                    break;
+                }
             }
-        }
 
-        animation_node->children.resize( node->mNumChildren );
-        for ( uint32_t i = 0; i < node->mNumChildren; i++ )
-            animation_node->children[i] = recur_helper( node->mChildren[i] );
+            animation_node->children.resize( node->mNumChildren );
+            for ( uint32_t i = 0; i < node->mNumChildren; i++ )
+                animation_node->children[i] = recur_helper( node->mChildren[i] );
 
-        return animation_node;
-    };
+            return animation_node;
+        };
     animation_object->animation_root = recur_helper( scene.mRootNode );
 
     return animation_object;

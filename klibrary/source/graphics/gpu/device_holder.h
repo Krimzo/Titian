@@ -59,7 +59,7 @@ struct DeviceHolder : NoCopy
     dx::ShaderView create_shader_view( dx::Resource const& resource, dx::ShaderViewDescriptor const* descriptor ) const;
     dx::AccessView create_access_view( dx::Resource const& resource, dx::AccessViewDescriptor const* descriptor ) const;
 
-    dx::InputLayout create_input_layout( CompiledShader const& compiled_shader, std::vector<dx::LayoutDescriptor> const& descriptors = {} ) const;
+    dx::InputLayout create_input_layout( CompiledShader const& compiled_shader, std::initializer_list<dx::LayoutDescriptor> const& descriptors = {} ) const;
 
     dx::VertexShader create_vertex_shader( CompiledShader const& compiled_shader ) const;
     dx::GeometryShader create_geometry_shader( CompiledShader const& compiled_shader ) const;

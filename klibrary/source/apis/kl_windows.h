@@ -1,5 +1,7 @@
 #pragma once
 
+#define NOMINMAX
+
 #include <ws2tcpip.h>
 #include <mfapi.h>
 #include <mfidl.h>
@@ -81,18 +83,20 @@ inline std::string get_error_description( HRESULT h_result )
     return description;
 }
 
-inline void operator>>( ResultGrabber const& grabber, VerifyResult const& token )
-{
-    if ( FAILED( grabber.result ) )
+inline std::function<void( ResultGrabber const& )> VERIFY_RESULT_FAIL_FUNC = []( ResultGrabber const& grabber ) -> void
     {
-        std::string message = std::format( "Result error: {}\n{}({})",
+        const std::string message = std::format( "Result error: {}\n{}({})",
             get_error_description( grabber.result ),
             grabber.location.file_name(),
-            grabber.location.line()
-        );
-        MessageBoxA( nullptr, message.data(), "Assertion failed!", MB_ICONERROR | MB_OK );
+            grabber.location.line() );
+        MessageBoxA( nullptr, message.data(), "Failed to verify HRESULT!", MB_ICONERROR | MB_OK );
         std::abort();
-    }
+    };
+
+inline void operator>>( ResultGrabber const& grabber, VerifyResult const& _ )
+{
+    if ( FAILED( grabber.result ) )
+        VERIFY_RESULT_FAIL_FUNC( grabber );
 }
 
 inline constexpr VerifyResult verify_result{};

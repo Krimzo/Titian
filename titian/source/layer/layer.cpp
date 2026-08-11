@@ -12,5 +12,5 @@ titian::Layer::Layer( StringRef const& name )
 
 void titian::Layer::panic() const
 {
-    kl::assert( false, "Layer 0x", std::hex, size_t( this ), " panicked" );
+    ti_assert( false, "Layer 0x", std::hex, size_t( this ), " panicked" );
 }

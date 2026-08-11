@@ -18,15 +18,16 @@ kl::Window::Window( std::string_view const& name )
     window_class.hInstance = m_instance;
     window_class.lpszClassName = name.data();
     window_class.hCursor = LoadCursor( NULL, IDC_ARROW );
-    assert( RegisterClassExA( &window_class ), "Failed to register window class" );
+    const ATOM register_atom = RegisterClassExA( &window_class );
+    assert( register_atom && "Failed to register window class" );
 
     RECT size_buffer = { 0, 0, 1600, 900 };
     AdjustWindowRect( &size_buffer, WS_OVERLAPPEDWINDOW, false );
-    Int2 new_size = { size_buffer.right - size_buffer.left, size_buffer.bottom - size_buffer.top };
-    Int2 new_position = SCREEN_SIZE / 2 - new_size / 2;
+    const Int2 new_size = { size_buffer.right - size_buffer.left, size_buffer.bottom - size_buffer.top };
+    const Int2 new_position = SCREEN_SIZE / 2 - new_size / 2;
 
     m_window = CreateWindowExA( NULL, name.data(), name.data(), WS_OVERLAPPEDWINDOW, new_position.x, new_position.y, new_size.x, new_size.y, nullptr, nullptr, m_instance, nullptr );
-    assert( m_window, "Failed to create window" );
+    assert( m_window && "Failed to create window" );
     m_device_context = GetDC( m_window );
 
     SetWindowLongPtrA( m_window, GWLP_USERDATA, (LONG_PTR) this );

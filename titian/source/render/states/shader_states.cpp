@@ -5,14 +5,14 @@ titian::ShaderStates::ShaderStates()
 {
     kl::GPU& gpu = AppLayer::get().gpu;
 
-    auto load_shaders = [&]( kl::Shaders& shader, str filename, Vector<dx::LayoutDescriptor> const& layout_descriptors )
+    const auto load_shaders = [&]( kl::Shaders& shader, str filename, std::initializer_list<dx::LayoutDescriptor> const& layout_descriptors )
         {
-            String source = kl::read_file_string( kl::format( "package/shaders/", filename ) );
+            const String source = kl::read_file_string( kl::format( "package/shaders/", filename ) );
             shader = gpu.create_shaders( source, layout_descriptors );
-            kl::assert( shader, "Failed to init [", filename, "] shaders" );
+            ti_assert( shader, "Failed to init [", filename, "] shaders" );
         };
 
-    Vector<dx::LayoutDescriptor> vertex_layout_descriptors = {
+    const std::initializer_list<dx::LayoutDescriptor> vertex_layout_descriptors = {
         { "KL_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "KL_Normal", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "KL_UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
