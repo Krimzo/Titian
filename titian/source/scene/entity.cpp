@@ -27,7 +27,7 @@ titian::Entity::~Entity()
 
 void titian::Entity::serialize( Serializer& serializer ) const
 {
-    serializer.write_string( "entity_type", typeid(*this).name() );
+    serializer.write_string( "entity_type", typeid( *this ).name() );
 
     serializer.write_bool( "shadows", shadows );
     serializer.write_string( "animation_name", animation_name );
@@ -394,11 +394,12 @@ void titian::Entity::set_collider_geometry( px::PxGeometry const& geometry )
         shape->setLocalPose( old_transform );
 }
 
-px::PxGeometry const* titian::Entity::collider_geometry() const
+titian::Opt<px::PxGeometryHolder> titian::Entity::collider_geometry() const
 {
     if ( auto shape = collider_shape() )
-        return &shape->getGeometry().any();
-    return nullptr;
+        return shape->getGeometry();
+    else
+        return std::nullopt;
 }
 
 void titian::Entity::set_box_collider( Float3 const& scale )
@@ -459,7 +460,7 @@ titian::Ref<titian::Entity> titian::Entity::clone() const
     entity->set_collider_rotation( collider_rotation() );
     entity->set_collider_offset( collider_offset() );
     if ( auto geometry = collider_geometry() )
-        entity->set_collider_geometry( *geometry );
+        entity->set_collider_geometry( geometry->any() );
     return entity;
 }
 

@@ -3,8 +3,7 @@
 
 titian::GUISectionEntityProperties::GUISectionEntityProperties()
     : GUISection( "GUISectionEntityProperties" )
-{
-}
+{}
 
 void titian::GUISectionEntityProperties::render_gui()
 {
@@ -333,7 +332,7 @@ void titian::GUISectionEntityProperties::edit_entity_collider( Scene& scene, Ent
         {
         case px::PxGeometryType::Enum::eBOX:
         {
-            px::PxBoxGeometry box_geometry = *static_cast<px::PxBoxGeometry const*>( geometry );
+            px::PxBoxGeometry box_geometry = geometry->box();
             box_geometry.halfExtents *= 2.0f;
             if ( im::DragFloat3( "Box Size", &box_geometry.halfExtents.x, 0.1f, 0.0f, 1e9f ) )
             {
@@ -344,14 +343,14 @@ void titian::GUISectionEntityProperties::edit_entity_collider( Scene& scene, Ent
         }
         case px::PxGeometryType::Enum::eSPHERE:
         {
-            px::PxSphereGeometry sphere_geometry = *static_cast<px::PxSphereGeometry const*>( geometry );
+            px::PxSphereGeometry sphere_geometry = geometry->sphere();
             if ( im::DragFloat( "Sphere Radius", &sphere_geometry.radius, 0.1f, 0.0f, 1e9f ) )
                 entity.set_collider_geometry( sphere_geometry );
             break;
         }
         case px::PxGeometryType::Enum::eCAPSULE:
         {
-            px::PxCapsuleGeometry capsule_geometry = *static_cast<px::PxCapsuleGeometry const*>( geometry );
+            px::PxCapsuleGeometry capsule_geometry = geometry->capsule();
             if ( im::DragFloat( "Capsule Radius", &capsule_geometry.radius, 0.5f, 0.0f, 1e9f ) )
                 entity.set_collider_geometry( capsule_geometry );
 

@@ -9,7 +9,7 @@
 
 namespace kl
 {
-inline Int2 SCREEN_SIZE = {
+inline const Int2 SCREEN_SIZE = {
     GetSystemMetrics( SM_CXSCREEN ),
     GetSystemMetrics( SM_CYSCREEN ),
 };

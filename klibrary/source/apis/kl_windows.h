@@ -65,16 +65,14 @@ struct ResultGrabber
     {}
 };
 
-inline std::string get_error_description( HRESULT h_result )
+inline std::wstring get_error_description( HRESULT h_result )
 {
-    char* description_buffer = nullptr;
-    FormatMessageA(
+    LPWSTR description_buffer = nullptr;
+    FormatMessageW(
         FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
         nullptr, h_result, MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ),
-        reinterpret_cast<LPSTR>( &description_buffer ), 0, nullptr
-    );
-
-    std::string description{};
+        (LPWSTR) &description_buffer, 0, nullptr );
+    std::wstring description{};
     if ( description_buffer )
     {
         description = description_buffer;
@@ -85,12 +83,10 @@ inline std::string get_error_description( HRESULT h_result )
 
 inline std::function<void( ResultGrabber const& )> VERIFY_RESULT_FAIL_FUNC = []( ResultGrabber const& grabber ) -> void
     {
-        const std::string message = std::format( "Result error: {}\n{}({})",
-            get_error_description( grabber.result ),
-            grabber.location.file_name(),
-            grabber.location.line() );
-        MessageBoxA( nullptr, message.data(), "Failed to verify HRESULT!", MB_ICONERROR | MB_OK );
-        std::abort();
+        std::wstringstream stream;
+        stream << grabber.location.file_name() << "(" << grabber.location.line() << ")\n" << get_error_description( grabber.result );
+        MessageBoxW( nullptr, stream.str().data(), L"Failed to verify HRESULT.", MB_ICONERROR | MB_OK );
+        std::exit( grabber.result );
     };
 
 inline void operator>>( ResultGrabber const& grabber, VerifyResult const& _ )
