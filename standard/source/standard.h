@@ -7,6 +7,11 @@
 #include "sol.hpp"
 #include "klibrary.h"
 
+#include <ImGuizmo.h>
+#include <imgui_memory_editor.h>
+#include <imgui_text_editor.h>
+#include <ImNodeFlow.h>
+
 namespace fs = std::filesystem;
 namespace dx = kl::dx;
 namespace js = kl::json;

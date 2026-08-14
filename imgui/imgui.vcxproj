@@ -20,9 +20,9 @@
     <ClCompile Include="source\imgui_canvas.cpp" />
     <ClCompile Include="source\imgui_demo.cpp" />
     <ClCompile Include="source\imgui_draw.cpp" />
-    <ClCompile Include="source\imgui_impl_dx11.cpp" />
-    <ClCompile Include="source\imgui_impl_win32.cpp" />
-    <ClCompile Include="source\imgui_stdlib.cpp" />
+    <ClCompile Include="source\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="source\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="source\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="source\imgui_tables.cpp" />
     <ClCompile Include="source\imgui_text_editor.cpp" />
     <ClCompile Include="source\imgui_widgets.cpp" />
@@ -42,11 +42,11 @@
     <ClInclude Include="source\imgui_bezier_math.h" />
     <ClInclude Include="source\imgui_canvas.h" />
     <ClInclude Include="source\imgui_extra_math.h" />
-    <ClInclude Include="source\imgui_impl_dx11.h" />
-    <ClInclude Include="source\imgui_impl_win32.h" />
+    <ClInclude Include="source\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="source\backends\imgui_impl_win32.h" />
     <ClInclude Include="source\imgui_internal.h" />
     <ClInclude Include="source\imgui_memory_editor.h" />
-    <ClInclude Include="source\imgui_stdlib.h" />
+    <ClInclude Include="source\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="source\imgui_text_editor.h" />
     <ClInclude Include="source\ImNodeFlow.h" />
     <ClInclude Include="source\ImSequencer.h" />
@@ -104,7 +104,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)lua\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)lua\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\klibrary\klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -127,7 +127,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)lua\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp\source\;$(SolutionDir)lua\source\;$(SolutionDir)fuze\source\;$(SolutionDir)imgui\source\;$(SolutionDir)klibrary\klibrary\klibrary\source\;$(SolutionDir)main\source\;$(SolutionDir)mmodule\source\;$(SolutionDir)packager\source\;$(SolutionDir)physx\source\;$(SolutionDir)sandbox\source\;$(SolutionDir)standard\source\;$(SolutionDir)titian\source\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
