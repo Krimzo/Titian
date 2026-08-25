@@ -5,11 +5,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <Jolt/Jolt.h>
-#include <Jolt/RegisterTypes.h>
-#include <Jolt/Core/Factory.h>
-#include <Jolt/Physics/PhysicsSystem.h>
-#include <Jolt/Physics/Body/BodyCreationSettings.h>
+#include <PxPhysicsAPI.h>
 #include <sol/sol.hpp>
 #include <klibrary.h>
 #include <imgui_memory_editor.h>
@@ -21,7 +17,7 @@ namespace fs = std::filesystem;
 namespace dx = kl::dx;
 namespace js = kl::json;
 namespace im = imgui;
-namespace jl = JPH;
+namespace px = physx;
 namespace sl = sol;
 namespace as = Assimp;
 
