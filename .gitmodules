@@ -1,3 +1,15 @@
-[submodule "klibrary/klibrary"]
-	path = klibrary/klibrary
+[submodule "assimp"]
+	path = assimp
+	url = https://github.com/assimp/assimp
+[submodule "lua"]
+	path = lua
+	url = https://github.com/lua/lua
+[submodule "sol2"]
+	path = sol2
+	url = https://github.com/ThePhd/sol2
+[submodule "jolt"]
+	path = jolt
+	url = https://github.com/jrouwe/JoltPhysics
+[submodule "klibrary"]
+	path = klibrary
 	url = https://github.com/Krimzo/KLibrary
