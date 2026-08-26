@@ -1,0 +1,5 @@
+---
+BasedOnStyle: Microsoft
+PointerAlignment: Left
+RemoveBracesLLVM: true
+SortIncludes: false

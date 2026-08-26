@@ -1,0 +1,44 @@
+#pragma once
+
+#include "scene/components/texture.h"
+#include "scene/camera.h"
+
+namespace titian
+{
+struct DirectionalLight : Entity
+{
+    static constexpr int CASCADE_COUNT = 4;
+
+    struct Defaults
+    {
+        static constexpr int RESOLUTION = 2560;
+        static constexpr float CASCADE_ENDS[CASCADE_COUNT] = {0.075f, 0.2f, 0.5f, 1.0f};
+    };
+
+    float3 color{1.0f};
+    float point_size = 0.2f;
+    float cascade_ends[std::size(Defaults::CASCADE_ENDS)] = {};
+
+    DirectionalLight();
+
+    void serialize(Serializer& serializer) const override;
+    void deserialize(Serializer const& serializer) override;
+
+    void set_resolution(int resolution);
+    int resolution() const;
+
+    void set_direction(float3 const& direction);
+    float3 direction() const;
+
+    dx::DepthView depth_view(int cascade_index) const;
+    dx::ShaderView shader_view(int cascade_index) const;
+
+    float4x4 light_matrix(float4x4 const& inv_cam_mat) const;
+    float4x4 light_matrix_cascade(Camera& camera, int cascade_index) const;
+
+  private:
+    int m_resolution = 0;
+    float3 m_direction = {0.0f, -1.0f, 0.0f};
+    Texture m_cascades[CASCADE_COUNT] = {};
+};
+} // namespace titian
