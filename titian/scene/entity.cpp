@@ -40,19 +40,19 @@ void titian::Entity::serialize(Serializer& serializer) const
     serializer.write_float("dynamic_friction", dynamic_friction());
     serializer.write_float("restitution", restitution());
 
-    Float3 scale = this->scale();
+    float3 scale = this->scale();
     serializer.write_float_array("scale", &scale.x, 3);
 
-    Float3 rotation = this->rotation();
+    float3 rotation = this->rotation();
     serializer.write_float_array("rotation", &rotation.x, 3);
 
-    Float3 position = this->position();
+    float3 position = this->position();
     serializer.write_float_array("position", &position.x, 3);
 
-    Float3 velocity = this->velocity();
+    float3 velocity = this->velocity();
     serializer.write_float_array("velocity", &velocity.x, 3);
 
-    Float3 angular = this->angular();
+    float3 angular = this->angular();
     serializer.write_float_array("angular", &angular.x, 3);
 
     px::PxGeometryType::Enum geometry_type = this->geometry_type();
@@ -88,10 +88,10 @@ void titian::Entity::serialize(Serializer& serializer) const
     }
     serializer.pop_object();
 
-    Float3 collider_rotation = this->collider_rotation();
+    float3 collider_rotation = this->collider_rotation();
     serializer.write_float_array("collider_rotation", &collider_rotation.x, 3);
 
-    Float3 collider_offset = this->collider_offset();
+    float3 collider_offset = this->collider_offset();
     serializer.write_float_array("collider_offset", &collider_offset.x, 3);
 }
 
@@ -129,23 +129,23 @@ void titian::Entity::deserialize(Serializer const& serializer)
     serializer.read_float("restitution", restitution);
     set_restitution(restitution);
 
-    Float3 scale;
+    float3 scale;
     serializer.read_float_array("scale", &scale.x, 3);
     set_scale(scale);
 
-    Float3 rotation;
+    float3 rotation;
     serializer.read_float_array("rotation", &rotation.x, 3);
     set_rotation(rotation);
 
-    Float3 position;
+    float3 position;
     serializer.read_float_array("position", &position.x, 3);
     set_position(position);
 
-    Float3 velocity;
+    float3 velocity;
     serializer.read_float_array("velocity", &velocity.x, 3);
     set_velocity(velocity);
 
-    Float3 angular;
+    float3 angular;
     serializer.read_float_array("angular", &angular.x, 3);
     set_angular(angular);
 
@@ -177,11 +177,11 @@ void titian::Entity::deserialize(Serializer const& serializer)
     }
     serializer.unload_object();
 
-    Float3 collider_rotation;
+    float3 collider_rotation;
     serializer.read_float_array("collider_rotation", &collider_rotation.x, 3);
     set_collider_rotation(collider_rotation);
 
-    Float3 collider_offset;
+    float3 collider_offset;
     serializer.read_float_array("collider_offset", &collider_offset.x, 3);
     set_collider_offset(collider_offset);
 }
@@ -279,84 +279,84 @@ float titian::Entity::restitution() const
     return m_material.getRestitution();
 }
 
-void titian::Entity::set_scale(Float3 const& scale)
+void titian::Entity::set_scale(float3 const& scale)
 {
     m_scale = scale;
 }
 
-titian::Float3 titian::Entity::scale() const
+float3 titian::Entity::scale() const
 {
     return m_scale;
 }
 
-void titian::Entity::set_rotation(Float3 const& rotation)
+void titian::Entity::set_rotation(float3 const& rotation)
 {
     px::PxTransform transform = m_actor.getGlobalPose();
-    transform.q = px_cast(Float4{kl::to_quat(rotation)});
+    transform.q = px_cast(float4{kl::to_quat(rotation)});
     m_actor.setGlobalPose(transform);
 }
 
-titian::Float3 titian::Entity::rotation() const
+float3 titian::Entity::rotation() const
 {
     px::PxTransform transform = m_actor.getGlobalPose();
-    return kl::to_euler(Quaternion{px_cast(transform.q)});
+    return kl::to_euler(quat{px_cast(transform.q)});
 }
 
-void titian::Entity::set_position(Float3 const& position)
+void titian::Entity::set_position(float3 const& position)
 {
     px::PxTransform transform = m_actor.getGlobalPose();
     transform.p = px_cast(position);
     m_actor.setGlobalPose(transform);
 }
 
-titian::Float3 titian::Entity::position() const
+float3 titian::Entity::position() const
 {
     px::PxTransform transform = m_actor.getGlobalPose();
     return px_cast(transform.p);
 }
 
-void titian::Entity::set_velocity(Float3 const& velocity)
+void titian::Entity::set_velocity(float3 const& velocity)
 {
     m_actor.setLinearVelocity(px_cast(velocity));
 }
 
-titian::Float3 titian::Entity::velocity() const
+float3 titian::Entity::velocity() const
 {
     return px_cast(m_actor.getLinearVelocity());
 }
 
-void titian::Entity::set_angular(Float3 const& angular)
+void titian::Entity::set_angular(float3 const& angular)
 {
     m_actor.setAngularVelocity(px_cast(angular));
 }
 
-titian::Float3 titian::Entity::angular() const
+float3 titian::Entity::angular() const
 {
     return px_cast(m_actor.getAngularVelocity());
 }
 
-void titian::Entity::set_collider_rotation(Float3 const& rotation)
+void titian::Entity::set_collider_rotation(float3 const& rotation)
 {
     auto shape = collider_shape();
     if (!shape)
         return;
 
     px::PxTransform transform = shape->getLocalPose();
-    transform.q = px_cast(Float4{kl::to_quat(rotation)});
+    transform.q = px_cast(float4{kl::to_quat(rotation)});
     shape->setLocalPose(transform);
 }
 
-titian::Float3 titian::Entity::collider_rotation() const
+float3 titian::Entity::collider_rotation() const
 {
     auto shape = collider_shape();
     if (!shape)
         return {};
 
     px::PxTransform transform = shape->getLocalPose();
-    return kl::to_euler(Quaternion{px_cast(transform.q)});
+    return kl::to_euler(quat{px_cast(transform.q)});
 }
 
-void titian::Entity::set_collider_offset(Float3 const& position)
+void titian::Entity::set_collider_offset(float3 const& position)
 {
     auto shape = collider_shape();
     if (!shape)
@@ -367,7 +367,7 @@ void titian::Entity::set_collider_offset(Float3 const& position)
     shape->setLocalPose(transform);
 }
 
-titian::Float3 titian::Entity::collider_offset() const
+float3 titian::Entity::collider_offset() const
 {
     auto shape = collider_shape();
     if (!shape)
@@ -398,7 +398,7 @@ titian::Opt<px::PxGeometryHolder> titian::Entity::collider_geometry() const
         return std::nullopt;
 }
 
-void titian::Entity::set_box_collider(Float3 const& scale)
+void titian::Entity::set_box_collider(float3 const& scale)
 {
     set_collider_geometry(px::PxBoxGeometry{px_cast(scale) * 0.5f});
 }
@@ -419,15 +419,15 @@ void titian::Entity::remove_collider()
         m_actor.detachShape(*shape);
 }
 
-titian::Float4x4 titian::Entity::model_matrix() const
+float4x4 titian::Entity::model_matrix() const
 {
-    return Float4x4::translation(position()) * Float4x4::rotation(rotation()) * Float4x4::scaling(scale());
+    return float4x4::translation(position()) * float4x4::rotation(rotation()) * float4x4::scaling(scale());
 }
 
-titian::Float4x4 titian::Entity::collider_matrix() const
+float4x4 titian::Entity::collider_matrix() const
 {
-    return Float4x4::translation(position()) * Float4x4::rotation(rotation()) *
-           Float4x4::translation(collider_offset()) * Float4x4::rotation(collider_rotation()) *
+    return float4x4::translation(position()) * float4x4::rotation(rotation()) *
+           float4x4::translation(collider_offset()) * float4x4::rotation(collider_rotation()) *
            collider_scaling_matrix();
 }
 
@@ -463,7 +463,7 @@ px::PxShape* titian::Entity::collider_shape() const
     return shape;
 }
 
-titian::Float4x4 titian::Entity::collider_scaling_matrix() const
+float4x4 titian::Entity::collider_scaling_matrix() const
 {
     auto shape = collider_shape();
     if (!shape)
@@ -473,15 +473,15 @@ titian::Float4x4 titian::Entity::collider_scaling_matrix() const
     {
     case px::PxGeometryType::Enum::eBOX: {
         auto const& geometry = static_cast<px::PxBoxGeometry const&>(shape->getGeometry());
-        return Float4x4::scaling(px_cast(geometry.halfExtents) * 2.0f);
+        return float4x4::scaling(px_cast(geometry.halfExtents) * 2.0f);
     }
     case px::PxGeometryType::Enum::eSPHERE: {
         auto const& geometry = static_cast<px::PxSphereGeometry const&>(shape->getGeometry());
-        return Float4x4::scaling(Float3{geometry.radius});
+        return float4x4::scaling(float3{geometry.radius});
     }
     case px::PxGeometryType::Enum::eCAPSULE: {
         auto const& geometry = static_cast<px::PxCapsuleGeometry const&>(shape->getGeometry());
-        return Float4x4::scaling(Float3{geometry.halfHeight * 0.5f, Float2{geometry.radius}});
+        return float4x4::scaling(float3{geometry.halfHeight * 0.5f, float2{geometry.radius}});
     }
     }
     return {};

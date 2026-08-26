@@ -1,7 +1,6 @@
 #pragma once
 
-#include "standard.h"
-
+#include "globals.h"
 
 namespace titian
 {
@@ -35,54 +34,53 @@ inline constexpr StringRef DRAG_ENTITY_ENTITY = "entity";
 inline constexpr StringRef DRAG_ENTITY_CAMERA = "camera";
 inline constexpr StringRef DRAG_ENTITY_AMBIENT = "ambient";
 inline constexpr StringRef DRAG_ENTITY_DIRECTIONAL = "directional";
-}
+} // namespace titian
 
 namespace titian
 {
-void gui_colored_text( StringRef const& message, Float4 const& color );
+void gui_colored_text(StringRef const& message, float4 const& color);
 Pair<ImVec2, ImVec2> gui_window_rect();
-float gui_calculate_item_with( StringRef const& label );
-void gui_align_horizontally( float width, float alignment );
-String gui_input_continuous( String const& id );
-Opt<String> gui_input_waited( String const& id, StringRef const& to_copy );
-}
+float gui_calculate_item_with(StringRef const& label);
+void gui_align_horizontally(float width, float alignment);
+String gui_input_continuous(String const& id);
+Opt<String> gui_input_waited(String const& id, StringRef const& to_copy);
+} // namespace titian
 
 namespace titian
 {
-template<typename T>
-void gui_set_drag_drop( StringRef const& id, T const& data, dx::ShaderView const& texture = nullptr )
+template <typename T>
+void gui_set_drag_drop(StringRef const& id, T const& data, dx::ShaderView const& texture = nullptr)
 {
-    im::PushStyleColor( ImGuiCol_PopupBg, {} );
-    im::PushStyleColor( ImGuiCol_Border, {} );
-    if ( im::BeginDragDropSource() )
+    im::PushStyleColor(ImGuiCol_PopupBg, {});
+    im::PushStyleColor(ImGuiCol_Border, {});
+    if (im::BeginDragDropSource())
     {
-        im::SetDragDropPayload( id.data(), nullptr, 0 );
-        _DRAG_DROP_DATA[String{ id }] = data;
-        if ( texture )
-            im::Image( texture.get(), { 50.0f, 50.0f } );
+        im::SetDragDropPayload(id.data(), nullptr, 0);
+        _DRAG_DROP_DATA[String{id}] = data;
+        if (texture)
+            im::Image(texture.get(), {50.0f, 50.0f});
 
         im::EndDragDropSource();
     }
-    im::PopStyleColor( 2 );
+    im::PopStyleColor(2);
 }
 
-template<typename T>
-Opt<T> gui_get_drag_drop( StringRef const& id )
+template <typename T> Opt<T> gui_get_drag_drop(StringRef const& id)
 {
-    auto it = _DRAG_DROP_DATA.find( id );
-    if ( it == _DRAG_DROP_DATA.end() )
+    auto it = _DRAG_DROP_DATA.find(id);
+    if (it == _DRAG_DROP_DATA.end())
         return std::nullopt;
 
     Opt<T> result;
-    if ( im::BeginDragDropTarget() )
+    if (im::BeginDragDropTarget())
     {
-        if ( im::AcceptDragDropPayload( id.data() ) )
+        if (im::AcceptDragDropPayload(id.data()))
         {
             result = std::any_cast<T&>(it->second);
-            _DRAG_DROP_DATA.erase( it );
+            _DRAG_DROP_DATA.erase(it);
         }
         im::EndDragDropTarget();
     }
     return result;
 }
-}
+} // namespace titian

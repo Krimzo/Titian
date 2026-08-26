@@ -194,12 +194,12 @@ void titian::Scene::onAdvance(px::PxRigidBody const* const* bodyBuffer, px::PxTr
 {
 }
 
-void titian::Scene::set_gravity(Float3 const& gravity)
+void titian::Scene::set_gravity(float3 const& gravity)
 {
     m_scene.setGravity(px_cast(gravity));
 }
 
-titian::Float3 titian::Scene::gravity() const
+float3 titian::Scene::gravity() const
 {
     return px_cast(m_scene.getGravity());
 }

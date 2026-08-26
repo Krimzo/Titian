@@ -3,7 +3,6 @@
 #include "gui/gui_section.h"
 #include "gui/gui_layer.h"
 
-
 namespace titian
 {
 struct GUISectionFuzeDisplay : GUISection
@@ -12,4 +11,4 @@ struct GUISectionFuzeDisplay : GUISection
 
     void render_gui() override;
 };
-}
+} // namespace titian

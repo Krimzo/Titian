@@ -24,6 +24,6 @@ struct AppLayer : Layer_T<AppLayer>
     bool update() override;
 
   private:
-    void handle_resize(Int2 size);
+    void handle_resize(int2 size);
 };
 } // namespace titian

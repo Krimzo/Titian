@@ -3,7 +3,6 @@
 #include "editor/game_layer.h"
 #include "scene/camera.h"
 
-
 namespace titian
 {
 struct StatePackage
@@ -14,23 +13,23 @@ struct StatePackage
     kl::Shaders shaders;
     Camera* camera = nullptr;
 };
-}
+} // namespace titian
 
 namespace titian
 {
 struct RenderPass : kl::NoCopy, BenchmarkInfo
 {
-    RenderPass( StringRef const& name );
+    RenderPass(StringRef const& name);
     virtual ~RenderPass() = default;
 
-    void process( Camera* camera );
+    void process(Camera* camera);
 
-protected:
-    virtual void state_package( StatePackage& package ) = 0;
-    virtual void render_self( StatePackage& package ) = 0;
+  protected:
+    virtual void state_package(StatePackage& package) = 0;
+    virtual void render_self(StatePackage& package) = 0;
 
-private:
-    void bind_states( StatePackage& package );
+  private:
+    void bind_states(StatePackage& package);
     void unbind_states();
 };
-}
+} // namespace titian

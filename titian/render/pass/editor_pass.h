@@ -4,7 +4,6 @@
 #include "editor/editor_layer.h"
 #include "gui/gui_layer.h"
 
-
 namespace titian
 {
 struct EditorPass : RenderPass
@@ -13,7 +12,7 @@ struct EditorPass : RenderPass
 
     EditorPass();
 
-    void state_package( StatePackage& package ) override;
-    void render_self( StatePackage& package ) override;
+    void state_package(StatePackage& package) override;
+    void render_self(StatePackage& package) override;
 };
-}
+} // namespace titian

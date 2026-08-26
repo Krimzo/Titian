@@ -6,7 +6,6 @@
 
 #include "gui/editors/code_editor.h"
 
-
 namespace titian
 {
 struct GUISectionShaderEditor : GUISection
@@ -17,12 +16,12 @@ struct GUISectionShaderEditor : GUISection
 
     void render_gui() override;
 
-private:
+  private:
     CodeEditor m_editor{};
     Shader* m_last_shader = nullptr;
 
-    void display_shaders( Scene& scene );
-    void edit_shader( Shader& shader );
-    void show_shader_properties( Shader* shader ) const;
+    void display_shaders(Scene& scene);
+    void edit_shader(Shader& shader);
+    void show_shader_properties(Shader* shader) const;
 };
-}
+} // namespace titian

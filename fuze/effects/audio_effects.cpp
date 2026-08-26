@@ -1,15 +1,12 @@
 #include "fuze.h"
 
-
 titian::AudioEffectVolume::AudioEffectVolume()
-{}
-
-void titian::AudioEffectVolume::apply( EffectPackage const& package, Audio& audio )
 {
-    kl::async_for( 0, (int) audio.out_audio.size(), [&]( int i )
-        {
-            audio.out_audio[i].adjust_volume( volume );
-        } );
+}
+
+void titian::AudioEffectVolume::apply(EffectPackage const& package, Audio& audio)
+{
+    kl::async_for(0, (int)audio.out_audio.size(), [&](int i) { audio.out_audio[i].adjust_volume(volume); });
 }
 
 titian::String titian::AudioEffectVolume::name() const
@@ -26,5 +23,5 @@ titian::Ref<titian::AudioEffect> titian::AudioEffectVolume::make_copy() const
 
 void titian::AudioEffectVolume::display_gui()
 {
-    im::DragFloat( "Volume", &volume, 0.01f );
+    im::DragFloat("Volume", &volume, 0.01f);
 }

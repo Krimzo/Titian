@@ -1,8 +1,6 @@
 #include "titian.h"
 
-
-titian::RenderLayer::RenderLayer()
-    : Layer_T( "RenderLayer" )
+titian::RenderLayer::RenderLayer() : Layer_T("RenderLayer")
 {
     kl::GPU const& gpu = AppLayer::get().gpu;
     screen_mesh = gpu.create_screen_mesh();
@@ -19,48 +17,47 @@ bool titian::RenderLayer::update()
     gpu.clear_internal();
 
     float animation_time = app_layer.timer.elapsed();
-    for ( auto& [_, animation] : scene.animations )
-        animation->update( scene, animation_time );
+    for (auto& [_, animation] : scene.animations)
+        animation->update(scene, animation_time);
 
-    scene.helper_iterate_entities( [&]( String const& name, Entity* entity )
-    {
-        if ( Camera* camera = dynamic_cast<Camera*>(entity) )
+    scene.helper_iterate_entities([&](String const& name, Entity* entity) {
+        if (Camera* camera = dynamic_cast<Camera*>(entity))
         {
             camera->clear_targets();
-            if ( camera->enabled && name != scene.main_camera_name )
+            if (camera->enabled && name != scene.main_camera_name)
             {
-                Int2 texture_size = camera->resolution();
-                for ( auto& pass : passes )
+                int2 texture_size = camera->resolution();
+                for (auto& pass : passes)
                 {
-                    gpu.set_viewport_size( texture_size );
-                    pass->process( camera );
+                    gpu.set_viewport_size(texture_size);
+                    pass->process(camera);
                 }
-                if ( Texture* texture = scene.helper_get_texture( camera->target_texture_name ) )
-                    texture->copy_other( camera->screen_texture.texture );
+                if (Texture* texture = scene.helper_get_texture(camera->target_texture_name))
+                    texture->copy_other(camera->screen_texture.texture);
             }
         }
-    } );
+    });
 
-    if ( Camera* camera = scene.get_casted<Camera>( scene.main_camera_name ) )
+    if (Camera* camera = scene.get_casted<Camera>(scene.main_camera_name))
     {
         camera->clear_targets();
-        if ( camera->enabled )
+        if (camera->enabled)
         {
-            Int2 texture_size = camera->resolution();
-            for ( auto& pass : passes )
+            int2 texture_size = camera->resolution();
+            for (auto& pass : passes)
             {
-                gpu.set_viewport_size( texture_size );
-                camera->update_aspect_ratio( texture_size );
-                pass->process( camera );
+                gpu.set_viewport_size(texture_size);
+                camera->update_aspect_ratio(texture_size);
+                pass->process(camera);
             }
-            if ( Texture* texture = scene.helper_get_texture( camera->target_texture_name ) )
-                texture->copy_other( camera->screen_texture.texture );
+            if (Texture* texture = scene.helper_get_texture(camera->target_texture_name))
+                texture->copy_other(camera->screen_texture.texture);
         }
     }
 
-    Int2 window_size = app_layer.window.size();
+    int2 window_size = app_layer.window.size();
     gpu.bind_internal_views();
-    gpu.set_viewport_size( window_size );
+    gpu.set_viewport_size(window_size);
     return true;
 }
 
@@ -69,6 +66,6 @@ void titian::RenderLayer::present() const
     kl::GPU& gpu = AppLayer::get().gpu;
     Scene& scene = GameLayer::get().scene();
 
-    Camera* main_camera = scene.get_casted<Camera>( scene.main_camera_name );
-    gpu.swap_buffers( main_camera ? main_camera->v_sync : true );
+    Camera* main_camera = scene.get_casted<Camera>(scene.main_camera_name);
+    gpu.swap_buffers(main_camera ? main_camera->v_sync : true);
 }

@@ -1,7 +1,6 @@
 ﻿#pragma once
 
-#include "standard.h"
-
+#include "globals.h"
 
 namespace titian
 {
@@ -13,4 +12,4 @@ struct DepthStates
 
     DepthStates();
 };
-}
+} // namespace titian

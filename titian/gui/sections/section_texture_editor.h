@@ -4,7 +4,6 @@
 #include "editor/editor_layer.h"
 #include "gui/gui_layer.h"
 
-
 namespace titian
 {
 struct GUISectionTextureEditor : GUISection
@@ -15,9 +14,9 @@ struct GUISectionTextureEditor : GUISection
 
     void render_gui() override;
 
-private:
-    void display_textures( Scene& scene );
-    void render_selected_texture( Texture& texture );
-    void show_texture_properties( Texture* texture );
+  private:
+    void display_textures(Scene& scene);
+    void render_selected_texture(Texture& texture);
+    void show_texture_properties(Texture* texture);
 };
-}
+} // namespace titian

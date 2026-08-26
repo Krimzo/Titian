@@ -1,36 +1,35 @@
 #include "titian.h"
 
+titian::RenderPass::RenderPass(StringRef const& name) : BenchmarkInfo(name)
+{
+}
 
-titian::RenderPass::RenderPass( StringRef const& name )
-    : BenchmarkInfo( name )
-{}
-
-void titian::RenderPass::process( Camera* camera )
+void titian::RenderPass::process(Camera* camera)
 {
     TimeBomb _ = bench_time_bomb();
     bench_reset();
 
-    if ( !camera )
+    if (!camera)
         return;
 
     StatePackage package;
     package.camera = camera;
-    state_package( package );
-    if ( !package.camera )
+    state_package(package);
+    if (!package.camera)
         return;
 
-    bind_states( package );
-    render_self( package );
+    bind_states(package);
+    render_self(package);
     unbind_states();
 }
 
-void titian::RenderPass::bind_states( StatePackage& package )
+void titian::RenderPass::bind_states(StatePackage& package)
 {
     kl::GPU& gpu = AppLayer::get().gpu;
-    gpu.bind_raster_state( package.raster_state );
-    gpu.bind_depth_state( package.depth_state );
-    gpu.bind_blend_state( package.blend_state );
-    gpu.bind_shaders( package.shaders );
+    gpu.bind_raster_state(package.raster_state);
+    gpu.bind_depth_state(package.depth_state);
+    gpu.bind_blend_state(package.blend_state);
+    gpu.bind_shaders(package.shaders);
 }
 
 void titian::RenderPass::unbind_states()

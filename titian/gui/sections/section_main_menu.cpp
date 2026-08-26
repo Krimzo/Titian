@@ -335,7 +335,7 @@ void titian::GUISectionMainMenu::render_gui()
             if (im::MenuItem("Quick Setup"))
             {
                 Ref camera = new Camera();
-                camera->set_position(Float3{1.5f});
+                camera->set_position(float3{1.5f});
                 camera->set_forward(-camera->position());
                 scene.add_entity("camera", camera);
                 scene.main_camera_name = "camera";

@@ -50,7 +50,7 @@ void titian::SandboxPieceMonkes::setup_self()
         scene.materials[material_name] = material;
 
         Ref monke = new Entity();
-        monke->set_scale(Float3{0.5f});
+        monke->set_scale(float3{0.5f});
         monke->set_position({
             (float)(x - half_size) + x_offset,
             (float)(y - half_size),

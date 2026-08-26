@@ -6,7 +6,6 @@
 #include "utility/file_util.h"
 #include "scene/components/texture.h"
 
-
 namespace titian
 {
 struct GUISectionExplorer : GUISection
@@ -24,14 +23,14 @@ struct GUISectionExplorer : GUISection
 
     void render_gui() override;
 
-private:
-    String m_path = fs::absolute( "." ).string();
+  private:
+    String m_path = fs::absolute(".").string();
     float m_icon_size = 70.0f;
 
-    void handle_file_entry( fs::path const& file );
-    void handle_directory_entry( fs::path const& directory, bool is_parent_dir );
+    void handle_file_entry(fs::path const& file);
+    void handle_directory_entry(fs::path const& directory, bool is_parent_dir);
 
-    void handle_item_transfer( StringRef const& item, StringRef const& destination );
-    dx::ShaderView file_icon( FileType type );
+    void handle_item_transfer(StringRef const& item, StringRef const& destination);
+    dx::ShaderView file_icon(FileType type);
 };
-}
+} // namespace titian

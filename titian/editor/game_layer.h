@@ -3,7 +3,6 @@
 #include "app/app_layer.h"
 #include "scene/scene.h"
 
-
 namespace titian
 {
 enum struct GameState
@@ -12,7 +11,7 @@ enum struct GameState
     PAUSED,
     RUNNING,
 };
-}
+} // namespace titian
 
 namespace titian
 {
@@ -33,8 +32,8 @@ struct GameLayer : Layer_T<GameLayer>
     bool game_running() const;
     bool game_paused() const;
 
-private:
+  private:
     Opt<Scene> m_scene;
     GameState m_game_state = GameState::STOPPED;
 };
-}
+} // namespace titian

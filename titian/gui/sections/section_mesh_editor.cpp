@@ -2,7 +2,7 @@
 
 titian::GUISectionMeshEditor::GUISectionMeshEditor() : GUISection("GUISectionMeshEditor")
 {
-    sun_direction = kl::normalize(Float3(-0.5f, -0.75f, 1.0f));
+    sun_direction = kl::normalize(float3(-0.5f, -0.75f, 1.0f));
     camera.background = RGB{30, 30, 30};
     camera.set_position({-0.34f, 0.18f, -0.94f});
     camera.speed = 3.1f;
@@ -36,7 +36,7 @@ void titian::GUISectionMeshEditor::render_gui()
 
         if (im::BeginChild("Mesh View", {}, was_focused))
         {
-            Int2 viewport_size = {(int)im::GetContentRegionAvail().x, (int)im::GetContentRegionAvail().y};
+            int2 viewport_size = {(int)im::GetContentRegionAvail().x, (int)im::GetContentRegionAvail().y};
             if (was_focused)
                 update_mesh_camera(scene);
 
@@ -243,7 +243,7 @@ void titian::GUISectionMeshEditor::update_mesh_camera(Scene& scene)
     camera.set_forward(-camera.position());
 }
 
-void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, Int2 viewport_size)
+void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, int2 viewport_size)
 {
     kl::GPU const& gpu = AppLayer::get().gpu;
     if (viewport_size.x <= 0 || viewport_size.y <= 0)
@@ -275,7 +275,7 @@ void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, Int2 viewpor
     gpu.clear_target_view(render_texture.target_view, camera.background);
     gpu.clear_depth_view(depth_texture.depth_view, 1.0f, 0xFF);
 
-    Int2 old_viewport_size = gpu.viewport_size();
+    int2 old_viewport_size = gpu.viewport_size();
     gpu.set_viewport_size(viewport_size);
 
     RenderLayer& render_layer = RenderLayer::get();
@@ -290,10 +290,10 @@ void titian::GUISectionMeshEditor::render_selected_mesh(Mesh& mesh, Int2 viewpor
 
     struct alignas(16) CB
     {
-        Float4x4 W;
-        Float4x4 WVP;
-        Float4 OBJECT_COLOR;
-        Float3 SUN_DIRECTION;
+        float4x4 W;
+        float4x4 WVP;
+        float4 OBJECT_COLOR;
+        float3 SUN_DIRECTION;
         float IS_SKELETAL;
     } cb = {};
 
@@ -443,27 +443,27 @@ void titian::GUISectionMeshEditor::render_gizmos(Mesh& mesh)
 
     Vertex& selected_vertex = mesh_data[m_selected_vertex_index];
     float viewport_tab_height = im::GetWindowContentRegionMin().y;
-    Float2 viewport_position = {im::GetWindowPos().x, im::GetWindowPos().y + viewport_tab_height};
-    Float2 viewport_size = {im::GetWindowWidth(), im::GetWindowHeight()};
+    float2 viewport_position = {im::GetWindowPos().x, im::GetWindowPos().y + viewport_tab_height};
+    float2 viewport_size = {im::GetWindowWidth(), im::GetWindowHeight()};
 
     ImGuizmo::Enable(true);
     ImGuizmo::SetDrawlist();
     ImGuizmo::SetRect(viewport_position.x, viewport_position.y, viewport_size.x, viewport_size.y);
 
-    Float3 selected_snap = {};
+    float3 selected_snap = {};
     if (window.keyboard.shift)
-        selected_snap = Float3{0.1f};
+        selected_snap = float3{0.1f};
 
-    Float4x4 view_matrix = kl::transpose(camera.view_matrix());
-    Float4x4 projection_matrix = kl::transpose(camera.projection_matrix());
-    Float4x4 transform_matrix = kl::transpose(Float4x4::translation(selected_vertex.position));
+    float4x4 view_matrix = kl::transpose(camera.view_matrix());
+    float4x4 projection_matrix = kl::transpose(camera.projection_matrix());
+    float4x4 transform_matrix = kl::transpose(float4x4::translation(selected_vertex.position));
 
     ImGuizmo::Manipulate(view_matrix.data, projection_matrix.data, ImGuizmo::OPERATION::TRANSLATE,
                          ImGuizmo::MODE::WORLD, transform_matrix.data, nullptr, &selected_snap.x);
 
     if (ImGuizmo::IsUsing())
     {
-        Float3 decomposed_parts[3] = {};
+        float3 decomposed_parts[3] = {};
         ImGuizmo::DecomposeMatrixToComponents(transform_matrix.data, &decomposed_parts[2].x, &decomposed_parts[1].x,
                                               &decomposed_parts[0].x);
 

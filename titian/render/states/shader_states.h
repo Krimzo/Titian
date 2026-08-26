@@ -1,7 +1,6 @@
 ﻿#pragma once
 
-#include "standard.h"
-
+#include "globals.h"
 
 namespace titian
 {
@@ -19,4 +18,4 @@ struct ShaderStates
 
     ShaderStates();
 };
-}
+} // namespace titian

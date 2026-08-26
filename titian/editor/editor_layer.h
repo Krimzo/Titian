@@ -3,7 +3,6 @@
 #include "editor/game_layer.h"
 #include "scene/camera.h"
 
-
 namespace titian
 {
 struct EditorLayer : Layer_T<EditorLayer>
@@ -21,4 +20,4 @@ struct EditorLayer : Layer_T<EditorLayer>
 
     bool update() override;
 };
-}
+} // namespace titian

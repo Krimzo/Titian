@@ -2,8 +2,8 @@
 
 void titian::TracingMesh::compute_aabb()
 {
-    Float3 min_point{+std::numeric_limits<float>::infinity()};
-    Float3 max_point{-std::numeric_limits<float>::infinity()};
+    float3 min_point{+std::numeric_limits<float>::infinity()};
+    float3 max_point{-std::numeric_limits<float>::infinity()};
     for (auto& triangle : triangles)
     {
         min_point = kl::min(min_point, triangle.a.position);
@@ -20,12 +20,12 @@ void titian::TracingMesh::compute_aabb()
 void titian::TracingTextureCube::load_cube(kl::Image const& image)
 {
     int part_size = image.width() / 4;
-    faces[0] = image.rectangle(Int2(2, 1) * part_size, Int2(3, 2) * part_size);
-    faces[1] = image.rectangle(Int2(0, 1) * part_size, Int2(1, 2) * part_size);
-    faces[2] = image.rectangle(Int2(1, 0) * part_size, Int2(2, 1) * part_size);
-    faces[3] = image.rectangle(Int2(1, 2) * part_size, Int2(2, 3) * part_size);
-    faces[4] = image.rectangle(Int2(1, 1) * part_size, Int2(2, 2) * part_size);
-    faces[5] = image.rectangle(Int2(3, 1) * part_size, Int2(4, 2) * part_size);
+    faces[0] = image.rectangle(int2(2, 1) * part_size, int2(3, 2) * part_size);
+    faces[1] = image.rectangle(int2(0, 1) * part_size, int2(1, 2) * part_size);
+    faces[2] = image.rectangle(int2(1, 0) * part_size, int2(2, 1) * part_size);
+    faces[3] = image.rectangle(int2(1, 2) * part_size, int2(2, 3) * part_size);
+    faces[4] = image.rectangle(int2(1, 1) * part_size, int2(2, 2) * part_size);
+    faces[5] = image.rectangle(int2(3, 1) * part_size, int2(4, 2) * part_size);
 }
 
 void titian::TracingTextureCube::load_2D(kl::Image const& image)
@@ -34,11 +34,11 @@ void titian::TracingTextureCube::load_2D(kl::Image const& image)
         face = image;
 }
 
-titian::RGB titian::TracingTextureCube::sample(Float3 const& direction) const
+titian::RGB titian::TracingTextureCube::sample(float3 const& direction) const
 {
     auto [x, y, z] = kl::normalize(direction);
-    auto [ax, ay, az] = kl::abs(Float3(x, y, z));
-    auto [u, v] = Float2();
+    auto [ax, ay, az] = kl::abs(float3(x, y, z));
+    auto [u, v] = float2();
 
     int face_index;
     if (ax >= ay && ax >= az)
@@ -89,14 +89,14 @@ titian::RGB titian::TracingTextureCube::sample(Float3 const& direction) const
     return faces[face_index].sample({u, v});
 }
 
-titian::RGB titian::TracingCamera::sample_background(Float3 const& direction) const
+titian::RGB titian::TracingCamera::sample_background(float3 const& direction) const
 {
     if (skybox)
         return skybox->sample(direction);
     return background;
 }
 
-titian::TracingScene::TracingScene(Scene& scene, Int2 resolution)
+titian::TracingScene::TracingScene(Scene& scene, int2 resolution)
 {
     std::mutex lock;
     std::for_each(std::execution::par, scene.entities().begin(), scene.entities().end(),
@@ -130,7 +130,7 @@ titian::TracingScene::TracingScene(Scene& scene, Int2 resolution)
 
 titian::Opt<titian::TracingPayload> titian::TracingScene::trace(kl::Ray const& ray, kl::Triangle const* blacklist) const
 {
-    std::optional<Float3> intersection;
+    std::optional<float3> intersection;
     float min_distance = std::numeric_limits<float>::infinity();
     Opt<TracingPayload> result;
     for (auto& entity : entities)
@@ -189,7 +189,7 @@ titian::Opt<titian::TracingEntity> titian::TracingScene::convert_entity(Scene co
     return result;
 }
 
-titian::TracingMesh titian::TracingScene::convert_mesh(Scene const& scene, Mesh const& mesh, Float4x4 const& matrix)
+titian::TracingMesh titian::TracingScene::convert_mesh(Scene const& scene, Mesh const& mesh, float4x4 const& matrix)
 {
     TracingMesh result;
     result.triangles.resize(mesh.vertices.size() / 3);
@@ -204,18 +204,18 @@ titian::TracingMesh titian::TracingScene::convert_mesh(Scene const& scene, Mesh 
     return result;
 }
 
-kl::Vertex titian::TracingScene::convert_vertex(Vertex const& vertex, Float4x4 const& matrix)
+kl::Vertex titian::TracingScene::convert_vertex(Vertex const& vertex, float4x4 const& matrix)
 {
     kl::Vertex result;
-    result.position = (matrix * Float4(vertex.position, 1.0f)).xyz();
-    result.normal = kl::normalize((matrix * Float4(vertex.normal, 0.0f)).xyz());
+    result.position = (matrix * float4(vertex.position, 1.0f)).xyz();
+    result.normal = kl::normalize((matrix * float4(vertex.normal, 0.0f)).xyz());
     result.uv = vertex.uv;
     return result;
 }
 
 titian::TracingMesh titian::TracingScene::convert_skel_mesh(Scene const& scene, Mesh const& mesh,
-                                                            Float4x4 const& model_matrix,
-                                                            Vector<Float4x4> const& bone_matrices)
+                                                            float4x4 const& model_matrix,
+                                                            Vector<float4x4> const& bone_matrices)
 {
     TracingMesh result;
     result.triangles.resize(mesh.vertices.size() / 3);
@@ -230,17 +230,17 @@ titian::TracingMesh titian::TracingScene::convert_skel_mesh(Scene const& scene, 
     return result;
 }
 
-kl::Vertex titian::TracingScene::convert_skel_vertex(Vertex const& vertex, Float4x4 const& model_matrix,
-                                                     Vector<Float4x4> const& bone_matrices)
+kl::Vertex titian::TracingScene::convert_skel_vertex(Vertex const& vertex, float4x4 const& model_matrix,
+                                                     Vector<float4x4> const& bone_matrices)
 {
-    Float4x4 bone_mat =
-        (vertex.bone_indices[0] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[0]] : Float4x4{}) *
+    float4x4 bone_mat =
+        (vertex.bone_indices[0] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[0]] : float4x4{}) *
             vertex.bone_weights[0] +
-        (vertex.bone_indices[1] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[1]] : Float4x4{}) *
+        (vertex.bone_indices[1] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[1]] : float4x4{}) *
             vertex.bone_weights[1] +
-        (vertex.bone_indices[2] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[2]] : Float4x4{}) *
+        (vertex.bone_indices[2] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[2]] : float4x4{}) *
             vertex.bone_weights[2] +
-        (vertex.bone_indices[3] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[3]] : Float4x4{}) *
+        (vertex.bone_indices[3] < bone_matrices.size() ? bone_matrices[vertex.bone_indices[3]] : float4x4{}) *
             vertex.bone_weights[3];
     return convert_vertex(vertex, model_matrix * bone_mat);
 }

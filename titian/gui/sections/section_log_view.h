@@ -4,7 +4,6 @@
 #include "gui/gui_layer.h"
 #include "app/logger.h"
 
-
 namespace titian
 {
 struct GUISectionLogView : GUISection
@@ -15,4 +14,4 @@ struct GUISectionLogView : GUISection
 
     void render_gui() override;
 };
-}
+} // namespace titian

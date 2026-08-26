@@ -2,7 +2,6 @@
 
 #include "serial/serial.h"
 
-
 namespace titian
 {
 using Byte4 = kl::Vector4<byte>;
@@ -13,19 +12,19 @@ namespace titian
 struct Vertex : kl::Vertex
 {
     Byte4 bone_indices;
-    Float4 bone_weights;
+    float4 bone_weights;
 };
-}
+} // namespace titian
 
 namespace titian
 {
 struct SkeletonNode
 {
     int bone_index = -1;
-    Float4x4 transformation;
+    float4x4 transformation;
     Vector<Ref<SkeletonNode>> children;
 };
-}
+} // namespace titian
 
 namespace titian
 {
@@ -35,7 +34,7 @@ enum struct MeshTopology
     LINES = D3D_PRIMITIVE_TOPOLOGY_LINELIST,
     TRIANGLES = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
 };
-}
+} // namespace titian
 
 namespace titian
 {
@@ -47,20 +46,20 @@ struct Mesh : Serializable
     Vector<Vertex> vertices;
     dx::Buffer buffer;
 
-    Vector<Float4x4> bone_matrices;
+    Vector<float4x4> bone_matrices;
     Ref<SkeletonNode> skeleton_root;
 
     Mesh();
 
-    void serialize( Serializer& serializer ) const override;
-    void deserialize( Serializer const& serializer ) override;
+    void serialize(Serializer& serializer) const override;
+    void deserialize(Serializer const& serializer) override;
 
-    void load_vertices( Vector<kl::Vertex> const& vertices );
-    void load_triangles( Vector<kl::Triangle> const& triangles );
+    void load_vertices(Vector<kl::Vertex> const& vertices);
+    void load_triangles(Vector<kl::Triangle> const& triangles);
     void reload();
 
     D3D11_PRIMITIVE_TOPOLOGY d3d_topology() const;
 
     Ref<Mesh> clone() const;
 };
-}
+} // namespace titian

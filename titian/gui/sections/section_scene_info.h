@@ -6,7 +6,6 @@
 #include "scene/light/directional_light.h"
 #include "scene/camera.h"
 
-
 namespace titian
 {
 struct GUISectionSceneInfo : GUISection
@@ -15,9 +14,9 @@ struct GUISectionSceneInfo : GUISection
 
     void render_gui() override;
 
-private:
-    void main_camera_info( Scene& scene );
-    void main_ambient_info( Scene& scene );
-    void main_directional_info( Scene& scene );
+  private:
+    void main_camera_info(Scene& scene);
+    void main_ambient_info(Scene& scene);
+    void main_directional_info(Scene& scene);
 };
-}
+} // namespace titian

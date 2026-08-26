@@ -23,7 +23,7 @@ void titian::SandboxPiecePhysicsTest::setup_platform(Scene& scene)
     scene.animations[animation_name] = scene.default_animations.cube.clone();
     scene.materials[material_name] = scene.default_materials.white.clone();
 
-    Float3 scale = {30.0f, 0.2f, 30.0f};
+    float3 scale = {30.0f, 0.2f, 30.0f};
 
     Ref platform = new Entity();
     platform->animation_name = animation_name;
@@ -91,7 +91,7 @@ void titian::SandboxPiecePhysicsTest::setup_objects(Scene& scene)
             box->set_rotation(kl::random::gen_float3(360.0f));
             box->set_position(
                 {(half_size - x) * 2.25f, 15.0f + (z - size / 2) * 1.5f, -25.0f + (half_size - z) * 2.25f});
-            box->set_box_collider(Float3{1.0f});
+            box->set_box_collider(float3{1.0f});
 
             scene.add_entity(entity_name, box);
             box_counter += 1;

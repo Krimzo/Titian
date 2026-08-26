@@ -1,9 +1,8 @@
 #include "sandbox.h"
 
-
-titian::SandboxPieceTest::SandboxPieceTest( TitianEditor& editor )
-    : SandboxPiece( editor )
-{}
+titian::SandboxPieceTest::SandboxPieceTest(TitianEditor& editor) : SandboxPiece(editor)
+{
+}
 
 void titian::SandboxPieceTest::setup_self()
 {

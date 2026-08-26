@@ -1,6 +1,6 @@
 #include "titian.h"
 
-titian::GPUTracer::GPUTracer(kl::Window& window, TracingScene const& scene, Int2 resolution)
+titian::GPUTracer::GPUTracer(kl::Window& window, TracingScene const& scene, int2 resolution)
     : window(window), scene(scene), m_gpu(window.ptr())
 {
     dx::TextureDescriptor tex_desc{};
@@ -65,7 +65,7 @@ void titian::GPUTracer::create_scene_buffers()
     };
     struct Material
     {
-        Float3 color;
+        float3 color;
         float texture_blend = 0.0f;
         float reflectivity_factor = 0.0f;
         float refraction_index = 0.0f;
@@ -126,25 +126,25 @@ void titian::GPUTracer::handle_input()
 
 void titian::GPUTracer::save_screenshot(StringRef const& path)
 {
-    Int2 resolution = m_gpu.texture_size(m_target);
+    int2 resolution = m_gpu.texture_size(m_target);
     dx::Texture staging_texture = m_gpu.create_staging_texture(m_target);
     m_gpu.copy_resource(staging_texture, m_target);
-    Vector<Float4> samples_buffer;
+    Vector<float4> samples_buffer;
     samples_buffer.resize((size_t)resolution.x * resolution.y);
-    m_gpu.read_from_texture(samples_buffer.data(), staging_texture, resolution, sizeof(Float4));
+    m_gpu.read_from_texture(samples_buffer.data(), staging_texture, resolution, sizeof(float4));
     kl::Image image;
     image.resize(resolution);
     float rec_iter = (1.0f / m_iterations);
     kl::async_for(0, image.pixel_count(), [&](int i) {
-        Float3 result = samples_buffer[i].xyz() * rec_iter;
-        image[i] = Float4{result, 1.0f};
+        float3 result = samples_buffer[i].xyz() * rec_iter;
+        image[i] = float4{result, 1.0f};
     });
     image.save_to_file(path, kl::ImageType::PNG);
 }
 
 void titian::GPUTracer::compute_pass()
 {
-    Int2 resolution = m_gpu.texture_size(m_target);
+    int2 resolution = m_gpu.texture_size(m_target);
 
     m_gpu.bind_compute_shader(m_compute_shader.shader);
     m_gpu.bind_access_view_for_compute_shader(m_target_access_view, 0);
@@ -155,13 +155,13 @@ void titian::GPUTracer::compute_pass()
 
     struct alignas(16) CB
     {
-        Float4x4 CAMERA_INV_MAT;
-        Float4 CAMERA_BACKGROUND;
-        Float3 CAMERA_POSITION;
+        float4x4 CAMERA_INV_MAT;
+        float4 CAMERA_BACKGROUND;
+        float3 CAMERA_POSITION;
         int32_t DEPTH_LIMIT;
-        Float3 DIRECTIONAL_DIRECTION;
+        float3 DIRECTIONAL_DIRECTION;
         float CAMERA_IS_WIREFRAME;
-        Float3 DIRECTIONAL_COLOR;
+        float3 DIRECTIONAL_COLOR;
         float CAMERA_HAS_SKYBOX;
         float CAMERA_BOUND;
         float DIRECTIONAL_POINT_SIZE;
@@ -204,7 +204,7 @@ void titian::GPUTracer::compute_pass()
 
 void titian::GPUTracer::copy_pass()
 {
-    Int2 resolution = m_gpu.texture_size(m_target);
+    int2 resolution = m_gpu.texture_size(m_target);
 
     m_gpu.bind_compute_shader(m_copy_shader.shader);
     m_gpu.bind_access_view_for_compute_shader(m_target_access_view, 0);

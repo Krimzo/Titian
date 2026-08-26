@@ -5,7 +5,6 @@
 #include "components/material.h"
 #include "utility/async_util.h"
 
-
 namespace titian
 {
 struct DefaultMeshes
@@ -16,7 +15,7 @@ struct DefaultMeshes
 
     DefaultMeshes();
 };
-}
+} // namespace titian
 
 namespace titian
 {
@@ -28,7 +27,7 @@ struct DefaultAnimations
 
     DefaultAnimations();
 };
-}
+} // namespace titian
 
 namespace titian
 {
@@ -38,4 +37,4 @@ struct DefaultMaterials
 
     DefaultMaterials();
 };
-}
+} // namespace titian

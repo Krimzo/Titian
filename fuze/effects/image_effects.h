@@ -2,7 +2,6 @@
 
 #include "effects/image_effect.h"
 
-
 namespace titian
 {
 struct ImageEffectSclRotPos : ImageEffect
@@ -16,8 +15,8 @@ struct ImageEffectSclRotPos : ImageEffect
 
     String get_source() const;
 
-    Float2& scale();
+    float2& scale();
     float& rotation();
-    Float2& position();
+    float2& position();
 };
-}
+} // namespace titian

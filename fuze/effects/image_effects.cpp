@@ -1,10 +1,8 @@
 #include "fuze.h"
 
-
-titian::ImageEffectSclRotPos::ImageEffectSclRotPos()
-    : ImageEffect( get_source() )
+titian::ImageEffectSclRotPos::ImageEffectSclRotPos() : ImageEffect(get_source())
 {
-    scale() = Float2( 1.0f );
+    scale() = float2(1.0f);
 }
 
 titian::String titian::ImageEffectSclRotPos::name() const
@@ -26,9 +24,9 @@ titian::Ref<titian::ImageEffect> titian::ImageEffectSclRotPos::make_copy() const
 
 void titian::ImageEffectSclRotPos::display_gui()
 {
-    im::DragFloat2( "Scale", &scale().x, 0.05f );
-    im::DragFloat( "Rotation", &rotation() );
-    im::DragFloat2( "Position", &position().x );
+    im::DragFloat2("Scale", &scale().x, 0.05f);
+    im::DragFloat("Rotation", &rotation());
+    im::DragFloat2("Position", &position().x);
 }
 
 titian::String titian::ImageEffectSclRotPos::get_source() const
@@ -53,17 +51,17 @@ void func(float2 target_coords)
 )";
 }
 
-titian::Float2& titian::ImageEffectSclRotPos::scale()
+float2& titian::ImageEffectSclRotPos::scale()
 {
-    return (Float2&) custom_data( 0, 0 );
+    return (float2&)custom_data(0, 0);
 }
 
 float& titian::ImageEffectSclRotPos::rotation()
 {
-    return (float&) custom_data( 0, 1 );
+    return (float&)custom_data(0, 1);
 }
 
-titian::Float2& titian::ImageEffectSclRotPos::position()
+float2& titian::ImageEffectSclRotPos::position()
 {
-    return (Float2&) custom_data( 0, 2 );
+    return (float2&)custom_data(0, 2);
 }

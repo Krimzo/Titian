@@ -6,7 +6,6 @@
 #include "serial/binary_serializer.h"
 #include "serial/text_serializer.h"
 
-
 namespace titian
 {
 struct GUISectionMainMenu : GUISection
@@ -15,7 +14,7 @@ struct GUISectionMainMenu : GUISection
 
     void render_gui() override;
 
-private:
+  private:
     String m_temp_path = "temp.titian";
 
     Texture m_start_button_texture;
@@ -26,4 +25,4 @@ private:
     float m_control_buttons_width = 0.0f;
     float m_gizmo_buttons_width = 0.0f;
 };
-}
+} // namespace titian

@@ -1,6 +1,5 @@
 #include "titian.h"
 
-
 titian::SamplerStates::SamplerStates()
 {
     kl::GPU const& gpu = AppLayer::get().gpu;
@@ -15,11 +14,11 @@ titian::SamplerStates::SamplerStates()
     shadow_sampler_descriptor.BorderColor[3] = 1.0f;
     shadow_sampler_descriptor.ComparisonFunc = D3D11_COMPARISON_LESS;
 
-    linear = gpu.create_sampler_state( true, false );
-    non_linear = gpu.create_sampler_state( false, false );
-    shadow = gpu.create_sampler_state( &shadow_sampler_descriptor );
+    linear = gpu.create_sampler_state(true, false);
+    non_linear = gpu.create_sampler_state(false, false);
+    shadow = gpu.create_sampler_state(&shadow_sampler_descriptor);
 
-    ti_assert( linear, "Failed to init LINEAR sampler state" );
-    ti_assert( non_linear, "Failed to init NON_LINEAR sampler state" );
-    ti_assert( shadow, "Failed to init SHADOW sampler state" );
+    ti_assert(linear, "Failed to init LINEAR sampler state");
+    ti_assert(non_linear, "Failed to init NON_LINEAR sampler state");
+    ti_assert(shadow, "Failed to init SHADOW sampler state");
 }

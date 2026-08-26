@@ -2,7 +2,6 @@
 
 #include "tracing.h"
 
-
 namespace titian
 {
 struct GPUTracer
@@ -10,11 +9,11 @@ struct GPUTracer
     kl::Window& window;
     TracingScene const& scene;
 
-    GPUTracer( kl::Window& window, TracingScene const& scene, Int2 resolution );
+    GPUTracer(kl::Window& window, TracingScene const& scene, int2 resolution);
 
     void render();
 
-private:
+  private:
     kl::GPU m_gpu;
     kl::Timer m_timer;
 
@@ -40,10 +39,10 @@ private:
 
     void create_scene_buffers();
     void handle_input();
-    void save_screenshot( StringRef const& path );
+    void save_screenshot(StringRef const& path);
 
     void compute_pass();
     void copy_pass();
     void display_pass();
 };
-}
+} // namespace titian

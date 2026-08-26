@@ -53,7 +53,7 @@ bool titian::VideoLayer::playing() const
     return m_playing;
 }
 
-void titian::VideoLayer::start_rendering(Int2 frame_size, int fps, float video_mb_rate, int audio_sample_rate)
+void titian::VideoLayer::start_rendering(int2 frame_size, int fps, float video_mb_rate, int audio_sample_rate)
 {
     if (m_renderer || m_playing)
         return;
@@ -122,7 +122,7 @@ float titian::VideoLayer::end_time() const
     return result;
 }
 
-void titian::VideoLayer::store_frame(Int2 size)
+void titian::VideoLayer::store_frame(int2 size)
 {
     m_handler.prepare_frame(size);
 
@@ -141,7 +141,7 @@ void titian::VideoLayer::store_frame(Int2 size)
     }
 }
 
-titian::Int2 titian::VideoLayer::frame_size() const
+int2 titian::VideoLayer::frame_size() const
 {
     return m_handler.out_frame.size();
 }

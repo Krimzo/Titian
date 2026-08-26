@@ -3,7 +3,6 @@
 #include "effects/image_effect.h"
 #include "effects/audio_effect.h"
 
-
 namespace titian
 {
 enum struct MediaType : int32_t
@@ -12,7 +11,7 @@ enum struct MediaType : int32_t
     AUDIO = 1,
     VIDEO = 2,
 };
-}
+} // namespace titian
 
 namespace titian
 {
@@ -38,16 +37,16 @@ struct Media : kl::NoCopy
     bool has_audio() const;
     bool has_video() const;
 
-    void store_frame( EffectPackage const& package, bool wait );
-    void store_audio( EffectPackage const& package );
+    void store_frame(EffectPackage const& package, bool wait);
+    void store_audio(EffectPackage const& package);
 
     Ref<Media> make_copy() const;
 
-private:
-    void store_raw_frame( float time, bool wait );
+  private:
+    void store_raw_frame(float time, bool wait);
     void store_raw_audio();
 
-    void apply_image_effects( EffectPackage const& package );
-    void apply_audio_effects( EffectPackage const& package );
+    void apply_image_effects(EffectPackage const& package);
+    void apply_audio_effects(EffectPackage const& package);
 };
-}
+} // namespace titian

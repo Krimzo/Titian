@@ -2,7 +2,6 @@
 
 #include "titian.h"
 
-
 namespace titian
 {
 struct EffectPackage
@@ -13,4 +12,4 @@ struct EffectPackage
 
     EffectPackage();
 };
-}
+} // namespace titian

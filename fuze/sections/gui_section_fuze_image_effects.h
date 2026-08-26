@@ -6,7 +6,6 @@
 #include "effects/image_effects.h"
 #include "effects/audio_effects.h"
 
-
 namespace titian
 {
 struct GUISectionFuzeImageEffects : GUISection
@@ -15,4 +14,4 @@ struct GUISectionFuzeImageEffects : GUISection
 
     void render_gui() override;
 };
-}
+} // namespace titian

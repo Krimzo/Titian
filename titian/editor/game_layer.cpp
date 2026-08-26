@@ -1,8 +1,6 @@
 #include "titian.h"
 
-
-titian::GameLayer::GameLayer()
-    : Layer_T( "GameLayer" )
+titian::GameLayer::GameLayer() : Layer_T("GameLayer")
 {
     reset_scene();
 }
@@ -10,9 +8,9 @@ titian::GameLayer::GameLayer()
 bool titian::GameLayer::update()
 {
     TimeBomb _ = bench_time_bomb();
-    if ( m_game_state == GameState::RUNNING )
+    if (m_game_state == GameState::RUNNING)
     {
-        m_scene->update_physics( AppLayer::get().timer.delta() );
+        m_scene->update_physics(AppLayer::get().timer.delta());
         m_scene->update_scripts();
     }
     return true;
@@ -30,28 +28,28 @@ titian::Scene& titian::GameLayer::scene()
 
 void titian::GameLayer::start_game()
 {
-    if ( m_game_state != GameState::STOPPED )
+    if (m_game_state != GameState::STOPPED)
         return;
 
     AppLayer& app_layer = AppLayer::get();
 
-    for ( auto& [_, shader] : m_scene->shaders )
+    for (auto& [_, shader] : m_scene->shaders)
         shader->reload();
-    for ( auto& [_, script] : m_scene->scripts )
+    for (auto& [_, script] : m_scene->scripts)
         script->reload();
 
     app_layer.timer.reset();
-    for ( auto& [_, script] : m_scene->scripts )
-        script->call_start( *m_scene );
+    for (auto& [_, script] : m_scene->scripts)
+        script->call_start(*m_scene);
 
     app_layer.timer.start();
     m_game_state = GameState::RUNNING;
-    Logger::log( "Game started." );
+    Logger::log("Game started.");
 }
 
 void titian::GameLayer::pause_game()
 {
-    if ( m_game_state != GameState::RUNNING )
+    if (m_game_state != GameState::RUNNING)
         return;
 
     AppLayer::get().timer.stop();
@@ -60,7 +58,7 @@ void titian::GameLayer::pause_game()
 
 void titian::GameLayer::resume_game()
 {
-    if ( m_game_state != GameState::PAUSED )
+    if (m_game_state != GameState::PAUSED)
         return;
 
     AppLayer::get().timer.start();
@@ -69,12 +67,12 @@ void titian::GameLayer::resume_game()
 
 void titian::GameLayer::stop_game()
 {
-    if ( m_game_state == GameState::STOPPED )
+    if (m_game_state == GameState::STOPPED)
         return;
 
     AppLayer::get().timer.reset();
     m_game_state = GameState::STOPPED;
-    Logger::log( "Game stopped." );
+    Logger::log("Game stopped.");
 }
 
 bool titian::GameLayer::game_running() const

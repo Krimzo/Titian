@@ -4,21 +4,19 @@
 
 using namespace titian;
 
-static constexpr bool SHOULD_PACKAGE_DEFAULTS = false;
+inline constexpr str EXE_PLAY = "play";
+inline constexpr str EXE_EDIT = "edit";
+inline constexpr str EXE_SANDBOX = "sandbox";
+inline constexpr str EXE_UNPACK = "unpack";
+inline constexpr str EXE_PACK = "pack";
+inline constexpr str EXE_VIDEO = "video";
 
 int main(int argc, str* argv)
 {
-    if constexpr (SHOULD_PACKAGE_DEFAULTS)
-    {
-        create_package("../titian/package/", "titian.tipk");
-        create_package("../sandbox/package/", "sandbox.tipk");
-        create_package("../fuze/package/", "fuze.tipk");
-    }
-
     if (!kl::IS_DEBUG && fs::path(argv[0]).is_absolute())
         kl::console::set_enabled(false);
 
-    String exe_type = EXE_PLAY;
+    String exe_type{EXE_PLAY};
     if (argc >= 2)
     {
         exe_type = argv[1];

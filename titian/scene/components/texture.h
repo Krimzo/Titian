@@ -2,7 +2,6 @@
 
 #include "serial/serial.h"
 
-
 namespace titian
 {
 struct Texture : Serializable
@@ -19,20 +18,20 @@ struct Texture : Serializable
 
     Texture();
 
-    void serialize( Serializer& serializer ) const override;
-    void deserialize( Serializer const& serializer ) override;
+    void serialize(Serializer& serializer) const override;
+    void deserialize(Serializer const& serializer) override;
 
     void reload_as_2D();
     bool reload_as_cube();
 
-    void create_target_view( dx::TargetViewDescriptor* descriptor = nullptr );
-    void create_depth_view( dx::DepthViewDescriptor* descriptor = nullptr );
-    void create_shader_view( dx::ShaderViewDescriptor* descriptor = nullptr );
-    void create_access_view( dx::AccessViewDescriptor* descriptor = nullptr );
+    void create_target_view(dx::TargetViewDescriptor* descriptor = nullptr);
+    void create_depth_view(dx::DepthViewDescriptor* descriptor = nullptr);
+    void create_shader_view(dx::ShaderViewDescriptor* descriptor = nullptr);
+    void create_access_view(dx::AccessViewDescriptor* descriptor = nullptr);
 
     bool is_cube() const;
-    Int2 resolution() const;
+    int2 resolution() const;
 
-    void copy_other( dx::Texture const& texture );
+    void copy_other(dx::Texture const& texture);
 };
-}
+} // namespace titian

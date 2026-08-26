@@ -1,7 +1,6 @@
 #pragma once
 
-#include "standard.h"
-
+#include "globals.h"
 
 namespace titian
 {
@@ -12,4 +11,4 @@ struct BlendStates
 
     BlendStates();
 };
-}
+} // namespace titian

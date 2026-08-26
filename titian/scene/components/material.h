@@ -2,7 +2,6 @@
 
 #include "serial/serial.h"
 
-
 namespace titian
 {
 struct Material : Serializable
@@ -11,8 +10,8 @@ struct Material : Serializable
     float reflectivity_factor = 0.0f;
     float refraction_index = 1.0f;
 
-    Float4 color = kl::colors::WHITE;
-    Float4x4 custom_data;
+    float4 color = kl::colors::WHITE;
+    float4x4 custom_data;
 
     String color_texture_name = "/";
     String normal_texture_name = "/";
@@ -21,11 +20,11 @@ struct Material : Serializable
 
     Material();
 
-    void serialize( Serializer& serializer ) const override;
-    void deserialize( Serializer const& serializer ) override;
+    void serialize(Serializer& serializer) const override;
+    void deserialize(Serializer const& serializer) override;
 
     bool is_transparent() const;
 
     Ref<Material> clone() const;
 };
-}
+} // namespace titian

@@ -128,105 +128,103 @@ titian::StringMap<titian::InterpScript::Parameter> titian::InterpScript::get_par
 
 void titian::InterpScript::load_engine_parts()
 {
-    m_engine->new_usertype<Int2>(
-        "Int2", sl::constructors<Int2(), Int2(int), Int2(int, int)>(), "x", &Int2::x, "y", &Int2::y,
-        sl::meta_function::equal_to, &Int2::operator==, sl::meta_function::unary_minus,
-        CONST_METHOD(Int2, Int2, operator-), sl::meta_function::addition, &Int2::operator+,
-        sl::meta_function::subtraction, CONST_METHOD(Int2, Int2, operator-, Int2 const&),
+    m_engine->new_usertype<int2>(
+        "int2", sl::constructors<int2(), int2(int), int2(int, int)>(), "x", &int2::x, "y", &int2::y,
+        sl::meta_function::equal_to, &int2::operator==, sl::meta_function::unary_minus,
+        CONST_METHOD(int2, int2, operator-), sl::meta_function::addition, &int2::operator+,
+        sl::meta_function::subtraction, CONST_METHOD(int2, int2, operator-, int2 const&),
         sl::meta_function::multiplication,
-        sl::overload(CONST_METHOD(Int2, Int2, operator*, int), CONST_METHOD(Int2, Int2, operator*, Int2 const&)),
+        sl::overload(CONST_METHOD(int2, int2, operator*, int), CONST_METHOD(int2, int2, operator*, int2 const&)),
         sl::meta_function::division,
-        sl::overload(CONST_METHOD(Int2, Int2, operator/, int), CONST_METHOD(Int2, Int2, operator/, Int2 const&)));
+        sl::overload(CONST_METHOD(int2, int2, operator/, int), CONST_METHOD(int2, int2, operator/, int2 const&)));
 
-    m_engine->new_usertype<Float2>(
-        "Float2", sl::constructors<Float2(), Float2(float), Float2(float, float)>(), "x", &Float2::x, "y", &Float2::y,
-        "length", &Float2::length, sl::meta_function::equal_to, &Float2::operator==, sl::meta_function::unary_minus,
-        CONST_METHOD(Float2, Float2, operator-), sl::meta_function::addition, &Float2::operator+,
-        sl::meta_function::subtraction, CONST_METHOD(Float2, Float2, operator-, Float2 const&),
+    m_engine->new_usertype<float2>(
+        "float2", sl::constructors<float2(), float2(float), float2(float, float)>(), "x", &float2::x, "y", &float2::y,
+        "length", &float2::length, sl::meta_function::equal_to, &float2::operator==, sl::meta_function::unary_minus,
+        CONST_METHOD(float2, float2, operator-), sl::meta_function::addition, &float2::operator+,
+        sl::meta_function::subtraction, CONST_METHOD(float2, float2, operator-, float2 const&),
         sl::meta_function::multiplication,
-        sl::overload(CONST_METHOD(Float2, Float2, operator*, float),
-                     CONST_METHOD(Float2, Float2, operator*, Float2 const&)),
+        sl::overload(CONST_METHOD(float2, float2, operator*, float),
+                     CONST_METHOD(float2, float2, operator*, float2 const&)),
         sl::meta_function::division,
-        sl::overload(CONST_METHOD(Float2, Float2, operator/, float),
-                     CONST_METHOD(Float2, Float2, operator/, Float2 const&)));
+        sl::overload(CONST_METHOD(float2, float2, operator/, float),
+                     CONST_METHOD(float2, float2, operator/, float2 const&)));
 
-    m_engine->new_usertype<Float3>(
-        "Float3",
-        sl::constructors<Float3(), Float3(float), Float3(float, float, float), Float3(Float2, float),
-                         Float3(float, Float2)>(),
-        "x", &Float3::x, "y", &Float3::y, "z", &Float3::z, "length", &Float3::length, sl::meta_function::equal_to,
-        &Float3::operator==, sl::meta_function::unary_minus, CONST_METHOD(Float3, Float3, operator-),
-        sl::meta_function::addition, &Float3::operator+, sl::meta_function::subtraction,
-        CONST_METHOD(Float3, Float3, operator-, Float3 const&), sl::meta_function::multiplication,
-        sl::overload(CONST_METHOD(Float3, Float3, operator*, float),
-                     CONST_METHOD(Float3, Float3, operator*, Float3 const&)),
+    m_engine->new_usertype<float3>(
+        "float3",
+        sl::constructors<float3(), float3(float), float3(float, float, float), float3(float2, float),
+                         float3(float, float2)>(),
+        "x", &float3::x, "y", &float3::y, "z", &float3::z, "length", &float3::length, sl::meta_function::equal_to,
+        &float3::operator==, sl::meta_function::unary_minus, CONST_METHOD(float3, float3, operator-),
+        sl::meta_function::addition, &float3::operator+, sl::meta_function::subtraction,
+        CONST_METHOD(float3, float3, operator-, float3 const&), sl::meta_function::multiplication,
+        sl::overload(CONST_METHOD(float3, float3, operator*, float),
+                     CONST_METHOD(float3, float3, operator*, float3 const&)),
         sl::meta_function::division,
-        sl::overload(CONST_METHOD(Float3, Float3, operator/, float),
-                     CONST_METHOD(Float3, Float3, operator/, Float3 const&)));
+        sl::overload(CONST_METHOD(float3, float3, operator/, float),
+                     CONST_METHOD(float3, float3, operator/, float3 const&)));
 
-    m_engine->new_usertype<Float4>(
-        "Float4",
-        sl::constructors<Float4(), Float4(float), Float4(float, float, float, float), Float4(Float2, float, float),
-                         Float4(float, Float2, float), Float4(float, float, Float2), Float4(Float2, Float2),
-                         Float4(Float3, float), Float4(float, Float3)>(),
-        "x", &Float4::x, "y", &Float4::y, "z", &Float4::z, "w", &Float4::w, "length", &Float4::length,
-        sl::meta_function::equal_to, &Float4::operator==, sl::meta_function::unary_minus,
-        CONST_METHOD(Float4, Float4, operator-), sl::meta_function::addition, &Float4::operator+,
-        sl::meta_function::subtraction, CONST_METHOD(Float4, Float4, operator-, Float4 const&),
+    m_engine->new_usertype<float4>(
+        "float4",
+        sl::constructors<float4(), float4(float), float4(float, float, float, float), float4(float2, float, float),
+                         float4(float, float2, float), float4(float, float, float2), float4(float2, float2),
+                         float4(float3, float), float4(float, float3)>(),
+        "x", &float4::x, "y", &float4::y, "z", &float4::z, "w", &float4::w, "length", &float4::length,
+        sl::meta_function::equal_to, &float4::operator==, sl::meta_function::unary_minus,
+        CONST_METHOD(float4, float4, operator-), sl::meta_function::addition, &float4::operator+,
+        sl::meta_function::subtraction, CONST_METHOD(float4, float4, operator-, float4 const&),
         sl::meta_function::multiplication,
-        sl::overload(CONST_METHOD(Float4, Float4, operator*, float),
-                     CONST_METHOD(Float4, Float4, operator*, Float4 const&)),
+        sl::overload(CONST_METHOD(float4, float4, operator*, float),
+                     CONST_METHOD(float4, float4, operator*, float4 const&)),
         sl::meta_function::division,
-        sl::overload(CONST_METHOD(Float4, Float4, operator/, float),
-                     CONST_METHOD(Float4, Float4, operator/, Float4 const&)));
+        sl::overload(CONST_METHOD(float4, float4, operator/, float),
+                     CONST_METHOD(float4, float4, operator/, float4 const&)));
 
-    m_engine->new_usertype<Float2x2>(
-        "Float2x2", sl::constructors<Float2x2()>(), "get", &Float2x2::get, "set", &Float2x2::set, "determinant",
-        &Float2x2::determinant, sl::meta_function::equal_to, &Float2x2::operator==, sl::meta_function::addition,
-        &Float2x2::operator+, sl::meta_function::subtraction, &Float2x2::operator-, sl::meta_function::multiplication,
-        sl::overload(CONST_METHOD(Float2x2, Float2x2, operator*, float),
-                     CONST_METHOD(Float2x2, Float2, operator*, Float2 const&),
-                     CONST_METHOD(Float2x2, Float2x2, operator*, Float2x2 const&)));
+    m_engine->new_usertype<float2x2>(
+        "float2x2", sl::constructors<float2x2()>(), "get", &float2x2::get, "set", &float2x2::set, "determinant",
+        &float2x2::determinant, sl::meta_function::equal_to, &float2x2::operator==, sl::meta_function::addition,
+        &float2x2::operator+, sl::meta_function::subtraction, &float2x2::operator-, sl::meta_function::multiplication,
+        sl::overload(CONST_METHOD(float2x2, float2x2, operator*, float),
+                     CONST_METHOD(float2x2, float2, operator*, float2 const&),
+                     CONST_METHOD(float2x2, float2x2, operator*, float2x2 const&)));
 
-    m_engine->new_usertype<Float3x3>(
-        "Float3x3", sl::constructors<Float3x3()>(), "get", &Float3x3::get, "set", &Float3x3::set, "determinant",
-        &Float3x3::determinant, sl::meta_function::equal_to, &Float3x3::operator==, sl::meta_function::addition,
-        &Float3x3::operator+, sl::meta_function::subtraction, &Float3x3::operator-, sl::meta_function::multiplication,
-        sl::overload(CONST_METHOD(Float3x3, Float3x3, operator*, float),
-                     CONST_METHOD(Float3x3, Float3, operator*, Float3 const&),
-                     CONST_METHOD(Float3x3, Float3x3, operator*, Float3x3 const&)));
+    m_engine->new_usertype<float3x3>(
+        "float3x3", sl::constructors<float3x3()>(), "get", &float3x3::get, "set", &float3x3::set, "determinant",
+        &float3x3::determinant, sl::meta_function::equal_to, &float3x3::operator==, sl::meta_function::addition,
+        &float3x3::operator+, sl::meta_function::subtraction, &float3x3::operator-, sl::meta_function::multiplication,
+        sl::overload(CONST_METHOD(float3x3, float3x3, operator*, float),
+                     CONST_METHOD(float3x3, float3, operator*, float3 const&),
+                     CONST_METHOD(float3x3, float3x3, operator*, float3x3 const&)));
 
-    m_engine->new_usertype<Float4x4>(
-        "Float4x4", sl::constructors<Float4x4()>(), "get", &Float4x4::get, "set", &Float4x4::set, "determinant",
-        &Float4x4::determinant, sl::meta_function::equal_to, &Float4x4::operator==, sl::meta_function::addition,
-        &Float4x4::operator+, sl::meta_function::subtraction, &Float4x4::operator-, sl::meta_function::multiplication,
-        sl::overload(CONST_METHOD(Float4x4, Float4x4, operator*, float),
-                     CONST_METHOD(Float4x4, Float4, operator*, Float4 const&),
-                     CONST_METHOD(Float4x4, Float4x4, operator*, Float4x4 const&)));
+    m_engine->new_usertype<float4x4>(
+        "float4x4", sl::constructors<float4x4()>(), "get", &float4x4::get, "set", &float4x4::set, "determinant",
+        &float4x4::determinant, sl::meta_function::equal_to, &float4x4::operator==, sl::meta_function::addition,
+        &float4x4::operator+, sl::meta_function::subtraction, &float4x4::operator-, sl::meta_function::multiplication,
+        sl::overload(CONST_METHOD(float4x4, float4x4, operator*, float),
+                     CONST_METHOD(float4x4, float4, operator*, float4 const&),
+                     CONST_METHOD(float4x4, float4x4, operator*, float4x4 const&)));
 
-    m_engine->new_usertype<Complex>(
-        "Complex", sl::constructors<Complex(), Complex(float), Complex(float, float)>(), "r", &Complex::r, "i",
-        &Complex::i, "length", &Complex::length, sl::meta_function::equal_to, &Complex::operator==,
-        sl::meta_function::unary_minus, CONST_METHOD(Complex, Complex, operator-), sl::meta_function::addition,
-        &Complex::operator+, sl::meta_function::subtraction, CONST_METHOD(Complex, Complex, operator-, Complex const&),
+    m_engine->new_usertype<cmplx>("cmplx", sl::constructors<cmplx(), cmplx(float), cmplx(float, float)>(), "r",
+                                  &cmplx::r, "i", &cmplx::i, "length", &cmplx::length, sl::meta_function::equal_to,
+                                  &cmplx::operator==, sl::meta_function::unary_minus,
+                                  CONST_METHOD(cmplx, cmplx, operator-), sl::meta_function::addition, &cmplx::operator+,
+                                  sl::meta_function::subtraction, CONST_METHOD(cmplx, cmplx, operator-, cmplx const&),
+                                  sl::meta_function::multiplication,
+                                  sl::overload(CONST_METHOD(cmplx, cmplx, operator*, float),
+                                               CONST_METHOD(cmplx, cmplx, operator*, cmplx const&)));
+
+    m_engine->new_usertype<quat>(
+        "quat",
+        sl::constructors<quat(), quat(float, float, float), quat(float, float, float, float), quat(float3, float)>(),
+        "r", &quat::r, "i", &quat::i, "j", &quat::j, "k", &quat::k, "length", &quat::length,
+        sl::meta_function::equal_to, &quat::operator==, sl::meta_function::unary_minus,
+        CONST_METHOD(quat, quat, operator-), sl::meta_function::addition, &quat::operator+,
+        sl::meta_function::subtraction, CONST_METHOD(quat, quat, operator-, quat const&),
         sl::meta_function::multiplication,
-        sl::overload(CONST_METHOD(Complex, Complex, operator*, float),
-                     CONST_METHOD(Complex, Complex, operator*, Complex const&)));
-
-    m_engine->new_usertype<Quaternion>(
-        "Quaternion",
-        sl::constructors<Quaternion(), Quaternion(float, float, float), Quaternion(float, float, float, float),
-                         Quaternion(Float3, float)>(),
-        "r", &Quaternion::r, "i", &Quaternion::i, "j", &Quaternion::j, "k", &Quaternion::k, "length",
-        &Quaternion::length, sl::meta_function::equal_to, &Quaternion::operator==, sl::meta_function::unary_minus,
-        CONST_METHOD(Quaternion, Quaternion, operator-), sl::meta_function::addition, &Quaternion::operator+,
-        sl::meta_function::subtraction, CONST_METHOD(Quaternion, Quaternion, operator-, Quaternion const&),
-        sl::meta_function::multiplication,
-        sl::overload(CONST_METHOD(Quaternion, Quaternion, operator*, float),
-                     CONST_METHOD(Quaternion, Quaternion, operator*, Quaternion const&)));
+        sl::overload(CONST_METHOD(quat, quat, operator*, float), CONST_METHOD(quat, quat, operator*, quat const&)));
 
     m_engine->new_usertype<kl::Vertex>(
-        "Vertex", sl::constructors<kl::Vertex(), kl::Vertex(Float3), kl::Vertex(Float3, Float3, Float2)>(), "position",
+        "Vertex", sl::constructors<kl::Vertex(), kl::Vertex(float3), kl::Vertex(float3, float3, float2)>(), "position",
         &kl::Vertex::position, "normal", &kl::Vertex::normal, "uv", &kl::Vertex::uv);
 
     m_engine->new_usertype<kl::Triangle>(
@@ -234,17 +232,17 @@ void titian::InterpScript::load_engine_parts()
         &kl::Triangle::a, "b", &kl::Triangle::b, "c", &kl::Triangle::c);
 
     m_engine->new_usertype<kl::Plane>(
-        "Plane", sl::constructors<kl::Plane(), kl::Plane(Float3, Float3)>(), "position", &kl::Plane::position, "normal",
+        "Plane", sl::constructors<kl::Plane(), kl::Plane(float3, float3)>(), "position", &kl::Plane::position, "normal",
         sl::overload(&kl::Plane::normal, &kl::Plane::set_normal), "in_front", &kl::Plane::in_front);
 
-    m_engine->new_usertype<kl::Sphere>("Sphere", sl::constructors<kl::Sphere(), kl::Sphere(Float3, float)>(),
+    m_engine->new_usertype<kl::Sphere>("Sphere", sl::constructors<kl::Sphere(), kl::Sphere(float3, float)>(),
                                        "position", &kl::Sphere::position, "radius", &kl::Sphere::radius);
 
-    m_engine->new_usertype<kl::AABB>("AABB", sl::constructors<kl::AABB(), kl::AABB(Float3, Float3)>(), "center",
+    m_engine->new_usertype<kl::AABB>("AABB", sl::constructors<kl::AABB(), kl::AABB(float3, float3)>(), "center",
                                      &kl::AABB::center, "half_size", &kl::AABB::half_size);
 
     m_engine->new_usertype<kl::Ray>(
-        "Ray", sl::constructors<kl::Ray(), kl::Ray(Float3, Float3), kl::Ray(Float3, Float4x4, Float2)>(), "origin",
+        "Ray", sl::constructors<kl::Ray(), kl::Ray(float3, float3), kl::Ray(float3, float4x4, float2)>(), "origin",
         &kl::Ray::origin, "direction", sl::property(&kl::Ray::direction, &kl::Ray::set_direction), "intersect_plane",
         &kl::Ray::intersect_plane, "intersect_sphere", &kl::Ray::intersect_sphere, "intersect_aabb",
         &kl::Ray::intersect_aabb, "intersect_triangle", &kl::Ray::intersect_triangle);
@@ -259,11 +257,11 @@ void titian::InterpScript::load_engine_parts()
                                 "v", &YUV::v, "ascii", &YUV::ascii, sl::meta_function::equal_to, &YUV::operator==);
 
     m_engine->new_usertype<kl::Image>(
-        "Image", sl::constructors<kl::Image(), kl::Image(Int2), kl::Image(StringRef)>(), "pixel_count",
+        "Image", sl::constructors<kl::Image(), kl::Image(int2), kl::Image(StringRef)>(), "pixel_count",
         &kl::Image::pixel_count, "byte_size", &kl::Image::byte_size, sl::meta_function::index,
-        sl::overload(METHOD(kl::Image, RGB&, operator[], int), METHOD(kl::Image, RGB&, operator[], Int2)),
+        sl::overload(METHOD(kl::Image, RGB&, operator[], int), METHOD(kl::Image, RGB&, operator[], int2)),
         sl::meta_function::new_index,
-        sl::overload(METHOD(kl::Image, RGB&, operator[], int), METHOD(kl::Image, RGB&, operator[], Int2)), "in_bounds",
+        sl::overload(METHOD(kl::Image, RGB&, operator[], int), METHOD(kl::Image, RGB&, operator[], int2)), "in_bounds",
         &kl::Image::in_bounds, "sample", &kl::Image::sample, "width",
         sl::property(&kl::Image::width, &kl::Image::set_width), "height",
         sl::property(&kl::Image::height, &kl::Image::set_height), "size",
@@ -271,8 +269,8 @@ void titian::InterpScript::load_engine_parts()
         &kl::Image::flip_horizontal, "flip_vertical", &kl::Image::flip_vertical, "rectangle", &kl::Image::rectangle,
         "as_ascii", &kl::Image::as_ascii, "draw_line", &kl::Image::draw_line, "draw_triangle",
         &kl::Image::draw_triangle, "draw_rectangle", &kl::Image::draw_rectangle, "draw_circle",
-        sl::overload(METHOD(kl::Image, void, draw_circle, Int2, float, RGB, bool),
-                     METHOD(kl::Image, void, draw_circle, Int2, Int2, RGB, bool)),
+        sl::overload(METHOD(kl::Image, void, draw_circle, int2, float, RGB, bool),
+                     METHOD(kl::Image, void, draw_circle, int2, int2, RGB, bool)),
         "draw_image", &kl::Image::draw_image, "load_from_file",
         METHOD(kl::Image, bool, load_from_file, StringRef const&), "save_to_file",
         CONST_METHOD(kl::Image, bool, save_to_file, StringRef const&, kl::ImageType));
@@ -411,13 +409,13 @@ void titian::InterpScript::load_engine_parts()
 
     (*m_engine)["new_bool_vector"] = []() { return Vector<bool>{}; };
     (*m_engine)["new_int_vector"] = []() { return Vector<int>{}; };
-    (*m_engine)["new_int2_vector"] = []() { return Vector<Int2>{}; };
+    (*m_engine)["new_int2_vector"] = []() { return Vector<int2>{}; };
     (*m_engine)["new_float_vector"] = []() { return Vector<float>{}; };
-    (*m_engine)["new_float2_vector"] = []() { return Vector<Float2>{}; };
-    (*m_engine)["new_float3_vector"] = []() { return Vector<Float3>{}; };
-    (*m_engine)["new_float4_vector"] = []() { return Vector<Float4>{}; };
-    (*m_engine)["new_complex_vector"] = []() { return Vector<Complex>{}; };
-    (*m_engine)["new_quat_vector"] = []() { return Vector<Quaternion>{}; };
+    (*m_engine)["new_float2_vector"] = []() { return Vector<float2>{}; };
+    (*m_engine)["new_float3_vector"] = []() { return Vector<float3>{}; };
+    (*m_engine)["new_float4_vector"] = []() { return Vector<float4>{}; };
+    (*m_engine)["new_complex_vector"] = []() { return Vector<cmplx>{}; };
+    (*m_engine)["new_quat_vector"] = []() { return Vector<quat>{}; };
     (*m_engine)["new_vertex_vector"] = []() { return Vector<kl::Vertex>{}; };
     (*m_engine)["new_triangle_vector"] = []() { return Vector<kl::Triangle>{}; };
     (*m_engine)["new_plane_vector"] = []() { return Vector<kl::Plane>{}; };
@@ -462,9 +460,9 @@ void titian::InterpScript::load_engine_parts()
     (*m_engine)["CAMERA_ORTHOGRAPHIC"] = (int)CameraType::ORTHOGRAPHIC;
 
     (*m_engine)["log"] = sl::overload(
-        &Logger::log<StringRef const&>, &Logger::log<bool const&>, &Logger::log<int const&>, &Logger::log<Int2 const&>,
-        &Logger::log<float const&>, &Logger::log<Float2 const&>, &Logger::log<Float3 const&>,
-        &Logger::log<Float4 const&>, &Logger::log<Complex const&>, &Logger::log<Quaternion const&>,
+        &Logger::log<StringRef const&>, &Logger::log<bool const&>, &Logger::log<int const&>, &Logger::log<int2 const&>,
+        &Logger::log<float const&>, &Logger::log<float2 const&>, &Logger::log<float3 const&>,
+        &Logger::log<float4 const&>, &Logger::log<cmplx const&>, &Logger::log<quat const&>,
         &Logger::log<kl::Vertex const&>, &Logger::log<kl::Triangle const&>, &Logger::log<kl::Plane const&>,
         &Logger::log<kl::Sphere const&>, &Logger::log<kl::AABB const&>, &Logger::log<kl::Ray const&>);
     (*m_engine)["print"] = (*m_engine)["log"];
@@ -476,17 +474,17 @@ void titian::InterpScript::load_engine_parts()
     (*m_engine)["get_keyboard"] = []() -> kl::Keyboard& { return AppLayer::get().window.keyboard; };
     (*m_engine)["get_mouse"] = []() -> kl::Mouse& { return AppLayer::get().window.mouse; };
 
-    (*m_engine)["Float3x3_translation"] = &Float3x3::translation;
-    (*m_engine)["Float3x3_rotation"] = &Float3x3::rotation;
-    (*m_engine)["Float3x3_scaling"] = &Float3x3::scaling;
+    (*m_engine)["Float3x3_translation"] = &float3x3::translation;
+    (*m_engine)["Float3x3_rotation"] = &float3x3::rotation;
+    (*m_engine)["Float3x3_scaling"] = &float3x3::scaling;
 
-    (*m_engine)["Float4x4_translation"] = &Float4x4::translation;
-    (*m_engine)["Float4x4_rotation"] = sl::overload(FUNCTION(Float4x4, Float4x4::rotation, Float3 const&),
-                                                    FUNCTION(Float4x4, Float4x4::rotation, Quaternion const&));
-    (*m_engine)["Float4x4_scaling"] = &Float4x4::scaling;
-    (*m_engine)["Float4x4_look_at"] = &Float4x4::look_at;
-    (*m_engine)["Float4x4_perspective"] = &Float4x4::perspective;
-    (*m_engine)["Float4x4_orthographic"] = &Float4x4::orthographic;
+    (*m_engine)["Float4x4_translation"] = &float4x4::translation;
+    (*m_engine)["Float4x4_rotation"] = sl::overload(FUNCTION(float4x4, float4x4::rotation, float3 const&),
+                                                    FUNCTION(float4x4, float4x4::rotation, quat const&));
+    (*m_engine)["Float4x4_scaling"] = &float4x4::scaling;
+    (*m_engine)["Float4x4_look_at"] = &float4x4::look_at;
+    (*m_engine)["Float4x4_perspective"] = &float4x4::perspective;
+    (*m_engine)["Float4x4_orthographic"] = &float4x4::orthographic;
 
     (*m_engine)["sin"] = &kl::sin<float>;
     (*m_engine)["cos"] = &kl::cos<float>;
@@ -516,55 +514,55 @@ void titian::InterpScript::load_engine_parts()
     (*m_engine)["lerp"] = FUNCTION(float, kl::lerp, float, float, float);
     (*m_engine)["unlerp"] = FUNCTION(float, kl::unlerp, float, float, float);
 
-    (*m_engine)["to_quat"] = sl::overload(FUNCTION(Quaternion, kl::to_quat, Float3 const&),
-                                          FUNCTION(Quaternion, kl::to_quat, Float3 const&, Float3 const&));
+    (*m_engine)["to_quat"] = sl::overload(FUNCTION(quat, kl::to_quat, float3 const&),
+                                          FUNCTION(quat, kl::to_quat, float3 const&, float3 const&));
 
-    (*m_engine)["to_euler"] = sl::overload(FUNCTION(Float3, kl::to_euler, Quaternion const&),
-                                           FUNCTION(Float3, kl::to_euler, Float3 const&, Float3 const&));
+    (*m_engine)["to_euler"] = sl::overload(FUNCTION(float3, kl::to_euler, quat const&),
+                                           FUNCTION(float3, kl::to_euler, float3 const&, float3 const&));
 
     (*m_engine)["abs"] =
-        sl::overload(FUNCTION(int, kl::abs, int), FUNCTION(Int2, kl::abs, Int2 const&), FUNCTION(float, kl::abs, float),
-                     FUNCTION(Float2, kl::abs, Float2 const&), FUNCTION(Float3, kl::abs, Float3 const&),
-                     FUNCTION(Float4, kl::abs, Float4 const&), FUNCTION(Complex, kl::abs, Complex const&),
-                     FUNCTION(Quaternion, kl::abs, Quaternion const&));
+        sl::overload(FUNCTION(int, kl::abs, int), FUNCTION(int2, kl::abs, int2 const&), FUNCTION(float, kl::abs, float),
+                     FUNCTION(float2, kl::abs, float2 const&), FUNCTION(float3, kl::abs, float3 const&),
+                     FUNCTION(float4, kl::abs, float4 const&), FUNCTION(cmplx, kl::abs, cmplx const&),
+                     FUNCTION(quat, kl::abs, quat const&));
 
     (*m_engine)["normalize"] =
-        sl::overload(FUNCTION(Float2, kl::normalize, Float2 const&), FUNCTION(Float3, kl::normalize, Float3 const&),
-                     FUNCTION(Float4, kl::normalize, Float4 const&), FUNCTION(Complex, kl::normalize, Complex const&),
-                     FUNCTION(Quaternion, kl::normalize, Quaternion const&));
+        sl::overload(FUNCTION(float2, kl::normalize, float2 const&), FUNCTION(float3, kl::normalize, float3 const&),
+                     FUNCTION(float4, kl::normalize, float4 const&), FUNCTION(cmplx, kl::normalize, cmplx const&),
+                     FUNCTION(quat, kl::normalize, quat const&));
 
     (*m_engine)["inverse"] =
-        sl::overload(FUNCTION(Float2x2, kl::inverse, Float2x2 const&), FUNCTION(Float3x3, kl::inverse, Float3x3 const&),
-                     FUNCTION(Float4x4, kl::inverse, Float4x4 const&), FUNCTION(Complex, kl::normalize, Complex const&),
-                     FUNCTION(Quaternion, kl::inverse, Quaternion const&));
+        sl::overload(FUNCTION(float2x2, kl::inverse, float2x2 const&), FUNCTION(float3x3, kl::inverse, float3x3 const&),
+                     FUNCTION(float4x4, kl::inverse, float4x4 const&), FUNCTION(cmplx, kl::normalize, cmplx const&),
+                     FUNCTION(quat, kl::inverse, quat const&));
 
-    (*m_engine)["transpose"] = sl::overload(FUNCTION(Float2x2, kl::transpose, Float2x2 const&),
-                                            FUNCTION(Float3x3, kl::transpose, Float3x3 const&),
-                                            FUNCTION(Float4x4, kl::transpose, Float4x4 const&));
+    (*m_engine)["transpose"] = sl::overload(FUNCTION(float2x2, kl::transpose, float2x2 const&),
+                                            FUNCTION(float3x3, kl::transpose, float3x3 const&),
+                                            FUNCTION(float4x4, kl::transpose, float4x4 const&));
 
-    (*m_engine)["dot"] = sl::overload(FUNCTION(float, kl::dot, Float2 const&, Float2 const&),
-                                      FUNCTION(float, kl::dot, Float3 const&, Float3 const&),
-                                      FUNCTION(float, kl::dot, Float4 const&, Float4 const&));
+    (*m_engine)["dot"] = sl::overload(FUNCTION(float, kl::dot, float2 const&, float2 const&),
+                                      FUNCTION(float, kl::dot, float3 const&, float3 const&),
+                                      FUNCTION(float, kl::dot, float4 const&, float4 const&));
     (*m_engine)["cross"] = &kl::cross<float>;
 
-    (*m_engine)["angle"] = sl::overload(FUNCTION(float, kl::angle, Float2, Float2, bool),
-                                        FUNCTION(float, kl::angle, Float3 const&, Float3 const&),
-                                        FUNCTION(float, kl::angle, Float4 const&, Float4 const&));
+    (*m_engine)["angle"] = sl::overload(FUNCTION(float, kl::angle, float2, float2, bool),
+                                        FUNCTION(float, kl::angle, float3 const&, float3 const&),
+                                        FUNCTION(float, kl::angle, float4 const&, float4 const&));
 
-    (*m_engine)["rotate"] = sl::overload(FUNCTION(Float2, kl::rotate, Float2 const&, float),
-                                         FUNCTION(Float3, kl::rotate, Float3 const&, Float3 const&, float));
+    (*m_engine)["rotate"] = sl::overload(FUNCTION(float2, kl::rotate, float2 const&, float),
+                                         FUNCTION(float3, kl::rotate, float3 const&, float3 const&, float));
 
-    (*m_engine)["reflect"] = sl::overload(FUNCTION(Float2, kl::reflect, Float2 const&, Float2),
-                                          FUNCTION(Float3, kl::reflect, Float3 const&, Float3));
+    (*m_engine)["reflect"] = sl::overload(FUNCTION(float2, kl::reflect, float2 const&, float2),
+                                          FUNCTION(float3, kl::reflect, float3 const&, float3));
 
     (*m_engine)["refract"] = &kl::refract<float>;
 
     (*m_engine)["gen_random_bool"] = &kl::random::gen_bool;
     (*m_engine)["gen_random_int"] = FUNCTION(int, kl::random::gen_int, int, int);
     (*m_engine)["gen_random_float"] = FUNCTION(float, kl::random::gen_float, float, float);
-    (*m_engine)["gen_random_float2"] = FUNCTION(Float2, kl::random::gen_float2, float, float);
-    (*m_engine)["gen_random_float3"] = FUNCTION(Float3, kl::random::gen_float3, float, float);
-    (*m_engine)["gen_random_float4"] = FUNCTION(Float4, kl::random::gen_float4, float, float);
+    (*m_engine)["gen_random_float2"] = FUNCTION(float2, kl::random::gen_float2, float, float);
+    (*m_engine)["gen_random_float3"] = FUNCTION(float3, kl::random::gen_float3, float, float);
+    (*m_engine)["gen_random_float4"] = FUNCTION(float4, kl::random::gen_float4, float, float);
     (*m_engine)["gen_random_color"] = &kl::random::gen_rgb;
     (*m_engine)["gen_random_char"] = &kl::random::gen_char;
     (*m_engine)["gen_random_string"] = &kl::random::gen_string;
@@ -590,22 +588,22 @@ void titian::InterpScript::load_engine_parts()
     (*m_engine)["ui_text"] = &ui_text;
     (*m_engine)["ui_colored_text"] = &ui_colored_text;
 
-    (*m_engine)["toint2"] = sl::overload([](Float2 const& value) -> Int2 { return value; });
-    (*m_engine)["tofloat2"] = sl::overload([](Int2 const& value) -> Float2 { return value; },
-                                           [](Complex const& value) -> Float2 { return value; });
+    (*m_engine)["toint2"] = sl::overload([](float2 const& value) -> int2 { return value; });
+    (*m_engine)["tofloat2"] = sl::overload([](int2 const& value) -> float2 { return value; },
+                                           [](cmplx const& value) -> float2 { return value; });
     (*m_engine)["tofloat3"] =
-        sl::overload([](RGB const& value) -> Float3 { return value; }, [](YUV const& value) -> Float3 { return value; },
-                     [](Quaternion const& value) -> Float3 { return value; });
-    (*m_engine)["tofloat4"] = sl::overload([](RGB const& value) -> Float4 { return value; },
-                                           [](Quaternion const& value) -> Float4 { return value; });
-    (*m_engine)["tocomplex"] = sl::overload([](Float2 const& value) -> Complex { return value; });
-    (*m_engine)["toquaternion"] = sl::overload([](Float3 const& value) -> Quaternion { return value; },
-                                               [](Float4 const& value) -> Quaternion { return value; });
+        sl::overload([](RGB const& value) -> float3 { return value; }, [](YUV const& value) -> float3 { return value; },
+                     [](quat const& value) -> float3 { return value; });
+    (*m_engine)["tofloat4"] = sl::overload([](RGB const& value) -> float4 { return value; },
+                                           [](quat const& value) -> float4 { return value; });
+    (*m_engine)["tocomplex"] = sl::overload([](float2 const& value) -> cmplx { return value; });
+    (*m_engine)["toquaternion"] = sl::overload([](float3 const& value) -> quat { return value; },
+                                               [](float4 const& value) -> quat { return value; });
     (*m_engine)["torgb"] =
-        sl::overload([](YUV const& value) -> RGB { return value; }, [](Float3 const& value) -> RGB { return value; },
-                     [](Float4 const& value) -> RGB { return value; });
+        sl::overload([](YUV const& value) -> RGB { return value; }, [](float3 const& value) -> RGB { return value; },
+                     [](float4 const& value) -> RGB { return value; });
     (*m_engine)["toyuv"] =
-        sl::overload([](RGB const& value) -> YUV { return value; }, [](Float3 const& value) -> YUV { return value; });
+        sl::overload([](RGB const& value) -> YUV { return value; }, [](float3 const& value) -> YUV { return value; });
 }
 
 static int load_names = [&] {

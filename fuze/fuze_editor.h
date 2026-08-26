@@ -10,7 +10,6 @@
 #include "sections/gui_section_fuze_timeline.h"
 #include "sections/gui_section_fuze_render.h"
 
-
 namespace titian
 {
 struct FuzeEditor : LayerStack
@@ -22,4 +21,4 @@ struct FuzeEditor : LayerStack
     FuzeEditor();
     ~FuzeEditor() override;
 };
-}
+} // namespace titian

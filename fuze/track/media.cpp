@@ -1,8 +1,8 @@
 #include "fuze.h"
 
-
 titian::Media::Media()
-{}
+{
+}
 
 bool titian::Media::has_image() const
 {
@@ -19,16 +19,16 @@ bool titian::Media::has_video() const
     return video && video->duration() > 0.0f;
 }
 
-void titian::Media::store_frame( EffectPackage const& package, bool wait )
+void titian::Media::store_frame(EffectPackage const& package, bool wait)
 {
-    store_raw_frame( package.current_time - package.media_start, wait );
-    apply_image_effects( package );
+    store_raw_frame(package.current_time - package.media_start, wait);
+    apply_image_effects(package);
 }
 
-void titian::Media::store_audio( EffectPackage const& package )
+void titian::Media::store_audio(EffectPackage const& package)
 {
     store_raw_audio();
-    apply_audio_effects( package );
+    apply_audio_effects(package);
 }
 
 titian::Ref<titian::Media> titian::Media::make_copy() const
@@ -41,64 +41,64 @@ titian::Ref<titian::Media> titian::Media::make_copy() const
     media->audio = this->audio ? this->audio->make_copy() : nullptr;
     media->video = this->video ? this->video->make_copy() : nullptr;
 
-    for ( auto& effect : this->image_effects )
-        media->image_effects.push_back( effect->make_copy() );
+    for (auto& effect : this->image_effects)
+        media->image_effects.push_back(effect->make_copy());
 
-    for ( auto& effect : this->audio_effects )
-        media->audio_effects.push_back( effect->make_copy() );
+    for (auto& effect : this->audio_effects)
+        media->audio_effects.push_back(effect->make_copy());
 
     return media;
 }
 
-void titian::Media::store_raw_frame( float time, bool wait )
+void titian::Media::store_raw_frame(float time, bool wait)
 {
-    if ( type == MediaType::IMAGE )
+    if (type == MediaType::IMAGE)
     {
-        if ( image )
+        if (image)
         {
-            out_frame.resize( image->out_frame.size() );
-            out_frame.upload( image->out_frame );
+            out_frame.resize(image->out_frame.size());
+            out_frame.upload(image->out_frame);
         }
     }
-    else if ( type == MediaType::VIDEO )
+    else if (type == MediaType::VIDEO)
     {
-        if ( video )
+        if (video)
         {
-            video->store_frame( time, wait );
-            out_frame.resize( video->out_frame.size() );
-            out_frame.upload( video->out_frame );
+            video->store_frame(time, wait);
+            out_frame.resize(video->out_frame.size());
+            out_frame.upload(video->out_frame);
         }
     }
 }
 
 void titian::Media::store_raw_audio()
 {
-    if ( type == MediaType::AUDIO )
+    if (type == MediaType::AUDIO)
     {
-        if ( audio )
+        if (audio)
         {
             out_audio.out_audio = audio->out_audio;
-            out_audio.out_audio.set_duration( this->duration );
+            out_audio.out_audio.set_duration(this->duration);
         }
     }
-    else if ( type == MediaType::VIDEO )
+    else if (type == MediaType::VIDEO)
     {
-        if ( audio )
+        if (audio)
         {
             out_audio.out_audio = audio->out_audio;
-            out_audio.out_audio.set_duration( this->duration );
+            out_audio.out_audio.set_duration(this->duration);
         }
     }
 }
 
-void titian::Media::apply_image_effects( EffectPackage const& package )
+void titian::Media::apply_image_effects(EffectPackage const& package)
 {
-    for ( auto& effect : image_effects )
-        effect->apply( package, out_frame );
+    for (auto& effect : image_effects)
+        effect->apply(package, out_frame);
 }
 
-void titian::Media::apply_audio_effects( EffectPackage const& package )
+void titian::Media::apply_audio_effects(EffectPackage const& package)
 {
-    for ( auto& effect : audio_effects )
-        effect->apply( package, out_audio );
+    for (auto& effect : audio_effects)
+        effect->apply(package, out_audio);
 }

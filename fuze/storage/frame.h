@@ -2,7 +2,6 @@
 
 #include "storage/video.h"
 
-
 namespace titian
 {
 struct Frame : kl::NoCopy
@@ -13,14 +12,14 @@ struct Frame : kl::NoCopy
 
     Frame();
 
-    void upload( RAWImage const& image );
-    void retrieve( RAWImage& image ) const;
+    void upload(RAWImage const& image);
+    void retrieve(RAWImage& image) const;
 
-    Int2 size() const;
-    void resize( Int2 size );
+    int2 size() const;
+    void resize(int2 size);
 
-private:
+  private:
     dx::Texture m_staging_texture;
-    Int2 m_size;
+    int2 m_size;
 };
-}
+} // namespace titian

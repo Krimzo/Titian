@@ -3,7 +3,6 @@
 #include "gui/gui_section.h"
 #include "gui/gui_layer.h"
 
-
 namespace titian
 {
 struct GUISectionFuzeTimeline : GUISection
@@ -18,7 +17,7 @@ struct GUISectionFuzeTimeline : GUISection
 
     void render_gui() override;
 
-private:
+  private:
     struct MovingMediaInfo
     {
         int track_index = 0;
@@ -35,11 +34,13 @@ private:
     bool m_editing_media = false;
     bool m_popup_was = false;
 
-    void handle_input( int scroll );
-    void render_header( ImVec2 cell_padding, float available_height, float& header_height, ImVec2& total_min, ImVec2& total_max );
-    void render_track( ImVec2 cell_padding, float row_height, int i, float header_height, ImVec2& total_min, ImVec2& total_max );
-    void render_pointer( ImVec2 total_min, ImVec2 total_max );
+    void handle_input(int scroll);
+    void render_header(ImVec2 cell_padding, float available_height, float& header_height, ImVec2& total_min,
+                       ImVec2& total_max);
+    void render_track(ImVec2 cell_padding, float row_height, int i, float header_height, ImVec2& total_min,
+                      ImVec2& total_max);
+    void render_pointer(ImVec2 total_min, ImVec2 total_max);
 
-    static ImColor color_classify( Media const& media );
+    static ImColor color_classify(Media const& media);
 };
-}
+} // namespace titian

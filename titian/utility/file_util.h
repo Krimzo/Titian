@@ -3,7 +3,6 @@
 #include "utility/gui_util.h"
 #include "utility/string_util.h"
 
-
 namespace titian
 {
 enum struct FileType : int32_t
@@ -16,9 +15,9 @@ enum struct FileType : int32_t
     BINARY_SCENE,
     TEXT_SCENE,
 };
-}
+} // namespace titian
 
 namespace titian
 {
-FileType classify_file( fs::path const& file );
+FileType classify_file(fs::path const& file);
 }

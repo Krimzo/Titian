@@ -10,7 +10,6 @@
 #include "render/states/shader_states.h"
 #include "render/states/blend_states.h"
 
-
 namespace titian
 {
 struct RenderLayer : Layer_T<RenderLayer>
@@ -30,4 +29,4 @@ struct RenderLayer : Layer_T<RenderLayer>
     bool update() override;
     void present() const;
 };
-}
+} // namespace titian

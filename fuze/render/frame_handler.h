@@ -2,7 +2,6 @@
 
 #include "storage/frame.h"
 
-
 namespace titian
 {
 struct FrameHandler
@@ -11,11 +10,11 @@ struct FrameHandler
 
     FrameHandler();
 
-    void prepare_frame( Int2 size );
-    void mix_frame( Frame const& frame );
+    void prepare_frame(int2 size);
+    void mix_frame(Frame const& frame);
 
-private:
+  private:
     dx::ComputeShader m_clear_shader;
     dx::ComputeShader m_mix_shader;
 };
-}
+} // namespace titian

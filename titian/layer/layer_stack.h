@@ -2,7 +2,6 @@
 
 #include "layer/layer.h"
 
-
 namespace titian
 {
 struct LayerStack
@@ -12,7 +11,7 @@ struct LayerStack
     LayerStack() = default;
     virtual ~LayerStack() = default;
 
-    void push_layer( Layer& layer );
+    void push_layer(Layer& layer);
     bool process_layers();
 };
-}
+} // namespace titian

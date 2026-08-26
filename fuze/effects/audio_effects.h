@@ -2,7 +2,6 @@
 
 #include "effects/audio_effect.h"
 
-
 namespace titian
 {
 struct AudioEffectVolume : AudioEffect
@@ -11,10 +10,10 @@ struct AudioEffectVolume : AudioEffect
 
     AudioEffectVolume();
 
-    void apply( EffectPackage const& package, Audio& audio ) override;
+    void apply(EffectPackage const& package, Audio& audio) override;
 
     String name() const override;
     Ref<AudioEffect> make_copy() const override;
     void display_gui() override;
 };
-}
+} // namespace titian

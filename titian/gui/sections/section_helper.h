@@ -5,7 +5,6 @@
 #include "render/render_layer.h"
 #include "serial/serial.h"
 
-
 namespace titian
 {
 struct GUISectionHelper : GUISection
@@ -17,10 +16,10 @@ struct GUISectionHelper : GUISection
 
     void render_gui() override;
 
-private:
+  private:
     float m_icon_size = 70.0f;
 
-    void handle_basic_entry( StringRef const& name ) const;
-    void handle_animation_entry( StringRef const& name ) const;
+    void handle_basic_entry(StringRef const& name) const;
+    void handle_animation_entry(StringRef const& name) const;
 };
-}
+} // namespace titian
