@@ -5,8 +5,10 @@ int SELECTED_COUNT;
 Texture2D<float> INDEX_TEXTURE : register(t0);
 StructuredBuffer<float> INDEX_BUFFER : register(t1);
 
-bool is_selected(float value) {
-    for (int i = 0; i < SELECTED_COUNT; i++) {
+bool is_selected(float value)
+{
+    for (int i = 0; i < SELECTED_COUNT; i++)
+    {
         if (INDEX_BUFFER[i] == value)
             return true;
     }

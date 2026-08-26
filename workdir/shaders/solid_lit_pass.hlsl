@@ -16,14 +16,11 @@ VS_OUT v_shader(float3 position : KL_Position, float3 normal : KL_Normal, uint4 
 {
     if (IS_SKELETAL)
     {
-        float4x4 bone_mat = BONES_BUFFER[bone_indices[0]] * bone_weights[0]
-                          + BONES_BUFFER[bone_indices[1]] * bone_weights[1]
-                          + BONES_BUFFER[bone_indices[2]] * bone_weights[2]
-                          + BONES_BUFFER[bone_indices[3]] * bone_weights[3];
+        float4x4 bone_mat = BONES_BUFFER[bone_indices[0]] * bone_weights[0] + BONES_BUFFER[bone_indices[1]] * bone_weights[1] + BONES_BUFFER[bone_indices[2]] * bone_weights[2] + BONES_BUFFER[bone_indices[3]] * bone_weights[3];
         position = mul(float4(position, 1.0f), bone_mat).xyz;
         normal = mul(float4(normal, 0.0f), bone_mat).xyz;
     }
-    
+
     VS_OUT data;
     data.position = mul(float4(position, 1.0f), WVP);
     data.normal = mul(float4(normal, 0.0f), W).xyz;
