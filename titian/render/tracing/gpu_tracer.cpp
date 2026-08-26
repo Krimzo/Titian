@@ -25,10 +25,9 @@ titian::GPUTracer::GPUTracer(kl::Window& window, TracingScene const& scene, Int2
     ti_verify(m_target_copy_access_view, "Failed to create tracing target copy access view");
     ti_verify(m_target_copy_shader_view, "Failed to create tracing target copy shader view");
 
-    m_compute_shader =
-        m_gpu.create_compute_shader(kl::read_file_string("package/shaders/tracing/tracing_compute.hlsl"));
-    m_copy_shader = m_gpu.create_compute_shader(kl::read_file_string("package/shaders/tracing/tracing_copy.hlsl"));
-    m_display_shaders = m_gpu.create_shaders(kl::read_file_string("package/shaders/tracing/tracing_display.hlsl"));
+    m_compute_shader = m_gpu.create_compute_shader(kl::read_file_string("shaders/tracing/tracing_compute.hlsl"));
+    m_copy_shader = m_gpu.create_compute_shader(kl::read_file_string("shaders/tracing/tracing_copy.hlsl"));
+    m_display_shaders = m_gpu.create_shaders(kl::read_file_string("shaders/tracing/tracing_display.hlsl"));
     ti_verify(m_compute_shader, "Failed to create tracing compute shader");
     ti_verify(m_copy_shader, "Failed to create tracing copy shader");
     ti_verify(m_display_shaders, "Failed to create tracing display shaders");

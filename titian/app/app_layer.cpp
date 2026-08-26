@@ -1,12 +1,10 @@
 #include "titian.h"
 
-
-titian::AppLayer::AppLayer()
-    : Layer_T( "AppLayer" )
+titian::AppLayer::AppLayer() : Layer_T("AppLayer")
 {
-    window.on_resize.emplace_back( [this]( auto size ) { handle_resize( size ); } );
-    window.set_icon( "package/textures/editor_icon.ico" );
-    window.set_dark_mode( true );
+    window.on_resize.emplace_back([this](auto size) { handle_resize(size); });
+    window.set_icon("textures/editor_icon.ico");
+    window.set_dark_mode(true);
     window.maximize();
 }
 
@@ -17,9 +15,9 @@ titian::AppLayer::~AppLayer()
     foundation.release();
 }
 
-void titian::AppLayer::set_name( StringRef const& name )
+void titian::AppLayer::set_name(StringRef const& name)
 {
-    window.set_title( name );
+    window.set_title(name);
 }
 
 bool titian::AppLayer::update()
@@ -29,11 +27,11 @@ bool titian::AppLayer::update()
     return window.process();
 }
 
-void titian::AppLayer::handle_resize( Int2 size )
+void titian::AppLayer::handle_resize(Int2 size)
 {
-    if ( size.x <= 0 || size.y <= 0 )
+    if (size.x <= 0 || size.y <= 0)
         return;
 
-    gpu.resize_internal( size );
-    gpu.set_viewport_size( size );
+    gpu.resize_internal(size);
+    gpu.set_viewport_size(size);
 }

@@ -11,6 +11,7 @@ set(PX_GENERATE_GPU_PROJECTS OFF CACHE BOOL "" FORCE)
 set(PX_GENERATE_STATIC_LIBRARIES ON CACHE BOOL "" FORCE)
 add_compile_options(/wd5054 /wd5055)
 add_subdirectory(physx/physx)
+SET(CMAKE_CONFIGURATION_TYPES Debug Release CACHE STRING "" FORCE)
 
 add_library(mmodule STATIC mmodule/MemoryModule.c)
 target_include_directories(mmodule PUBLIC mmodule)

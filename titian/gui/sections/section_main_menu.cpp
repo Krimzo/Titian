@@ -10,9 +10,9 @@ titian::GUISectionMainMenu::GUISectionMainMenu() : GUISection("GUISectionMainMen
     };
 
     WorkQueue queue;
-    queue.add_task([&] { create_texture(m_start_button_texture, "package/textures/start_button.png"); });
-    queue.add_task([&] { create_texture(m_pause_button_texture, "package/textures/pause_button.png"); });
-    queue.add_task([&] { create_texture(m_stop_button_texture, "package/textures/stop_button.png"); });
+    queue.add_task([&] { create_texture(m_start_button_texture, "textures/start_button.png"); });
+    queue.add_task([&] { create_texture(m_pause_button_texture, "textures/pause_button.png"); });
+    queue.add_task([&] { create_texture(m_stop_button_texture, "textures/stop_button.png"); });
     queue.finalize();
 }
 

@@ -278,7 +278,7 @@ void titian::Tracing::render(Scene& scene)
 
     kl::Window window{"Titian Raytracer"};
     window.set_dark_mode(true);
-    window.set_icon("package/textures/editor_icon.ico");
+    window.set_icon("textures/editor_icon.ico");
     window.maximize();
 
     if (GPU_TRACER)
